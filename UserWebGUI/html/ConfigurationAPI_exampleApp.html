@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+<html lang="en"> 
+<head>
+	<title>ConfigurationGUI</title>
+
+	<link href='/WebPath/css/fonts.css?family=Inconsolata:400' rel='stylesheet' type='text/css'>
+		
+	<!-- link rel="stylesheet" type="text/css" href="/WebPath/css/ConfigurationGUI.css" -->
+	<link rel="stylesheet" type="text/css" href="/WebPath/css/ConfigurationAPI.css">
+
+	<!-- MultiSelectBox: Must include .css style sheet and .js functionality -->
+	<link rel="stylesheet" type="text/css" href="/WebPath/css/MultiSelectBox.css">
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/MultiSelectBox.js"></script>
+
+	<style type="text/css">			
+	
+
+		/* make buttons have a hand cursor */
+		input[type="button"], button {
+			cursor: pointer;
+		}
+		
+		
+	</style>
+	
+	
+	<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>	
+	<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>	
+	<script type="text/JavaScript" src="/WebPath/js/DesktopWindowContentCode.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/SimpleContextMenu.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+	
+	<script>		
+		
+		//	Description of Configuration-Subset Functionality/Behavior:
+		//	
+		//	GET parameters:
+		//		<subsetBasePath> = Records at this path are the target of this GUI, e.g. “FEInterfaceConfiguration”
+		//		<groupingFieldList> = CSV list of tree paths relative to <baseTable>, e.g. “LinkToFETypeConfiguration,FEInterfacePluginName”
+		//									- these are the fields that can be used to filter UID records by (and these will cause grouping in square-view)	
+		//		<editableFieldList> = empty string or "DEFAULT" for all, or CSV list of fields to show for editing
+		//		<filterFieldList> = CSV list (of forced filter) of tree paths relative to <baseTable> and = value, e.g. "LinkToFETypeConfiguration=NIMPlus,FEInterfacePluginName=NIMPlusPlugin"
+		//									- this is like a pre-filter (filter on records UID that user can not control)	
+		//	- Requires user to have LOCK
+		//	
+		//	- Split window into two panes: Left and Right; Left is fixed width and hideable.	
+		//	
+		//	- Left Pane:
+		//		* Fixed width, vertical auto scroll, hideable.
+		//		* Filter icon that toggles display of multi-select boxes for each <subLevelGrouping>. 
+		//		* Filtering:
+		//		 	- AND/OR option if multiple sublevels
+		//			- multi-select for each <subLevelGrouping>
+		//		* Icon to toggle record representation (Multi-select or Square Grid groupings)
+		//		* Record UID Selector:
+		//			- Multi-select box for selection of UID (based on sublevelgrouping filters)
+		//		* Alternatively can represent the detectors as squares (with mouse over UID names)
+		//			- Squares will be grouped by SubLevel using AND logic with a sublevel-label
+		//					
+		//	- Right Pane:
+		//		* Show fields that are common based on SubLevelGrouping filters
+		//			- E.g. if *,* then can only show SlowControls fields
+		//			- Challenge: show all common fields, even through links
+		//			- Allow editing the field (based on type) .. same as tree edit, but like already clicked 
+		//		
+		//	- Save functionality should be same as saving tree	
+		//		* If admin, give options to target a certain system alias.. Etc.
+		//		* Else assume saving to currently active groups
+
+		
+				
+		var _TABLE_BOOL_TYPE_TRUE_COLOR = "rgb(201, 255, 201)";
+		var _TABLE_BOOL_TYPE_FALSE_COLOR = "rgb(255, 178, 178)";
+		
+		
+	
+		
+	
+		/////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////
+	
+		//functions:			
+			//init()
+			
+	
+		/////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////
+				
+		
+		//init called once body has loaded
+		function init() {			
+						
+			Debug.log("CfgGUI_sebset init ");
+			DesktopContent.tooltip("Configuration-Subset GUI Introduction",
+					"Welcome to the Configuration-Subset GUI. Here you can manipulate the fields "+
+					"of a subset of your <i>otsdaq</i> system. \n\n" +
+					"The organization of the Configuration-Subset GUI is in the form of two panes, a left and right.\n\n" +
+					
+					"Briefly, here is a description of the two panes: " +
+					"\n\t- 'Left Pane' is for selecting one or many records to target." +
+					"\n\t- 'Right Pane' is for modifying the common fields associated with the selected records."
+			);
+			
+			//extract get parameters
+			//		<subsetBasePath> 	= Records at this path are the target of this GUI, e.g. “FEInterfaceConfiguration”
+			//		<groupingFieldList> = CSV list of tree paths relative to <baseTable>, e.g. “LinkToFETypeConfiguration,FEInterfacePluginName”
+			//		<editableFieldList> = empty string or "DEFAULT" for all, or CSV list of fields to show for editing
+			//		<filterFieldList> 	= CSV list (of forced filter) of tree paths relative to <baseTable> and = value, e.g. "LinkToFETypeConfiguration=NIMPlus,FEInterfacePluginName=NIMPlusPlugin"
+			
+			_subsetBasePath		= DesktopContent.getParameter(0,"subsetBasePath");			
+			_groupingFieldList 	= DesktopContent.getParameter(0,"groupingFieldList");			
+			_editableFieldList	= DesktopContent.getParameter(0,"editableFieldList");			
+			_filterFieldList 	= DesktopContent.getParameter(0,"filterFieldList");
+			
+			if(!_subsetBasePath)
+			{
+				Debug.log("Missing required GET parameter 'subsetBasePath.'",
+						Debug.HIGH_PRIORITY);
+				return;
+			}
+			if(!_groupingFieldList) _groupingFieldList = "";
+			if(!_editableFieldList) _editableFieldList = "";
+			if(!_filterFieldList) _filterFieldList = "";
+			
+			Debug.log("_subsetBasePath " + _subsetBasePath);
+			Debug.log("_groupingFieldList " + _groupingFieldList);
+			Debug.log("_editableFieldList " + _editableFieldList);
+			Debug.log("_filterFieldList " + _filterFieldList);
+			
+			var localGetFieldValuesForRecordHandler;
+			var localRecords, localFields, localModifiedTables;
+			
+			localModifiedTables = [];
+			
+			//get list of records that match <subsetBasePath> AND <filterFieldList>
+			
+			ConfigurationAPI.getSubsetRecords(
+					_subsetBasePath,
+					_filterFieldList,
+					function(records)
+					{
+				localRecords = records;
+				Debug.log("records found = " + records.length);
+
+				var str = document.body.innerHTML;
+				str += "<br>GetRecords";
+				str += "<br>";
+				for(var i=0;i<records.length;++i)
+					str += records[i] + "<br>";
+				document.body.innerHTML = str;
+
+				//get grouping field values
+				//	for record list
+				ConfigurationAPI.getFieldValuesForRecords(
+						_subsetBasePath,
+						records,
+						_editableFieldList,
+						-1,
+						function(recFields)
+						{
+					localFields = recFields;
+					Debug.log("recFields found = " + recFields.length);
+
+					var str = document.body.innerHTML;
+					str += "<br>GetFields";
+					str += "<br>";
+					for(var i in recFields)
+						str += i + ": " + recFields[i].fieldRelativePath + 
+						recFields[i].fieldColumnName + "<br>";
+					document.body.innerHTML = str;
+
+					ConfigurationAPI.getFieldValuesForRecord(
+							_subsetBasePath,
+							[records[0]],
+							recFields,
+							localGetFieldValuesForRecordHandler
+					);
+
+
+						});
+
+
+					});
+
+			var setValue = true;
+			var saveAll = false;
+			localGetFieldValuesForRecordHandler = function(recFieldValues) {
+				var str = document.body.innerHTML;
+				str += "<br>GetFieldValues " + setValue;
+				str += "<br>";
+				for(var i in recFieldValues)
+					str += recFieldValues[i].fieldUID + ": " +
+						recFieldValues[i].fieldPath + ": " + 
+						recFieldValues[i].fieldValue + "<br>";
+				document.body.innerHTML = str;
+				
+				if(setValue)				
+					ConfigurationAPI.setFieldValuesForRecords(
+							_subsetBasePath,
+							localRecords,
+							[localFields[1],localFields[5]], //fieldArr
+							["0","3999"], //valueArr
+							function(modifiedTables)
+							{
+					localModifiedTables = modifiedTables;
+					
+					//get value again, without setting again
+					setValue = false;
+					saveAll = true;
+					if(1 && modifiedTables.length)
+						ConfigurationAPI.getFieldValuesForRecord(
+							_subsetBasePath,
+							localRecords,
+							localFields,
+							localGetFieldValuesForRecordHandler,
+							localModifiedTables
+					);	
+							});
+				
+				
+				if(saveAll)
+					ConfigurationAPI.popUpSaveModifiedTablesForm(localModifiedTables,
+							function(newTables, newGroups, newAliases)
+							{
+					if(newTables.length)
+						Debug.log("Done with saving.");
+					else
+						Debug.log("No saving done!");
+						
+							});
+					
+			}
+		} //end init()
+		
+		
+		
+		</script>
+</head>
+	
+
+<body onload='Javascript:init();'>	
+		
+	<h1>Configuration GUI Subset</h1>
+		
+	
+	
+</body>
+	
+</html>

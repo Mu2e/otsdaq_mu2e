@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="en"> 
+<head>
+	<title>ConfigurationGUI</title>
+
+	<link href='/WebPath/css/fonts.css?family=Inconsolata:400' rel='stylesheet' type='text/css'>
+	<link href='/WebPath/css/fonts.css?family=Comfortaa:400' rel='stylesheet' type='text/css'>
+		
+	
+	
+	<!-- FTBFWebPath is link (> ln -s linkpath linkname) in otsdaq_utilities/WebPath -->
+	<link rel="stylesheet" type="text/css" href="/WebPath/css/library/pretty-checkbox.min.css">
+	<link rel="stylesheet" type="text/css" href="/WebPath/css/library/MaterialDesign-Webfont-master/css/materialdesignicons.min.css">
+	
+	<link rel="stylesheet" type="text/css" href="/WebPath/css/ConfigurationAPI.css">
+	<link rel="stylesheet" type="text/css" href="/WebPath/css/SmartLaunch.css">
+	
+	
+	<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>	
+	<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>	
+	<script type="text/JavaScript" src="/WebPath/js/DesktopWindowContentCode.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/SimpleContextMenu.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+
+	<script type="text/JavaScript" src="/WebPath/js/SmartLaunch.js"></script>
+	
+	<script>		
+	
+
+	//	Note: modeled off of template in otsdaq_utilities/WebGUI/html/SmartLaunch.html 
+	//
+	//	Smart Launch for otsdaq demo -- names of contexts are just examples:
+	//	
+	//		Checkboxes on left to select configuration systems to enable
+	//		Giant button on right to launch
+	//	
+	//		The user can copy this template into their own repository and 
+	//			and make custom groupings of contexts. For example,
+	//			the Tracker might consist of 5 contents, and could then
+	//			be reduced to a single checkbox.
+	//		Use SmartLaunch.subsystems and SmartLaunch.systemToContextMap to define custom context groups.
+	//
+	//		Launch means:
+	//			- enable associated contexts
+	//			- save new context group, activate (do not alias)
+	//			- save user active sessions
+	//			- relaunch otsdaq normal mode
+	//			- load active sessions
+	//			- detect in GUI that system is back alive
+	//
+	//
+
+
+
+	SmartLaunch.doShowContexts = true; //true to also include contexts
+	
+	var _NAME_STRIPS 	= "Strip Telescope";
+	var _NAME_MWPC 		= "Wire Chambers";
+	var _NAME_NIMPLUS 	= "NIM+ Trigger/Coincidence Module";
+	
+	var _subsystems = [
+					   _NAME_STRIPS,
+					   _NAME_MWPC,
+					   _NAME_NIMPLUS
+					   ]; 
+	
+	var _systemToContextMap = {};
+	_systemToContextMap[_NAME_STRIPS] = [
+										 "StripTelescopeContext"
+										 ];
+	_systemToContextMap[_NAME_MWPC] = [
+									   "WireChamberContext",
+									   "ARTDAQBoardReader0", 
+									   "ARTDAQEventBuilder0",
+									   "ARTDAQEventBuilder1",
+									   "ARTDAQAggregator0"
+									   ];
+	_systemToContextMap[_NAME_NIMPLUS] = [
+										  "NimPlusContext"
+										  ];
+	
+	
+
+	//=====================================================================================
+	//init ~~
+	//	init called once body has loaded
+	function init() 
+	{		
+		SmartLaunch.create();
+	}
+	
+	</script>
+</head>
+	
+
+<body onload='Javascript:init();'>		
+	
+</body>
+	
+</html>
+
+	

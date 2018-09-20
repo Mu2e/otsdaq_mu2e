@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+<xc:Partition xmlns:xsi     = "http://www.w3.org/2001/XMLSchema-instance"  
+              xmlns:soapenc = "http://schemas.xmlsoap.org/soap/encoding/" 
+              xmlns:xc      = "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+  <xc:Context id="0" url="http://${SUPERVISOR_SERVER}:${PORT}">
+
+    <xc:Application class="ots::ConfigurationGUISupervisor" id="${CONFIGURATION_GUI_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libConfigurationGUI.so</xc:Module>
+
+    <xc:Application class="ots::WizardSupervisor" id="${WIZARD_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libWizardSupervisor.so</xc:Module>
+
+    <xc:Application class="ots::ConsoleSupervisor" id="${CONSOLE_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libConsole.so</xc:Module>
+    
+  </xc:Context>
+
+</xc:Partition>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="MessageFacilityConfiguration">
+			<VIEW Name="MESSAGE_FACILITY_CONFIGURATION" Type="File,Database,DatabaseTest">
+				<COLUMN Type="UID" 	 Name="UID" 	 StorageName="UID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="TrueFalse" 	 Name="EnableUDPForwarding" 	 StorageName="ENABLE_UDP_FORWARDING" 		DataType="VARCHAR2"/>
+				<COLUMN Type="YesNo" 	 Name="ForwardToWebConsoleGUI" 	 StorageName="FORWARD_TO_WEB_CONSOLE_GUI" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="WebConsoleForwardingIPAddress" 	 StorageName="WEB_CONSOLE_FORWARDING_IP_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="WebConsoleForwardingPort0" 	 StorageName="WEB_CONSOLE_FORWARDING_PORT0" 		DataType="NUMBER"/>
+				<COLUMN Type="Data" 	 Name="WebConsoleForwardingPort1" 	 StorageName="WEB_CONSOLE_FORWARDING_PORT1" 		DataType="NUMBER"/>
+				<COLUMN Type="YesNo" 	 Name="ForwardToQTViewerGUI" 	 StorageName="FORWARD_TO_QT_VIEWER_GUI" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="QTViewerForwardingIPAddress" 	 StorageName="QT_VIEWER_FORWARDING_IP_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="QTViewerForwardingPort" 	 StorageName="QT_VIEWER_FORWARDING_PORT" 		DataType="NUMBER"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

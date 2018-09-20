@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="FESlowControlsConfiguration">
+			<VIEW Name="FE_SLOW_CONTROLS_CONFIGURATION" Type="File,Database,DatabaseTest">
+				<COLUMN Type="GroupID-SlowControlChannels" 	 Name="FEGroupID" 	 StorageName="FE_GROUP_ID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="UID" 	 Name="ChannelName" 	 StorageName="CHANNEL_NAME" 		DataType="VARCHAR2"/>
+				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="ChannelDataType" 	 StorageName="CHANNEL_DATA_TYPE" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="UniversalInterfaceAddress" 	 StorageName="UNIVERSAL_INTERFACE_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="UniversalDataBitOffset" 	 StorageName="UNIVERSAL_DATA_BIT_OFFSET" 		DataType="NUMBER"/>
+				<COLUMN Type="YesNo" 	 Name="ReadAccess" 	 StorageName="READ_ACCESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="YesNo" 	 Name="WriteAccess" 	 StorageName="WRITE_ACCESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="TrueFalse" 	 Name="RecordChangesOnly" 	 StorageName="RECORD_CHANGES_ONLY" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="DelayBetweenSamplesInSeconds" 	 StorageName="DELAY_BETWEEN_SAMPLES_IN_SECONDS" 		DataType="NUMBER"/>
+				<COLUMN Type="YesNo" 	 Name="MonitoringEnabled" 	 StorageName="MONITORING_ENABLED" 		DataType="VARCHAR2"/>
+				<COLUMN Type="YesNo" 	 Name="LocalSavingEnabled" 	 StorageName="LOCAL_SAVING_ENABLED" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="LocalFilePath" 	 StorageName="LOCAL_FILE_PATH" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="RadixFileName" 	 StorageName="RADIX_FILE_NAME" 		DataType="VARCHAR2"/>
+				<COLUMN Type="TrueFalse" 	 Name="SaveBinaryFile" 	 StorageName="SAVE_BINARY_FILE" 		DataType="VARCHAR2"/>
+				<COLUMN Type="YesNo" 	 Name="AlarmsEnabled" 	 StorageName="ALARMS_ENABLED" 		DataType="VARCHAR2"/>
+				<COLUMN Type="TrueFalse" 	 Name="LatchAlarms" 	 StorageName="LATCH_ALARMS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="LowLowThreshold" 	 StorageName="LOW_LOW_THRESHOLD" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="LowThreshold" 	 StorageName="LOW_THRESHOLD" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="HighThreshold" 	 StorageName="HIGH_THRESHOLD" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="HighHighThreshold" 	 StorageName="HIGH_HIGH_THRESHOLD" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

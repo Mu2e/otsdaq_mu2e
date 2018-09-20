@@ -1,0 +1,97 @@
+{
+"ouid" : [
+"ec82af4567264faf8dbc1a66"
+],
+"version" : {
+"1" : [
+"ec82af4567264faf8dbc1a66"
+]
+},
+"configurations.name" : {
+"notprovided" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v1" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v2" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v3" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v4" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v5" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v6" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v7" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v8" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v9" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v10" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v11" : [
+"ec82af4567264faf8dbc1a66"
+]
+},
+"entities.name" : {
+"OTSROOT" : [
+"ec82af4567264faf8dbc1a66"
+]
+},
+"aliases.active.name" : {
+
+},
+"runs.name" : {
+
+},
+"configurations.assigned" : {
+"notprovided" : [
+"2018-07-17T12:10:19.766-0500"
+],
+"defaultConfig_v1" : [
+"2018-07-17T12:10:20.285-0500"
+],
+"defaultConfig_v2" : [
+"2018-09-06T16:32:23.643-0500"
+],
+"defaultConfig_v3" : [
+"2018-09-06T16:33:36.053-0500"
+],
+"defaultConfig_v4" : [
+"2018-09-10T14:38:12.270-0500"
+],
+"defaultConfig_v5" : [
+"2018-09-10T14:44:51.698-0500"
+],
+"defaultConfig_v6" : [
+"2018-09-10T14:46:41.960-0500"
+],
+"defaultConfig_v7" : [
+"2018-09-10T14:57:27.388-0500"
+],
+"defaultConfig_v8" : [
+"2018-09-20T13:50:07.363-0500"
+],
+"defaultConfig_v9" : [
+"2018-09-20T13:51:11.410-0500"
+],
+"defaultConfig_v10" : [
+"2018-09-20T15:03:48.190-0500"
+],
+"defaultConfig_v11" : [
+"2018-09-20T15:07:01.461-0500"
+]
+}
+}

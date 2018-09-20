@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="RawDataSaverConsumerConfiguration">
+			<VIEW Name="RAW_DATA_SAVER_CONSUMER_CONFIGURATION" Type="File,Database,DatabaseTest">
+				<COLUMN Type="UID" 	 Name="ProcessorUID" 	 StorageName="PROCESSOR_UID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="FilePath" 	 StorageName="FILE_PATH" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="RadixFileName" 	 StorageName="RADIX_FILE_NAME" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="MaxFileSize" 	 StorageName="MAX_FILE_SIZE" 		DataType="NUMBER"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

@@ -1,0 +1,154 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DATA_MANAGER_SUPERVISOR_CONFIGURATION",
+"COMMENT" : "Added artdaq DMs. Changed group name. Added visualizer DM.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1480436876,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"LINK_TO_DATA_MANAGER_CONFIGURATION" : "VARCHAR2",
+"LINK_TO_DATA_MANAGER_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUPERVISOR_UID" : "DataManagerSupervisor0",
+"LINK_TO_DATA_MANAGER_CONFIGURATION" : "DataManagerConfiguration",
+"LINK_TO_DATA_MANAGER_GROUP_ID" : "DMGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479771599"
+},
+{
+"SUPERVISOR_UID" : "VisualSupervisor0",
+"LINK_TO_DATA_MANAGER_CONFIGURATION" : "DataManagerConfiguration",
+"LINK_TO_DATA_MANAGER_GROUP_ID" : "DMVisualizerGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479825977"
+},
+{
+"SUPERVISOR_UID" : "ARTDataManagerSupervisor0",
+"LINK_TO_DATA_MANAGER_CONFIGURATION" : "DataManagerConfiguration",
+"LINK_TO_DATA_MANAGER_GROUP_ID" : "ART_S0_DataManager0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480436876"
+},
+{
+"SUPERVISOR_UID" : "ARTDataManagerSupervisor1",
+"LINK_TO_DATA_MANAGER_CONFIGURATION" : "DataManagerConfiguration",
+"LINK_TO_DATA_MANAGER_GROUP_ID" : "ART_S1_DataManager0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480436876"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-07-17T12:10:19.897-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:19.902-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:19.899-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.376-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-07-17T12:10:19.900-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:19.899-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-07-17T12:10:19.900-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2018-07-17T12:10:19.900-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-07-17T12:10:19.901-0500",
+"value" : {
+"name" : "DataManagerSupervisorConfiguration",
+"assigned" : "2018-07-17T12:10:19.901-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-07-17T12:10:19.902-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:19.902-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-07-17T12:10:20.376-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.376-0500"
+}
+}
+],
+"created" : "2018-07-17T12:10:19.897-0500"
+},
+"_id" : {
+"$oid" : "d001cb3c52cb4c658a1e3fc8"
+},
+"collection" : "DataManagerSupervisorConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -1,0 +1,11 @@
+#add_subdirectory(UserConfigurationDataFormats)
+add_subdirectory(FEInterfaces)
+#add_subdirectory(DataProcessorPlugins)
+#add_subdirectory(DemoRootUtilities)
+#add_subdirectory(InterfaceTest)
+#add_subdirectory(ArtModules)
+#add_subdirectory(Generators)
+#add_subdirectory(Overlays)
+#add_subdirectory(ControlsInterfacePlugins)
+#add_subdirectory(TemplateDirectory)
+

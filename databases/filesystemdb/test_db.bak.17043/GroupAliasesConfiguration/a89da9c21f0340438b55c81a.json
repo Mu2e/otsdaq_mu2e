@@ -1,0 +1,138 @@
+{
+"document" : {
+"data" : {
+"NAME" : "GROUP_ALIASES_CONFIGURATION",
+"COMMENT" : "Default Backbone.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1501097254,
+"COL_TYPES" : {
+"GROUP_KEY_ALIAS" : "VARCHAR2",
+"GROUP_NAME" : "VARCHAR2",
+"GROUP_KEY" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"GROUP_KEY_ALIAS" : "defaultContextAlias",
+"GROUP_NAME" : "testContext",
+"GROUP_KEY" : "2",
+"COMMENT_DESCRIPTION" : "default safe context",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1499445762"
+},
+{
+"GROUP_KEY_ALIAS" : "defaultSystemAlias",
+"GROUP_NAME" : "defaultConfig",
+"GROUP_KEY" : "5",
+"COMMENT_DESCRIPTION" : "default safe running",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1501097254"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 14:33:23 2017",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+},
+{
+"name" : "TableEditWizBackbone_v0",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "0",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "GroupAliasesConfiguration",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "TableEditWizBackbone_v0",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+}
+],
+"created" : "Wed Jul 26 14:33:23 2017"
+},
+"_id" : {
+"$oid" : "a89da9c21f0340438b55c81a"
+},
+"collection" : "GroupAliasesConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

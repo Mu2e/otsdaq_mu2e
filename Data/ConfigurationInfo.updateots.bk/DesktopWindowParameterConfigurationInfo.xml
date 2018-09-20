@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="DesktopWindowParameterConfiguration">
+			<VIEW Name="DESKTOP_WINDOW_PARAMETER_CONFIGURATION" Type="File,Database,DatabaseTest" Description="The%20parameters%20in%20this%20table%20are%20linked%20to%20by%20the%20DesktopIconConfiguration%20table%2C%20and%20they%20become%20GET%20parameters%20for%20the%20target%20window.%0A%0AThe%20GET%20parameters%20can%20then%20be%20used%20by%20the%20window's%20source%20code%20(i.e.%20HTML%20and%20JavaScript)%20to%20affect%20the%20presentation%20of%20the%20window's%20content.">
+				<COLUMN Type="GroupID-windowParameters" 	 Name="windowParameterGroupID" 	 StorageName="WINDOW_PARAMETER_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="windowParameterUID" 	 StorageName="WINDOW_PARAMETER_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="TrueFalse" 	 Name="Enabled" 	 StorageName="ENABLED" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="windowParameterKey" 	 StorageName="WINDOW_PARAMETER_KEY" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="windowParameterValue" 	 StorageName="WINDOW_PARAMETER_VALUE" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

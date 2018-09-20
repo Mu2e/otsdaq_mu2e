@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="DataManagerConfiguration">
+			<VIEW Name="DATA_MANAGER_CONFIGURATION" Type="File,Database,DatabaseTest">
+				<COLUMN Type="GroupID-0" 	 Name="DataManagerGroupID" 	 StorageName="DATA_MANAGER_GROUP_ID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="UID" 	 Name="DataBufferUID" 	 StorageName="DATA_BUFFER_UID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="ChildLink-0" 	 Name="LinkToDataBufferConfiguration" 	 StorageName="LINK_TO_DATA_BUFFER_CONFIGURATION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="ChildLinkGroupID-0" 	 Name="LinkToDataBufferGroupID" 	 StorageName="LINK_TO_DATA_BUFFER_GROUP_ID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

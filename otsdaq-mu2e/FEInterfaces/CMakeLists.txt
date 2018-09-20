@@ -1,0 +1,46 @@
+#include_directories(${MPI_INCLUDE_PATH})
+#include_directories(/mu2e/ups/pcie_linux_kernel_module/v1_11_02/include/)
+#include_directories(${CMAKE_BINARY_DIR}/artdaq)
+
+#cet_make(LIBRARY_NAME FEInterfaces
+#		 LIBRARIES
+#         FECore		 
+#         ${CETLIB}
+#)
+#
+#install_headers()
+#install_source()
+
+  
+    
+simple_plugin(CFOFrontEndInterface "interface"
+#  DAQHardware
+  FECore
+DTCInterface  
+#  WorkLoopManager
+#  MessageFacility
+#  NetworkUtilities
+#  ConfigurationInterface
+#  ConfigurationDataFormats
+#  $ENV{XERCES_C_LIB}/libxerces-c.so
+#  ${CETLIB}
+#  ${CETLIB_EXCEPT}
+ )
+
+simple_plugin(DTCFrontEndInterface "interface"
+#  DAQHardware
+  FECore
+DTCInterface  
+#  WorkLoopManager
+#  MessageFacility
+#  NetworkUtilities
+#  ConfigurationInterface
+#  ConfigurationDataFormats
+#  $ENV{XERCES_C_LIB}/libxerces-c.so
+#  ${CETLIB}
+#  ${CETLIB_EXCEPT}
+ )
+
+
+
+ 

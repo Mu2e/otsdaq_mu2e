@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="StateMachineConfiguration">
+			<VIEW Name="STATE_MACHINE_CONFIGURATION" Type="File,Database,DatabaseTest" Description="No%20description.">
+				<COLUMN Type="GroupID-FSM" 	 Name="StateMachineGroupID" 	 StorageName="STATE_MACHINE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="StateMachineUID" 	 StorageName="STATE_MACHINE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="SystemAliasFilter" 	 StorageName="SYSTEM_ALIAS_FILTER" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="RunDisplayAlias" 	 StorageName="RUN_DISPLAY_ALIAS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="EnableConfigurationDumpOnConfigureTransition" 	 StorageName="ENABLE_CONFIGURATION_DUMP_ON_CONFIGURE_TRANSITION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="ConfigurationDumpOnConfigureFormat" 	 StorageName="CONFIGURATION_DUMP_ON_CONFIGURE_FORMAT" 		DataType="VARCHAR2" 		DataChoices="GroupKeys,TableVersions,GroupKeysAndTableVersions,All"/>
+				<COLUMN Type="Data" 	 Name="ConfigurationDumpOnConfigureFilePath" 	 StorageName="CONFIGURATION_DUMP_ON_CONFIGURE_FILE_PATH" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="ConfigurationDumpOnConfigureFileRadix" 	 StorageName="CONFIGURATION_DUMP_ON_CONFIGURE_FILE_RADIX" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="EnableConfigurationDumpOnRunTransition" 	 StorageName="ENABLE_CONFIGURATION_DUMP_ON_RUN_TRANSITION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="ConfigurationDumpOnRunFormat" 	 StorageName="CONFIGURATION_DUMP_ON_RUN_FORMAT" 		DataType="VARCHAR2" 		DataChoices="GroupKeys,TableVersions,GroupKeysAndTableVersions,All"/>
+				<COLUMN Type="Data" 	 Name="ConfigurationDumpOnRunFilePath" 	 StorageName="CONFIGURATION_DUMP_ON_RUN_FILE_PATH" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="ConfigurationDumpOnRunFileRadix" 	 StorageName="CONFIGURATION_DUMP_ON_RUN_FILE_RADIX" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

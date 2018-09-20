@@ -1,0 +1,36 @@
+<?xml version='1.0'?>
+<xc:Partition xmlns:xsi     = "http://www.w3.org/2001/XMLSchema-instance"  
+              xmlns:soapenc = "http://schemas.xmlsoap.org/soap/encoding/" 
+              xmlns:xc      = "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+  <xc:Context id="0" url="http://ftbftracker02.fnal.gov:1974">
+
+    <xc:Application class="ots::Supervisor" id="254" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libSupervisor.so</xc:Module>
+
+    <xc:Application class="ots::FEWSupervisor" id="253" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libFEWSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::FERSupervisor" id="252" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libFERSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::FEWSupervisor" id="251" instance="2" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libFEWSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::FERSupervisor" id="250" instance="2" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libFERSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::ChatSupervisor" id="240" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libChatSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::LogbookSupervisor" id="241" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libLogbookSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::VisualSupervisor" id="242" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libVisualSupervisor.so</xc:Module>
+
+    <xc:Application class="ots::ConfigurationGUISupervisor" id="243" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libConfigurationGUISupervisor.so</xc:Module>
+  </xc:Context>
+
+</xc:Partition>

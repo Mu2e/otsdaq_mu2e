@@ -1,0 +1,6 @@
+udp: { 
+	type: UDP 
+	threshold: DEBUG 
+	port: 30000 
+	host: "127.0.0.1" 
+}
