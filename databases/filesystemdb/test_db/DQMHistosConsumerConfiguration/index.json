@@ -43,6 +43,33 @@
 ],
 "defaultConfig_v11" : [
 "ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v12" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v13" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v14" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v15" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v16" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v17" : [
+"ec82af4567264faf8dbc1a66"
+],
+"defaultConfig_v18" : [
+"ec82af4567264faf8dbc1a66"
+],
+"daq02Config_v0" : [
+"ec82af4567264faf8dbc1a66"
+],
+"daq02Config_v1" : [
+"ec82af4567264faf8dbc1a66"
 ]
 },
 "entities.name" : {
@@ -92,6 +119,33 @@
 ],
 "defaultConfig_v11" : [
 "2018-09-20T15:07:01.461-0500"
+],
+"defaultConfig_v12" : [
+"2018-09-20T15:54:51.956-0500"
+],
+"defaultConfig_v13" : [
+"2018-09-20T16:17:52.859-0500"
+],
+"defaultConfig_v14" : [
+"2018-09-20T16:36:56.765-0500"
+],
+"defaultConfig_v15" : [
+"2018-10-11T15:12:58.646-0500"
+],
+"defaultConfig_v16" : [
+"2018-10-12T13:10:19.449-0500"
+],
+"defaultConfig_v17" : [
+"2018-10-16T13:33:14.075-0500"
+],
+"defaultConfig_v18" : [
+"2018-10-16T13:36:48.687-0500"
+],
+"daq02Config_v0" : [
+"2018-10-17T11:19:57.428-0500"
+],
+"daq02Config_v1" : [
+"2018-10-18T08:57:32.021-0500"
 ]
 }
 }

@@ -127,6 +127,42 @@
 {
 "name" : "defaultConfig_v11",
 "assigned" : "2018-09-20T15:07:02.789-0500"
+},
+{
+"name" : "defaultConfig_v12",
+"assigned" : "2018-09-20T15:54:53.672-0500"
+},
+{
+"name" : "defaultConfig_v13",
+"assigned" : "2018-09-20T16:17:54.199-0500"
+},
+{
+"name" : "defaultConfig_v14",
+"assigned" : "2018-09-20T16:36:58.114-0500"
+},
+{
+"name" : "defaultConfig_v15",
+"assigned" : "2018-10-11T15:13:00.065-0500"
+},
+{
+"name" : "defaultConfig_v16",
+"assigned" : "2018-10-12T13:10:20.795-0500"
+},
+{
+"name" : "defaultConfig_v17",
+"assigned" : "2018-10-16T13:33:15.574-0500"
+},
+{
+"name" : "defaultConfig_v18",
+"assigned" : "2018-10-16T13:36:50.131-0500"
+},
+{
+"name" : "daq02Config_v0",
+"assigned" : "2018-10-17T11:19:59.987-0500"
+},
+{
+"name" : "daq02Config_v1",
+"assigned" : "2018-10-18T08:57:37.984-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -252,6 +288,78 @@
 "value" : {
 "name" : "defaultConfig_v11",
 "assigned" : "2018-09-20T15:07:02.789-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-09-20T15:54:53.672-0500",
+"value" : {
+"name" : "defaultConfig_v12",
+"assigned" : "2018-09-20T15:54:53.672-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-09-20T16:17:54.199-0500",
+"value" : {
+"name" : "defaultConfig_v13",
+"assigned" : "2018-09-20T16:17:54.199-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-09-20T16:36:58.114-0500",
+"value" : {
+"name" : "defaultConfig_v14",
+"assigned" : "2018-09-20T16:36:58.114-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-11T15:13:00.065-0500",
+"value" : {
+"name" : "defaultConfig_v15",
+"assigned" : "2018-10-11T15:13:00.065-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-12T13:10:20.795-0500",
+"value" : {
+"name" : "defaultConfig_v16",
+"assigned" : "2018-10-12T13:10:20.795-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-16T13:33:15.574-0500",
+"value" : {
+"name" : "defaultConfig_v17",
+"assigned" : "2018-10-16T13:33:15.574-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-16T13:36:50.132-0500",
+"value" : {
+"name" : "defaultConfig_v18",
+"assigned" : "2018-10-16T13:36:50.131-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-17T11:19:59.987-0500",
+"value" : {
+"name" : "daq02Config_v0",
+"assigned" : "2018-10-17T11:19:59.987-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-18T08:57:37.984-0500",
+"value" : {
+"name" : "daq02Config_v1",
+"assigned" : "2018-10-18T08:57:37.984-0500"
 }
 }
 ],

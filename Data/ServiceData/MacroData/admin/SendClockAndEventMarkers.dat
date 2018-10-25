@@ -1,7 +1,0 @@
-{
-"name":"SendClockAndEventMarkers",
-"sequence":"0:w:91a8:0000ffff,1:r:91a8:,2:w:9118:ff0000,3:w:9118:0,4:w:9100:5,5:w:9114:0000ffff,6:w:9154:80,7:w:91a8:0000ffff,8:r:91a8:,9:w:9118:ff0000,10:w:9118:0",
-"time":"Mon Sep 10 2018 15:18:31 GMT-0500 (CDT)",
-"notes":"",
-"LSBF":"false"
-}@

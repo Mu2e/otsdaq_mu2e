@@ -1,96 +1,36 @@
 {
-"Command":"w:91a0:00000000",
+"Command":"r:9140:000000C0",
 "Format":"hex:hex",
-"Time":"Tue Sep 11 2018 09:58:20 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Oct 24 2018 16:36:33 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface%3A311%3ADTC0"
 }#
 {
-"Command":"w:9154:00000000",
+"Command":"r:9140:000000C0",
 "Format":"hex:hex",
-"Time":"Tue Sep 11 2018 09:58:34 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Oct 24 2018 16:36:35 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface%3A311%3ADTC0"
 }#
 {
-"Command":"w:9114:00000000",
+"Command":"r:9140:000000C2",
 "Format":"hex:hex",
-"Time":"Tue Sep 11 2018 09:59:00 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Oct 24 2018 16:37:22 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface%3A311%3ADTC0"
 }#
 {
-"Command":"w:9114:00000101",
+"Command":"r:9140:000000C3",
 "Format":"hex:hex",
-"Time":"Tue Sep 11 2018 09:59:20 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Oct 24 2018 16:41:15 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface%3A311%3ADTC0"
 }#
 {
-"Command":"w:9380:00000101",
+"Command":"r:9140:000000C3",
 "Format":"hex:hex",
-"Time":"Tue Sep 11 2018 09:59:31 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Oct 24 2018 16:41:16 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface%3A311%3ADTC0"
 }#
 {
-"Command":"r:9360:FFFFFFFF",
+"Command":"r:9140:000000C3",
 "Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:00:04 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9380:00000000",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:00:56 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:91a0:00000000",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:44 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9154:00000000",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:44 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9114:00000000",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:44 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9114:00000101",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:44 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9380:00000101",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:44 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"r:9360:037B1ADE",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:45 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9380:00000000",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 10:22:45 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"r:9160:09502F90",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 13:48:56 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"r:9380:01000000",
-"Format":"hex:hex",
-"Time":"Tue Sep 11 2018 13:50:57 GMT-0500 (CDT)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Oct 24 2018 16:41:18 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface%3A312%3ADTC1"
 }#

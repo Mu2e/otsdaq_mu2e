@@ -74,6 +74,10 @@
 {
 "name" : "defaultConfig_v11",
 "assigned" : "2018-09-20T15:07:02.539-0500"
+},
+{
+"name" : "defaultConfig_v12",
+"assigned" : "2018-09-20T15:54:53.408-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -135,6 +139,14 @@
 "value" : {
 "name" : "defaultConfig_v11",
 "assigned" : "2018-09-20T15:07:02.539-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-09-20T15:54:53.408-0500",
+"value" : {
+"name" : "defaultConfig_v12",
+"assigned" : "2018-09-20T15:54:53.408-0500"
 }
 }
 ],
