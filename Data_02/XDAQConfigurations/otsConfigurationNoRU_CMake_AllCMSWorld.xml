@@ -1,0 +1,88 @@
+<?xml version='1.0'?>
+<xc:Partition xmlns:xsi     = "http://www.w3.org/2001/XMLSchema-instance"  
+              xmlns:soapenc = "http://schemas.xmlsoap.org/soap/encoding/" 
+              xmlns:xc      = "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+  <xc:Context id="0" url="http://athenanu.dhcp.fnal.gov:2015">
+
+    <xc:Application class="ots::Supervisor" id="200" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq/lib/libSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::FESupervisor" id="210" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+    
+    <!--xc:Application class="ots::DataManagerSupervisor" id="310" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module-->
+        
+    <xc:Application class="ots::VisualSupervisor" id="270" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq_utilities/lib/libVisualization.so</xc:Module>
+
+    <xc:Application class="ots::ChatSupervisor" id="250" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq_utilities/lib/libChat.so</xc:Module>
+    
+    <xc:Application class="ots::LogbookSupervisor" id="260" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq_utilities/lib/libLogbook.so</xc:Module>
+    
+    <xc:Application class="ots::ConfigurationGUISupervisor" id="280" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq_utilities/lib/libConfigurationGUI.so</xc:Module>
+    
+    <xc:Application class="ots::MacroMakerSupervisor" id="300" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq_utilities/lib/libMacroMaker.so</xc:Module>
+
+  </xc:Context>
+
+  <!--xc:Context id="0" url="http://athenanu.dhcp.fnal.gov:3015">
+    <xc:Application class="ots::VisualSupervisor" id="270" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq_utilities/lib/libVisualization.so</xc:Module>
+  </xc:Context-->
+
+  <xc:Context id="0" url="http://athenanu.dhcp.fnal.gov:2018">
+    <xc:Application class="ots::ARTDAQDataManagerSupervisor" id="220" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+  </xc:Context>
+
+  <xc:Context id="0" url="http://athenanu.dhcp.fnal.gov:2016">
+    <xc:Application class="ots::EventBuilderApp" id="230" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq/lib/libEventBuilderApp.so</xc:Module>
+  </xc:Context>
+
+  <xc:Context id="0" url="http://athenanu.dhcp.fnal.gov:2017">
+    <xc:Application class="ots::AggregatorApp" id="240" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/hgcal_daq/build_slf6.x86_64/otsdaq/lib/libAggregatorApp.so</xc:Module>
+  </xc:Context>
+
+  <xc:Context id="0" url="http://ftbftracker02.fnal.gov:2015">
+    <!-- strip planes -->
+
+    <xc:Application class="ots::FESupervisor" id="2100" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+
+    <xc:Application class="ots::FESupervisor" id="2101" instance="2" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+
+    <xc:Application class="ots::FESupervisor" id="2102" instance="3" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+
+    <xc:Application class="ots::FESupervisor" id="2103" instance="4" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+    
+    <xc:Application class="ots::FESupervisor" id="21010" instance="10" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+    <!-- ********************* -->
+
+    <xc:Application class="ots::DataManagerSupervisor" id="3100" instance="1" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+    
+    <xc:Application class="ots::DataManagerSupervisor" id="3101" instance="2" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+    
+    <xc:Application class="ots::DataManagerSupervisor" id="3102" instance="3" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+    
+    <xc:Application class="ots::DataManagerSupervisor" id="3104" instance="4" network="local" group="daq"/>
+    <xc:Module>/home/cmstestbeam/Programming/mrbots/build_slf6.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
+  </xc:Context>
+
+</xc:Partition>
+
+

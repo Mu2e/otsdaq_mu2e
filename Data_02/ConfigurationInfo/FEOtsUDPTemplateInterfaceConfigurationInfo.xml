@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="FEOtsUDPTemplateInterfaceConfiguration">
+			<VIEW Name="FE_OTS_UDP_TEMPLATE_INTERFACE_CONFIGURATION" Type="File,Database,DatabaseTest">
+				<COLUMN Type="UID" 	 Name="InterfaceID" 	 StorageName="INTERFACE_ID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="FirmwareVersion" 	 StorageName="FIRMWARE_VERSION" 		DataType="NUMBER"/>
+				<COLUMN Type="Data" 	 Name="InterfaceIPAddress" 	 StorageName="INTERFACE_IP_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="InterfacePort" 	 StorageName="INTERFACE_PORT" 		DataType="NUMBER"/>
+				<COLUMN Type="Data" 	 Name="HostIPAddress" 	 StorageName="HOST_IP_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="HostPort" 	 StorageName="HOST_PORT" 		DataType="NUMBER"/>
+				<COLUMN Type="Data" 	 Name="StreamToIPAddress" 	 StorageName="STREAM_TO_IP_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="StreamToPort" 	 StorageName="STREAM_TO_PORT" 		DataType="NUMBER"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

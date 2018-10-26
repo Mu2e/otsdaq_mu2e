@@ -1,0 +1,50 @@
+<?xml version='1.0'?>
+<xc:Partition xmlns:xsi     = "http://www.w3.org/2001/XMLSchema-instance"  
+              xmlns:soapenc = "http://schemas.xmlsoap.org/soap/encoding/" 
+              xmlns:xc      = "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+  <xc:Context id="0" url="http://${SUPERVISOR_SERVER}:${PORT}">
+
+    <xc:Application class="ots::Supervisor" id="${SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libSupervisor.so</xc:Module>
+
+    <xc:Application class="ots::FERSupervisor" id="${FER_SUPERVISOR_ID}0" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libFECore.so</xc:Module>
+
+    <xc:Application class="ots::FEWSupervisor" id="${FEW_SUPERVISOR_ID}0" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libFECore.so</xc:Module>
+    
+    <xc:Application class="ots::FEWSupervisor" id="${FEW_SUPERVISOR_ID}1" instance="2" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libFECore.so</xc:Module>
+    
+    <xc:Application class="ots::FEWSupervisor" id="${FEW_SUPERVISOR_ID}2" instance="3" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libFECore.so</xc:Module>
+    
+    <xc:Application class="ots::DataManagerSupervisor" id="${DATA_MANAGER_SUPERVISOR_ID}0" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libDataManager.so</xc:Module>
+
+    <xc:Application class="ots::DataManagerSupervisor" id="${DATA_MANAGER_SUPERVISOR_ID}1" instance="2" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libDataManager.so</xc:Module>
+
+    <xc:Application class="ots::DataManagerSupervisor" id="${DATA_MANAGER_SUPERVISOR_ID}2" instance="3" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_LIB}/libDataManager.so</xc:Module>
+
+    <xc:Application class="ots::ChatSupervisor" id="${CHAT_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libChat.so</xc:Module>
+    
+    <xc:Application class="ots::LogbookSupervisor" id="${LOGBOOK_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libLogbook.so</xc:Module>
+    
+    <xc:Application class="ots::VisualSupervisor" id="${VISUAL_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libVisualization.so</xc:Module>
+
+    <xc:Application class="ots::ConfigurationGUISupervisor" id="${CONFIGURATION_GUI_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libConfigurationGUI.so</xc:Module>
+    
+    <xc:Application class="ots::MacroMakerSupervisor" id="${MACROMAKER_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${OTSDAQ_UTILITIES_LIB}/libMacroMaker.so</xc:Module>
+
+  </xc:Context>
+
+</xc:Partition>
+

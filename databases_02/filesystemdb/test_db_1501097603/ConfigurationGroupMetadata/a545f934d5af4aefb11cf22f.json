@@ -1,0 +1,126 @@
+{
+"document" : {
+"data" : {
+"NAME" : "",
+"COMMENT" : "",
+"AUTHOR" : "",
+"CREATION_TIME" : 1501082751,
+"COL_TYPES" : {
+"UNUSED_UID" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"GROUP_CREATION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UNUSED_UID" : "0",
+"COMMENT_DESCRIPTION" : "",
+"AUTHOR" : "admin",
+"GROUP_CREATION_TIME" : "1501083131"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 10:32:11 2017",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+},
+{
+"name" : "TableEditWizBackbone_v0",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "1",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "ConfigurationGroupMetadata",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "TableEditWizBackbone_v0",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+}
+],
+"created" : "Wed Jul 26 10:32:11 2017"
+},
+"_id" : {
+"$oid" : "a545f934d5af4aefb11cf22f"
+},
+"collection" : "ConfigurationGroupMetadata",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
