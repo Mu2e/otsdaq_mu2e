@@ -59,6 +59,13 @@ namespace ots
     DTCLib::DTC* thisCFO_;
 
     m_ioc_reg_access_t reg_access_; 
+
+    int loopback_distribution_[10000];
+    unsigned int min_distribution_;
+    unsigned int max_distribution_;
+    float average_loopback_;
+    float rms_loopback_;
+
   };
 
 }

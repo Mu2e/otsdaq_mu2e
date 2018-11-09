@@ -212,6 +212,30 @@
 {
 "name" : "GroupAliasTreeEditWizBackbone_v18",
 "assigned" : "2018-10-25T16:01:29.842-0500"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v19",
+"assigned" : "2018-10-26T15:51:30.755-0500"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v20",
+"assigned" : "2018-10-30T11:19:01.065-0500"
+},
+{
+"name" : "GroupAliasSaveWizBackbone_v11",
+"assigned" : "2018-10-30T13:13:22.760-0500"
+},
+{
+"name" : "GroupAliasSaveWizBackbone_v12",
+"assigned" : "2018-10-30T14:05:30.414-0500"
+},
+{
+"name" : "GroupAliasSaveWizBackbone_v13",
+"assigned" : "2018-10-30T17:53:34.998-0500"
+},
+{
+"name" : "GroupAliasSaveWizBackbone_v14",
+"assigned" : "2018-10-31T11:29:08.329-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -577,6 +601,54 @@
 "value" : {
 "name" : "GroupAliasTreeEditWizBackbone_v18",
 "assigned" : "2018-10-25T16:01:29.842-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-26T15:51:30.755-0500",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v19",
+"assigned" : "2018-10-26T15:51:30.755-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-30T11:19:01.065-0500",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v20",
+"assigned" : "2018-10-30T11:19:01.065-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-30T13:13:22.760-0500",
+"value" : {
+"name" : "GroupAliasSaveWizBackbone_v11",
+"assigned" : "2018-10-30T13:13:22.760-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-30T14:05:30.414-0500",
+"value" : {
+"name" : "GroupAliasSaveWizBackbone_v12",
+"assigned" : "2018-10-30T14:05:30.414-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-30T17:53:34.998-0500",
+"value" : {
+"name" : "GroupAliasSaveWizBackbone_v13",
+"assigned" : "2018-10-30T17:53:34.998-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-31T11:29:08.329-0500",
+"value" : {
+"name" : "GroupAliasSaveWizBackbone_v14",
+"assigned" : "2018-10-31T11:29:08.329-0500"
 }
 }
 ],
