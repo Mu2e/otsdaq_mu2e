@@ -1,18 +1,126 @@
 {
-"Command":"r:9140:00000001",
+"Command":"w:9114:101",
 "Format":"hex:hex",
-"Time":"Fri Nov 09 2018 08:38:32 GMT-0600 (Central Standard Time)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Wed Nov 14 2018 13:53:24 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"w:9100:4",
+"Format":"hex:hex",
+"Time":"Wed Nov 14 2018 13:53:55 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"w:9100:4",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:21 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9118:00000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:29 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9124:00000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:29 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9128:000003FF",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:29 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9134:00000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:29 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9138:C3C3FFFF",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:30 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
 "Command":"r:9140:000000C3",
 "Format":"hex:hex",
-"Time":"Fri Nov 09 2018 08:38:38 GMT-0600 (Central Standard Time)",
+"Time":"Thu Nov 15 2018 14:18:30 GMT-0600 (Central Standard Time)",
 "Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9140:00000043",
+"Command":"r:915c:0BEBC200",
 "Format":"hex:hex",
-"Time":"Fri Nov 09 2018 08:38:42 GMT-0600 (Central Standard Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Nov 15 2018 14:18:30 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9114:00004141",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:42 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"w:9114:101",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:53 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9114:00000101",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:18:55 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"w:9100:10000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:11 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9118:00000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:22 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9124:00000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:22 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9128:000003FF",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:22 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9134:00000000",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:23 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9138:C3C3FFFF",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:23 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:9140:000000C3",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:23 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
+}#
+{
+"Command":"r:915c:0BEBC200",
+"Format":"hex:hex",
+"Time":"Thu Nov 15 2018 14:19:23 GMT-0600 (Central Standard Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#

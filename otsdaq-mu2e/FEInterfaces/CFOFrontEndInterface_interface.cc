@@ -384,10 +384,10 @@ void CFOFrontEndInterface::configure(void)
   
   const int number_of_system_configs	= -1; // if < 0, keep trying until links are OK.  
                                               // If > 0, go through configuration steps this many times 
-  const int config_clock		= 0;  // 1 = yes, 0 = no
+  const int config_clock		= 1;  // 1 = yes, 0 = no
   const int reset_tx			= 1;  // 1 = yes, 0 = no
   
-  const int number_of_dtc_config_steps = 6; 
+  const int number_of_dtc_config_steps = 7; 
   
   int number_of_total_config_steps = number_of_system_configs * number_of_dtc_config_steps;
   
@@ -397,8 +397,12 @@ void CFOFrontEndInterface::configure(void)
     if (config_step >= number_of_total_config_steps) // done - exit system config
       return;
   }
-  
-  if ( (config_step%number_of_dtc_config_steps) == 0 ) {
+
+  // pass 0:  do nothing (resetting FPGAs on DTCs)
+
+  if ( (config_step%number_of_dtc_config_steps) == 1 ) {
+
+    // reset clocks
     
     __COUT__ << "CFO disable Event Start character output " << __E__;
     registerWrite(0x9100,0x0); 
@@ -414,7 +418,8 @@ void CFOFrontEndInterface::configure(void)
     
     if (config_clock == 1 && config_step < number_of_dtc_config_steps) {
       // only configure the clock/crystal the first loop through...
-      __MCOUT_INFO__("CFO resetting clock..." << __E__);
+
+      __MCOUT_INFO__("CFO reset clock..." << __E__);
       __COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
       
       registerWrite(0x9160,0x09502F90);
@@ -451,7 +456,7 @@ void CFOFrontEndInterface::configure(void)
       
     }
     
-  } else if ( (config_step%number_of_dtc_config_steps) == 2 ) {
+  } else if ( (config_step%number_of_dtc_config_steps) == 3 ) {
     
     //step 2: after DTC jitter attenuator OK, config CFO SERDES PLLs and TX
     if (reset_tx == 1) {
@@ -474,7 +479,7 @@ void CFOFrontEndInterface::configure(void)
 
     } 
     
-  } else if ( (config_step%number_of_dtc_config_steps) == 4 ) {
+  } else if ( (config_step%number_of_dtc_config_steps) == 5 ) {
     
     __COUT__ << "CFO reset serdes RX " << __E__;
     registerWrite(0x9118,0x000000ff);
@@ -495,7 +500,7 @@ void CFOFrontEndInterface::configure(void)
     registerWrite(0x9154,0x0800);
     // 	registerWrite(0x9154,0x00000000); 	// for NO markers, write these values
     
-  } else if ( (config_step%number_of_dtc_config_steps) == 5 ) {
+  } else if ( (config_step%number_of_dtc_config_steps) == 6 ) {
     
     __MCOUT_INFO__("--------------" << __E__);
     __MCOUT_INFO__("CFO configured" << __E__);
