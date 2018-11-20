@@ -53,20 +53,19 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   universalAddressSize_ = 4;
   universalDataSize_ = 4;
   
+  device_name_ = interfaceUID;
+
   dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+  roc_mask_ = 0x3; // ROC0 and ROC1
   
   dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
   
-  device_name_ = interfaceUID;
-  
-  unsigned roc_mask = 0x1;
   std::string expectedDesignVersion = "";
   auto mode = DTCLib::DTC_SimMode_NoCFO;
   
-  thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask);  
-  //  thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask,expectedDesignVersion);
+  thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask_,expectedDesignVersion);
   
   __MCOUT_INFO__("DTCFrontEndInterface instantiated with name: " << device_name_
 		 << " dtc_location_in_chain_ = " << dtc_location_in_chain_
@@ -353,17 +352,17 @@ void DTCFrontEndInterface::printVoltages() {
 }
 
 int DTCFrontEndInterface::checkLinkStatus() {
-  
-  if ((getCFOLinkStatus()		== 1) && 
-      (getROCLinkStatus( 0 )	== 1) &&
-      (getROCLinkStatus( 1 )	== 1) ) {
-    //	 (ReadROCLinkStatus( 2 ) == 1) &&
-    //	 (ReadROCLinkStatus( 3 ) == 1) &&
-    //	 (ReadROCLinkStatus( 4 ) == 1) &&
-    //	 (ReadROCLinkStatus( 5 ) == 1) &&
-    //	 (ReadROCLinkStatus( 6 ) == 1) &&
-    //	 (ReadROCLinkStatus( 7 ) == 1) ) {
-    
+
+  int ROCs_OK = 1;
+
+  for (int i=0; i<8; i++) 
+    if ( ROCActive(i) )
+      ROCs_OK &= getROCLinkStatus(i);
+
+
+  if ((getCFOLinkStatus() == 1) && 
+      ROCs_OK	          == 1) {
+
     //	__COUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;			
     //	__MOUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
     
@@ -378,6 +377,16 @@ int DTCFrontEndInterface::checkLinkStatus() {
     
   }
   
+}
+
+bool DTCFrontEndInterface::ROCActive(unsigned ROC_link) {
+  
+  if ( (roc_mask_ >> ROC_link) && 0x1 ) {
+    return true;
+  } else { 
+    return false;
+  }
+
 }
 
 //==================================================================================================
@@ -573,17 +582,14 @@ void DTCFrontEndInterface::configure(void)
   } else if ( (config_step%number_of_dtc_config_steps) == 5 ) {
     
     // enable markers, tx and rx
-    
-    __COUT__ << "DTC enable markers - all ROC links" << __E__;
-    registerWrite(0x91f8,0x00003f3f);
-    
-    // CHANGE THIS WHEN there are multiple ROCs, or when you want to specify WHICH ROC is looped back//
-    __COUT__ << "DTC enable tx and rx - all links" << __E__;
-    registerWrite(0x9114,0x00007f7f);
-    // __COUT__ << "DTC enable tx and rx - CFO and ROC0" << __E__;
-    // registerWrite(0x9114,0x00004141);
-    // __COUT__ << "DTC enable tx and rx - CFO, ROC0, and ROC1" << __E__;
-    // registerWrite(0x9114,0x00004343);
+
+    int data_to_write = (roc_mask_ << 8) | roc_mask_;
+    __COUT__ << "DTC enable markers - enabled ROC links 0x" << std::hex << data_to_write << std::dec << __E__;
+    registerWrite(0x91f8,data_to_write);
+
+    data_to_write = 0x4040 | (roc_mask_ << 8) | roc_mask_;    
+    __COUT__ << "DTC enable tx and rx - CFO and enabled ROC links 0x" << std::hex << data_to_write << std::dec << __E__;
+    registerWrite(0x9114,data_to_write);
     
     //put DTC CFO link output into loopback mode
     __COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
@@ -2111,14 +2117,13 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   registerWrite(0x9100,0x00000004); //Enable DCS
 
   // hack - there is a problem with multiple reads of DCS packets
-  auto dtc_link	 = static_cast<DTCLib::DTC_Link_ID>(0);
-  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,-1,0x1);
+  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_);
 
   // hack - should be able to use thisDTC_ instantiated at instantiation of this class...
   auto readData = thisDTC_2->ReadROCRegister(rocLinkIndex, address);
 
+  // hack - there is a problem with multiple reads of DCS packets
   delete thisDTC_2;
-  // end hack - there is a problem with multiple reads of DCS packets
 	  
   char readDataStr[100];
   sprintf(readDataStr,"0x%X",readData);
@@ -2151,12 +2156,6 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
   __CFG_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
   __CFG_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
   
-  //hack-- enable only the link you are talking to:
-  int link_to_enable = 0x00000101 << rocLinkIndex;
-  __COUT__ << "DTC enable tx and rx - link 0x" << std::hex << link_to_enable << __E__;
-  registerWrite(0x9114,link_to_enable);
-  //hack-- enable only the link you are talking to:  
-  
   registerWrite(0x9100,0x00000004);	//Enable DCS
   
   thisDTC_->WriteROCRegister(rocLinkIndex,address,writeData);	
@@ -2164,11 +2163,7 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
   for(auto &argOut:argsOut) 
     __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
 
-  //hack-- enable only the link you are talking to:
-  __COUT__ << "DTC enable tx and rx - enable all links" << __E__;
-  registerWrite(0x9114,0x00007f7f);
-  //hack-- enable only the link you are talking to:
-  
+  registerWrite(0x9100,0x00000000); //Disable DCS
 } 
 
 
@@ -2197,12 +2192,6 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
   __CFG_COUT__ << "address = 0x" 	<< std::hex << (unsigned int)address << std::dec << __E__;
   __CFG_COUT__ << "writeData = 0x" << std::hex << writeData 						<< std::dec << __E__;
 
-  //hack-- enable only the link you are talking to:
-  int link_to_enable = 0x00000101 << rocLinkIndex;
-  __COUT__ << "DTC enable tx and rx - link 0x" << std::hex << link_to_enable << __E__;
-  registerWrite(0x9114,link_to_enable);
-  //hack-- enable only the link you are talking to:  
-    
   registerWrite(0x9100,0x00000004);	// bit 2 = Enable DCS
   
   thisDTC_->WriteExtROCRegister(rocLinkIndex,block,address,writeData);	
@@ -2210,11 +2199,7 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
   for(auto &argOut:argsOut) 
     __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
 
-  //hack-- enable only the link you are talking to:
-  __COUT__ << "DTC enable tx and rx - enable all links" << __E__;
-  registerWrite(0x9114,0x00007f7f);
-  //hack-- enable only the link you are talking to:
-  
+  registerWrite(0x9100,0x00000000); //Disable DCS
 } 
 
 void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
@@ -2233,53 +2218,31 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
   
   DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
   uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
+  uint8_t block				= __GET_ARG_IN__("block",uint8_t);
   
-  try
-	{
-	  auto readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
-	  
-	  char readDataStr[100];
-	  sprintf(readDataStr,"0x%X",readData);
-	  __SET_ARG_OUT__("readData",readDataStr);
-	  //__SET_ARG_OUT__("readData", readData);
-	  
-	  //for(auto &argOut:argsOut) 
-	  __CFG_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__; 
-	}
-	catch(...)
-	{
-		__CFG_COUT__ << "Caught exception... " << __E__;
-	}
-	
-	return;
+  __CFG_COUTV__(rocLinkIndex);
+  __CFG_COUT__ << "block = "	 << std::dec << (unsigned int)block << __E__; 
+  __CFG_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
+
+  registerWrite(0x9100,0x00000004);	//bit 4 = Enable DCS
+
+  //  uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex,block,address);	
+
+  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_);
+
+  // hack - should be able to use thisDTC_ instantiated at instantiation of this class...
+  auto readData = thisDTC_2->ReadExtROCRegister(rocLinkIndex,block,address);
+
+  // hack - there is a problem with multiple reads of DCS packets
+  delete thisDTC_2;
+
+  __SET_ARG_OUT__("readData", readData);
   
-  
-//  uint8_t block				= __GET_ARG_IN__("block",uint8_t);
-//  
-//  __CFG_COUTV__(rocLinkIndex);
-//  __CFG_COUT__ << "block = "	<< std::dec << (unsigned int)block << __E__; 
-//  __CFG_COUT__ << "address = 0x"	<< std::hex << (unsigned int)address << std::dec << __E__;
-//
-//  //hack-- enable only the link you are talking to:
-//  int link_to_enable = 0x00000101 << rocLinkIndex;
-//  __COUT__ << "DTC enable tx and rx - link 0x" << std::hex << link_to_enable << __E__;
-//  registerWrite(0x9114,link_to_enable);
-//  //hack-- enable only the link you are talking to:  
-//  
-//  registerWrite(0x9100,0x00000004);	//bit 4 = Enable DCS
-//
-//  uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex,block,address);	
-//
-//  __SET_ARG_OUT__("readData", readData);
-//  
-//  for(auto &argOut:argsOut) 
-//    __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
-//
-//  //hack-- enable only the link you are talking to:
-//  __COUT__ << "DTC enable tx and rx - enable all links" << __E__;
-//  registerWrite(0x9114,0x00007f7f);
-//  //hack-- enable only the link you are talking to:
-  
+  for(auto &argOut:argsOut) 
+    __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
+
+  registerWrite(0x9100,0x00000000); //Disable DCS
+
 } 
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)

@@ -70,6 +70,12 @@
 ],
 "daq02Config_v1" : [
 "38d5ec0409ab4c7999af29c9"
+],
+"defaultConfig_v19" : [
+"38d5ec0409ab4c7999af29c9"
+],
+"defaultConfig_v20" : [
+"38d5ec0409ab4c7999af29c9"
 ]
 },
 "entities.name" : {
@@ -146,6 +152,12 @@
 ],
 "daq02Config_v1" : [
 "2018-10-18T08:57:38.601-0500"
+],
+"defaultConfig_v19" : [
+"2018-11-19T15:33:04.433-0600"
+],
+"defaultConfig_v20" : [
+"2018-11-19T15:36:05.880-0600"
 ]
 }
 }

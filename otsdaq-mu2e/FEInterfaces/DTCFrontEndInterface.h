@@ -49,9 +49,10 @@ namespace ots
 		void turnOnLED(); // turn on LED on visible side of timing card
 		void turnOffLED(); // turn off LED on visible side of timing card
 
-		int getROCLinkStatus(int ROC_link);
-		int getCFOLinkStatus();
-		int checkLinkStatus();
+		bool ROCActive(unsigned ROC_link);
+		int  getROCLinkStatus(int ROC_link);
+		int  getCFOLinkStatus();
+		int  checkLinkStatus();
 
 	protected:
 		//FrontEndHardwareTemplate* theFrontEndHardware_;
@@ -62,6 +63,7 @@ namespace ots
 		int fd_;
 		int dtc_ = -1;
 		int dtc_location_in_chain_ = -1;
+		unsigned roc_mask_ = 0;
 		std::string device_name_;
 		DTCLib::DTC* thisDTC_ ;
 		

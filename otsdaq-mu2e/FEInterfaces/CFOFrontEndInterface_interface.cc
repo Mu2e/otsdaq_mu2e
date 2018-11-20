@@ -258,9 +258,9 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   
   const int numberOfIterations = 100;
   
-  float numerator				= 0.0;
-  float denominator			= 0.0;
-  int number_of_failures 		= 0;
+  float numerator	 = 0.0;
+  float denominator	 = 0.0;
+  int number_of_failures = 0;
   
   int loopback_data[numberOfIterations] = {};
   
@@ -398,12 +398,10 @@ void CFOFrontEndInterface::configure(void)
       return;
   }
 
-  // pass 0:  do nothing (resetting FPGAs on DTCs)
+  if ( (config_step%number_of_dtc_config_steps) == 0 ) {
 
-  if ( (config_step%number_of_dtc_config_steps) == 1 ) {
+    // disable outputs
 
-    // reset clocks
-    
     __COUT__ << "CFO disable Event Start character output " << __E__;
     registerWrite(0x9100,0x0); 
     
@@ -415,7 +413,11 @@ void CFOFrontEndInterface::configure(void)
     
     __COUT__ << "CFO turn off 40MHz marker interval" << __E__;
     registerWrite(0x9154,0x00000000); 	
-    
+
+  } else if ( (config_step%number_of_dtc_config_steps) == 1 ) {
+
+    // reset clocks
+        
     if (config_clock == 1 && config_step < number_of_dtc_config_steps) {
       // only configure the clock/crystal the first loop through...
 
@@ -458,7 +460,7 @@ void CFOFrontEndInterface::configure(void)
     
   } else if ( (config_step%number_of_dtc_config_steps) == 3 ) {
     
-    //step 2: after DTC jitter attenuator OK, config CFO SERDES PLLs and TX
+    // after DTC jitter attenuator OK, config CFO SERDES PLLs and TX
     if (reset_tx == 1) {
 
       __MCOUT_INFO__("CFO reset TX..." << __E__);
