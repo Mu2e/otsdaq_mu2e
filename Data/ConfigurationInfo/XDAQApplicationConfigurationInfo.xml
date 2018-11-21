@@ -7,7 +7,7 @@
 				<COLUMN Type="ChildLink-0" 	 Name="LinkToSupervisorConfiguration" 	 StorageName="LINK_TO_SUPERVISOR_CONFIGURATION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLinkUID-0" 	 Name="LinkToSupervisorUID" 	 StorageName="LINK_TO_SUPERVISOR_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="FixedChoiceData" 	 Name="Class" 	 StorageName="CLASS" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,ots%3A%3ASupervisor,ots%3A%3AFESupervisor,ots%3A%3ADataManagerSupervisor,ots%3A%3AARTDAQDataManagerSupervisor,ots%3A%3AEventBuilderApp,ots%3A%3AAggregatorApp,ots%3A%3AConfigurationGUISupervisor,ots%3A%3AMacroMakerSupervisor,ots%3A%3AVisualSupervisor,ots%3A%3AChatSupervisor,ots%3A%3AConsoleSupervisor,ots%3A%3ALogbookSupervisor,ots%3A%3AControlsDashboardSupervisor"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="Class" 	 StorageName="CLASS" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,ots%3A%3AGatewaySupervisor,ots%3A%3AFESupervisor,ots%3A%3ADataManagerSupervisor,ots%3A%3AARTDAQDataManagerSupervisor,ots%3A%3AEventBuilderApp,ots%3A%3AAggregatorApp,ots%3A%3AConfigurationGUISupervisor,ots%3A%3AMacroMakerSupervisor,ots%3A%3AVisualSupervisor,ots%3A%3AChatSupervisor,ots%3A%3AConsoleSupervisor,ots%3A%3ALogbookSupervisor,ots%3A%3AControlsDashboardSupervisor"/>
 				<COLUMN Type="UniqueData" 	 Name="Id" 	 StorageName="ID" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="FixedChoiceData" 	 Name="Instance" 	 StorageName="INSTANCE" 		DataType="NUMBER" 		DataChoices="arbitraryBool=1,1"/>
 				<COLUMN Type="FixedChoiceData" 	 Name="Network" 	 StorageName="NETWORK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,local"/>

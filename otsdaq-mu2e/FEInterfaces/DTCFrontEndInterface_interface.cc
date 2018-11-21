@@ -5,7 +5,6 @@
 
 //#include "mu2e_driver/mu2e_mmap_ioctl.h"	// m_ioc_cmd_t
 
-
 using namespace ots;
 
 #undef 	__MF_SUBJECT__
@@ -52,27 +51,37 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   //theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
   universalAddressSize_ = 4;
   universalDataSize_ = 4;
-  
+
+  // label  
   device_name_ = interfaceUID;
 
-  dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
-  roc_mask_ = 0x3; // ROC0 and ROC1
-  
+  // linux file to communicate with
   dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
-  
+
+  // DTC class
+  dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+
   std::string expectedDesignVersion = "";
   auto mode = DTCLib::DTC_SimMode_NoCFO;
   
   thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask_,expectedDesignVersion);
   
+  // ROCs associated with this DTC
+  roc_mask_ = 0x3; // ROC0 and ROC1
+  //  roc_mask_ = getSelfNode().getNode("roc_mask").getValue<unsigned int>();
+  unsigned delay[8] = {1,2,3,4,5,6,7,8};
+
+  for (unsigned link=0; link<8; link++)
+    if (ROCActive(link)) 
+      //      rocs_.push_back(ROCInterface(link,thisDTC_,delay[link]));
+
+  // done  
   __MCOUT_INFO__("DTCFrontEndInterface instantiated with name: " << device_name_
 		 << " dtc_location_in_chain_ = " << dtc_location_in_chain_
 		 << " talking to /dev/mu2e" << dtc_
 		 << __E__);
-  
-  
 }
 
 //==========================================================================================
@@ -595,10 +604,8 @@ void DTCFrontEndInterface::configure(void)
     __COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
     registerWrite(0x9100,0x00000000);
     
-    // uncomment these lines to do the loopback on the NEXT DTC in the daisy chain
-    // __COUT__ << "DTC set CFO link output loopback mode PASSTHROUGH" << __E__;
-    // //put DTC CFO link output into pass (not loopback) mode
-    // registerWrite(0x9100,0x10000000);
+    for (unsigned i=0; i<rocs_.size(); i++) 
+      rocs_[i].configure();
     
     sleep(1);
     

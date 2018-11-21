@@ -1,5 +1,5 @@
-#ifndef _ots_FrontEndInterfaceTemplate_h_
-#define _ots_FrontEndInterfaceTemplate_h_
+#ifndef _ots_CFOFrontEndInterface_h_
+#define _ots_CFOFrontEndInterface_h_
 
 #include "otsdaq-core/FECore/FEVInterface.h"
 #include <string>

@@ -2,21 +2,29 @@
 #include_directories(/mu2e/ups/pcie_linux_kernel_module/v1_11_02/include/)
 #include_directories(${CMAKE_BINARY_DIR}/artdaq)
 
-#cet_make(LIBRARY_NAME FEInterfaces
-#		 LIBRARIES
-#         FECore		 
-#         ${CETLIB}
-#)
-#
-#install_headers()
-#install_source()
+cet_make(LIBRARY_NAME Mu2eFEInterfaceComponents
+		EXCLUDE 
+			CFOFrontEndInterface_interface.cc
+		 	DTCFrontEndInterface_interface.cc
+			SendClockAndEventMarkers.cc		
+			my_cntl.cc
+			
+		 LIBRARIES         	
+		 	
+		 
+		 	artdaq-core_Utilities
+		 	${MF_MESSAGELOGGER}
+         	${MF_UTILITIES}        
+         	${CETLIB}
+			#otsdaq-core_Configurable
+			DTCInterface
 
-  
+)
     
 simple_plugin(CFOFrontEndInterface "interface"
 #  DAQHardware
-  FECore
-DTCInterface  
+  	FECore
+	DTCInterface 
 #  WorkLoopManager
 #  MessageFacility
 #  NetworkUtilities
@@ -29,8 +37,10 @@ DTCInterface
 
 simple_plugin(DTCFrontEndInterface "interface"
 #  DAQHardware
-  FECore
-DTCInterface  
+  	FECore
+	DTCInterface  
+	Mu2eFEInterfaceComponents
+	
 #  WorkLoopManager
 #  MessageFacility
 #  NetworkUtilities
@@ -41,6 +51,7 @@ DTCInterface
 #  ${CETLIB_EXCEPT}
  )
 
-
+install_headers()
+install_source()
 
  
