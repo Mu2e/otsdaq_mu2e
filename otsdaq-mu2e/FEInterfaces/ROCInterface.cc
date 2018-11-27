@@ -10,10 +10,10 @@ using namespace ots;
 //=========================================================================================
 ROCInterface::ROCInterface(const unsigned int linkID,
 			   DTCLib::DTC* thisDTC, 
-			   const unsigned int delay)//,
-			   //const ConfigurationTree& theXDAQContextConfigTree,
-			   //const std::string& theConfigurationPath)
-//: Configurable(theXDAQContextConfigTree,theConfigurationPath)
+			   const unsigned int delay,
+			   const ConfigurationTree& theXDAQContextConfigTree,
+			   const std::string& theConfigurationPath)
+: Configurable(theXDAQContextConfigTree,theConfigurationPath)
 {
 	INIT_MF("ROCInterface");
 
@@ -40,20 +40,56 @@ ROCInterface::~ROCInterface(void)
 {
 }
 
+//==================================================================================================
+void ROCInterface::writeRegister(unsigned address, unsigned data_to_write) {
 
+  thisDTC_->WriteROCRegister(linkID_,address,data_to_write);
+
+  return;
+
+}
+
+//==================================================================================================
+int ROCInterface::readRegister(unsigned address) {
+
+  return thisDTC_->ReadROCRegister(linkID_,address);
+
+}
+
+//==================================================================================================
+int ROCInterface::readTimestamp() {
+
+  return this->readRegister(12);
+}
+
+void ROCInterface::writeDelay(unsigned delay) {
+
+ this->writeRegister(21,delay);
+
+ return;
+}
+
+int ROCInterface::readDelay() {
+
+ return this->readRegister(7);
+}
 
 //==================================================================================================
 void ROCInterface::configure(void)
 {
-  	//junk;
-  	
-  	std::cout << "ROC link " << linkID_ << " set delay = " << delay_ << std::endl;
-  	//should be equivalent with ROC decoration specified in ROCInterface::getIdString()
- 	__COUT__ << " set delay = " << delay_ << __E__;
-  	
-	//  	thisDTC_->WriteROCRegister(linkID_,6,delay_);
 
-  	return;
+  // read 6 should read back 0x12fc
+  std::cout << getIdString() << " 1 read register 6 = " << this->readRegister(6) << std::endl;
+  std::cout << getIdString() << " 2 read register 6 = " << this->readRegister(6) << std::endl;
+  std::cout << getIdString() << " 3 read register 6 = " << this->readRegister(6) << std::endl;
+  std::cout << getIdString() << " 4 read register 6 = " << this->readRegister(6) << std::endl;
+
+  std::cout << getIdString() << " set delay = " << delay_ << std::endl;
+  this->writeDelay(delay_);
+
+  std::cout << getIdString() << " read delay = " << this->readDelay() << std::endl;
+  
+  return;
 }
 
 //========================================================================================================================

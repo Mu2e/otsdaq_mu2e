@@ -16,7 +16,7 @@ cet_make(LIBRARY_NAME Mu2eFEInterfaceComponents
 		 	${MF_MESSAGELOGGER}
          	${MF_UTILITIES}        
          	${CETLIB}
-			#otsdaq-core_Configurable
+			Configurable
 			DTCInterface
 
 )

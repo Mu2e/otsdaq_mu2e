@@ -276,6 +276,10 @@
 {
 "name" : "GroupAliasSaveWizBackbone_v17",
 "assigned" : "2018-11-21T12:43:09.754-0600"
+},
+{
+"name" : "TableEditWizBackbone_v12",
+"assigned" : "2018-11-21T12:48:42.853-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -769,6 +773,14 @@
 "value" : {
 "name" : "GroupAliasSaveWizBackbone_v17",
 "assigned" : "2018-11-21T12:43:09.754-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-11-21T12:48:42.853-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v12",
+"assigned" : "2018-11-21T12:48:42.853-0600"
 }
 }
 ],

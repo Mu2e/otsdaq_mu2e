@@ -69,13 +69,17 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask_,expectedDesignVersion);
   
   // ROCs associated with this DTC
-  roc_mask_ = 0x3; // ROC0 and ROC1
+  roc_mask_ = 0x1;
   //  roc_mask_ = getSelfNode().getNode("roc_mask").getValue<unsigned int>();
   unsigned delay[8] = {1,2,3,4,5,6,7,8};
 
   for (unsigned link=0; link<8; link++)
     if (ROCActive(link)) 
-      //      rocs_.push_back(ROCInterface(link,thisDTC_,delay[link]));
+      {
+      	
+      	rocs_.push_back(ROCInterface(link,thisDTC_,delay[link],
+      		theXDAQContextConfigTree, interfaceConfigurationPath));
+      }
 
   // done  
   __MCOUT_INFO__("DTCFrontEndInterface instantiated with name: " << device_name_
@@ -2132,10 +2136,10 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   // hack - there is a problem with multiple reads of DCS packets
   delete thisDTC_2;
 	  
-  char readDataStr[100];
-  sprintf(readDataStr,"0x%X",readData);
-  __SET_ARG_OUT__("readData",readDataStr);
-  //__SET_ARG_OUT__("readData", readData);
+  //  char readDataStr[100];
+  //  sprintf(readDataStr,"0x%X",readData);
+  //  __SET_ARG_OUT__("readData",readDataStr);
+  __SET_ARG_OUT__("readData", readData);
     
   //for(auto &argOut:argsOut) 
   __CFG_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__; 
@@ -2164,8 +2168,15 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
   __CFG_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
   
   registerWrite(0x9100,0x00000004);	//Enable DCS
-  
-  thisDTC_->WriteROCRegister(rocLinkIndex,address,writeData);	
+
+  // hack - there is a problem with multiple reads of DCS packets
+  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_);
+
+  // hack - should be able to use thisDTC_ instantiated at instantiation of this class...
+  thisDTC_2->WriteROCRegister(rocLinkIndex, address, writeData);
+
+  // hack - there is a problem with multiple reads of DCS packets
+  delete thisDTC_2;
   
   for(auto &argOut:argsOut) 
     __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 

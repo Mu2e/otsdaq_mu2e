@@ -6,42 +6,42 @@
 	<!-- ContextUID='mainContext' sourceConfig='XDAQContextConfiguration_v27 @ 1542663253' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:2015">
 
-		<!-- Application GroupID = 'mainContext' UID='Supervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
-		<xc:Application class="ots::Supervisor" id="200" instance="1" network="local" group="daq">
-			<properties xmlns="urn:xdaq-application:Supervisor" xsi:type="soapenc:Struct">
+		<!-- Application GroupID = 'mainContext' UID='Supervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
+		<xc:Application class="ots::GatewaySupervisor" id="200" instance="1" network="local" group="daq">
+			<properties xmlns="urn:xdaq-application:GatewaySupervisor" xsi:type="soapenc:Struct">
 			</properties>
 		</xc:Application>
-		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so</xc:Module>
+		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so</xc:Module>
 
-		<!-- Application GroupID = 'mainContext' UID='ChatSupervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'mainContext' UID='ChatSupervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::ChatSupervisor" id="250" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:ChatSupervisor" xsi:type="soapenc:Struct">
 			</properties>
 		</xc:Application>
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libChat.so</xc:Module>
 
-		<!-- Application GroupID = 'mainContext' UID='ConsoleSupervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'mainContext' UID='ConsoleSupervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::ConsoleSupervisor" id="260" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:ConsoleSupervisor" xsi:type="soapenc:Struct">
 			</properties>
 		</xc:Application>
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libConsole.so</xc:Module>
 
-		<!-- Application GroupID = 'mainContext' UID='LogbookSupervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'mainContext' UID='LogbookSupervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::LogbookSupervisor" id="261" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:LogbookSupervisor" xsi:type="soapenc:Struct">
 			</properties>
 		</xc:Application>
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libLogbook.so</xc:Module>
 
-		<!-- Application GroupID = 'mainContext' UID='ConfigurationGUISupervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'mainContext' UID='ConfigurationGUISupervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::ConfigurationGUISupervisor" id="281" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:ConfigurationGUISupervisor" xsi:type="soapenc:Struct">
 			</properties>
 		</xc:Application>
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libConfigurationGUI.so</xc:Module>
 
-		<!-- Application GroupID = 'mainContext' UID='MacroMakerSupervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'mainContext' UID='MacroMakerSupervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::MacroMakerSupervisor" id="300" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:MacroMakerSupervisor" xsi:type="soapenc:Struct">
 			</properties>
@@ -53,7 +53,7 @@
 	<!-- ContextUID='ContextDTC0' sourceConfig='XDAQContextConfiguration_v27 @ 1542663253' -->
 	<xc:Context id="0" url="http://mu2edaq05.fnal.gov:2017">
 
-		<!-- Application GroupID = 'ContextDTC0' UID='FESupervisor1' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'ContextDTC0' UID='FESupervisor1' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::FESupervisor" id="311" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:FESupervisor" xsi:type="soapenc:Struct">
 			</properties>
@@ -65,7 +65,7 @@
 	<!-- ContextUID='ContextCFO0' sourceConfig='XDAQContextConfiguration_v27 @ 1542663253' -->
 	<xc:Context id="0" url="http://mu2edaq04.fnal.gov:2016">
 
-		<!-- Application GroupID = 'ContextCFO0' UID='FESupervisor' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'ContextCFO0' UID='FESupervisor' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::FESupervisor" id="210" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:FESupervisor" xsi:type="soapenc:Struct">
 			</properties>
@@ -77,7 +77,7 @@
 	<!-- ContextUID='ContextDTC1' sourceConfig='XDAQContextConfiguration_v27 @ 1542663253' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:2018">
 
-		<!-- Application GroupID = 'ContextDTC1' UID='FESupervisor2' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
+		<!-- Application GroupID = 'ContextDTC1' UID='FESupervisor2' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::FESupervisor" id="312" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:FESupervisor" xsi:type="soapenc:Struct">
 			</properties>
@@ -89,14 +89,12 @@
 	<!-- ContextUID='ContextCAPTAN0' sourceConfig='XDAQContextConfiguration_v27 @ 1542663253' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:2019">
 
-		<!-- Application GroupID = 'ContextCAPTAN0' UID='FESupervisor3' sourceConfig='XDAQApplicationConfiguration_v19 @ 1542824588' -->
-		<!--
+		<!-- Application GroupID = 'ContextCAPTAN0' UID='FESupervisor3' sourceConfig='XDAQApplicationConfiguration_v20 @ 1542826115' -->
 		<xc:Application class="ots::FESupervisor" id="313" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:FESupervisor" xsi:type="soapenc:Struct">
 			</properties>
 		</xc:Application>
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
-		-->
 
 	</xc:Context>
 

@@ -495,7 +495,8 @@ void CFOFrontEndInterface::configure(void)
     registerWrite(0x9114,0x0000ffff); 
     
     __COUT__ << "CFO set Event Window interval time" << __E__;
-    registerWrite(0x91a0,0x0000ffff); 
+    //    registerWrite(0x91a0,0x154);   //1.7us 
+    registerWrite(0x91a0,0x1f40);   //40us 
     // 	registerWrite(0x91a0,0x00000000); 	// for NO markers, write these values
     
     __COUT__ << "CFO set 40MHz marker interval" << __E__;
