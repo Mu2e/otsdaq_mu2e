@@ -53,7 +53,6 @@ find_ups_product( art v1_06_00 )
 find_ups_product( fhiclcpp v2_16_00 )
 find_ups_product( messagefacility v1_10_00 )
 find_ups_product( cetlib v1_03_00 )
-find_ups_product( xerces_c v3_1_2 )
 find_ups_product( otsdaq v1_00_00 )
 find_ups_product( otsdaq_utilities v1_00_00 )
 find_ups_product( otsdaq_components v1_00_00 )
@@ -84,7 +83,7 @@ add_subdirectory(tools)
 add_subdirectory(test)
 
 # Documentation directory
-add_subdirectory(doc)
+#add_subdirectory(doc)
 
 # UPS
 add_subdirectory(ups)
