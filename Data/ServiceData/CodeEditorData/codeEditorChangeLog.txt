@@ -396,3 +396,9 @@ time=1543357521 old-size=33535 new-size=33535 path=/home/mu2edaq/sync_demo/ots/s
 time=1543357610 old-size=52069 new-size=52071 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq/tools/StartOTS.sh
 time=1543357658 old-size=5255 new-size=5245 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq/otsdaq-core/SupervisorInfo/SupervisorInfo.h
 time=1543357672 old-size=16566 new-size=16588 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc
+time=1543359190 old-size=65007 new-size=65329 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1543359279 old-size=65329 new-size=65328 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1543359417 old-size=65328 new-size=65335 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1543359441 old-size=65335 new-size=65339 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1543359480 old-size=65339 new-size=65345 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1543359503 old-size=65345 new-size=65351 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc

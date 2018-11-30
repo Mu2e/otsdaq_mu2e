@@ -318,6 +318,10 @@
 {
 "name" : "testContext_v50",
 "assigned" : "2018-11-21T12:48:39.111-0600"
+},
+{
+"name" : "testContext_v51",
+"assigned" : "2018-11-28T08:59:51.006-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -779,6 +783,14 @@
 "value" : {
 "name" : "testContext_v50",
 "assigned" : "2018-11-21T12:48:39.111-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-11-28T08:59:51.006-0600",
+"value" : {
+"name" : "testContext_v51",
+"assigned" : "2018-11-28T08:59:51.006-0600"
 }
 }
 ],

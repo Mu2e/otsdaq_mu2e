@@ -421,7 +421,7 @@ void CFOFrontEndInterface::configure(void)
     if (config_clock == 1 && config_step < number_of_dtc_config_steps) {
       // only configure the clock/crystal the first loop through...
 
-      __MCOUT_INFO__("CFO reset clock..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": CFO reset clock..." << __E__);
       __COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
       
       registerWrite(0x9160,0x09502F90);
@@ -453,8 +453,7 @@ void CFOFrontEndInterface::configure(void)
       
     } else { 
 
-      __MCOUT_INFO__("CFO NOT resetting clock..." << __E__);      
-      __COUT__ << "CFO DO NOT set oscillator frequency" << __E__;
+      __MCOUT_INFO__("Step " << config_step << "CFO NOT reset clock..." << __E__);      
       
     }
     
@@ -463,7 +462,7 @@ void CFOFrontEndInterface::configure(void)
     // after DTC jitter attenuator OK, config CFO SERDES PLLs and TX
     if (reset_tx == 1) {
 
-      __MCOUT_INFO__("CFO reset TX..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": CFO reset TX..." << __E__);
 
       __COUT__ << "CFO reset serdes PLLs " << __E__;
       registerWrite(0x9118,0x0000ff00);
@@ -476,13 +475,15 @@ void CFOFrontEndInterface::configure(void)
       sleep(3);
     } else {
 
-      __MCOUT_INFO__("CFO do NOT reset TX..." << __E__);
-      __COUT__ << "CFO do NOT reset PLL and TX" << __E__;
+      __MCOUT_INFO__("Step " << config_step << "CFO do NOT reset TX..." << __E__);
 
     } 
     
-  } else if ( (config_step%number_of_dtc_config_steps) == 5 ) {
-    
+  } else if ( (config_step%number_of_dtc_config_steps) == 6 ) {
+
+    __MCOUT_INFO__("Step " << config_step 
+		   << ": CFO enable Event start characters, SERDES Tx and Rx, and event window interval" << __E__);
+ 
     __COUT__ << "CFO reset serdes RX " << __E__;
     registerWrite(0x9118,0x000000ff);
     registerWrite(0x9118,0x0);
@@ -502,9 +503,7 @@ void CFOFrontEndInterface::configure(void)
     __COUT__ << "CFO set 40MHz marker interval" << __E__;
     registerWrite(0x9154,0x0800);
     // 	registerWrite(0x9154,0x00000000); 	// for NO markers, write these values
-    
-  } else if ( (config_step%number_of_dtc_config_steps) == 6 ) {
-    
+       
     __MCOUT_INFO__("--------------" << __E__);
     __MCOUT_INFO__("CFO configured" << __E__);
     

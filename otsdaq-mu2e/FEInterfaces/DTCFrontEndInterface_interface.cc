@@ -16,6 +16,13 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 					   const std::string& interfaceConfigurationPath) :
   FEVInterface (interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
 {
+
+  __COUT__ << "instantiate DTC... " 
+	   << interfaceUID << " "
+	   << theXDAQContextConfigTree << " "
+	   << interfaceConfigurationPath
+	   << __E__;
+
   registerFEMacroFunction("ROC_WriteBlock",//feMacroName 
 			  static_cast<FEVInterface::frontEndMacroFunction_t>(&DTCFrontEndInterface::WriteROCBlock), //feMacroFunction 
 			  std::vector<std::string>{"rocLinkIndex","block", "address","writeData"},
@@ -52,7 +59,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   universalAddressSize_ = 4;
   universalDataSize_ = 4;
 
-  // label  
+  // label
   device_name_ = interfaceUID;
 
   // linux file to communicate with
@@ -60,26 +67,42 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
 
-  // DTC class
-  dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+  // build the mask of enabled ROCs
 
+  std::vector<std::pair<std::string,ConfigurationTree> > rocChildren = 
+    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+
+  roc_mask_ = 0;
+
+  for(auto& roc: rocChildren) {
+
+    __COUT__ << "roc uid " << roc.first << __E__;
+    int enabled = roc.second.getNode("ROCEnable").getValue<int>();
+    __COUT__ << "roc enable " << enabled << __E__;
+
+    if(enabled == 1) {
+      int linkID = roc.second.getNode("linkID").getValue<int>();
+      roc_mask_ |= (0x1 << linkID);
+    }
+  }
+
+  __COUT__ << "DTC roc_mask_ = " << std::hex << roc_mask_ << std::dec << __E__;
+
+  // instantiate DTC with the appropriate ROCs enabled
   std::string expectedDesignVersion = "";
   auto mode = DTCLib::DTC_SimMode_NoCFO;
-  
   thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask_,expectedDesignVersion);
-  
-  // ROCs associated with this DTC
-  roc_mask_ = 0x1;
-  //  roc_mask_ = getSelfNode().getNode("roc_mask").getValue<unsigned int>();
-  unsigned delay[8] = {1,2,3,4,5,6,7,8};
 
-  for (unsigned link=0; link<8; link++)
-    if (ROCActive(link)) 
-      {
-      	
-      	rocs_.push_back(ROCInterface(link,thisDTC_,delay[link],
-      		theXDAQContextConfigTree, interfaceConfigurationPath));
-      }
+  // instantiate vector of ROCs 
+  for(auto& roc: rocChildren) 
+    if( roc.second.getNode("ROCEnable").getValue<int>() == 1 ) 
+      rocs_.push_back( ROCInterface(thisDTC_, 
+				    roc.first, 
+				    Configurable::getSelfNode().getNode("LinkToROCGroupTable"), 
+				    roc.first) );
+
+  // DTC-specific info
+  dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
 
   // done  
   __MCOUT_INFO__("DTCFrontEndInterface instantiated with name: " << device_name_
@@ -428,10 +451,46 @@ void DTCFrontEndInterface::configure(void)
   int number_of_total_config_steps = number_of_system_configs * number_of_dtc_config_steps;
   
   int config_step = getIterationIndex();
+  int config_substep = getSubIterationIndex();
   
   if (number_of_system_configs > 0) {
     if (config_step >= number_of_total_config_steps) // done, exit system config
       return;
+  }
+
+  if (config_substep > 0 && config_substep < 4) { //wait a maximum of 30 seconds
+
+    const int number_of_link_checks = 10;
+
+    int link_ok = 0;
+    
+    for (int i=0; i<number_of_link_checks; i++) {
+      
+      if (checkLinkStatus() == 1 ) {
+	
+	indicateIterationWork(); // links OK, 
+	turnOffLED(); 
+	return;                  // continue with the rest of the configuration
+	
+      } else if (getCFOLinkStatus() == 0) {
+	
+	__COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
+	
+	sleep(1);
+	
+	indicateIterationWork(); // in this case, links will never get to be OK 
+	turnOffLED(); 
+	return;                  // continue with the rest of the configuration
+	
+      } else {
+
+	__COUT__ << "Waiting for DTC Link Status = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
+	sleep(1);
+
+      }
+    }
+
+    indicateSubIterationWork();    // links still not OK, come back to me... 
   }
   
   turnOnLED();
@@ -442,7 +501,7 @@ void DTCFrontEndInterface::configure(void)
 
       // only reset the FPGA the first time through
 
-      __MCOUT_INFO__(device_name_ << " reset FPGA..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " reset FPGA..." << __E__);
 
       registerWrite(0x9100,0x10000000);	// bit 31 = DTC Reset FPGA
       sleep(3);
@@ -456,7 +515,7 @@ void DTCFrontEndInterface::configure(void)
 
       //  registerWrite(0x9100,0x10000000);	// bit 31 = DTC Reset FPGA
 
-      __MCOUT_INFO__(device_name_ << " reset clock..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " reset clock..." << __E__);
       
       __COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
       registerWrite(0x915c,0x09502F90);
@@ -485,7 +544,7 @@ void DTCFrontEndInterface::configure(void)
       
     } else { 
 
-      __MCOUT_INFO__(device_name_ << " do NOT reset clock..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " do NOT reset clock..." << __E__);
       
     }
     
@@ -495,7 +554,7 @@ void DTCFrontEndInterface::configure(void)
 
     if (config_jitter_attenuator == 1 && config_step < number_of_dtc_config_steps) {
 
-      __MCOUT_INFO__(device_name_ << " configure Jitter Attenuator..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure Jitter Attenuator..." << __E__);
 
       configureJitterAttenuator();
       
@@ -503,7 +562,7 @@ void DTCFrontEndInterface::configure(void)
 
     } else { 
       
-      __MCOUT_INFO__(device_name_ << " do NOT configure Jitter Attenuator..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " do NOT configure Jitter Attenuator..." << __E__);
       
     }
     
@@ -564,35 +623,16 @@ void DTCFrontEndInterface::configure(void)
     // 	 registerWrite(0x9118,0x00000000);
     // 	 
     // 	 sleep(6);
-    
-    const int number_of_link_checks = 10;
-    
-    for (int i=0; i<number_of_link_checks; i++) {
-      
-      if (checkLinkStatus() == 1 ) {
-	
-	//__COUT__ << "Waiting finished 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
-	
-	i = number_of_link_checks; // kick out of this loop...
-	
-      } else if (getCFOLinkStatus() == 0) {
-	
-	__COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
-	
-	sleep(1);
-	
-	i = number_of_link_checks; // kick out of this loop...
-	
-      } else {
 
-	__COUT__ << "Waiting for DTC Link Status = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
-	sleep(1);
+    __MCOUT_INFO__ ("Step " << config_step << ": " << device_name_ << " wait for links..." << __E__);
 
-      }
-      
-    }
+    indicateSubIterationWork(); // tell state machine to stay in configure state ("come back to me")
+
+    return;
     
   } else if ( (config_step%number_of_dtc_config_steps) == 5 ) {
+
+    __MCOUT_INFO__ ("Step " << config_step << ": " << device_name_ << " enable markers, Tx, Rx" << __E__);
     
     // enable markers, tx and rx
 
@@ -607,7 +647,8 @@ void DTCFrontEndInterface::configure(void)
     //put DTC CFO link output into loopback mode
     __COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
     registerWrite(0x9100,0x00000000);
-    
+
+    __MCOUT_INFO__ ("Step " << config_step << ": " << device_name_ << " configure ROCs" << __E__);    
     for (unsigned i=0; i<rocs_.size(); i++) 
       rocs_[i].configure();
     
@@ -615,7 +656,7 @@ void DTCFrontEndInterface::configure(void)
     
   } else if ( (config_step%number_of_dtc_config_steps) == 6 ) {
     
-    __MCOUT_INFO__ (device_name_ << " configured" << __E__);
+    __MCOUT_INFO__ ("Step " << config_step << ": " << device_name_ << " configured" << __E__);
     
     if ( checkLinkStatus() == 1) {
 
@@ -641,7 +682,6 @@ void DTCFrontEndInterface::configure(void)
   readStatus(); //spit out link status at every step
   
   indicateIterationWork(); // otherwise, tell state machine to stay in configure state ("come back to me")
-  //indicateSubIterationWork(); // otherwise, tell state machine to stay in configure state ("come back to me")
   
   turnOffLED(); 
   return;
@@ -2125,17 +2165,8 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   __CFG_COUTV__(rocLinkIndex);
   __CFG_COUTV__(address);
 
-  registerWrite(0x9100,0x00000004); //Enable DCS
+  uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
 
-  // hack - there is a problem with multiple reads of DCS packets
-  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_);
-
-  // hack - should be able to use thisDTC_ instantiated at instantiation of this class...
-  auto readData = thisDTC_2->ReadROCRegister(rocLinkIndex, address);
-
-  // hack - there is a problem with multiple reads of DCS packets
-  delete thisDTC_2;
-	  
   //  char readDataStr[100];
   //  sprintf(readDataStr,"0x%X",readData);
   //  __SET_ARG_OUT__("readData",readDataStr);
@@ -2143,8 +2174,6 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
     
   //for(auto &argOut:argsOut) 
   __CFG_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__; 
-
-  registerWrite(0x9100,0x00000000); //Disable DCS
 
 } //end DTCStatus()
 
@@ -2167,21 +2196,11 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
   __CFG_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
   __CFG_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
   
-  registerWrite(0x9100,0x00000004);	//Enable DCS
+  thisDTC_->WriteROCRegister(rocLinkIndex, address, writeData);
 
-  // hack - there is a problem with multiple reads of DCS packets
-  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_);
-
-  // hack - should be able to use thisDTC_ instantiated at instantiation of this class...
-  thisDTC_2->WriteROCRegister(rocLinkIndex, address, writeData);
-
-  // hack - there is a problem with multiple reads of DCS packets
-  delete thisDTC_2;
-  
   for(auto &argOut:argsOut) 
     __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
 
-  registerWrite(0x9100,0x00000000); //Disable DCS
 } 
 
 
@@ -2210,14 +2229,11 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
   __CFG_COUT__ << "address = 0x" 	<< std::hex << (unsigned int)address << std::dec << __E__;
   __CFG_COUT__ << "writeData = 0x" << std::hex << writeData 						<< std::dec << __E__;
 
-  registerWrite(0x9100,0x00000004);	// bit 2 = Enable DCS
-  
   thisDTC_->WriteExtROCRegister(rocLinkIndex,block,address,writeData);	
   
   for(auto &argOut:argsOut) 
     __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
 
-  registerWrite(0x9100,0x00000000); //Disable DCS
 } 
 
 void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
@@ -2242,24 +2258,12 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
   __CFG_COUT__ << "block = "	 << std::dec << (unsigned int)block << __E__; 
   __CFG_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
 
-  registerWrite(0x9100,0x00000004);	//bit 4 = Enable DCS
-
-  //  uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex,block,address);	
-
-  auto thisDTC_2 = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_);
-
-  // hack - should be able to use thisDTC_ instantiated at instantiation of this class...
-  auto readData = thisDTC_2->ReadExtROCRegister(rocLinkIndex,block,address);
-
-  // hack - there is a problem with multiple reads of DCS packets
-  delete thisDTC_2;
+  uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex,block,address);	
 
   __SET_ARG_OUT__("readData", readData);
   
   for(auto &argOut:argsOut) 
     __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
-
-  registerWrite(0x9100,0x00000000); //Disable DCS
 
 } 
 

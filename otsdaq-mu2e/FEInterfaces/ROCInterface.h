@@ -16,7 +16,10 @@ class ROCInterface : public Configurable
 {
   
  public:
-  ROCInterface (const unsigned int linkID, DTCLib::DTC* thisDTC, const unsigned int delay, const ConfigurationTree& theXDAQContextConfigTree, const std::string& theConfigurationPath);
+  ROCInterface (DTCLib::DTC* thisDTC, 
+		const std::string& interfaceUID, 
+		const ConfigurationTree& theXDAQContextConfigTree, 
+		const std::string& theConfigurationPath);
   
   ~ROCInterface(void);
 	  
@@ -30,7 +33,7 @@ class ROCInterface : public Configurable
   void stop (void);
   bool running (void);
   
-  std::string getIdString(void) { std::stringstream ss; ss << "ROC" << linkID_; return ss.str();}
+  std::string getIdString(void) { std::stringstream ss; ss << device_name_; return ss.str();}
 
   // write and read to registers
   void writeRegister (unsigned address, unsigned data_to_write);
@@ -45,6 +48,7 @@ class ROCInterface : public Configurable
   DTCLib::DTC_Link_ID linkID_;
   DTCLib::DTC* 	      thisDTC_;
   unsigned int 	      delay_;
+  std::string device_name_;
   
 };
 
