@@ -30,6 +30,7 @@ class ROCInterface : public Configurable
   void stop (void);
   bool running (void);
   
+  
   std::string getIdString(void) { std::stringstream ss; ss << "ROC" << linkID_; return ss.str();}
 
   // write and read to registers

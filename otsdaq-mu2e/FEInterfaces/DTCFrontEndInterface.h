@@ -23,13 +23,16 @@ namespace ots
 		
     // state machine
     //----------------
-    void configure (void);
+    void configure (void);    
     void halt (void);
     void pause (void);
     void resume (void);
     void start (std::string runNumber);
     void stop (void);
     bool running (void);
+    
+    // emulator handlers
+    void emulatorConfigure (void);
     
     
     // hardware access
@@ -63,6 +66,7 @@ namespace ots
     int dtc_location_in_chain_ = -1;
     unsigned roc_mask_ = 0;
     std::string device_name_;
+    bool emulatorMode_;
     
     std::vector<ROCInterface> rocs_;
 		

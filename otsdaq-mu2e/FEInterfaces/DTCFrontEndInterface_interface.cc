@@ -57,6 +57,41 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 
   // linux file to communicate with
   dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
+  
+  
+  try
+  {  
+  	emulatorMode_ = getSelfNode().getNode("EmulatorMode").getValue<bool>();
+  }
+  catch(...)
+  {
+  	__COUT__ << "Assuming NOT emulator mode." << __E__;
+  	emulatorMode_ = false;
+  }
+  
+  unsigned delay[8] = {1,2,3,4,5,6,7,8};
+  
+  if(emulatorMode_)
+  {
+  	__COUT__ << "Starting emulator mode..." << __E__;
+  	//TODO -- allow multiple types of emulators
+  	int type = 0; // calorimeter emulator
+  	if(type == 0)
+  	{
+  		rocs_.push_back(ROCCalorimeterEmulator(link,0 /*DTC*/,delay[link],
+      		theXDAQContextConfigTree, interfaceConfigurationPath));
+  	
+  		//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
+  		//	&(rocs_.back())).detach();
+  	}
+  	else
+  	{
+  		__SS__ << "Unknown type " << type << __E__;
+  		__SS_THROW__;  		
+  	}
+  	return;
+  }
+  
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
 
@@ -71,7 +106,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   // ROCs associated with this DTC
   roc_mask_ = 0x1;
   //  roc_mask_ = getSelfNode().getNode("roc_mask").getValue<unsigned int>();
-  unsigned delay[8] = {1,2,3,4,5,6,7,8};
+  
 
   for (unsigned link=0; link<8; link++)
     if (ROCActive(link)) 
@@ -403,11 +438,39 @@ bool DTCFrontEndInterface::ROCActive(unsigned ROC_link) {
 }
 
 //==================================================================================================
+void DTCFrontEndInterface::emulatorConfigure(void)
+{	
+   float a, inputTemp;
+   int addBoard;
+//   cout<<"Select the board to Monitor: \n";
+//   cin>> addBoard;
+   addBoard = 105;
+//   cout<<"Please enter the average Board Temp in C: \n";
+//   cin>>inputTemp;
+   inputTemp = 13.0;
+   a = 0.;
+   while( a < 20 ) {
+      //temp1.noiseTemp(inputTemp);
+      //cout << "Temp of the Board "<<addBoard<<": " << temp1.GetBoardTempC() << endl;
+      a++;
+      usleep(1000000);
+   }
+}
+
+//==================================================================================================
 void DTCFrontEndInterface::configure(void)
 {
   
   __CFG_COUTV__( getIterationIndex() );
   __CFG_COUTV__( getSubIterationIndex() );
+  
+  if(emulatorMode_)
+  {
+  	__COUT__ << "Starting emulator mode configure..." << __E__;
+  	emulatorConfigure();
+  	return;
+  }
+  
   
   // NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
   // Therefore, break up configuration into several steps so as to reply before the time out
