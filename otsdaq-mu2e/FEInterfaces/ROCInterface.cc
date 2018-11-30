@@ -8,31 +8,27 @@ using namespace ots;
 #define __MF_SUBJECT__ getIdString()
 
 //=========================================================================================
-ROCInterface::ROCInterface(const unsigned int linkID,
-			   DTCLib::DTC* thisDTC, 
-			   const unsigned int delay,
+ROCInterface::ROCInterface(DTCLib::DTC* thisDTC, 
+			   const std::string& interfaceUID, 
 			   const ConfigurationTree& theXDAQContextConfigTree,
 			   const std::string& theConfigurationPath)
 : Configurable(theXDAQContextConfigTree,theConfigurationPath)
 {
-	INIT_MF("ROCInterface");
+  INIT_MF("ROCInterface");
 
-	linkID_  = DTCLib::DTC_Link_ID(linkID);  
-	thisDTC_ = thisDTC;	
-	delay_   = delay;
-	__COUTV__(delay_);
+  thisDTC_ = thisDTC;
+
+  device_name_ = interfaceUID;
+
+  linkID_  = DTCLib::DTC_Link_ID( getSelfNode().getNode("linkID").getValue<unsigned int>() );  
+  //  __COUTV__(linkID_);
+
+  delay_   = getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>();
+  //  __COUTV__(delay_);
 	
-//	try
-//	{
-//		delay_ = getSelfNode().getNode("DelayOffset").getValue<unsigned int>();
-//	}
-//	catch(...)
-//	{
-//		__COUT__ << "Field does not exist?" << __E__;
-//	}
-
-	__MCOUT_INFO__("ROCInterface instantiated with link: " << linkID_ << __E__);
-
+  __MCOUT_INFO__("ROCInterface instantiated with link: " << linkID_ 
+		 << " and EventWindowDelayOffset = " << delay_
+		 << __E__);
 }
 
 //==========================================================================================
@@ -79,16 +75,23 @@ void ROCInterface::configure(void)
 {
 
   // read 6 should read back 0x12fc
-  std::cout << getIdString() << " 1 read register 6 = " << this->readRegister(6) << std::endl;
-  std::cout << getIdString() << " 2 read register 6 = " << this->readRegister(6) << std::endl;
-  std::cout << getIdString() << " 3 read register 6 = " << this->readRegister(6) << std::endl;
-  std::cout << getIdString() << " 4 read register 6 = " << this->readRegister(6) << std::endl;
+  //  __COUT__ << getIdString() << " 1 read register 6 = " << this->readRegister(6) << __E__;
+  //  __COUT__ << getIdString() << " 2 read register 6 = " << this->readRegister(6) << __E__;
+  //  __COUT__ << getIdString() << " 3 read register 6 = " << this->readRegister(6) << __E__;
+  __COUT__ << getIdString() << " Confirm read register 6 = " << this->readRegister(6) << __E__;
 
-  std::cout << getIdString() << " set delay = " << delay_ << std::endl;
+  __MCOUT_INFO__ ("........." << getIdString() << " Set delay = " << delay_ << __E__);
+
   this->writeDelay(delay_);
 
-  std::cout << getIdString() << " read delay = " << this->readDelay() << std::endl;
-  
+  __COUT__ << getIdString() << " Read delay = " << this->readDelay() << __E__;
+
+  __COUT__ << __E__;   __COUT__ << __E__;   __COUT__ << __E__;
+  __COUT__ << getIdString() << " Read register 6 = " << this->readRegister(6) << __E__;
+  __COUT__ << getIdString() << " Read register 6 = " << this->readRegister(6) << __E__;
+  __COUT__ << getIdString() << " Read register 7 = " << this->readRegister(7) << __E__;
+  __COUT__ << getIdString() << " Read register 7 = " << this->readRegister(7) << __E__;
+
   return;
 }
 
