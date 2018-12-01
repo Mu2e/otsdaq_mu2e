@@ -82,36 +82,36 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   {
   	__COUT__ << "Starting emulator mode..." << __E__;
   	//TODO -- allow multiple types of emulators
-  	int type = 0; // calorimeter emulator
-  	if(type == 0)
-  	{
-  		
-  		
-
-  		std::vector<std::pair<std::string,ConfigurationTree> > rocChildren = 
-    		Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-    		
-
-
-	  	// instantiate vector of ROCs 
-		for(auto& roc: rocChildren) 
-	    if( roc.second.getNode("ROCEnable").getValue<int>() == 1 ) 
-	      rocs_.push_back( ROCCalorimeterEmulator(thisDTC_, 
-				    roc.first, 
-				    Configurable::getSelfNode().getNode("LinkToROCGroupTable"), 
-				    roc.first) );
-    	
-  		//rocs_.push_back(ROCCalorimeterEmulator(link,0 /*DTC*/,delay[link],
-      	//	theXDAQContextConfigTree, interfaceConfigurationPath));
-  	
-  		//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
-  		//	&(rocs_.back())).detach();
-  	}
-  	else
-  	{
-  		__SS__ << "Unknown type " << type << __E__;
-  		__SS_THROW__;  		
-  	}
+//  	int type = 0; // calorimeter emulator
+//  	if(type == 0)
+//  	{
+//
+//
+//
+//  		std::vector<std::pair<std::string,ConfigurationTree> > rocChildren =
+//    		Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+//
+//
+//
+//	  	// instantiate vector of ROCs
+//		for(auto& roc: rocChildren)
+//	    if( roc.second.getNode("ROCEnable").getValue<int>() == 1 )
+//	      rocs_.push_back( ROCCalorimeterEmulator(thisDTC_,
+//				    roc.first,
+//				    Configurable::getSelfNode().getNode("LinkToROCGroupTable"),
+//				    roc.first) );
+//
+//  		//rocs_.push_back(ROCCalorimeterEmulator(link,0 /*DTC*/,delay[link],
+//      	//	theXDAQContextConfigTree, interfaceConfigurationPath));
+//
+//  		//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
+//  		//	&(rocs_.back())).detach();
+//  	}
+//  	else
+//  	{
+//  		__SS__ << "Unknown type " << type << __E__;
+//  		__SS_THROW__;
+//  	}
   	return;
   }
   
