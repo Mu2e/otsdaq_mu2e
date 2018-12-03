@@ -2,54 +2,43 @@
 #include_directories(/mu2e/ups/pcie_linux_kernel_module/v1_11_02/include/)
 #include_directories(${CMAKE_BINARY_DIR}/artdaq)
 
-cet_make(LIBRARY_NAME Mu2eFEInterfaceComponents
-		EXCLUDE 
-			CFOFrontEndInterface_interface.cc
-		 	DTCFrontEndInterface_interface.cc
-			SendClockAndEventMarkers.cc		
-			my_cntl.cc
+#cet_make(LIBRARY_NAME Mu2eFEInterfaceComponents
+#		EXCLUDE 
+#			CFOFrontEndInterface_interface.cc
+#		 	DTCFrontEndInterface_interface.cc
+#			SendClockAndEventMarkers.cc		
+#			my_cntl.cc
 			
-		 LIBRARIES         	
+#		 LIBRARIES         	
 		 	
 		 
-		 	artdaq-core_Utilities
-		 	${MF_MESSAGELOGGER}
-         	${MF_UTILITIES}        
-         	${CETLIB}
-			Configurable
-			DTCInterface
+#		 	artdaq-core_Utilities
+#		 	${MF_MESSAGELOGGER}
+ #        	${MF_UTILITIES}        
+  #       	${CETLIB}
+	#		Configurable
+	#		DTCInterface
 
-)
-    
-simple_plugin(CFOFrontEndInterface "interface"
-#  DAQHardware
-  	FECore
-	DTCInterface 
-#  WorkLoopManager
-#  MessageFacility
-#  NetworkUtilities
-#  ConfigurationInterface
-#  ConfigurationDataFormats
-#  $ENV{XERCES_C_LIB}/libxerces-c.so
-#  ${CETLIB}
-#  ${CETLIB_EXCEPT}
+#)
+
+
+simple_plugin(ROCCoreInterface "interface"
+  	FECore		
+  	DTCInterface
  )
-
+    
 simple_plugin(DTCFrontEndInterface "interface"
-#  DAQHardware
   	FECore
 	DTCInterface  
-	Mu2eFEInterfaceComponents
-	
-#  WorkLoopManager
-#  MessageFacility
-#  NetworkUtilities
-#  ConfigurationInterface
-#  ConfigurationDataFormats
-#  $ENV{XERCES_C_LIB}/libxerces-c.so
-#  ${CETLIB}
-#  ${CETLIB_EXCEPT}
+	otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
+	#Mu2eFEInterfaceComponents	
  )
+ 
+simple_plugin(CFOFrontEndInterface "interface"
+  	FECore
+	DTCInterface
+ )
+
 
 install_headers()
 install_source()

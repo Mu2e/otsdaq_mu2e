@@ -1,7 +1,7 @@
 #ifndef _ots_DTCFrontEndInterface_h_
 #define _ots_DTCFrontEndInterface_h_
 
-#include "otsdaq-mu2e/FEInterfaces/ROCInterface.h"
+#include "otsdaq-mu2e/FEInterfaces/ROCCoreInterface.h"
 #include "otsdaq-core/FECore/FEVInterface.h"
 #include <string>
 #include <map>
@@ -60,6 +60,10 @@ namespace ots
     DTCLib::DTC* thisDTC_;
     
   private:
+
+    void 							createROCs				(void);
+
+
     char devfile_[11];
     int fd_;
     int dtc_ = -1;
@@ -68,11 +72,12 @@ namespace ots
     std::string device_name_;
     bool emulatorMode_;
     
-    std::vector<ROCInterface> rocs_;
+    std::map<std::string /*name*/, std::unique_ptr<ROCCoreInterface> > rocs_;
 		
     m_ioc_reg_access_t reg_access_; 
     
     
+
   public: 
     void ReadROC(frontEndMacroInArgs_t argsIn, frontEndMacroOutArgs_t argsOut);
     void WriteROC(frontEndMacroInArgs_t argsIn, frontEndMacroOutArgs_t argsOut);

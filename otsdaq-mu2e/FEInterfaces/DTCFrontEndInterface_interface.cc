@@ -1,7 +1,8 @@
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
 #include "otsdaq-core/Macros/InterfacePluginMacros.h"
-//#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
-//#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
+#include "otsdaq-core/PluginMakers/MakeInterface.h"
+
+#include "otsdaq-core/FECore/FEVInterface.h"
 
 //#include "mu2e_driver/mu2e_mmap_ioctl.h"	// m_ioc_cmd_t
 
@@ -13,8 +14,9 @@ using namespace ots;
 //=========================================================================================
 DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID, 
 					   const ConfigurationTree& theXDAQContextConfigTree, 
-					   const std::string& interfaceConfigurationPath) :
-  FEVInterface (interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
+					   const std::string& interfaceConfigurationPath)
+: FEVInterface (interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
+, thisDTC_(0)
 {
 
   __COUT__ << "instantiate DTC... " 
@@ -75,82 +77,53 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   	__COUT__ << "Assuming NOT emulator mode." << __E__;
   	emulatorMode_ = false;
   }
-  
-  unsigned delay[8] = {1,2,3,4,5,6,7,8};
-  
+
+
   if(emulatorMode_)
   {
-  	__COUT__ << "Starting emulator mode..." << __E__;
-  	//TODO -- allow multiple types of emulators
-//  	int type = 0; // calorimeter emulator
-//  	if(type == 0)
-//  	{
-//
-//
-//
-//  		std::vector<std::pair<std::string,ConfigurationTree> > rocChildren =
-//    		Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-//
-//
-//
-//	  	// instantiate vector of ROCs
-//		for(auto& roc: rocChildren)
-//	    if( roc.second.getNode("ROCEnable").getValue<int>() == 1 )
-//	      rocs_.push_back( ROCCalorimeterEmulator(thisDTC_,
-//				    roc.first,
-//				    Configurable::getSelfNode().getNode("LinkToROCGroupTable"),
-//				    roc.first) );
-//
-//  		//rocs_.push_back(ROCCalorimeterEmulator(link,0 /*DTC*/,delay[link],
-//      	//	theXDAQContextConfigTree, interfaceConfigurationPath));
-//
-//  		//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
-//  		//	&(rocs_.back())).detach();
-//  	}
-//  	else
-//  	{
-//  		__SS__ << "Unknown type " << type << __E__;
-//  		__SS_THROW__;
-//  	}
-  	return;
+	  __COUT__ << "Emulator DTC mode starting up..." << __E__;
+	  createROCs();
+	  return;
   }
+  //else not emulator mode
+
+  //unsigned delay[8] = {1,2,3,4,5,6,7,8};
   
+
+
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
 
-  // build the mask of enabled ROCs
 
-  std::vector<std::pair<std::string,ConfigurationTree> > rocChildren = 
-    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+  //create roc mask for DTC
+  {
+	  std::vector<std::pair<std::string,ConfigurationTree> > rocChildren =
+			  Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
 
-  roc_mask_ = 0;
+	  roc_mask_ = 0;
 
-  for(auto& roc: rocChildren) {
+	  for(auto& roc: rocChildren)
+	  {
+		  __COUT__ << "roc uid " << roc.first << __E__;
+		  bool enabled = roc.second.getNode("Status").getValue<bool>();
+		  __COUT__ << "roc enable " << enabled << __E__;
 
-    __COUT__ << "roc uid " << roc.first << __E__;
-    int enabled = roc.second.getNode("ROCEnable").getValue<int>();
-    __COUT__ << "roc enable " << enabled << __E__;
+		  if(enabled)
+		  {
+			  int linkID = roc.second.getNode("linkID").getValue<int>();
+			  roc_mask_ |= (0x1 << linkID);
+		  }
+	  }
 
-    if(enabled == 1) {
-      int linkID = roc.second.getNode("linkID").getValue<int>();
-      roc_mask_ |= (0x1 << linkID);
-    }
-  }
-
-  __COUT__ << "DTC roc_mask_ = " << std::hex << roc_mask_ << std::dec << __E__;
+	  __COUT__ << "DTC roc_mask_ = " << std::hex << roc_mask_ << std::dec << __E__;
+  } //end create roc mask
 
   // instantiate DTC with the appropriate ROCs enabled
   std::string expectedDesignVersion = "";
   auto mode = DTCLib::DTC_SimMode_NoCFO;
   thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask_,expectedDesignVersion);
 
-  // instantiate vector of ROCs 
-  for(auto& roc: rocChildren) 
-    if( roc.second.getNode("ROCEnable").getValue<int>() == 1 ) 
-      rocs_.push_back( ROCInterface(thisDTC_, 
-				    roc.first, 
-				    Configurable::getSelfNode().getNode("LinkToROCGroupTable"), 
-				    roc.first) );
+  createROCs();
 
   // DTC-specific info
   dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
@@ -165,11 +138,122 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
 {
-  delete thisDTC_;
+	if(thisDTC_)
+		delete thisDTC_;
   //delete theFrontEndHardware_;
   //delete theFrontEndFirmware_;
 }
 
+//========================================================================================================================
+void DTCFrontEndInterface::createROCs(void)
+{
+	rocs_.clear();
+
+	std::vector<std::pair<std::string,ConfigurationTree> > rocChildren =
+			Configurable::getSelfNode().getNode(
+					"LinkToROCGroupTable").getChildren();
+
+	// instantiate vector of ROCs
+	for(auto& roc: rocChildren)
+		if( roc.second.getNode("Status").getValue<bool>())
+		{
+			__COUT__ << "ROC Plugin Name: "<< roc.second.getNode(
+					"ROCInterfacePluginName").getValue<std::string>() << std::endl;
+			__COUT__ << "ROC Name: "<< roc.first << std::endl;
+
+
+			try
+			{
+
+				__COUT__ << "here" << __E__;
+				__COUTV__(theXDAQContextConfigTree_.getValueAsString());
+				__COUTV__(roc.second.getNode("ROCInterfacePluginName").getValue<std::string>());
+				__COUT__ << "there" << __E__;
+
+				std::unique_ptr<FEVInterface> tmpRoc =
+						makeInterface(
+								roc.second.getNode("ROCInterfacePluginName").getValue<std::string>(),
+								roc.first,
+								theXDAQContextConfigTree_,
+								(theConfigurationPath_ + "/LinkToROCGroupTable/" +
+										roc.first));
+				__COUT__ << "Made" << __E__;
+				__COUTV__(tmpRoc.get());
+				if(!tmpRoc.get())
+					__COUT__ << "Null!" << __E__;
+
+				//setup parent supervisor of FEVinterface (for backwards compatibility, left out of constructor)
+				tmpRoc->parentSupervisor_ = parentSupervisor_;
+
+				try
+				{
+					ROCCoreInterface& tmpRocPtr =
+							 dynamic_cast<ROCCoreInterface&>(*tmpRoc);// dynamic_cast<ROCCoreInterface*>(tmpRoc.get());
+
+					__COUTV__(tmpRocPtr.emulatorMode_);
+
+//					__COUTV__(tmpRocPtr);
+//					if(!tmpRocPtr)
+//						__COUT__ << "Null!?" << __E__;
+//
+//					__COUTV__(tmpRocPtr->emulatorMode_);
+//					tmpRocPtr->emulatorMode_ = emulatorMode_;
+//					__COUTV__(tmpRocPtr->emulatorMode_);
+				}
+				catch(const std::bad_cast& e) {
+				    // Cast failed
+					__COUT__ << "cast failed" << __E__;
+				}
+				catch(...) {
+				    // Cast failed
+					__COUT__ << "cast failed" << __E__;
+				}
+
+				__COUT__ << "again here." << __E__;
+
+				(dynamic_cast<ROCCoreInterface*>(tmpRoc.get()))->emulatorMode_ = emulatorMode_;
+
+				__COUTV__((dynamic_cast<ROCCoreInterface*>(tmpRoc.get()))->emulatorMode_);
+
+//				rocs_.emplace(std::pair<std::string,
+//						std::unique_ptr<ROCCoreInterface>>(
+//						roc.first,
+//						dynamic_cast<ROCCoreInterface*>(
+//						makeInterface(
+//								roc.second.getNode("ROCInterfacePluginName").getValue<std::string>(),
+//								roc.first,
+//								theXDAQContextConfigTree_,
+//								(theConfigurationPath_ + "/LinkToROCGroupTable/" +
+//										roc.first) )
+//				)));
+//
+//				//setup other members supervisor of ROCCore (for interface plug-in compatibility, left out of constructor)
+//				rocs_[roc.first]->emulatorMode_ = emulatorMode_;
+//				if(emulatorMode_)
+//				{
+//					__COUT__ << "Creating ROC in emulator mode..." << __E__;
+//					//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
+//							//  		//	&(rocs_.back())).detach();
+//				}
+//				else
+//				{
+//					rocs_[roc.first]->thisDTC_ = thisDTC_;
+//				}
+			}
+			catch(const cet::exception& e)
+			{
+				__SS__ << "Failed to instantiate plugin named '" <<
+						roc.first << "' of type '" <<
+						roc.second.getNode("ROCInterfacePluginName").getValue<std::string>()
+						<< "' due to the following error: \n" << e.what() << __E__;
+				__COUT_ERR__ << ss.str();
+				__MOUT_ERR__ << ss.str();
+				__SS_THROW__;
+			}
+		}
+
+	__COUT__ << "Done creating ROCs" << std::endl;
+} //end createROCs
 
 //==========================================================================================
 //universalRead
@@ -181,6 +265,8 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 int DTCFrontEndInterface::universalRead(char *address, char *returnValue)
 {
   // __COUT__ << "DTC READ" << __E__;
+
+	if(emulatorMode_) return -1;
   
   reg_access_.access_type = 0; // 0 = read, 1 = write
   
@@ -202,7 +288,8 @@ int DTCFrontEndInterface::universalRead(char *address, char *returnValue)
 //===========================================================================================
 // registerRead: return = value read from register at address "address"
 //
-int DTCFrontEndInterface::registerRead(int address) {
+int DTCFrontEndInterface::registerRead(int address)
+{
   
   uint8_t *addrs = new uint8_t[universalAddressSize_];	//create address buffer of interface size
   uint8_t *data = new uint8_t[universalDataSize_];	//create data buffer of interface size
@@ -245,7 +332,8 @@ int DTCFrontEndInterface::registerRead(int address) {
 void DTCFrontEndInterface::universalWrite(char* address, char* writeValue)
 {
   // __COUT__ << "DTC WRITE" << __E__;
-  
+	if(emulatorMode_) return;
+
   reg_access_.access_type = 1; // 0 = read, 1 = write
   
   reg_access_.reg_offset = *((int*) address); 
@@ -483,6 +571,12 @@ void DTCFrontEndInterface::configure(void)
   __CFG_COUTV__( getIterationIndex() );
   __CFG_COUTV__( getSubIterationIndex() );
   
+  if(emulatorMode_)
+  {
+	  __COUT__ << "Emulator DTC configuring..." << __E__;
+	  return;
+  }
+
   // NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
   // Therefore, break up configuration into several steps so as to reply before the time out
   // As well, there is a specific order in which to configure the links in the chain of CFO->DTC0->DTC1->...DTCN
@@ -700,8 +794,8 @@ void DTCFrontEndInterface::configure(void)
     registerWrite(0x9100,0x00000000);
 
     __MCOUT_INFO__ ("Step " << config_step << ": " << device_name_ << " configure ROCs" << __E__);    
-    for (unsigned i=0; i<rocs_.size(); i++) 
-      rocs_[i].configure();
+    for (auto& roc:rocs_)
+      roc.second->configure();
     
     sleep(1);
     
@@ -736,7 +830,7 @@ void DTCFrontEndInterface::configure(void)
   
   turnOffLED(); 
   return;
-}
+} //end configure()
 
 //========================================================================================================================
 void DTCFrontEndInterface::halt(void)
@@ -762,6 +856,13 @@ void DTCFrontEndInterface::resume(void)
 //========================================================================================================================
 void DTCFrontEndInterface::start(std::string )//runNumber)
 {
+
+	if(emulatorMode_)
+	{
+		__COUT__ << "Emulator DTC starting..." << __E__;
+		return;
+	}
+
   const int numberOfChains = 1;
   int link[numberOfChains] = {0};
   
