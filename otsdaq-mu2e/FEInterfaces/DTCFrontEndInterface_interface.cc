@@ -164,81 +164,53 @@ void DTCFrontEndInterface::createROCs(void)
 
 			try
 			{
-
-				__COUT__ << "here" << __E__;
 				__COUTV__(theXDAQContextConfigTree_.getValueAsString());
 				__COUTV__(roc.second.getNode("ROCInterfacePluginName").getValue<std::string>());
-				__COUT__ << "there" << __E__;
 
-				std::unique_ptr<FEVInterface> tmpRoc =
+				//Note: FEVInterface makeInterface returns a unique_ptr
+				//	and we want to verify that ROCCoreInterface functionality
+				//	is there, so we do an intermediate dynamic_cast to check
+				//	before placing in a new unique_ptr of type ROCCoreInterface.
+				std::unique_ptr<FEVInterface> tmpVFE =
 						makeInterface(
 								roc.second.getNode("ROCInterfacePluginName").getValue<std::string>(),
 								roc.first,
 								theXDAQContextConfigTree_,
 								(theConfigurationPath_ + "/LinkToROCGroupTable/" +
 										roc.first));
-				__COUT__ << "Made" << __E__;
-				__COUTV__(tmpRoc.get());
-				if(!tmpRoc.get())
-					__COUT__ << "Null!" << __E__;
 
 				//setup parent supervisor of FEVinterface (for backwards compatibility, left out of constructor)
-				tmpRoc->parentSupervisor_ = parentSupervisor_;
+				tmpVFE->parentSupervisor_ = parentSupervisor_;
 
-				try
+				ROCCoreInterface& tmpRoc =
+						dynamic_cast<ROCCoreInterface&>(*tmpVFE);// dynamic_cast<ROCCoreInterface*>(tmpRoc.get());
+
+				//setup other members of ROCCore (for interface plug-in compatibility, left out of constructor)
+
+				__COUTV__(tmpRoc.emulatorMode_);
+				tmpRoc.emulatorMode_ = emulatorMode_;
+				__COUTV__(tmpRoc.emulatorMode_);
+
+				if(emulatorMode_)
 				{
-					ROCCoreInterface& tmpRocPtr =
-							 dynamic_cast<ROCCoreInterface&>(*tmpRoc);// dynamic_cast<ROCCoreInterface*>(tmpRoc.get());
-
-					__COUTV__(tmpRocPtr.emulatorMode_);
-
-//					__COUTV__(tmpRocPtr);
-//					if(!tmpRocPtr)
-//						__COUT__ << "Null!?" << __E__;
-//
-//					__COUTV__(tmpRocPtr->emulatorMode_);
-//					tmpRocPtr->emulatorMode_ = emulatorMode_;
-//					__COUTV__(tmpRocPtr->emulatorMode_);
+					__COUT__ << "Creating ROC in emulator mode..." << __E__;
+					//start emulator thread
+					//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
+					//  		//	&(rocs_.back())).detach();
 				}
-				catch(const std::bad_cast& e) {
-				    // Cast failed
-					__COUT__ << "cast failed" << __E__;
-				}
-				catch(...) {
-				    // Cast failed
-					__COUT__ << "cast failed" << __E__;
+				else
+				{
+					tmpRoc.thisDTC_ = thisDTC_;
 				}
 
-				__COUT__ << "again here." << __E__;
+				rocs_.emplace(std::pair<std::string,
+						std::unique_ptr<ROCCoreInterface>>(
+								roc.first,
+								&tmpRoc));
+				tmpVFE.release(); //release the FEVInterface unique_ptr, so we are left with just one
 
-				(dynamic_cast<ROCCoreInterface*>(tmpRoc.get()))->emulatorMode_ = emulatorMode_;
+				__COUTV__(rocs_[roc.first]->emulatorMode_);
 
-				__COUTV__((dynamic_cast<ROCCoreInterface*>(tmpRoc.get()))->emulatorMode_);
-
-//				rocs_.emplace(std::pair<std::string,
-//						std::unique_ptr<ROCCoreInterface>>(
-//						roc.first,
-//						dynamic_cast<ROCCoreInterface*>(
-//						makeInterface(
-//								roc.second.getNode("ROCInterfacePluginName").getValue<std::string>(),
-//								roc.first,
-//								theXDAQContextConfigTree_,
-//								(theConfigurationPath_ + "/LinkToROCGroupTable/" +
-//										roc.first) )
-//				)));
-//
-//				//setup other members supervisor of ROCCore (for interface plug-in compatibility, left out of constructor)
-//				rocs_[roc.first]->emulatorMode_ = emulatorMode_;
-//				if(emulatorMode_)
-//				{
-//					__COUT__ << "Creating ROC in emulator mode..." << __E__;
-//					//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
-//							//  		//	&(rocs_.back())).detach();
-//				}
-//				else
-//				{
-//					rocs_[roc.first]->thisDTC_ = thisDTC_;
-//				}
 			}
 			catch(const cet::exception& e)
 			{
@@ -248,6 +220,16 @@ void DTCFrontEndInterface::createROCs(void)
 						<< "' due to the following error: \n" << e.what() << __E__;
 				__COUT_ERR__ << ss.str();
 				__MOUT_ERR__ << ss.str();
+				__SS_THROW__;
+			}
+			catch(const std::bad_cast& e)
+			{
+				__SS__ << "Cast to ROCCoreInterface failed! Verify the plugin inherits from ROCCoreInterface." << __E__;
+				ss << "Failed to instantiate plugin named '" <<
+						roc.first << "' of type '" <<
+						roc.second.getNode("ROCInterfacePluginName").getValue<std::string>()
+						<< "' due to the following error: \n" << e.what() << __E__;
+
 				__SS_THROW__;
 			}
 		}
@@ -573,9 +555,14 @@ void DTCFrontEndInterface::configure(void)
   
   if(emulatorMode_)
   {
-	  __COUT__ << "Emulator DTC configuring..." << __E__;
+	  __COUT__ << "Emulator DTC configuring... # of ROCs = " <<
+			  rocs_.size() << __E__;
+	  for (auto& roc:rocs_)
+	       roc.second->configure();
 	  return;
   }
+  __COUT__ << "DTC configuring... # of ROCs = " <<
+  			  rocs_.size() << __E__;
 
   // NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
   // Therefore, break up configuration into several steps so as to reply before the time out

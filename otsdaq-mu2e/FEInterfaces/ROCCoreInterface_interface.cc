@@ -8,7 +8,7 @@
 using namespace ots;
 
 #undef 	__MF_SUBJECT__
-#define __MF_SUBJECT__ FEVInterface::getInterfaceUID()
+#define __MF_SUBJECT__ "FE-ROCCoreInterface"
 
 //=========================================================================================
 ROCCoreInterface::ROCCoreInterface(
@@ -31,6 +31,7 @@ ROCCoreInterface::ROCCoreInterface(
 //==========================================================================================
 ROCCoreInterface::~ROCCoreInterface(void)
 {
+	__CFG_COUT__ << "Destructor" << __E__;
 }
 
 //==================================================================================================
@@ -38,7 +39,7 @@ void ROCCoreInterface::writeRegister(unsigned address, unsigned data_to_write)
 {
 	if(emulatorMode_)
 	{
-		__COUT__ << "Emulator mode write." << __E__;
+		__CFG_COUT__ << "Emulator mode write." << __E__;
 		return;
 	}
 
@@ -54,7 +55,7 @@ int ROCCoreInterface::readRegister(unsigned address)
 
 	if(emulatorMode_)
 	{
-		__COUT__ << "Emulator mode read." << __E__;
+		__CFG_COUT__ << "Emulator mode read." << __E__;
 		return -1;
 	}
 
@@ -86,22 +87,22 @@ int ROCCoreInterface::readDelay()
 void ROCCoreInterface::configure(void)
 {
   // read 6 should read back 0x12fc
-  //  __COUT__ << " 1 read register 6 = " << this->readRegister(6) << __E__;
-  //  __COUT__ << " 2 read register 6 = " << this->readRegister(6) << __E__;
-  //  __COUT__ << " 3 read register 6 = " << this->readRegister(6) << __E__;
-  __COUT__ << " Confirm read register 6 = " << this->readRegister(6) << __E__;
+  //  __CFG_COUT__ << " 1 read register 6 = " << this->readRegister(6) << __E__;
+  //  __CFG_COUT__ << " 2 read register 6 = " << this->readRegister(6) << __E__;
+  //  __CFG_COUT__ << " 3 read register 6 = " << this->readRegister(6) << __E__;
+  __CFG_COUT__ << " Confirm read register 6 = " << this->readRegister(6) << __E__;
 
   __MCOUT_INFO__ ("........." << " Set delay = " << delay_ << __E__);
 
   this->writeDelay(delay_);
 
-  __COUT__ << " Read delay = " << this->readDelay() << __E__;
+  __CFG_COUT__ << " Read delay = " << this->readDelay() << __E__;
 
-  __COUT__ << __E__;   __COUT__ << __E__;   __COUT__ << __E__;
-  __COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
-  __COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
-  __COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
-  __COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
+  __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;
+  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
+  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
+  __CFG_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
+  __CFG_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
 
   return;
 }
