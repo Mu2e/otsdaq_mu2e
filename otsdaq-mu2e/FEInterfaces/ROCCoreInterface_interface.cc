@@ -1,8 +1,6 @@
 #include "otsdaq-mu2e/FEInterfaces/ROCCoreInterface.h"
-#include "otsdaq-core/Macros/CoutMacros.h"
 
 #include "otsdaq-core/Macros/InterfacePluginMacros.h"
-#include "otsdaq-core/PluginMakers/MakeInterface.h"
 
 
 using namespace ots;

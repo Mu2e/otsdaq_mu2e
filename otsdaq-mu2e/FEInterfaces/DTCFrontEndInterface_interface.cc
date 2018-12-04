@@ -2,9 +2,7 @@
 #include "otsdaq-core/Macros/InterfacePluginMacros.h"
 #include "otsdaq-core/PluginMakers/MakeInterface.h"
 
-#include "otsdaq-core/FECore/FEVInterface.h"
-
-//#include "mu2e_driver/mu2e_mmap_ioctl.h"	// m_ioc_cmd_t
+#include "otsdaq-mu2e/FEInterfaces/ROCCoreVEmulator.h"
 
 using namespace ots;
 
@@ -194,9 +192,28 @@ void DTCFrontEndInterface::createROCs(void)
 				if(emulatorMode_)
 				{
 					__COUT__ << "Creating ROC in emulator mode..." << __E__;
-					//start emulator thread
-					//std::thread([](ROCCalorimeterEmulator *roc){ ROCCalorimeterEmulator::EmulatorWorkLoop(roc); },
-					//  		//	&(rocs_.back())).detach();
+
+					try
+					{
+						//verify ROCCoreVEmulator class functionality with dynamic_cast
+						ROCCoreVEmulator& tmpEmulator =
+								dynamic_cast<ROCCoreVEmulator&>(tmpRoc);// dynamic_cast<ROCCoreInterface*>(tmpRoc.get());
+
+						//start emulator thread
+						std::thread([](ROCCoreVEmulator* rocEmulator)
+								{ ROCCoreVEmulator::emulatorThread(rocEmulator); },
+								&tmpEmulator).detach();
+					}
+					catch(const std::bad_cast& e)
+					{
+						__SS__ << "Cast to ROCCoreVEmulator failed! Verify the emulator plugin inherits from ROCCoreVEmulator." << __E__;
+						ss << "Failed to instantiate plugin named '" <<
+								roc.first << "' of type '" <<
+								roc.second.getNode("ROCInterfacePluginName").getValue<std::string>()
+								<< "' due to the following error: \n" << e.what() << __E__;
+
+						__SS_THROW__;
+					}
 				}
 				else
 				{
