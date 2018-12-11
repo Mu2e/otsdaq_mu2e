@@ -50,7 +50,6 @@ void ROCCoreInterface::writeRegister(unsigned address, unsigned data_to_write)
 //==================================================================================================
 int ROCCoreInterface::readRegister(unsigned address)
 {
-
 	if(emulatorMode_)
 	{
 		__CFG_COUT__ << "Emulator mode read." << __E__;

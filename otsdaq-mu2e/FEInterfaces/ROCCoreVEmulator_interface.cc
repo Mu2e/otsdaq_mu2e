@@ -13,7 +13,7 @@ ROCCoreVEmulator::ROCCoreVEmulator(
 			   const ConfigurationTree& theXDAQContextConfigTree,
 			   const std::string& theConfigurationPath)
 : ROCCoreInterface			(rocUID,theXDAQContextConfigTree,theConfigurationPath)
-, workloopExit_				(true)
+, workloopExit_				(false)
 , workloopRunning_			(false)
 {
   INIT_MF("ROCCoreVEmulator");

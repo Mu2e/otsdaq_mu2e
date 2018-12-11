@@ -201,7 +201,10 @@ void DTCFrontEndInterface::createROCs(void)
 
 						//start emulator thread
 						std::thread([](ROCCoreVEmulator* rocEmulator)
-								{ ROCCoreVEmulator::emulatorThread(rocEmulator); },
+								{
+							__COUT__ << "Starting ROC emulator thread..." << __E__;
+							ROCCoreVEmulator::emulatorThread(rocEmulator);
+								},
 								&tmpEmulator).detach();
 					}
 					catch(const std::bad_cast& e)

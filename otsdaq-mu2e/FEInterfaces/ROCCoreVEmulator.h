@@ -29,12 +29,15 @@ public:
 		bool stillWorking = true;
 		while(!roc->workloopExit_ && stillWorking)
 		{
+			__COUT__ << "Calling emulator WorkLoop..." << __E__;
+
 			//lockout member variables for the remainder of the scope
 			//this guarantees the emulator thread can safely access the members
 			//	Note: other functions (e.g. write and read) must also lock for this to work!
 			std::lock_guard<std::mutex> lock(roc->workloopMutex_);
 			stillWorking = roc->emulatorWorkLoop();
 		}
+		__COUT__ << "Exited emulator WorkLoop." << __E__;
 
 		roc->workloopRunning_ = false;
 	} //end emulatorThread()
