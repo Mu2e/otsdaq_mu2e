@@ -4,6 +4,10 @@
 
 #include "otsdaq-core/FECore/FEVInterface.h"
 
+#include <iostream>
+#include <fstream>
+
+
 //#include "mu2e_driver/mu2e_mmap_ioctl.h"	// m_ioc_cmd_t
 
 using namespace ots;
@@ -66,7 +70,6 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 
   // linux file to communicate with
   dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
-  
 
   try
   {  
@@ -572,13 +575,13 @@ void DTCFrontEndInterface::configure(void)
                                               // If > 0, go through configuration steps this many times 
  
   const int reset_fpga		        = 1;  // 1 = yes, 0 = no
-  const int config_clock		= 1;  // 1 = yes, 0 = no
-  const int config_jitter_attenuator	= 1;  // 1 = yes, 0 = no
+  const int config_clock		= 0;  // 1 = yes, 0 = no
+  const int config_jitter_attenuator	= 0;  // 1 = yes, 0 = no
   const int reset_rx			= 0;  // 1 = yes, 0 = no
   
   const int number_of_dtc_config_steps = 7;  
 
-  const int max_number_of_tries = 10;        // max_number_of_tries - number_of_dtc_config_steps = max number to wait for links OK
+  const int max_number_of_tries = 3;        // max number to wait for links OK
   
   int number_of_total_config_steps = number_of_system_configs * number_of_dtc_config_steps;
   
@@ -590,7 +593,8 @@ void DTCFrontEndInterface::configure(void)
       return;
   }
 
-  if (config_substep > 0 && config_substep < 4) { //wait a maximum of 30 seconds
+  //waiting for link loop
+  if (config_substep > 0 && config_substep < max_number_of_tries) { //wait a maximum of 30 seconds
 
     const int number_of_link_checks = 10;
 
@@ -599,22 +603,27 @@ void DTCFrontEndInterface::configure(void)
     for (int i=0; i<number_of_link_checks; i++) {
       
       if (checkLinkStatus() == 1 ) {
-	
-	indicateIterationWork(); // links OK, 
+
+	// links OK,  continue with the rest of the configuration
+
+	indicateIterationWork(); 
 	turnOffLED(); 
-	return;                  // continue with the rest of the configuration
+	return;                  
 	
       } else if (getCFOLinkStatus() == 0) {
+
+	// in this case, links will never get to be OK, stop waiting for them
 	
 	__COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
-	
 	sleep(1);
-	
-	indicateIterationWork(); // in this case, links will never get to be OK 
+
+	indicateIterationWork(); 	
 	turnOffLED(); 
-	return;                  // continue with the rest of the configuration
+	return;                  
 	
       } else {
+
+	// links still not OK, keep checking... 
 
 	__COUT__ << "Waiting for DTC Link Status = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
 	sleep(1);
@@ -622,9 +631,19 @@ void DTCFrontEndInterface::configure(void)
       }
     }
 
-    indicateSubIterationWork();    // links still not OK, come back to me... 
+    indicateSubIterationWork();    
+    return;
+
+  } else if (config_substep > max_number_of_tries) { 
+
+    //wait a maximum of 30 seconds, then stop waiting for them
+
+    __COUT__ << "Links still bad = 0x" << std::hex << registerRead(0x9140) << std::dec << "... continue"<< __E__;
+    indicateIterationWork(); 
+    turnOffLED(); 
+    return;                  
   }
-  
+
   turnOnLED();
   
   if ( (config_step%number_of_dtc_config_steps) == 0 ) {
@@ -803,11 +822,13 @@ void DTCFrontEndInterface::configure(void)
 
     } else if ( config_step > max_number_of_tries ) {
 
-      __MCOUT_INFO__(device_name_ << " too long waiting for links... not OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
+      __MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
       return;
 
     } else {
+
       __MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
+
     }
   }
 
@@ -856,7 +877,7 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
   const int numberOfDTCsPerChain = 2;
   int DTCcounter[numberOfDTCsPerChain] = {0};
   
-  const int numberOfROCsPerDTC = 2;
+  const int numberOfROCsPerDTC = 1;
   int ROCCounter[numberOfROCsPerDTC] = {0};
   
   // To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
@@ -935,8 +956,47 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
 //========================================================================================================================
 void DTCFrontEndInterface::stop(void)
 {
-  __COUT__ << "STOP: DTC status" << __E__;
-  readStatus();
+  
+  const int totalNumberOfLoopbacks = 100;
+
+  int loopbackIndex = getIterationIndex();
+
+
+
+  if (loopbackIndex == 0) {
+
+    int i=0;
+    for (auto& roc:rocs_) {
+      std::stringstream filename;
+      filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC" << roc.second->getLinkID() << "data.txt";
+      std::string filenamestring = filename.str();
+      datafile_[i].open(filenamestring);
+      i++;
+    }
+  }
+
+  if (loopbackIndex > totalNumberOfLoopbacks) { 	 
+    int i=0;
+    for (auto& roc:rocs_) {
+      datafile_[i].close();
+      i++;
+    }
+    return;
+  }
+  
+  int i=0;
+  for (auto& roc:rocs_) {
+
+    int timestamp_data = roc.second->readTimestamp();
+
+    __COUT__<< "Read " << loopbackIndex << " -> " << device_name_ << " timestamp " << timestamp_data << __E__;
+
+    datafile_[i] << loopbackIndex << " " << timestamp_data << std::endl;
+    i++;
+  }
+
+  indicateIterationWork();
+  return;
 }
 
 //========================================================================================================================
@@ -2302,9 +2362,11 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
   uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
   __CFG_COUTV__(rocLinkIndex);
-  __CFG_COUTV__(address);
+  __CFG_COUTV__((unsigned int)address);
 
-  uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
+	//DTCLib::DTC* tmpDTC = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_,"");
+  	uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
+	//delete tmpDTC;
 
   //  char readDataStr[100];
   //  sprintf(readDataStr,"0x%X",readData);
@@ -2315,6 +2377,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   __CFG_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__; 
 
 } //end DTCStatus()
+
 
 
 //========================================================================================================================
