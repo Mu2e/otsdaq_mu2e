@@ -43,6 +43,15 @@ simple_plugin(CFOFrontEndInterface "interface"
 	DTCInterface
  )
    
+   
+simple_plugin(CAPTANSignalGenerator "interface"
+  DAQHardware
+  FECore
+  WorkLoopManager
+  Configurable
+  ${CETLIB}
+  ${CETLIB_EXCEPT}
+)
 
 install_headers()
 install_source()
