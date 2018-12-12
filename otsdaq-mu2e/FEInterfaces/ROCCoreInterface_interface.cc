@@ -72,37 +72,42 @@ int ROCCoreInterface::readTimestamp()
 //==================================================================================================
 void ROCCoreInterface::writeDelay(unsigned delay)
 {
- this->writeRegister(21,delay);
-
- return;
+  this->writeRegister(21,delay);
+  return;
 }
 
 //==================================================================================================
 int ROCCoreInterface::readDelay()
 {
- return this->readRegister(7);
+  return this->readRegister(7);
 }
 
 //==================================================================================================
 void ROCCoreInterface::configure(void)
 {
+  //setup needToResetAlignment using rising edge of register 22 
+  // (i.e., force synchronization of ROC clock with 40MHz system clock)
+  __MCOUT_INFO__("......... setup to synchronize ROC clock with 40 MHz clock edge" << __E__);
+  this->writeRegister(22,0);
+  this->writeRegister(22,1);
+
   // read 6 should read back 0x12fc
   //  __CFG_COUT__ << " 1 read register 6 = " << this->readRegister(6) << __E__;
   //  __CFG_COUT__ << " 2 read register 6 = " << this->readRegister(6) << __E__;
   //  __CFG_COUT__ << " 3 read register 6 = " << this->readRegister(6) << __E__;
-  __CFG_COUT__ << " Confirm read register 6 = " << this->readRegister(6) << __E__;
+  //  __CFG_COUT__ << " Confirm read register 6 = " << this->readRegister(6) << __E__;
 
-  __MCOUT_INFO__ ("........." << " Set delay = " << delay_ << __E__);
+  __MCOUT_INFO__ ("........." << " Set delay = " << delay_ << " ... ");
 
   this->writeDelay(delay_);
 
-  __CFG_COUT__ << " Read delay = " << this->readDelay() << __E__;
+  __MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
 
-  __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;
-  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
-  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
-  __CFG_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
-  __CFG_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
+  //  __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;
+  //  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
+  //  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
+  //  __CFG_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
+  //  __CFG_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
 
   return;
 }
