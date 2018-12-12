@@ -358,8 +358,9 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   //	__COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
   
   for (unsigned int n=(min_distribution_-5); n<(max_distribution_+5); n++) 
-    __COUT__ << " delay [ " << n << " ] = " << loopback_distribution_[n] << __E__;
-  
+  {
+    __MCOUT__(" delay [ " << n << " ] = " << loopback_distribution_[n] << __E__);
+  }
   __COUT__ << __E__;
   
   __COUT__ << "LOOPBACK: number of failed loopbacks = " << std::dec << number_of_failures << __E__;
@@ -367,7 +368,7 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   
   
   return average_loopback_;
-}
+} //end MesaureLoopback()
 
 
 //===============================================================================================
@@ -384,7 +385,7 @@ void CFOFrontEndInterface::configure(void)
   
   const int number_of_system_configs	= -1; // if < 0, keep trying until links are OK.  
                                               // If > 0, go through configuration steps this many times 
-  const int config_clock		= 1;  // 1 = yes, 0 = no
+  const int config_clock		= 0;  // 1 = yes, 0 = no
   const int reset_tx			= 1;  // 1 = yes, 0 = no
   
   const int number_of_dtc_config_steps = 7; 
@@ -453,7 +454,7 @@ void CFOFrontEndInterface::configure(void)
       
     } else { 
 
-      __MCOUT_INFO__("Step " << config_step << "CFO NOT reset clock..." << __E__);      
+      __MCOUT_INFO__("Step " << config_step << ": CFO do NOT reset clock..." << __E__);      
       
     }
     
@@ -553,12 +554,17 @@ void CFOFrontEndInterface::resume(void)
 //========================================================================================================================
 void CFOFrontEndInterface::start(std::string )//runNumber)
 {
+	
+  bool LoopbackLock		   = true;
+  int loopbackROC		   = 0;
+  
   const int numberOfChains = 1;
   int link[numberOfChains] = {0};
   
+  
   const int numberOfDTCsPerChain = 2; // assume 0, then 1
   
-  const int numberOfROCsPerDTC = 2; // assume 0, then 1
+  const int numberOfROCsPerDTC = 1; // assume 0, then 1
   
   // To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
   // work per iteration. Loop back done on all chains (in this method), assuming the following order: 
@@ -587,8 +593,18 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
 	}
       }
     }
-    __MCOUT_INFO__("-------------------------" << __E__); 
     
+    float diff = delay[0][1][0] - delay[0][0][0];
+    
+    __MCOUT_INFO__("DTC1 - DTC0 = " << diff <<__E__);
+    __MCOUT_INFO__("-------------------------" << __E__); 
+
+    __COUT__ << "CFO enable Event Start character output " << __E__;
+    registerWrite(0x9100,0x5); 
+    
+    __COUT__ << "CFO enable serdes transmit and receive " << __E__;
+    registerWrite(0x9114,0x0000ffff); 
+
     __COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
     registerWrite(0x9118,0x000000ff);
     registerWrite(0x9118,0x0);
@@ -642,7 +658,7 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
     registerWrite(0x9118,0x0);
     sleep(5);
     
-    // 	__COUT__ << "LOOPBACK: on DTC " << link[chainIndex] <<__E__;
+    //__MCOUT__( "LOOPBACK: on DTC " << link[chainIndex] <<__E__);
     
     delay[chainIndex][activeDTC][activeROC] = MeasureLoopback(link[chainIndex]);
     
@@ -654,14 +670,147 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
   } // (chainIndex < numberOfChains && WorkLoop::continueWorkLoop_)
   
   indicateIterationWork(); // I still need to be touched
+  
+//  for(int i = 0; i < 10; i++)
+//  {
+// 	 if((delay[0][0][0] != 65 || delay[0][1][0] != 95) && LoopbackLock)
+// 	 {  
+// 	 	
+ // 		configure();	
+ // 	 }
+//}
   return;
 }
 
 //========================================================================================================================
 void CFOFrontEndInterface::stop(void)
 {
-  __COUT__ << "STOP: CFO status" << __E__;
-  readStatus();
+	
+  const int totalNumberOfLoopbacks = 200;
+
+  int loopbackIndex = getIterationIndex();
+
+  if (loopbackIndex > totalNumberOfLoopbacks) { 	 
+
+
+	  //---- begin read in data 
+	
+	  std::string filein1 = "/home/mu2edaq/sync_demo/ots/DTC0_ROC0data.txt";
+	  std::string filein2 = "/home/mu2edaq/sync_demo/ots/DTC1_ROC0data.txt";
+	
+	  // file 1
+	  std::ifstream in1;
+	
+	  int iteration_source1[25];
+	  int timestamp_source1[25];
+	
+	  in1.open(filein1);
+	
+	  //  std::cout << filein1 << std::endl;
+	
+	  int nlines1 = 0;
+	  while (1) {
+	    in1 >> iteration_source1[nlines1] >> timestamp_source1[nlines1] ;
+	    if (!in1.good()) break;
+	//    if(nlines1<10)
+	//          __COUT__ <<  "iteration " << iteration_source1[nlines1] << " " <<
+	//           timestamp_source1[nlines1] << __E__;
+	    nlines1++;
+	  }
+	
+	  in1.close();
+  
+  	  // file 2
+	  std::ifstream in2;
+	
+	  int iteration_source2[25];
+	  int timestamp_source2[25];
+	
+	  in2.open(filein2);
+	
+	  //  std::cout << filein1 << std::endl;
+	
+	  int nlines2 = 0;
+	  while (1) {
+	    in2 >> iteration_source2[nlines2] >> timestamp_source2[nlines2] ;
+	    if (!in2.good()) break;
+	//    if(nlines2<10)
+	//          __COUT__ <<  "iteration " << iteration_source2[nlines2] << " " <<
+	 //          timestamp_source2[nlines2] << __E__;
+	    nlines2++;
+	  }
+	
+	  in2.close();
+
+     __COUT__ << "Read in " << nlines1 << " lines from " << filein1 << __E__;
+     __COUT__ << "Read in " << nlines2 << " lines from " << filein2 << __E__;
+
+     __COUT__ << __E__;
+
+     //__MCOUT_INFO__("iter file1  file2  diff" << __E__);
+
+     int distribution[61] = {};
+
+     int max_distribution = 0;
+     int min_distribution = 60;
+
+     int offset = 30;
+
+     int timestamp_diff[25];
+
+     float numerator = 0.;
+     float denominator = 0.;
+
+     for (int i=0; i<nlines1; i++) {
+       timestamp_diff[i] = (timestamp_source2[i] - timestamp_source1[i]) + offset;
+       //__MCOUT_INFO__(i << "    " <<
+       //               timestamp_source1[i] << "   " <<
+       //               timestamp_source2[i] << "   " <<
+       //               (timestamp_diff[i] - offset) << __E__);
+
+       numerator += (float) timestamp_diff[i];
+       denominator += 1.0;
+
+       distribution[timestamp_diff[i]]++;
+
+       if (timestamp_diff[i] > max_distribution) 
+         max_distribution = timestamp_diff[i];
+
+       if (timestamp_diff[i] < min_distribution) 
+         min_distribution = timestamp_diff[i];
+
+     }
+     float average = numerator/denominator;
+
+     float rms = 0.;
+  
+     for (int n = 0; n<nlines1; n++)
+       rms += (timestamp_diff[n] - average) * (timestamp_diff[n] - average);
+  
+     if (denominator > 0.0) 
+       rms = sqrt(rms / denominator);
+
+     average -= offset;
+
+     //    __COUT__ << "LOOPBACK: min_distribution_: " << min_distribution_ << __E__;
+     //    __COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
+
+     __MCOUT_INFO__("--------------------------------------------" << __E__);
+     __MCOUT_INFO__("--CAPTAN timestamp difference distribution--" << __E__);
+     for (int n=(min_distribution-5); n<(max_distribution+5); n++) {
+       int display = n - offset;
+       __MCOUT_INFO__(" diff [ " << display << " ] = " << distribution[n] << __E__);
+     }
+     __MCOUT_INFO__("--------------------------------------------" << __E__);
+
+     __MCOUT_INFO__ ("Average = " << average << " ... RMS = " << rms << __E__);
+
+	 return;
+  }
+  
+  indicateIterationWork();
+  return;
+
 }
 
 //========================================================================================================================
@@ -674,5 +823,7 @@ bool CFOFrontEndInterface::running(void)
   
   return false;
 }
+
+
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)

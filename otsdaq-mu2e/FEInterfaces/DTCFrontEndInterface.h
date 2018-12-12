@@ -5,6 +5,8 @@
 #include "otsdaq-core/FECore/FEVInterface.h"
 #include <string>
 #include <map>
+#include <iostream>
+#include <fstream>
 #include "dtcInterfaceLib/DTC.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"	// m_ioc_cmd_t
 
@@ -71,6 +73,8 @@ namespace ots
     unsigned roc_mask_ = 0;
     std::string device_name_;
     bool emulatorMode_;
+
+    std::ofstream datafile_[8];  
     
     std::map<std::string /*name*/, std::unique_ptr<ROCCoreInterface> > rocs_;
 		

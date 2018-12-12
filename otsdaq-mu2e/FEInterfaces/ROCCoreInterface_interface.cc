@@ -1,8 +1,6 @@
 #include "otsdaq-mu2e/FEInterfaces/ROCCoreInterface.h"
-#include "otsdaq-core/Macros/CoutMacros.h"
 
 #include "otsdaq-core/Macros/InterfacePluginMacros.h"
-#include "otsdaq-core/PluginMakers/MakeInterface.h"
 
 
 using namespace ots;
@@ -52,7 +50,6 @@ void ROCCoreInterface::writeRegister(unsigned address, unsigned data_to_write)
 //==================================================================================================
 int ROCCoreInterface::readRegister(unsigned address)
 {
-
 	if(emulatorMode_)
 	{
 		__CFG_COUT__ << "Emulator mode read." << __E__;

@@ -26,19 +26,32 @@ simple_plugin(ROCCoreInterface "interface"
   	FECore		
   	DTCInterface
  )
+ 
+simple_plugin(ROCCoreVEmulator "interface"
+	otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
+ )
     
 simple_plugin(DTCFrontEndInterface "interface"
   	FECore
 	DTCInterface  
 	otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
-	#Mu2eFEInterfaceComponents	
+	otsdaq-mu2e_FEInterfaces_ROCCoreVEmulator_interface
  )
  
 simple_plugin(CFOFrontEndInterface "interface"
   	FECore
 	DTCInterface
  )
-
+   
+   
+simple_plugin(CAPTANSignalGenerator "interface"
+  DAQHardware
+  FECore
+  WorkLoopManager
+  Configurable
+  ${CETLIB}
+  ${CETLIB_EXCEPT}
+)
 
 install_headers()
 install_source()

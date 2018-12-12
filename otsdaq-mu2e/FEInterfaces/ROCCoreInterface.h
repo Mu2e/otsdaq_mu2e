@@ -41,8 +41,8 @@ class ROCCoreInterface : public FEVInterface
   //----------------
 
   // write and read to registers
-  void writeRegister (unsigned address, unsigned data_to_write);
-  int readRegister (unsigned address);
+  virtual void writeRegister (unsigned address, unsigned data_to_write);
+  virtual int readRegister (unsigned address);
 
   //specific ROC functions
   int readTimestamp();
