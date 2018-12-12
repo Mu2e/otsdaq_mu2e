@@ -49,6 +49,8 @@ class ROCCoreInterface : public FEVInterface
   void writeDelay(unsigned delay); //5ns steps
   int readDelay();                 //5ns steps
 
+  inline int getLinkID() { return linkID_; }
+
   bool					emulatorMode_;
   DTCLib::DTC* 	      	thisDTC_;
 
