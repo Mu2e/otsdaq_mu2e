@@ -269,7 +269,12 @@ int DTCFrontEndInterface::universalRead(char *address, char *returnValue)
 {
   // __COUT__ << "DTC READ" << __E__;
 
-	if(emulatorMode_) return -1;
+	if(emulatorMode_)
+	{
+		for(unsigned int i=0;i<universalDataSize_;++i)
+			returnValue[i] = 0xF0 | i;
+		return 0;
+	}
   
   reg_access_.access_type = 0; // 0 = read, 1 = write
   
