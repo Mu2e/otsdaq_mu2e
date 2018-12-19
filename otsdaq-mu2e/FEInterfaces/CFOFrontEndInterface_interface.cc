@@ -350,7 +350,7 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   	// do a little bit of analysis
   
 	average_loopback_ = -999.;
-  	if (denominator > 0.0) 
+  	if (denominator > 0.5) 
     	average_loopback_ = numerator / denominator;
   
   	rms_loopback_ = 0.;
@@ -361,9 +361,12 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
 		}
 	}
 
-	if (denominator > 0.0) 
+	if (denominator > 0.5) { 
     	rms_loopback_ = sqrt(rms_loopback_ / denominator);
-  
+    	average_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
+    	rms_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
+	}
+
   	__COUT__ << "LOOPBACK: distribution: " << __E__;
   	//	__COUT__ << "LOOPBACK: min_distribution_: " << min_distribution_ << __E__;
   	//	__COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
@@ -371,9 +374,6 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
 	for (unsigned int n=(min_distribution_-5); n<(max_distribution_+5); n++) {
     	__COUT__ << " delay [ " << n << " ] = " << loopback_distribution_[n] << __E__;
   	}
-
-    average_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
-    rms_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
 
 	__COUT__<< " average = " << average_loopback_ << " ns, RMS = " << rms_loopback_ 
     			<< " ns, failures = " << failed_loopback_ << __E__;
