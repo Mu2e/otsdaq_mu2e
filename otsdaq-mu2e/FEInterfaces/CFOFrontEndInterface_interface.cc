@@ -369,14 +369,14 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   	//	__COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
   
 	for (unsigned int n=(min_distribution_-5); n<(max_distribution_+5); n++) {
-    	__MCOUT__(" delay [ " << n << " ] = " << loopback_distribution_[n] << __E__);
+    	__COUT__ << " delay [ " << n << " ] = " << loopback_distribution_[n] << __E__;
   	}
 
     average_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
     rms_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
 
-	__MCOUT__(" average = " << average_loopback_ << " ns, RMS = " << rms_loopback_ 
-    			<< " ns, failures = " << failed_loopback_ << __E__);
+	__COUT__<< " average = " << average_loopback_ << " ns, RMS = " << rms_loopback_ 
+    			<< " ns, failures = " << failed_loopback_ << __E__;
 
 	__COUT__ << __E__;
   
