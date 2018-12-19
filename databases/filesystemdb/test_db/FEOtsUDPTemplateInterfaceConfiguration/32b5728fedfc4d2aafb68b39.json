@@ -221,6 +221,110 @@
 {
 "name" : "defaultConfig_v35",
 "assigned" : "2018-12-12T12:02:23.957-0600"
+},
+{
+"name" : "defaultConfig_v36",
+"assigned" : "2018-12-12T14:03:18.441-0600"
+},
+{
+"name" : "defaultConfig_v37",
+"assigned" : "2018-12-13T11:35:01.030-0600"
+},
+{
+"name" : "defaultConfig_v38",
+"assigned" : "2018-12-13T11:52:23.388-0600"
+},
+{
+"name" : "defaultConfig_v39",
+"assigned" : "2018-12-13T11:53:30.956-0600"
+},
+{
+"name" : "defaultConfig_v40",
+"assigned" : "2018-12-13T12:04:32.725-0600"
+},
+{
+"name" : "defaultConfig_v41",
+"assigned" : "2018-12-14T09:25:32.355-0600"
+},
+{
+"name" : "defaultConfig_v42",
+"assigned" : "2018-12-14T09:29:58.626-0600"
+},
+{
+"name" : "defaultConfig_v43",
+"assigned" : "2018-12-14T09:30:25.090-0600"
+},
+{
+"name" : "defaultConfig_v44",
+"assigned" : "2018-12-14T09:32:18.021-0600"
+},
+{
+"name" : "defaultConfig_v45",
+"assigned" : "2018-12-14T09:34:34.944-0600"
+},
+{
+"name" : "defaultConfig_v46",
+"assigned" : "2018-12-14T09:54:13.815-0600"
+},
+{
+"name" : "defaultConfig_v47",
+"assigned" : "2018-12-14T10:09:05.133-0600"
+},
+{
+"name" : "defaultConfig_v48",
+"assigned" : "2018-12-14T15:10:11.009-0600"
+},
+{
+"name" : "defaultConfig_v49",
+"assigned" : "2018-12-14T16:19:44.957-0600"
+},
+{
+"name" : "defaultConfig_v50",
+"assigned" : "2018-12-14T16:27:52.451-0600"
+},
+{
+"name" : "defaultConfig_v51",
+"assigned" : "2018-12-14T16:30:37.948-0600"
+},
+{
+"name" : "defaultConfig_v52",
+"assigned" : "2018-12-14T16:37:51.128-0600"
+},
+{
+"name" : "defaultConfig_v53",
+"assigned" : "2018-12-14T16:40:21.716-0600"
+},
+{
+"name" : "defaultConfig_v54",
+"assigned" : "2018-12-14T16:43:22.328-0600"
+},
+{
+"name" : "defaultConfig_v55",
+"assigned" : "2018-12-14T16:48:56.190-0600"
+},
+{
+"name" : "defaultConfig_v56",
+"assigned" : "2018-12-17T16:41:30.457-0600"
+},
+{
+"name" : "defaultConfig_v57",
+"assigned" : "2018-12-18T08:39:20.737-0600"
+},
+{
+"name" : "defaultConfig_v58",
+"assigned" : "2018-12-18T08:39:58.340-0600"
+},
+{
+"name" : "defaultConfig_v59",
+"assigned" : "2018-12-18T09:01:28.940-0600"
+},
+{
+"name" : "defaultConfig_v60",
+"assigned" : "2018-12-18T09:35:20.103-0600"
+},
+{
+"name" : "defaultConfig_v61",
+"assigned" : "2018-12-18T09:37:43.974-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -546,6 +650,214 @@
 "value" : {
 "name" : "defaultConfig_v35",
 "assigned" : "2018-12-12T12:02:23.957-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-12T14:03:18.441-0600",
+"value" : {
+"name" : "defaultConfig_v36",
+"assigned" : "2018-12-12T14:03:18.441-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T11:35:01.030-0600",
+"value" : {
+"name" : "defaultConfig_v37",
+"assigned" : "2018-12-13T11:35:01.030-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T11:52:23.388-0600",
+"value" : {
+"name" : "defaultConfig_v38",
+"assigned" : "2018-12-13T11:52:23.388-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T11:53:30.956-0600",
+"value" : {
+"name" : "defaultConfig_v39",
+"assigned" : "2018-12-13T11:53:30.956-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T12:04:32.725-0600",
+"value" : {
+"name" : "defaultConfig_v40",
+"assigned" : "2018-12-13T12:04:32.725-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:25:32.355-0600",
+"value" : {
+"name" : "defaultConfig_v41",
+"assigned" : "2018-12-14T09:25:32.355-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:29:58.626-0600",
+"value" : {
+"name" : "defaultConfig_v42",
+"assigned" : "2018-12-14T09:29:58.626-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:30:25.090-0600",
+"value" : {
+"name" : "defaultConfig_v43",
+"assigned" : "2018-12-14T09:30:25.090-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:32:18.021-0600",
+"value" : {
+"name" : "defaultConfig_v44",
+"assigned" : "2018-12-14T09:32:18.021-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:34:34.944-0600",
+"value" : {
+"name" : "defaultConfig_v45",
+"assigned" : "2018-12-14T09:34:34.944-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:54:13.815-0600",
+"value" : {
+"name" : "defaultConfig_v46",
+"assigned" : "2018-12-14T09:54:13.815-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T10:09:05.133-0600",
+"value" : {
+"name" : "defaultConfig_v47",
+"assigned" : "2018-12-14T10:09:05.133-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T15:10:11.009-0600",
+"value" : {
+"name" : "defaultConfig_v48",
+"assigned" : "2018-12-14T15:10:11.009-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:19:44.958-0600",
+"value" : {
+"name" : "defaultConfig_v49",
+"assigned" : "2018-12-14T16:19:44.957-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:27:52.451-0600",
+"value" : {
+"name" : "defaultConfig_v50",
+"assigned" : "2018-12-14T16:27:52.451-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:30:37.948-0600",
+"value" : {
+"name" : "defaultConfig_v51",
+"assigned" : "2018-12-14T16:30:37.948-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:37:51.128-0600",
+"value" : {
+"name" : "defaultConfig_v52",
+"assigned" : "2018-12-14T16:37:51.128-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:40:21.716-0600",
+"value" : {
+"name" : "defaultConfig_v53",
+"assigned" : "2018-12-14T16:40:21.716-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:43:22.328-0600",
+"value" : {
+"name" : "defaultConfig_v54",
+"assigned" : "2018-12-14T16:43:22.328-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:48:56.190-0600",
+"value" : {
+"name" : "defaultConfig_v55",
+"assigned" : "2018-12-14T16:48:56.190-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-17T16:41:30.457-0600",
+"value" : {
+"name" : "defaultConfig_v56",
+"assigned" : "2018-12-17T16:41:30.457-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T08:39:20.737-0600",
+"value" : {
+"name" : "defaultConfig_v57",
+"assigned" : "2018-12-18T08:39:20.737-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T08:39:58.340-0600",
+"value" : {
+"name" : "defaultConfig_v58",
+"assigned" : "2018-12-18T08:39:58.340-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T09:01:28.940-0600",
+"value" : {
+"name" : "defaultConfig_v59",
+"assigned" : "2018-12-18T09:01:28.940-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T09:35:20.103-0600",
+"value" : {
+"name" : "defaultConfig_v60",
+"assigned" : "2018-12-18T09:35:20.103-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T09:37:43.974-0600",
+"value" : {
+"name" : "defaultConfig_v61",
+"assigned" : "2018-12-18T09:37:43.974-0600"
 }
 }
 ],

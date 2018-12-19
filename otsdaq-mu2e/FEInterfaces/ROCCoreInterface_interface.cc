@@ -56,8 +56,19 @@ int ROCCoreInterface::readRegister(unsigned address)
 		return -1;
 	}
 
-  return thisDTC_->ReadROCRegister(linkID_,address);
+	int read_data = 0;
 
+  try
+  {  
+	read_data = thisDTC_->ReadROCRegister(linkID_,address,1000);
+  }
+  catch(...)
+  {
+  	__COUT__ << "DTC failed DCS read" << __E__;
+  	read_data = -999;
+  }
+
+  return read_data; 
 }
 
 //==================================================================================================
@@ -82,6 +93,12 @@ int ROCCoreInterface::readDelay()
 //==================================================================================================
 void ROCCoreInterface::configure(void)
 {
+
+  __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
+  this->writeRegister(0,1);
+  this->writeRegister(0,0);
+
+
   //setup needToResetAlignment using rising edge of register 22 
   // (i.e., force synchronization of ROC clock with 40MHz system clock)
   __MCOUT_INFO__("......... setup to synchronize ROC clock with 40 MHz clock edge" << __E__);
@@ -98,7 +115,7 @@ void ROCCoreInterface::configure(void)
 
   this->writeDelay(delay_);
 
-  __MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
+  //  __MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
 
   //  __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;   __CFG_COUT__ << __E__;
   //  __CFG_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;

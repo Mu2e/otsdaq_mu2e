@@ -70,6 +70,7 @@ namespace ots
     int fd_;
     int dtc_ = -1;
     int dtc_location_in_chain_ = -1;
+    int configure_clock_ = 0;
     unsigned roc_mask_ = 0;
     std::string device_name_;
     bool emulatorMode_;

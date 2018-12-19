@@ -20,7 +20,9 @@ CFOFrontEndInterface::CFOFrontEndInterface(const std::string& interfaceUID,
   //theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
   universalAddressSize_ = 4;
   universalDataSize_ 	= 4;
-  
+
+  configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<unsigned int>();
+
   dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
@@ -255,120 +257,134 @@ int CFOFrontEndInterface::getLinkStatus() {
 //=====================================================================================
 //
 float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
+
+  	const int maxNumberOfLoopbacks = 10000;
+  	int numberOfLoopbacks = getConfigurationManager()->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfLoopbacks").getValue<unsigned int>();
+
+  	__CFG_COUTV__( numberOfLoopbacks );
+
+  	//  int numberOfLoopbacks = 100;
   
-  const int numberOfIterations = 100;
+  	float numerator	 = 0.0;
+  	float denominator	 = 0.0;
+  	failed_loopback_ = 0;
   
-  float numerator	 = 0.0;
-  float denominator	 = 0.0;
-  int number_of_failures = 0;
+  	int loopback_data[maxNumberOfLoopbacks] = {};
   
-  int loopback_data[numberOfIterations] = {};
+  	max_distribution_ = 0;         // maximum value of the histogram
+  	min_distribution_ = 99999;     // minimum value of the histogram
   
-  max_distribution_ = 0;         // maximum value of the histogram
-  min_distribution_ = 99999;     // minimum value of the histogram
+  	for (int n = 0; n < 10000; n++) 
+    	loopback_distribution_[n] = 0;   //zero out the histogram
   
-  for (int n = 0; n < 10000; n++) 
-    loopback_distribution_[n] = 0;   //zero out the histogram
+  	__COUT__ << "LOOPBACK: CFO status before loopback" << __E__;
+  	readStatus();
   
-  __COUT__ << "LOOPBACK: CFO status before loopback" << __E__;
-  readStatus();
+  	//	__COUT__ << "LOOPBACK: BEFORE max_distribution_: " << max_distribution_ << __E__;	
   
-  //	__COUT__ << "LOOPBACK: BEFORE max_distribution_: " << max_distribution_ << __E__;	
-  
-  for (int n = 0; n<numberOfIterations; n++) {
+  	for (int n = 0; n<=numberOfLoopbacks; n++) {
     
-    //----------take out of delay measurement mode
-    registerWrite(0x9380,0x00000000);
+    	//----------take out of delay measurement mode
+    	registerWrite(0x9380,0x00000000);
     
-    //-------- Disable tx and rx data
-    registerWrite(0x9114,0x00000000);
+    	//-------- Disable tx and rx data
+    	registerWrite(0x9114,0x00000000);
     
-    //--- enable tx and rx for link linkToLoopback
-    int dataToWrite = (0x00000101 << linkToLoopback);
-    registerWrite(0x9114,dataToWrite);
+    	//--- enable tx and rx for link linkToLoopback
+    	int dataToWrite = (0x00000101 << linkToLoopback);
+    	registerWrite(0x9114,dataToWrite);
     
-    //----- Put linkToLoopback in delay measurement mode 
-    dataToWrite = (0x00000100 << linkToLoopback);
-    registerWrite(0x9380,dataToWrite);
+    	//----- Put linkToLoopback in delay measurement mode 
+    	dataToWrite = (0x00000100 << linkToLoopback);
+    	registerWrite(0x9380,dataToWrite);
     
+    	//------ begin delay measurement
+    	dataToWrite = (0x00000101 << linkToLoopback);
+    	registerWrite(0x9380,dataToWrite);
+    	usleep(100);
     
-    //------ begin delay measurement
-    dataToWrite = (0x00000101 << linkToLoopback);
-    registerWrite(0x9380,dataToWrite);
-    usleep(100);
+    	//--------read delay value
+    	unsigned int delay = registerRead(0x9360);
+    	
+    	//		__COUT__ << "LOOPBACK iteration " << std::dec << n << " gives " << delay << __E__;
     
-    //--------read delay value
-    unsigned int delay = registerRead(0x9360);
-    //		__COUT__ << "LOOPBACK iteration " << std::dec << n << " gives " << delay << __E__;
-    
-    if (delay < 10000) {
+    	if (delay < 10000 && n>0) { //skip the first event since the ROC is resetting its alignment
       
-      numerator += (float) delay;
-      denominator += 1.0;
-      // 		__COUT__ << "LOOPBACK iteration " << std::dec << n << " gives " << delay << __E__;
+      		numerator += (float) delay;
+      		denominator += 1.0;
+      		// 		__COUT__ << "LOOPBACK iteration " << std::dec << n << " gives " << delay << __E__;
       
-      loopback_data[n] = delay;
+      		loopback_data[n] = delay;
       
-      loopback_distribution_[delay]++;
+      		loopback_distribution_[delay]++;
       
-      if (delay > max_distribution_) {
-	max_distribution_ = delay;
-	//		    __COUT__ << "LOOPBACK: new max_distribution_: " << max_distribution_ << __E__;	
-      }
+      		if (delay > max_distribution_) {
+				max_distribution_ = delay;
+				//		    __COUT__ << "LOOPBACK: new max_distribution_: " << max_distribution_ << __E__;	
+      		}
       
-      if (delay < min_distribution_) 
-	min_distribution_ = delay;
+      		if (delay < min_distribution_) 
+				min_distribution_ = delay;
       
-    } else {
+    	} else {
       
-      loopback_data[n] = -999;
-      number_of_failures++;
-      
-    }
+      		loopback_data[n] = -999;
+      		
+      		if (n > 0) { 				//skip the first event since the ROC is resetting its alignment
+      			failed_loopback_++;
+		    }  
+    	}
     
-    //----------clear delay measurement mode
-    registerWrite(0x9380,0x00000000);
+    	//----------clear delay measurement mode
+    	registerWrite(0x9380,0x00000000);
     
-    //-------- Disable tx and rx data
-    registerWrite(0x9114,0x00000000);
+    	//-------- Disable tx and rx data
+    	registerWrite(0x9114,0x00000000);
     
-    usleep(100);
-    
-  }
+    	usleep(10);
+  	}
   
-  __COUT__ << "LOOPBACK: CFO status after loopback" << __E__;
-  readStatus();
+  	__COUT__ << "LOOPBACK: CFO status after loopback" << __E__;
+  	readStatus();
   
-  // do a little bit of analysis
+  	// do a little bit of analysis
   
-  average_loopback_ = -999.;
-  if (denominator > 0.0) 
-    average_loopback_ = numerator / denominator;
+	average_loopback_ = -999.;
+  	if (denominator > 0.0) 
+    	average_loopback_ = numerator / denominator;
   
-  rms_loopback_ = 0.;
+  	rms_loopback_ = 0.;
   
-  for (int n = 0; n<numberOfIterations; n++)
-    rms_loopback_ = (loopback_data[n] - average_loopback_) * (loopback_data[n] - average_loopback_);
+  	for (int n = 0; n<numberOfLoopbacks; n++) {
+		if (loopback_data[n] > 0) {
+			rms_loopback_ += (loopback_data[n] - average_loopback_) * (loopback_data[n] - average_loopback_);
+		}
+	}
+
+	if (denominator > 0.0) 
+    	rms_loopback_ = sqrt(rms_loopback_ / denominator);
   
-  if (denominator > 0.0) 
-    rms_loopback_ = sqrt(rms_loopback_ / denominator);
+  	__COUT__ << "LOOPBACK: distribution: " << __E__;
+  	//	__COUT__ << "LOOPBACK: min_distribution_: " << min_distribution_ << __E__;
+  	//	__COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
   
-  __COUT__ << "LOOPBACK: distribution: " << __E__;
-  //	__COUT__ << "LOOPBACK: min_distribution_: " << min_distribution_ << __E__;
-  //	__COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
+	for (unsigned int n=(min_distribution_-5); n<(max_distribution_+5); n++) {
+    	__MCOUT__(" delay [ " << n << " ] = " << loopback_distribution_[n] << __E__);
+  	}
+
+    average_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
+    rms_loopback_ *= 5;    //convert from 5ns bins (200MHz) to 1ns bins
+
+	__MCOUT__(" average = " << average_loopback_ << " ns, RMS = " << rms_loopback_ 
+    			<< " ns, failures = " << failed_loopback_ << __E__);
+
+	__COUT__ << __E__;
   
-  for (unsigned int n=(min_distribution_-5); n<(max_distribution_+5); n++) 
-  {
-    __MCOUT__(" delay [ " << n << " ] = " << loopback_distribution_[n] << __E__);
-  }
-  __COUT__ << __E__;
+  	__COUT__ << "LOOPBACK: number of failed loopbacks = " << std::dec << failed_loopback_ << __E__;
   
-  __COUT__ << "LOOPBACK: number of failed loopbacks = " << std::dec << number_of_failures << __E__;
-  
-  
-  
-  return average_loopback_;
-} //end MesaureLoopback()
+  	return average_loopback_;
+
+} //end MeasureLoopback()
 
 
 //===============================================================================================
@@ -383,10 +399,10 @@ void CFOFrontEndInterface::configure(void)
   // As well, there is a specific order in which to configure the links in the chain of CFO->DTC0->DTC1->...DTCN
   
   
-  const int number_of_system_configs	= -1; // if < 0, keep trying until links are OK.  
-                                              // If > 0, go through configuration steps this many times 
-  const int config_clock		= 0;  // 1 = yes, 0 = no
-  const int reset_tx			= 1;  // 1 = yes, 0 = no
+  const int number_of_system_configs	= -1;        // if < 0, keep trying until links are OK.  
+                                                     // If > 0, go through configuration steps this many times 
+  int config_clock		        = configure_clock_;  // 1 = yes, 0 = no
+  const int reset_tx			= 1;                 // 1 = yes, 0 = no
   
   const int number_of_dtc_config_steps = 7; 
   
@@ -564,7 +580,7 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
   
   const int numberOfDTCsPerChain = 2; // assume 0, then 1
   
-  const int numberOfROCsPerDTC = 1; // assume 0, then 1
+  const int numberOfROCsPerDTC = 2; // assume 0, then 1
   
   // To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
   // work per iteration. Loop back done on all chains (in this method), assuming the following order: 
@@ -577,21 +593,24 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
   // N-1 none none ... ROC0
   // N none none ... ROC1
   
-  int totalNumberOfLoopbacks = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
+  int numberOfMeasurements = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
   
-  int loopbackIndex = getIterationIndex();
+  int startIndex = getIterationIndex();
   
-  if (loopbackIndex >= totalNumberOfLoopbacks) {
+  if (startIndex >= numberOfMeasurements) {
     __MCOUT_INFO__("-------------------------" << __E__); 	
     __MCOUT_INFO__("FULL SYSTEM loopback DONE" << __E__);
     
-    for (int nChain = 0; nChain < numberOfChains; nChain++) {
-      for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) {
-	for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) {
-	  __MCOUT_INFO__("chain " << nChain << " - DTC " << nDTC << " - ROC " << nROC
-			 << " = " << std::dec << delay[nChain][nDTC][nROC] << __E__);
-	}
-      }
+	for (int nChain = 0; nChain < numberOfChains; nChain++) {
+		for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) {
+			for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) {
+	  			__MCOUT_INFO__("chain " << nChain << " - DTC " << nDTC << " - ROC " << nROC
+			 					<< " = " << std::dec << delay[nChain][nDTC][nROC] 
+			 					<< " ns +/- " << delay_rms[nChain][nDTC][nROC] 
+			 					<< " (" << delay_failed[nChain][nDTC][nROC] 
+			 					<< ")" << __E__);
+			}
+      	}
     }
     
     float diff = delay[0][1][0] - delay[0][0][0];
@@ -617,35 +636,37 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
   __COUT__ << "START: CFO status" << __E__;
   readStatus();
   
-  if (loopbackIndex == 0) {
-    for (int nChain = 0; nChain < numberOfChains; nChain++) {
-      for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) {
-	for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) {
-	  delay[nChain][nDTC][nROC] = -1;
-	}
-      }
-    }
-  }
+	if (startIndex == 0) {
+    	for (int nChain = 0; nChain < numberOfChains; nChain++) {
+      		for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) {
+				for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) {
+	  				delay[nChain][nDTC][nROC] = -1;
+	 				delay_rms[nChain][nDTC][nROC] = -1;
+	 				delay_failed[nChain][nDTC][nROC] = -1;
+				}
+      		}
+    	}
+	}	
   //=========== Perform loopback=============
   
   // where are we in the procedure?
-  int activeROC = loopbackIndex % numberOfROCsPerDTC ;
+  int activeROC = startIndex % numberOfROCsPerDTC ;
   
   int activeDTC = -1;
   
   for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) { 
-    //	__COUT__ << "loopback index = " << loopbackIndex
+    //	__COUT__ << "loopback index = " << startIndex
     //		<< " nDTC = " << nDTC
     //		<< " numberOfDTCsPerChain = " << numberOfDTCsPerChain
     //		<< __E__;
-    if ( 	loopbackIndex >= (nDTC * numberOfROCsPerDTC) &&
-		loopbackIndex < ((nDTC+1) * numberOfROCsPerDTC ) ) {
+    if (startIndex >= (nDTC * numberOfROCsPerDTC) &&
+		startIndex < ((nDTC+1) * numberOfROCsPerDTC ) ) {
       //				__COUT__ << "ACTIVE DTC " << nDTC << __E__;
       activeDTC = nDTC;
     }
   }
   
-  //	__MOUT__ 	<< "loopback index = " << loopbackIndex;
+  //	__MOUT__ 	<< "loopback index = " << startIndex;
   __MCOUT_INFO__(" Looping back DTC" << activeDTC << " ROC" << activeROC << __E__);
   
   int chainIndex = 0;
@@ -659,11 +680,15 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
     sleep(5);
     
     //__MCOUT__( "LOOPBACK: on DTC " << link[chainIndex] <<__E__);
-    
-    delay[chainIndex][activeDTC][activeROC] = MeasureLoopback(link[chainIndex]);
-    
+    MeasureLoopback(link[chainIndex]);
+
+	delay[chainIndex][activeDTC][activeROC] = average_loopback_;
+	delay_rms[chainIndex][activeDTC][activeROC] = rms_loopback_;
+	delay_failed[chainIndex][activeDTC][activeROC] = failed_loopback_;
+
     __COUT__ << "LOOPBACK: link " << link[chainIndex] << " -> delay = " << delay[chainIndex][activeDTC][activeROC] 
-	     << " (dec)" << __E__;	
+	     	 << " ns,  rms = " << delay_rms[chainIndex][activeDTC][activeROC] 
+	     	 << " failed = " << delay_failed[chainIndex][activeDTC][activeROC] << __E__;	
     
     chainIndex++;
     
@@ -685,132 +710,135 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
 //========================================================================================================================
 void CFOFrontEndInterface::stop(void)
 {
-	
-  const int totalNumberOfLoopbacks = 200;
+	int numberOfCAPTANPulses = getConfigurationManager()->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfCAPTANPulses").getValue<unsigned int>();
 
-  int loopbackIndex = getIterationIndex();
+	__CFG_COUTV__( numberOfCAPTANPulses );
 
-  if (loopbackIndex > totalNumberOfLoopbacks) { 	 
+	if (numberOfCAPTANPulses == 0) {
+		return;
+	}
 
+  	int loopbackIndex = getIterationIndex();
 
-	  //---- begin read in data 
+  	if (loopbackIndex > numberOfCAPTANPulses) { 	 
+
+		//---- begin read in data 
 	
-	  std::string filein1 = "/home/mu2edaq/sync_demo/ots/DTC0_ROC0data.txt";
-	  std::string filein2 = "/home/mu2edaq/sync_demo/ots/DTC1_ROC0data.txt";
+	  	std::string filein1 = "/home/mu2edaq/sync_demo/ots/DTC0_ROC0data.txt";
+	  	std::string filein2 = "/home/mu2edaq/sync_demo/ots/DTC1_ROC0data.txt";
 	
-	  // file 1
-	  std::ifstream in1;
+	  	// file 1
+	  	std::ifstream in1;
 	
-	  int iteration_source1[25];
-	  int timestamp_source1[25];
+	  	int iteration_source1[25];
+	  	int timestamp_source1[25];
 	
-	  in1.open(filein1);
+	  	in1.open(filein1);
 	
-	  //  std::cout << filein1 << std::endl;
+	  	//  std::cout << filein1 << std::endl;
 	
-	  int nlines1 = 0;
-	  while (1) {
-	    in1 >> iteration_source1[nlines1] >> timestamp_source1[nlines1] ;
-	    if (!in1.good()) break;
-	//    if(nlines1<10)
-	//          __COUT__ <<  "iteration " << iteration_source1[nlines1] << " " <<
-	//           timestamp_source1[nlines1] << __E__;
-	    nlines1++;
-	  }
+	  	int nlines1 = 0;
+	  	while (1) {
+	    	in1 >> iteration_source1[nlines1] >> timestamp_source1[nlines1] ;
+	    	if (!in1.good()) break;
+			//    if(nlines1<10)
+			//          __COUT__ <<  "iteration " << iteration_source1[nlines1] << " " <<
+			//           timestamp_source1[nlines1] << __E__;
+	    	nlines1++;
+	  	}
 	
-	  in1.close();
+	  	in1.close();
   
-  	  // file 2
-	  std::ifstream in2;
+  	  	// file 2
+	  	std::ifstream in2;
 	
-	  int iteration_source2[25];
-	  int timestamp_source2[25];
+	  	int iteration_source2[25];
+	  	int timestamp_source2[25];
 	
-	  in2.open(filein2);
+	  	in2.open(filein2);
 	
-	  //  std::cout << filein1 << std::endl;
+	  	//  std::cout << filein1 << std::endl;
 	
-	  int nlines2 = 0;
-	  while (1) {
-	    in2 >> iteration_source2[nlines2] >> timestamp_source2[nlines2] ;
-	    if (!in2.good()) break;
-	//    if(nlines2<10)
-	//          __COUT__ <<  "iteration " << iteration_source2[nlines2] << " " <<
-	 //          timestamp_source2[nlines2] << __E__;
-	    nlines2++;
-	  }
+	  	int nlines2 = 0;
+	  	while (1) {
+	    	in2 >> iteration_source2[nlines2] >> timestamp_source2[nlines2] ;
+	    	if (!in2.good()) break;
+			//    if(nlines2<10)
+			//          __COUT__ <<  "iteration " << iteration_source2[nlines2] << " " <<
+	 		//          timestamp_source2[nlines2] << __E__;
+	    	nlines2++;
+	  	}
 	
-	  in2.close();
+	  	in2.close();
 
-     __COUT__ << "Read in " << nlines1 << " lines from " << filein1 << __E__;
-     __COUT__ << "Read in " << nlines2 << " lines from " << filein2 << __E__;
+     	__COUT__ << "Read in " << nlines1 << " lines from " << filein1 << __E__;
+     	__COUT__ << "Read in " << nlines2 << " lines from " << filein2 << __E__;
 
-     __COUT__ << __E__;
+ 	    __COUT__ << __E__;
 
-     //__MCOUT_INFO__("iter file1  file2  diff" << __E__);
+		//__MCOUT_INFO__("iter file1  file2  diff" << __E__);
 
-     int distribution[61] = {};
+     	int distribution[61] = {};
 
-     int max_distribution = 0;
-     int min_distribution = 60;
+     	int max_distribution = 0;
+     	int min_distribution = 60;
 
-     int offset = 30;
+     	int offset = 30;
 
-     int timestamp_diff[25];
+     	int timestamp_diff[25];
 
-     float numerator = 0.;
-     float denominator = 0.;
+     	float numerator = 0.;
+     	float denominator = 0.;
 
-     for (int i=0; i<nlines1; i++) {
-       timestamp_diff[i] = (timestamp_source2[i] - timestamp_source1[i]) + offset;
-       //__MCOUT_INFO__(i << "    " <<
-       //               timestamp_source1[i] << "   " <<
-       //               timestamp_source2[i] << "   " <<
-       //               (timestamp_diff[i] - offset) << __E__);
+     	for (int i=0; i<nlines1; i++) {
+       		timestamp_diff[i] = (timestamp_source2[i] - timestamp_source1[i]) + offset;
+       		//__MCOUT_INFO__(i << "    " <<
+       		//               timestamp_source1[i] << "   " <<
+       		//               timestamp_source2[i] << "   " <<
+       		//               (timestamp_diff[i] - offset) << __E__);
 
-       numerator += (float) timestamp_diff[i];
-       denominator += 1.0;
+       		numerator += (float) timestamp_diff[i];
+       		denominator += 1.0;
 
-       distribution[timestamp_diff[i]]++;
+       		distribution[timestamp_diff[i]]++;
 
-       if (timestamp_diff[i] > max_distribution) 
-         max_distribution = timestamp_diff[i];
+       		if (timestamp_diff[i] > max_distribution) 
+         		max_distribution = timestamp_diff[i];
 
-       if (timestamp_diff[i] < min_distribution) 
-         min_distribution = timestamp_diff[i];
+       		if (timestamp_diff[i] < min_distribution) 
+         		min_distribution = timestamp_diff[i];
 
-     }
-     float average = numerator/denominator;
+     	}
+     	float average = numerator/denominator;
 
-     float rms = 0.;
+     	float rms = 0.;
   
-     for (int n = 0; n<nlines1; n++)
-       rms += (timestamp_diff[n] - average) * (timestamp_diff[n] - average);
+     	for (int n = 0; n<nlines1; n++)
+       		rms += (timestamp_diff[n] - average) * (timestamp_diff[n] - average);
   
-     if (denominator > 0.0) 
-       rms = sqrt(rms / denominator);
+ 	    if (denominator > 0.0) 
+    	   rms = sqrt(rms / denominator);
 
-     average -= offset;
+     	average -= offset;
 
-     //    __COUT__ << "LOOPBACK: min_distribution_: " << min_distribution_ << __E__;
-     //    __COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
+     	//    __COUT__ << "LOOPBACK: min_distribution_: " << min_distribution_ << __E__;
+     	//    __COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
 
-     __MCOUT_INFO__("--------------------------------------------" << __E__);
-     __MCOUT_INFO__("--CAPTAN timestamp difference distribution--" << __E__);
-     for (int n=(min_distribution-5); n<(max_distribution+5); n++) {
-       int display = n - offset;
-       __MCOUT_INFO__(" diff [ " << display << " ] = " << distribution[n] << __E__);
-     }
-     __MCOUT_INFO__("--------------------------------------------" << __E__);
+     	__MCOUT_INFO__("--------------------------------------------" << __E__);
+     	__MCOUT_INFO__("--CAPTAN timestamp difference distribution--" << __E__);
+     	for (int n=(min_distribution-5); n<(max_distribution+5); n++) {
+       		int display = n - offset;
+       		__MCOUT_INFO__(" diff [ " << display << " ] = " << distribution[n] << __E__);
+     	}
+     	__MCOUT_INFO__("--------------------------------------------" << __E__);
 
-     __MCOUT_INFO__ ("Average = " << average << " ... RMS = " << rms << __E__);
+     	__MCOUT_INFO__ ("Average = " << average << " ... RMS = " << rms << __E__);
 
-	 return;
-  }
+	 	return;
+  	}
   
-  indicateIterationWork();
-  return;
-
+  	indicateIterationWork();
+  	return;
 }
 
 //========================================================================================================================

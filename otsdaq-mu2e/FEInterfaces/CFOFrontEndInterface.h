@@ -47,6 +47,8 @@ namespace ots
     int getLinkStatus();
 
     float delay[8][6][8];
+    float delay_rms[8][6][8];
+    float delay_failed[8][6][8];
 
   protected:
     //FrontEndHardwareTemplate* theFrontEndHardware_;
@@ -57,6 +59,7 @@ namespace ots
     int fd_;
     int dtc_ = -1;
     DTCLib::DTC* thisCFO_;
+    int configure_clock_ = 0;
 
     m_ioc_reg_access_t reg_access_; 
 
@@ -65,6 +68,7 @@ namespace ots
     unsigned int max_distribution_;
     float average_loopback_;
     float rms_loopback_;
+    float failed_loopback_;
 
   };
 

@@ -60,6 +60,8 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   //theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
   universalAddressSize_ = 4;
   universalDataSize_ = 4;
+  
+  configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<unsigned int>();
 
   // label
   device_name_ = interfaceUID;
@@ -593,8 +595,8 @@ void DTCFrontEndInterface::configure(void)
                                               // If > 0, go through configuration steps this many times 
  
   const int reset_fpga		        = 1;  // 1 = yes, 0 = no
-  const int config_clock		= 0;  // 1 = yes, 0 = no
-  const int config_jitter_attenuator	= 0;  // 1 = yes, 0 = no
+  const int config_clock		= configure_clock_;  // 1 = yes, 0 = no
+  const int config_jitter_attenuator	= configure_clock_;  // 1 = yes, 0 = no
   const int reset_rx			= 0;  // 1 = yes, 0 = no
   
   const int number_of_dtc_config_steps = 7;  
@@ -670,10 +672,12 @@ void DTCFrontEndInterface::configure(void)
 
       // only reset the FPGA the first time through
 
-      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " reset FPGA..." << __E__);
+      __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " reset FPGA...");
 
       registerWrite(0x9100,0x10000000);	// bit 31 = DTC Reset FPGA
       sleep(3);
+
+      __MCOUT_INFO__("............. firmware version " << std::hex << registerRead(0x9004) << std::dec << __E__);
 
     }
 
@@ -893,10 +897,8 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
   int link[numberOfChains] = {0};
   
   const int numberOfDTCsPerChain = 2;
-  int DTCcounter[numberOfDTCsPerChain] = {0};
   
-  const int numberOfROCsPerDTC = 1;
-  int ROCCounter[numberOfROCsPerDTC] = {0};
+  const int numberOfROCsPerDTC = 2;    //assume these are ROC0 and ROC1
   
   // To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
   // work per iteration.  Loop back done on all chains (in this method), assuming the following order:  
@@ -909,11 +911,11 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
   // N-1  none  none  ...  ROC0
   // N  none  none  ...  ROC1
   
-  int totalNumberOfLoopbacks = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
+  int totalNumberOfMeasurements = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
   
   int loopbackIndex = getIterationIndex();
   
-  if (loopbackIndex >= totalNumberOfLoopbacks) { 	 
+  if (loopbackIndex >= totalNumberOfMeasurements) { 	 
     //    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
     
     if ( checkLinkStatus() == 1) {
@@ -959,11 +961,23 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
     registerWrite(0x9100,0x10000000);
     
   }
-  
+
+
   int ROCToEnable = 0x00004040 | (0x101 << activeROC);  // enables TX and Rx to CFO (bit 6) and appropriate ROC
-  registerWrite(0x9114,ROCToEnable);
-  
   __COUT__ << "enable ROC " << activeROC << " --> 0x" << std::hex << ROCToEnable << std::dec << __E__;
+
+  registerWrite(0x9114,ROCToEnable);
+
+  // Re-align the links for the activeROC
+  for (auto& roc:rocs_) {
+	if (roc.second->getLinkID() == activeROC) {
+		__COUT__ << "... ROC realign link... " << __E__;
+		roc.second->writeRegister(22,0);
+    	roc.second->writeRegister(22,1);
+    }
+  }
+
+
   
   sleep(2);  
   
@@ -975,46 +989,55 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
 void DTCFrontEndInterface::stop(void)
 {
   
-  const int totalNumberOfLoopbacks = 100;
+  	int numberOfCAPTANPulses = getConfigurationManager()->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfCAPTANPulses").getValue<unsigned int>();
 
-  int loopbackIndex = getIterationIndex();
+  	__CFG_COUTV__( numberOfCAPTANPulses );
 
+  	int stopIndex = getIterationIndex();
 
+	if (numberOfCAPTANPulses == 0) {
+		return;
+	}
 
-  if (loopbackIndex == 0) {
+  	if (stopIndex == 0) {
 
-    int i=0;
-    for (auto& roc:rocs_) {
-      std::stringstream filename;
-      filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC" << roc.second->getLinkID() << "data.txt";
-      std::string filenamestring = filename.str();
-      datafile_[i].open(filenamestring);
-      i++;
-    }
-  }
+    	int i=0;
+    	for (auto& roc:rocs_) {
+			// re-align link
+			roc.second->writeRegister(22,0);
+	    	roc.second->writeRegister(22,1);
+	
+			std::stringstream filename;
+			filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC" << roc.second->getLinkID() << "data.txt";
+	      	std::string filenamestring = filename.str();
+	      	datafile_[i].open(filenamestring);
+	      	i++;
+    	}
+  	}
 
-  if (loopbackIndex > totalNumberOfLoopbacks) { 	 
-    int i=0;
-    for (auto& roc:rocs_) {
-      datafile_[i].close();
-      i++;
-    }
-    return;
-  }
+	if (stopIndex > numberOfCAPTANPulses) { 	 	
+		int i=0;
+	    for (auto& roc:rocs_) {
+			datafile_[i].close();
+			i++;
+	    }
+	    return;
+	}
   
-  int i=0;
-  for (auto& roc:rocs_) {
+  	int i=0;
+  	__COUT__ << "Entering read timestamp loop..." << __E__;
+  	for (auto& roc:rocs_) {
 
-    int timestamp_data = roc.second->readTimestamp();
+    	int timestamp_data = roc.second->readTimestamp();
 
-    __COUT__<< "Read " << loopbackIndex << " -> " << device_name_ << " timestamp " << timestamp_data << __E__;
+	    __COUT__<< "Read " << stopIndex << " -> " << device_name_ << " timestamp " << timestamp_data << __E__;
 
-    datafile_[i] << loopbackIndex << " " << timestamp_data << std::endl;
-    i++;
-  }
+	    datafile_[i] << stopIndex << " " << timestamp_data << std::endl;
+    	i++;
+  	}
 
-  indicateIterationWork();
-  return;
+  	indicateIterationWork();
+  	return;
 }
 
 //========================================================================================================================
@@ -2383,7 +2406,16 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   __CFG_COUTV__((unsigned int)address);
 
 	//DTCLib::DTC* tmpDTC = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_,"");
-  	uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
+
+	uint16_t readData = -999;
+
+	for (auto& roc:rocs_) {
+		if ( rocLinkIndex == roc.second->getLinkID() ) {
+			readData = roc.second->readRegister(address);
+    	}
+  	}
+
+	//uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
 	//delete tmpDTC;
 
   //  char readDataStr[100];
