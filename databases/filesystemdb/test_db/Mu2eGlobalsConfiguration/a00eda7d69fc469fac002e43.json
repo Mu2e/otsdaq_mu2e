@@ -1,0 +1,166 @@
+{
+"document" : {
+"data" : {
+"NAME" : "MU2E_GLOBALS_CONFIGURATION",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1544827730,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"NUMBER_OF_LOOPBACKS" : "NUMBER",
+"NUMBER_OF_CAPTAN_PULSES" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "SyncDemoConfig",
+"NUMBER_OF_LOOPBACKS" : "10000",
+"NUMBER_OF_CAPTAN_PULSES" : "10",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1544827725"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-12-14T16:48:50.814-0600",
+"rawdata" : [
+
+]
+},
+"version" : "10",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-12-14T16:48:50.815-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-12-14T16:48:50.814-0600"
+},
+{
+"name" : "defaultConfig_v55",
+"assigned" : "2018-12-14T16:48:56.704-0600"
+},
+{
+"name" : "defaultConfig_v56",
+"assigned" : "2018-12-17T16:41:30.976-0600"
+},
+{
+"name" : "defaultConfig_v58",
+"assigned" : "2018-12-18T08:39:58.837-0600"
+},
+{
+"name" : "defaultConfig_v59",
+"assigned" : "2018-12-18T09:01:29.484-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:48:50.815-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-12-14T16:48:50.814-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-12-14T16:48:50.815-0600",
+"value" : {
+"name" : "10",
+"assigned" : "2018-12-14T16:48:50.815-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-12-14T16:48:50.815-0600",
+"value" : {
+"name" : "Mu2eGlobalsConfiguration",
+"assigned" : "2018-12-14T16:48:50.815-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-12-14T16:48:50.815-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-12-14T16:48:50.815-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T16:48:56.704-0600",
+"value" : {
+"name" : "defaultConfig_v55",
+"assigned" : "2018-12-14T16:48:56.704-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-17T16:41:30.976-0600",
+"value" : {
+"name" : "defaultConfig_v56",
+"assigned" : "2018-12-17T16:41:30.976-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T08:39:58.837-0600",
+"value" : {
+"name" : "defaultConfig_v58",
+"assigned" : "2018-12-18T08:39:58.837-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-18T09:01:29.484-0600",
+"value" : {
+"name" : "defaultConfig_v59",
+"assigned" : "2018-12-18T09:01:29.484-0600"
+}
+}
+],
+"created" : "2018-12-14T16:48:50.814-0600"
+},
+"_id" : {
+"$oid" : "a00eda7d69fc469fac002e43"
+},
+"collection" : "Mu2eGlobalsConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

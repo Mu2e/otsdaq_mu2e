@@ -248,6 +248,14 @@
 {
 "name" : "defaultConfig_v61",
 "assigned" : "2018-12-18T09:37:42.439-0600"
+},
+{
+"name" : "defaultConfig_v62",
+"assigned" : "2018-12-19T13:25:51.239-0600"
+},
+{
+"name" : "defaultConfig_v63",
+"assigned" : "2018-12-19T13:29:20.086-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -677,6 +685,22 @@
 "value" : {
 "name" : "defaultConfig_v61",
 "assigned" : "2018-12-18T09:37:42.439-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-19T13:25:51.239-0600",
+"value" : {
+"name" : "defaultConfig_v62",
+"assigned" : "2018-12-19T13:25:51.239-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-19T13:29:20.086-0600",
+"value" : {
+"name" : "defaultConfig_v63",
+"assigned" : "2018-12-19T13:29:20.086-0600"
 }
 }
 ],

@@ -1,0 +1,214 @@
+{
+"document" : {
+"data" : {
+"NAME" : "MU2E_GLOBALS_CONFIGURATION",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1544723606,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"NUMBER_OF_LOOPBACKS" : "NUMBER",
+"NUMBER_OF_CAPTAN_PULSES" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "SyncDemoConfig",
+"NUMBER_OF_LOOPBACKS" : "100",
+"NUMBER_OF_CAPTAN_PULSES" : "10",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1544723606"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-12-13T11:53:26.186-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-12-13T11:53:26.186-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-12-13T11:53:26.186-0600"
+},
+{
+"name" : "defaultConfig_v39",
+"assigned" : "2018-12-13T11:53:31.493-0600"
+},
+{
+"name" : "defaultConfig_v40",
+"assigned" : "2018-12-13T12:04:33.206-0600"
+},
+{
+"name" : "defaultConfig_v41",
+"assigned" : "2018-12-14T09:25:32.829-0600"
+},
+{
+"name" : "defaultConfig_v42",
+"assigned" : "2018-12-14T09:29:59.141-0600"
+},
+{
+"name" : "defaultConfig_v43",
+"assigned" : "2018-12-14T09:30:25.705-0600"
+},
+{
+"name" : "defaultConfig_v44",
+"assigned" : "2018-12-14T09:32:18.579-0600"
+},
+{
+"name" : "defaultConfig_v45",
+"assigned" : "2018-12-14T09:34:35.476-0600"
+},
+{
+"name" : "defaultConfig_v48",
+"assigned" : "2018-12-14T15:10:11.541-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T11:53:26.186-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-12-13T11:53:26.186-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-12-13T11:53:26.186-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2018-12-13T11:53:26.186-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-12-13T11:53:26.186-0600",
+"value" : {
+"name" : "Mu2eGlobalsConfiguration",
+"assigned" : "2018-12-13T11:53:26.186-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-12-13T11:53:26.186-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-12-13T11:53:26.186-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T11:53:31.493-0600",
+"value" : {
+"name" : "defaultConfig_v39",
+"assigned" : "2018-12-13T11:53:31.493-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-13T12:04:33.206-0600",
+"value" : {
+"name" : "defaultConfig_v40",
+"assigned" : "2018-12-13T12:04:33.206-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:25:32.829-0600",
+"value" : {
+"name" : "defaultConfig_v41",
+"assigned" : "2018-12-14T09:25:32.829-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:29:59.141-0600",
+"value" : {
+"name" : "defaultConfig_v42",
+"assigned" : "2018-12-14T09:29:59.141-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:30:25.705-0600",
+"value" : {
+"name" : "defaultConfig_v43",
+"assigned" : "2018-12-14T09:30:25.705-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:32:18.579-0600",
+"value" : {
+"name" : "defaultConfig_v44",
+"assigned" : "2018-12-14T09:32:18.579-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:34:35.476-0600",
+"value" : {
+"name" : "defaultConfig_v45",
+"assigned" : "2018-12-14T09:34:35.476-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T15:10:11.542-0600",
+"value" : {
+"name" : "defaultConfig_v48",
+"assigned" : "2018-12-14T15:10:11.541-0600"
+}
+}
+],
+"created" : "2018-12-13T11:53:26.186-0600"
+},
+"_id" : {
+"$oid" : "a9b6244c2b6a45509346902c"
+},
+"collection" : "Mu2eGlobalsConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
