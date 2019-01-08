@@ -301,7 +301,7 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
     	//------ begin delay measurement
     	dataToWrite = (0x00000101 << linkToLoopback);
     	registerWrite(0x9380,dataToWrite);
-    	usleep(100);
+    	usleep(5);
     
     	//--------read delay value
     	unsigned int delay = registerRead(0x9360);
@@ -341,7 +341,7 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
     	//-------- Disable tx and rx data
     	registerWrite(0x9114,0x00000000);
     
-    	usleep(10);
+    	usleep(5);
   	}
   
   	__COUT__ << "LOOPBACK: CFO status after loopback" << __E__;
@@ -372,11 +372,11 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   	//	__COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ << __E__;
   
 	for (unsigned int n=(min_distribution_-5); n<(max_distribution_+5); n++) {
-    	__COUT__ << " delay [ " << n << " ] = " << loopback_distribution_[n] << __E__;
+    	__MCOUT_INFO__(" delay [ " << n << " ] = " << loopback_distribution_[n] << __E__);
   	}
 
-	__COUT__<< " average = " << average_loopback_ << " ns, RMS = " << rms_loopback_ 
-    			<< " ns, failures = " << failed_loopback_ << __E__;
+	__MCOUT_INFO__(" average = " << average_loopback_ << " ns, RMS = " << rms_loopback_ 
+    				<< " ns, failures = " << failed_loopback_ << __E__);
 
 	__COUT__ << __E__;
   
@@ -613,9 +613,9 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
       	}
     }
     
-    float diff = delay[0][1][0] - delay[0][0][0];
+    float diff = delay[0][1][1] - delay[0][1][0];
     
-    __MCOUT_INFO__("DTC1 - DTC0 = " << diff <<__E__);
+    __MCOUT_INFO__("DTC1: ROC1 - ROC0 = " << diff <<__E__);
     __MCOUT_INFO__("-------------------------" << __E__); 
 
     __COUT__ << "CFO enable Event Start character output " << __E__;
@@ -627,7 +627,7 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
     __COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
     registerWrite(0x9118,0x000000ff);
     registerWrite(0x9118,0x0);
-    sleep(5);
+    usleep(50);
     
     readStatus();
     return;

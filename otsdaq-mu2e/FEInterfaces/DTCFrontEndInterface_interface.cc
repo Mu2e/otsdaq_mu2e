@@ -984,7 +984,7 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
 
 
   
-  sleep(2);  
+  //sleep(2);  
   
   indicateIterationWork();
   return;
