@@ -19,7 +19,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 , thisDTC_(0)
 {
 
-  __COUT__ << "instantiate DTC... " 
+  __FE_COUT__ << "instantiate DTC... "
 	   << interfaceUID << " "
 	   << theXDAQContextConfigTree << " "
 	   << interfaceConfigurationPath
@@ -75,14 +75,14 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   }
   catch(...)
   {
-  	__COUT__ << "Assuming NOT emulator mode." << __E__;
+  	__FE_COUT__ << "Assuming NOT emulator mode." << __E__;
   	emulatorMode_ = false;
   }
 
 
   if(emulatorMode_)
   {
-	  __COUT__ << "Emulator DTC mode starting up..." << __E__;
+	  __FE_COUT__ << "Emulator DTC mode starting up..." << __E__;
 	  createROCs();
 	  return;
   }
@@ -105,9 +105,9 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 
 	  for(auto& roc: rocChildren)
 	  {
-		  __COUT__ << "roc uid " << roc.first << __E__;
+		  __FE_COUT__ << "roc uid " << roc.first << __E__;
 		  bool enabled = roc.second.getNode("Status").getValue<bool>();
-		  __COUT__ << "roc enable " << enabled << __E__;
+		  __FE_COUT__ << "roc enable " << enabled << __E__;
 
 		  if(enabled)
 		  {
@@ -116,7 +116,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 		  }
 	  }
 
-	  __COUT__ << "DTC roc_mask_ = " << std::hex << roc_mask_ << std::dec << __E__;
+	  __FE_COUT__ << "DTC roc_mask_ = " << std::hex << roc_mask_ << std::dec << __E__;
   } //end create roc mask
 
   // instantiate DTC with the appropriate ROCs enabled
@@ -158,9 +158,9 @@ void DTCFrontEndInterface::createROCs(void)
 	for(auto& roc: rocChildren)
 		if( roc.second.getNode("Status").getValue<bool>())
 		{
-			__COUT__ << "ROC Plugin Name: "<< roc.second.getNode(
+			__FE_COUT__ << "ROC Plugin Name: "<< roc.second.getNode(
 					"ROCInterfacePluginName").getValue<std::string>() << std::endl;
-			__COUT__ << "ROC Name: "<< roc.first << std::endl;
+			__FE_COUT__ << "ROC Name: "<< roc.first << std::endl;
 
 
 			try
@@ -194,7 +194,7 @@ void DTCFrontEndInterface::createROCs(void)
 
 				if(emulatorMode_)
 				{
-					__COUT__ << "Creating ROC in emulator mode..." << __E__;
+					__FE_COUT__ << "Creating ROC in emulator mode..." << __E__;
 
 					try
 					{
@@ -241,7 +241,7 @@ void DTCFrontEndInterface::createROCs(void)
 						roc.first << "' of type '" <<
 						roc.second.getNode("ROCInterfacePluginName").getValue<std::string>()
 						<< "' due to the following error: \n" << e.what() << __E__;
-				__COUT_ERR__ << ss.str();
+				__FE_COUT_ERR__ << ss.str();
 				__MOUT_ERR__ << ss.str();
 				__SS_THROW__;
 			}
@@ -257,7 +257,7 @@ void DTCFrontEndInterface::createROCs(void)
 			}
 		}
 
-	__COUT__ << "Done creating ROCs" << std::endl;
+	__FE_COUT__ << "Done creating ROCs" << std::endl;
 } //end createROCs
 
 //==========================================================================================
@@ -269,7 +269,7 @@ void DTCFrontEndInterface::createROCs(void)
 //		- expects exception thrown on failure/timeout
 void DTCFrontEndInterface::universalRead(char *address, char *returnValue)
 {
-  // __COUT__ << "DTC READ" << __E__;
+  // __FE_COUT__ << "DTC READ" << __E__;
 
 	if(emulatorMode_)
 	{
@@ -321,7 +321,7 @@ int DTCFrontEndInterface::registerRead(int address)
   for (uint8_t i = universalDataSize_; i > 0 ; i-- ) 
     readvalue = (readvalue << 8 & 0xffffff00) | data[i-1];
   
-  // __COUT__ << "DTC: readvalue register 0x" << std::hex << address 
+  // __FE_COUT__ << "DTC: readvalue register 0x" << std::hex << address
   //	<< " is..." << std::hex << readvalue << __E__;
   
   delete[] addrs; //free the memory
@@ -339,7 +339,7 @@ int DTCFrontEndInterface::registerRead(int address)
 //		- writeValue will be a [universalDataSize_] byte long char array
 void DTCFrontEndInterface::universalWrite(char* address, char* writeValue)
 {
-  // __COUT__ << "DTC WRITE" << __E__;
+  // __FE_COUT__ << "DTC WRITE" << __E__;
 	if(emulatorMode_) return;
 
   reg_access_.access_type = 1; // 0 = read, 1 = write
@@ -351,7 +351,7 @@ void DTCFrontEndInterface::universalWrite(char* address, char* writeValue)
   // __COUTV__(reg_access.val);
   
   if ( ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_) ) 
-    __COUT_ERR__ << "ERROR: DTC universal write - Does file exist? /dev/mu2e" << dtc_ << __E__; 
+    __FE_COUT_ERR__ << "ERROR: DTC universal write - Does file exist? /dev/mu2e" << dtc_ << __E__;
   
   return;
 }
@@ -399,9 +399,9 @@ int DTCFrontEndInterface::registerWrite(int address, int dataToWrite) {
       i++;
       readbackValue = registerRead(address);
       usleep(100);
-      if ( (i%10) == 0 ) __COUT__ << "DTC I2C waited " << i << " times..." << __E__;
+      if ( (i%10) == 0 ) __FE_COUT__ << "DTC I2C waited " << i << " times..." << __E__;
     }
-    // if (i > 0) __COUT__ << "DTC I2C waited " << i << " times..." << __E__;
+    // if (i > 0) __FE_COUT__ << "DTC I2C waited " << i << " times..." << __E__;
     
   }
   
@@ -409,7 +409,7 @@ int DTCFrontEndInterface::registerWrite(int address, int dataToWrite) {
   if ( address == 0x9168 ) {
     if ( (readbackValue & 0xffffff00) != (dataToWrite & 0xffffff00) ) {
       
-      __COUT_ERR__ 	<< "DTC: write value 0x" << std::hex << dataToWrite
+      __FE_COUT_ERR__ 	<< "DTC: write value 0x" << std::hex << dataToWrite
 			<< " to register 0x" << std::hex << address 
 			<< "... read back 0x" << std::hex << readbackValue 
 			<< __E__;
@@ -420,7 +420,7 @@ int DTCFrontEndInterface::registerWrite(int address, int dataToWrite) {
   if (readbackValue != dataToWrite &&
       address != 0x9168 &&
       address != 0x916c ) {
-    __COUT_ERR__ 	<< "DTC: write value 0x" << std::hex << dataToWrite
+    __FE_COUT_ERR__ 	<< "DTC: write value 0x" << std::hex << dataToWrite
 			<< " to register 0x" << std::hex << address 
 			<< "... read back 0x" << std::hex << readbackValue 
 			<< __E__;
@@ -435,23 +435,23 @@ int DTCFrontEndInterface::registerWrite(int address, int dataToWrite) {
 //==================================================================================================
 void DTCFrontEndInterface::readStatus(void) 
 {
-  __COUT__ << device_name_ << " firmware version (0x9004) = 0x" << std::hex << registerRead(0x9004) << __E__;
+  __FE_COUT__ << device_name_ << " firmware version (0x9004) = 0x" << std::hex << registerRead(0x9004) << __E__;
   
   printVoltages();
   
-  __COUT__ << device_name_ << " temperature = " << readTemperature() << " degC" << __E__;
+  __FE_COUT__ << device_name_ << " temperature = " << readTemperature() << " degC" << __E__;
   
-  __COUT__ << device_name_ << " SERDES reset........ (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
-  __COUT__ << device_name_ << " SERDES disparity err (0x911c) = 0x" << std::hex << registerRead(0x9118) << __E__;
-  __COUT__ << device_name_ << " SERDES unlock error. (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;
-  __COUT__ << device_name_ << " PLL locked.......... (0x9128) = 0x" << std::hex << registerRead(0x9128) << __E__;
-  __COUT__ << device_name_ << " SERDES Rx status.... (0x9134) = 0x" << std::hex << registerRead(0x9134) << __E__;
-  __COUT__ << device_name_ << " SERDES reset done... (0x9138) = 0x" << std::hex << registerRead(0x9138) << __E__;
-  __COUT__ << device_name_ << " link status......... (0x9140) = 0x" << std::hex << registerRead(0x9140) << __E__;
-  __COUT__ << device_name_ << " SERDES ref clk freq. (0x915c) = 0x" << std::hex << registerRead(0x915c) << " = " 
+  __FE_COUT__ << device_name_ << " SERDES reset........ (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
+  __FE_COUT__ << device_name_ << " SERDES disparity err (0x911c) = 0x" << std::hex << registerRead(0x9118) << __E__;
+  __FE_COUT__ << device_name_ << " SERDES unlock error. (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;
+  __FE_COUT__ << device_name_ << " PLL locked.......... (0x9128) = 0x" << std::hex << registerRead(0x9128) << __E__;
+  __FE_COUT__ << device_name_ << " SERDES Rx status.... (0x9134) = 0x" << std::hex << registerRead(0x9134) << __E__;
+  __FE_COUT__ << device_name_ << " SERDES reset done... (0x9138) = 0x" << std::hex << registerRead(0x9138) << __E__;
+  __FE_COUT__ << device_name_ << " link status......... (0x9140) = 0x" << std::hex << registerRead(0x9140) << __E__;
+  __FE_COUT__ << device_name_ << " SERDES ref clk freq. (0x915c) = 0x" << std::hex << registerRead(0x915c) << " = "
 	   << std::dec << registerRead(0x915c) << __E__;
-  __COUT__ << device_name_ << " control............. (0x9100) = 0x" << std::hex << registerRead(0x9100) << __E__;
-  __COUT__ << __E__;
+  __FE_COUT__ << device_name_ << " control............. (0x9100) = 0x" << std::hex << registerRead(0x9100) << __E__;
+  __FE_COUT__ << __E__;
   
   return;
   
@@ -526,9 +526,9 @@ void DTCFrontEndInterface::printVoltages() {
   float volt_vccaux = ( (float) adc_vccaux / 4095. ) * 3.0;
   float volt_vccbram = ( (float) adc_vccbram / 4095. ) * 3.0;
   
-  __COUT__ << device_name_ << " VCCINT. = " << volt_vccint << " V" << __E__;
-  __COUT__ << device_name_ << " VCCAUX. = " << volt_vccaux << " V" << __E__;
-  __COUT__ << device_name_ << " VCCBRAM = " << volt_vccbram << " V" << __E__;
+  __FE_COUT__ << device_name_ << " VCCINT. = " << volt_vccint << " V" << __E__;
+  __FE_COUT__ << device_name_ << " VCCAUX. = " << volt_vccaux << " V" << __E__;
+  __FE_COUT__ << device_name_ << " VCCBRAM = " << volt_vccbram << " V" << __E__;
   
   return;
   
@@ -546,14 +546,14 @@ int DTCFrontEndInterface::checkLinkStatus() {
   if ((getCFOLinkStatus() == 1) && 
       ROCs_OK	          == 1) {
 
-    //	__COUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;			
+    //	__FE_COUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
     //	__MOUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
     
     return 1;
     
   } else {
     
-    //	__COUT__ << "DTC links not OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
+    //	__FE_COUT__ << "DTC links not OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
     //	__MOUT__ << "DTC links not OK = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
     
     return 0;
@@ -576,18 +576,18 @@ bool DTCFrontEndInterface::ROCActive(unsigned ROC_link) {
 void DTCFrontEndInterface::configure(void)
 {
   
-  __CFG_COUTV__( getIterationIndex() );
-  __CFG_COUTV__( getSubIterationIndex() );
+  __FE_COUTV__( getIterationIndex() );
+  __FE_COUTV__( getSubIterationIndex() );
   
   if(emulatorMode_)
   {
-	  __COUT__ << "Emulator DTC configuring... # of ROCs = " <<
+	  __FE_COUT__ << "Emulator DTC configuring... # of ROCs = " <<
 			  rocs_.size() << __E__;
 	  for (auto& roc:rocs_)
 	       roc.second->configure();
 	  return;
   }
-  __COUT__ << "DTC configuring... # of ROCs = " <<
+  __FE_COUT__ << "DTC configuring... # of ROCs = " <<
   			  rocs_.size() << __E__;
 
   // NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
@@ -637,7 +637,7 @@ void DTCFrontEndInterface::configure(void)
 
 	// in this case, links will never get to be OK, stop waiting for them
 	
-	__COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
+	__FE_COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
 	sleep(1);
 
 	indicateIterationWork(); 	
@@ -648,7 +648,7 @@ void DTCFrontEndInterface::configure(void)
 
 	// links still not OK, keep checking... 
 
-	__COUT__ << "Waiting for DTC Link Status = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
+	__FE_COUT__ << "Waiting for DTC Link Status = 0x" << std::hex << registerRead(0x9140) << std::dec << __E__;
 	sleep(1);
 
       }
@@ -661,7 +661,7 @@ void DTCFrontEndInterface::configure(void)
 
     //wait a maximum of 30 seconds, then stop waiting for them
 
-    __COUT__ << "Links still bad = 0x" << std::hex << registerRead(0x9140) << std::dec << "... continue"<< __E__;
+    __FE_COUT__ << "Links still bad = 0x" << std::hex << registerRead(0x9140) << std::dec << "... continue"<< __E__;
     indicateIterationWork(); 
     turnOffLED(); 
     return;                  
@@ -693,7 +693,7 @@ void DTCFrontEndInterface::configure(void)
 
       __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " reset clock..." << __E__);
       
-      __COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
+      __FE_COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
       registerWrite(0x915c,0x09502F90);
       
       //set RST_REG bit
@@ -710,7 +710,7 @@ void DTCFrontEndInterface::configure(void)
       // auto oscillator = DTCLib::DTC_OscillatorType_DDR; //-C 1 (DDR clock)
       auto oscillator = DTCLib::DTC_OscillatorType_Timing; //-C 2 = DTC (with timing card)
       
-      __COUT__ << "DTC - set oscillator frequency to " << std::dec << targetFrequency << " MHz" << __E__;
+      __FE_COUT__ << "DTC - set oscillator frequency to " << std::dec << targetFrequency << " MHz" << __E__;
       
       thisDTC_->SetNewOscillatorFrequency(oscillator,targetFrequency);
       
@@ -749,13 +749,13 @@ void DTCFrontEndInterface::configure(void)
     // THIS SHOULD NOT BE NECESSARY with firmware version 20181024 	 
     if (reset_rx == 1) {
 
-      __COUT__ << "DTC reset CFO link CPLL" << __E__;
+      __FE_COUT__ << "DTC reset CFO link CPLL" << __E__;
       registerWrite(0x9118,0x00004000);
       registerWrite(0x9118,0x00000000);
       
       sleep(3);
       
-      __COUT__ << "DTC reset CFO link RX" << __E__;
+      __FE_COUT__ << "DTC reset CFO link RX" << __E__;
       registerWrite(0x9118,0x00400000);
       registerWrite(0x9118,0x00000000);
       
@@ -763,11 +763,11 @@ void DTCFrontEndInterface::configure(void)
       
     } else {
       
-      __COUT__ << "DTC do NOT reset PLL and CFO RX" << __E__;
+      __FE_COUT__ << "DTC do NOT reset PLL and CFO RX" << __E__;
       
     }
     // 	 
-    // 	 __COUT__ << "DTC reset CFO link TX" << __E__;
+    // 	 __FE_COUT__ << "DTC reset CFO link TX" << __E__;
     // 	 registerWrite(0x9118,0x40000000);
     // 	 registerWrite(0x9118,0x00000000);
     // 	 
@@ -780,13 +780,13 @@ void DTCFrontEndInterface::configure(void)
     // RESETTING THE LINKS SHOULD NOT BE NECESSARY with firmware version 20181024, however, 
     // we DO want to confirm that the links are OK...
 
-    // 	 __COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
+    // 	 __FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
     // 	 registerWrite(0x9118,0x00003f00);
     // 	 registerWrite(0x9118,0x00000000);
     //	 
     //	 sleep(3);
     // 	 
-    // 	 __COUT__ << "DTC reset ROC link SERDES TX" << __E__;
+    // 	 __FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
     // 	 registerWrite(0x9118,0x3f000000);
     // 	 registerWrite(0x9118,0x00000000);
     // 	 
@@ -794,7 +794,7 @@ void DTCFrontEndInterface::configure(void)
     // 	 
     // 	 // WILL NEED TO CONFIGURE THE ROC LINKS HERE BEFORE RESETTING WHAT IS RECEIVED
     // 	 
-    // 	 __COUT__ << "DTC reset ROC link SERDES RX" << __E__;
+    // 	 __FE_COUT__ << "DTC reset ROC link SERDES RX" << __E__;
     // 	 registerWrite(0x9118,0x003f0000);
     // 	 registerWrite(0x9118,0x00000000);
     // 	 
@@ -813,15 +813,15 @@ void DTCFrontEndInterface::configure(void)
     // enable markers, tx and rx
 
     int data_to_write = (roc_mask_ << 8) | roc_mask_;
-    __COUT__ << "DTC enable markers - enabled ROC links 0x" << std::hex << data_to_write << std::dec << __E__;
+    __FE_COUT__ << "DTC enable markers - enabled ROC links 0x" << std::hex << data_to_write << std::dec << __E__;
     registerWrite(0x91f8,data_to_write);
 
     data_to_write = 0x4040 | (roc_mask_ << 8) | roc_mask_;    
-    __COUT__ << "DTC enable tx and rx - CFO and enabled ROC links 0x" << std::hex << data_to_write << std::dec << __E__;
+    __FE_COUT__ << "DTC enable tx and rx - CFO and enabled ROC links 0x" << std::hex << data_to_write << std::dec << __E__;
     registerWrite(0x9114,data_to_write);
     
     //put DTC CFO link output into loopback mode
-    __COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
+    __FE_COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
     registerWrite(0x9100,0x00000000);
 
     __MCOUT_INFO__ ("Step " << config_step << ": " << device_name_ << " configure ROCs" << __E__);    
@@ -868,21 +868,21 @@ void DTCFrontEndInterface::configure(void)
 //========================================================================================================================
 void DTCFrontEndInterface::halt(void)
 {
-  //	__COUT__ << "HALT: DTC status" << __E__;
+  //	__FE_COUT__ << "HALT: DTC status" << __E__;
   //	readStatus();
 }
 
 //========================================================================================================================
 void DTCFrontEndInterface::pause(void)
 {
-  //	__COUT__ << "PAUSE: DTC status" << __E__;
+  //	__FE_COUT__ << "PAUSE: DTC status" << __E__;
   //	readStatus();
 }
 
 //========================================================================================================================
 void DTCFrontEndInterface::resume(void)
 {
-  //	__COUT__ << "RESUME: DTC status" << __E__;
+  //	__FE_COUT__ << "RESUME: DTC status" << __E__;
   //	readStatus();
 }
 
@@ -892,7 +892,7 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
 
 	if(emulatorMode_)
 	{
-		__COUT__ << "Emulator DTC starting..." << __E__;
+		__FE_COUT__ << "Emulator DTC starting..." << __E__;
 		return;
 	}
 
@@ -945,7 +945,7 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
     }
   }
   
-  // __COUT__ << "loopback index = " << loopbackIndex
+  // __FE_COUT__ << "loopback index = " << loopbackIndex
   // 	<< " activeDTC = " << activeDTC
   //	 	<< " activeROC = " << activeROC
   //	 	<< __E__;
@@ -953,13 +953,13 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
   
   if (activeDTC == dtc_location_in_chain_) { 
     
-    __COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
+    __FE_COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
     registerWrite(0x9100,0x00000000);
     
   } else {
     
     // this DTC is lower in chain than the one being looped.  Pass the loopback signal through
-    __COUT__ 	<< "active DTC = " << activeDTC << " is NOT this DTC = " << dtc_location_in_chain_ 
+    __FE_COUT__ 	<< "active DTC = " << activeDTC << " is NOT this DTC = " << dtc_location_in_chain_
 		<< "... pass signal through" << __E__;
     registerWrite(0x9100,0x10000000);
     
@@ -967,14 +967,14 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
 
 
   int ROCToEnable = 0x00004040 | (0x101 << activeROC);  // enables TX and Rx to CFO (bit 6) and appropriate ROC
-  __COUT__ << "enable ROC " << activeROC << " --> 0x" << std::hex << ROCToEnable << std::dec << __E__;
+  __FE_COUT__ << "enable ROC " << activeROC << " --> 0x" << std::hex << ROCToEnable << std::dec << __E__;
 
   registerWrite(0x9114,ROCToEnable);
 
   // Re-align the links for the activeROC
   for (auto& roc:rocs_) {
 	if (roc.second->getLinkID() == activeROC) {
-		__COUT__ << "... ROC realign link... " << __E__;
+		__FE_COUT__ << "... ROC realign link... " << __E__;
 		roc.second->writeRegister(22,0);
     	roc.second->writeRegister(22,1);
     }
@@ -994,7 +994,7 @@ void DTCFrontEndInterface::stop(void)
   
   	int numberOfCAPTANPulses = getConfigurationManager()->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfCAPTANPulses").getValue<unsigned int>();
 
-  	__CFG_COUTV__( numberOfCAPTANPulses );
+  	__FE_COUTV__( numberOfCAPTANPulses );
 
   	int stopIndex = getIterationIndex();
 
@@ -1028,12 +1028,12 @@ void DTCFrontEndInterface::stop(void)
 	}
   
   	int i=0;
-  	__COUT__ << "Entering read timestamp loop..." << __E__;
+  	__FE_COUT__ << "Entering read timestamp loop..." << __E__;
   	for (auto& roc:rocs_) {
 
     	int timestamp_data = roc.second->readTimestamp();
 
-	    __COUT__<< "Read " << stopIndex << " -> " << device_name_ << " timestamp " << timestamp_data << __E__;
+	    __FE_COUT__<< "Read " << stopIndex << " -> " << device_name_ << " timestamp " << timestamp_data << __E__;
 
 	    datafile_[i] << stopIndex << " " << timestamp_data << std::endl;
     	i++;
@@ -2398,15 +2398,15 @@ void DTCFrontEndInterface::configureJitterAttenuator(void)
 void DTCFrontEndInterface::ReadROC(__ARGS__)
 {
 
-  __CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-  __CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
   for(auto &argIn:argsIn) 
-    __CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
   
   DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
   uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
-  __CFG_COUTV__(rocLinkIndex);
-  __CFG_COUTV__((unsigned int)address);
+  __FE_COUTV__(rocLinkIndex);
+  __FE_COUTV__((unsigned int)address);
 
 	//DTCLib::DTC* tmpDTC = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_,"");
 
@@ -2427,7 +2427,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
   __SET_ARG_OUT__("readData", readData);
     
   //for(auto &argOut:argsOut) 
-  __CFG_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__; 
+  __FE_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__;
 
 } //end DTCStatus()
 
@@ -2439,22 +2439,22 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 //	Macro Notes: 
 void DTCFrontEndInterface::WriteROC(__ARGS__)
 {
-  __CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-  __CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
   for(auto &argIn:argsIn) 
-    __CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
   
   DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
   uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
   uint16_t writeData			= __GET_ARG_IN__("writeData", uint16_t);
-  __CFG_COUTV__(rocLinkIndex);
-  __CFG_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
-  __CFG_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
+  __FE_COUTV__(rocLinkIndex);
+  __FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
+  __FE_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
   
   thisDTC_->WriteROCRegister(rocLinkIndex, address, writeData);
 
   for(auto &argOut:argsOut) 
-    __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
+    __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 
 } 
 
@@ -2462,63 +2462,63 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 //========================================================================================================================
 void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 {
-  __CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-  __CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
   for(auto &argIn:argsIn) 
-    __CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
   
   //macro commands section 
   
-  __CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-  __CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
   
   for(auto &argIn:argsIn) 
-    __CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
   
   DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID( __GET_ARG_IN__("rocLinkIndex", uint8_t) );
   uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
   uint16_t writeData			= __GET_ARG_IN__("writeData", uint16_t);
   uint8_t block				= __GET_ARG_IN__("block", uint8_t);
-  __CFG_COUTV__(rocLinkIndex);
-  __CFG_COUT__ << "block = "		 << std::dec << (unsigned int)block 	<< __E__; 
-  __CFG_COUT__ << "address = 0x" 	<< std::hex << (unsigned int)address << std::dec << __E__;
-  __CFG_COUT__ << "writeData = 0x" << std::hex << writeData 						<< std::dec << __E__;
+  __FE_COUTV__(rocLinkIndex);
+  __FE_COUT__ << "block = "		 << std::dec << (unsigned int)block 	<< __E__;
+  __FE_COUT__ << "address = 0x" 	<< std::hex << (unsigned int)address << std::dec << __E__;
+  __FE_COUT__ << "writeData = 0x" << std::hex << writeData 						<< std::dec << __E__;
 
   thisDTC_->WriteExtROCRegister(rocLinkIndex,block,address,writeData);	
   
   for(auto &argOut:argsOut) 
-    __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
+    __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 
 } 
 
 void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 {
-  __CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-  __CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
   for(auto &argIn:argsIn) 
-    __CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
   
   //macro commands section 
-  __CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-  __CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
   
   for(auto &argIn:argsIn) 
-    __CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
   
   DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
   uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
   uint8_t block				= __GET_ARG_IN__("block",uint8_t);
   
-  __CFG_COUTV__(rocLinkIndex);
-  __CFG_COUT__ << "block = "	 << std::dec << (unsigned int)block << __E__; 
-  __CFG_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
+  __FE_COUTV__(rocLinkIndex);
+  __FE_COUT__ << "block = "	 << std::dec << (unsigned int)block << __E__;
+  __FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
 
   uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex,block,address);	
 
   __SET_ARG_OUT__("readData", readData);
   
   for(auto &argOut:argsOut) 
-    __CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
+    __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 
 } 
 

@@ -54,38 +54,38 @@ void CAPTANSignalGenerator::configure(void)
 //		VStateMachine::indicateIterationWork();
 //
 //
-//	__CFG_COUTV__(VStateMachine::getSubIterationIndex());
-//	__CFG_COUTV__(VStateMachine::getSubIterationWork());
-//	__CFG_COUTV__(VStateMachine::getIterationIndex());
-//	__CFG_COUTV__(VStateMachine::getIterationWork());
+//	__FE_COUTV__(VStateMachine::getSubIterationIndex());
+//	__FE_COUTV__(VStateMachine::getSubIterationWork());
+//	__FE_COUTV__(VStateMachine::getIterationIndex());
+//	__FE_COUTV__(VStateMachine::getIterationWork());
 //
 //
 //	return;
 	
-	__CFG_COUT__ << "configure" << __E__;
-	__CFG_COUT__ << "Clearing receive socket buffer: " << OtsUDPHardware::clearReadSocket() << " packets cleared." << __E__;
+	__FE_COUT__ << "configure" << __E__;
+	__FE_COUT__ << "Clearing receive socket buffer: " << OtsUDPHardware::clearReadSocket() << " packets cleared." << __E__;
 	
 	std::string sendBuffer;
 	std::string recvBuffer;
 	uint64_t 	readQuadWord;
 	
-	__CFG_COUT__ << "Configuration Path Table: " <<
+	__FE_COUT__ << "Configuration Path Table: " <<
 		theXDAQContextConfigTree_.getNode(theConfigurationPath_).getConfigurationName() <<
 		"-v" <<
 		theXDAQContextConfigTree_.getNode(theConfigurationPath_).getConfigurationVersion() <<
 		__E__;
 	
-	__CFG_COUT__ << "Interface name: " <<
+	__FE_COUT__ << "Interface name: " <<
 		theXDAQContextConfigTree_.getNode(theConfigurationPath_) << __E__;
 	
-	__CFG_COUT__ << "Configured Firmware Version: " <<
+	__FE_COUT__ << "Configured Firmware Version: " <<
 		theXDAQContextConfigTree_.getNode(theConfigurationPath_).getNode("FirmwareVersion").getValue<unsigned int>()
 		<< __E__;
 	
-	__CFG_COUT__ << "Setting Destination IP: " <<
+	__FE_COUT__ << "Setting Destination IP: " <<
 		theXDAQContextConfigTree_.getNode(theConfigurationPath_).getNode("StreamToIPAddress").getValue<std::string>()
 		<< __E__;
-	__CFG_COUT__ << "And Destination Port: " <<
+	__FE_COUT__ << "And Destination Port: " <<
 		theXDAQContextConfigTree_.getNode(theConfigurationPath_).getNode("StreamToPort").getValue<unsigned int>()
 		<< __E__;
 	
@@ -95,7 +95,7 @@ void CAPTANSignalGenerator::configure(void)
 			);
 	OtsUDPHardware::write(sendBuffer);
 	
-	__CFG_COUT__ << "Reading back burst dest MAC/IP/Port: " << __E__;
+	__FE_COUT__ << "Reading back burst dest MAC/IP/Port: " << __E__;
 	
 	OtsUDPFirmwareCore::readDataDestinationMAC(sendBuffer);
 	OtsUDPHardware::read(sendBuffer,readQuadWord);
@@ -114,40 +114,40 @@ void CAPTANSignalGenerator::configure(void)
 	//Run Configure Sequence Commands
 	FEVInterface::runSequenceOfCommands("LinkToConfigureSequence");
 	
-	__CFG_COUT__ << "Done with ots Template configuring." << __E__;
+	__FE_COUT__ << "Done with ots Template configuring." << __E__;
 }
 
 //========================================================================================================================
 //void CAPTANSignalGenerator::configureDetector(const DACStream& theDACStream)
 //{
-//	__CFG_COUT__ << "\tconfigureDetector" << __E__;
+//	__FE_COUT__ << "\tconfigureDetector" << __E__;
 //}
 
 //========================================================================================================================
 void CAPTANSignalGenerator::halt(void)
 {
-	__CFG_COUT__ << "\tHalt" << __E__;
+	__FE_COUT__ << "\tHalt" << __E__;
 	stop();
 }
 
 //========================================================================================================================
 void CAPTANSignalGenerator::pause(void)
 {
-	__CFG_COUT__ << "\tPause" << __E__;
+	__FE_COUT__ << "\tPause" << __E__;
 	stop();
 }
 
 //========================================================================================================================
 void CAPTANSignalGenerator::resume(void)
 {
-	__CFG_COUT__ << "\tResume" << __E__;
+	__FE_COUT__ << "\tResume" << __E__;
 	start("");
 }
 
 //========================================================================================================================
 void CAPTANSignalGenerator::start(std::string )//runNumber)
 {
-	__CFG_COUT__ << "\tStart" << __E__;
+	__FE_COUT__ << "\tStart" << __E__;
 	
 	
 //		unsigned int i = VStateMachine::getIterationIndex();
@@ -158,10 +158,10 @@ void CAPTANSignalGenerator::start(std::string )//runNumber)
 //			VStateMachine::indicateIterationWork();
 //
 //
-//		__CFG_COUTV__(VStateMachine::getSubIterationIndex());
-//		__CFG_COUTV__(VStateMachine::getSubIterationWork());
-//		__CFG_COUTV__(VStateMachine::getIterationIndex());
-//		__CFG_COUTV__(VStateMachine::getIterationWork());
+//		__FE_COUTV__(VStateMachine::getSubIterationIndex());
+//		__FE_COUTV__(VStateMachine::getSubIterationWork());
+//		__FE_COUTV__(VStateMachine::getIterationIndex());
+//		__FE_COUTV__(VStateMachine::getIterationWork());
 //
 //
 //		return;
@@ -179,10 +179,10 @@ void CAPTANSignalGenerator::start(std::string )//runNumber)
 //========================================================================================================================
 void CAPTANSignalGenerator::stop(void)
 {
-	__CFG_COUT__ << "\tStop" << __E__;
+	__FE_COUT__ << "\tStop" << __E__;
 
   	int numberOfCAPTANPulses = getConfigurationManager()->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfCAPTANPulses").getValue<unsigned int>();
-  	__CFG_COUTV__( numberOfCAPTANPulses );
+  	__FE_COUTV__( numberOfCAPTANPulses );
 
 	if ( numberOfCAPTANPulses == 0 ) {
 		return;
@@ -233,7 +233,7 @@ void CAPTANSignalGenerator::stop(void)
 //========================================================================================================================
 bool CAPTANSignalGenerator::running(void)
 {
-	__CFG_COUT__ << "\tRunning" << __E__;
+	__FE_COUT__ << "\tRunning" << __E__;
 	
 	//__SS__ << "?" << __E__; //test exceptions during running
 	//__SS_THROW__;
@@ -300,9 +300,9 @@ bool CAPTANSignalGenerator::running(void)
 //NOTE: buffer for returnValue must be max UDP size to handle return possibility
 void ots::CAPTANSignalGenerator::universalRead(char *address, char *returnValue)
 {
-	__CFG_COUT__ << "address size " << universalAddressSize_ << __E__;
+	__FE_COUT__ << "address size " << universalAddressSize_ << __E__;
 	
-	__CFG_COUT__ << "Request: ";
+	__FE_COUT__ << "Request: ";
 	for(unsigned int i=0;i<universalAddressSize_;++i)
 		printf("%2.2X",(unsigned char)address[i]);
 	std::cout << __E__;
@@ -312,7 +312,7 @@ void ots::CAPTANSignalGenerator::universalRead(char *address, char *returnValue)
 	
 	OtsUDPHardware::read(sendBuffer, readBuffer); // data reply
 	
-	__CFG_COUT__ << "Result SIZE: " << readBuffer.size() << __E__;
+	__FE_COUT__ << "Result SIZE: " << readBuffer.size() << __E__;
 	std::memcpy(returnValue,readBuffer.substr(2).c_str(),universalDataSize_);
 
 } //end universalRead()
@@ -322,9 +322,9 @@ void ots::CAPTANSignalGenerator::universalRead(char *address, char *returnValue)
 //NOTE: buffer for writeValue must be at least size universalDataSize_
 void ots::CAPTANSignalGenerator::universalWrite(char* address, char* writeValue)
 {
-	__CFG_COUT__ << "address size " << universalAddressSize_ << __E__;
-	__CFG_COUT__ << "data size " << universalDataSize_ << __E__;
-	__CFG_COUT__ << "Sending: ";
+	__FE_COUT__ << "address size " << universalAddressSize_ << __E__;
+	__FE_COUT__ << "data size " << universalDataSize_ << __E__;
+	__FE_COUT__ << "Sending: ";
 	for(unsigned int i=0;i<universalAddressSize_;++i)
 		printf("%2.2X",(unsigned char)address[i]);
 	std::cout << __E__;
@@ -343,10 +343,10 @@ void ots::CAPTANSignalGenerator::universalWrite(char* address, char* writeValue)
 //	Macro Notes: This is a great test!
 void CAPTANSignalGenerator::varTest(__ARGS__)
 {
-	__CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-	__CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
 	for(auto &argIn:argsIn) 
-		__CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 	
 	//macro commands section 
 	{
@@ -378,7 +378,7 @@ void CAPTANSignalGenerator::varTest(__ARGS__)
 		universalWrite(address,data);
 		
 		// command-#4: delay(4000);
-		__CFG_COUT__ << "Sleeping for... " << 4000 << " milliseconds " << __E__;
+		__FE_COUT__ << "Sleeping for... " << 4000 << " milliseconds " << __E__;
 		usleep(4000*1000 /* microseconds */);
 		
 		
@@ -387,7 +387,7 @@ void CAPTANSignalGenerator::varTest(__ARGS__)
 	}
 	
 	for(auto &argOut:argsOut) 
-		__CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
+		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 	
 } //end varTest()
 
@@ -398,10 +398,10 @@ void CAPTANSignalGenerator::varTest(__ARGS__)
 //	Macro Notes: [Modified 14:28 10/11/2018] This is a great test!
 void CAPTANSignalGenerator::varTest2(__ARGS__)
 {
-	__CFG_COUT__ << "# of input args = " << argsIn.size() << __E__; 
-	__CFG_COUT__ << "# of output args = " << argsOut.size() << __E__; 
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
 	for(auto &argIn:argsIn) 
-		__CFG_COUT__ << argIn.first << ": " << argIn.second << __E__; 
+		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 	
 	//macro commands section 
 	{
@@ -433,7 +433,7 @@ void CAPTANSignalGenerator::varTest2(__ARGS__)
 		universalWrite(address,data);
 		
 		// command-#4: delay(4000);
-		__CFG_COUT__ << "Sleeping for... " << 4000 << " milliseconds " << __E__;
+		__FE_COUT__ << "Sleeping for... " << 4000 << " milliseconds " << __E__;
 		usleep(4000*1000 /* microseconds */);
 		
 		
@@ -442,7 +442,7 @@ void CAPTANSignalGenerator::varTest2(__ARGS__)
 	}
 	
 	for(auto &argOut:argsOut) 
-		__CFG_COUT__ << argOut.first << ": " << argOut.second << __E__; 
+		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 	
 } //end varTest2()
 

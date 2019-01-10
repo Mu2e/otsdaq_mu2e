@@ -24,12 +24,12 @@ ROCCoreVEmulator::~ROCCoreVEmulator(void)
 {
 	while(workloopRunning_)
 	{
-		__COUT__ << "Attempting to exit thread..." << __E__;
+		__FE_COUT__ << "Attempting to exit thread..." << __E__;
 		workloopExit_ = true;
 		sleep(1);
 	}
 
-	__COUT__ << "Workloop thread is not running." << __E__;
+	__FE_COUT__ << "Workloop thread is not running." << __E__;
 }
 
 DEFINE_OTS_INTERFACE(ROCCoreVEmulator)
