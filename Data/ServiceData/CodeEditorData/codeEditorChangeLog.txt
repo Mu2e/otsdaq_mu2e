@@ -585,3 +585,13 @@ time=1545493059 old-size=55931 new-size=57123 path=/home/mu2edaq/sync_demo/ots/s
 time=1545493382 old-size=57123 new-size=56920 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq/tools/StartOTS.sh
 time=1545493877 old-size=56920 new-size=57163 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq/tools/StartOTS.sh
 time=1545493916 old-size=57163 new-size=57162 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq/tools/StartOTS.sh
+time=1546964339 old-size=28266 new-size=28272 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546965463 old-size=28272 new-size=28273 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546965596 old-size=28273 new-size=28278 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546965811 old-size=28278 new-size=28276 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546966007 old-size=28276 new-size=28282 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546966418 old-size=28282 new-size=28281 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546976589 old-size=28281 new-size=28281 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546976592 old-size=71925 new-size=71927 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1546976651 old-size=28281 new-size=28279 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1546977067 old-size=28279 new-size=28281 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc

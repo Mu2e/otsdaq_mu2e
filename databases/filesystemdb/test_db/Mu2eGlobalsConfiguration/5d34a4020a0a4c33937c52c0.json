@@ -1,0 +1,130 @@
+{
+"document" : {
+"data" : {
+"NAME" : "MU2E_GLOBALS_CONFIGURATION",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1546977427,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"NUMBER_OF_LOOPBACKS" : "NUMBER",
+"NUMBER_OF_CAPTAN_PULSES" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "SyncDemoConfig",
+"NUMBER_OF_LOOPBACKS" : "100",
+"NUMBER_OF_CAPTAN_PULSES" : "0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1546977427"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-08T13:57:07.309-0600",
+"rawdata" : [
+
+]
+},
+"version" : "13",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-08T13:57:07.311-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-08T13:57:07.310-0600"
+},
+{
+"name" : "defaultConfig_v65",
+"assigned" : "2019-01-08T13:57:11.542-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-08T13:57:07.310-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-08T13:57:07.310-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-08T13:57:07.310-0600",
+"value" : {
+"name" : "13",
+"assigned" : "2019-01-08T13:57:07.310-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-08T13:57:07.310-0600",
+"value" : {
+"name" : "Mu2eGlobalsConfiguration",
+"assigned" : "2019-01-08T13:57:07.310-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-08T13:57:07.311-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-08T13:57:07.311-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-08T13:57:11.542-0600",
+"value" : {
+"name" : "defaultConfig_v65",
+"assigned" : "2019-01-08T13:57:11.542-0600"
+}
+}
+],
+"created" : "2019-01-08T13:57:07.309-0600"
+},
+"_id" : {
+"$oid" : "5d34a4020a0a4c33937c52c0"
+},
+"collection" : "Mu2eGlobalsConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
