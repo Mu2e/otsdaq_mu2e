@@ -29,7 +29,8 @@ ROCCoreInterface::ROCCoreInterface(
 //==========================================================================================
 ROCCoreInterface::~ROCCoreInterface(void)
 {
-	__FE_COUT__ << "Destructor" << __E__;
+	//NOTE:: be careful not to call __FE_COUT__ decoration because it uses the tree and it may already be destructed partially
+	__COUT__ << FEVInterface::interfaceUID_ << " Destructor" << __E__;
 }
 
 //==================================================================================================
