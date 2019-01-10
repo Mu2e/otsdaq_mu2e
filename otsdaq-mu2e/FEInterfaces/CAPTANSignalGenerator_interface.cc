@@ -298,7 +298,7 @@ bool CAPTANSignalGenerator::running(void)
 //========================================================================================================================
 //NOTE: buffer for address must be at least size universalAddressSize_
 //NOTE: buffer for returnValue must be max UDP size to handle return possibility
-int ots::CAPTANSignalGenerator::universalRead(char *address, char *returnValue)
+void ots::CAPTANSignalGenerator::universalRead(char *address, char *returnValue)
 {
 	__CFG_COUT__ << "address size " << universalAddressSize_ << __E__;
 	
@@ -310,21 +310,11 @@ int ots::CAPTANSignalGenerator::universalRead(char *address, char *returnValue)
 	std::string readBuffer, sendBuffer;
 	OtsUDPFirmwareCore::readAdvanced(sendBuffer,address,1 /*size*/);
 	
-	//OtsUDPHardware::read(FSSRFirmware::universalRead(address), readBuffer) < 0;
-	try
-	{
-		OtsUDPHardware::read(sendBuffer, readBuffer); // data reply
-	}
-	catch(std::runtime_error &e)
-	{
-		__CFG_COUT__ << "Caught it! This is when it's getting time out error" << __E__;
-			__CFG_COUT_ERR__ << e.what() << __E__;
-		return -1;
-	}
+	OtsUDPHardware::read(sendBuffer, readBuffer); // data reply
 	
 	__CFG_COUT__ << "Result SIZE: " << readBuffer.size() << __E__;
 	std::memcpy(returnValue,readBuffer.substr(2).c_str(),universalDataSize_);
-	return 0;
+
 } //end universalRead()
 
 //========================================================================================================================

@@ -36,7 +36,7 @@ class ROCCoreInterface : public FEVInterface
 
   //----------------
   //just to keep FEVInterface, defining universal read..
-  int universalRead (char* address, char* readValue ) override { __SS__ << "Not defined. Parent should be DTCFrontEndInterface, not FESupervisor." << __E__; __SS_THROW__; }
+  void universalRead  (char* address, char* readValue ) override { __SS__ << "Not defined. Parent should be DTCFrontEndInterface, not FESupervisor." << __E__; __SS_THROW__; }
   void universalWrite (char* address, char* writeValue) override { __SS__ << "Not defined. Parent should be DTCFrontEndInterface, not FESupervisor." << __E__; __SS_THROW__; }
   //----------------
 

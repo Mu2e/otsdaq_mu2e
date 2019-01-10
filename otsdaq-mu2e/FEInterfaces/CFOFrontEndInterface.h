@@ -38,7 +38,7 @@ namespace ots
 
     // hardware access
     //----------------
-    int  universalRead	  (char* address, char* readValue ) override;
+    void universalRead	  (char* address, char* readValue ) override;
     void universalWrite	  (char* address, char* writeValue) override;
     int  registerRead     (int address  );
     int  registerWrite    (int address, int dataToWrite); //return read value after having written dataToWrite

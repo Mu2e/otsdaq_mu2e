@@ -54,7 +54,7 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 //		- address will be a [universalAddressSize_] byte long char array
 //		- returnValue will be a [universalDataSize_] byte long char array
 //		- expects return value of 0 on success and negative numbers on failure
-int CFOFrontEndInterface::universalRead(char *address, char *returnValue)
+void CFOFrontEndInterface::universalRead(char *address, char *returnValue)
 {
   // __COUT__ << "CFO READ" << __E__;
   
@@ -65,14 +65,13 @@ int CFOFrontEndInterface::universalRead(char *address, char *returnValue)
   
   if ( ioctl(fd_,M_IOC_REG_ACCESS,&reg_access_) ) 
     {
-      __COUT_ERR__ << "ERROR: CFO universalRead - Does file exist? -> /dev/mu2e" << dtc_ << __E__; 
-      return -1; //failed
+      __SS__ << "ERROR: CFO universalRead - Does file exist? -> /dev/mu2e" << dtc_ << __E__;
+      __SS_THROW__;
     }
   
   std::memcpy(returnValue,&reg_access_.val,universalDataSize_);
   // __COUTV__(reg_access.val);
   
-  return 0; //success
 }
 
 //===========================================================================================

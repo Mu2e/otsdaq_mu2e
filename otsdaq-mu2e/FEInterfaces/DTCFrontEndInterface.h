@@ -39,7 +39,7 @@ namespace ots
     
     // hardware access
     //----------------
-    int universalRead (char* address, char* readValue ) override;
+    void universalRead (char* address, char* readValue ) override;
     void universalWrite (char* address, char* writeValue) override;
     int registerRead (int address );
     int registerWrite (int address, int dataToWrite); //return read value after having written dataToWrite
@@ -84,10 +84,10 @@ namespace ots
     
 
   public: 
-    void ReadROC(frontEndMacroInArgs_t argsIn, frontEndMacroOutArgs_t argsOut);
-    void WriteROC(frontEndMacroInArgs_t argsIn, frontEndMacroOutArgs_t argsOut);
-    void WriteROCBlock(frontEndMacroInArgs_t argsIn, frontEndMacroOutArgs_t argsOut);
-    void ReadROCBlock(frontEndMacroInArgs_t argsIn, frontEndMacroOutArgs_t argsOut);
+    void ReadROC(__ARGS__);
+    void WriteROC(__ARGS__);
+    void WriteROCBlock(__ARGS__);
+    void ReadROCBlock(__ARGS__);
   };
 }
 #endif

@@ -266,8 +266,8 @@ void DTCFrontEndInterface::createROCs(void)
 //	When Macro Maker calls:
 //		- address will be a [universalAddressSize_] byte long char array
 //		- returnValue will be a [universalDataSize_] byte long char array
-//		- expects return value of 0 on success and negative numbers on failure
-int DTCFrontEndInterface::universalRead(char *address, char *returnValue)
+//		- expects exception thrown on failure/timeout
+void DTCFrontEndInterface::universalRead(char *address, char *returnValue)
 {
   // __COUT__ << "DTC READ" << __E__;
 
@@ -275,7 +275,7 @@ int DTCFrontEndInterface::universalRead(char *address, char *returnValue)
 	{
 		for(unsigned int i=0;i<universalDataSize_;++i)
 			returnValue[i] = 0xF0 | i;
-		return 0;
+		return;
 	}
   
   reg_access_.access_type = 0; // 0 = read, 1 = write
@@ -285,14 +285,12 @@ int DTCFrontEndInterface::universalRead(char *address, char *returnValue)
   
   if (ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_) ) 
     {
-      __COUT_ERR__ << "ERROR: DTC universal read - Does file exist? -> /dev/mu2e" << dtc_ << __E__; 
-      return -1; //failed
+      __SS__ << "ERROR: DTC universal read - Does file exist? -> /dev/mu2e" << dtc_ << __E__;
+      __SS_THROW__;
     }
   
   std::memcpy(returnValue,&reg_access_.val,universalDataSize_);
   // __COUTV__(reg_access_.val);
-  
-  return 0; //success
 }
 
 //===========================================================================================
