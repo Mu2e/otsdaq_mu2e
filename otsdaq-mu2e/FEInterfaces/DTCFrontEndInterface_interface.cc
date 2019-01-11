@@ -2412,22 +2412,35 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	uint16_t readData = -999;
 
-	for (auto& roc:rocs_) {
-		if ( rocLinkIndex == roc.second->getLinkID() ) {
+	for (auto& roc:rocs_) 
+	{
+		
+		__FE_COUT__ << "Found link ID " <<
+			 roc.second->getLinkID() << 
+			 " looking for " << rocLinkIndex << __E__;
+			 
+		if ( rocLinkIndex == roc.second->getLinkID() ) 
+		{
 			readData = roc.second->readRegister(address);
+			
+				
+			//uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
+			//delete tmpDTC;
+			
+			//  char readDataStr[100];
+			//  sprintf(readDataStr,"0x%X",readData);
+			//  __SET_ARG_OUT__("readData",readDataStr);
+			__SET_ARG_OUT__("readData", readData);
+			
+			//for(auto &argOut:argsOut) 
+			__FE_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__;
+			return;
     	}
   	}
+  	
+  	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+  	__FE_SS_THROW__;
 
-	//uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
-	//delete tmpDTC;
-
-  //  char readDataStr[100];
-  //  sprintf(readDataStr,"0x%X",readData);
-  //  __SET_ARG_OUT__("readData",readDataStr);
-  __SET_ARG_OUT__("readData", readData);
-    
-  //for(auto &argOut:argsOut) 
-  __FE_COUT__ << "readData" << ": " << std::hex << readData << std::dec << __E__;
 
 } //end DTCStatus()
 
@@ -2439,22 +2452,37 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 //	Macro Notes: 
 void DTCFrontEndInterface::WriteROC(__ARGS__)
 {
-  __FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
-  __FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
-  for(auto &argIn:argsIn) 
-    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
-  
-  DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
-  uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
-  uint16_t writeData			= __GET_ARG_IN__("writeData", uint16_t);
-  __FE_COUTV__(rocLinkIndex);
-  __FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
-  __FE_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
-  
-  thisDTC_->WriteROCRegister(rocLinkIndex, address, writeData);
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+  	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
+  	for(auto &argIn:argsIn) 
+	    __FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
+	  
+	DTCLib::DTC_Link_ID rocLinkIndex 	= DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	uint8_t address 			= __GET_ARG_IN__("address", uint8_t);
+	uint16_t writeData			= __GET_ARG_IN__("writeData", uint16_t);
 
-  for(auto &argOut:argsOut) 
-    __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
+	__FE_COUTV__(rocLinkIndex);
+	__FE_COUTV__((unsigned int)address);
+	__FE_COUTV__(writeData);
+
+
+	for (auto& roc:rocs_) 
+	{
+		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for " << rocLinkIndex << __E__;
+			 
+		if ( rocLinkIndex == roc.second->getLinkID() ) 
+		{
+			roc.second->writeRegister(address,writeData);
+
+			for(auto &argOut:argsOut) 	
+				__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
+
+			return;
+    	}
+  	}
+  	
+  	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+  	__FE_SS_THROW__;
 
 } 
 
