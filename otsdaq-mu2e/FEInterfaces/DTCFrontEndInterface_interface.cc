@@ -257,7 +257,7 @@ void DTCFrontEndInterface::createROCs(void)
 			}
 		}
 
-	__FE_COUT__ << "Done creating ROCs" << std::endl;
+	__FE_COUT__ << "Done creating " << rocs_.size() << " ROC(s)" << std::endl;
 } //end createROCs
 
 //==========================================================================================
