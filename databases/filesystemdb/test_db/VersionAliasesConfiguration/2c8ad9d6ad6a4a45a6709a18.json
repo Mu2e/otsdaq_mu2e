@@ -544,6 +544,10 @@
 {
 "name" : "TableEditWizBackbone_v47",
 "assigned" : "2019-01-16T09:18:51.655-0600"
+},
+{
+"name" : "TableEditWizBackbone_v48",
+"assigned" : "2019-01-16T10:22:14.238-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -1573,6 +1577,14 @@
 "value" : {
 "name" : "TableEditWizBackbone_v47",
 "assigned" : "2019-01-16T09:18:51.655-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T10:22:14.238-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v48",
+"assigned" : "2019-01-16T10:22:14.238-0600"
 }
 }
 ],

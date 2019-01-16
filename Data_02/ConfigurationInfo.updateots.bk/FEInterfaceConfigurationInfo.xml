@@ -5,7 +5,7 @@
 				<COLUMN Type="GroupID-0" 	 Name="FEInterfaceGroupID" 	 StorageName="FE_INTERFACE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="UID" 	 Name="FEInterfaceUID" 	 StorageName="FE_INTERFACE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="FixedChoiceData" 	 Name="FEInterfacePluginName" 	 StorageName="FE_INTERFACE_PLUGIN_NAME" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,FEOtsUDPTemplateInterface,CFOFrontEndInterface,DTCFrontEndInterface"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="FEInterfacePluginName" 	 StorageName="FE_INTERFACE_PLUGIN_NAME" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,CFOFrontEndInterface,DTCFrontEndInterface,CAPTANSignalGenerator"/>
 				<COLUMN Type="ChildLink-0" 	 Name="LinkToFETypeConfiguration" 	 StorageName="LINK_TO_FE_TYPE_CONFIGURATION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLinkUID-0" 	 Name="LinkToFETypeUID" 	 StorageName="LINK_TO_FE_TYPE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-SlowControlChannels" 	 Name="LinkToSlowControlChannelsConfiguration" 	 StorageName="LINK_TO_SLOW_CONTROL_CHANNELS_CONFIGURATION" 		DataType="VARCHAR2" 		DataChoices=""/>

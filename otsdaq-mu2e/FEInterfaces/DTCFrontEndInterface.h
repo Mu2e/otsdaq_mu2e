@@ -90,6 +90,7 @@ namespace ots
     void ReadROCBlock(__ARGS__);
     void DTCReset(__ARGS__);
     void DTCReset();
+    void DTCHighRateDCSCheck(__ARGS__);
   };
 }
 #endif

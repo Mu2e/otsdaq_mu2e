@@ -60,6 +60,16 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 			  std::vector<std::string>{},
 			  std::vector<std::string>{},
 			  1); //requiredUserPermissions 
+		
+	
+   registerFEMacroFunction("DTC_HighRate_DCS_Check",	
+			  static_cast<FEVInterface::frontEndMacroFunction_t>(
+			  &DTCFrontEndInterface:: DTCHighRateDCSCheck)	,
+			  std::vector<std::string>{},
+			  std::vector<std::string>{},
+			  1); //requiredUserPermissions 
+			  
+			
   
   
   //theFrontEndHardware_ = new FrontEndHardwareTemplate();
@@ -2573,6 +2583,13 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
     __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 
 } 
+
+
+void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
+{
+	for (auto& roc:rocs_)
+	       roc.second->highRateCheck();
+}
 
 void DTCFrontEndInterface::DTCReset(__ARGS__)
 {

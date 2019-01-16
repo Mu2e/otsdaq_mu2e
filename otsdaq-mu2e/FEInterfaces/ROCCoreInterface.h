@@ -48,6 +48,8 @@ class ROCCoreInterface : public FEVInterface
   int readTimestamp();
   void writeDelay(unsigned delay); //5ns steps
   int readDelay();                 //5ns steps
+  
+  void highRateCheck(void);
 
   inline int getLinkID() { return linkID_; }
 

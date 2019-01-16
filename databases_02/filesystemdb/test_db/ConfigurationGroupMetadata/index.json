@@ -28,6 +28,7 @@
 "4508c743baf84e9f822d73e3",
 "463c016615354e5a904029de",
 "46ad6b0998ab4eb7976c4a6e",
+"46e3cc2be8144d65ad6e05e0",
 "487cc1f83cea40fda6f7c4fa",
 "4c3aae727297435fbfae8767",
 "565ec46f851d421c863cda77",
@@ -85,10 +86,12 @@
 "d2d4bf17082545d0b4c3cd83",
 "d30a2edd45e247a089429d96",
 "d4d87a99a167438ba81028e1",
+"d590d53dff9745d48a888e15",
 "d5f4dfb72608468a83f49469",
 "dc26c06aaf3f4c268870dadc",
 "dcf06b5f114f46bf8ee382a1",
 "dddf3534f0f94d84a8d2b21a",
+"de1dca20b63d4c18a4d918b5",
 "df75f45033fd49ca9f324837",
 "e07142caf9c045a6bb071a9e",
 "e29a0a5ea8ec424ca924f397",
@@ -99,7 +102,8 @@
 "f138c86cad1c4b3fbf79ad5f",
 "f31859aa57114ca4b4e4c1c1",
 "f62a68d1b2644cb88f0dee62",
-"ff23115c15dc4642af4cd0e6"
+"ff23115c15dc4642af4cd0e6",
+"ff55e0b8125b440bbb77e54d"
 ],
 "version" : {
 "0" : [
@@ -401,6 +405,18 @@
 ],
 "99" : [
 "82f02942eb0f4fc1b69bba6b"
+],
+"100" : [
+"d590d53dff9745d48a888e15"
+],
+"101" : [
+"46e3cc2be8144d65ad6e05e0"
+],
+"102" : [
+"de1dca20b63d4c18a4d918b5"
+],
+"103" : [
+"ff55e0b8125b440bbb77e54d"
 ]
 },
 "configurations.name" : {
@@ -433,6 +449,7 @@
 "4508c743baf84e9f822d73e3",
 "463c016615354e5a904029de",
 "46ad6b0998ab4eb7976c4a6e",
+"46e3cc2be8144d65ad6e05e0",
 "487cc1f83cea40fda6f7c4fa",
 "4c3aae727297435fbfae8767",
 "565ec46f851d421c863cda77",
@@ -490,10 +507,12 @@
 "d2d4bf17082545d0b4c3cd83",
 "d30a2edd45e247a089429d96",
 "d4d87a99a167438ba81028e1",
+"d590d53dff9745d48a888e15",
 "d5f4dfb72608468a83f49469",
 "dc26c06aaf3f4c268870dadc",
 "dcf06b5f114f46bf8ee382a1",
 "dddf3534f0f94d84a8d2b21a",
+"de1dca20b63d4c18a4d918b5",
 "df75f45033fd49ca9f324837",
 "e07142caf9c045a6bb071a9e",
 "e29a0a5ea8ec424ca924f397",
@@ -504,7 +523,8 @@
 "f138c86cad1c4b3fbf79ad5f",
 "f31859aa57114ca4b4e4c1c1",
 "f62a68d1b2644cb88f0dee62",
-"ff23115c15dc4642af4cd0e6"
+"ff23115c15dc4642af4cd0e6",
+"ff55e0b8125b440bbb77e54d"
 ],
 "defaultConfig_v2" : [
 "71b71ef3fc064f62811d2c30"
@@ -805,6 +825,18 @@
 ],
 "TableEditWizBackbone_v10" : [
 "82f02942eb0f4fc1b69bba6b"
+],
+"daq02Config_v5" : [
+"d590d53dff9745d48a888e15"
+],
+"TableEditWizBackbone_v11" : [
+"46e3cc2be8144d65ad6e05e0"
+],
+"daq02Config_v6" : [
+"de1dca20b63d4c18a4d918b5"
+],
+"GroupAliasTreeEditWizBackbone_v20" : [
+"ff55e0b8125b440bbb77e54d"
 ]
 },
 "entities.name" : {
@@ -837,6 +869,7 @@
 "4508c743baf84e9f822d73e3",
 "463c016615354e5a904029de",
 "46ad6b0998ab4eb7976c4a6e",
+"46e3cc2be8144d65ad6e05e0",
 "487cc1f83cea40fda6f7c4fa",
 "4c3aae727297435fbfae8767",
 "565ec46f851d421c863cda77",
@@ -894,10 +927,12 @@
 "d2d4bf17082545d0b4c3cd83",
 "d30a2edd45e247a089429d96",
 "d4d87a99a167438ba81028e1",
+"d590d53dff9745d48a888e15",
 "d5f4dfb72608468a83f49469",
 "dc26c06aaf3f4c268870dadc",
 "dcf06b5f114f46bf8ee382a1",
 "dddf3534f0f94d84a8d2b21a",
+"de1dca20b63d4c18a4d918b5",
 "df75f45033fd49ca9f324837",
 "e07142caf9c045a6bb071a9e",
 "e29a0a5ea8ec424ca924f397",
@@ -908,7 +943,8 @@
 "f138c86cad1c4b3fbf79ad5f",
 "f31859aa57114ca4b4e4c1c1",
 "f62a68d1b2644cb88f0dee62",
-"ff23115c15dc4642af4cd0e6"
+"ff23115c15dc4642af4cd0e6",
+"ff55e0b8125b440bbb77e54d"
 ]
 },
 "aliases.active.name" : {
@@ -1018,7 +1054,11 @@
 "2019-01-15T15:17:19.606-0600",
 "2019-01-15T15:17:32.417-0600",
 "2019-01-15T15:25:21.389-0600",
-"2019-01-15T15:25:30.084-0600"
+"2019-01-15T15:25:30.084-0600",
+"2019-01-16T10:22:37.562-0600",
+"2019-01-16T10:22:44.044-0600",
+"2019-01-16T10:24:17.859-0600",
+"2019-01-16T10:24:24.682-0600"
 ],
 "defaultConfig_v2" : [
 "2018-09-06T16:32:23.544-0500"
@@ -1319,6 +1359,18 @@
 ],
 "TableEditWizBackbone_v10" : [
 "2019-01-15T15:25:30.384-0600"
+],
+"daq02Config_v5" : [
+"2019-01-16T10:22:38.165-0600"
+],
+"TableEditWizBackbone_v11" : [
+"2019-01-16T10:22:44.207-0600"
+],
+"daq02Config_v6" : [
+"2019-01-16T10:24:18.257-0600"
+],
+"GroupAliasTreeEditWizBackbone_v20" : [
+"2019-01-16T10:24:24.928-0600"
 ]
 }
 }

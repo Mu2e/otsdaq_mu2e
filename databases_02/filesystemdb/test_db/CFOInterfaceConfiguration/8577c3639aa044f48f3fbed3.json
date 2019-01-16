@@ -76,6 +76,14 @@
 {
 "name" : "daq02Config_v4",
 "assigned" : "2019-01-15T15:17:20.072-0600"
+},
+{
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-16T10:22:37.888-0600"
+},
+{
+"name" : "daq02Config_v6",
+"assigned" : "2019-01-16T10:24:18.046-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -161,6 +169,22 @@
 "value" : {
 "name" : "daq02Config_v4",
 "assigned" : "2019-01-15T15:17:20.072-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T10:22:37.888-0600",
+"value" : {
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-16T10:22:37.888-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T10:24:18.046-0600",
+"value" : {
+"name" : "daq02Config_v6",
+"assigned" : "2019-01-16T10:24:18.046-0600"
 }
 }
 ],

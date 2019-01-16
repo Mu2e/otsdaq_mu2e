@@ -21,6 +21,12 @@
 ],
 "daq02Config_v4" : [
 "bcacb4b1c6db412cb339ceb4"
+],
+"daq02Config_v5" : [
+"bcacb4b1c6db412cb339ceb4"
+],
+"daq02Config_v6" : [
+"bcacb4b1c6db412cb339ceb4"
 ]
 },
 "entities.name" : {
@@ -45,6 +51,12 @@
 ],
 "daq02Config_v4" : [
 "2019-01-15T15:17:26.222-0600"
+],
+"daq02Config_v5" : [
+"2019-01-16T10:22:41.140-0600"
+],
+"daq02Config_v6" : [
+"2019-01-16T10:24:20.767-0600"
 ]
 }
 }
