@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="DataBufferConfiguration">
+			<VIEW Name="DATA_BUFFER_CONFIGURATION" Type="File,Database,DatabaseTest" Description="This%20table%20is%20used%20to%20associate%20Data%20Processors%20with%20Data%20Buffers.%20Each%20Data%20Buffer%20Group%20can%20have%20one%20or%20many%20Data%20Processors.%20Data%20Processors%20can%20be%20of%20type%20Producer%20(writes%20to%20a%20Data%20Buffer)%20or%20Consumer%20(reads%20from%20a%20Data%20Buffer).%20%0A%0AThis%20tables%20also%20is%20used%20to%20associate%20a%20Data%20Processor%20plug-in%20class%20(and%20its%20associated%20configuration)%20to%20a%20Data%20Processor%20record.">
+				<COLUMN Type="GroupID-0" 	 Name="DataBufferGroupID" 	 StorageName="DATA_BUFFER_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="ProcessorUID" 	 StorageName="PROCESSOR_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="ProcessorType" 	 StorageName="PROCESSOR_TYPE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,Producer,Consumer"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="ProcessorPluginName" 	 StorageName="PROCESSOR_PLUGIN_NAME" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,UDPDataListenerProducer,UDPDataListenerProducer,RawDataSaverConsumer,UDPDataStreamerConsumer,DemoDQMHistosConsumer"/>
+				<COLUMN Type="ChildLink-0" 	 Name="LinkToProcessorConfiguration" 	 StorageName="LINK_TO_PROCESSOR_CONFIGURATION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLinkUID-0" 	 Name="LinkToProcessorUID" 	 StorageName="LINK_TO_PROCESSOR_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

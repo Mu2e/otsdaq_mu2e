@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+  <CONFIGURATION Name="TheSupervisorConfiguration">
+    <VIEW Name="THE_SUPERVISOR_CONFIGURATION" Type="File,Database,DatabaseTest" Description="No%20description.">
+      <COLUMN Type="UID" 	                Name="SupervisorUID" 	                 StorageName="SUPERVISOR_UID" 		                   DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="ChildLink-FSM" 	      Name="LinkToStateMachineConfiguration" StorageName="LINK_TO_STATE_MACHINE_CONFIGURATION" 	 DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="ChildLinkGroupID-FSM" Name="StateMachineGroupID" 	           StorageName="STATE_MACHINE_GROUP_ID" 		           DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="YesNo" 	              Name="EnableStateChangesOverUDP" 	     StorageName="ENABLE_STATE_CHANGES_OVER_UDP" 		     DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="Data" 	              Name="IPAddressForStateChangesOverUDP" StorageName="IP_ADDRESS_FOR_STATE_CHANGES_OVER_UDP" DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="Data" 	              Name="PortForStateChangesOverUDP" 	   StorageName="PORT_FOR_STATE_CHANGES_OVER_UDP" 		   DataType="NUMBER" 		              DataChoices=""/>
+      <COLUMN Type="YesNo" 	              Name="EnableAckForStateChangesOverUDP" StorageName="ENABLE_ACK_FOR_STATE_CHANGES_OVER_UDP" DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="YesNo"                Name="EnableARTDAQCommanderPlugin"     StorageName="ENABLE_ARTDAQ_COMMANDER_PLUGIN"        DataType="VARCHAR2"                DataChoices=""/>
+      <COLUMN Type="Data" 	              Name="ARTDAQCommanderType" 	           StorageName="ARTDAQ_COMMANDER_PLUGIN_TYPE" 		     DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="Data" 	              Name="ARTDAQCommanderID" 	             StorageName="ARTDAQ_COMMANDER_ID" 		               DataType="NUMBER" 		              DataChoices=""/>
+      <COLUMN Type="Comment" 	            Name="CommentDescription" 	           StorageName="COMMENT_DESCRIPTION" 		               DataType="VARCHAR2"            		DataChoices=""/>
+      <COLUMN Type="Author" 	            Name="Author" 	                       StorageName="AUTHOR" 		                           DataType="VARCHAR2" 		            DataChoices=""/>
+      <COLUMN Type="Timestamp" 	          Name="RecordInsertionTime" 	           StorageName="RECORD_INSERTION_TIME" 		             DataType="TIMESTAMP WITH TIMEZONE" DataChoices=""/>
+    </VIEW>
+  </CONFIGURATION>
+</ROOT>
