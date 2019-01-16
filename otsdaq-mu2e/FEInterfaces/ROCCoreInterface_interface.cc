@@ -43,6 +43,11 @@ void ROCCoreInterface::writeRegister(unsigned address, unsigned data_to_write)
 		return;
 	}
 
+	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_ 
+				<< ", address = " << address 
+				<< ", write data = " << data_to_write
+				<< __E__;
+
 	thisDTC_->WriteROCRegister(linkID_,address,data_to_write);
 
 	return;
@@ -65,8 +70,9 @@ int ROCCoreInterface::readRegister(unsigned address)
 	try
 	{  	
 		
-		__FE_COUT__ << "Calling read ROC register" << __E__;
-		read_data = thisDTC_->ReadROCRegister(linkID_,address,1000);
+		__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_ 
+					<< ", address = " << address << __E__;
+		read_data = thisDTC_->ReadROCRegister(linkID_,address,10);
 	}
 	catch(...)
 	{
@@ -119,7 +125,7 @@ try
 	
 	
 	// read 6 should read back 0x12fc
-	for (int i = 0; i<10*1000; i++) 
+	for (int i = 0; i<1; i++) 
 	{	
 		__MCOUT_INFO__(i << " read register 6 = " << this->readRegister(6) << __E__);		
 		__MCOUT_INFO__(i << " read register 7 = " << this->readDelay() << __E__);
