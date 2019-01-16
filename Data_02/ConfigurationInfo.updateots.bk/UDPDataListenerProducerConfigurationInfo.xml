@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="UDPDataListenerProducerConfiguration">
+			<VIEW Name="UDP_DATA_LISTENER_PRODUCER_CONFIGURATION" Type="File,Database,DatabaseTest">
+				<COLUMN Type="UID" 	 Name="ProcessorUID" 	 StorageName="PROCESSOR_UID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="BufferSize" 	 StorageName="BUFFER_SIZE" 		DataType="NUMBER"/>
+				<COLUMN Type="Data" 	 Name="HostIPAddress" 	 StorageName="HOST_IP_ADDRESS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="HostPort" 	 StorageName="HOST_PORT" 		DataType="NUMBER"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>

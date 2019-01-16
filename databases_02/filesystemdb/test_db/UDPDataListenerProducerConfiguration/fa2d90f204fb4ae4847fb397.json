@@ -163,6 +163,26 @@
 {
 "name" : "daq02Config_v1",
 "assigned" : "2018-10-18T08:57:37.984-0500"
+},
+{
+"name" : "daq02Config_v2",
+"assigned" : "2019-01-15T15:01:28.543-0600"
+},
+{
+"name" : "daq02Config_v3",
+"assigned" : "2019-01-15T15:05:03.642-0600"
+},
+{
+"name" : "daq02Config_v4",
+"assigned" : "2019-01-15T15:17:26.833-0600"
+},
+{
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-15T21:27:41.241-0600"
+},
+{
+"name" : "daq02Config_v6",
+"assigned" : "2019-01-15T21:30:14.307-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -360,6 +380,46 @@
 "value" : {
 "name" : "daq02Config_v1",
 "assigned" : "2018-10-18T08:57:37.984-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:01:28.544-0600",
+"value" : {
+"name" : "daq02Config_v2",
+"assigned" : "2019-01-15T15:01:28.543-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:05:03.642-0600",
+"value" : {
+"name" : "daq02Config_v3",
+"assigned" : "2019-01-15T15:05:03.642-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:17:26.833-0600",
+"value" : {
+"name" : "daq02Config_v4",
+"assigned" : "2019-01-15T15:17:26.833-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T21:27:41.241-0600",
+"value" : {
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-15T21:27:41.241-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T21:30:14.307-0600",
+"value" : {
+"name" : "daq02Config_v6",
+"assigned" : "2019-01-15T21:30:14.307-0600"
 }
 }
 ],

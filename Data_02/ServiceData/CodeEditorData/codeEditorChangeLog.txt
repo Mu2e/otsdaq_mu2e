@@ -1,0 +1,7 @@
+time=1547614072 old-size=59824 new-size=59856 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq/tools/StartOTS.sh
+time=1547652029 old-size=27223 new-size=27378 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_utilities/WebGUI/js/Debug.js
+time=1547652195 old-size=27378 new-size=27392 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_utilities/WebGUI/js/Debug.js
+time=1547652472 old-size=27392 new-size=27388 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_utilities/WebGUI/js/Debug.js
+time=1547652583 old-size=27388 new-size=27407 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_utilities/WebGUI/js/Debug.js
+time=1547654356 old-size=5340 new-size=5350 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
+time=1547654408 old-size=5350 new-size=6855 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc

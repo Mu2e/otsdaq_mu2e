@@ -198,6 +198,10 @@
 {
 "name" : "testContext_v34",
 "assigned" : "2018-10-19T12:45:26.344-0500"
+},
+{
+"name" : "daq02Context_v4",
+"assigned" : "2019-01-15T15:25:24.326-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -531,6 +535,14 @@
 "value" : {
 "name" : "testContext_v34",
 "assigned" : "2018-10-19T12:45:26.344-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:25:24.326-0600",
+"value" : {
+"name" : "daq02Context_v4",
+"assigned" : "2019-01-15T15:25:24.326-0600"
 }
 }
 ],

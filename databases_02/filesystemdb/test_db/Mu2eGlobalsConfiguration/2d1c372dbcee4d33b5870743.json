@@ -1,0 +1,123 @@
+{
+"document" : {
+"data" : {
+"NAME" : "MU2E_GLOBALS_CONFIGURATION",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1547609257,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"NUMBER_OF_LOOPBACKS" : "NUMBER",
+"NUMBER_OF_CAPTAN_PULSES" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-15T21:27:37.515-0600",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-15T21:27:37.516-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-15T21:27:37.515-0600"
+},
+{
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-15T21:27:40.617-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T21:27:37.515-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-15T21:27:37.515-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-15T21:27:37.516-0600",
+"value" : {
+"name" : "0",
+"assigned" : "2019-01-15T21:27:37.516-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-15T21:27:37.516-0600",
+"value" : {
+"name" : "Mu2eGlobalsConfiguration",
+"assigned" : "2019-01-15T21:27:37.516-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-15T21:27:37.516-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-15T21:27:37.516-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T21:27:40.617-0600",
+"value" : {
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-15T21:27:40.617-0600"
+}
+}
+],
+"created" : "2019-01-15T21:27:37.515-0600"
+},
+"_id" : {
+"$oid" : "2d1c372dbcee4d33b5870743"
+},
+"collection" : "Mu2eGlobalsConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

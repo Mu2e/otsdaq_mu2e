@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+		<CONFIGURATION Name="IterationTargetConfiguration">
+			<VIEW Name="ITERATION_TARGET_CONFIGURATION" Type="File,Database,DatabaseTest" Description="This%20table%20forms%20groups%20of%20targets%20for%20the%20iterator.%20A%20group%20can%20span%20multiple%20front-end%20interfaces%20or%20whatever%20(as%20long%20as%20they%20have%20the%20iterator%20can%20modify%20the%20same%20relative%20path%20field).">
+				<COLUMN Type="GroupID-targets" 	 Name="IterationTargetGroupID" 	 StorageName="ITERATION_TARGET_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="IterationTargetGroupMemberUID" 	 StorageName="ITERATION_TARGET_GROUP_MEMBER_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-target" 	 Name="LinkToTarget" 	 StorageName="LINK_TO_TARGET" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1"/>
+				<COLUMN Type="ChildLinkUID-target" 	 Name="LinkToTargetUID" 	 StorageName="LINK_TO_TARGET_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</CONFIGURATION>
+	</ROOT>
