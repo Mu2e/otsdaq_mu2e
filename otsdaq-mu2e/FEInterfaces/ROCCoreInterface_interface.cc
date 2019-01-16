@@ -97,6 +97,52 @@ int ROCCoreInterface::readDelay()
 }
 
 //==================================================================================================
+void ROCCoreInterface::highRateCheck(void)
+try
+{
+	
+	__FE_COUT__ << "Starting the high rate check... " << __E__;
+	srand (time(NULL));
+
+	int r;
+	unsigned int val;
+	int loops = 10*1000;
+	int cnt = 0;	
+
+	unsigned int correct[] = {4680,10};
+	
+	for (int i = 0; i<loops; i++) 
+	for (int j = 0; j<2; j++) 
+	{
+		
+		r = rand() % 100;			
+		__FE_COUT__ << i << "\t of " << loops << " x " << j << 
+			"\tx " << r << " :\t read register " << 6+j << __E__;  
+
+		for (int rr = 0; rr<r; rr++) 
+		{			
+			
+			++cnt;
+			val = this->readRegister(6+j);
+			if(val != correct[j])
+			{
+				__FE_SS__ <<  i << "\tx " << j << "\tx " << r << " :\t " <<
+					"Mismatch on read " << val << " vs " << correct[j] <<
+					". Read failed on read number " << cnt << __E__;
+				__FE_SS_THROW__;
+			}
+		}	
+	}
+	
+	__FE_COUT__ << "Completed high rate check. Number of reads: " << cnt << __E__;
+}
+catch(...)
+{
+	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
+	__FE_SS_THROW__;
+}
+
+//==================================================================================================
 void ROCCoreInterface::configure(void)
 try
 {
@@ -117,44 +163,32 @@ try
 	
 	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
 	
+	unsigned int val;
 	
 	// read 6 should read back 0x12fc
-	for (int i = 0; i<10*1000; i++) 
+	for (int i = 0; i<10; i++) 
 	{	
-		__MCOUT_INFO__(i << " read register 6 = " << this->readRegister(6) << __E__);		
-		__MCOUT_INFO__(i << " read register 7 = " << this->readDelay() << __E__);
+		val = this->readRegister(6);
+	
+		__MCOUT_INFO__(i << " read register 6 = " << val << __E__);		
+		if(val != 4680)
+		{
+			__FE_SS__ << "Bad read not 4680!" << __E__;
+			__FE_SS_THROW__;
+		}
+		
+		val = this->readDelay();
+		__MCOUT_INFO__(i << " read register 7 = " << val << __E__);
+		if(val != delay_)
+		{
+			__FE_SS__ << "Bad read not " << delay_ << "!" << __E__;
+			__FE_SS_THROW__;
+		}
 	}
 	
 	if(0) //random intense check
 	{
-		srand (time(NULL));
-	
-		int r;
-		unsigned int val;
-		int loops = 10*1000;
-		
-
-		unsigned int correct[] = {4680,10};
-	
-		for (int i = 0; i<10*1000; i++) 
-		for (int j = 0; j<2; j++) 
-		{
-			
-			r = rand() % 100;			
-			__FE_COUT__ << i << "\t of " << loops << " x " << j << 
-				"\tx " << r << " :\t read register " << 6+j << __E__;  
-
-			for (int rr = 0; rr<r; rr++) 
-			{			
-				val = this->readRegister(6+j);
-				if(val != correct[j])
-				{
-					__FE_SS__ <<  i << "\tx " << j << "\tx " << r << " :\t " <<
-						"Mismatch on read " << val << " vs " << correct[j] << __E__;
-					//__FE_THROW_SS__;
-				}
-			}	
-		}
+		highRateCheck();
 	}
 	
 	__MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
