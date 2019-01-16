@@ -512,6 +512,38 @@
 {
 "name" : "TableEditWizBackbone_v42",
 "assigned" : "2019-01-10T12:18:16.227-0600"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v55",
+"assigned" : "2019-01-14T14:18:03.460-0600"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v56",
+"assigned" : "2019-01-14T14:32:25.748-0600"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v57",
+"assigned" : "2019-01-14T14:34:11.236-0600"
+},
+{
+"name" : "TableEditWizBackbone_v43",
+"assigned" : "2019-01-16T09:02:09.967-0600"
+},
+{
+"name" : "TableEditWizBackbone_v44",
+"assigned" : "2019-01-16T09:11:41.742-0600"
+},
+{
+"name" : "TableEditWizBackbone_v45",
+"assigned" : "2019-01-16T09:12:09.503-0600"
+},
+{
+"name" : "TableEditWizBackbone_v46",
+"assigned" : "2019-01-16T09:14:50.830-0600"
+},
+{
+"name" : "TableEditWizBackbone_v47",
+"assigned" : "2019-01-16T09:18:51.655-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -1477,6 +1509,70 @@
 "value" : {
 "name" : "TableEditWizBackbone_v42",
 "assigned" : "2019-01-10T12:18:16.227-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-14T14:18:03.460-0600",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v55",
+"assigned" : "2019-01-14T14:18:03.460-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-14T14:32:25.748-0600",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v56",
+"assigned" : "2019-01-14T14:32:25.748-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-14T14:34:11.236-0600",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v57",
+"assigned" : "2019-01-14T14:34:11.236-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:02:09.967-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v43",
+"assigned" : "2019-01-16T09:02:09.967-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:11:41.742-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v44",
+"assigned" : "2019-01-16T09:11:41.742-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:12:09.503-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v45",
+"assigned" : "2019-01-16T09:12:09.503-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:14:50.830-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v46",
+"assigned" : "2019-01-16T09:14:50.830-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:18:51.655-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v47",
+"assigned" : "2019-01-16T09:18:51.655-0600"
 }
 }
 ],

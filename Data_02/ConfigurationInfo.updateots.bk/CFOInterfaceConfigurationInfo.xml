@@ -4,7 +4,6 @@
 			<VIEW Name="CFO_INTERFACE_CONFIGURATION" Type="File,Database,DatabaseTest" Description="No%20description.">
 				<COLUMN Type="UID" 	 Name="UID" 	 StorageName="UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="DeviceIndex" 	 StorageName="DEVICE_INDEX" 		DataType="NUMBER" 		DataChoices=""/>
-				<COLUMN Type="Data" 	 Name="ConfigureClock" 	 StorageName="CONFIGURE_CLOCK" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>

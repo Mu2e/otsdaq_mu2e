@@ -282,6 +282,38 @@
 {
 "name" : "defaultConfig_v69",
 "assigned" : "2019-01-10T12:18:12.625-0600"
+},
+{
+"name" : "defaultConfig_v70",
+"assigned" : "2019-01-14T14:17:59.720-0600"
+},
+{
+"name" : "defaultConfig_v71",
+"assigned" : "2019-01-14T14:32:22.177-0600"
+},
+{
+"name" : "defaultConfig_v72",
+"assigned" : "2019-01-14T14:34:07.247-0600"
+},
+{
+"name" : "defaultConfig_v73",
+"assigned" : "2019-01-16T09:02:05.982-0600"
+},
+{
+"name" : "defaultConfig_v74",
+"assigned" : "2019-01-16T09:11:37.787-0600"
+},
+{
+"name" : "defaultConfig_v75",
+"assigned" : "2019-01-16T09:12:05.956-0600"
+},
+{
+"name" : "defaultConfig_v76",
+"assigned" : "2019-01-16T09:14:46.886-0600"
+},
+{
+"name" : "defaultConfig_v77",
+"assigned" : "2019-01-16T09:18:47.647-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -727,6 +759,70 @@
 "value" : {
 "name" : "defaultConfig_v69",
 "assigned" : "2019-01-10T12:18:12.625-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-14T14:17:59.720-0600",
+"value" : {
+"name" : "defaultConfig_v70",
+"assigned" : "2019-01-14T14:17:59.720-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-14T14:32:22.177-0600",
+"value" : {
+"name" : "defaultConfig_v71",
+"assigned" : "2019-01-14T14:32:22.177-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-14T14:34:07.247-0600",
+"value" : {
+"name" : "defaultConfig_v72",
+"assigned" : "2019-01-14T14:34:07.247-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:02:05.982-0600",
+"value" : {
+"name" : "defaultConfig_v73",
+"assigned" : "2019-01-16T09:02:05.982-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:11:37.787-0600",
+"value" : {
+"name" : "defaultConfig_v74",
+"assigned" : "2019-01-16T09:11:37.787-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:12:05.956-0600",
+"value" : {
+"name" : "defaultConfig_v75",
+"assigned" : "2019-01-16T09:12:05.956-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:14:46.886-0600",
+"value" : {
+"name" : "defaultConfig_v76",
+"assigned" : "2019-01-16T09:14:46.886-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T09:18:47.647-0600",
+"value" : {
+"name" : "defaultConfig_v77",
+"assigned" : "2019-01-16T09:18:47.647-0600"
 }
 }
 ],

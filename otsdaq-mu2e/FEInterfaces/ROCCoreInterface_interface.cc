@@ -18,7 +18,8 @@ ROCCoreInterface::ROCCoreInterface(
 {
   INIT_MF("ROCCoreInterface");
 
-  linkID_  = DTCLib::DTC_Link_ID( getSelfNode().getNode("linkID").getValue<unsigned int>() );  
+  linkID_  = DTCLib::DTC_Link_ID( getSelfNode().getNode("linkID").getValue<unsigned int>() );
+
   delay_   = getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>();
 	
   __MCOUT_INFO__("ROCCoreInterface instantiated with link: " << linkID_
@@ -62,7 +63,8 @@ int ROCCoreInterface::readRegister(unsigned address)
 	int read_data = 0;
 	
 	try
-	{  		
+	{  	
+		
 		__FE_COUT__ << "Calling read ROC register" << __E__;
 		read_data = thisDTC_->ReadROCRegister(linkID_,address,1000);
 	}
@@ -96,17 +98,12 @@ int ROCCoreInterface::readDelay()
 
 //==================================================================================================
 void ROCCoreInterface::configure(void)
+try
 {
 	
 	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
 	// this->writeRegister(0,1);
 	// this->writeRegister(0,0);
-	
-	// read 6 should read back 0x12fc
-	__FE_COUT__ << " 1 read register 6 = " << this->readRegister(6) << __E__;
-	__FE_COUT__ << " 2 read register 6 = " << this->readRegister(6) << __E__;
-	__FE_COUT__ << " 3 read register 6 = " << this->readRegister(6) << __E__;
-	__FE_COUT__ << " 4 read register 6 = " << this->readRegister(6) << __E__;
 	
 	//setup needToResetAlignment using rising edge of register 22 
 	// (i.e., force synchronization of ROC clock with 40MHz system clock)
@@ -118,6 +115,48 @@ void ROCCoreInterface::configure(void)
 	
 	this->writeDelay(delay_);
 	
+	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
+	
+	
+	// read 6 should read back 0x12fc
+	for (int i = 0; i<10*1000; i++) 
+	{	
+		__MCOUT_INFO__(i << " read register 6 = " << this->readRegister(6) << __E__);		
+		__MCOUT_INFO__(i << " read register 7 = " << this->readDelay() << __E__);
+	}
+	
+	if(0) //random intense check
+	{
+		srand (time(NULL));
+	
+		int r;
+		unsigned int val;
+		int loops = 10*1000;
+		
+
+		unsigned int correct[] = {4680,10};
+	
+		for (int i = 0; i<10*1000; i++) 
+		for (int j = 0; j<2; j++) 
+		{
+			
+			r = rand() % 100;			
+			__FE_COUT__ << i << "\t of " << loops << " x " << j << 
+				"\tx " << r << " :\t read register " << 6+j << __E__;  
+
+			for (int rr = 0; rr<r; rr++) 
+			{			
+				val = this->readRegister(6+j);
+				if(val != correct[j])
+				{
+					__FE_SS__ <<  i << "\tx " << j << "\tx " << r << " :\t " <<
+						"Mismatch on read " << val << " vs " << correct[j] << __E__;
+					//__FE_THROW_SS__;
+				}
+			}	
+		}
+	}
+	
 	__MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
 	
 	//  __FE_COUT__ << __E__;   __FE_COUT__ << __E__;   __FE_COUT__ << __E__;
@@ -127,6 +166,11 @@ void ROCCoreInterface::configure(void)
 	//  __FE_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
 	
 	return;
+}
+catch(...)
+{
+	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
+	__FE_SS_THROW__;
 }
 
 //========================================================================================================================
