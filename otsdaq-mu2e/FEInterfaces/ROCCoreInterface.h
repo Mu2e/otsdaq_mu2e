@@ -57,7 +57,6 @@ class ROCCoreInterface : public FEVInterface
  private:
   DTCLib::DTC_Link_ID 	linkID_;
   unsigned int 	      	delay_;
-
   
 };
 

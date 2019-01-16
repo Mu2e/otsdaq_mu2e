@@ -9,7 +9,7 @@ Reset=`tput sgr0`         # Reset all
 
 echo -e "${Reset}===> start otsdaq on $HOSTNAME${Reset}"
 
-StartOTS.sh
+ots #start ots in normal mode
 
 if [[ "$HOSTNAME" == "mu2edaq06.fnal.gov" ]]; then
     echo -e "${Reset}Starting OTS on remote machines (XDAQ supervisors only)${Reset}"

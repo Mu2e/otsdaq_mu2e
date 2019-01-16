@@ -70,6 +70,15 @@
 ],
 "daq02Config_v1" : [
 "d001cb3c52cb4c658a1e3fc8"
+],
+"daq02Config_v2" : [
+"d001cb3c52cb4c658a1e3fc8"
+],
+"daq02Config_v3" : [
+"d001cb3c52cb4c658a1e3fc8"
+],
+"daq02Config_v4" : [
+"d001cb3c52cb4c658a1e3fc8"
 ]
 },
 "entities.name" : {
@@ -146,6 +155,15 @@
 ],
 "daq02Config_v1" : [
 "2018-10-18T08:57:34.366-0500"
+],
+"daq02Config_v2" : [
+"2019-01-15T15:01:26.722-0600"
+],
+"daq02Config_v3" : [
+"2019-01-15T15:05:02.227-0600"
+],
+"daq02Config_v4" : [
+"2019-01-15T15:17:22.909-0600"
 ]
 }
 }

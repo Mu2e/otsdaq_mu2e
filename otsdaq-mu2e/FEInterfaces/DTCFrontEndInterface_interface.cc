@@ -55,6 +55,12 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
 			  1); //requiredUserPermissions 
   
   
+   registerFEMacroFunction("DTC_Reset",	
+			  static_cast<FEVInterface::frontEndMacroFunction_t>(&DTCFrontEndInterface::DTCReset)	,
+			  std::vector<std::string>{},
+			  std::vector<std::string>{},
+			  1); //requiredUserPermissions 
+  
   
   //theFrontEndHardware_ = new FrontEndHardwareTemplate();
   //theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
@@ -88,52 +94,51 @@ DTCFrontEndInterface::DTCFrontEndInterface(const std::string& interfaceUID,
   }
   //else not emulator mode
 
-  //unsigned delay[8] = {1,2,3,4,5,6,7,8};
-  
-
-
   snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
   fd_ = open(devfile_, O_RDONLY);
 
-
-  //create roc mask for DTC
-  {
-	  std::vector<std::pair<std::string,ConfigurationTree> > rocChildren =
+	unsigned dtc_class_roc_mask = 0;
+  	//create roc mask for DTC
+  	{
+		std::vector<std::pair<std::string,ConfigurationTree> > rocChildren =
 			  Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
 
-	  roc_mask_ = 0;
+		roc_mask_ = 0;
 
-	  for(auto& roc: rocChildren)
-	  {
-		  __FE_COUT__ << "roc uid " << roc.first << __E__;
-		  bool enabled = roc.second.getNode("Status").getValue<bool>();
-		  __FE_COUT__ << "roc enable " << enabled << __E__;
+		for(auto& roc: rocChildren)
+	  	{
+			__FE_COUT__ << "roc uid " << roc.first << __E__;
+		  	bool enabled = roc.second.getNode("Status").getValue<bool>();
+		  	__FE_COUT__ << "roc enable " << enabled << __E__;
 
-		  if(enabled)
-		  {
-			  int linkID = roc.second.getNode("linkID").getValue<int>();
-			  roc_mask_ |= (0x1 << linkID);
-		  }
+			if(enabled)
+		  	{
+				int linkID = roc.second.getNode("linkID").getValue<int>();
+			  	roc_mask_ |= (0x1 << linkID);      
+			  	dtc_class_roc_mask |= (0x1 << (linkID * 4));      //the DTC class instantiation expects each ROC has its own hex nibble
+			}
 	  }
 
-	  __FE_COUT__ << "DTC roc_mask_ = " << std::hex << roc_mask_ << std::dec << __E__;
-  } //end create roc mask
+	  __FE_COUT__ << "DTC roc_mask_ = 0x" << std::hex << roc_mask_ << std::dec << __E__;
+	  __FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex << dtc_class_roc_mask << std::dec << __E__;
 
-  // instantiate DTC with the appropriate ROCs enabled
-  std::string expectedDesignVersion = "";
-  auto mode = DTCLib::DTC_SimMode_NoCFO;
-  thisDTC_ = new DTCLib::DTC(mode,dtc_,roc_mask_,expectedDesignVersion);
+	} //end create roc mask
 
-  createROCs();
-
-  // DTC-specific info
-  dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
-
-  // done  
-  __MCOUT_INFO__("DTCFrontEndInterface instantiated with name: " << device_name_
-		 << " dtc_location_in_chain_ = " << dtc_location_in_chain_
-		 << " talking to /dev/mu2e" << dtc_
-		 << __E__);
+  	// instantiate DTC with the appropriate ROCs enabled
+	std::string expectedDesignVersion = "";
+	auto mode = DTCLib::DTC_SimMode_NoCFO;
+	thisDTC_ = new DTCLib::DTC(mode,dtc_,dtc_class_roc_mask,expectedDesignVersion);
+	
+	createROCs();
+	
+	// DTC-specific info
+	dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+	
+	// done  
+	__MCOUT_INFO__("DTCFrontEndInterface instantiated with name: " << device_name_
+			 << " dtc_location_in_chain_ = " << dtc_location_in_chain_
+			 << " talking to /dev/mu2e" << dtc_
+			 << __E__);
 }
 
 //==========================================================================================
@@ -536,11 +541,18 @@ void DTCFrontEndInterface::printVoltages() {
 
 int DTCFrontEndInterface::checkLinkStatus() {
 
-  int ROCs_OK = 1;
+	int ROCs_OK = 1;
 
-  for (int i=0; i<8; i++) 
-    if ( ROCActive(i) )
-      ROCs_OK &= getROCLinkStatus(i);
+  	for (int i=0; i<8; i++)
+  	{
+  		//__FE_COUT__ << " check link " << i << " ";
+  	
+    	if ( ROCActive(i) )
+    	{
+			//__FE_COUT__ << " active... status = " << getROCLinkStatus(i) << __E__; 
+			ROCs_OK &= getROCLinkStatus(i);
+	    }
+	}
 
 
   if ((getCFOLinkStatus() == 1) && 
@@ -563,17 +575,23 @@ int DTCFrontEndInterface::checkLinkStatus() {
 }
 
 bool DTCFrontEndInterface::ROCActive(unsigned ROC_link) {
-  
-  if ( (roc_mask_ >> ROC_link) && 0x1 ) {
-    return true;
-  } else { 
-    return false;
-  }
+	// __FE_COUTV__(roc_mask_);
+    // __FE_COUTV__(ROC_link);
+
+	if ( ((roc_mask_ >> ROC_link) & 0x01) == 1 ) 
+  	{
+    	return true;
+  	} 
+  	else 
+  	{ 
+    	return false;
+  	}
 
 }
 
 //==================================================================================================
 void DTCFrontEndInterface::configure(void)
+try
 {
   
   __FE_COUTV__( getIterationIndex() );
@@ -677,11 +695,12 @@ void DTCFrontEndInterface::configure(void)
 
       __MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " reset FPGA...");
 
-      registerWrite(0x9100,0x10000000);	// bit 31 = DTC Reset FPGA
+      registerWrite(0x9100,0x80000000);	// bit 31 = DTC Reset FPGA
       sleep(3);
 
       __MCOUT_INFO__("............. firmware version " << std::hex << registerRead(0x9004) << std::dec << __E__);
 
+		DTCReset();
     }
 
   } else if ( (config_step%number_of_dtc_config_steps) == 1 ) {
@@ -864,6 +883,11 @@ void DTCFrontEndInterface::configure(void)
   turnOffLED(); 
   return;
 } //end configure()
+catch(...)
+{
+	__FE_SS__ << "Unknown error caught. Check the printouts!" << __E__;
+	__FE_SS_THROW__;
+}
 
 //========================================================================================================================
 void DTCFrontEndInterface::halt(void)
@@ -2547,6 +2571,62 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
   
   for(auto &argOut:argsOut) 
     __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
+
+} 
+
+void DTCFrontEndInterface::DTCReset(__ARGS__)
+{
+	DTCReset();
+}
+
+void DTCFrontEndInterface::DTCReset()
+{
+
+{
+        char *address   = new char[universalAddressSize_]{0};   //create address buffer of interface size and init to all 0
+        char *data              = new char[universalDataSize_]{0};              //create data buffer of interface size and init to all 0
+        uint64_t macroAddress;          //create macro address buffer (size 8 bytes)
+        uint64_t macroData;                     //create macro address buffer (size 8 bytes)
+        std::map<std::string /*arg name*/,uint64_t /*arg val*/> macroArgs; //create map from arg name to 64-bit number
+
+        // command-#0: Write(0x9100 /*address*/,0xa0000000 /*data*/);
+        macroAddress = 0x9100; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0xa0000000; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        // command-#1: Write(0x9118 /*address*/,0x0000003f /*data*/);
+        macroAddress = 0x9118; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0x0000003f; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        // command-#2: Write(0x9100 /*address*/,0x00000000 /*data*/);
+        macroAddress = 0x9100; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0x00000000; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        // command-#3: Write(0x9100 /*address*/,0x10000000 /*data*/);
+        macroAddress = 0x9100; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0x10000000; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        // command-#4: Write(0x9100 /*address*/,0x30000000 /*data*/);
+        macroAddress = 0x9100; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0x30000000; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        // command-#5: Write(0x9100 /*address*/,0x10000000 /*data*/);
+        macroAddress = 0x9100; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0x10000000; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        // command-#6: Write(0x9118 /*address*/,0x00000000 /*data*/);
+        macroAddress = 0x9118; memcpy(address,&macroAddress,8); //copy macro address to buffer
+        macroData = 0x00000000; memcpy(data,&macroData,8);      //copy macro data to buffer
+        universalWrite(address,data);
+
+        delete[] address; //free the memory
+        delete[] data; //free the memory
+}
 
 } 
 

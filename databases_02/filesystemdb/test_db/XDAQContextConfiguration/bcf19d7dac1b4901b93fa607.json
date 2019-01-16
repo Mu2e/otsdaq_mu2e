@@ -111,6 +111,10 @@
 {
 "name" : "daq02Context_v3",
 "assigned" : "2018-10-18T09:13:09.824-0500"
+},
+{
+"name" : "daq02Context_v4",
+"assigned" : "2019-01-15T15:25:24.601-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -164,6 +168,14 @@
 "value" : {
 "name" : "daq02Context_v3",
 "assigned" : "2018-10-18T09:13:09.824-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:25:24.601-0600",
+"value" : {
+"name" : "daq02Context_v4",
+"assigned" : "2019-01-15T15:25:24.601-0600"
 }
 }
 ],
