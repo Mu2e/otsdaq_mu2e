@@ -104,48 +104,68 @@ int ROCCoreInterface::readDelay()
 
 //==================================================================================================
 void ROCCoreInterface::highRateCheck(void)
-try
 {
 	
-	__FE_COUT__ << "Starting the high rate check... " << __E__;
+	__FE_MCOUT__("Starting the high rate check... " << __E__);
+
+	std::thread([](ROCCoreInterface *roc)
+	{ 		
+		ROCCoreInterface:: highRateCheckThread(roc); 
+	},this).detach();
+	
+	__FE_MCOUT__ ("Thread launched..." << __E__);
+}
+	
+//==================================================================================================
+void ROCCoreInterface::highRateCheckThread(ROCCoreInterface *roc)
+try
+{
+	__MCOUT__(roc->interfaceUID_ << "Starting the high rate check... " << __E__);
 	srand (time(NULL));
 
 	int r;
 	unsigned int val;
 	int loops = 10*1000;
 	int cnt = 0;	
-
-	unsigned int correct[] = {4680,10};
+	int cnts[] = {0,0};
+	
+	unsigned int correct[] = {4860,10};
 	
 	for (int i = 0; i<loops; i++) 
-	for (int j = 0; j<2; j++) 
-	{
-		
-		r = rand() % 100;			
-		__FE_COUT__ << i << "\t of " << loops << " x " << j << 
-			"\tx " << r << " :\t read register " << 6+j << __E__;  
-
-		for (int rr = 0; rr<r; rr++) 
-		{			
+		for (int j = 0; j<2; j++) 
+		{
 			
-			++cnt;
-			val = this->readRegister(6+j);
-			if(val != correct[j])
-			{
-				__FE_SS__ <<  i << "\tx " << j << "\tx " << r << " :\t " <<
-					"Mismatch on read " << val << " vs " << correct[j] <<
-					". Read failed on read number " << cnt << __E__;
-				__FE_SS_THROW__;
-			}
-		}	
-	}
+			r = rand() % 100;			
+			__MCOUT__ (roc->interfaceUID_ << i << "\t of " << loops << 
+				"\tx " << r << " :\t read register " << 6+j << __E__);  
+
+			for (int rr = 0; rr<r; rr++) 
+			{			
+				
+				++cnt;
+				++cnts[j];
+				val = roc->readRegister(6+j);
+				if(val != correct[j])
+				{
+					__SS__ << roc->interfaceUID_ << i << "\tx " << r << " :\t " <<
+						"read register " << 6+j <<
+						". Mismatch on read " << val << " vs " << correct[j] <<
+						". Read failed on read number " << cnt << __E__;
+					__MOUT__ << ss.str();				
+					__SS_THROW__;
+				}
+			}	
+		}
 	
-	__FE_COUT__ << "Completed high rate check. Number of reads: " << cnt << __E__;
+	__MCOUT__(roc->interfaceUID_ <<
+		"Completed high rate check. Number of reads: " << cnt <<
+		", reg6cnt=" << cnts[0] << ", reg7cnt=" << cnts[1] << __E__);
 }
 catch(...)
 {
-	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
-	__FE_SS_THROW__;
+	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
+	__MCOUT__(ss.str());
+	//__FE_SS_THROW__;
 }
 
 //==================================================================================================
@@ -177,9 +197,9 @@ try
 		val = this->readRegister(6);
 	
 		__MCOUT_INFO__(i << " read register 6 = " << val << __E__);		
-		if(val != 4680)
+		if(val != 4860)
 		{
-			__FE_SS__ << "Bad read not 4680!" << __E__;
+			__FE_SS__ << "Bad read not 4860! val = " << val << __E__;
 			__FE_SS_THROW__;
 		}
 		
@@ -187,7 +207,7 @@ try
 		__MCOUT_INFO__(i << " read register 7 = " << val << __E__);
 		if(val != delay_)
 		{
-			__FE_SS__ << "Bad read not " << delay_ << "!" << __E__;
+			__FE_SS__ << "Bad read not " << delay_ << "! val = " << val << __E__;
 			__FE_SS_THROW__;
 		}
 	}
@@ -205,11 +225,16 @@ try
 	//  __FE_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
 	//  __FE_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
 	
-	return;
+}
+catch(const std::runtime_error& e)
+{
+	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
+	throw;
 }
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
+	__FE_MOUT__ << ss.str();
 	__FE_SS_THROW__;
 }
 

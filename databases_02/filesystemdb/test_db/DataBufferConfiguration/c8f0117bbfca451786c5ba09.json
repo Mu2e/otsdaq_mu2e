@@ -210,6 +210,10 @@
 {
 "name" : "daq02Config_v6",
 "assigned" : "2019-01-16T10:24:18.963-0600"
+},
+{
+"name" : "daq02Config_v7",
+"assigned" : "2019-01-16T11:44:23.530-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -447,6 +451,14 @@
 "value" : {
 "name" : "daq02Config_v6",
 "assigned" : "2019-01-16T10:24:18.963-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T11:44:23.530-0600",
+"value" : {
+"name" : "daq02Config_v7",
+"assigned" : "2019-01-16T11:44:23.530-0600"
 }
 }
 ],

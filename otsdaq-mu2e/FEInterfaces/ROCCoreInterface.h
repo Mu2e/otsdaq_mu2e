@@ -50,6 +50,7 @@ class ROCCoreInterface : public FEVInterface
   int readDelay();                 //5ns steps
   
   void highRateCheck(void);
+  static void highRateCheckThread(ROCCoreInterface *roc);
 
   inline int getLinkID() { return linkID_; }
 

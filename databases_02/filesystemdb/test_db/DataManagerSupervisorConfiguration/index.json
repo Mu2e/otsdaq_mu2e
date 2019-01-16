@@ -85,6 +85,9 @@
 ],
 "daq02Config_v6" : [
 "d001cb3c52cb4c658a1e3fc8"
+],
+"daq02Config_v7" : [
+"d001cb3c52cb4c658a1e3fc8"
 ]
 },
 "entities.name" : {
@@ -176,6 +179,9 @@
 ],
 "daq02Config_v6" : [
 "2019-01-16T10:24:19.431-0600"
+],
+"daq02Config_v7" : [
+"2019-01-16T11:44:23.974-0600"
 ]
 }
 }
