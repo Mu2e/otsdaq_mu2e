@@ -81,7 +81,9 @@ namespace ots
 		
     m_ioc_reg_access_t reg_access_; 
     
-    
+    unsigned initial_9100_ = 0;
+	unsigned initial_9114_ = 0;
+
 
   public: 
     void ReadROC(__ARGS__);

@@ -930,96 +930,103 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
 		return;
 	}
 
-  const int numberOfChains = 1;
-  int link[numberOfChains] = {0};
+  	const int numberOfChains = 1;
+  	int link[numberOfChains] = {0};
   
-  const int numberOfDTCsPerChain = 2;
+  	const int numberOfDTCsPerChain = 2;
   
-  const int numberOfROCsPerDTC = 2;    //assume these are ROC0 and ROC1
+  	const int numberOfROCsPerDTC = 2;    //assume these are ROC0 and ROC1
   
-  // To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
-  // work per iteration.  Loop back done on all chains (in this method), assuming the following order:  
-  // i  DTC0  DTC1  ...  DTCN
-  // 0  ROC0  none  ...  none  
-  // 1  ROC1  none  ...  none
-  // 2  none  ROC0  ...  none
-  // 3  none  ROC1  ...  none
-  // ...
-  // N-1  none  none  ...  ROC0
-  // N  none  none  ...  ROC1
+  	// To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
+  	// work per iteration.  Loop back done on all chains (in this method), assuming the following order:  
+  	// i  DTC0  DTC1  ...  DTCN
+  	// 0  ROC0  none  ...  none  
+  	// 1  ROC1  none  ...  none
+  	// 2  none  ROC0  ...  none
+  	// 3  none  ROC1  ...  none
+  	// ...
+  	// N-1  none  none  ...  ROC0
+  	// N  none  none  ...  ROC1
   
-  int totalNumberOfMeasurements = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
+  	int totalNumberOfMeasurements = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
   
-  int loopbackIndex = getIterationIndex();
-  
-  if (loopbackIndex >= totalNumberOfMeasurements) { 	 
-    //    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
+  	int loopbackIndex = getIterationIndex();
+
+	if (loopbackIndex == 0) 
+	{
+		initial_9100_ = registerRead(0x9100);
+		initial_9114_ = registerRead(0x9114);
+	}
+
+  	if (loopbackIndex >= totalNumberOfMeasurements) 
+  	{ 	 
+    	//    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
     
-    if ( checkLinkStatus() == 1) {
-      //      __MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
-    } else {
+    	if ( checkLinkStatus() == 1) {
+      		//      __MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
+    	} else {
       //      __MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
-    }
+    	}
+
+		registerWrite(0x9100,initial_9100_);
+		registerWrite(0x9114,initial_9114_);
+
+    	return;
+  	}
+  
+  	//=========== Perform loopback=============
+  
+  	// where are we in the procedure?
+  	int activeROC = loopbackIndex % numberOfROCsPerDTC ;
+  
+  	int activeDTC = -1;
+  
+  	for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) 
+  	{ 
+    	if (loopbackIndex >= (  nDTC   * numberOfROCsPerDTC) &&
+	 		loopbackIndex <  ((nDTC+1) * numberOfROCsPerDTC) ) 
+	 	{
+      		activeDTC = nDTC;
+    	}
+  	}
+  
+  	// __FE_COUT__ << "loopback index = " << loopbackIndex
+  	// 	<< " activeDTC = " << activeDTC
+  	//	 	<< " activeROC = " << activeROC
+  	//	 	<< __E__;
     
-    return;
-  }
-  
-  //=========== Perform loopback=============
-  
-  // where are we in the procedure?
-  int activeROC = loopbackIndex % numberOfROCsPerDTC ;
-  
-  int activeDTC = -1;
-  
-  for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) { 
-    if ( loopbackIndex >= (  nDTC   * numberOfROCsPerDTC) &&
-	 loopbackIndex <  ((nDTC+1) * numberOfROCsPerDTC) ) {
-      
-      activeDTC = nDTC;
-    }
-  }
-  
-  // __FE_COUT__ << "loopback index = " << loopbackIndex
-  // 	<< " activeDTC = " << activeDTC
-  //	 	<< " activeROC = " << activeROC
-  //	 	<< __E__;
-  
-  
-  if (activeDTC == dtc_location_in_chain_) { 
+  	if (activeDTC == dtc_location_in_chain_) 
+  	{ 
+    	__FE_COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
+    	registerWrite(0x9100,0x00000000);
     
-    __FE_COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
-    registerWrite(0x9100,0x00000000);
+  	} else {
     
-  } else {
-    
-    // this DTC is lower in chain than the one being looped.  Pass the loopback signal through
-    __FE_COUT__ 	<< "active DTC = " << activeDTC << " is NOT this DTC = " << dtc_location_in_chain_
-		<< "... pass signal through" << __E__;
-    registerWrite(0x9100,0x10000000);
-    
-  }
+    	// this DTC is lower in chain than the one being looped.  Pass the loopback signal through
+    	__FE_COUT__ 	<< "active DTC = " << activeDTC << " is NOT this DTC = " << dtc_location_in_chain_
+						<< "... pass signal through" << __E__;
+    	registerWrite(0x9100,0x10000000);
+  	}
 
 
-  int ROCToEnable = 0x00004040 | (0x101 << activeROC);  // enables TX and Rx to CFO (bit 6) and appropriate ROC
-  __FE_COUT__ << "enable ROC " << activeROC << " --> 0x" << std::hex << ROCToEnable << std::dec << __E__;
+  	int ROCToEnable = 0x00004040 | (0x101 << activeROC);  // enables TX and Rx to CFO (bit 6) and appropriate ROC
+  	__FE_COUT__ << "enable ROC " << activeROC << " --> 0x" << std::hex << ROCToEnable << std::dec << __E__;
 
-  registerWrite(0x9114,ROCToEnable);
+  	registerWrite(0x9114,ROCToEnable);
 
-  // Re-align the links for the activeROC
-  for (auto& roc:rocs_) {
-	if (roc.second->getLinkID() == activeROC) {
-		__FE_COUT__ << "... ROC realign link... " << __E__;
-		roc.second->writeRegister(22,0);
-    	roc.second->writeRegister(22,1);
-    }
-  }
+  	// Re-align the links for the activeROC
+  	for (auto& roc:rocs_) 
+  	{
+		if (roc.second->getLinkID() == activeROC) 
+		{
+			__FE_COUT__ << "... ROC realign link... " << __E__;
+			roc.second->writeRegister(22,0);
+    		roc.second->writeRegister(22,1);
+    	}
+  	} 
 
-
-  
-  //sleep(2);  
-  
-  indicateIterationWork();
-  return;
+  	indicateIterationWork();
+  	return;
 }
 
 //========================================================================================================================

@@ -219,11 +219,6 @@ try
 	
 	__MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
 	
-	//  __FE_COUT__ << __E__;   __FE_COUT__ << __E__;   __FE_COUT__ << __E__;
-	//  __FE_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
-	//  __FE_COUT__ << " Read register 6 = " << this->readRegister(6) << __E__;
-	//  __FE_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
-	//  __FE_COUT__ << " Read register 7 = " << this->readRegister(7) << __E__;
 	
 }
 catch(const std::runtime_error& e)

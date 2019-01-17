@@ -410,6 +410,34 @@
 {
 "name" : "defaultConfig_v78",
 "assigned" : "2019-01-16T10:22:06.515-0600"
+},
+{
+"name" : "defaultConfig_v79",
+"assigned" : "2019-01-16T11:44:42.616-0600"
+},
+{
+"name" : "defaultConfig_v80",
+"assigned" : "2019-01-17T11:35:53.259-0600"
+},
+{
+"name" : "defaultConfig_v81",
+"assigned" : "2019-01-17T11:38:43.948-0600"
+},
+{
+"name" : "defaultConfig_v82",
+"assigned" : "2019-01-17T14:17:58.421-0600"
+},
+{
+"name" : "defaultConfig_v83",
+"assigned" : "2019-01-17T14:18:24.613-0600"
+},
+{
+"name" : "defaultConfig_v84",
+"assigned" : "2019-01-17T14:19:58.920-0600"
+},
+{
+"name" : "defaultConfig_v85",
+"assigned" : "2019-01-17T14:33:27.413-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -1087,6 +1115,62 @@
 "value" : {
 "name" : "defaultConfig_v78",
 "assigned" : "2019-01-16T10:22:06.515-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T11:44:42.616-0600",
+"value" : {
+"name" : "defaultConfig_v79",
+"assigned" : "2019-01-16T11:44:42.616-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T11:35:53.259-0600",
+"value" : {
+"name" : "defaultConfig_v80",
+"assigned" : "2019-01-17T11:35:53.259-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T11:38:43.948-0600",
+"value" : {
+"name" : "defaultConfig_v81",
+"assigned" : "2019-01-17T11:38:43.948-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T14:17:58.421-0600",
+"value" : {
+"name" : "defaultConfig_v82",
+"assigned" : "2019-01-17T14:17:58.421-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T14:18:24.613-0600",
+"value" : {
+"name" : "defaultConfig_v83",
+"assigned" : "2019-01-17T14:18:24.613-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T14:19:58.920-0600",
+"value" : {
+"name" : "defaultConfig_v84",
+"assigned" : "2019-01-17T14:19:58.920-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T14:33:27.414-0600",
+"value" : {
+"name" : "defaultConfig_v85",
+"assigned" : "2019-01-17T14:33:27.413-0600"
 }
 }
 ],

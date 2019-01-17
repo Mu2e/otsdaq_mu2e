@@ -260,7 +260,11 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
   	const int maxNumberOfLoopbacks = 10000;
   	int numberOfLoopbacks = getConfigurationManager()->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfLoopbacks").getValue<unsigned int>();
 
-  	__FE_COUTV__( numberOfLoopbacks );
+	// get initial states
+	unsigned initial_9380 = registerRead(0x9380);
+	unsigned initial_9114 = registerRead(0x9114);
+
+	__FE_COUTV__( numberOfLoopbacks );
 
   	//  int numberOfLoopbacks = 100;
   
@@ -335,10 +339,10 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
     	}
     
     	//----------clear delay measurement mode
-    	registerWrite(0x9380,0x00000000);
+    	//registerWrite(0x9380,0x00000000);
     
     	//-------- Disable tx and rx data
-    	registerWrite(0x9114,0x00000000);
+    	//registerWrite(0x9114,0x00000000);
     
     	usleep(5);
   	}
@@ -380,7 +384,11 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback) {
 	__FE_COUT__ << __E__;
   
   	__FE_COUT__ << "LOOPBACK: number of failed loopbacks = " << std::dec << failed_loopback_ << __E__;
-  
+
+	// return back to initial state
+	registerWrite(0x9380,initial_9380);
+	registerWrite(0x9114,initial_9114);
+
   	return average_loopback_;
 
 } //end MeasureLoopback()
@@ -569,76 +577,79 @@ void CFOFrontEndInterface::resume(void)
 //========================================================================================================================
 void CFOFrontEndInterface::start(std::string )//runNumber)
 {
-	
-  bool LoopbackLock		   = true;
-  int loopbackROC		   = 0;
-  
-  const int numberOfChains = 1;
-  int link[numberOfChains] = {0};
-  
-  
-  const int numberOfDTCsPerChain = 2; // assume 0, then 1
-  
-  const int numberOfROCsPerDTC = 2; // assume 0, then 1
-  
-  // To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
-  // work per iteration. Loop back done on all chains (in this method), assuming the following order: 
-  // i DTC0 DTC1 ... DTCN
-  // 0 ROC0 none ... none 
-  // 1 ROC1 none ... none
-  // 2 none ROC0 ... none
-  // 3 none ROC1 ... none
-  // ...
-  // N-1 none none ... ROC0
-  // N none none ... ROC1
-  
-  int numberOfMeasurements = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
-  
-  int startIndex = getIterationIndex();
-  
-  if (startIndex >= numberOfMeasurements) {
-    __MCOUT_INFO__("-------------------------" << __E__); 	
-    __MCOUT_INFO__("FULL SYSTEM loopback DONE" << __E__);
-    
-	for (int nChain = 0; nChain < numberOfChains; nChain++) {
-		for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) {
-			for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) {
-	  			__MCOUT_INFO__("chain " << nChain << " - DTC " << nDTC << " - ROC " << nROC
-			 					<< " = " << std::dec << delay[nChain][nDTC][nROC] 
-			 					<< " ns +/- " << delay_rms[nChain][nDTC][nROC] 
-			 					<< " (" << delay_failed[nChain][nDTC][nROC] 
-			 					<< ")" << __E__);
-			}
-      	}
-    }
-    
-    float diff = delay[0][1][1] - delay[0][1][0];
-    
-    __MCOUT_INFO__("DTC1: ROC1 - ROC0 = " << diff <<__E__);
-    __MCOUT_INFO__("-------------------------" << __E__); 
 
-    __FE_COUT__ << "CFO enable Event Start character output " << __E__;
-    registerWrite(0x9100,0x5); 
+	bool LoopbackLock		   = true;
+	int loopbackROC		   = 0;
+  
+	const int numberOfChains = 1;
+	int link[numberOfChains] = {0};
+  
+	const int numberOfDTCsPerChain = 2; // assume 0, then 1
+  
+	const int numberOfROCsPerDTC = 2; // assume 0, then 1
+  
+  	// To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO (this method)
+  	// work per iteration. Loop back done on all chains (in this method), assuming the following order: 
+  	// i DTC0 DTC1 ... DTCN
+  	// 0 ROC0 none ... none 
+  	// 1 ROC1 none ... none
+  	// 2 none ROC0 ... none
+  	// 3 none ROC1 ... none
+  	// ...
+  	// N-1 none none ... ROC0
+  	// N none none ... ROC1
+  
+  	int numberOfMeasurements = numberOfChains * numberOfDTCsPerChain * numberOfROCsPerDTC;
+  
+  	int startIndex = getIterationIndex();
+  
+  	if (startIndex >= numberOfMeasurements) {
+		__MCOUT_INFO__("-------------------------" << __E__); 	
+    	__MCOUT_INFO__("FULL SYSTEM loopback DONE" << __E__);
     
-    __FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
-    registerWrite(0x9114,0x0000ffff); 
+		for (int nChain = 0; nChain < numberOfChains; nChain++) 
+		{
+			for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) 
+			{
+				for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) 
+				{
+	  				__MCOUT_INFO__("chain " << nChain << " - DTC " << nDTC << " - ROC " << nROC
+			 						<< " = " << std::dec << delay[nChain][nDTC][nROC] 
+			 						<< " ns +/- " << delay_rms[nChain][nDTC][nROC] 
+			 						<< " (" << delay_failed[nChain][nDTC][nROC] 
+			 						<< ")" << __E__);
+				}
+      		}
+    	}
+    
+    	float diff = delay[0][1][1] - delay[0][1][0];
+    
+    	__MCOUT_INFO__("DTC1: ROC1 - ROC0 = " << diff <<__E__);
+    	__MCOUT_INFO__("-------------------------" << __E__); 
 
-    __FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
-    registerWrite(0x9118,0x000000ff);
-    registerWrite(0x9118,0x0);
-    usleep(50);
+    	__FE_COUT__ << "CFO enable Event Start character output " << __E__;
+    	registerWrite(0x9100,0x5); 
+
+    	__FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
+    	registerWrite(0x9118,0x000000ff);
+    	registerWrite(0x9118,0x0);
+    	usleep(50);
     
-    readStatus();
-    return;
-  }
+    	readStatus();
+    	return;
+	}
   
-  __FE_COUT__ << "START: CFO status" << __E__;
-  readStatus();
+  	__FE_COUT__ << "START: CFO status" << __E__;
+  	readStatus();
   
-	if (startIndex == 0) {
-    	for (int nChain = 0; nChain < numberOfChains; nChain++) {
-      		for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) {
-				for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) {
+	if (startIndex == 0) 
+	{
+    	for (int nChain = 0; nChain < numberOfChains; nChain++) 
+    	{
+      		for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) 
+      		{
+				for (int nROC = 0; nROC < numberOfROCsPerDTC; nROC++) 
+				{
 	  				delay[nChain][nDTC][nROC] = -1;
 	 				delay_rms[nChain][nDTC][nROC] = -1;
 	 				delay_failed[nChain][nDTC][nROC] = -1;
@@ -646,64 +657,60 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
       		}
     	}
 	}	
-  //=========== Perform loopback=============
+  	//=========== Perform loopback=============
   
-  // where are we in the procedure?
-  int activeROC = startIndex % numberOfROCsPerDTC ;
+  	// where are we in the procedure?
+  	int activeROC = startIndex % numberOfROCsPerDTC ;
   
-  int activeDTC = -1;
+  	int activeDTC = -1;
   
-  for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) { 
-    //	__FE_COUT__ << "loopback index = " << startIndex
-    //		<< " nDTC = " << nDTC
-    //		<< " numberOfDTCsPerChain = " << numberOfDTCsPerChain
-    //		<< __E__;
-    if (startIndex >= (nDTC * numberOfROCsPerDTC) &&
-		startIndex < ((nDTC+1) * numberOfROCsPerDTC ) ) {
-      //				__FE_COUT__ << "ACTIVE DTC " << nDTC << __E__;
-      activeDTC = nDTC;
-    }
-  }
+  	for (int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++) 
+  	{ 
+    	//	__FE_COUT__ << "loopback index = " << startIndex
+    	//		<< " nDTC = " << nDTC
+    	//		<< " numberOfDTCsPerChain = " << numberOfDTCsPerChain
+    	//		<< __E__;
+    	if (startIndex >= (nDTC * numberOfROCsPerDTC) &&
+			startIndex < ((nDTC+1) * numberOfROCsPerDTC ) ) 
+			{
+      			//				__FE_COUT__ << "ACTIVE DTC " << nDTC << __E__;
+      			activeDTC = nDTC;
+    		}
+  	}
   
-  //	__MOUT__ 	<< "loopback index = " << startIndex;
-  __MCOUT_INFO__(" Looping back DTC" << activeDTC << " ROC" << activeROC << __E__);
+  	//	__MOUT__ 	<< "loopback index = " << startIndex;
+  	__MCOUT_INFO__(" Looping back DTC" << activeDTC << " ROC" << activeROC << __E__);
   
-  int chainIndex = 0;
+  	int chainIndex = 0;
   
-  while( (chainIndex < numberOfChains) ) {
+  	while( (chainIndex < numberOfChains) ) 
+  	{
     
-    // clean up after the DTC has done all of its resetting... 
-    __FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
-    registerWrite(0x9118,0x000000ff);
-    registerWrite(0x9118,0x0);
-    sleep(5);
+    	// clean up after the DTC has done all of its resetting... 
+    	__FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
+    	registerWrite(0x9118,0x000000ff);
+    	registerWrite(0x9118,0x0);
+    	sleep(1);
     
-    //__MCOUT__( "LOOPBACK: on DTC " << link[chainIndex] <<__E__);
-    MeasureLoopback(link[chainIndex]);
+    	//__MCOUT__( "LOOPBACK: on DTC " << link[chainIndex] <<__E__);
+    	MeasureLoopback(link[chainIndex]);
 
-	delay[chainIndex][activeDTC][activeROC] = average_loopback_;
-	delay_rms[chainIndex][activeDTC][activeROC] = rms_loopback_;
-	delay_failed[chainIndex][activeDTC][activeROC] = failed_loopback_;
+		delay[chainIndex][activeDTC][activeROC] = average_loopback_;
+		delay_rms[chainIndex][activeDTC][activeROC] = rms_loopback_;
+		delay_failed[chainIndex][activeDTC][activeROC] = failed_loopback_;
 
-    __FE_COUT__ << "LOOPBACK: link " << link[chainIndex] << " -> delay = " << delay[chainIndex][activeDTC][activeROC]
-	     	 << " ns,  rms = " << delay_rms[chainIndex][activeDTC][activeROC] 
-	     	 << " failed = " << delay_failed[chainIndex][activeDTC][activeROC] << __E__;	
+    	__FE_COUT__ << "LOOPBACK: link " << link[chainIndex] 
+    				<< " -> delay = " << delay[chainIndex][activeDTC][activeROC]
+	     	 		<< " ns,  rms = " << delay_rms[chainIndex][activeDTC][activeROC] 
+	     	 		<< " failed = " << delay_failed[chainIndex][activeDTC][activeROC] << __E__;	
     
-    chainIndex++;
+    	chainIndex++;
     
-  } // (chainIndex < numberOfChains && WorkLoop::continueWorkLoop_)
+  	} // (chainIndex < numberOfChains)
   
-  indicateIterationWork(); // I still need to be touched
+  	indicateIterationWork(); // I still need to be touched
   
-//  for(int i = 0; i < 10; i++)
-//  {
-// 	 if((delay[0][0][0] != 65 || delay[0][1][0] != 95) && LoopbackLock)
-// 	 {  
-// 	 	
- // 		configure();	
- // 	 }
-//}
-  return;
+  	return;
 }
 
 //========================================================================================================================

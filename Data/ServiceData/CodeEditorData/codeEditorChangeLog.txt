@@ -672,3 +672,14 @@ time=1547654645 old-size=5903 new-size=5905 path=/home/mu2edaq/sync_demo/ots/src
 time=1547654735 old-size=76117 new-size=76119 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
 time=1547655280 old-size=5905 new-size=5899 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
 time=1547656610 old-size=5899 new-size=6143 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
+time=1547746517 old-size=28389 new-size=28611 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1547746802 old-size=28611 new-size=28664 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1547746938 old-size=28664 new-size=28547 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1547751368 old-size=28547 new-size=28547 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1547751609 old-size=28547 new-size=28434 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1547751794 old-size=76522 new-size=76539 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1547751971 old-size=76539 new-size=76589 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1547752859 old-size=76589 new-size=76572 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1547754120 old-size=76572 new-size=76756 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc
+time=1547754204 old-size=2524 new-size=2581 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h
+time=1547755539 old-size=7651 new-size=7268 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
