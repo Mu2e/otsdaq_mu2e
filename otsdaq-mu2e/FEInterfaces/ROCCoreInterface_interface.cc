@@ -103,6 +103,19 @@ int ROCCoreInterface::readDelay()
 }
 
 //==================================================================================================
+int ROCCoreInterface::readDTCLinkLossCounter()
+{
+	return this->readRegister(8);
+}
+
+//==================================================================================================
+void ROCCoreInterface::resetDTCLinkLossCounter()
+{
+	this->writeRegister(24,0x1);
+	return;
+}
+
+//==================================================================================================
 void ROCCoreInterface::highRateCheck(void)
 {
 	
@@ -183,7 +196,7 @@ try
 	this->writeRegister(22,0);
 	this->writeRegister(22,1);
 	
-	__MCOUT_INFO__ ("........." << " Set delay = " << delay_ << " ... ");
+	__MCOUT_INFO__ ("........." << " Set delay = " << delay_ << ", readback = " << this->readDelay() << " ... ");
 	
 	this->writeDelay(delay_);
 	
@@ -196,7 +209,7 @@ try
 	{	
 		val = this->readRegister(6);
 	
-		__MCOUT_INFO__(i << " read register 6 = " << val << __E__);		
+		//__MCOUT_INFO__(i << " read register 6 = " << val << __E__);		
 		if(val != 4860)
 		{
 			__FE_SS__ << "Bad read not 4860! val = " << val << __E__;
@@ -204,7 +217,7 @@ try
 		}
 		
 		val = this->readDelay();
-		__MCOUT_INFO__(i << " read register 7 = " << val << __E__);
+		//__MCOUT_INFO__(i << " read register 7 = " << val << __E__);
 		if(val != delay_)
 		{
 			__FE_SS__ << "Bad read not " << delay_ << "! val = " << val << __E__;
@@ -216,9 +229,9 @@ try
 	{
 		highRateCheck();
 	}
-	
-	__MCOUT_INFO__ ("........." << " Read back = " << this->readDelay() << __E__);
-	
+
+	__MCOUT_INFO__ ("......... reset DTC link loss counter ... ");
+	resetDTCLinkLossCounter();
 	
 }
 catch(const std::runtime_error& e)

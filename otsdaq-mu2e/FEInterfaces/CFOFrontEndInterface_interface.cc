@@ -622,9 +622,9 @@ void CFOFrontEndInterface::start(std::string )//runNumber)
       		}
     	}
     
-    	float diff = delay[0][1][1] - delay[0][1][0];
+    	float diff = delay[0][1][0] - delay[0][0][0];
     
-    	__MCOUT_INFO__("DTC1: ROC1 - ROC0 = " << diff <<__E__);
+    	__MCOUT_INFO__("DTC1_ROC0 - DTC0_ROC0 = " << diff <<__E__);
     	__MCOUT_INFO__("-------------------------" << __E__); 
 
     	__FE_COUT__ << "CFO enable Event Start character output " << __E__;
@@ -736,8 +736,8 @@ void CFOFrontEndInterface::stop(void)
 	  	// file 1
 	  	std::ifstream in1;
 	
-	  	int iteration_source1[25];
-	  	int timestamp_source1[25];
+	  	int iteration_source1[10000];
+	  	int timestamp_source1[10000];
 	
 	  	in1.open(filein1);
 	
@@ -747,9 +747,9 @@ void CFOFrontEndInterface::stop(void)
 	  	while (1) {
 	    	in1 >> iteration_source1[nlines1] >> timestamp_source1[nlines1] ;
 	    	if (!in1.good()) break;
-			//    if(nlines1<10)
-			//          __FE_COUT__ <<  "iteration " << iteration_source1[nlines1] << " " <<
-			//           timestamp_source1[nlines1] << __E__;
+			if(nlines1<10)
+				__FE_COUT__ <<  "iteration " << iteration_source1[nlines1] << " " <<
+			           		timestamp_source1[nlines1] << __E__;
 	    	nlines1++;
 	  	}
 	
@@ -758,8 +758,8 @@ void CFOFrontEndInterface::stop(void)
   	  	// file 2
 	  	std::ifstream in2;
 	
-	  	int iteration_source2[25];
-	  	int timestamp_source2[25];
+	  	int iteration_source2[10000];
+	  	int timestamp_source2[10000];
 	
 	  	in2.open(filein2);
 	
@@ -769,9 +769,9 @@ void CFOFrontEndInterface::stop(void)
 	  	while (1) {
 	    	in2 >> iteration_source2[nlines2] >> timestamp_source2[nlines2] ;
 	    	if (!in2.good()) break;
-			//    if(nlines2<10)
-			//          __FE_COUT__ <<  "iteration " << iteration_source2[nlines2] << " " <<
-	 		//          timestamp_source2[nlines2] << __E__;
+			if(nlines2<10)
+			          __FE_COUT__ <<  "iteration " << iteration_source2[nlines2] << " " <<
+	 		          timestamp_source2[nlines2] << __E__;
 	    	nlines2++;
 	  	}
 	
@@ -791,7 +791,7 @@ void CFOFrontEndInterface::stop(void)
 
      	int offset = 30;
 
-     	int timestamp_diff[25];
+     	int timestamp_diff[10000];
 
      	float numerator = 0.;
      	float denominator = 0.;

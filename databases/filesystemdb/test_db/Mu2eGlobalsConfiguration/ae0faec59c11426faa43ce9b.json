@@ -58,6 +58,34 @@
 {
 "name" : "defaultConfig_v53",
 "assigned" : "2018-12-14T16:40:22.256-0600"
+},
+{
+"name" : "defaultConfig_v87",
+"assigned" : "2019-01-24T13:53:47.487-0600"
+},
+{
+"name" : "defaultConfig_v88",
+"assigned" : "2019-01-24T13:58:53.962-0600"
+},
+{
+"name" : "defaultConfig_v89",
+"assigned" : "2019-01-24T14:07:57.832-0600"
+},
+{
+"name" : "defaultConfig_v90",
+"assigned" : "2019-01-24T14:08:23.918-0600"
+},
+{
+"name" : "defaultConfig_v91",
+"assigned" : "2019-01-24T14:41:21.501-0600"
+},
+{
+"name" : "defaultConfig_v93",
+"assigned" : "2019-01-24T16:17:49.377-0600"
+},
+{
+"name" : "defaultConfig_v94",
+"assigned" : "2019-01-24T16:24:00.830-0600"
 }
 ],
 "changelog" : "notprovided",
@@ -103,6 +131,62 @@
 "value" : {
 "name" : "defaultConfig_v53",
 "assigned" : "2018-12-14T16:40:22.256-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T13:53:47.487-0600",
+"value" : {
+"name" : "defaultConfig_v87",
+"assigned" : "2019-01-24T13:53:47.487-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T13:58:53.962-0600",
+"value" : {
+"name" : "defaultConfig_v88",
+"assigned" : "2019-01-24T13:58:53.962-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T14:07:57.832-0600",
+"value" : {
+"name" : "defaultConfig_v89",
+"assigned" : "2019-01-24T14:07:57.832-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T14:08:23.918-0600",
+"value" : {
+"name" : "defaultConfig_v90",
+"assigned" : "2019-01-24T14:08:23.918-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T14:41:21.501-0600",
+"value" : {
+"name" : "defaultConfig_v91",
+"assigned" : "2019-01-24T14:41:21.501-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T16:17:49.377-0600",
+"value" : {
+"name" : "defaultConfig_v93",
+"assigned" : "2019-01-24T16:17:49.377-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-24T16:24:00.830-0600",
+"value" : {
+"name" : "defaultConfig_v94",
+"assigned" : "2019-01-24T16:24:00.830-0600"
 }
 }
 ],

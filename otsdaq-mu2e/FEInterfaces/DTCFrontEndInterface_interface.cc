@@ -967,7 +967,12 @@ void DTCFrontEndInterface::start(std::string )//runNumber)
     	} else {
       //      __MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex << registerRead(0x9140) << std::dec << __E__);
     	}
-
+    	
+		for (auto& roc:rocs_) {
+			__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost " << 
+	    					roc.second->readDTCLinkLossCounter() << " times");
+	    }
+	    
 		registerWrite(0x9100,initial_9100_);
 		registerWrite(0x9114,initial_9114_);
 
@@ -1059,9 +1064,12 @@ void DTCFrontEndInterface::stop(void)
     	}
   	}
 
-	if (stopIndex > numberOfCAPTANPulses) { 	 	
+	if (stopIndex > numberOfCAPTANPulses) {
+		
 		int i=0;
 	    for (auto& roc:rocs_) {
+	    	__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost " << 
+	    					roc.second->readDTCLinkLossCounter() << " times");
 			datafile_[i].close();
 			i++;
 	    }

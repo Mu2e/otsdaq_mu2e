@@ -44,11 +44,14 @@ class ROCCoreInterface : public FEVInterface
   virtual void writeRegister (unsigned address, unsigned data_to_write);
   virtual int readRegister (unsigned address);
 
-  //specific ROC functions
-  int readTimestamp();
-  void writeDelay(unsigned delay); //5ns steps
-  int readDelay();                 //5ns steps
-  
+  	//specific ROC functions
+  	int readTimestamp();
+  	void writeDelay(unsigned delay); //5ns steps
+  	int readDelay();                 //5ns steps
+
+	int readDTCLinkLossCounter();
+	void resetDTCLinkLossCounter();
+
   void highRateCheck(void);
   static void highRateCheckThread(ROCCoreInterface *roc);
 
