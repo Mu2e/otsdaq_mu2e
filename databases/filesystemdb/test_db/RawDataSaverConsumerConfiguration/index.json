@@ -301,6 +301,9 @@
 ],
 "defaultConfig_v95" : [
 "eadce27a4b114f73b851f20d"
+],
+"defaultConfig_v96" : [
+"eadce27a4b114f73b851f20d"
 ]
 },
 "entities.name" : {
@@ -608,6 +611,9 @@
 ],
 "defaultConfig_v95" : [
 "2019-01-24T16:28:09.439-0600"
+],
+"defaultConfig_v96" : [
+"2019-01-25T09:42:17.086-0600"
 ]
 }
 }

@@ -784,45 +784,73 @@ void CFOFrontEndInterface::stop(void)
 
 		//__MCOUT_INFO__("iter file1  file2  diff" << __E__);
 
-     	int distribution[61] = {};
+     	int distribution[1001] = {};
 
-     	int max_distribution = 0;
-     	int min_distribution = 60;
+     	int max_distribution = -1000;
+     	int min_distribution = 1000;
 
-     	int offset = 30;
+     	int offset = 500;
 
-     	int timestamp_diff[10000];
+     	int timestamp_diff[1000] = {};
 
      	float numerator = 0.;
      	float denominator = 0.;
 
      	for (int i=0; i<nlines1; i++) {
-       		timestamp_diff[i] = (timestamp_source2[i] - timestamp_source1[i]) + offset;
-       		//__MCOUT_INFO__(i << "    " <<
-       		//               timestamp_source1[i] << "   " <<
-       		//               timestamp_source2[i] << "   " <<
-       		//               (timestamp_diff[i] - offset) << __E__);
 
-       		numerator += (float) timestamp_diff[i];
-       		denominator += 1.0;
+			if (timestamp_source1[i] == 65535 || timestamp_source2[i] == 65535 ||
+				timestamp_source1[i] == -999 || timestamp_source2[i] == -999) 
+			{
+				timestamp_diff[i] = -999999;
+			} 
+			else
+	     	{
+      			timestamp_diff[i] = (timestamp_source2[i] - timestamp_source1[i]) + offset;
 
-       		distribution[timestamp_diff[i]]++;
+				if (timestamp_diff[i] >= 0 && timestamp_diff[i] < 1000 )   //crossed from one event window to another
+				{
 
-       		if (timestamp_diff[i] > max_distribution) 
-         		max_distribution = timestamp_diff[i];
+	       			numerator += (float) timestamp_diff[i];
+    	   			denominator += 1.0;
 
-       		if (timestamp_diff[i] < min_distribution) 
-         		min_distribution = timestamp_diff[i];
-
-     	}
+	    	   		distribution[timestamp_diff[i]]++;
+	
+	       			if (timestamp_diff[i] > max_distribution) {
+	         			max_distribution = timestamp_diff[i];
+				 		__COUT__ << i << " new max    " <<
+	       			    	           timestamp_source1[i] << "   " <<
+	       			        	       timestamp_source2[i] << "   " <<
+	       			            	   timestamp_diff[i] << __E__;
+					}
+	
+	       			if (timestamp_diff[i] < min_distribution) {
+				 		__COUT__ << i << " new min    " <<
+	       			    	           timestamp_source1[i] << "   " <<
+	       			        	       timestamp_source2[i] << "   " <<
+	       			            	   timestamp_diff[i] << __E__;
+	
+						min_distribution = timestamp_diff[i];
+			    	}
+	     		}
+	     		else
+	     		{
+	     			timestamp_diff[i] = -999999;
+	     		}
+     		}
+	    }
      	float average = numerator/denominator;
 
      	float rms = 0.;
   
-     	for (int n = 0; n<nlines1; n++)
-       		rms += (timestamp_diff[n] - average) * (timestamp_diff[n] - average);
-  
- 	    if (denominator > 0.0) 
+     	for (int n = 0; n<nlines1; n++) 
+     	{
+     		if (timestamp_diff[n] != -999999) 
+			{	
+				rms += (timestamp_diff[n] - average) * (timestamp_diff[n] - average);
+			}
+	    }
+
+		if (denominator > 0.0) 
     	   rms = sqrt(rms / denominator);
 
      	average -= offset;
