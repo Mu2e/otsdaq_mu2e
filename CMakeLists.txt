@@ -80,10 +80,10 @@ add_subdirectory(otsdaq-mu2e)
 add_subdirectory(tools)
 
 # Test Programs
-add_subdirectory(test)
+#add_subdirectory(test)
 
 # Documentation directory
-#add_subdirectory(doc)
+add_subdirectory(doc)
 
 # UPS
 add_subdirectory(ups)
