@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 						   interfaceUID_,
 						   theXDAQContextConfigTree_,
 						   supervisorConfigurationPath_       + 
-						   "/LinkToFEInterfaceConfiguration/" + 
+						   "/LinkToFEInterfaceTable/" + 
 						   interfaceUID_                      + 
 						   "/LinkToFETypeConfiguration");
 	std::cout << "Done with new" << std::endl;
