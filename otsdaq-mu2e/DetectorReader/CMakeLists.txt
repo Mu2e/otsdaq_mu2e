@@ -17,7 +17,7 @@ cet_make(LIBRARY_NAME DetectorReader
 	         ${ROOT_CORE}
          	 $ENV{XERCES_C_LIB}/libxerces-c.so
          	 SOAPUtilities
-		 ConfigurationDataFormats
+		 TableCore
 		 ConfigurationInterface
 		 DataManager
 		 DAQHardware
@@ -28,7 +28,7 @@ cet_make(LIBRARY_NAME DetectorReader
          XmlUtilities
          FECore
          otsdaq-demo_FEInterfaces_FEOtsUDPFSSRInterface_interface
-         otsdaq-demo_UserConfigurationDataFormats_FEROtsUDPHardwareConfiguration_configuration
+         otsdaq-demo_UserTableCore_FEROtsUDPHardwareConfiguration_configuration
 )
 
 #get_cmake_property(_variableNames VARIABLES)

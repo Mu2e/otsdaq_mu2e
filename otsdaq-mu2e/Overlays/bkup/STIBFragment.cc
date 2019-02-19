@@ -2,11 +2,9 @@
 
 #include "cetlib/exception.h"
 
-std::ostream & ots::operator << (std::ostream & os, STIBFragment const & f) {
-  os << "STIBFragment_event_size: "
-     << f.hdr_event_size()
-     << "\n";
+std::ostream& ots::operator<<(std::ostream& os, STIBFragment const& f)
+{
+	os << "STIBFragment_event_size: " << f.hdr_event_size() << "\n";
 
-  return os;
+	return os;
 }
-

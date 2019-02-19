@@ -5,7 +5,7 @@ cet_make_exec(DemoInterfaceTestMain
 		ConfigurationInterface
 		DAQHardware
 		FECore
-		ConfigurationDataFormats
+		TableCore
         	WorkLoopManager
 		NetworkUtilities
 		otsdaq-components_FEInterfaces_FEOtsUDPTemplateInterface_interface

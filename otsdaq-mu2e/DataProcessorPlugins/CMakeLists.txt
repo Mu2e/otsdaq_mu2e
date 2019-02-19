@@ -7,7 +7,7 @@ simple_plugin(DemoDQMHistosConsumer "processor"
 #	MessageFacility
 	Macros
     ConfigurationInterface
-    ConfigurationDataFormats
+    TableCore
 	${ROOT_BASIC_LIB_LIST}
 	${MF_MESSAGELOGGER}
   )

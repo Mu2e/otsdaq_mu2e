@@ -1,4 +1,4 @@
-#add_subdirectory(UserConfigurationDataFormats)
+#add_subdirectory(UserTableCore)
 add_subdirectory(FEInterfaces)
 #add_subdirectory(DataProcessorPlugins)
 #add_subdirectory(DemoRootUtilities)

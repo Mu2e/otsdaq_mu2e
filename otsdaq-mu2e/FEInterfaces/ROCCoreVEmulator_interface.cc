@@ -4,19 +4,18 @@
 
 using namespace ots;
 
-#undef 	__MF_SUBJECT__
+#undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "FE-ROCCoreVEmulator"
 
 //=========================================================================================
-ROCCoreVEmulator::ROCCoreVEmulator(
-			   const std::string& rocUID,
-			   const ConfigurationTree& theXDAQContextConfigTree,
-			   const std::string& theConfigurationPath)
-: ROCCoreInterface			(rocUID,theXDAQContextConfigTree,theConfigurationPath)
-, workloopExit_				(false)
-, workloopRunning_			(false)
+ROCCoreVEmulator::ROCCoreVEmulator(const std::string&       rocUID,
+                                   const ConfigurationTree& theXDAQContextConfigTree,
+                                   const std::string&       theConfigurationPath)
+    : ROCCoreInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
+    , workloopExit_(false)
+    , workloopRunning_(false)
 {
-  INIT_MF("ROCCoreVEmulator");
+	INIT_MF("ROCCoreVEmulator");
 }
 
 //==========================================================================================
