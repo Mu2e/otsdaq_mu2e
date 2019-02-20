@@ -28,7 +28,7 @@ cet_make(LIBRARY_NAME DetectorReader
          XmlUtilities
          FECore
          otsdaq-demo_FEInterfaces_FEOtsUDPFSSRInterface_interface
-         otsdaq-demo_UserTableCore_FEROtsUDPHardwareConfiguration_configuration
+         otsdaq-demo_UserTableCore_FEROtsUDPHardwareConfiguration_table
 )
 
 #get_cmake_property(_variableNames VARIABLES)

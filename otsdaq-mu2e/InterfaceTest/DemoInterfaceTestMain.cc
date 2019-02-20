@@ -9,7 +9,7 @@
 
 #include "otsdaq-components/FEInterfaces/FEWOtsUDPFSSRInterface.h"
 #include "otsdaq-components/FEInterfaces/FEWOtsUDPHCALInterface.h"
-#include "otsdaq-core/ConfigurationDataFormats/FEWOtsUDPHardwareConfiguration.h"
+#include "otsdaq-core/ConfigurationDataFormats/FEWOtsUDPHardwareTable.h"
 */
 using namespace ots;
 
@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 
 	ConfigurationManager* theConfigurationManager_ = new ConfigurationManager();
 
-	std::string XDAQContextConfigurationName_ = "XDAQContextConfiguration";
+	std::string XDAQContextConfigurationName_ = "XDAQContextTable";
 	std::string supervisorContextUID_         = "mainContext";
 	std::string supervisorApplicationUID_     = "FESupervisor";
 	std::string interfaceUID_                 = "ExampleInterface0";
