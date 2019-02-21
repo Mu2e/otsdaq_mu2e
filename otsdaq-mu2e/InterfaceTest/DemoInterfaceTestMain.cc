@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "../../../otsdaq/otsdaq-core/TableCore/TableGroupKey.h"
+#include "otsdaq-core/TableCore/TableGroupKey.h"
 #include "otsdaq-components/FEInterfaces/FEOtsUDPTemplateInterface.h"
 #include "otsdaq-core/ConfigurationInterface/ConfigurationInterface.h"
 #include "otsdaq-core/ConfigurationInterface/ConfigurationManager.h"
