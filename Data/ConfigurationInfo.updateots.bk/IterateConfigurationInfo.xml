@@ -4,7 +4,7 @@
 			<VIEW Name="ITERATE_CONFIGURATION" Type="File,Database,DatabaseTest" Description="No%20description.">
 				<COLUMN Type="UID" 	 Name="IterationPlanName" 	 StorageName="ITERATION_PLAN_NAME" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-iterationPlan" 	 Name="LinkToIterationPlanConfiguration" 	 StorageName="LINK_TO_ITERATION_PLAN_CONFIGURATION" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,IterationPlanConfiguration"/>
+				<COLUMN Type="ChildLink-iterationPlan" 	 Name="LinkToIterationPlanTable" 	 StorageName="LINK_TO_ITERATION_PLAN_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,IterationPlanConfiguration"/>
 				<COLUMN Type="ChildLinkGroupID-iterationPlan" 	 Name="LinkToIterationPlanGroupID" 	 StorageName="LINK_TO_ITERATION_PLAN_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>

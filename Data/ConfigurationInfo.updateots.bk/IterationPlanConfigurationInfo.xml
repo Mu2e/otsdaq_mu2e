@@ -6,7 +6,7 @@
 				<COLUMN Type="UID" 	 Name="IterationPlanCommandID" 	 StorageName="ITERATION_PLAN_COMMAND_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="FixedChoiceData" 	 Name="CommandType" 	 StorageName="COMMAND_TYPE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,BEGIN_LABEL,REPEAT_LABEL,CHOOSE_FSM,CONFIGURE_ACTIVE_GROUP,CONFIGURE_ALIAS,CONFIGURE_GROUP,MODIFY_ACTIVE_GROUP,EXECUTE_MACRO,EXECUTE_FE_MACRO,RUN"/>
-				<COLUMN Type="ChildLink-command" 	 Name="LinkToCommandConfiguration" 	 StorageName="LINK_TO_COMMAND_CONFIGURATION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-command" 	 Name="LinkToCommandTable" 	 StorageName="LINK_TO_COMMAND_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLinkUID-command" 	 Name="LinkToCommandUID" 	 StorageName="LINK_TO_COMMAND_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
