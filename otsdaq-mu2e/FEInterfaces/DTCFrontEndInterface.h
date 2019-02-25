@@ -8,7 +8,7 @@
 #include "dtcInterfaceLib/DTC.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t
 #include "otsdaq-core/FECore/FEVInterface.h"
-#include "otsdaq-mu2e/FEInterfaces/ROCCoreInterface.h"
+#include "ROCCoreVInterface.h"
 
 namespace ots
 {

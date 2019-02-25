@@ -1,7 +1,7 @@
 #ifndef _ots_ROCCoreVEmulator_h_
 #define _ots_ROCCoreVEmulator_h_
 
-#include "otsdaq-mu2e/FEInterfaces/ROCCoreInterface.h"
+#include "ROCCoreVInterface.h"
 
 namespace ots
 {
