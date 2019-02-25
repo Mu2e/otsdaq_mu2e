@@ -211,12 +211,11 @@ void DTCFrontEndInterface::createROCs(void)
 					{
 						// all ROCs support emulator mode
 
-						//						// verify ROCCoreVEmulator class functionality with
-						//dynamic_cast
-						//						ROCCoreVEmulator& tmpEmulator =
-						//dynamic_cast<ROCCoreVEmulator&>(
+						//						// verify ROCCoreVEmulator class functionality
+						//with  dynamic_cast 						ROCCoreVEmulator&
+						//tmpEmulator =  dynamic_cast<ROCCoreVEmulator&>(
 						//						    tmpRoc);  //
-						//dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
+						// dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
 
 						// start emulator thread
 						std::thread(
@@ -229,15 +228,15 @@ void DTCFrontEndInterface::createROCs(void)
 					}
 					//					catch(const std::bad_cast& e)
 					//					{
-					//						__SS__ << "Cast to ROCCoreVEmulator failed! Verify the
-					//emulator " 						          "plugin inherits from
-					//ROCCoreVEmulator."
+					//						__SS__ << "Cast to ROCCoreVEmulator failed! Verify
+					//the  emulator " 						          "plugin inherits
+					// from  ROCCoreVEmulator."
 					//						       << __E__;
-					//						ss << "Failed to instantiate plugin named '" <<
-					//roc.first
+					//						ss << "Failed to instantiate plugin named '"
+					//<<  roc.first
 					//						   << "' of type '"
 					//						   <<
-					//roc.second.getNode("ROCInterfacePluginName")
+					// roc.second.getNode("ROCInterfacePluginName")
 					//						          .getValue<std::string>()
 					//						   << "' due to the following error: \n"
 					//						   << e.what() << __E__;

@@ -35,15 +35,12 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	virtual int readEmulatorRegister(unsigned address) override { return -1; }
 
 	// specific ROC functions
-	int  readTimestamp();
-	void writeDelay(unsigned delay);  // 5ns steps
-	int  readDelay();                 // 5ns steps
+	virtual int  readTimestamp() override;
+	virtual void writeDelay(unsigned delay) override;  // 5ns steps
+	virtual int  readDelay() override;                 // 5ns steps
 
-	int  readDTCLinkLossCounter();
-	void resetDTCLinkLossCounter();
-
-	void        highRateCheck(void);
-	static void highRateCheckThread(ROCPolarFireCoreInterface* roc);
+	virtual int  readDTCLinkLossCounter() override;
+	virtual void resetDTCLinkLossCounter() override;
 };
 
 }  // namespace ots

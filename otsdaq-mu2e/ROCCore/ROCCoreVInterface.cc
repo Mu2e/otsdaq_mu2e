@@ -82,23 +82,23 @@ int ROCCoreVInterface::readRegister(unsigned address)
 }  // end readRegister()
 //
 ////==================================================================================================
-//int ROCCoreVInterface::readTimestamp() { return this->readRegister(12); }
+// int ROCCoreVInterface::readTimestamp() { return this->readRegister(12); }
 //
 ////==================================================================================================
-//void ROCCoreVInterface::writeDelay(unsigned delay)
+// void ROCCoreVInterface::writeDelay(unsigned delay)
 //{
 //	this->writeRegister(21, delay);
 //	return;
 //}
 //
 ////==================================================================================================
-//int ROCCoreVInterface::readDelay() { return this->readRegister(7); }
+// int ROCCoreVInterface::readDelay() { return this->readRegister(7); }
 //
 ////==================================================================================================
-//int ROCCoreVInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
+// int ROCCoreVInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
 //
 ////==================================================================================================
-//void ROCCoreVInterface::resetDTCLinkLossCounter()
+// void ROCCoreVInterface::resetDTCLinkLossCounter()
 //{
 //	this->writeRegister(24, 0x1);
 //	return;
@@ -181,7 +181,7 @@ void ROCCoreVInterface::configure(void) try
 	//
 	//	__MCOUT_INFO__("........."
 	//	               << " Set delay = " << delay_ << ", readback = " <<
-	//this->readDelay()
+	// this->readDelay()
 	//	               << " ... ");
 	//
 	//	this->writeDelay(delay_);
