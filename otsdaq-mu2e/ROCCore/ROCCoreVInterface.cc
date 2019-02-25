@@ -80,29 +80,29 @@ int ROCCoreVInterface::readRegister(unsigned address)
 		return readROCRegister(address);
 
 }  // end readRegister()
-
-//==================================================================================================
-int ROCCoreVInterface::readTimestamp() { return this->readRegister(12); }
-
-//==================================================================================================
-void ROCCoreVInterface::writeDelay(unsigned delay)
-{
-	this->writeRegister(21, delay);
-	return;
-}
-
-//==================================================================================================
-int ROCCoreVInterface::readDelay() { return this->readRegister(7); }
-
-//==================================================================================================
-int ROCCoreVInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
-
-//==================================================================================================
-void ROCCoreVInterface::resetDTCLinkLossCounter()
-{
-	this->writeRegister(24, 0x1);
-	return;
-}
+//
+////==================================================================================================
+//int ROCCoreVInterface::readTimestamp() { return this->readRegister(12); }
+//
+////==================================================================================================
+//void ROCCoreVInterface::writeDelay(unsigned delay)
+//{
+//	this->writeRegister(21, delay);
+//	return;
+//}
+//
+////==================================================================================================
+//int ROCCoreVInterface::readDelay() { return this->readRegister(7); }
+//
+////==================================================================================================
+//int ROCCoreVInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
+//
+////==================================================================================================
+//void ROCCoreVInterface::resetDTCLinkLossCounter()
+//{
+//	this->writeRegister(24, 0x1);
+//	return;
+//}
 
 //==================================================================================================
 void ROCCoreVInterface::highRateCheck(void)
