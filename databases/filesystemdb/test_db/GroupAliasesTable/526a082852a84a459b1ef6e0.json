@@ -1,0 +1,166 @@
+{
+"document" : {
+"data" : {
+"NAME" : "GROUP_ALIASES_TABLE",
+"COMMENT" : "Default Backbone.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1548881324,
+"COL_TYPES" : {
+"GROUP_KEY_ALIAS" : "VARCHAR2",
+"GROUP_NAME" : "VARCHAR2",
+"GROUP_KEY" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"GROUP_KEY_ALIAS" : "defaultSystemAlias",
+"GROUP_NAME" : "defaultConfig",
+"GROUP_KEY" : "103",
+"COMMENT_DESCRIPTION" : "default safe running",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548881324"
+},
+{
+"GROUP_KEY_ALIAS" : "daq02Context",
+"GROUP_NAME" : "daq02Context",
+"GROUP_KEY" : "2",
+"COMMENT_DESCRIPTION" : "This Group Alias was automatically setup by the server.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1539793119"
+},
+{
+"GROUP_KEY_ALIAS" : "syncDemoContext",
+"GROUP_NAME" : "testContext",
+"GROUP_KEY" : "58",
+"COMMENT_DESCRIPTION" : "This Group Alias was automatically setup by the server.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548710896"
+},
+{
+"GROUP_KEY_ALIAS" : "daq02SystemAlias",
+"GROUP_NAME" : "daq02Config",
+"GROUP_KEY" : "1",
+"COMMENT_DESCRIPTION" : "This Group Alias was automatically setup by the server.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1539871059"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-30T14:48:44.822-0600",
+"rawdata" : [
+
+]
+},
+"version" : "146",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-30T14:48:44.823-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-30T14:48:44.823-0600"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v66",
+"assigned" : "2019-01-30T14:48:47.534-0600"
+},
+{
+"name" : "TableEditWizBackbone_v67",
+"assigned" : "2019-01-30T14:50:30.136-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-01-30T14:48:44.823-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-30T14:48:44.823-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-30T14:48:44.823-0600",
+"value" : {
+"name" : "146",
+"assigned" : "2019-01-30T14:48:44.823-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-30T14:48:44.823-0600",
+"value" : {
+"name" : "GroupAliasesTable",
+"assigned" : "2019-01-30T14:48:44.823-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-30T14:48:44.823-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-30T14:48:44.823-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-30T14:48:47.534-0600",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v66",
+"assigned" : "2019-01-30T14:48:47.534-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-30T14:50:30.136-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v67",
+"assigned" : "2019-01-30T14:50:30.136-0600"
+}
+}
+],
+"created" : "2019-01-30T14:48:44.822-0600"
+},
+"_id" : {
+"$oid" : "526a082852a84a459b1ef6e0"
+},
+"collection" : "GroupAliasesTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

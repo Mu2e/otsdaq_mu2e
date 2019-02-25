@@ -1,0 +1,619 @@
+{
+"ouid" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"version" : {
+"1" : [
+"6059ff38a80943ebb18a9bd5"
+]
+},
+"configurations.name" : {
+"notprovided" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v1" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v2" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v3" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v4" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v5" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v6" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v7" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v8" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v9" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v10" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v11" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v12" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v13" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v14" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v15" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v16" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v17" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v18" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"daq02Config_v0" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"daq02Config_v1" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v19" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v20" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v21" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v22" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v23" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v24" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v25" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v26" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v27" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v28" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v29" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v30" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v31" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v32" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v33" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v34" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v35" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v36" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v37" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v38" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v39" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v40" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v41" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v42" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v43" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v44" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v45" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v46" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v47" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v48" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v49" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v50" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v51" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v52" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v53" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v54" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v55" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v56" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v57" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v58" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v59" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v60" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v61" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v62" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v63" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v64" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v65" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v66" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v67" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v68" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v69" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v70" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v71" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v72" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v73" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v74" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v75" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v76" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v77" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v78" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v79" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v80" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v81" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v82" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v83" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v84" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v85" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v86" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v87" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v88" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v89" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v90" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v91" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v92" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v93" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v94" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v95" : [
+"6059ff38a80943ebb18a9bd5"
+],
+"defaultConfig_v96" : [
+"6059ff38a80943ebb18a9bd5"
+]
+},
+"entities.name" : {
+"OTSROOT" : [
+"6059ff38a80943ebb18a9bd5"
+]
+},
+"aliases.active.name" : {
+
+},
+"runs.name" : {
+
+},
+"configurations.assigned" : {
+"notprovided" : [
+"2018-07-17T12:10:20.051-0500"
+],
+"defaultConfig_v1" : [
+"2018-07-17T12:10:20.484-0500"
+],
+"defaultConfig_v2" : [
+"2018-09-06T16:32:24.295-0500"
+],
+"defaultConfig_v3" : [
+"2018-09-06T16:33:36.781-0500"
+],
+"defaultConfig_v4" : [
+"2018-09-10T14:38:13.047-0500"
+],
+"defaultConfig_v5" : [
+"2018-09-10T14:44:52.499-0500"
+],
+"defaultConfig_v6" : [
+"2018-09-10T14:46:42.672-0500"
+],
+"defaultConfig_v7" : [
+"2018-09-10T14:57:28.716-0500"
+],
+"defaultConfig_v8" : [
+"2018-09-20T13:50:08.122-0500"
+],
+"defaultConfig_v9" : [
+"2018-09-20T13:51:12.179-0500"
+],
+"defaultConfig_v10" : [
+"2018-09-20T15:03:49.074-0500"
+],
+"defaultConfig_v11" : [
+"2018-09-20T15:07:02.329-0500"
+],
+"defaultConfig_v12" : [
+"2018-09-20T15:54:53.250-0500"
+],
+"defaultConfig_v13" : [
+"2018-09-20T16:17:53.761-0500"
+],
+"defaultConfig_v14" : [
+"2018-09-20T16:36:57.692-0500"
+],
+"defaultConfig_v15" : [
+"2018-10-11T15:12:59.629-0500"
+],
+"defaultConfig_v16" : [
+"2018-10-12T13:10:20.393-0500"
+],
+"defaultConfig_v17" : [
+"2018-10-16T13:33:15.131-0500"
+],
+"defaultConfig_v18" : [
+"2018-10-16T13:36:49.708-0500"
+],
+"daq02Config_v0" : [
+"2018-10-17T11:19:59.294-0500"
+],
+"daq02Config_v1" : [
+"2018-10-18T08:57:36.139-0500"
+],
+"defaultConfig_v19" : [
+"2018-11-19T15:33:03.752-0600"
+],
+"defaultConfig_v20" : [
+"2018-11-19T15:36:05.105-0600"
+],
+"defaultConfig_v21" : [
+"2018-11-27T16:59:39.504-0600"
+],
+"defaultConfig_v22" : [
+"2018-11-27T17:09:16.042-0600"
+],
+"defaultConfig_v23" : [
+"2018-11-27T17:12:54.712-0600"
+],
+"defaultConfig_v24" : [
+"2018-11-28T10:09:53.802-0600"
+],
+"defaultConfig_v25" : [
+"2018-11-28T10:12:17.416-0600"
+],
+"defaultConfig_v26" : [
+"2018-11-28T11:50:34.454-0600"
+],
+"defaultConfig_v27" : [
+"2018-11-28T12:20:38.819-0600"
+],
+"defaultConfig_v28" : [
+"2018-11-28T12:42:14.625-0600"
+],
+"defaultConfig_v29" : [
+"2018-11-30T11:22:04.692-0600"
+],
+"defaultConfig_v30" : [
+"2018-12-03T14:27:46.316-0600"
+],
+"defaultConfig_v31" : [
+"2018-12-03T14:51:20.135-0600"
+],
+"defaultConfig_v32" : [
+"2018-12-07T17:27:05.142-0600"
+],
+"defaultConfig_v33" : [
+"2018-12-12T09:59:53.432-0600"
+],
+"defaultConfig_v34" : [
+"2018-12-12T11:59:23.066-0600"
+],
+"defaultConfig_v35" : [
+"2018-12-12T12:02:24.093-0600"
+],
+"defaultConfig_v36" : [
+"2018-12-12T14:03:18.610-0600"
+],
+"defaultConfig_v37" : [
+"2018-12-13T11:35:01.189-0600"
+],
+"defaultConfig_v38" : [
+"2018-12-13T11:52:23.555-0600"
+],
+"defaultConfig_v39" : [
+"2018-12-13T11:53:31.114-0600"
+],
+"defaultConfig_v40" : [
+"2018-12-13T12:04:32.865-0600"
+],
+"defaultConfig_v41" : [
+"2018-12-14T09:25:32.497-0600"
+],
+"defaultConfig_v42" : [
+"2018-12-14T09:29:58.796-0600"
+],
+"defaultConfig_v43" : [
+"2018-12-14T09:30:25.338-0600"
+],
+"defaultConfig_v44" : [
+"2018-12-14T09:32:18.238-0600"
+],
+"defaultConfig_v45" : [
+"2018-12-14T09:34:35.110-0600"
+],
+"defaultConfig_v46" : [
+"2018-12-14T09:54:13.970-0600"
+],
+"defaultConfig_v47" : [
+"2018-12-14T10:09:05.298-0600"
+],
+"defaultConfig_v48" : [
+"2018-12-14T15:10:11.176-0600"
+],
+"defaultConfig_v49" : [
+"2018-12-14T16:19:45.117-0600"
+],
+"defaultConfig_v50" : [
+"2018-12-14T16:27:52.610-0600"
+],
+"defaultConfig_v51" : [
+"2018-12-14T16:30:38.122-0600"
+],
+"defaultConfig_v52" : [
+"2018-12-14T16:37:51.293-0600"
+],
+"defaultConfig_v53" : [
+"2018-12-14T16:40:21.882-0600"
+],
+"defaultConfig_v54" : [
+"2018-12-14T16:43:22.486-0600"
+],
+"defaultConfig_v55" : [
+"2018-12-14T16:48:56.350-0600"
+],
+"defaultConfig_v56" : [
+"2018-12-17T16:41:30.623-0600"
+],
+"defaultConfig_v57" : [
+"2018-12-18T08:39:20.894-0600"
+],
+"defaultConfig_v58" : [
+"2018-12-18T08:39:58.499-0600"
+],
+"defaultConfig_v59" : [
+"2018-12-18T09:01:29.107-0600"
+],
+"defaultConfig_v60" : [
+"2018-12-18T09:35:20.263-0600"
+],
+"defaultConfig_v61" : [
+"2018-12-18T09:37:44.141-0600"
+],
+"defaultConfig_v62" : [
+"2018-12-19T13:25:52.858-0600"
+],
+"defaultConfig_v63" : [
+"2018-12-19T13:29:21.776-0600"
+],
+"defaultConfig_v64" : [
+"2019-01-08T13:36:55.032-0600"
+],
+"defaultConfig_v65" : [
+"2019-01-08T13:57:11.186-0600"
+],
+"defaultConfig_v66" : [
+"2019-01-10T09:53:52.388-0600"
+],
+"defaultConfig_v67" : [
+"2019-01-10T09:54:51.665-0600"
+],
+"defaultConfig_v68" : [
+"2019-01-10T12:05:01.047-0600"
+],
+"defaultConfig_v69" : [
+"2019-01-10T12:18:12.450-0600"
+],
+"defaultConfig_v70" : [
+"2019-01-14T14:17:59.546-0600"
+],
+"defaultConfig_v71" : [
+"2019-01-14T14:32:21.956-0600"
+],
+"defaultConfig_v72" : [
+"2019-01-14T14:34:07.073-0600"
+],
+"defaultConfig_v73" : [
+"2019-01-16T09:02:05.762-0600"
+],
+"defaultConfig_v74" : [
+"2019-01-16T09:11:37.613-0600"
+],
+"defaultConfig_v75" : [
+"2019-01-16T09:12:05.732-0600"
+],
+"defaultConfig_v76" : [
+"2019-01-16T09:14:46.702-0600"
+],
+"defaultConfig_v77" : [
+"2019-01-16T09:18:47.383-0600"
+],
+"defaultConfig_v78" : [
+"2019-01-16T10:22:06.515-0600"
+],
+"defaultConfig_v79" : [
+"2019-01-16T11:44:42.616-0600"
+],
+"defaultConfig_v80" : [
+"2019-01-17T11:35:53.259-0600"
+],
+"defaultConfig_v81" : [
+"2019-01-17T11:38:43.948-0600"
+],
+"defaultConfig_v82" : [
+"2019-01-17T14:17:58.421-0600"
+],
+"defaultConfig_v83" : [
+"2019-01-17T14:18:24.613-0600"
+],
+"defaultConfig_v84" : [
+"2019-01-17T14:19:58.920-0600"
+],
+"defaultConfig_v85" : [
+"2019-01-17T14:33:27.413-0600"
+],
+"defaultConfig_v86" : [
+"2019-01-24T13:46:23.814-0600"
+],
+"defaultConfig_v87" : [
+"2019-01-24T13:53:47.171-0600"
+],
+"defaultConfig_v88" : [
+"2019-01-24T13:58:53.598-0600"
+],
+"defaultConfig_v89" : [
+"2019-01-24T14:07:57.451-0600"
+],
+"defaultConfig_v90" : [
+"2019-01-24T14:08:23.540-0600"
+],
+"defaultConfig_v91" : [
+"2019-01-24T14:41:21.166-0600"
+],
+"defaultConfig_v92" : [
+"2019-01-24T16:12:04.593-0600"
+],
+"defaultConfig_v93" : [
+"2019-01-24T16:17:49.062-0600"
+],
+"defaultConfig_v94" : [
+"2019-01-24T16:24:00.524-0600"
+],
+"defaultConfig_v95" : [
+"2019-01-24T16:28:08.793-0600"
+],
+"defaultConfig_v96" : [
+"2019-01-25T09:42:16.409-0600"
+]
+}
+}

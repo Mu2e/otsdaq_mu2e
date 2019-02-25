@@ -1,0 +1,144 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ROC_INTERFACE_TABLE",
+"COMMENT" : "First attempt to configure ROCs",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1543421532,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"ROC_GROUP_ID" : "VARCHAR2",
+"LINK_ID" : "NUMBER",
+"ROC_ENABLE" : "NUMBER",
+"EVENT_WINDOW_DELAY_OFFSET" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "DTC0_ROC0",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"LINK_ID" : "0",
+"ROC_ENABLE" : "1",
+"EVENT_WINDOW_DELAY_OFFSET" : "10",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1543421525"
+},
+{
+"UID" : "DTC0_ROC1",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"LINK_ID" : "1",
+"ROC_ENABLE" : "0",
+"EVENT_WINDOW_DELAY_OFFSET" : "20",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1543360151"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-11-28T10:12:12.724-0600",
+"rawdata" : [
+
+]
+},
+"version" : "3",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-11-28T10:12:12.724-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-11-28T10:12:12.724-0600"
+},
+{
+"name" : "defaultConfig_v25",
+"assigned" : "2018-11-28T10:12:17.746-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2018-11-28T10:12:12.724-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-11-28T10:12:12.724-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-11-28T10:12:12.724-0600",
+"value" : {
+"name" : "3",
+"assigned" : "2018-11-28T10:12:12.724-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-11-28T10:12:12.724-0600",
+"value" : {
+"name" : "ROCInterfaceTable",
+"assigned" : "2018-11-28T10:12:12.724-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-11-28T10:12:12.724-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-11-28T10:12:12.724-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2018-11-28T10:12:17.746-0600",
+"value" : {
+"name" : "defaultConfig_v25",
+"assigned" : "2018-11-28T10:12:17.746-0600"
+}
+}
+],
+"created" : "2018-11-28T10:12:12.724-0600"
+},
+"_id" : {
+"$oid" : "4b7429bc923f448f9b747bf3"
+},
+"collection" : "ROCInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

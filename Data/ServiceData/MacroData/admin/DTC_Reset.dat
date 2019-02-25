@@ -1,0 +1,7 @@
+{
+"name":"DTC_Reset",
+"sequence":"0:w:9100:a0000000,1:w:9118:0000003f,2:w:9100:00000000,3:w:9100:10000000,4:w:9100:30000000,5:w:9100:10000000,6:w:9118:00000000",
+"time":"Tue Jan 15 2019 14:22:25 GMT-0600 (Central Standard Time)",
+"notes":"bring DTC out of broken state into working state",
+"LSBF":"false"
+}@
