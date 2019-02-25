@@ -22,20 +22,15 @@
 #)
 
 
-simple_plugin(ROCCoreInterface "interface"
-  	FECore		
-  	DTCInterface
- )
- 
-simple_plugin(ROCCoreVEmulator "interface"
-	otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
+simple_plugin(ROCPolarFireCoreInterface "interface"
+  	ROCCore
  )
     
 simple_plugin(DTCFrontEndInterface "interface"
   	FECore
 	DTCInterface  
-	otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
-	otsdaq-mu2e_FEInterfaces_ROCCoreVEmulator_interface
+	ROCCore
+	#otsdaq-mu2e_FEInterfaces_ROCPolarFireCoreInterface_interface
  )
  
 simple_plugin(CFOFrontEndInterface "interface"

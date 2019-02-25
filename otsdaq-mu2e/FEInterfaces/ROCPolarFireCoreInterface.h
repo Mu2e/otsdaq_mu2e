@@ -1,55 +1,38 @@
-#ifndef _ots_ROCCoreInterface_h_
-#define _ots_ROCCoreInterface_h_
+#ifndef _ots_ROCPolarFireCoreInterface_h_
+#define _ots_ROCPolarFireCoreInterface_h_
 
 #include <sstream>
 #include <string>
-#include "dtcInterfaceLib/DTC.h"
-#include "otsdaq-core/FECore/FEVInterface.h"
+#include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
 
 namespace ots
 {
-class ROCCoreInterface : public FEVInterface
+class ROCPolarFireCoreInterface : public ROCCoreVInterface
 {
   public:
-	ROCCoreInterface(const std::string&       rocUID,
-	                 const ConfigurationTree& theXDAQContextConfigTree,
-	                 const std::string&       interfaceConfigurationPath);
+	ROCPolarFireCoreInterface(const std::string&       rocUID,
+	                          const ConfigurationTree& theXDAQContextConfigTree,
+	                          const std::string&       interfaceConfigurationPath);
 
-	~ROCCoreInterface(void);
-
-	virtual std::string getInterfaceType(void) const override { return interfaceUID_; }
+	~ROCPolarFireCoreInterface(void);
 
 	// state machine
 	//----------------
-	void configure(void);
-	void halt(void);
-	void pause(void);
-	void resume(void);
-	void start(std::string runNumber);
-	void stop(void);
-	bool running(void);
-
-	//----------------
-	// just to keep FEVInterface, defining universal read..
-	void universalRead(char* address, char* readValue) override
-	{
-		__SS__ << "Not defined. Parent should be DTCFrontEndInterface, not "
-		          "FESupervisor."
-		       << __E__;
-		__SS_THROW__;
-	}
-	void universalWrite(char* address, char* writeValue) override
-	{
-		__SS__ << "Not defined. Parent should be DTCFrontEndInterface, not "
-		          "FESupervisor."
-		       << __E__;
-		__SS_THROW__;
-	}
-	//----------------
+	void configure(void) override;
+	void halt(void) override;
+	void pause(void) override;
+	void resume(void) override;
+	void start(std::string runNumber) override;
+	void stop(void) override;
+	bool running(void) override;
 
 	// write and read to registers
-	virtual void writeRegister(unsigned address, unsigned data_to_write);
-	virtual int  readRegister(unsigned address);
+	virtual void writeROCRegister(unsigned address, unsigned data_to_write) override;
+	virtual int  readROCRegister(unsigned address) override;
+	virtual void writeEmulatorRegister(unsigned address, unsigned data_to_write) override
+	{
+	}
+	virtual int readEmulatorRegister(unsigned address) override { return -1; }
 
 	// specific ROC functions
 	int  readTimestamp();
@@ -60,16 +43,7 @@ class ROCCoreInterface : public FEVInterface
 	void resetDTCLinkLossCounter();
 
 	void        highRateCheck(void);
-	static void highRateCheckThread(ROCCoreInterface* roc);
-
-	inline int getLinkID() { return linkID_; }
-
-	bool         emulatorMode_;
-	DTCLib::DTC* thisDTC_;
-
-  private:
-	DTCLib::DTC_Link_ID linkID_;
-	unsigned int        delay_;
+	static void highRateCheckThread(ROCPolarFireCoreInterface* roc);
 };
 
 }  // namespace ots

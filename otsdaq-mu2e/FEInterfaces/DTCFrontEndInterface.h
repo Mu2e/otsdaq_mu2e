@@ -8,7 +8,7 @@
 #include "dtcInterfaceLib/DTC.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t
 #include "otsdaq-core/FECore/FEVInterface.h"
-#include "ROCCoreVInterface.h"
+#include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
 
 namespace ots
 {
@@ -76,7 +76,7 @@ class DTCFrontEndInterface : public FEVInterface
 
 	std::ofstream datafile_[8];
 
-	std::map<std::string /*name*/, std::unique_ptr<ROCCoreInterface>> rocs_;
+	std::map<std::string /*name*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
 
 	m_ioc_reg_access_t reg_access_;
 

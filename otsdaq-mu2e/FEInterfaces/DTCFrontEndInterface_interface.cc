@@ -2,8 +2,6 @@
 #include "otsdaq-core/PluginMakers/MakeInterface.h"
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
 
-#include "otsdaq-mu2e/FEInterfaces/ROCCoreVEmulator.h"
-
 using namespace ots;
 
 #undef __MF_SUBJECT__
@@ -182,9 +180,9 @@ void DTCFrontEndInterface::createROCs(void)
 				    roc.second.getNode("ROCInterfacePluginName").getValue<std::string>());
 
 				// Note: FEVInterface makeInterface returns a unique_ptr
-				//	and we want to verify that ROCCoreInterface functionality
+				//	and we want to verify that ROCCoreVInterface functionality
 				//	is there, so we do an intermediate dynamic_cast to check
-				//	before placing in a new unique_ptr of type ROCCoreInterface.
+				//	before placing in a new unique_ptr of type ROCCoreVInterface.
 				std::unique_ptr<FEVInterface> tmpVFE = makeInterface(
 				    roc.second.getNode("ROCInterfacePluginName").getValue<std::string>(),
 				    roc.first,
@@ -195,8 +193,8 @@ void DTCFrontEndInterface::createROCs(void)
 				// left out of constructor)
 				tmpVFE->parentSupervisor_ = parentSupervisor_;
 
-				ROCCoreInterface& tmpRoc = dynamic_cast<ROCCoreInterface&>(
-				    *tmpVFE);  // dynamic_cast<ROCCoreInterface*>(tmpRoc.get());
+				ROCCoreVInterface& tmpRoc = dynamic_cast<ROCCoreVInterface&>(
+				    *tmpVFE);  // dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
 
 				// setup other members of ROCCore (for interface plug-in compatibility,
 				// left out of constructor)
@@ -209,42 +207,50 @@ void DTCFrontEndInterface::createROCs(void)
 				{
 					__FE_COUT__ << "Creating ROC in emulator mode..." << __E__;
 
-					try
+					// try
 					{
-						// verify ROCCoreVEmulator class functionality with dynamic_cast
-						ROCCoreVEmulator& tmpEmulator = dynamic_cast<ROCCoreVEmulator&>(
-						    tmpRoc);  // dynamic_cast<ROCCoreInterface*>(tmpRoc.get());
+						// all ROCs support emulator mode
+
+						//						// verify ROCCoreVEmulator class functionality with
+						//dynamic_cast
+						//						ROCCoreVEmulator& tmpEmulator =
+						//dynamic_cast<ROCCoreVEmulator&>(
+						//						    tmpRoc);  //
+						//dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
 
 						// start emulator thread
 						std::thread(
-						    [](ROCCoreVEmulator* rocEmulator) {
+						    [](ROCCoreVInterface* rocEmulator) {
 							    __COUT__ << "Starting ROC emulator thread..." << __E__;
-							    ROCCoreVEmulator::emulatorThread(rocEmulator);
+							    ROCCoreVInterface::emulatorThread(rocEmulator);
 						    },
-						    &tmpEmulator)
+						    &tmpRoc)
 						    .detach();
 					}
-					catch(const std::bad_cast& e)
-					{
-						__SS__ << "Cast to ROCCoreVEmulator failed! Verify the emulator "
-						          "plugin inherits from ROCCoreVEmulator."
-						       << __E__;
-						ss << "Failed to instantiate plugin named '" << roc.first
-						   << "' of type '"
-						   << roc.second.getNode("ROCInterfacePluginName")
-						          .getValue<std::string>()
-						   << "' due to the following error: \n"
-						   << e.what() << __E__;
-
-						__SS_THROW__;
-					}
+					//					catch(const std::bad_cast& e)
+					//					{
+					//						__SS__ << "Cast to ROCCoreVEmulator failed! Verify the
+					//emulator " 						          "plugin inherits from
+					//ROCCoreVEmulator."
+					//						       << __E__;
+					//						ss << "Failed to instantiate plugin named '" <<
+					//roc.first
+					//						   << "' of type '"
+					//						   <<
+					//roc.second.getNode("ROCInterfacePluginName")
+					//						          .getValue<std::string>()
+					//						   << "' due to the following error: \n"
+					//						   << e.what() << __E__;
+					//
+					//						__SS_THROW__;
+					//					}
 				}
 				else
 				{
 					tmpRoc.thisDTC_ = thisDTC_;
 				}
 
-				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreInterface>>(
+				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
 				    roc.first, &tmpRoc));
 				tmpVFE.release();  // release the FEVInterface unique_ptr, so we are left
 				                   // with just one
@@ -261,19 +267,22 @@ void DTCFrontEndInterface::createROCs(void)
 				       << e.what() << __E__;
 				__FE_COUT_ERR__ << ss.str();
 				__MOUT_ERR__ << ss.str();
-				__SS_THROW__;
+				__SS_ONLY_THROW__;
 			}
 			catch(const std::bad_cast& e)
 			{
-				__SS__ << "Cast to ROCCoreInterface failed! Verify the plugin inherits "
-				          "from ROCCoreInterface."
+				__SS__ << "Cast to ROCCoreVInterface failed! Verify the plugin inherits "
+				          "from ROCCoreVInterface."
 				       << __E__;
 				ss << "Failed to instantiate plugin named '" << roc.first << "' of type '"
 				   << roc.second.getNode("ROCInterfacePluginName").getValue<std::string>()
 				   << "' due to the following error: \n"
 				   << e.what() << __E__;
 
-				__SS_THROW__;
+				__FE_COUT_ERR__ << ss.str();
+				__MOUT_ERR__ << ss.str();
+
+				__SS_ONLY_THROW__;
 			}
 		}
 

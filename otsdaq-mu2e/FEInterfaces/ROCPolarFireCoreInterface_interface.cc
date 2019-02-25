@@ -1,45 +1,35 @@
 #include "otsdaq-core/Macros/InterfacePluginMacros.h"
-#include "ROCCoreVInterface.h"
+#include "otsdaq-mu2e/FEInterfaces/ROCPolarFireCoreInterface.h"
 
 using namespace ots;
 
 #undef __MF_SUBJECT__
-#define __MF_SUBJECT__ "FE-ROCCoreInterface"
+#define __MF_SUBJECT__ "FE-ROCPolarFireCoreInterface"
 
 //=========================================================================================
-ROCCoreInterface::ROCCoreInterface(const std::string&       rocUID,
-                                   const ConfigurationTree& theXDAQContextConfigTree,
-                                   const std::string&       theConfigurationPath)
-    : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath), thisDTC_(0)
+ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
+    const std::string&       rocUID,
+    const ConfigurationTree& theXDAQContextConfigTree,
+    const std::string&       theConfigurationPath)
+    : ROCCoreVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
 {
-	INIT_MF("ROCCoreInterface");
+	INIT_MF("ROCPolarFireCoreInterface");
 
-	linkID_ =
-	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());
-
-	delay_ = getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>();
-
-	__MCOUT_INFO__("ROCCoreInterface instantiated with link: "
+	__MCOUT_INFO__("ROCPolarFireCoreInterface instantiated with link: "
 	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
 }
 
 //==========================================================================================
-ROCCoreInterface::~ROCCoreInterface(void)
+ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 {
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
-	__COUT__ << FEVInterface::interfaceUID_ << " Destructor" << __E__;
+	__COUT__ << FEVInterface::interfaceUID_ << " Destructed." << __E__;
 }
 
 //==================================================================================================
-void ROCCoreInterface::writeRegister(unsigned address, unsigned data_to_write)
+void ROCPolarFireCoreInterface::writeROCRegister(unsigned address, unsigned data_to_write)
 {
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator mode write." << __E__;
-		return;
-	}
-
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << data_to_write
 	            << __E__;
@@ -50,7 +40,7 @@ void ROCCoreInterface::writeRegister(unsigned address, unsigned data_to_write)
 }
 
 //==================================================================================================
-int ROCCoreInterface::readRegister(unsigned address)
+int ROCPolarFireCoreInterface::readROCRegister(unsigned address)
 {
 	__FE_COUTV__(address);
 
@@ -78,42 +68,45 @@ int ROCCoreInterface::readRegister(unsigned address)
 }
 
 //==================================================================================================
-int ROCCoreInterface::readTimestamp() { return this->readRegister(12); }
+int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================
-void ROCCoreInterface::writeDelay(unsigned delay)
+void ROCPolarFireCoreInterface::writeDelay(unsigned delay)
 {
 	this->writeRegister(21, delay);
 	return;
 }
 
 //==================================================================================================
-int ROCCoreInterface::readDelay() { return this->readRegister(7); }
+int ROCPolarFireCoreInterface::readDelay() { return this->readRegister(7); }
 
 //==================================================================================================
-int ROCCoreInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
+int ROCPolarFireCoreInterface::readDTCLinkLossCounter() { return this->readRegister(8); }
 
 //==================================================================================================
-void ROCCoreInterface::resetDTCLinkLossCounter()
+void ROCPolarFireCoreInterface::resetDTCLinkLossCounter()
 {
 	this->writeRegister(24, 0x1);
 	return;
 }
 
 //==================================================================================================
-void ROCCoreInterface::highRateCheck(void)
+void ROCPolarFireCoreInterface::highRateCheck(void)
 {
 	__FE_MCOUT__("Starting the high rate check... " << __E__);
 
-	std::thread([](ROCCoreInterface* roc) { ROCCoreInterface::highRateCheckThread(roc); },
-	            this)
+	std::thread(
+	    [](ROCPolarFireCoreInterface* roc) {
+		    ROCPolarFireCoreInterface::highRateCheckThread(roc);
+	    },
+	    this)
 	    .detach();
 
 	__FE_MCOUT__("Thread launched..." << __E__);
 }
 
 //==================================================================================================
-void ROCCoreInterface::highRateCheckThread(ROCCoreInterface* roc) try
+void ROCPolarFireCoreInterface::highRateCheckThread(ROCPolarFireCoreInterface* roc) try
 {
 	__MCOUT__(roc->interfaceUID_ << "Starting the high rate check... " << __E__);
 	srand(time(NULL));
@@ -162,7 +155,7 @@ catch(...)
 }
 
 //==================================================================================================
-void ROCCoreInterface::configure(void) try
+void ROCPolarFireCoreInterface::configure(void) try
 {
 	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
 	// this->writeRegister(0,1);
@@ -227,23 +220,23 @@ catch(...)
 }
 
 //========================================================================================================================
-void ROCCoreInterface::halt(void) {}
+void ROCPolarFireCoreInterface::halt(void) {}
 
 //========================================================================================================================
-void ROCCoreInterface::pause(void) {}
+void ROCPolarFireCoreInterface::pause(void) {}
 
 //========================================================================================================================
-void ROCCoreInterface::resume(void) {}
+void ROCPolarFireCoreInterface::resume(void) {}
 
 //========================================================================================================================
-void ROCCoreInterface::start(std::string)  // runNumber)
+void ROCPolarFireCoreInterface::start(std::string)  // runNumber)
 {
 }
 
 //========================================================================================================================
-void ROCCoreInterface::stop(void) {}
+void ROCPolarFireCoreInterface::stop(void) {}
 
 //========================================================================================================================
-bool ROCCoreInterface::running(void) { return false; }
+bool ROCPolarFireCoreInterface::running(void) { return false; }
 
-DEFINE_OTS_INTERFACE(ROCCoreInterface)
+DEFINE_OTS_INTERFACE(ROCPolarFireCoreInterface)
