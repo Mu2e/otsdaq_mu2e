@@ -211,9 +211,10 @@ void DTCFrontEndInterface::createROCs(void)
 					{
 						// all ROCs support emulator mode
 
-						//						// verify ROCCoreVEmulator class functionality
-						//with  dynamic_cast 						ROCCoreVEmulator&
-						//tmpEmulator =  dynamic_cast<ROCCoreVEmulator&>(
+						//						// verify ROCCoreVEmulator class
+						//functionality  with  dynamic_cast
+						// ROCCoreVEmulator&  tmpEmulator =
+						// dynamic_cast<ROCCoreVEmulator&>(
 						//						    tmpRoc);  //
 						// dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
 
@@ -228,8 +229,9 @@ void DTCFrontEndInterface::createROCs(void)
 					}
 					//					catch(const std::bad_cast& e)
 					//					{
-					//						__SS__ << "Cast to ROCCoreVEmulator failed! Verify
-					//the  emulator " 						          "plugin inherits
+					//						__SS__ << "Cast to ROCCoreVEmulator failed!
+					//Verify  the  emulator " 						          "plugin
+					// inherits
 					// from  ROCCoreVEmulator."
 					//						       << __E__;
 					//						ss << "Failed to instantiate plugin named '"
