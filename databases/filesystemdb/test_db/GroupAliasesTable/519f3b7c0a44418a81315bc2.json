@@ -1,0 +1,154 @@
+{
+"document" : {
+"data" : {
+"NAME" : "GROUP_ALIASES_TABLE",
+"COMMENT" : "Default Backbone.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1544827404,
+"COL_TYPES" : {
+"GROUP_KEY_ALIAS" : "VARCHAR2",
+"GROUP_NAME" : "VARCHAR2",
+"GROUP_KEY" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"GROUP_KEY_ALIAS" : "defaultSystemAlias",
+"GROUP_NAME" : "defaultConfig",
+"GROUP_KEY" : "54",
+"COMMENT_DESCRIPTION" : "default safe running",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1544827404"
+},
+{
+"GROUP_KEY_ALIAS" : "daq02Context",
+"GROUP_NAME" : "daq02Context",
+"GROUP_KEY" : "2",
+"COMMENT_DESCRIPTION" : "This Group Alias was automatically setup by the server.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1539793119"
+},
+{
+"GROUP_KEY_ALIAS" : "syncDemoContext",
+"GROUP_NAME" : "testContext",
+"GROUP_KEY" : "55",
+"COMMENT_DESCRIPTION" : "This Group Alias was automatically setup by the server.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1544653663"
+},
+{
+"GROUP_KEY_ALIAS" : "daq02SystemAlias",
+"GROUP_NAME" : "daq02Config",
+"GROUP_KEY" : "1",
+"COMMENT_DESCRIPTION" : "This Group Alias was automatically setup by the server.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1539871059"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-12-14T16:43:24.108-0600",
+"rawdata" : [
+
+]
+},
+"version" : "94",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-12-14T16:43:24.108-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-12-14T16:43:24.108-0600"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v47",
+"assigned" : "2018-12-14T16:43:27.204-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2018-12-14T16:43:24.108-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-12-14T16:43:24.108-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-12-14T16:43:24.108-0600",
+"value" : {
+"name" : "94",
+"assigned" : "2018-12-14T16:43:24.108-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-12-14T16:43:24.108-0600",
+"value" : {
+"name" : "GroupAliasesTable",
+"assigned" : "2018-12-14T16:43:24.108-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-12-14T16:43:24.108-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-12-14T16:43:24.108-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2018-12-14T16:43:27.204-0600",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v47",
+"assigned" : "2018-12-14T16:43:27.204-0600"
+}
+}
+],
+"created" : "2018-12-14T16:43:24.108-0600"
+},
+"_id" : {
+"$oid" : "519f3b7c0a44418a81315bc2"
+},
+"collection" : "GroupAliasesTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
