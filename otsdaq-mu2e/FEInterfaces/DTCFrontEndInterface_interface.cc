@@ -194,7 +194,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				__FE_COUTV__(StringMacros::vectorToString(inputArgs));
 				__FE_COUTV__(StringMacros::vectorToString(outputArgs));
 
-				rocFEMacroMap_.emplace(std::make_pair(macroName,roc.first));
+				rocFEMacroMap_.emplace(std::make_pair(macroName,
+						std::make_pair(roc.first,feMacro.first)));
 
 				registerFEMacroFunction(macroName,
 						static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -2821,9 +2822,12 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 				"' not found in DTC's map!" << __E__;
 		__FE_SS_THROW__;
 	}
-	std::string rocUID = feMacroIt->first;
+
+	const std::string& rocUID = feMacroIt->second.first;
+	const std::string& rocFEMacroName = feMacroIt->second.second;
 
 	__FE_COUTV__(rocUID);
+	__FE_COUTV__(rocFEMacroName);
 
 	auto rocIt = rocs_.find(rocUID);
 	if(rocIt == rocs_.end())
@@ -2834,6 +2838,8 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		__FE_SS_THROW__;
 	}
 
+	rocIt->second->runSelfFrontEndMacro(rocFEMacroName,
+			argsIn,argsOut);
 
 
 } //end RunROCFEMacro()
