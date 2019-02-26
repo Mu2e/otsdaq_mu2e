@@ -2807,11 +2807,11 @@ void DTCFrontEndInterface::DTCReset()
 //========================================================================
 void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 {
-	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
-	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
-
-	__FE_COUTV__(feMacroName);
-	__FE_COUTV__(rocUID);
+//	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
+//	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
+//
+//	__FE_COUTV__(feMacroName);
+//	__FE_COUTV__(rocUID);
 
 	auto feMacroIt = rocFEMacroMap_.find(feMacroStruct.feMacroName_);
 	if(feMacroIt == rocFEMacroMap_.end())
@@ -2821,6 +2821,20 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 				"' not found in DTC's map!" << __E__;
 		__FE_SS_THROW__;
 	}
+	std::string rocUID = feMacroIt->first;
+
+	__FE_COUTV__(rocUID);
+
+	auto rocIt = rocs_.find(rocUID);
+	if(rocIt == rocs_.end())
+	{
+		__FE_SS__ << "Fatal error - ROC name '" <<
+				rocUID <<
+				"' not found in DTC's map!" << __E__;
+		__FE_SS_THROW__;
+	}
+
+
 
 } //end RunROCFEMacro()
 
