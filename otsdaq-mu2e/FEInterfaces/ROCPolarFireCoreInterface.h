@@ -32,7 +32,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	virtual void writeEmulatorRegister(unsigned address, unsigned data_to_write) override
 	{
 	}
-	virtual int readEmulatorRegister(unsigned address) override { return -1; }
+	virtual int readEmulatorRegister(unsigned address) override;
 
 	// specific ROC functions
 	virtual int  readTimestamp() override;

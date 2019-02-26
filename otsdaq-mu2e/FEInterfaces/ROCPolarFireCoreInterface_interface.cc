@@ -28,6 +28,18 @@ ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 }
 
 //==================================================================================================
+int ROCPolarFireCoreInterface::readEmulatorRegister(unsigned address)
+{
+	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec << linkID_
+	            << ", address = " << address << __E__;
+	if(address == 6)
+		return 4860;
+	else if(address == 7)
+		return delay_;
+	return -1;
+} //end readEmulatorRegister
+
+//==================================================================================================
 void ROCPolarFireCoreInterface::writeROCRegister(unsigned address, unsigned data_to_write)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
@@ -42,20 +54,13 @@ void ROCPolarFireCoreInterface::writeROCRegister(unsigned address, unsigned data
 //==================================================================================================
 int ROCPolarFireCoreInterface::readROCRegister(unsigned address)
 {
-	__FE_COUTV__(address);
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator mode read." << __E__;
-		return -1;
-	}
+	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
+	            << ", address = " << address << __E__;
 
 	int read_data = 0;
 
 	try
 	{
-		__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
-		            << ", address = " << address << __E__;
 		read_data = thisDTC_->ReadROCRegister(linkID_, address, 10);
 	}
 	catch(...)

@@ -949,6 +949,11 @@ void DTCFrontEndInterface::configure(void) try
 	turnOffLED();
 	return;
 }  // end configure()
+catch(const std::runtime_error& e)
+{
+	__FE_SS__ << "Error caught: " << e.what() << __E__;
+	__FE_SS_THROW__;
+}
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check the printouts!" << __E__;
