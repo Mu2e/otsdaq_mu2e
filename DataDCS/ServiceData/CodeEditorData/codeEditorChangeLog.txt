@@ -688,3 +688,4 @@ time=1551216471 authoradmin old-size=65381 new-size=65481 path=/home/mu2edcs/dcs
 time=1551218037 authoradmin old-size=247308 new-size=247377 path=/home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc
 time=1551218141 authoradmin old-size=247377 new-size=247378 path=/home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc
 time=1551218145 authoradmin old-size=247378 new-size=247378 path=/home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc
+time=1551221538 authoradmin old-size=247617 new-size=247645 path=/home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc

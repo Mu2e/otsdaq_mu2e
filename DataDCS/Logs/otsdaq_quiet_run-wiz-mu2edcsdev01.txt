@@ -1,20 +1,20 @@
-26 Feb 2019 22:30:07.192 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
-26 Feb 2019 22:30:07.194 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - Loaded profile: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/XDAQConfigurations/otsConfiguration_CMake.xml
-26 Feb 2019 22:30:07.195 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
-26 Feb 2019 22:30:07.196 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
-26 Feb 2019 22:30:07.197 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
-26 Feb 2019 22:30:07.199 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
-26 Feb 2019 22:30:07.201 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
-26 Feb 2019 22:30:07.201 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
-26 Feb 2019 22:30:07.207 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
-26 Feb 2019 22:30:07.207 [139882792216768] DEBUG mu2edcsdev01.p:5019 <> - Create application descriptor for class: executive::Application id: 0
-26 Feb 2019 22:30:07.224 [139882792216768] INFO  mu2edcsdev01.p:5019.executive::Application.lid(0) <> - Log URL not set (was already console)
-26 Feb 2019 22:30:07.225 [139882792216768] INFO  mu2edcsdev01.p:5019.executive::Application.lid(0) <> - Changed Log level to INFO
-26 Feb 2019 22:30:07.228 [139882792216768] INFO  mu2edcsdev01.p:5019.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
-26 Feb 2019 22:30:07.548 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - ConfigurationGUI version: 03.00.00, compiled on Feb 26 2019 at 14:15:48
-26 Feb 2019 22:30:07.562 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - WizardSupervisor version: 01.00.00, compiled on Feb 26 2019 at 14:16:26
-26 Feb 2019 22:30:07.565 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - Console version: 03.00.00, compiled on Feb 26 2019 at 14:15:48
-26 Feb 2019 22:30:07.567 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - CodeEditor version: 03.00.00, compiled on Feb 26 2019 at 14:15:48
+26 Feb 2019 22:50:24.379 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
+26 Feb 2019 22:50:24.382 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - Loaded profile: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/XDAQConfigurations/otsConfiguration_CMake.xml
+26 Feb 2019 22:50:24.383 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
+26 Feb 2019 22:50:24.384 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
+26 Feb 2019 22:50:24.385 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
+26 Feb 2019 22:50:24.387 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
+26 Feb 2019 22:50:24.388 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
+26 Feb 2019 22:50:24.389 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
+26 Feb 2019 22:50:24.394 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
+26 Feb 2019 22:50:24.395 [140107697805504] DEBUG mu2edcsdev01.p:5019 <> - Create application descriptor for class: executive::Application id: 0
+26 Feb 2019 22:50:24.412 [140107697805504] INFO  mu2edcsdev01.p:5019.executive::Application.lid(0) <> - Log URL not set (was already console)
+26 Feb 2019 22:50:24.412 [140107697805504] INFO  mu2edcsdev01.p:5019.executive::Application.lid(0) <> - Changed Log level to INFO
+26 Feb 2019 22:50:24.415 [140107697805504] INFO  mu2edcsdev01.p:5019.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+26 Feb 2019 22:50:24.740 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - ConfigurationGUI version: 03.00.00, compiled on Feb 26 2019 at 14:15:48
+26 Feb 2019 22:50:24.753 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - WizardSupervisor version: 01.00.00, compiled on Feb 26 2019 at 14:16:26
+26 Feb 2019 22:50:24.756 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - Console version: 03.00.00, compiled on Feb 26 2019 at 14:15:48
+26 Feb 2019 22:50:24.758 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - CodeEditor version: 03.00.00, compiled on Feb 26 2019 at 14:15:48
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
@@ -58,7 +58,7 @@ LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/Configura
 
 
 LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacility.fcl
-02-26 16:30:07.933600                         UDP_mfPlugin err Error sending message 2 to 127.0.0.1, errno=17 (File exists)
+02-26 16:50:25.111133                         UDP_mfPlugin err Error sending message 2 to 127.0.0.1, errno=17 (File exists)
 LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [33]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edcsdev01:5019
 LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [34]	application->getApplicationDescriptor()->getLocalId() = 280
 LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	supervisorClass_ = ots::ConfigurationGUISupervisor
@@ -78,7 +78,7 @@ LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/Config
 LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacility.fcl
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [56]	Initializing...
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [58]	Activating saved context, which may prepare for normal mode...
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [6862]	Attempting test activation of the context group.
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [6875]	Attempting test activation of the context group.
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
@@ -212,10 +212,10 @@ LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc 
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
 LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveTableGroups.cfg
 LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1125]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(6)']
 LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [166]	Console has first message.
 :Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [215]	Missed packets from Early! Sequence IDs 3 to 1.
 :Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [215]	Missed packets from DAQ! Sequence IDs 1 to 4.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1125]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(6)']
 LogError:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [526]	
 :TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
 LogDebug:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [683]	Error occured in TableView::init() for version=4
@@ -269,19 +269,7 @@ LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [20]	Request 
 LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacility.fcl
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [30]	Begin!
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [11]	Constructed.
-26 Feb 2019 22:30:08.844 [139882792216768] INFO  mu2edcsdev01.p:5019 <> - Ready.
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [211]	submittedSequence=fa37 1551220256
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [225]	*** Successfully authenticated security sequence @ 1551220256
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [148]	***Successfully authenticated security sequence. 1551220257
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [356]	Command = check
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [369]	***Successfully authenticated security sequence.
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2710]	tooltip value read = 1
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [356]	Command = check
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [369]	***Successfully authenticated security sequence.
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2710]	tooltip value read = 1
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [356]	Command = check
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [369]	***Successfully authenticated security sequence.
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2710]	tooltip value read = 1
+26 Feb 2019 22:50:25.953 [140107697805504] INFO  mu2edcsdev01.p:5019 <> - Ready.
 LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [300]	Wiz mode detected. Skipping setup of supervisor properties for supervisor of class 'ots::ConfigurationGUISupervisor'
 LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [344]	Final supervisor property settings:
 LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		AllowNoLoginRequestTypes = 
@@ -293,12 +281,12 @@ LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreP
 LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		UserGroupsAllowed = 
 LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		UserGroupsDisallowed = 
 LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		UserPermissionsThreshold = *=10 | deleteTreeNodeRecords=255 | saveTableInfo=255 | deleteTableInfo=255
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> getContextMemberNames
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> getTreeView
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 10
-LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: getContextMemberNames
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5219]	Config Session: admin:0 ... out of size: 0
-LogInfo:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5227]	Creating new Configuration Manager.
+LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: getTreeView
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5232]	Config Session: admin:0 ... out of size: 0
+LogInfo:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5240]	Creating new Configuration Manager.
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
 LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
@@ -421,95 +409,6 @@ LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/Configura
 
 LogDebug:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [367]	======================================================== getAllTableInfo end
 LogDebug:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [378]	Number of Groups: 14
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> versionTracking
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 10
-LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: versionTracking
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5219]	Config Session: admin:0 ... out of size: 1
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [368]	type: Get
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> getLastTableGroups
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 10
-LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: getLastTableGroups
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5219]	Config Session: admin:0 ... out of size: 1
-LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3542]	ActionOfLastGroup: Configured
-LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3686]	theGroup.first= defaultConfig
- theGroup.second= 72
-LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3542]	ActionOfLastGroup: Started
-LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3686]	theGroup.first= defaultConfig
- theGroup.second= 72
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> getBackboneMemberNames
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 10
-LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: getBackboneMemberNames
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5219]	Config Session: admin:0 ... out of size: 1
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> getGroupAliases
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 10
-LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: getGroupAliases
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5219]	Config Session: admin:0 ... out of size: 1
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [418]	reloadActive: 1
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 4
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [393]	Destroying Backbone Key: 7
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveTableGroups.cfg
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1125]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(6)']
-LogError:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [526]	
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-LogDebug:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [683]	Error occured in TableView::init() for version=4
-LogDebug:ots:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationInterface.h [222]	Error occurred while getting and filling Table "XDAQApplicationTable" version:4
-LogDebug:ots:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationInterface.h [224]		-Configuration interface mode=0
-LogWarning:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1311]	:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308]	Error occurred while loading table group 'testContext(6)': 
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-
-LogError:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1315]	
-:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308]	Error occurred while loading table group 'testContext(6)': 
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-
-LogWarning:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1344]	:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1343]	Error occurred while loading table group: :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308]	Error occurred while loading table group 'testContext(6)': 
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-
-
-LogError:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1348]	
-:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1343]	Error occurred while loading table group: :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308]	Error occurred while loading table group 'testContext(6)': 
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-
-
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1125]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(7)']
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1290]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(7)']
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1125]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(4)']
-LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [61]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
-LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [62]	FESlowControlsTable
-LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [72]	BurstDataCount
-LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [74]	childType=unsigned long long
-LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1290]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(4)']
-LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [300]	
-:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Failed to load group in ConfigurationManager::init() with name 'testContext(6)'
-:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1343]	Error occurred while loading table group: :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308]	Error occurred while loading table group 'testContext(6)': 
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-
-
-
-LogError:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [431]	
-:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [429]	Error loading active groups!
-
-:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Failed to load group in ConfigurationManager::init() with name 'testContext(6)'
-:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1343]	Error occurred while loading table group: :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308]	Error occurred while loading table group 'testContext(6)': 
-:TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509]	Table Error:	'ControlsDashboardSupervisorTable' in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-
-
-
-
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [6405]	activeVersions["GroupAliasesTable"]=9
-LogError:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [171]	'getGroupAliases' ERROR encountered: :ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [429] Error loading active groups!  :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216] Failed to load group in ConfigurationManager::init() with name &apos;testContext(6)&apos; :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1343] Error occurred while loading table group: :ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1308] Error occurred while loading table group &apos;testContext(6)&apos;:  :TableView-XDAQ_APPLICATION_TABLE:v4:otsdaq/otsdaq-core/TableCore/TableView.cc [509] Table Error: &apos;ControlsDashboardSupervisorTable&apos; in column LinkToSupervisorTable is not a valid Fixed Choice option. Possible values are as follows: NO_LINK, GatewaySupervisorTable, FESupervisorTable, FEDataManagerSupervisorTable, DataManagerSupervisorTable, ARTDAQAggregatorTable, ARTDAQBuilderTable, ECLSupervisorTable.
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [356]	Command = check
-LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [369]	***Successfully authenticated security sequence.
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2710]	tooltip value read = 1
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> getTreeView
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
-LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 10
-LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: getTreeView
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [5219]	Config Session: admin:0 ... out of size: 1
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [763]	configGroup: testContext
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [764]	configGroupKey: 6
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [765]	startPath: /
@@ -623,8 +522,8 @@ LogDebug:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/Config
 LogDebug:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [378]	Number of Groups: 14
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [1542]	Loading group 'testContext(6)'
 LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [1567]	*accumulatedErrors = 
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [2634]	Active tables are setup. No issues found.
-LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [2656]	accumulateTreeErrs = 
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [2647]	Active tables are setup. No issues found.
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [2669]	accumulateTreeErrs = 
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [300]	Wiz mode detected. Skipping setup of supervisor properties for supervisor of class 'ots::CodeEditorSupervisor'
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [344]	Final supervisor property settings:
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		AllowNoLoginRequestTypes = 
@@ -636,6 +535,51 @@ LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropert
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		UserGroupsAllowed = 
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		UserGroupsDisallowed = 
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [346]		UserPermissionsThreshold = *=1 | codeEditor=-1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [356]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [432]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [25]	ApplicationDescriptor LID=240
+LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [356]	Command = check
+LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [369]	***Successfully authenticated security sequence.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2710]	tooltip value read = 1551387969
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getAllowedExtensions
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 1 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 1 files.
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
@@ -683,7 +627,69 @@ LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsign
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
 LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getFileContent
-LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [356]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationInterface.h
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [356]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /otsdaq/otsdaq-core/ConfigurationInterface
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 0 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 19 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /otsdaq
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'LICENSE' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 9 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 1 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 1 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /otsdaq_utilities
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'LICENSE' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 1 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /otsdaq_utilities/otsdaq-utilities
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 8 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 2 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [117]	requestType: codeEditor
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [173]	path = /otsdaq_utilities/otsdaq-utilities/ConfigurationGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [174]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 0 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [323]	Found 5 files.
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [429]	requestType ==========>>> codeEditor
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [430]	(unsigned int)userInfo.permissionLevel_ = 255
 LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	(unsigned int)userInfo.permissionsThreshold_ = 1
@@ -691,5 +697,3 @@ LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervi
 LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [69]	Code Editor
 LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [67]	option = getFileContent
 LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [356]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc
-LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [271]	No messages received at Console Supervisor. Exiting Console messageFacilityReceiverWorkLoop
-LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [79]	CLOSING THE SOCKET #8 IP: 127.0.0.1 port: 30001 htons: 12661
