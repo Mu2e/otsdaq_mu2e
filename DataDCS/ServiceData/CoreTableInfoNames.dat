@@ -1,4 +1,5 @@
 ConfigCore/*
+ARTDAQ/*
 ContextGroup/DesktopIconTable
 ContextGroup/DesktopWindowParameterTable
 ContextGroup/GatewaySupervisorTable
@@ -23,3 +24,9 @@ IterateGroup/IterationCommandRepeatLabelTable
 IterateGroup/IterationCommandRunTable
 IterateGroup/IterationPlanTable
 IterateGroup/IterationTargetTable
+../../../otsdaq_mu2e/Data/*FE*
+../../../otsdaq_mu2e/Data/*CFO*
+../../../otsdaq_mu2e/Data/*DTC*
+../../../otsdaq_mu2e/Data/*ROC*
+../../../otsdaq_mu2e/Data/*Mu2e*
+../../../otsdaq_mu2e/DataDCS/XDAQApplicationTable
