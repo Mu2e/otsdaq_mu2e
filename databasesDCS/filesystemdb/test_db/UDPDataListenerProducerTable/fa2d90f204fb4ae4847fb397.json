@@ -1,0 +1,171 @@
+{
+"document" : {
+"data" : {
+"NAME" : "UDP_DATA_LISTENER_PRODUCER_TABLE",
+"COMMENT" : "Artdaq listeners. UDP Listener for HW emulator. and UDP Listener for DQM",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1499539039,
+"COL_TYPES" : {
+"PROCESSOR_UID" : "VARCHAR2",
+"BUFFER_SIZE" : "NUMBER",
+"HOST_IP_ADDRESS" : "VARCHAR2",
+"HOST_PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"PROCESSOR_UID" : "UDPListener0",
+"BUFFER_SIZE" : "100",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4005",
+"COMMENT_DESCRIPTION" : "Listening to hardware emulator which is sending to 4005.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826574"
+},
+{
+"PROCESSOR_UID" : "UDPListener1",
+"BUFFER_SIZE" : "100",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4101",
+"COMMENT_DESCRIPTION" : "Listening to DB0 streamer.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826574"
+},
+{
+"PROCESSOR_UID" : "ART_S0_DM0_DB0_Listener0",
+"BUFFER_SIZE" : "100",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4121",
+"COMMENT_DESCRIPTION" : "artdaq listener",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480437391"
+},
+{
+"PROCESSOR_UID" : "ART_S1_DM0_DB0_Listener0",
+"BUFFER_SIZE" : "100",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4131",
+"COMMENT_DESCRIPTION" : "artdaq listener",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480437391"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-07-17T12:10:20.185-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:20.189-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:20.187-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.590-0500"
+},
+{
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-28T14:58:36.717-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2018-07-17T12:10:20.187-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:20.187-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-07-17T12:10:20.188-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2018-07-17T12:10:20.188-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-07-17T12:10:20.188-0500",
+"value" : {
+"name" : "UDPDataListenerProducerTable",
+"assigned" : "2018-07-17T12:10:20.188-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-07-17T12:10:20.189-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:20.189-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2018-07-17T12:10:20.590-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.590-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-28T14:58:36.717-0600",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-28T14:58:36.717-0600"
+}
+}
+],
+"created" : "2018-07-17T12:10:20.185-0500"
+},
+"_id" : {
+"$oid" : "fa2d90f204fb4ae4847fb397"
+},
+"collection" : "UDPDataListenerProducerTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

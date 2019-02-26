@@ -1,0 +1,130 @@
+{
+"document" : {
+"data" : {
+"NAME" : "FE_SUPERVISOR_TABLE",
+"COMMENT" : "First attempt to connect to HW emulator.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1548709092,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"LINK_TO_FE_INTERFACE_TABLE" : "VARCHAR2",
+"LINK_TO_FE_INTERFACE_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUPERVISOR_UID" : "FESupervisor0",
+"LINK_TO_FE_INTERFACE_TABLE" : "FEInterfaceTable",
+"LINK_TO_FE_INTERFACE_GROUP_ID" : "FEGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548709092"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-28T14:58:12.490-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-28T14:58:12.490-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-28T14:58:12.490-0600"
+},
+{
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-28T14:58:36.602-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-01-28T14:58:12.490-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-28T14:58:12.490-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-28T14:58:12.490-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-01-28T14:58:12.490-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-28T14:58:12.490-0600",
+"value" : {
+"name" : "FESupervisorTable",
+"assigned" : "2019-01-28T14:58:12.490-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-28T14:58:12.490-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-28T14:58:12.490-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-28T14:58:36.602-0600",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-28T14:58:36.602-0600"
+}
+}
+],
+"created" : "2019-01-28T14:58:12.490-0600"
+},
+"_id" : {
+"$oid" : "35ec00128d92460cb7cbd8b3"
+},
+"collection" : "FESupervisorTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
