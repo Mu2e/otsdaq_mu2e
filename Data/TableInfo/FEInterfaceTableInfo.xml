@@ -2,12 +2,12 @@
 	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
 		<TABLE Name="FEInterfaceTable">
 			<VIEW Name="FE_INTERFACE_TABLE" Type="File,Database,DatabaseTest" Description="This%20table%20is%20used%20to%20associate%20a%20plugin%20class%20(and%20its%20table%20specifics)%20with%20a%20front-end%20device.%0A%0AThis%20table%20can%20be%20optionally%20used%20to%20associate%20a%20slow%20control%20table%20with%20a%20front-end.">
-				<COLUMN Type="GroupID-0" 	 Name="FEInterfaceGroupID" 	 StorageName="FE_INTERFACE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="GroupID-FE" 	 Name="FEInterfaceGroupID" 	 StorageName="FE_INTERFACE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="UID" 	 Name="FEInterfaceUID" 	 StorageName="FE_INTERFACE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="FixedChoiceData" 	 Name="FEInterfacePluginName" 	 StorageName="FE_INTERFACE_PLUGIN_NAME" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,CFOFrontEndInterface,DTCFrontEndInterface,CAPTANSignalGenerator"/>
-				<COLUMN Type="ChildLink-0" 	 Name="LinkToFETypeTable" 	 StorageName="LINK_TO_FE_TYPE_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLinkUID-0" 	 Name="LinkToFETypeUID" 	 StorageName="LINK_TO_FE_TYPE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-feType" 	 Name="LinkToFETypeTable" 	 StorageName="LINK_TO_FE_TYPE_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLinkUID-feType" 	 Name="LinkToFETypeUID" 	 StorageName="LINK_TO_FE_TYPE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-SlowControlChannels" 	 Name="LinkToSlowControlChannelsTable" 	 StorageName="LINK_TO_SLOW_CONTROL_CHANNELS_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLinkGroupID-SlowControlChannels" 	 Name="LinkToSlowControlChannelsGroupID" 	 StorageName="LINK_TO_SLOW_CONTROL_CHANNELS_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-SlowControlsMonitor" 	 Name="LinkToSlowControlsMonitorTable" 	 StorageName="LINK_TO_SLOW_CONTROLS_MONITOR_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
