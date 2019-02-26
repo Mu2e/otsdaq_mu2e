@@ -18,52 +18,6 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-	registerFEMacroFunction(
-	    "ROC_WriteBlock",  // feMacroName
-	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &DTCFrontEndInterface::WriteROCBlock),  // feMacroFunction
-	    std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
-	    std::vector<std::string>{},  // namesOfOutputArgs
-	    1);                          // requiredUserPermissions
-
-	registerFEMacroFunction("ROC_ReadBlock",
-	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
-	                            &DTCFrontEndInterface::ReadROCBlock),
-	                        std::vector<std::string>{"rocLinkIndex", "block", "address"},
-	                        std::vector<std::string>{"readData"},
-	                        1);  // requiredUserPermissions
-
-	// registration of FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by
-	// 'admin' using MacroMaker.
-	registerFEMacroFunction(
-	    "ROC_Write",  // feMacroName
-	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &DTCFrontEndInterface::WriteROC),  // feMacroFunction
-	    std::vector<std::string>{"rocLinkIndex", "address", "writeData"},
-	    std::vector<std::string>{},  // namesOfOutput
-	    1);                          // requiredUserPermissions
-
-	registerFEMacroFunction(
-	    "ROC_Read",
-	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &DTCFrontEndInterface::ReadROC),                  // feMacroFunction
-	    std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
-	    std::vector<std::string>{"readData"},
-	    1);  // requiredUserPermissions
-
-	registerFEMacroFunction("DTC_Reset",
-	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
-	                            &DTCFrontEndInterface::DTCReset),
-	                        std::vector<std::string>{},
-	                        std::vector<std::string>{},
-	                        1);  // requiredUserPermissions
-
-	registerFEMacroFunction("DTC_HighRate_DCS_Check",
-	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
-	                            &DTCFrontEndInterface::DTCHighRateDCSCheck),
-	                        std::vector<std::string>{},
-	                        std::vector<std::string>{},
-	                        1);  // requiredUserPermissions
 
 	// theFrontEndHardware_ = new FrontEndHardwareTemplate();
 	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
@@ -92,6 +46,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	{
 		__FE_COUT__ << "Emulator DTC mode starting up..." << __E__;
 		createROCs();
+		registerFEMacros();
 		return;
 	}
 	// else not emulator mode
@@ -135,26 +90,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
 
 	createROCs();
-
-	{ //add ROC FE Macros
-		for(auto& roc : rocs_)
-		{
-			auto feMacros = roc.second->getMapOfFEMacroFunctions();
-			for(auto& feMacro:feMacros)
-			{
-				__COUT__ << roc.first << "::" << feMacro.first << __E__;
-
-				std::vector<std::string> inputParams,outputParams;
-				continue;
-				registerFEMacroFunction("Run_ROC_FEMacro",
-						static_cast<FEVInterface::frontEndMacroFunction_t>(
-								&DTCFrontEndInterface::RunROCFEMacro),
-								std::vector<std::string>{"ROC_FEMacroName"},
-								std::vector<std::string>{},
-								1);  // requiredUserPermissions
-			}
-		}
-	} //end add ROC FE Macros
+	registerFEMacros();
 
 	// DTC-specific info
 	dtc_location_in_chain_ =
@@ -174,6 +110,105 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 	// delete theFrontEndHardware_;
 	// delete theFrontEndFirmware_;
 }
+
+//========================================================================================================================
+void DTCFrontEndInterface::registerFEMacros(void)
+{
+	mapOfFEMacroFunctions_.clear();
+
+	// clang-format off
+	registerFEMacroFunction(
+			"ROC_WriteBlock",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::WriteROCBlock),  // feMacroFunction
+					std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
+					std::vector<std::string>{},  // namesOfOutputArgs
+					1);                          // requiredUserPermissions
+
+	registerFEMacroFunction("ROC_ReadBlock",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ReadROCBlock),
+					std::vector<std::string>{"rocLinkIndex", "block", "address"},
+					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
+
+	// registration of FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by
+	// 'admin' using MacroMaker.
+	registerFEMacroFunction(
+			"ROC_Write",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::WriteROC),  // feMacroFunction
+					std::vector<std::string>{"rocLinkIndex", "address", "writeData"},
+					std::vector<std::string>{},  // namesOfOutput
+					1);                          // requiredUserPermissions
+
+	registerFEMacroFunction(
+			"ROC_Read",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ReadROC),                  // feMacroFunction
+					std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
+					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction("DTC_Reset",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DTCReset),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction("DTC_HighRate_DCS_Check",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DTCHighRateDCSCheck),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+
+
+
+
+	{ //add ROC FE Macros
+		__FE_COUT__ << "Getting children ROC FEMacros..." << __E__;
+		rocFEMacroMap_.clear();
+		for(auto& roc : rocs_)
+		{
+			auto feMacros = roc.second->getMapOfFEMacroFunctions();
+			for(auto& feMacro:feMacros)
+			{
+				__FE_COUT__ << roc.first << "::" << feMacro.first << __E__;
+
+				//make DTC FEMacro forwarding to ROC FEMacro
+				std::string macroName = roc.first + "_" +
+						feMacro.first;
+				__FE_COUTV__(macroName);
+
+				std::vector<std::string> inputArgs,outputArgs;
+
+				//inputParams.push_back("ROC_UID");
+				//inputParams.push_back("ROC_FEMacroName");
+				for(auto& inArg: feMacro.second.namesOfInputArguments_)
+					inputArgs.push_back(inArg);
+				for(auto& outArg: feMacro.second.namesOfOutputArguments_)
+					outputArgs.push_back(outArg);
+
+				__FE_COUTV__(StringMacros::vectorToString(inputArgs));
+				__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+
+				rocFEMacroMap_.emplace(std::make_pair(macroName,roc.first));
+
+				registerFEMacroFunction(macroName,
+						static_cast<FEVInterface::frontEndMacroFunction_t>(
+								&DTCFrontEndInterface::RunROCFEMacro),
+								inputArgs,
+								outputArgs,
+								1);  // requiredUserPermissions
+			}
+		}
+	} //end add ROC FE Macros
+
+	// clang-format on
+
+} //end registerFEMacros()
 
 //========================================================================================================================
 void DTCFrontEndInterface::createROCs(void)
@@ -308,6 +343,9 @@ void DTCFrontEndInterface::createROCs(void)
 		}
 
 	__FE_COUT__ << "Done creating " << rocs_.size() << " ROC(s)" << std::endl;
+
+
+
 }  // end createROCs
 
 //==========================================================================================
@@ -2771,6 +2809,18 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 {
 	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
 	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
+
+	__FE_COUTV__(feMacroName);
+	__FE_COUTV__(rocUID);
+
+	auto feMacroIt = rocFEMacroMap_.find(feMacroStruct.feMacroName_);
+	if(feMacroIt == rocFEMacroMap_.end())
+	{
+		__FE_SS__ << "Fatal error - ROC FE Macro name '" <<
+				feMacroStruct.feMacroName_ <<
+				"' not found in DTC's map!" << __E__;
+		__FE_SS_THROW__;
+	}
 
 } //end RunROCFEMacro()
 

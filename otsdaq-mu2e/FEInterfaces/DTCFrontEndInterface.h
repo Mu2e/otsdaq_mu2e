@@ -64,6 +64,7 @@ class DTCFrontEndInterface : public FEVInterface
 
   private:
 	void createROCs(void);
+	void registerFEMacros(void);
 
 	char        devfile_[11];
 	int         fd_;
@@ -77,6 +78,7 @@ class DTCFrontEndInterface : public FEVInterface
 	std::ofstream datafile_[8];
 
 	std::map<std::string /*name*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
+	std::map<std::string /*FEMacro name*/, std::string /*ROC UID*/> rocFEMacroMap_;
 
 	m_ioc_reg_access_t reg_access_;
 

@@ -24,7 +24,7 @@ ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 {
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
-	__COUT__ << FEVInterface::interfaceUID_ << " Destructed." << __E__;
+	__COUT__ << FEVInterface::interfaceUID_ << "Destructed." << __E__;
 }
 
 //==================================================================================================
@@ -99,6 +99,11 @@ void ROCPolarFireCoreInterface::resetDTCLinkLossCounter()
 void ROCPolarFireCoreInterface::configure(void) try
 {
 
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
+		return;
+	}
 	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
 	// this->writeRegister(0,1);
 	// this->writeRegister(0,0);
@@ -116,11 +121,6 @@ void ROCPolarFireCoreInterface::configure(void) try
 
 	this->writeDelay(delay_);
 
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
-		return;
-	}
 
 
 	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
