@@ -1,0 +1,510 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 09:41:04 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 24-Jan-2019 09:41:04 CST  pre-events TCPConnect.cc:334
+Resolving host 127.0.0.1, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 24-Jan-2019 09:41:04 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edcsdev01
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 09:41:04 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 24-Jan-2019 09:41:04 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConfigurationGUI 24-Jan-2019 09:41:04 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ConfigurationGUI configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/ConfigurationGUI" pattern:"ConfigurationGUI-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  OtsConfigurationWizard  24-Jan-2019 09:41:04 CST pre-events configureMessageFacility.cc:286
+Message Facility Application OtsConfigurationWizard configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/OtsConfigurationWizard" pattern:"OtsConfigurationWizard-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 09:41:05 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 09:41:05 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 24-Jan-2019 09:41:05 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConsoleSupervisor 24-Jan-2019 09:41:05 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ConsoleSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/ConsoleSupervisor" pattern:"ConsoleSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 09:41:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [160]	DEBUG messages look like this.
+%MSG
+%MSG-i Console:  Early 24-Jan-2019 09:41:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [161]	INFO messages look like this.
+%MSG
+%MSG-w Console:  Early 24-Jan-2019 09:41:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [162]	WARNING messages look like this.
+%MSG
+%MSG-e Console:  Early 24-Jan-2019 09:41:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [163]	ERROR messages look like this.
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 09:43:06 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 09:45:07 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 09:47:08 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 09:49:09 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 09:51:10 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 10:43:13 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 11:43:16 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 12:43:18 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 13:43:20 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 14:43:23 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 15:43:25 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 16:43:28 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 17:43:30 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 18:43:32 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 19:43:35 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 20:43:37 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 21:43:39 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 22:43:42 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 23:43:44 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 00:43:47 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 01:43:49 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 02:43:51 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 03:43:54 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 04:43:56 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 05:43:59 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 06:44:01 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 07:44:03 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 08:44:06 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 09:44:08 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 10:44:11 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 11:44:13 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 12:44:15 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 13:44:18 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 14:44:20 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 15:44:22 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 16:44:25 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 17:44:27 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 18:44:30 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 19:44:32 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 20:44:34 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 21:44:37 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 22:44:39 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 25-Jan-2019 23:44:42 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 00:44:44 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 01:44:46 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 02:44:49 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 03:44:51 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 04:44:53 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 05:44:56 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 06:44:58 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 07:45:01 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 08:45:03 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 09:45:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 10:45:08 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 11:45:10 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 12:45:13 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 13:45:15 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 14:45:17 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 15:45:20 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 16:45:22 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 17:45:25 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 18:45:27 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 19:45:29 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 20:45:32 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 21:45:34 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 22:45:36 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 26-Jan-2019 23:45:39 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 00:45:41 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 01:45:44 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 02:45:46 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 03:45:48 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 04:45:51 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 05:45:53 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 06:45:56 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 07:45:58 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 08:46:00 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 09:46:03 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 10:46:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 11:46:08 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 12:46:10 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 13:46:12 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 14:46:15 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 15:46:17 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 16:46:19 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 17:46:22 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 18:46:24 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 19:46:27 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 20:46:29 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 21:46:31 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 22:46:34 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 27-Jan-2019 23:46:36 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 00:46:39 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 01:46:41 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 02:46:43 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 03:46:46 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 04:46:48 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 05:46:51 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 06:46:53 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 07:46:55 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 08:46:58 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 09:47:00 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 10:47:03 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 11:47:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 12:47:07 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 13:47:10 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 14:47:12 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 15:47:14 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 16:47:17 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 17:47:19 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 18:47:22 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 19:47:24 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 20:47:26 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 21:47:29 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 22:47:31 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 28-Jan-2019 23:47:34 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 00:47:36 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 01:47:38 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 02:47:41 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 03:47:43 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 04:47:46 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 05:47:48 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 06:47:50 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 07:47:53 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 08:47:55 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 09:47:58 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 10:48:00 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 11:48:02 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 12:48:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 13:48:07 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 14:48:09 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 15:48:12 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 16:48:14 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 17:48:17 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 18:48:19 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 19:48:21 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 20:48:24 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 21:48:26 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 22:48:29 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 29-Jan-2019 23:48:31 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 00:48:33 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 01:48:36 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 02:48:38 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 03:48:41 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 04:48:43 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 05:48:45 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 06:48:48 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 07:48:50 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 08:48:53 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 09:48:55 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 10:48:57 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 11:49:00 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 12:49:02 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 13:49:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 14:49:07 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG
+%MSG-d Console:  Early 30-Jan-2019 15:49:09 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [244]	Console is alive and waiting a long time... (if no messages, next heartbeat is in approximately one hour)
+%MSG

@@ -1,0 +1,87 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  07-Nov-2018 16:46:05 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  07-Nov-2018 16:46:06 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 07-Nov-2018 16:46:06 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 07-Nov-2018 16:46:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [491]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 07-Nov-2018 16:46:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [495]	CFO links OK = 0x1
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 07-Nov-2018 16:47:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [491]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 07-Nov-2018 16:47:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [503]	CFO links not OK = 0x0
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 07-Nov-2018 16:48:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [491]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 07-Nov-2018 16:48:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [503]	CFO links not OK = 0x0
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 09-Nov-2018 08:41:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [491]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 09-Nov-2018 08:41:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [495]	CFO links OK = 0x1
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 09-Nov-2018 08:44:10 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [491]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 09-Nov-2018 08:44:10 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [495]	CFO links OK = 0x1
+%MSG

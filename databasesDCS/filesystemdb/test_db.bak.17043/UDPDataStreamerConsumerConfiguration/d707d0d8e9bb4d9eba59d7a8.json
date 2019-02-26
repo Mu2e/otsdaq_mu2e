@@ -1,0 +1,134 @@
+{
+"document" : {
+"data" : {
+"NAME" : "UDP_DATA_STREAMER_CONSUMER_CONFIGURATION",
+"COMMENT" : "streaming to DQM DB1",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1499539121,
+"COL_TYPES" : {
+"PROCESSOR_UID" : "VARCHAR2",
+"HOST_IP_ADDRESS" : "VARCHAR2",
+"HOST_PORT" : "NUMBER",
+"STREAM_TO_IP_ADDRESS" : "VARCHAR2",
+"STREAM_TO_PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"PROCESSOR_UID" : "UDPStreamer0",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4100",
+"STREAM_TO_IP_ADDRESS" : "127.0.0.1",
+"STREAM_TO_PORT" : "4101",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826470"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 14:33:23 2017",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "1",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "UDPDataStreamerConsumerConfiguration",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 14:33:23 2017",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "Wed Jul 26 14:33:23 2017"
+}
+}
+],
+"created" : "Wed Jul 26 14:33:23 2017"
+},
+"_id" : {
+"$oid" : "d707d0d8e9bb4d9eba59d7a8"
+},
+"collection" : "UDPDataStreamerConsumerConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

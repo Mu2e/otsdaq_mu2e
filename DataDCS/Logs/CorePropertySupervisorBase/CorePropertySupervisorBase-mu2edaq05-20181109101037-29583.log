@@ -1,0 +1,123 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  09-Nov-2018 10:10:37 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 09-Nov-2018 10:10:37 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 09-Nov-2018 10:10:37 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  09-Nov-2018 10:10:38 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 09-Nov-2018 10:10:38 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:11:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:11:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [448]	DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:11:16 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [464]	DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:12:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [579]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:12:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [582]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:16:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:16:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:16:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:16:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:16:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:16:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [448]	DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:16:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [464]	DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:16:41 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [579]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:16:41 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [582]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:21:47 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:21:47 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:21:47 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 10:21:47 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:21:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:21:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [448]	DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:21:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [464]	DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:22:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [579]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 10:22:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [582]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:14:12 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:14:12 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:14:12 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:14:12 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 12-Nov-2018 11:14:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 12-Nov-2018 11:14:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [448]	DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 12-Nov-2018 11:14:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [464]	DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 12-Nov-2018 11:14:39 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [579]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 12-Nov-2018 11:14:39 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [582]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:31:38 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:31:38 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:31:38 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 12-Nov-2018 11:31:38 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG

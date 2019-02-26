@@ -1,0 +1,129 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  30-Oct-2018 11:48:03 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  30-Oct-2018 11:48:03 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 30-Oct-2018 11:48:03 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:48:49 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:48:49 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:49:14 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:49:14 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:49:38 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:49:38 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:50:03 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:50:03 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:50:29 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:50:29 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:50:53 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:50:53 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:51:18 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:51:18 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:51:42 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:51:42 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:52:07 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:52:07 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:52:33 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:52:33 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:52:58 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:52:58 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:53:23 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:53:23 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:53:48 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:53:48 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:54:12 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:54:12 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:54:37 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:54:37 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:55:03 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:55:03 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:55:28 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:55:28 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:55:53 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:55:53 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:56:18 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:56:18 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:56:43 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [442]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 30-Oct-2018 11:56:43 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [446]	CFO links OK = 0x1
+%MSG

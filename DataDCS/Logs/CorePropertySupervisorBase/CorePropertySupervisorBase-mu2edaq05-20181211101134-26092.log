@@ -1,0 +1,99 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  11-Dec-2018 10:11:34 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 11-Dec-2018 10:11:34 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 11-Dec-2018 10:11:34 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  11-Dec-2018 10:11:35 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 11-Dec-2018 10:11:35 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 11-Dec-2018 10:12:00 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:12:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 31
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:12:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [138]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:12:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [655]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:12:16 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [669]	Step 1: DTC0 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:12:36 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [708]	Step 2: DTC0 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:12:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [786]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [802]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [90]	... setup to synchronize ROC clock with 40 MHz clock edge
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [100]	......... Set delay = 31 ... 
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [104]	read back = 65535
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:28 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [810]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:28 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [829]	DTC0 links not OK 0x42
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [698]	Step 8: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [716]	Step 9: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:13:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 11: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 11: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 11: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [786]	Step 12: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [802]	Step 12: DTC0 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [90]	... setup to synchronize ROC clock with 40 MHz clock edge
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [100]	......... Set delay = 31 ... 
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [104]	read back = 65535
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [810]	Step 13: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Dec-2018 10:14:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [825]	DTC0 too long waiting for links... not OK 0x42
+%MSG

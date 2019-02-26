@@ -1,0 +1,270 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  07-Nov-2018 16:45:57 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 07-Nov-2018 16:45:57 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 07-Nov-2018 16:45:57 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq06.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  07-Nov-2018 16:45:58 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 07-Nov-2018 16:45:58 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:46:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:46:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [575]	DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:46:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [588]	DTC1 links not OK 0xc1
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:46:58 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:47:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:47:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [575]	DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:47:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [588]	DTC1 links not OK 0x80
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  Early 07-Nov-2018 16:48:14 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:48:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:48:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [575]	DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 07-Nov-2018 16:48:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [588]	DTC1 links not OK 0x80
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:56:48 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:57:12 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:57:13 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:57:16 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:57:17 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:58:17 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:58:49 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:58:50 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:59:12 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:59:13 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:59:51 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:59:52 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 15:59:52 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:20 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:20 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:32 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:32 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:33 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:33 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:35 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:44 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:44 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:02:44 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:03:06 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:03:20 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:03 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:03 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:04 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:04 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:05 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:06 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:06 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:07 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:04:09 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:06:21 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:06:25 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:06:27 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:08:11 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:08:12 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:08:19 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:08:25 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:09:26 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:09:41 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:11:08 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:11:30 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:11:49 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:12:54 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:14:38 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_WriteBlock' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:15:10 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:15:23 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:16:23 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:17:12 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:17:29 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 08-Nov-2018 16:20:34 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:40:49 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 08:40:56 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 08:41:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [575]	DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 08:41:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [578]	DTC1 links OK 0x43
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  Early 09-Nov-2018 08:43:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 08:43:46 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 08:44:11 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [575]	DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 09-Nov-2018 08:44:11 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [578]	DTC1 links OK 0x43
+%MSG

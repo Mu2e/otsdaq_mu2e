@@ -1,0 +1,126 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  30-Oct-2018 15:09:09 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 30-Oct-2018 15:09:09 CDT  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 30-Oct-2018 15:09:09 CDT  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  30-Oct-2018 15:09:09 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 30-Oct-2018 15:09:09 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:09:50 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [73]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:10:41 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:10:41 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0x80
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:11:02 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:11:02 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0x80
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:11:34 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:11:34 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:11:51 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:11:51 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:07 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:07 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:23 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:23 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:39 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:39 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:55 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:12:55 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:11 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:11 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:27 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:27 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:43 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:43 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:59 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:13:59 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:14:15 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:14:15 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:14:31 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:14:31 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:14:47 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:14:47 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:15:03 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:15:03 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:15:19 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:15:19 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [601]	DTC0 links not OK 0xc0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:15:33 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [569]	DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 30-Oct-2018 15:15:33 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [572]	DTC0 links OK 0xc3
+%MSG

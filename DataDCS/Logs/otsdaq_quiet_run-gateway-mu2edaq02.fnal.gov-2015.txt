@@ -1,0 +1,960 @@
+18 Oct 2018 21:49:18.629 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - xdaq version: 05.03.00, compiled on May 15 2018 at 17:19:06, 64bit
+18 Oct 2018 21:49:18.632 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - Loaded profile: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/XDAQConfigurations/otsConfiguration_CMake.xml
+18 Oct 2018 21:49:18.633 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - b2innub version: 02.05.01, compiled on May 15 2018 at 17:21:26
+18 Oct 2018 21:49:18.634 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - executive version: 04.00.06, compiled on May 15 2018 at 17:20:58
+18 Oct 2018 21:49:18.635 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - b2inutils version: 04.04.05, compiled on May 15 2018 at 17:21:32
+18 Oct 2018 21:49:18.637 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - pthttp version: 04.05.05, compiled on May 15 2018 at 17:20:00
+18 Oct 2018 21:49:18.638 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - ptfifo version: 04.03.01, compiled on May 15 2018 at 17:20:38
+18 Oct 2018 21:49:18.639 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - xrelay version: 04.01.00, compiled on May 15 2018 at 17:21:20
+18 Oct 2018 21:49:18.641 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - hyperdaq version: 05.01.11, compiled on May 15 2018 at 17:21:18
+18 Oct 2018 21:49:18.641 [139704188704960] DEBUG gov.fnal.mu2edaq02.p:2015 <> - Create application descriptor for class: executive::Application id: 0
+18 Oct 2018 21:49:18.654 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015.executive::Application.lid(0) <> - Log URL not set (was already console)
+18 Oct 2018 21:49:18.654 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015.executive::Application.lid(0) <> - Changed Log level to INFO
+18 Oct 2018 21:49:18.669 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+18 Oct 2018 21:49:19.069 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - GatewaySupervisor_ version: 03.00.00, compiled on Oct 11 2018 at 10:06:24
+18 Oct 2018 21:49:19.080 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - Chat version: 03.00.00, compiled on Oct 11 2018 at 10:06:23
+18 Oct 2018 21:49:19.085 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - Console version: 03.00.00, compiled on Oct 11 2018 at 10:06:23
+18 Oct 2018 21:49:19.089 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - Logbook version: 03.00.00, compiled on Oct 11 2018 at 10:06:23
+18 Oct 2018 21:49:19.093 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - ConfigurationGUI version: 03.00.00, compiled on Oct 11 2018 at 10:06:23
+18 Oct 2018 21:49:19.098 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - MacroMaker version: 03.00.00, compiled on Oct 11 2018 at 10:06:23
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [97]	Resetting RunControlStateMachine with name 'GatewaySupervisor'...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq02.fnal.gov:2015
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 200
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::GatewaySupervisor
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = GatewaySupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [185]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [296]	Init complete
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'Supervisor' of class ots::GatewaySupervisor.
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = Supervisor
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/Supervisor/LinkToSupervisorConfiguration
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [658]	/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/LoginData/HashesData//hashes.xml
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [706]	0 Hashes found.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [763]	Found Users database next user Id: 1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [899]	1 Users found.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [902]	User 0: Name: admin		Display Name: Administrator		Email: root@otsdaq.fnal.gov		Permissions: allUsers: 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [3016]	The current security type is NoSecurity
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [3026]	CareAboutCookieCodes_: 0
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [566]	/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/LoginData/UsersData//activeSessions.sv
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [583]	Extracting active sessions...
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [624]	ActiveSessionCookieCodeVector loaded with size 0
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2968]	Attempting to load username with lock: admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2983]	Setting lock
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2770]	actingUser = admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2771]	Permissions: allUsers: 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2772]	usersUsernameWithLock_ = 
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2773]	lock = 1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2774]	username = admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2775]	isUsernameActive(username) = 0
+LogInfo:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2803]	User 'admin' has locked out the system!
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [157]	Done with Web Users initialization!
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: InfoRequest jobName: InfoRequest
+LogDebug:Iterator:otsdaq/otsdaq-core/GatewaySupervisor/Iterator.cc [29]	Iterator constructed.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [74]	
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [82]	Security: NoSecurity
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [178]	State changes over UDP are disabled.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [192]	Updating core tables table...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq02.fnal.gov:2015
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 250
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ChatSupervisor
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ChatSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [185]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [296]	Init complete
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ChatSupervisor' of class ots::ChatSupervisor.
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ChatSupervisor
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ChatSupervisor/LinkToSupervisorConfiguration
+LogDebug:FSM-ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [97]	Resetting RunControlStateMachine with name 'ChatSupervisor:ChatSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq02.fnal.gov:2015
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 260
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ConsoleSupervisor
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ConsoleSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [185]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [296]	Init complete
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ConsoleSupervisor' of class ots::ConsoleSupervisor.
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ConsoleSupervisor
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ConsoleSupervisor/LinkToSupervisorConfiguration
+LogDebug:FSM-ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [97]	Resetting RunControlStateMachine with name 'ConsoleSupervisor:ConsoleSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:Console-ConsoleSupervisor:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [43]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:Console-ConsoleSupervisor:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [52]	Constructor complete.
+LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [80]	
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [35]	Socket constructor 127.0.0.1:30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [52]	IPAddress: 127.0.0.1 port: 30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [65]	Constructed socket for port 30001=30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/ReceiverSocket.cc [23]	ReceiverSocket constructor 127.0.0.1:30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [91]	Initializing port 30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [116]	]	Binding port: 30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [128]	]	Socket Number: 11 for port: 30001 initialized.
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [139]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [140]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [141]	SOCKET ON PORT: 30001 ON IP: 127.0.0.1 INITIALIZED OK!
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [142]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [143]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [147]	]	Socket Number: 11 for port: 30001 initialized.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [162]	Setting socket receive buffer size = 65536 0x10000
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [158]	Console has first message.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq02.fnal.gov:2015
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 261
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::LogbookSupervisor
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = LogbookSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [185]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [296]	Init complete
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'LogbookSupervisor' of class ots::LogbookSupervisor.
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = LogbookSupervisor
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/LogbookSupervisor/LinkToSupervisorConfiguration
+LogDebug:FSM-LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [97]	Resetting RunControlStateMachine with name 'LogbookSupervisor:LogbookSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [159]	Active Experiment is 
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq02.fnal.gov:2015
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 281
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ConfigurationGUISupervisor
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ConfigurationGUISupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [185]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [438]	Making System Logbook Entry: ots started.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [450]	Making logbook entry: ots started.
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [444]	Received External Supervisor System Entry ots started.
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [445]	Active Experiment is  
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [463]	Warning - Currently, no Active Experiment.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [492]	Returned Status: Warning - Currently, no Active Experiment.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [296]	Init complete
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ConfigurationGUISupervisor' of class ots::ConfigurationGUISupervisor.
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ConfigurationGUISupervisor
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ConfigurationGUISupervisor/LinkToSupervisorConfiguration
+LogDebug:FSM-ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [97]	Resetting RunControlStateMachine with name 'ConfigurationGUISupervisor:ConfigurationGUISupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:CfgGUI-ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [43]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:CfgGUI-ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [60]	Initializing...
+LogDebug:CfgGUI-ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [62]	Activating saved context, which may prepare for normal mode...
+LogDebug:CfgGUI-ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [6317]	Attempting test activation of the context group.
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1916]	*** Login RequestType = login
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [438]	Making System Logbook Entry: admin logged in.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [450]	Making logbook entry: admin logged in.
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [444]	Received External Supervisor System Entry admin logged in.
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [445]	Active Experiment is  
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [463]	Warning - Currently, no Active Experiment.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [492]	Returned Status: Warning - Currently, no Active Experiment.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2539]	StringMacros::mapToString(permissionMap) = allUsers: 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2543]	Gettings settings for user: admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2549]	Preferences file: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/LoginData/UsersData/UserPreferencesData/admin.pref
+otsdaq/otsdaq-core/XmlUtilities/HttpXmlDocument.cc [483]	File not accessible.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2553]	Preferences are defaults.
+otsdaq/otsdaq-core/XmlUtilities/HttpXmlDocument.cc [483]	File not accessible.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2609]	System Preferences are defaults.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [1755]	Found 0 active sessions for uid 0
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [305]	No user supervisor property settings found in the configuration tree, going with the defaults.
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [251]	Final supervisor property settings:
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		AllowNoLoginRequestTypes = 
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		AutomatedRequestTypes = getSystemMessages | getCurrentState | gatewayLaunchOTS | gatewayLaunchWiz
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		CheckUserLockRequestTypes = 
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		NoXmlWhiteSpaceRequestTypes = 
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		NonXMLRequestTypes = 
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		RequireUserLockRequestTypes = gatewayLaunchOTS | gatewayLaunchWiz | codeEditor
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		UserGroupsAllowed = 
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		UserGroupsDisallowed = 
+LogDebug:ots-GatewaySupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [253]		UserPermissionsThreshold = *=1 | gatewayLaunchOTS=-1 | gatewayLaunchWiz=-1 | codeEditor=-1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> getDesktopIcons
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = State Machine
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:1
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Chat
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:1
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Visualizer
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:10
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Configure
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:10
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Front-ends
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:10
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Data Processors
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:10
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Macro Maker
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:1
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Smart Launch
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:1
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = System Diagram
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:1
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2807]	icon.caption_ = Code Editor
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2808]	icon.permissionThresholdString_ = allUsers:255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2832]	iconString = State Machine,FSM,1,1,icon-Physics.gif,/WebPath/html/StateMachine.html?fsm_name=OtherRuns0,,Chat,CHAT,1,1,icon-Chat.png,/urn:xdaq-application:lid=250,,Visualizer,VIS,0,1,icon-Visualizer.png,/WebPath/html/Visualization.html?urn=270,,Configure,CFG,0,1,icon-Configure.png,/WebPath/html/ConfigurationGUI.html?urn=281,,Front-ends,CFG,0,1,icon-Configure.png,/WebPath/html/ConfigurationGUI_subset.html?urn=281&subsetBasePath=FEInterfaceConfiguration&groupingFieldList=Status%2CFEInterfacePluginName&recordAlias=Front%2Dends&editableFieldList=%21%2ACommentDescription%2C%21SlowControls%2A,Config Subsets,Data Processors,CFG,0,1,icon-Configure.png,/WebPath/html/ConfigurationGUI_subset.html?urn=281&editableFieldList=%21%2ACommentDescription%2C%21SlowControls%2A&subsetBasePath=DataBufferConfiguration&groupingFieldList=Status%2CProcessorType%2CProcessorPluginName&recordAlias=Data%20Processors,Config Subsets,Macro Maker,MM,1,1,icon-MacroMaker.png,/WebPath/html/MacroMaker.html?urn=300,,Smart Launch,LAUNCH,1,1,icon-Rocket.png,/WebPath/html/SmartLaunch.html?urn=281,,System Diagram,DIAGRAM,0,1,icon-Configure.png,/WebPath/html/ConfigurationSubsetBlockDiagram.html?urn=281,Config Subsets,Code Editor,CODE,0,1,icon-CodeEditor.png,/WebPath/html/CodeEditor.html,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2133]	Tooltip RequestType = check
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:CfgGUI-ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [48]	Constructor complete.
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq02.fnal.gov:2015
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 300
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::MacroMakerSupervisor
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = MacroMakerSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [185]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [296]	Init complete
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'MacroMakerSupervisor' of class ots::MacroMakerSupervisor.
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = MacroMakerSupervisor
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/MacroMakerSupervisor/LinkToSupervisorConfiguration
+LogDebug:FSM-MacroMakerSupervisor:MacroMakerSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-MacroMakerSupervisor:MacroMakerSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [97]	Resetting RunControlStateMachine with name 'MacroMakerSupervisor:MacroMakerSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots-MacroMakerSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+18 Oct 2018 21:49:29.899 [139704188704960] INFO  gov.fnal.mu2edaq02.p:2015 <> - Ready.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> getAliasList
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2341]	fsmName = OtherRuns0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2371]	stateMachineAliasFilter  = !*Context*
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2485]	Load preferences: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/RunControlData/FSMLastGroupAlias-admin.pref
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2491]	tmpLastAlias: daq02SystemAlias
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> getStateMachine
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> stateMatchinePreferences
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2693]	Preferences file: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/LoginData/UsersData/UserPreferencesData/generic_Default_FSM_View/admin_Default_FSM_View.pref
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2707]	Read value 
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> StateMachineInitialize
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [567]	Check for Handled by theIterator_
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [658]	State Machine command = Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [659]	fsmName = OtherRuns0
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [660]	fsmWindowName = State Machine
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [661]	activeStateMachineName_ = 
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [662]	command = Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [663]	commandParameters.size = 0
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [826]	Soap Handler!
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [310]	Request: StateMachine Value=Initialize WLName: 0-Initialize
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [53]	Processing request! WorkLoops: 0 req: 0
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [124]	SUCCESS: Request is being processed!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [829]	Done - Soap Handler!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [766]	FSM state transition launched!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [852]	Propagating command 'Initialize'...
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [138]	Received... Command: Initialize Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [152]	Defaulting iteration index to 0.
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [163]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [203]	Starting state for GatewaySupervisor is Initial and attempting to Initialize
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [137]	transition = Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1452]	Initial
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [378]	getOrderedSupervisorDescriptors
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [410]	Here is the order supervisors will be Initialize'd:
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [438]	FESupervisor1 [LID=311]:  priority 100
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [438]	FESupervisor [LID=210]:  priority 100
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [438]	FESupervisor2 [LID=312]:  priority 100
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1635]	=========> Broadcasting state machine command = Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Initialize Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1849]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] was Initialize'd correctly!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Initialize Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1849]	Supervisor instance = 'FESupervisor' [LID=210] in Context 'ContextCFO0' [URL=http://mu2edaq02.fnal.gov:2016] was Initialize'd correctly!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Initialize
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Initialize Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1849]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] was Initialize'd correctly!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1459]	Fsm current state: Initial
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1460]	Fsm current transition: Initializing
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1461]	Fsm final state: Halted
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1059]	Fsm current state: Halted
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1060]	Fsm is in transition? yes
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [373]	Ending state for GatewaySupervisor is Halted
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [375]	result = InitializeDone
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [859]	Done with command 'Initialize.' Reply = InitializeDone
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> getAliasList
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2341]	fsmName = OtherRuns0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2371]	stateMachineAliasFilter  = !*Context*
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2485]	Load preferences: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/RunControlData/FSMLastGroupAlias-admin.pref
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2491]	tmpLastAlias: daq02SystemAlias
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> StateMachineConfigure
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [567]	Check for Handled by theIterator_
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [658]	State Machine command = Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [659]	fsmName = OtherRuns0
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [660]	fsmWindowName = State Machine
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [661]	activeStateMachineName_ = 
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [662]	command = Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [663]	commandParameters.size = 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [705]	Configure --> Name: ConfigurationAlias Value: daq02SystemAlias
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [712]	Save FSM preferences: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/RunControlData/FSMLastGroupAlias-admin.pref
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [826]	Soap Handler!
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [253]	Deleting WorkLoop 0
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [310]	Request: StateMachine Value=Configure WLName: 1-Configure
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [53]	Processing request! WorkLoops: 0 req: 1
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [124]	SUCCESS: Request is being processed!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [829]	Done - Soap Handler!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [852]	Propagating command 'Configure'...
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [766]	FSM state transition launched!
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [138]	Received... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [152]	Defaulting iteration index to 0.
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [163]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [203]	Starting state for GatewaySupervisor is Halted and attempting to Configure
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [137]	transition = Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1224]	Fsm current state: Halted
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1229]	Transition parameter: daq02SystemAlias
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1274]	Configuration group name: daq02Config key: 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [438]	Making System Logbook Entry: Configuring 'daq02SystemAlias' which translates to daq02Config (1).
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [450]	Making logbook entry: Configuring 'daq02SystemAlias' which translates to daq02Config (1).
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [444]	Received External Supervisor System Entry Configuring %27daq02SystemAlias%27 which translates to daq02Config (1).
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [445]	Active Experiment is  
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [463]	Warning - Currently, no Active Experiment.
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [492]	Returned Status: Warning - Currently, no Active Experiment.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [297]	Deactivating Configuration group: daq02Config
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [41]	Using Config Mgr with Write Access! (for TheSupervisor)
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [297]	Deactivating Configuration group: daq02Config
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogInfo:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [334]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+LogInfo:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [350]	Active Context: daq02Context(2)
+LogInfo:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [352]	Active Backbone: GroupAliasTreeEditWizBackbone(14)
+LogInfo:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [354]	Active Iterate: (-1)
+LogInfo:ConfigurationManagerRW:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [356]	Active Configuration: daq02Config(1)
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [378]	getOrderedSupervisorDescriptors
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [170]	ACTIVE_GROUP_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Context group 'daq02Context(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'GroupAliasTreeEditWizBackbone(14)']
+LogInfo:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [216]	Illegal character found, so skipping entry in active table file!
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [978]	StringMacros::mapToString(aliasMap) = 
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1048]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1192]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'daq02Config(1)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [340]	Destroying Configuration Key: 1
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [351]	Destroying Backbone Key: 14
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [369]	Destroying Context Key: 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [410]	Here is the order supervisors will be Configure'd:
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [438]	FESupervisor [LID=210]:  priority 1
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [438]	FESupervisor1 [LID=311]:  priority 2
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [438]	FESupervisor2 [LID=312]:  priority 2
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1635]	=========> Broadcasting state machine command = Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor [LID=210]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor' [LID=210] in Context 'ContextCFO0' [URL=http://mu2edaq02.fnal.gov:2016] is still Configure'ing... (iteration: 0)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] is still Configure'ing... (iteration: 0)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1682]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] is still Configure'ing... (iteration: 0)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 1.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 1, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor' [LID=210] in Context 'ContextCFO0' [URL=http://mu2edaq02.fnal.gov:2016] is still Configure'ing... (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 1.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 1, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] is still Configure'ing... (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 1.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 1, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] is still Configure'ing... (iteration: 1)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1883]	Completed iteration: 1
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 2.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 2, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor' [LID=210] in Context 'ContextCFO0' [URL=http://mu2edaq02.fnal.gov:2016] is still Configure'ing... (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 2.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 2, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] is still Configure'ing... (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 2.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 2, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] is still Configure'ing... (iteration: 2)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1883]	Completed iteration: 2
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 3.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 3, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor' [LID=210] in Context 'ContextCFO0' [URL=http://mu2edaq02.fnal.gov:2016] is still Configure'ing... (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 3.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 3, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] is still Configure'ing... (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 3.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 3, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] is still Configure'ing... (iteration: 3)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1883]	Completed iteration: 3
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 4.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor [LID=210]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 4, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1849]	Supervisor instance = 'FESupervisor' [LID=210] in Context 'ContextCFO0' [URL=http://mu2edaq02.fnal.gov:2016] was Configure'd correctly!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 4.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 4, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] is still Configure'ing... (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 4.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 4, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1820]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] is still Configure'ing... (iteration: 4)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1883]	Completed iteration: 4
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 5.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor1 [LID=311]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 5, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1849]	Supervisor instance = 'FESupervisor1' [LID=311] in Context 'ContextDTC0' [URL=http://mu2edaq02.fnal.gov:2017] was Configure'd correctly!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1671]	Adding iteration parameters 5.0
+LogDebug:ots:otsdaq/otsdaq-core/SOAPUtilities/SOAPUtilities.cc [95]	adding parameters!!!!!!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1690]	Sending message to Supervisor FESupervisor2 [LID=312]: Configure (iteration: 5)
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1704]	Sending... Command: Configure Par 0 Name: ConfigurationAlias Value: daq02SystemAlias, Par 0 Name: ConfigurationGroupKey Value: 1, Par 0 Name: ConfigurationGroupName Value: daq02Config, Par 0 Name: iterationIndex Value: 5, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1849]	Supervisor instance = 'FESupervisor2' [LID=312] in Context 'ContextDTC1' [URL=http://mu2edaq02.fnal.gov:2018] was Configure'd correctly!
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1883]	Completed iteration: 5
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [1388]	Done
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [373]	Ending state for GatewaySupervisor is Configured
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [375]	result = ConfigureDone
+LogDebug:GatewaySupervisor-GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [859]	Done with command 'Configure.' Reply = ConfigureDone

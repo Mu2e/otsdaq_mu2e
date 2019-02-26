@@ -1,0 +1,270 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  11-Jan-2019 12:35:52 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 11-Jan-2019 12:35:52 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 11-Jan-2019 12:35:52 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  11-Jan-2019 12:35:52 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 11-Jan-2019 12:35:52 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 11-Jan-2019 12:39:08 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [26]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 31
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 11-Jan-2019 12:39:08 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [26]	ROCCoreInterface instantiated with link: 1 and EventWindowDelayOffset = 20
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [136]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [678]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:11 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [683]	............. firmware version 19010915
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [723]	Step 1: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [741]	Step 2: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [803]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [811]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [827]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [112]	......... setup to synchronize ROC clock with 40 MHz clock edge
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [116]	......... Set delay = 31 ... 
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:39:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [120]	......... Read back = 65535
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:40:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [112]	......... setup to synchronize ROC clock with 40 MHz clock edge
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:40:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [116]	......... Set delay = 20 ... 
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:40:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [120]	......... Read back = 65535
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:41:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [835]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq05-0  11-Jan-2019 12:41:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [839]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 13:47:12 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 13:49:08 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 13:52:39 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:11:23 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:11:24 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:11:26 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:11:27 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:11:28 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:11:29 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:39:58 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:42:35 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:42:47 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:42:53 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:42:55 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:42:57 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:43:01 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:44:11 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:44:44 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:44:47 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:44:53 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:02 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:05 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:06 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:07 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:08 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:09 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:17 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:19 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:26 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:28 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:30 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:31 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:33 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:34 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:35 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:36 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:37 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:38 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:39 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:40 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:41 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:42 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:42 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:43 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 14:45:44 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:24:09 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:25:03 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:31:55 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:37:15 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:19 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:20 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:21 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:24 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:24 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:25 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:33 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:34 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:35 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:38:57 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:41:29 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:41:38 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:46:46 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:48:10 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:48:27 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq05-0 11-Jan-2019 16:50:41 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [406]	Launching FE Macro 'ROC_Write' ...
+%MSG

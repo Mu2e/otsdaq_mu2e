@@ -1,0 +1,4 @@
+<userData>
+<nextUserId>1</nextUserId>
+<userEntry><username>admin</username><displayName>Administrator</displayName><salt></salt><uid>0</uid><permissions>allUsers:255</permissions><lastLoginAttemptTime>1527265899</lastLoginAttemptTime><accountCreatedTime>1527263021</accountCreatedTime><loginFailureCount>0</loginFailureCount><lastModifiedTime>0</lastModifiedTime><lastModifierUsername></lastModifierUsername><useremail>root@otsdaq.fnal.gov</useremail></userEntry>
+</userData>

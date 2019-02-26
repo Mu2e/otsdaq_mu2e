@@ -1,0 +1,351 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  12-Dec-2018 11:17:37 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 12-Dec-2018 11:17:37 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 12-Dec-2018 11:17:37 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq06.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  12-Dec-2018 11:17:37 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 12-Dec-2018 11:17:37 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 12-Dec-2018 11:18:30 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:18:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:18:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [138]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:18:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [655]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:18:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [669]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [708]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [778]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [786]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [802]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [90]	......... setup to synchronize ROC clock with 40 MHz clock edge
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [100]	......... Set delay = 0 ... 
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [104]	......... Read back = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:38 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [810]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:19:38 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [814]	DTC1 links OK 0xc3
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 20482
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 31244
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 38217
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 22374
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 7147
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 27724
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 5045
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 4403
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 33594
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 10250
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:20:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 25820
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 1016
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 26480
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 39757
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 9910
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 19571
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 35971
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 22645
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 1958
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 19284
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 23103
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:21:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 14512
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 24989
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 37990
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 16837
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 8131
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 22885
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 38485
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 12307
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 4843
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 37898
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 37390
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:25:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 23375
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 29891
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 37098
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 34380
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 538
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 6901
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 38031
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 29041
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 1888
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 21056
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 39430
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 28201
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 28113
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 26596
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 39624
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 13755
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 34883
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 25644
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 39702
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 10398
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 20738
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 7551
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:26:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 20713
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 21957
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 30451
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 7210
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 21897
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 15698
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 24512
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 1537
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 21104
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 25771
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 30656
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:27:53 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 31074
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 5525
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 10188
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 356
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 3546
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 34312
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 32090
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 28875
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 7093
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 5138
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 27046
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 2927
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 22642
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 12075
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 6221
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 5398
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 28100
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 16010
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 2504
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 38615
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 2660
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 5420
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:30:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 10 -> DTC1 timestamp 3235
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 0 -> DTC1 timestamp 2481
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 1 -> DTC1 timestamp 1431
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 2 -> DTC1 timestamp 23535
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 3 -> DTC1 timestamp 20217
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 4 -> DTC1 timestamp 10851
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 5 -> DTC1 timestamp 6771
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 6 -> DTC1 timestamp 29158
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 7 -> DTC1 timestamp 32809
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 8 -> DTC1 timestamp 38867
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  12-Dec-2018 11:31:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [992]	Read 9 -> DTC1 timestamp 8422
+%MSG

@@ -1,0 +1,16 @@
+
+
+/home/mu2edaq/sync_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	Starting...
+
+
+
+
+/home/mu2edaq/sync_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	 port parameter file:/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/QuietForwarder.cfg
+
+
+
+
+/home/mu2edaq/sync_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	 Forwarding from:  to: :
+
+
+getaddrinfo: Name or service not known

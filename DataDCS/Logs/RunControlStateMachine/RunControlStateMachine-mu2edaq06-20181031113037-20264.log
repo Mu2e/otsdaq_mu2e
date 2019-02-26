@@ -1,0 +1,423 @@
+%MSG-i configureMessageFacility:  RunControlStateMachine  31-Oct-2018 11:30:37 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  RunControlStateMachine 31-Oct-2018 11:30:37 CDT pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  RunControlStateMachine 31-Oct-2018 11:30:37 CDT pre-events TCPConnect.cc:241
+Resolving ip mu2edaq06.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  31-Oct-2018 11:30:38 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i WebUsers:  CorePropertySupervisorBase-mu2edaq06-0  31-Oct-2018 11:30:38 CDT pre-events
+otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2803]	User 'admin' has locked out the system!
+%MSG
+%MSG-d Iterator:  CorePropertySupervisorBase-mu2edaq06-0  31-Oct-2018 11:30:38 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/Iterator.cc [28]	Iterator constructed.
+%MSG
+%MSG-i configureMessageFacility:  GatewaySupervisor 31-Oct-2018 11:30:38 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application GatewaySupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/GatewaySupervisor" pattern:"GatewaySupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  31-Oct-2018 11:30:39 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  31-Oct-2018 11:30:39 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 31-Oct-2018 11:30:39 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ChatSupervisor 31-Oct-2018 11:30:39 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application ChatSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ChatSupervisor" pattern:"ChatSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  31-Oct-2018 11:30:39 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  31-Oct-2018 11:30:40 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 31-Oct-2018 11:30:40 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConsoleSupervisor 31-Oct-2018 11:30:40 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application ConsoleSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ConsoleSupervisor" pattern:"ConsoleSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 11:30:40 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [161]	DEBUG messages look like this.
+%MSG
+%MSG-i Console:  Early 31-Oct-2018 11:30:40 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [162]	INFO messages look like this.
+%MSG
+%MSG-w Console:  Early 31-Oct-2018 11:30:40 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [163]	WARNING messages look like this.
+%MSG
+%MSG-e Console:  Early 31-Oct-2018 11:30:40 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [164]	ERROR messages look like this.
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  31-Oct-2018 11:30:40 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  31-Oct-2018 11:30:40 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 31-Oct-2018 11:30:40 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  LogbookSupervisor 31-Oct-2018 11:30:40 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application LogbookSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/LogbookSupervisor" pattern:"LogbookSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  31-Oct-2018 11:30:41 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  31-Oct-2018 11:30:42 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 31-Oct-2018 11:30:42 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConfigurationGUI 31-Oct-2018 11:30:42 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application ConfigurationGUI configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ConfigurationGUI" pattern:"ConfigurationGUI-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  31-Oct-2018 11:30:42 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  31-Oct-2018 11:30:43 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 31-Oct-2018 11:30:43 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  MacroMaker 31-Oct-2018 11:30:43 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application MacroMaker configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/MacroMaker" pattern:"MacroMaker-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:30:57 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Configuring 'defaultSystemAlias' which translates to defaultConfig (16).
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 11:30:58 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 11:30:58 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(38)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 11:30:58 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasSaveWizBackbone(14)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 11:30:58 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 11:30:58 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(16)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:31:45 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 314 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:33:45 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:33:47 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 315 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:35:54 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:35:57 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 316 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 11:38:50 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 11:40:51 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 11:42:52 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:44:06 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:44:08 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 317 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 11:47:02 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:48:56 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:49:10 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 318 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 11:52:03 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:53:38 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:53:46 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 319 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:55:25 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:55:28 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 320 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:56:54 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:56:57 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 321 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:59:48 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 11:59:50 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 322 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:02:43 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:03:34 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:03:36 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 323 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:06:29 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:06:48 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:06:52 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run halting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:07:15 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Configuring 'defaultSystemAlias' which translates to defaultConfig (16).
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 12:07:15 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 12:07:15 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(38)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 12:07:15 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasSaveWizBackbone(14)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 12:07:15 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 12:07:15 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(16)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:09:44 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:11:45 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:12:27 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 324 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:13:43 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:13:46 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 325 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:15:01 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:15:06 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 326 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:16:21 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:16:24 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 327 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:17:29 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:17:32 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 328 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:19:49 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:19:51 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 329 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:22:30 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:22:33 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 330 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:25:27 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:25:54 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:25:56 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 331 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:28:50 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:30:10 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:30:16 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 332 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:33:09 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:33:58 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:34:04 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 333 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:36:58 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:38:59 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:41:00 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:43:01 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:45:02 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:45:14 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:45:23 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 334 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:47:02 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:47:05 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 335 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:49:22 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:49:24 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 336 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:50:56 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:50:59 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 337 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:53:53 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:55:54 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:56:14 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 12:56:16 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 338 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 12:59:10 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:01:00 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:01:03 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 339 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 13:03:56 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:04:38 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:04:40 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 340 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:05:41 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:05:44 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 341 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:07:54 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:07:57 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 342 starting.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:09:49 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:09:51 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run 343 starting.
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 13:12:45 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 13:14:46 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 13:16:47 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 13:18:48 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 31-Oct-2018 13:20:49 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [240]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d GatewaySupervisor:  Early 31-Oct-2018 13:30:01 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [452]	Making logbook entry: Run stopping.
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:19 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:19 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(41)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:19 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasSaveWizBackbone(14)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:19 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:19 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(16)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:20 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:20 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(41)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:20 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasSaveWizBackbone(13)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:20 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 31-Oct-2018 13:30:20 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(16)
+%MSG
+%MSG-w GatewaySupervisor:  Early 31-Oct-2018 13:30:22 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2873]	gatewayLaunchOTS requestType received! 
+%MSG

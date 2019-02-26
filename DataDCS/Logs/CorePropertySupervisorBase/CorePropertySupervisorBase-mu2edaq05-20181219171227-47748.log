@@ -1,0 +1,252 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  19-Dec-2018 17:12:27 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 19-Dec-2018 17:12:27 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 19-Dec-2018 17:12:27 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  19-Dec-2018 17:12:27 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 19-Dec-2018 17:12:27 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:12:59 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [136]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:12:59 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [680]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:02 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [685]	............. firmware version 18111410
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [725]	Step 1: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [743]	Step 2: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:11 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [805]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [813]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [829]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:28 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 17:13:28 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [841]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:13:45 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:13:51 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:13:52 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:13:53 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:13:53 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:00 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:00 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:14 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_ReadBlock' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:15 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_ReadBlock' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:16 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_ReadBlock' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:18 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:19 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 17:14:37 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:30:02 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:30:02 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:30:02 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:30:02 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [136]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [680]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [685]	............. firmware version 18111410
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [725]	Step 1: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [743]	Step 2: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:19 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [805]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:31 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [813]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:31 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [829]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:36 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:30:36 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [841]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:45:45 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:45:45 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:45:45 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:45:45 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:45:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [136]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:45:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [680]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:45:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [685]	............. firmware version 18111410
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:45:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [725]	Step 1: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:45:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [743]	Step 2: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:46:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [805]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:46:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [813]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:46:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [829]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:46:19 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:46:19 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [841]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:56:23 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:56:23 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:56:23 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 19:56:23 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [136]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [680]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [685]	............. firmware version 18111410
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [725]	Step 1: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:33 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [743]	Step 2: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:39 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [805]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [813]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:52 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [829]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:57 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 19:56:57 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [841]	DTC0 links OK 0xc3
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 20:12:37 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 20:12:37 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 20:12:37 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 20:12:37 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:12:45 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [136]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:12:45 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [680]	Step 0: DTC0 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:12:48 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [685]	............. firmware version 18111410
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:12:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [725]	Step 1: DTC0 do NOT reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:12:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [743]	Step 2: DTC0 do NOT configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:12:57 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [805]	Step 4: DTC0 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:13:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [813]	Step 5: DTC0 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:13:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [829]	Step 5: DTC0 configure ROCs
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:13:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 6: DTC0 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  Early 19-Dec-2018 20:13:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [841]	DTC0 links OK 0xc3
+%MSG

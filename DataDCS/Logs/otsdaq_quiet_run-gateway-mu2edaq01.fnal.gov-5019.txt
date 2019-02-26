@@ -1,0 +1,1102 @@
+24 Jan 2019 17:20:58.525 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
+24 Jan 2019 17:20:58.527 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - Loaded profile: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/XDAQConfigurations/otsConfiguration_CMake.xml
+24 Jan 2019 17:20:58.527 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
+24 Jan 2019 17:20:58.528 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
+24 Jan 2019 17:20:58.529 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
+24 Jan 2019 17:20:58.530 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
+24 Jan 2019 17:20:58.531 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
+24 Jan 2019 17:20:58.531 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
+24 Jan 2019 17:20:58.534 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
+24 Jan 2019 17:20:58.535 [140716444469440] DEBUG gov.fnal.mu2edaq01.p:5019 <> - Create application descriptor for class: executive::Application id: 0
+24 Jan 2019 17:20:58.552 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019.executive::Application.lid(0) <> - Log URL not set (was already console)
+24 Jan 2019 17:20:58.552 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019.executive::Application.lid(0) <> - Changed Log level to INFO
+24 Jan 2019 17:20:58.556 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+24 Jan 2019 17:20:58.784 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - GatewaySupervisor_ version: 03.00.00, compiled on Jan 24 2019 at 10:20:38
+24 Jan 2019 17:20:58.787 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - Chat version: 03.00.00, compiled on Jan 24 2019 at 10:20:36
+24 Jan 2019 17:20:58.790 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - Console version: 03.00.00, compiled on Jan 24 2019 at 10:20:36
+24 Jan 2019 17:20:58.793 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - Logbook version: 03.00.00, compiled on Jan 24 2019 at 10:20:36
+24 Jan 2019 17:20:58.796 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - ConfigurationGUI version: 03.00.00, compiled on Jan 24 2019 at 10:20:36
+24 Jan 2019 17:20:58.799 [140716444469440] WARN  gov.fnal.mu2edaq01.p:5019 <> - Could not perform version checking on module file://home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libControlsDashboard.so, version declaration missing.
+24 Jan 2019 17:20:58.803 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - MacroMaker version: 03.00.00, compiled on Jan 24 2019 at 10:20:36
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-GatewaySupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [99]	Resetting RunControlStateMachine with name 'GatewaySupervisor'...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:GatewaySupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq01.fnal.gov:5019
+LogDebug:GatewaySupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 200
+LogDebug:GatewaySupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::GatewaySupervisor
+LogDebug:GatewaySupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = GatewaySupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [109]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [342]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:GatewaySupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'Supervisor' of class ots::GatewaySupervisor.
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = Supervisor
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/Supervisor/LinkToSupervisorConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [117]	hostname = mu2edaq01.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [137]	Marked alive: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/otsdaq_is_alive-mu2edaq01.fnal.gov-5019.dat
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [658]	/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/LoginData/HashesData//hashes.xml
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [706]	0 Hashes found.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [763]	Found Users database next user Id: 1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [899]	1 Users found.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [902]	User 0: Name: admin		Display Name: Administrator		Email: root@otsdaq.fnal.gov		Permissions: allUsers: 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [3016]	The current security type is NoSecurity
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [3026]	CareAboutCookieCodes_: 0
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [566]	/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/LoginData/UsersData//activeSessions.sv
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [624]	ActiveSessionCookieCodeVector loaded with size 0
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2968]	Attempting to load username with lock: admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2983]	Setting lock
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2770]	actingUser = admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2771]	Permissions: allUsers: 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2772]	usersUsernameWithLock_ = 
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2773]	lock = 1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2774]	username = admin
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2775]	isUsernameActive(username) = 0
+LogInfo:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2803]	User 'admin' has locked out the system!
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [157]	Done with Web Users initialization!
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: InfoRequest jobName: InfoRequest
+LogDebug:Iterator:otsdaq/otsdaq-core/GatewaySupervisor/Iterator.cc [29]	Iterator constructed.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [74]	
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [83]	Security: NoSecurity
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [187]	State changes over UDP are disabled.
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [201]	Updating core tables table...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ChatSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq01.fnal.gov:5019
+LogDebug:ChatSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 250
+LogDebug:ChatSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ChatSupervisor
+LogDebug:ChatSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ChatSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [109]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [342]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:ChatSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ChatSupervisor' of class ots::ChatSupervisor.
+LogDebug:ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ChatSupervisor
+LogDebug:ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ChatSupervisor/LinkToSupervisorConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [117]	hostname = mu2edaq01.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [137]	Marked alive: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/otsdaq_is_alive-mu2edaq01.fnal.gov-5019.dat
+LogDebug:FSM-ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [99]	Resetting RunControlStateMachine with name 'ChatSupervisor:ChatSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ChatSupervisor:ChatSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConsoleSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq01.fnal.gov:5019
+LogDebug:ConsoleSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 260
+LogDebug:ConsoleSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ConsoleSupervisor
+LogDebug:ConsoleSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ConsoleSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [109]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [342]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:ConsoleSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ConsoleSupervisor' of class ots::ConsoleSupervisor.
+LogDebug:ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ConsoleSupervisor
+LogDebug:ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ConsoleSupervisor/LinkToSupervisorConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [117]	hostname = mu2edaq01.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [137]	Marked alive: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/otsdaq_is_alive-mu2edaq01.fnal.gov-5019.dat
+LogDebug:FSM-ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [99]	Resetting RunControlStateMachine with name 'ConsoleSupervisor:ConsoleSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConsoleSupervisor:ConsoleSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ConsoleSupervisor:ConsoleSupervisor:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [43]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConsoleSupervisor:ConsoleSupervisor:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [52]	Constructor complete.
+LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [79]	
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [35]	Socket constructor 192.168.157.6:30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [52]	IPAddress: 192.168.157.6 port: 30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [65]	Constructed socket for port 30001=30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/ReceiverSocket.cc [23]	ReceiverSocket constructor 192.168.157.6:30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [91]	Initializing port 30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [116]	]	Binding port: 30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [128]	]	Socket Number: 8 for port: 30001 initialized.
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [139]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [140]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [141]	SOCKET ON PORT: 30001 ON IP: 192.168.157.6 INITIALIZED OK!
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [142]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [143]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [147]	]	Socket Number: 8 for port: 30001 initialized.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [162]	Setting socket receive buffer size = 65536 0x10000
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:LogbookSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq01.fnal.gov:5019
+LogDebug:LogbookSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 261
+LogDebug:LogbookSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::LogbookSupervisor
+LogDebug:LogbookSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = LogbookSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [109]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [342]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:LogbookSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'LogbookSupervisor' of class ots::LogbookSupervisor.
+LogDebug:LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = LogbookSupervisor
+LogDebug:LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/LogbookSupervisor/LinkToSupervisorConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [117]	hostname = mu2edaq01.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [137]	Marked alive: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/otsdaq_is_alive-mu2edaq01.fnal.gov-5019.dat
+LogDebug:FSM-LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [99]	Resetting RunControlStateMachine with name 'LogbookSupervisor:LogbookSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:LogbookSupervisor:LogbookSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:Logbook:otsdaq_utilities/otsdaq-utilities/Logbook/LogbookSupervisor.cc [159]	Active Experiment is 
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConfigurationGUISupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq01.fnal.gov:5019
+LogDebug:ConfigurationGUISupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 281
+LogDebug:ConfigurationGUISupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ConfigurationGUISupervisor
+LogDebug:ConfigurationGUISupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ConfigurationGUISupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [109]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [342]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:ConfigurationGUISupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ConfigurationGUISupervisor' of class ots::ConfigurationGUISupervisor.
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ConfigurationGUISupervisor
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ConfigurationGUISupervisor/LinkToSupervisorConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [117]	hostname = mu2edaq01.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [137]	Marked alive: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/otsdaq_is_alive-mu2edaq01.fnal.gov-5019.dat
+LogDebug:FSM-ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [99]	Resetting RunControlStateMachine with name 'ConfigurationGUISupervisor:ConfigurationGUISupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [43]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [60]	Initializing...
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [62]	Activating saved context, which may prepare for normal mode...
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [6357]	Attempting test activation of the context group.
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:ConfigurationGUISupervisor:ConfigurationGUISupervisor:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [48]	Constructor complete.
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ControlsDashboardSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [19]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq01.fnal.gov:5019
+LogDebug:ControlsDashboardSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [20]	application->getApplicationDescriptor()->getLocalId() = 282
+LogDebug:ControlsDashboardSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [21]	supervisorClass_ = ots::ControlsDashboardSupervisor
+LogDebug:ControlsDashboardSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [22]	supervisorClassNoNamespace_ = ControlsDashboardSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [54]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [42]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [109]	Initializing info for Normal mode XDAQ context...
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1145]	Configuration: ConfigurationGroupMetadata
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1148]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:ConfigurationBase-ConfigurationGroupMetadata:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationBase.cc [1174]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [171]	ACTIVE_GROUP_FILENAME = /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/ActiveConfigurationGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [172]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/databasesDCS/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [89]	Opened.. /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/MessageFacilityConfiguration_configuration.cc [143]	Forwarding to Web GUI with UDP forward MesageFacility configuration.
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [400]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/XDAQContextConfiguration_configuration.cc [407]	Fixing deprecated Supervisor class from /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libSupervisor.so to /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/lib/libGatewaySupervisor.so
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(5)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(0)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1053]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [50]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [51]	FESlowControlsConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [61]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/ConfigurationPluginDataFormats/FESlowControlsConfiguration_configuration.cc [63]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1199]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(2)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [342]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+LogDebug:ControlsDashboardSupervisor:MUST BE INITIALIZED INSIDE THE CONTRUCTOR TO THROW EXCEPTIONS:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	Getting configuration specific info for supervisor 'ControlsDashboardSupervisor' of class ots::ControlsDashboardSupervisor.
+LogDebug:ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [77]	CorePropertySupervisorBase::supervisorContextUID_ = mainContext
+LogDebug:ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [78]	CorePropertySupervisorBase::supervisorApplicationUID_ = ControlsDashboardSupervisor
+LogDebug:ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [79]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /mainContext/LinkToApplicationConfiguration/ControlsDashboardSupervisor/LinkToSupervisorConfiguration
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [117]	hostname = mu2edaq01.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [137]	Marked alive: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/otsdaq_is_alive-mu2edaq01.fnal.gov-5019.dat
+LogDebug:FSM-ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [24]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [99]	Resetting RunControlStateMachine with name 'ControlsDashboardSupervisor:ControlsDashboardSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [24]	Request name: StateMachine jobName: StateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Begin!
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [37]	Configuring message facility with /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq_utilities/otsdaq-utilities/ControlsDashboard/ControlsDashboardSupervisor.cc [179]	
+LogDebug:ots:otsdaq_utilities/otsdaq-utilities/ControlsDashboard/ControlsDashboardSupervisor.cc [182]	XDAQContextConfiguration
+LogDebug:ots:otsdaq_utilities/otsdaq-utilities/ControlsDashboard/ControlsDashboardSupervisor.cc [184]	XDAQContextConfiguration
+LogDebug:ControlsDashboardSupervisor:ControlsDashboardSupervisor:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [51]	Destroying...
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [343]	Destroying Configuration Key: 2
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [354]	Destroying Backbone Key: 0
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [372]	Destroying Context Key: 5
+24 Jan 2019 17:21:00.274 [140716444469440] ERROR gov.fnal.mu2edaq01.p:5019.executive::Application.lid(0) <> - Caught exception: xdaq::exception::ConfigurationError 'Failed to instantiate application class 'ots::ControlsDashboardSupervisor', local identifier '282'' raised at instantiateApplications(/scratch/workspace/artdaq_demo-release-build/SLF7/e15-prof/build/xdaq/v14_4_1a/build/Linux64bit+3.10-2.17-e15-prof/xdaq-14.4.1/daq/executive/src/common/Application.cc:1173);
+	originated by xdaq::exception::ApplicationInstantiationFailed 'Failed to instantiate object for class ots::ControlsDashboardSupervisor in context http://mu2edaq01.fnal.gov:5019, std exception in user function: ---- Configuration BEGIN
+  UnknownPlugin
+  ---- Configuration BEGIN
+    Library specification "ControlsOtsInterface": does not correspond to any library in LD_LIBRARY_PATH of type "controls"
+  ---- Configuration END
+  Plugin ControlsOtsInterface with version Unknown was not registered.
+  Perhaps your plugin type is misspelled or is not a plugin recognized by this
+  system.
+---- Configuration END
+' raised at instantiateApplication(/scratch/workspace/artdaq_demo-release-build/SLF7/e15-prof/build/xdaq/v14_4_1a/build/Linux64bit+3.10-2.17-e15-prof/xdaq-14.4.1/daq/xdaq/src/common/ApplicationRegistry.cc:260)
+24 Jan 2019 17:21:00.274 [140716444469440] ERROR gov.fnal.mu2edaq01.p:5019.executive::Application.lid(0) <> - Failed to configure executive
+24 Jan 2019 17:21:00.275 [140716444469440] INFO  gov.fnal.mu2edaq01.p:5019 <> - Ready.
+LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [255]	No messages received at Console Supervisor. Exiting Console messageFacilityReceiverWorkLoop
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [83]	CLOSING THE SOCKET #8 IP: 192.168.157.6 port: 30001 htons: 12661
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [356]	No user supervisor property settings found in the configuration tree, going with the defaults.
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [302]	Final supervisor property settings:
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		AllowNoLoginRequestTypes = 
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		AutomatedRequestTypes = getSystemMessages | getCurrentState | gatewayLaunchOTS | gatewayLaunchWiz
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		CheckUserLockRequestTypes = 
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		NoXmlWhiteSpaceRequestTypes = 
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		NonXMLRequestTypes = 
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		RequireUserLockRequestTypes = gatewayLaunchOTS | gatewayLaunchWiz | codeEditor
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		UserGroupsAllowed = 
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		UserGroupsDisallowed = 
+LogDebug:GatewaySupervisor:Supervisor:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [304]		UserPermissionsThreshold = *=1 | gatewayLaunchOTS=-1 | gatewayLaunchWiz=-1 | codeEditor=-1
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = build
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [468]	clean = 0
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = build
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [468]	clean = 0
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'LICENSE' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .txt
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = txt
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 1 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'UserWebPath' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 0 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 1 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 32 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboardEdit
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboardEdit
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [358]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboardEdit.html
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 1 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 32 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'UserWebPath' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 0 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 3 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 16 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/js/widgetLibrary
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/js/widgetLibrary
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [358]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/js/widgetLibrary.js
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/js/widgetLibrary
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/js/widgetLibrary
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/js/widgetLibrary.js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2489]	Start
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2493]	Tooltip RequestType = check
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [2542]	Done
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/js/widgetLibrary
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/js/widgetLibrary
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/js/widgetLibrary.js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 3 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 16 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'UserWebPath' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 0 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI/js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = js
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 3 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 16 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [313]	Invalid file extension, skipping 'UserWebPath' ...
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 6 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 0 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getDirectoryContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [167]	path = /otsdaq_utilities/WebGUI/html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [168]	std::string(getenv("MRB_SOURCE")) + "/" = /home/mu2edcs/dcs_ots_demo/ots/srcs/
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = .html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [321]	Found 1 directories.
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [322]	Found 32 files.
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = getFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [358]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [431]	requestType ==========>>> codeEditor
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [432]	(unsigned int)userInfo.permissionLevel_ = 255
+LogDebug:WebUsers:otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [433]	(unsigned int)userInfo.permissionsThreshold_ = 255
+LogDebug:GatewaySupervisor:otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [3246]	Code Editor
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [57]	option = saveFileContent
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [113]	path = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [124]	fullpath = /otsdaq_utilities/WebGUI/html/SlowControlsDashboard
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [138]	extension = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [148]	retExt = html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [381]	fullpath = /home/mu2edcs/dcs_ots_demo/ots/srcs//otsdaq_utilities/WebGUI/html/SlowControlsDashboard.html
+LogDebug:CodeEditor:otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [431]	Changes logged to: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/ServiceData/CodeEditorData/codeEditorChangeLog.txt
+Terminating...

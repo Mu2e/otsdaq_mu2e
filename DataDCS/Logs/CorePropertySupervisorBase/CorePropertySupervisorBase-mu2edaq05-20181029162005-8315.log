@@ -1,0 +1,153 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  29-Oct-2018 16:20:05 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 29-Oct-2018 16:20:05 CDT  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 29-Oct-2018 16:20:05 CDT  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  29-Oct-2018 16:20:05 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 29-Oct-2018 16:20:05 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:20:25 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [75]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:21:02 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:21:39 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:22:16 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:22:53 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:23:31 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:24:08 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:24:45 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:25:22 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:25:59 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:26:37 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:27:14 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:27:51 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:28:28 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:29:05 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:29:43 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:30:20 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:30:57 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:31:34 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:32:11 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 16:32:49 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d ots:  Early 29-Oct-2018 17:25:44 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 29-Oct-2018 17:25:44 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 29-Oct-2018 17:25:44 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 29-Oct-2018 17:25:44 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:34:28 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [75]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:34:59 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:35:19 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:35:39 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:36:00 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:36:20 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:36:40 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:37:00 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:37:20 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:37:40 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:38:00 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:38:20 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:38:40 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:39:00 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:39:20 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:39:40 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:40:00 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:40:20 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:40:41 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:41:01 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG
+%MSG-d DTCFrontEndInterface:  Early 29-Oct-2018 17:41:21 CDT pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC links not OK 0x80
+%MSG

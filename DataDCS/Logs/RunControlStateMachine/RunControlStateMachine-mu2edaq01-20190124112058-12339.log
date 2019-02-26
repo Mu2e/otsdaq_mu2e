@@ -1,0 +1,2340 @@
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 11:20:58 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  RunControlStateMachine 24-Jan-2019 11:20:58 CST pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  RunControlStateMachine 24-Jan-2019 11:20:58 CST pre-events TCPConnect.cc:241
+Resolving ip mu2edaq01.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 11:20:58 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i WebUsers:  CorePropertySupervisorBase-mu2edaq01-0  24-Jan-2019 11:20:59 CST pre-events
+otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2803]	User 'admin' has locked out the system!
+%MSG
+%MSG-d Iterator:  CorePropertySupervisorBase-mu2edaq01-0  24-Jan-2019 11:20:59 CST pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/Iterator.cc [28]	Iterator constructed.
+%MSG
+%MSG-i configureMessageFacility:  GatewaySupervisor 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application GatewaySupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/GatewaySupervisor" pattern:"GatewaySupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ChatSupervisor 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ChatSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/ChatSupervisor" pattern:"ChatSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConsoleSupervisor 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ConsoleSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/ConsoleSupervisor" pattern:"ConsoleSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  LogbookSupervisor 24-Jan-2019 11:20:59 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application LogbookSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/LogbookSupervisor" pattern:"LogbookSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  24-Jan-2019 11:20:59 CST pre-events configureMessageFacility.cc:286
+[RATE LIMIT] Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 11:21:01 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 11:21:03 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 11:21:05 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 11:21:07 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d Console:  Early 24-Jan-2019 11:21:09 CST pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [239]	Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:28 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	/home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:28 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	calling buildtool -I /home/mu2edcs/dcs_ots_demo/ots/localProducts_otsdaq_demo_v2_01_00_e15_s64_prof -b
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:28 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Install prefix = /home/mu2edcs/dcs_ots_demo/ots/localProducts_otsdaq_demo_v2_01_00_e15_s64_prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:28 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: CETPKG_TYPE = Prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage cmake.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq_utilities v2_02_00 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_utilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-lon
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:33 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-DMESSAGEFACILITY_HEX_VERSION=0x20106
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Could NOT find XSD (missing: XSD_INCLUDE_DIR) 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq_mu2e v2_01_01 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.01.01
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-parameter -Wno-unused-bu
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wext
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.01.01
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq_components v2_02_00 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:37 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_components
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-lon
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:38 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:39 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex   
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:39 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex  found components:  PDFLATEX PS2PDF MAKEINDEX 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:39 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found epstopdf
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:39 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:39 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq v2_02_00 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-lon
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:40 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-DART_HEX_VERSION=0x21002
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-DMESSAGEFACILITY_HEX_VERSION=0x20106
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex   
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex  found components:  PDFLATEX PS2PDF MAKEINDEX 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found epstopdf
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is pcie_linux_kernel_module v2_00_05 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /home/mu2edcs/dcs_ots_demo/ots/srcs/pcie_linux_kernel_module/Modules;/cvmfs/fermilab.opensciencegrid.org/prod
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /home/mu2edcs/dcs_ots_demo/ots/srcs/pcie_linux_kernel_module/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/pcie_linux_kernel_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.00.05
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-function -Wno-unused-par
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -Wal
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	ESYMS is /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/TRACE/module/3.10.0-693.5.2.el7.x86_64/Module.symvers
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	V8_DEFINE_STRING is 405103
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex   
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex  found components:  PDFLATEX PS2PDF MAKEINDEX 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found epstopdf
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.00.05
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Configuring done
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:48 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Generating done
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Build files have been written to: /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage cmake successful.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage build.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:49 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  4%] Built target CgiDataUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  6%] Built target otsConsoleFwd
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  5%] Built target AddNewInterface.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  5%] Built target doxygen_main_editor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  6%] Built target Macros
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  5%] Built target ProductsUpdate.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  6%] Built target DTCInterface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  5%] Built target create_ots_repo.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  1%] Built target UpdateOTS.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq_components/doc/man to otsdaq_components/v2_02_00/slf7.x86_64.e1
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq_components/doc/man to otsdaq_components/v2_02_00/slf7.x86_64.e15.s64.prof/lib/../share/man
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Scanning dependencies of target artdaq-ots_BuildInfo
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  7%] Built target ots_udp_hw_emulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target udp_send_artdaq.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target udp_data_emulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target ots_udp_sw_emulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target multi_udp_send_artdaq.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Building CXX object otsdaq/artdaq-ots/BuildInfo/CMakeFiles/artdaq-ots_BuildInfo.dir/GetPackageBuildInfo.cc.o
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target artdaq-ots_Overlays
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  9%] Built target StartOTS.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  9%] Built target setupOtsEnvironment.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  9%] Built target generateUDP.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target xt_cmd.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target otsdaq_components_doc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target generateEventBuilder.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target generateJSONDispatcher.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target ProgressBar
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target ots_utilities.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target generateAggregator.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target generateEventBuilderMain.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target SystemMessenger
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target BitManipulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target ots
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/doc/man to otsdaq/v2_02_00/slf7.x86_64.e15.s64.prof/lib/../shar
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/doc/man to otsdaq/v2_02_00/slf7.x86_64.e15.s64.prof/lib/../share/man
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 17%] Built target devl
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 18%] Built target artdaq-ots_ArtModules_UDPDump_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 20%] Built target generateAggregatorMain.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target mcs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target generateBoardReaderMain.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target pci_devel_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target mymodule2
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 22%] Built target SOAPUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 22%] Built target XmlUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target mu2eUtil
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target mcs.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 23%] Built target PluginMakers
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 27%] Built target rocUtil
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 30%] Built target testdata.bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 30%] Built target tester
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 30%] Built target requestSender
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 30%] Built target packetReader
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 30%] Built target updateMu2e.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 31%] Built target Setup_DTC.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 30%] Built target dtcUnitTests
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 31%] Built target my_cntl
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 31%] Built target DTCRegDump
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target DTC
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target rick_clock_test
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target artdaq-ots_ArtModules_JSONDispatcher_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/pcie_linux_kernel_module/doc/man to pcie_linux_kernel_module/v2_00_05/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/pcie_linux_kernel_module/doc/man to pcie_linux_kernel_module/v2_00_05/slf7.x86_64.e15.s64.prof/lib/../share/man
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 35%] Built target packetGenerator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 37%] Built target sizeof_buffdesc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 37%] Built target switch_test.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 37%] Built target CFOInterface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 39%] Built target NetworkUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 40%] Built target DetectorHardware
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 43%] Built target mu2eCompiler
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 43%] Built target cfoUtil
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 43%] Built target CFORegDump
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:50 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 43%] Built target pcie_linux_kernel_module_doc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 45%] Built target CodeEditor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 45%] Linking CXX shared library ../../lib/libartdaq-ots_BuildInfo.so
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 47%] Built target FiniteStateMachine
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 47%] Built target WorkLoopManager
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 48%] Built target artdaq-ots_Generators_UDPReceiver_generator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 49%] Built target ConfigurationDataFormats
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 49%] Built target artdaq-ots_BuildInfo
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 49%] Linking CXX shared library ../../lib/libartdaq-ots_ArtModules_ArtdaqOtsBuildInfo_module.so
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 50%] Built target artdaq-ots_ArtModules_ArtdaqOtsBuildInfo_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 50%] Built target otsdaq_doc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:51 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 53%] Built target ConfigurationInterface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 54%] Built target RootUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 54%] Built target otsdaq-core_ConfigurationPluginDataFormats_XDAQContextConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target DetectorConfiguration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target otsdaq-core_ConfigurationPluginDataFormats_FESlowControlsConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target otsdaq_import_system_aliases
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target otsdaq-core_ConfigurationPluginDataFormats_MessageFacilityConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target otsdaq_flatten_system_aliases
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target otsdaq-core_ConfigurationPluginDataFormats_IterateConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 61%] Built target otsdaq-core_ConfigurationPluginDataFormats_ARTDAQBuilderConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 61%] Built target Configurable
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 61%] Built target otsdaq-core_ConfigurationPluginDataFormats_ARTDAQBoardReaderConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 61%] Built target otsdaq-core_ConfigurationPluginDataFormats_ARTDAQAggregatorConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 62%] Built target SupervisorInfo
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 67%] Built target ControlsCore
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 68%] Built target DAQHardware
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 69%] Built target WebUsersUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 72%] Built target EventBuilderApp
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 72%] Built target DispatcherApp
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:52 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 72%] Built target DataLoggerApp
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 74%] Built target DataManager
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 75%] Built target otsdaq-core_ConfigurationPluginDataFormats_DesktopIconConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 76%] Built target otsdaq-core_DataProcessorPlugins_UDPDataListenerProducer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 78%] Built target otsdaq-core_DataProcessorPlugins_RawDataSaverConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 78%] Built target otsdaq-core_DataProcessorPlugins_UDPDataStreamerConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 79%] Built target otsdaq-core_DataProcessorPlugins_TCPDataListenerProducer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_OtsDataSaverConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_RawDataVisualizerConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_TCPDataStreamerConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 82%] Built target FECore
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 82%] Built target otsdaq-core_DataProcessorPlugins_ARTDAQConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 82%] Built target otsdaq-core_DataProcessorPlugins_ARTDAQProducer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-components_FEInterfaces_FEOtsUDPTemplateInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target OTSDAQComponentsFEInterfaces
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target InterfacePluginTestMain
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-mu2e_FEInterfaces_CAPTANSignalGenerator_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-mu2e_FEInterfaces_CFOFrontEndInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:53 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target ARTDAQDataManager
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 87%] Built target otsdaq-mu2e_FEInterfaces_ROCCoreVEmulator_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 88%] Built target otsdaq-mu2e_FEInterfaces_DTCFrontEndInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 91%] Built target CoreSupervisors
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 94%] Built target ConfigurationGUI
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target Console
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target Chat
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target MacroMaker
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target ControlsDashboard
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target Logbook
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 96%] Built target Visualization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:54 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 98%] Built target GatewaySupervisor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[100%] Built target WizardSupervisor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	9.63user 12.13system 0:05.54elapsed 392%CPU (0avgtext+0avgdata 41728maxresident)k
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	1950272inputs+29928outputs (18284major+748841minor)pagefaults 0swaps
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage build successful.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:21:55 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [567]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:20 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	/home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:20 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	calling buildtool -I /home/mu2edcs/dcs_ots_demo/ots/localProducts_otsdaq_demo_v2_01_00_e15_s64_prof -b
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:20 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Install prefix = /home/mu2edcs/dcs_ots_demo/ots/localProducts_otsdaq_demo_v2_01_00_e15_s64_prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:20 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: CETPKG_TYPE = Prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage cmake.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq_utilities v2_02_00 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_utilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-lon
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:24 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-DMESSAGEFACILITY_HEX_VERSION=0x20106
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:25 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Could NOT find XSD (missing: XSD_INCLUDE_DIR) 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq_mu2e v2_01_01 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.01.01
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-parameter -Wno-unused-bu
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wext
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:26 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:27 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.01.01
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq_components v2_02_00 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_components
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-lon
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:29 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex   
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex  found components:  PDFLATEX PS2PDF MAKEINDEX 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found epstopdf
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegri
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CMAKE_MODULE_PATH is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is otsdaq v2_02_00 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opens
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /cvmfs/fermilab.opensciencegrid.org/products/artdaq/art/v2_10_02/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules;/home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_1a/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/artdaq_utilities/v1_04_08/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-lon
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-varia
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Win
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:31 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Boost version: 1.66.0
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found the following Boost libraries:
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   chrono
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   date_time
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   filesystem
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   graph
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   iostreams
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   locale
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   prg_exec_monitor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   program_options
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   random
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   regex
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   serialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   signals
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   system
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   thread
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   timer
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   unit_test_framework
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wave
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   wserialization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--   atomic
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-DART_HEX_VERSION=0x21002
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:32 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-DMESSAGEFACILITY_HEX_VERSION=0x20106
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex   
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex  found components:  PDFLATEX PS2PDF MAKEINDEX 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found epstopdf
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.02.00
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cetbuildtools_BINDIR = /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- full qual e15:s64:prof reduced to e15:s64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Product is pcie_linux_kernel_module v2_00_05 e15:s64:prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /home/mu2edcs/dcs_ots_demo/ots/srcs/pcie_linux_kernel_module/Modules;/cvmfs/fermilab.opensciencegrid.org/prod
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Module path is /home/mu2edcs/dcs_ots_demo/ots/srcs/pcie_linux_kernel_module/Modules;/cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/Modules
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- set_install_root: PACKAGE_TOP_DIRECTORY is /home/mu2edcs/dcs_ots_demo/ots/srcs/pcie_linux_kernel_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- cet dot version: 2.00.05
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CET_REPORT: /cvmfs/fermilab.opensciencegrid.org/products/artdaq/cetbuildtools/v7_02_01/bin/cet_report
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Building for Linux slf7 x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Selected diagnostics option VIGILANT
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    DEFINE (-D): NDEBUG
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- compiler flags for directory  and below
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-function -Wno-unused-par
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C++     FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -std=c++98 -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -std=c++14 -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -Wal
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:34 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	--    C       FLAGS: -g -gdwarf-4 -O3 -fno-omit-frame-pointer -Werror -pedantic -Wno-unused-function -Wno-unused-parameter -Wall -Werror=return-type -Wextra -Wno-long-long -Winit-self -Wno-unused-local-typedefs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	ESYMS is /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/TRACE/module/3.10.0-693.5.2.el7.x86_64/Module.symvers
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	V8_DEFINE_STRING is 405103
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex   
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found LATEX: /usr/bin/latex  found components:  PDFLATEX PS2PDF MAKEINDEX 
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Found epstopdf
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_VERSION is 2.00.05
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:35 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- CPACK_PACKAGE_NAME and CPACK_SYSTEM_NAME are otsdaq_demo slf7-x86_64-e15-s64-prof
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:36 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Configuring done
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Generating done
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	-- Build files have been written to: /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage cmake successful.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage build.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  2%] Built target AddNewInterface.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  4%] Built target UpdateOTS.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  4%] Built target CgiDataUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  4%] Built target create_ots_repo.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  4%] Built target otsConsoleFwd
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  4%] Built target doxygen_main_editor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  5%] Built target Macros
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  6%] Built target ProductsUpdate.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:41 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  6%] Built target DTCInterface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Scanning dependencies of target artdaq-ots_BuildInfo
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq_components/doc/man to otsdaq_components/v2_02_00/slf7.x86_64.e1
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq_components/doc/man to otsdaq_components/v2_02_00/slf7.x86_64.e15.s64.prof/lib/../share/man
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target udp_data_emulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target ots_udp_hw_emulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target multi_udp_send_artdaq.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target udp_send_artdaq.py
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target ots_udp_sw_emulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Building CXX object otsdaq/artdaq-ots/BuildInfo/CMakeFiles/artdaq-ots_BuildInfo.dir/GetPackageBuildInfo.cc.o
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[  8%] Built target setupOtsEnvironment.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target artdaq-ots_Overlays
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target generateUDP.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target StartOTS.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 10%] Built target xt_cmd.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 11%] Built target otsdaq_components_doc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 11%] Built target generateJSONDispatcher.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 11%] Built target ots_utilities.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 11%] Built target ProgressBar
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 11%] Built target generateEventBuilderMain.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 12%] Built target BitManipulator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 12%] Built target generateAggregator.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 12%] Built target generateEventBuilder.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 13%] Built target SystemMessenger
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/doc/man to otsdaq/v2_02_00/slf7.x86_64.e15.s64.prof/lib/../shar
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/otsdaq/doc/man to otsdaq/v2_02_00/slf7.x86_64.e15.s64.prof/lib/../share/man
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 14%] Built target generateBoardReaderMain.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 14%] Built target mymodule2
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 14%] Built target mcs.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 14%] Built target pci_devel_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 14%] Built target ots
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 18%] Built target XmlUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 18%] Built target mcs
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 16%] Built target devl
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 17%] Built target generateAggregatorMain.rb
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 19%] Built target artdaq-ots_ArtModules_UDPDump_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target SOAPUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 21%] Built target requestSender
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 23%] Built target Setup_DTC.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 26%] Built target rick_clock_test
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 23%] Built target updateMu2e.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 29%] Built target PluginMakers
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 29%] Built target mu2eUtil
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 28%] Built target my_cntl
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 29%] Built target DTCRegDump
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 31%] Built target rocUtil
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 32%] Built target DTC
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 32%] Built target packetReader
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target tester
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target dtcUnitTests
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target artdaq-ots_ArtModules_JSONDispatcher_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 34%] Built target testdata.bin
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/pcie_linux_kernel_module/doc/man to pcie_linux_kernel_module/v2_00_05/
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	Copying /home/mu2edcs/dcs_ots_demo/ots/build_slf7.x86_64/pcie_linux_kernel_module/doc/man to pcie_linux_kernel_module/v2_00_05/slf7.x86_64.e15.s64.prof/lib/../share/man
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 36%] Built target CFOInterface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 35%] Built target packetGenerator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 36%] Built target sizeof_buffdesc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 35%] Built target switch_test.sh
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 37%] Built target DetectorHardware
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 39%] Built target cfoUtil
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 41%] Built target CFORegDump
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 41%] Built target mu2eCompiler
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 43%] Built target NetworkUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 43%] Built target pcie_linux_kernel_module_doc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 45%] Built target CodeEditor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 45%] Linking CXX shared library ../../lib/libartdaq-ots_BuildInfo.so
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 47%] Built target FiniteStateMachine
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 47%] Built target WorkLoopManager
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:42 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 47%] Built target artdaq-ots_Generators_UDPReceiver_generator
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 49%] Built target ConfigurationDataFormats
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 49%] Built target artdaq-ots_BuildInfo
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 49%] Linking CXX shared library ../../lib/libartdaq-ots_ArtModules_ArtdaqOtsBuildInfo_module.so
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 50%] Built target artdaq-ots_ArtModules_ArtdaqOtsBuildInfo_module
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 50%] Built target otsdaq_doc
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 53%] Built target ConfigurationInterface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:43 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 54%] Built target RootUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 55%] Built target otsdaq-core_ConfigurationPluginDataFormats_XDAQContextConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 57%] Built target otsdaq-core_ConfigurationPluginDataFormats_MessageFacilityConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 57%] Built target otsdaq_flatten_system_aliases
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 56%] Built target otsdaq-core_ConfigurationPluginDataFormats_FESlowControlsConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 57%] Built target otsdaq-core_ConfigurationPluginDataFormats_IterateConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 57%] Built target otsdaq_import_system_aliases
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 58%] Built target DetectorConfiguration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 59%] Built target otsdaq-core_ConfigurationPluginDataFormats_ARTDAQBoardReaderConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 60%] Built target otsdaq-core_ConfigurationPluginDataFormats_ARTDAQBuilderConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 61%] Built target Configurable
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 61%] Built target otsdaq-core_ConfigurationPluginDataFormats_ARTDAQAggregatorConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 62%] Built target SupervisorInfo
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 64%] Built target ControlsCore
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 68%] Built target DAQHardware
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 69%] Built target WebUsersUtilities
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 72%] Built target EventBuilderApp
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 72%] Built target DispatcherApp
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 72%] Built target DataLoggerApp
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 74%] Built target DataManager
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:44 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 75%] Built target otsdaq-core_ConfigurationPluginDataFormats_DesktopIconConfiguration_configuration
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_UDPDataListenerProducer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_RawDataSaverConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_TCPDataListenerProducer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_OtsDataSaverConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_TCPDataStreamerConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_RawDataVisualizerConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 80%] Built target otsdaq-core_DataProcessorPlugins_UDPDataStreamerConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 81%] Built target otsdaq-core_DataProcessorPlugins_ARTDAQProducer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 81%] Built target otsdaq-core_DataProcessorPlugins_ARTDAQConsumer_processor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 82%] Built target FECore
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-components_FEInterfaces_FEOtsUDPTemplateInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-mu2e_FEInterfaces_ROCCoreInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target OTSDAQComponentsFEInterfaces
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-mu2e_FEInterfaces_CFOFrontEndInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target InterfacePluginTestMain
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target otsdaq-mu2e_FEInterfaces_CAPTANSignalGenerator_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 86%] Built target ARTDAQDataManager
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:45 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 87%] Built target otsdaq-mu2e_FEInterfaces_ROCCoreVEmulator_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 88%] Built target otsdaq-mu2e_FEInterfaces_DTCFrontEndInterface_interface
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 91%] Built target CoreSupervisors
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 92%] Built target Logbook
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 94%] Built target Console
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 94%] Built target ConfigurationGUI
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target MacroMaker
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 92%] Built target ControlsDashboard
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 95%] Built target Chat
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 96%] Built target Visualization
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:46 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[ 98%] Built target GatewaySupervisor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	[100%] Built target WizardSupervisor
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	9.75user 12.12system 0:05.35elapsed 408%CPU (0avgtext+0avgdata 41740maxresident)k
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	1955984inputs+29928outputs (19264major+743320minor)pagefaults 0swaps
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	INFO: Stage build successful.
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	------------------------------------
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [561]	
+%MSG
+%MSG-d CodeEditor:  Early 24-Jan-2019 11:22:47 CST pre-events
+otsdaq/otsdaq-core/CodeEditor/CodeEditor.cc [567]	
+%MSG

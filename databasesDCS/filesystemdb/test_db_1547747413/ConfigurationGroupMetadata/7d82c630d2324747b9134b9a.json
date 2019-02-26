@@ -1,0 +1,128 @@
+{
+"document" : {
+"data" : {
+"NAME" : "",
+"COMMENT" : "",
+"AUTHOR" : "",
+"CREATION_TIME" : 1536269427,
+"COL_TYPES" : {
+"UNUSED_UID" : "NUMBER",
+"GROUP_ALIASES" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"GROUP_CREATION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UNUSED_UID" : "0",
+"GROUP_ALIASES" : "",
+"COMMENT_DESCRIPTION" : "",
+"AUTHOR" : "admin",
+"GROUP_CREATION_TIME" : "1544801679"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-12-14T09:34:39.373-0600",
+"rawdata" : [
+
+]
+},
+"version" : "190",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-12-14T09:34:39.373-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-12-14T09:34:39.373-0600"
+},
+{
+"name" : "TableEditWizBackbone_v27",
+"assigned" : "2018-12-14T09:34:39.594-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:34:39.373-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-12-14T09:34:39.373-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-12-14T09:34:39.373-0600",
+"value" : {
+"name" : "190",
+"assigned" : "2018-12-14T09:34:39.373-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-12-14T09:34:39.373-0600",
+"value" : {
+"name" : "ConfigurationGroupMetadata",
+"assigned" : "2018-12-14T09:34:39.373-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-12-14T09:34:39.373-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-12-14T09:34:39.373-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-12-14T09:34:39.594-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v27",
+"assigned" : "2018-12-14T09:34:39.594-0600"
+}
+}
+],
+"created" : "2018-12-14T09:34:39.373-0600"
+},
+"_id" : {
+"$oid" : "7d82c630d2324747b9134b9a"
+},
+"collection" : "ConfigurationGroupMetadata",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

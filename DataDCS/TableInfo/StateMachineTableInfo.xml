@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="StateMachineTable">
+			<VIEW Name="STATE_MACHINE_TABLE" Type="File,Database,DatabaseTest" Description="State%20machines%20have%20unique%20run%20display%20aliases%20and%20independent%20run%20number%20sequences.%20They%20also%20have%20an%20associated%20system%20alias%20filter%20which%20forces%20users%20to%20only%20consider%20a%20subset%20of%20existing%20system%20aliases%20when%20configuring.%0A%0AFor%20example%2C%20it%20may%20be%20useful%20to%20have%20a%20%22Physics%22%20state%20machine%20and%20a%20%22Cosmics%22%20state%20machine.%20In%20which%20case%2C%20it%20may%20be%20useful%20to%20consider%20%22Physics*%22%20and%20%22Cosmic*%22%20system%20aliases%20respectively%2C%20and%20have%20a%20run%20display%20alias%20of%20%22PhysicsRun%22%20and%20%22CosmicsRun%22%20respectively%20(note%20that%20the%20run%20number%20sequence%20for%20the%20two%20types%20of%20runs%20would%20proceed%20independently).">
+				<COLUMN Type="GroupID-FSM" 	 Name="StateMachineGroupID" 	 StorageName="STATE_MACHINE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="StateMachineUID" 	 StorageName="STATE_MACHINE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="SystemAliasFilter" 	 StorageName="SYSTEM_ALIAS_FILTER" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UniqueData" 	 Name="RunDisplayAlias" 	 StorageName="RUN_DISPLAY_ALIAS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="EnableTableDumpOnConfigureTransition" 	 StorageName="ENABLE_TABLE_DUMP_ON_CONFIGURE_TRANSITION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="TableDumpOnConfigureFormat" 	 StorageName="TABLE_DUMP_ON_CONFIGURE_FORMAT" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,TableVersions,GroupKeysAndTableVersions,All"/>
+				<COLUMN Type="Data" 	 Name="TableDumpOnConfigureFilePath" 	 StorageName="TABLE_DUMP_ON_CONFIGURE_FILE_PATH" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="TableDumpOnConfigureFileRadix" 	 StorageName="TABLE_DUMP_ON_CONFIGURE_FILE_RADIX" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="EnableTableDumpOnRunTransition" 	 StorageName="ENABLE_TABLE_DUMP_ON_RUN_TRANSITION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="TableDumpOnRunFormat" 	 StorageName="TABLE_DUMP_ON_RUN_FORMAT" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,TableVersions,GroupKeysAndTableVersions,All"/>
+				<COLUMN Type="Data" 	 Name="TableDumpOnRunFilePath" 	 StorageName="TABLE_DUMP_ON_RUN_FILE_PATH" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="TableDumpOnRunFileRadix" 	 StorageName="TABLE_DUMP_ON_RUN_FILE_RADIX" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</TABLE>
+	</ROOT>

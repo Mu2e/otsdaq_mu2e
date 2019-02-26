@@ -1,0 +1,130 @@
+{
+"document" : {
+"data" : {
+"NAME" : "FE_SUPERVISOR_CONFIGURATION",
+"COMMENT" : "First attempt to connect to HW emulator.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1531237127,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"LINK_TO_FE_INTERFACE_CONFIGURATION" : "VARCHAR2",
+"LINK_TO_FE_INTERFACE_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUPERVISOR_UID" : "FESupervisor0",
+"LINK_TO_FE_INTERFACE_CONFIGURATION" : "FEInterfaceConfiguration",
+"LINK_TO_FE_INTERFACE_GROUP_ID" : "FEGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479692415"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-07-17T12:10:20.094-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:20.097-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:20.096-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.518-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-07-17T12:10:20.096-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:20.096-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-07-17T12:10:20.096-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2018-07-17T12:10:20.096-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-07-17T12:10:20.096-0500",
+"value" : {
+"name" : "FESupervisorConfiguration",
+"assigned" : "2018-07-17T12:10:20.096-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-07-17T12:10:20.097-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:20.097-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-07-17T12:10:20.518-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.518-0500"
+}
+}
+],
+"created" : "2018-07-17T12:10:20.094-0500"
+},
+"_id" : {
+"$oid" : "29e3f5e9b1664807a15813d7"
+},
+"collection" : "FESupervisorConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -1,0 +1,128 @@
+{
+"document" : {
+"data" : {
+"NAME" : "",
+"COMMENT" : "",
+"AUTHOR" : "",
+"CREATION_TIME" : 1536269427,
+"COL_TYPES" : {
+"UNUSED_UID" : "NUMBER",
+"GROUP_ALIASES" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"GROUP_CREATION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UNUSED_UID" : "0",
+"GROUP_ALIASES" : "",
+"COMMENT_DESCRIPTION" : "Configuration%20group%20for%20mu2edaq02%20standalone%20system",
+"AUTHOR" : "admin",
+"GROUP_CREATION_TIME" : "1539871049"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-10-18T08:57:29.985-0500",
+"rawdata" : [
+
+]
+},
+"version" : "85",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-10-18T08:57:29.988-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-10-18T08:57:29.986-0500"
+},
+{
+"name" : "daq02Config_v1",
+"assigned" : "2018-10-18T08:57:31.509-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-18T08:57:29.986-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-10-18T08:57:29.986-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-10-18T08:57:29.987-0500",
+"value" : {
+"name" : "85",
+"assigned" : "2018-10-18T08:57:29.987-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-10-18T08:57:29.987-0500",
+"value" : {
+"name" : "ConfigurationGroupMetadata",
+"assigned" : "2018-10-18T08:57:29.987-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-10-18T08:57:29.988-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-10-18T08:57:29.988-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-10-18T08:57:31.509-0500",
+"value" : {
+"name" : "daq02Config_v1",
+"assigned" : "2018-10-18T08:57:31.509-0500"
+}
+}
+],
+"created" : "2018-10-18T08:57:29.985-0500"
+},
+"_id" : {
+"$oid" : "152ac20411f34fb49c5e3294"
+},
+"collection" : "ConfigurationGroupMetadata",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

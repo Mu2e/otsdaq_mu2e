@@ -1,0 +1,66 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  22-Oct-2018 16:06:18 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 22-Oct-2018 16:06:18 CDT  pre-events TCPConnect.cc:334
+Resolving host 127.0.0.1, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 22-Oct-2018 16:06:18 CDT  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq05.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  22-Oct-2018 16:06:18 CDT pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 22-Oct-2018 16:06:18 CDT  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:10:12 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:10:12 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:10:12 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:10:12 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:12:25 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:12:25 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0-SlowControls
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:12:25 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:12:25 CDT pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC0
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:18:49 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocWrite' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:26:05 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:26:28 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:27:50 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:28:15 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:35:43 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:35:55 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:37:25 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG
+%MSG-d ots:  Early 22-Oct-2018 16:37:27 CDT pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [327]	Launching FE Macro 'rocRead' ...
+%MSG

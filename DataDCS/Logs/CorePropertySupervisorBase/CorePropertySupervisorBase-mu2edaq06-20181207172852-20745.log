@@ -1,0 +1,576 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  07-Dec-2018 17:28:52 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 07-Dec-2018 17:28:52 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 07-Dec-2018 17:28:52 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq06.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  07-Dec-2018 17:28:52 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 07-Dec-2018 17:28:52 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 07-Dec-2018 17:29:21 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:29:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:29:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:29:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:29:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:24 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:24 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:24 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:30:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:31:26 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:31:33 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:31:42 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:31:51 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:31:58 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:32:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 07-Dec-2018 17:32:09 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:32:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:32:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:32:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:32:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:32:48 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:33:11 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:33:12 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:33:12 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:33:12 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:33:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:33:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:33:26 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:33:32 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:33:40 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:33:47 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:34:30 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 07-Dec-2018 17:34:37 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:34:37 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:34:37 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:34:37 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:15 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:39 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:40 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:40 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:40 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:45 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  07-Dec-2018 17:35:45 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:35:55 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:36:03 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:36:09 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:36:15 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 07-Dec-2018 17:36:22 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:48:06 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 10:50:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 10-Dec-2018 10:50:27 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:50:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:50:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:50:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:50:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:30 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:35 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 10:51:35 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 11:10:12 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 11:11:10 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 11:11:16 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 11:11:24 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 11:23:47 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 11:23:58 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 13:39:59 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 10-Dec-2018 13:40:05 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:40:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:40:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:40:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:40:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:40:44 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:41:07 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:41:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:41:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:41:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:41:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 13:41:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:40:55 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 10-Dec-2018 14:41:24 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:41:24 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:41:24 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:41:24 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:41:47 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:02 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 14:42:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:57:33 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:57:34 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:57:34 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:57:47 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 14:57:47 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:14 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:00:17 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 10-Dec-2018 15:00:23 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:00:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:00:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:00:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:00:46 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [767]	Step 5: DTC1 enable markers, Tx, Rx
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [783]	Step 5: DTC1 configure ROCs
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:26 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [99]	......... Set delay = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [791]	Step 6: DTC1 configured
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:01:32 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [795]	DTC1 links OK 0xc3
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:01:49 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:01:50 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:01:51 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:01:57 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:02:51 CST pre-events
+otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [328]	Launching FE Macro 'ROC_Read' ...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:03:00 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG
+%MSG-i configureMessageFacility:  ROCCoreInterface 10-Dec-2018 15:03:06 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application ROCCoreInterface configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ROCCoreInterface" pattern:"ROCCoreInterface-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i FE-ROCCoreInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:03:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc [28]	ROCCoreInterface instantiated with link: 0 and EventWindowDelayOffset = 0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:03:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [135]	DTCFrontEndInterface instantiated with name: DTC1 dtc_location_in_chain_ = 1 talking to /dev/mu2e0
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:03:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [636]	Step 0: DTC1 reset FPGA...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:03:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [650]	Step 1: DTC1 reset clock...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:03:45 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [689]	Step 2: DTC1 configure Jitter Attenuator...
+%MSG
+%MSG-i DTCFrontEndInterface:  ROCCoreInterface-mu2edaq06-0  10-Dec-2018 15:04:08 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [759]	Step 4: DTC1 wait for links...
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1_ROC0
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1-SlowControls
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: DTC1
+%MSG
+%MSG-d ots:  ROCCoreInterface-mu2edaq06-0 10-Dec-2018 15:04:09 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: DTC1
+%MSG

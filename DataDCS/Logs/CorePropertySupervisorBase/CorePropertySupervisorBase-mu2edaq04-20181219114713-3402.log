@@ -1,0 +1,495 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  19-Dec-2018 11:47:13 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 19-Dec-2018 11:47:13 CST  pre-events TCPConnect.cc:334
+Resolving host 192.168.157.6, on port 30000
+%MSG
+%MSG-i _TCPConnect:  CorePropertySupervisorBase 19-Dec-2018 11:47:13 CST  pre-events TCPConnect.cc:241
+Resolving ip mu2edaq04.fnal.gov
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  19-Dec-2018 11:47:14 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 19-Dec-2018 11:47:14 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"192.168.157.6" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:48:36 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [473]	Step 1: CFO do NOT reset clock...
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:48:36 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [482]	Step 3: CFO reset TX...
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:49:16 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [502]	Step 6: CFO enable Event start characters, SERDES Tx and Rx, and event window interval
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:49:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [524]	--------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:49:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [525]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:49:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [529]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:50:36 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:50:48 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:00 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:12 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1081.52 ns +/- 2.29952 (404)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:51:20 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:54:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:54:37 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:54:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1081.53 ns +/- 2.30404 (399)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:55:09 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:56:37 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:56:49 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:01 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:13 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1081.52 ns +/- 2.29898 (413)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:57:21 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:58:38 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:58:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:02 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:14 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = 1043.91 ns +/- 21.4847 (655)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1081.53 ns +/- 2.3041 (405)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = 563.909
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 11:59:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:07 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:19 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = 1043.92 ns +/- 21.4788 (650)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1081.53 ns +/- 2.30363 (408)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = 563.916
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:00:27 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 12:01:29 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 12:01:29 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 12:01:29 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CFO0
+%MSG
+%MSG-d ots:  Early 19-Dec-2018 12:01:29 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CFO0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:01:41 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [473]	Step 1: CFO do NOT reset clock...
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:01:41 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [482]	Step 3: CFO reset TX...
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:02:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [502]	Step 6: CFO enable Event start characters, SERDES Tx and Rx, and event window interval
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:02:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [524]	--------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:02:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [525]	CFO configured
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:02:25 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [529]	CFO links OK = 0x1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:07 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:19 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:31 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.33 ns +/- 2.21131 (399)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:03:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:06 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:19 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:31 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.34 ns +/- 2.21357 (404)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:04:51 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:10 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:34 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:46 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (9357)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.34 ns +/- 2.21568 (407)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:05:55 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:10 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:34 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:46 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = 715 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.34 ns +/- 2.21383 (413)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = 235
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:08:54 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:09:58 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:11 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:23 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:35 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.35 ns +/- 2.21908 (394)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:10:43 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:05 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:17 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:29 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:41 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.33 ns +/- 2.21027 (390)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 12:11:50 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:17:58 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:10 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC0 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:22 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC0
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:34 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [670]	 Looping back DTC1 ROC1
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [601]	-------------------------
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [602]	FULL SYSTEM loopback DONE
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 0 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 0 - ROC 1 = 480 ns +/- 0 (0)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 0 = -4995 ns +/- 0 (10000)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [611]	chain 0 - DTC 1 - ROC 1 = 1066.34 ns +/- 2.21358 (393)
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [618]	DTC1 - DTC0 = -5475
+%MSG
+%MSG-i CFOFrontEndInterface:  Early 19-Dec-2018 13:18:42 CST pre-events
+otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc [619]	-------------------------
+%MSG

@@ -1,0 +1,45 @@
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  12-Dec-2018 11:34:12 CST pre-events configureMessageFacility.cc:286
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  12-Dec-2018 11:34:13 CST pre-events configureMessageFacility.cc:286
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 12-Dec-2018 11:34:13 CST  pre-events configureMessageFacility.cc:286
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"}}
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:40:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CAPTAN0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:40:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CAPTAN0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:40:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CAPTAN0
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:40:21 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CAPTAN0
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:42:07 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CAPTAN0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:42:07 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CAPTAN0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:42:07 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CAPTAN0
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:42:07 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CAPTAN0
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:44:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CAPTAN0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:44:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CAPTAN0-SlowControls
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:44:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [26]	Destroying WorkLoop: CAPTAN0
+%MSG
+%MSG-d ots:  Early 12-Dec-2018 11:44:03 CST pre-events
+otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destroyed WorkLoop: CAPTAN0
+%MSG

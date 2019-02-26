@@ -1,0 +1,15 @@
+
+
+/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	Starting...
+
+
+
+
+/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	 port parameter file:/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/MessageFacilityConfigurations/QuietForwarder.cfg
+
+
+
+
+/home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	 Forwarding from: 30000 to: 127.0.0.1:30001
+
+

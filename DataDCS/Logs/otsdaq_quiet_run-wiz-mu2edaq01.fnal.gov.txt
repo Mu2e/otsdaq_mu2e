@@ -1,0 +1,15 @@
+26 Feb 2019 20:44:10.735 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
+26 Feb 2019 20:44:10.737 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - Loaded profile: /home/mu2edcs/dcs_ots_demo/ots/srcs/otsdaq_mu2e/DataDCS/XDAQConfigurations/otsConfiguration_CMake.xml
+26 Feb 2019 20:44:10.751 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
+26 Feb 2019 20:44:10.763 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
+26 Feb 2019 20:44:10.777 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
+26 Feb 2019 20:44:10.819 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
+26 Feb 2019 20:44:10.862 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
+26 Feb 2019 20:44:10.873 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
+26 Feb 2019 20:44:10.907 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
+26 Feb 2019 20:44:10.907 [140167346161856] DEBUG gov.fnal.mu2edaq01.p:5019 <> - Create application descriptor for class: executive::Application id: 0
+26 Feb 2019 20:44:10.925 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019.executive::Application.lid(0) <> - Log URL not set (was already console)
+26 Feb 2019 20:44:10.925 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019.executive::Application.lid(0) <> - Changed Log level to INFO
+26 Feb 2019 20:44:10.932 [140167346161856] INFO  gov.fnal.mu2edaq01.p:5019.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+26 Feb 2019 20:44:10.933 [140167346161856] FATAL root <> - Caught exception: xdaq::exception::Exception 'Cannot setup HTTP transport.' raised at init(/scratch/workspace/artdaq_demo-release-build/SLF7/e15-prof/build/xdaq/v14_4_1a/build/Linux64bit+3.10-2.17-e15-prof/xdaq-14.4.1/daq/xdaq/src/common/ApplicationContextImpl.cc:650);
+	originated by pt::http::exception::Exception 'Cannot start HTTP receiver loop for (binding) address: http://mu2edaq01.fnal.gov:5019. Address already in use' raised at ReceiverLoop(/scratch/workspace/artdaq_demo-release-build/SLF7/e15-prof/build/xdaq/v14_4_1a/build/Linux64bit+3.10-2.17-e15-prof/xdaq-14.4.1/daq/pt/http/src/common/ReceiverLoop.cc:233)

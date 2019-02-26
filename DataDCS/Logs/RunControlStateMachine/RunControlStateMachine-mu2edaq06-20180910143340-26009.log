@@ -1,0 +1,300 @@
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:40 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:40 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i WebUsers:  CorePropertySupervisorBase-mu2edaq06-0  10-Sep-2018 14:33:41 CDT pre-events
+otsdaq/otsdaq-core/WebUsersUtilities/WebUsers.cc [2803]	User 'admin' has locked out the system!
+%MSG
+%MSG-d Iterator:  CorePropertySupervisorBase-mu2edaq06-0  10-Sep-2018 14:33:41 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/Iterator.cc [28]	Iterator constructed.
+%MSG
+%MSG-i configureMessageFacility:  GatewaySupervisor 10-Sep-2018 14:33:41 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application GatewaySupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/GatewaySupervisor" pattern:"GatewaySupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:41 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:41 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 10-Sep-2018 14:33:41 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:42 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:42 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 10-Sep-2018 14:33:42 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ChatSupervisor 10-Sep-2018 14:33:42 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application ChatSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ChatSupervisor" pattern:"ChatSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:43 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:43 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 10-Sep-2018 14:33:43 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConsoleSupervisor 10-Sep-2018 14:33:43 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application ConsoleSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ConsoleSupervisor" pattern:"ConsoleSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d Console:  Early 10-Sep-2018 14:33:43 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [157]	DEBUG messages look like this.
+%MSG
+%MSG-i Console:  Early 10-Sep-2018 14:33:43 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [158]	INFO messages look like this.
+%MSG
+%MSG-w Console:  Early 10-Sep-2018 14:33:43 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [159]	WARNING messages look like this.
+%MSG
+%MSG-e Console:  Early 10-Sep-2018 14:33:43 CDT pre-events
+otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [160]	ERROR messages look like this.
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:43 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:43 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 10-Sep-2018 14:33:43 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  LogbookSupervisor 10-Sep-2018 14:33:43 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application LogbookSupervisor configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/LogbookSupervisor" pattern:"LogbookSupervisor-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:44 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:44 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 10-Sep-2018 14:33:44 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  ConfigurationGUI 10-Sep-2018 14:33:44 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application ConfigurationGUI configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/ConfigurationGUI" pattern:"ConfigurationGUI-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CorePropertySupervisorBase  10-Sep-2018 14:33:45 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application CorePropertySupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CorePropertySupervisorBase" pattern:"CorePropertySupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  RunControlStateMachine  10-Sep-2018 14:33:45 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application RunControlStateMachine configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/RunControlStateMachine" pattern:"RunControlStateMachine-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  CoreSupervisorBase 10-Sep-2018 14:33:45 CDT  pre-events configureMessageFacility.cc:300
+Message Facility Application CoreSupervisorBase configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/CoreSupervisorBase" pattern:"CoreSupervisorBase-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-i configureMessageFacility:  MacroMaker 10-Sep-2018 14:33:45 CDT pre-events configureMessageFacility.cc:300
+Message Facility Application MacroMaker configured with: debugModules:["*"] destinations:{file:{append:false directory:"/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/MacroMaker" pattern:"MacroMaker-%?H%t-%p.log" seperator:"-" threshold:"DEBUG" timestamp_pattern:"%Y%m%d%H%M%S" type:"GenFile"} udp:{host:"127.0.0.1" port:30000 threshold:"DEBUG" type:"UDP"}}
+%MSG
+%MSG-d GatewaySupervisor:  Early 10-Sep-2018 14:33:53 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [463]	Making logbook entry: admin logged in.
+%MSG
+%MSG-d GatewaySupervisor:  Early 10-Sep-2018 14:33:53 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [463]	Making logbook entry: admin logged in.
+%MSG
+%MSG-d GatewaySupervisor:  Early 10-Sep-2018 14:34:04 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [463]	Making logbook entry: Configuring 'defaultSystemAlias' which translates to defaultConfig (3).
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:34:05 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:34:05 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(3)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:34:05 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasTreeEditWizBackbone(1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:34:05 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:34:05 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(3)
+%MSG
+%MSG-e ots:  Early 10-Sep-2018 14:34:22 CDT pre-events
+otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [249]	Exception caught during read: :ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [391]	Can not get configuration name of node with no configuration pointer!
+
+%MSG
+%MSG-e ots:  Early 10-Sep-2018 14:35:32 CDT pre-events
+otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [249]	Exception caught during read: :ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [391]	Can not get configuration name of node with no configuration pointer!
+
+%MSG
+%MSG-d Console:  Early 10-Sep-2018 14:37:32 CDT pre-events
+Console is alive and waiting... (if no messages, next heartbeat is in approximately two minutes)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:13 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:13 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(3)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:13 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasTreeEditWizBackbone(1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:13 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:13 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(4)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:14 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:14 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(3)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:14 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasTreeEditWizBackbone(2)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:14 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:14 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(4)
+%MSG
+%MSG-d GatewaySupervisor:  Early 10-Sep-2018 14:38:31 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [463]	Making logbook entry: Run halting.
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroying WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroyed WorkLoop: CFO0-SlowControls
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroying WorkLoop: CFO0
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroyed WorkLoop: CFO0
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroying WorkLoop: ExampleInterface0-SlowControls
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroyed WorkLoop: ExampleInterface0-SlowControls
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroying WorkLoop: ExampleInterface0
+%MSG
+%MSG-d WorkLoop:  Early 10-Sep-2018 14:38:32 CDT pre-events
+Destroyed WorkLoop: ExampleInterface0
+%MSG
+%MSG-d GatewaySupervisor:  Early 10-Sep-2018 14:38:35 CDT pre-events
+otsdaq/otsdaq-core/GatewaySupervisor/GatewaySupervisor.cc [463]	Making logbook entry: Configuring 'defaultSystemAlias' which translates to defaultConfig (4).
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:36 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [336]	Updating persistent active groups to /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveConfigurationGroups.cfg ...
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:36 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [359]	Active Context: testContext(3)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:36 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [361]	Active Backbone: GroupAliasTreeEditWizBackbone(2)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:36 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [363]	Active Iterate: (-1)
+%MSG
+%MSG-i ConfigurationManagerRW:  Early 10-Sep-2018 14:38:36 CDT pre-events
+otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManagerRW.cc [365]	Active Configuration: defaultConfig(4)
+%MSG
+%MSG-e ots:  Early 10-Sep-2018 14:38:58 CDT pre-events
+otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [249]	Exception caught during read: :ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [991]	
+
+Error occurred descending from node 'OtsInterface0' in table 'FEOtsUDPTemplateInterfaceConfiguration' looking for child 'DeviceIndex'
+
+
+--- Additional error detail: 
+
+:ConfigurationView-FE_OTS_UDP_TEMPLATE_INTERFACE_CONFIGURATION:v2:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationView.cc [1188]		In view: FE_OTS_UDP_TEMPLATE_INTERFACE_CONFIGURATION, Can't find column named 'DeviceIndex'
+Existing columns:
+	InterfaceID
+	FirmwareVersion
+	InterfaceIPAddress
+	InterfacePort
+	HostIPAddress
+	HostPort
+	StreamToIPAddress
+	StreamToPort
+	CommentDescription
+	Author
+	RecordInsertionTime
+
+ 0# ots::ConfigurationTree::getNode(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) const in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libConfigurationInterface.so
+ 1# ots::CFOFrontEndInterface::universalRead(char*, char*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_mu2e/lib/libotsdaq-mu2e_FEInterfaces_CFOFrontEndInterface_interface.so
+ 2# ots::FEVInterfacesManager::universalRead(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char*, char*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libFECore.so
+ 3# ots::FESupervisor::macroMakerSupervisorRequest(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+ 4# xoap::Method<ots::FESupervisor>::invoke(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+ 5# executive::SOAPDispatcher::processIncomingMessage(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libexecutive.so
+ 6# pt::http::SOAPLoopbackMessenger::send(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libpthttp.so
+ 7# xdaq::ApplicationContextImpl::postSOAP(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>&, xdaq::ApplicationDescriptor const&, xdaq::ApplicationDescriptor const&) in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libxdaq.so
+ 8# ots::SOAPMessenger::sendWithSOAPReply(xdaq::ApplicationDescriptor const*, xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libSOAPUtilities.so
+ 9# ots::SOAPMessenger::sendWithSOAPReply(xdaq::ApplicationDescriptor const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, ots::SOAPParameters) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libSOAPUtilities.so
+10# ots::MacroMakerSupervisor::readData(ots::HttpXmlDocument&, cgicc::Cgicc&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) in //home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libMacroMaker.so
+11# ots::MacroMakerSupervisor::handleRequest(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, ots::HttpXmlDocument&, cgicc::Cgicc&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) in //home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libMacroMaker.so
+12# ots::MacroMakerSupervisor::request(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, cgicc::Cgicc&, ots::HttpXmlDocument&, ots::WebUsers::RequestUserInfo const&) in //home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libMacroMaker.so
+13# ots::CoreSupervisorBase::requestWrapper(xgi::Input*, xgi::Output*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+14# xgi::Method<ots::CoreSupervisorBase>::invoke(xgi::Input*, xgi::Output*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+15# executive::XgiDispatcher::processIncomingMessage(xgi::Input*, xgi::Output*) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libexecutive.so
+16# pt::http::ReceiverLoop::onRequest(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libpthttp.so
+17# pt::http::ReceiverLoop::process(toolbox::task::WorkLoop*) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libpthttp.so
+18# toolbox::task::WaitingWorkLoop::process() in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libtoolbox.so
+19# toolbox::task::WorkLoop::run() in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libtoolbox.so
+20# toolbox::task::thread_func(void*) in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libtoolbox.so
+21# 0x00007FB626F47E25 in /lib64/libpthread.so.0
+22# clone in /lib64/libc.so.6
+
+%MSG
+%MSG-e ots:  Early 10-Sep-2018 14:39:08 CDT pre-events
+otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [249]	Exception caught during read: :ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [991]	
+
+Error occurred descending from node 'OtsInterface0' in table 'FEOtsUDPTemplateInterfaceConfiguration' looking for child 'DeviceIndex'
+
+
+--- Additional error detail: 
+
+:ConfigurationView-FE_OTS_UDP_TEMPLATE_INTERFACE_CONFIGURATION:v2:otsdaq/otsdaq-core/ConfigurationDataFormats/ConfigurationView.cc [1188]		In view: FE_OTS_UDP_TEMPLATE_INTERFACE_CONFIGURATION, Can't find column named 'DeviceIndex'
+Existing columns:
+	InterfaceID
+	FirmwareVersion
+	InterfaceIPAddress
+	InterfacePort
+	HostIPAddress
+	HostPort
+	StreamToIPAddress
+	StreamToPort
+	CommentDescription
+	Author
+	RecordInsertionTime
+
+ 0# ots::ConfigurationTree::getNode(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) const in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libConfigurationInterface.so
+ 1# ots::CFOFrontEndInterface::universalRead(char*, char*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_mu2e/lib/libotsdaq-mu2e_FEInterfaces_CFOFrontEndInterface_interface.so
+ 2# ots::FEVInterfacesManager::universalRead(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char*, char*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libFECore.so
+ 3# ots::FESupervisor::macroMakerSupervisorRequest(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+ 4# xoap::Method<ots::FESupervisor>::invoke(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+ 5# executive::SOAPDispatcher::processIncomingMessage(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libexecutive.so
+ 6# pt::http::SOAPLoopbackMessenger::send(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libpthttp.so
+ 7# xdaq::ApplicationContextImpl::postSOAP(xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>&, xdaq::ApplicationDescriptor const&, xdaq::ApplicationDescriptor const&) in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libxdaq.so
+ 8# ots::SOAPMessenger::sendWithSOAPReply(xdaq::ApplicationDescriptor const*, xoap::CountingPtr<xoap::SOAPMessage, xoap::ThreadSafeReferenceCount, xoap::StandardObjectPolicy>) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libSOAPUtilities.so
+ 9# ots::SOAPMessenger::sendWithSOAPReply(xdaq::ApplicationDescriptor const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, ots::SOAPParameters) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libSOAPUtilities.so
+10# ots::MacroMakerSupervisor::readData(ots::HttpXmlDocument&, cgicc::Cgicc&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) in //home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libMacroMaker.so
+11# ots::MacroMakerSupervisor::handleRequest(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, ots::HttpXmlDocument&, cgicc::Cgicc&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) in //home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libMacroMaker.so
+12# ots::MacroMakerSupervisor::request(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, cgicc::Cgicc&, ots::HttpXmlDocument&, ots::WebUsers::RequestUserInfo const&) in //home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq_utilities/lib/libMacroMaker.so
+13# ots::CoreSupervisorBase::requestWrapper(xgi::Input*, xgi::Output*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+14# xgi::Method<ots::CoreSupervisorBase>::invoke(xgi::Input*, xgi::Output*) in /home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so
+15# executive::XgiDispatcher::processIncomingMessage(xgi::Input*, xgi::Output*) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libexecutive.so
+16# pt::http::ReceiverLoop::onRequest(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libpthttp.so
+17# pt::http::ReceiverLoop::process(toolbox::task::WorkLoop*) in //home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libpthttp.so
+18# toolbox::task::WaitingWorkLoop::process() in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libtoolbox.so
+19# toolbox::task::WorkLoop::run() in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libtoolbox.so
+20# toolbox::task::thread_func(void*) in /home/mu2edaq/sync_demo/ots/products/xdaq/v14_4_0b/Linux64bit+3.10-2.17-e15-prof/lib/libtoolbox.so
+21# 0x00007FB626F47E25 in /lib64/libpthread.so.0
+22# clone in /lib64/libc.so.6
+
+%MSG

@@ -1,0 +1,132 @@
+{
+"document" : {
+"data" : {
+"NAME" : "RAW_DATA_SAVER_CONSUMER_CONFIGURATION",
+"COMMENT" : "For hw emulator.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1501097254,
+"COL_TYPES" : {
+"PROCESSOR_UID" : "VARCHAR2",
+"FILE_PATH" : "VARCHAR2",
+"RADIX_FILE_NAME" : "VARCHAR2",
+"MAX_FILE_SIZE" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"PROCESSOR_UID" : "RAWSaver0",
+"FILE_PATH" : "${OTSDAQ_DATA}",
+"RADIX_FILE_NAME" : "Run",
+"MAX_FILE_SIZE" : "0",
+"COMMENT_DESCRIPTION" : "saving hw emulator data.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1501097254"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-17T11:50:16.890-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T11:50:16.891-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-17T11:50:16.891-0600"
+},
+{
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-17T11:50:19.092-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T11:50:16.891-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-17T11:50:16.891-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-17T11:50:16.891-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-01-17T11:50:16.891-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-17T11:50:16.891-0600",
+"value" : {
+"name" : "RawDataSaverConsumerConfiguration",
+"assigned" : "2019-01-17T11:50:16.891-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-17T11:50:16.891-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T11:50:16.891-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-17T11:50:19.092-0600",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-17T11:50:19.092-0600"
+}
+}
+],
+"created" : "2019-01-17T11:50:16.890-0600"
+},
+"_id" : {
+"$oid" : "14c4b79c5df149cdab886e02"
+},
+"collection" : "RawDataSaverConsumerConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

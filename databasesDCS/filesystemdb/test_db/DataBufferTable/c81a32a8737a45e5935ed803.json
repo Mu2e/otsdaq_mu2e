@@ -1,0 +1,210 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DATA_BUFFER_TABLE",
+"COMMENT" : "Data Buffer table for tutorial.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1501079048,
+"COL_TYPES" : {
+"DATA_BUFFER_GROUP_ID" : "VARCHAR2",
+"PROCESSOR_UID" : "VARCHAR2",
+"PROCESSOR_TYPE" : "VARCHAR2",
+"PROCESSOR_PLUGIN_NAME" : "VARCHAR2",
+"LINK_TO_PROCESSOR_TABLE" : "VARCHAR2",
+"LINK_TO_PROCESSOR_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup0",
+"PROCESSOR_UID" : "DB0Producer0",
+"PROCESSOR_TYPE" : "Producer",
+"PROCESSOR_PLUGIN_NAME" : "UDPDataListenerProducer",
+"LINK_TO_PROCESSOR_TABLE" : "UDPDataListenerProducerTable",
+"LINK_TO_PROCESSOR_UID" : "UDPListener0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479488752"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup0",
+"PROCESSOR_UID" : "DB0Consumer0",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "RawDataSaverConsumer",
+"LINK_TO_PROCESSOR_TABLE" : "RawDataSaverConsumerTable",
+"LINK_TO_PROCESSOR_UID" : "RAWSaver0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479770727"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup0",
+"PROCESSOR_UID" : "DB0Consumer1",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "UDPDataStreamerConsumer",
+"LINK_TO_PROCESSOR_TABLE" : "UDPDataStreamerConsumerTable",
+"LINK_TO_PROCESSOR_UID" : "UDPStreamer0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826252"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup1",
+"PROCESSOR_UID" : "DB1Producer0",
+"PROCESSOR_TYPE" : "Producer",
+"PROCESSOR_PLUGIN_NAME" : "UDPDataListenerProducer",
+"LINK_TO_PROCESSOR_TABLE" : "UDPDataListenerProducerTable",
+"LINK_TO_PROCESSOR_UID" : "UDPListener1",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826252"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup1",
+"PROCESSOR_UID" : "DB1Consumer1",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "DemoDQMHistosConsumer",
+"LINK_TO_PROCESSOR_TABLE" : "DQMHistosConsumerTable",
+"LINK_TO_PROCESSOR_UID" : "DQMHistos0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826252"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-17T11:50:15.304-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T11:50:15.305-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-17T11:50:15.305-0600"
+},
+{
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-17T11:50:18.023-0600"
+},
+{
+"name" : "defaultConfig_v3",
+"assigned" : "2019-02-21T12:54:05.126-0600"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "2019-02-21T12:56:27.714-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-01-17T11:50:15.305-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-17T11:50:15.305-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-17T11:50:15.305-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-01-17T11:50:15.305-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-17T11:50:15.305-0600",
+"value" : {
+"name" : "DataBufferTable",
+"assigned" : "2019-01-17T11:50:15.305-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-17T11:50:15.305-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T11:50:15.305-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-17T11:50:18.023-0600",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "2019-01-17T11:50:18.023-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-21T12:54:05.127-0600",
+"value" : {
+"name" : "defaultConfig_v3",
+"assigned" : "2019-02-21T12:54:05.126-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-21T12:56:27.714-0600",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "2019-02-21T12:56:27.714-0600"
+}
+}
+],
+"created" : "2019-01-17T11:50:15.304-0600"
+},
+"_id" : {
+"$oid" : "c81a32a8737a45e5935ed803"
+},
+"collection" : "DataBufferTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
