@@ -232,7 +232,14 @@ catch(...)
 }
 
 //========================================================================================================================
-void ROCCoreVInterface::halt(void) {}
+void ROCCoreVInterface::halt(void)
+{
+	if(workloopRunning_)
+	{
+		__FE_COUT__ << "Halting and attempting to exit emulator workloop..." << __E__;
+		ROCCoreVInterface::workloopExit_ = true;
+	}
+} //end halt()
 
 //========================================================================================================================
 void ROCCoreVInterface::pause(void) {}

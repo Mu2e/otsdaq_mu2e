@@ -20,9 +20,10 @@ class ROCCoreVInterface : public FEVInterface
 	virtual std::string getInterfaceType(void) const override
 	{
 		return theXDAQContextConfigTree_.getBackNode(theConfigurationPath_)
+			.getNode(FEVInterface::interfaceUID_)
 		    .getNode("ROCInterfacePluginName")
 		    .getValue<std::string>();
-	}  // interfaceType_;}
+	}
 
 	// state machine
 	//----------------
