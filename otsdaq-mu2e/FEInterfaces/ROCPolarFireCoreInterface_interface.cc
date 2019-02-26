@@ -98,6 +98,7 @@ void ROCPolarFireCoreInterface::resetDTCLinkLossCounter()
 //==================================================================================================
 void ROCPolarFireCoreInterface::configure(void) try
 {
+
 	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
 	// this->writeRegister(0,1);
 	// this->writeRegister(0,0);
@@ -114,6 +115,13 @@ void ROCPolarFireCoreInterface::configure(void) try
 	               << " ... ");
 
 	this->writeDelay(delay_);
+
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
+		return;
+	}
+
 
 	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
 

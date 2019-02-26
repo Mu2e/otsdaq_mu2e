@@ -136,6 +136,26 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 
 	createROCs();
 
+	{ //add ROC FE Macros
+		for(auto& roc : rocs_)
+		{
+			auto feMacros = roc.second->getMapOfFEMacroFunctions();
+			for(auto& feMacro:feMacros)
+			{
+				__COUT__ << roc.first << "::" << feMacro.first << __E__;
+
+				std::vector<std::string> inputParams,outputParams;
+				continue;
+				registerFEMacroFunction("Run_ROC_FEMacro",
+						static_cast<FEVInterface::frontEndMacroFunction_t>(
+								&DTCFrontEndInterface::RunROCFEMacro),
+								std::vector<std::string>{"ROC_FEMacroName"},
+								std::vector<std::string>{},
+								1);  // requiredUserPermissions
+			}
+		}
+	} //end add ROC FE Macros
+
 	// DTC-specific info
 	dtc_location_in_chain_ =
 	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
@@ -2636,6 +2656,7 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 }
 
+//========================================================================
 void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
@@ -2668,14 +2689,17 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 }
 
+//========================================================================
 void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 {
 	for(auto& roc : rocs_)
 		roc.second->highRateCheck();
 }
 
+//========================================================================
 void DTCFrontEndInterface::DTCReset(__ARGS__) { DTCReset(); }
 
+//========================================================================
 void DTCFrontEndInterface::DTCReset()
 {
 	{
@@ -2741,5 +2765,13 @@ void DTCFrontEndInterface::DTCReset()
 		delete[] data;     // free the memory
 	}
 }
+
+//========================================================================
+void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
+{
+	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
+	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
+
+} //end RunROCFEMacro()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)
