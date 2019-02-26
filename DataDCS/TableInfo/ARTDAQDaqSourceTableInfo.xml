@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="ARTDAQDaqSourceTable">
+			<VIEW Name="ARTDAQ_DAQ_SOURCE_TABLE" Type="File,Database,DatabaseTest" Description="No%20description.">
+				<COLUMN Type="GroupID-sources" 	 Name="sourceGroupID" 	 StorageName="SOURCE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="sourceUID" 	 StorageName="SOURCE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="sourceKey" 	 StorageName="SOURCE_KEY" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="transferPluginType" 	 StorageName="TRANSFER_PLUGIN_TYPE" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-source" 	 Name="sourceARTDAQContextLink" 	 StorageName="SOURCE_ARTDAQ_CONTEXT_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,XDAQContextTable"/>
+				<COLUMN Type="ChildLinkUID-source" 	 Name="sourceARTDAQContextLinkUID" 	 StorageName="SOURCE_ARTDAQ_CONTEXT_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-fragmentSize" 	 Name="ARTDAQGlobalTableLink" 	 StorageName="ARTDAQ_GLOBAL_TABLE_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,ARTDAQGlobalTable"/>
+				<COLUMN Type="ChildLinkUID-fragmentSize" 	 Name="ARTDAQGlobalTableLinkUID" 	 StorageName="ARTDAQ_GLOBAL_TABLE_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</TABLE>
+	</ROOT>

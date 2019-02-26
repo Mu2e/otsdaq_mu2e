@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="ARTDAQGlobalTable">
+			<VIEW Name="ARTDAQ_GLOBAL_TABLE" Type="File,Database,DatabaseTest">
+				<COLUMN Type="UID" 	 Name="artdaqUID" 	 StorageName="ARTDAQ_UID" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="processNameForBuilders" 	 StorageName="PROCESS_NAME_FOR_BUILDERS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="processNameForAggregators" 	 StorageName="PROCESS_NAME_FOR_AGGREGATORS" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Data" 	 Name="maxFragmentSizeWords" 	 StorageName="MAX_FRAGMENT_SIZE_WORDS" 		DataType="NUMBER"/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2"/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE"/>
+			</VIEW>
+		</TABLE>
+	</ROOT>
