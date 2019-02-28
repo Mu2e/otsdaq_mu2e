@@ -111,28 +111,34 @@ class ROCCoreVInterface : public FEVInterface
 
 	static void emulatorThread(ROCCoreVInterface* roc)
 	{
-		roc->workloopRunning_ = true;
+		roc->emulatorWorkloopRunning_ = true;
 
 		bool stillWorking = true;
-		while(!roc->workloopExit_ && stillWorking)
+		while(!roc->emulatorWorkloopExit_ && stillWorking)
 		{
-			__COUT__ << "Calling emulator WorkLoop..." << __E__;
+			usleep(roc->emulatorWorkLoopPeriod_ /*microseconds*/);
 
-			// lockout member variables for the remainder of the scope
-			// this guarantees the emulator thread can safely access the members
-			//	Note: other functions (e.g. write and read) must also lock for
-			// this to work!
-			std::lock_guard<std::mutex> lock(roc->workloopMutex_);
-			stillWorking = roc->emulatorWorkLoop();
+			//__COUT__ << "Calling emulator WorkLoop..." << __E__;
+
+			{
+				// lockout member variables for the remainder of the scope
+				// this guarantees the emulator thread can safely access the members
+				//	Note: other functions (e.g. write and read) must also lock for
+				// this to work!
+				std::lock_guard<std::mutex> lock(roc->workloopMutex_);
+				stillWorking = roc->emulatorWorkLoop();
+			}
+
 		}
 		__COUT__ << "Exited emulator WorkLoop." << __E__;
 
-		roc->workloopRunning_ = false;
+		roc->emulatorWorkloopRunning_ = false;
 	}  // end emulatorThread()
 
   protected:
-	volatile bool workloopExit_;
-	volatile bool workloopRunning_;
+	volatile bool emulatorWorkloopExit_;
+	volatile bool emulatorWorkloopRunning_;
+	const unsigned int  emulatorWorkLoopPeriod_; // in microseconds
 
 	std::mutex workloopMutex_;
 

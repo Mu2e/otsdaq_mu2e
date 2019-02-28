@@ -13,8 +13,9 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
     : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
-    , workloopExit_(false)
-    , workloopRunning_(false)
+    , emulatorWorkloopExit_(false)
+    , emulatorWorkloopRunning_(false)
+	, emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
 {
 	__FE_COUT__ << "Constructing..." << __E__;
 
@@ -36,11 +37,11 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 	// tree and it may already be destructed partially
 	__COUT__ << FEVInterface::interfaceUID_ << "Destructing..." << __E__;
 
-	while(workloopRunning_)
+	while(emulatorWorkloopRunning_)
 	{
 		__COUT__ << FEVInterface::interfaceUID_ << "Attempting to exit thread..."
 		         << __E__;
-		workloopExit_ = true;
+		emulatorWorkloopExit_ = true;
 		sleep(1);
 	}
 
@@ -58,6 +59,7 @@ void ROCCoreVInterface::writeRegister(unsigned address, unsigned writeData)
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode write." << __E__;
+		std::lock_guard<std::mutex> lock(workloopMutex_);
 		return writeEmulatorRegister(address, writeData);
 	}
 	else
@@ -74,6 +76,7 @@ int ROCCoreVInterface::readRegister(unsigned address)
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode read." << __E__;
+		std::lock_guard<std::mutex> lock(workloopMutex_);
 		return readEmulatorRegister(address);
 	}
 	else
@@ -234,10 +237,10 @@ catch(...)
 //========================================================================================================================
 void ROCCoreVInterface::halt(void)
 {
-	if(workloopRunning_)
+	if(emulatorWorkloopRunning_)
 	{
 		__FE_COUT__ << "Halting and attempting to exit emulator workloop..." << __E__;
-		ROCCoreVInterface::workloopExit_ = true;
+		ROCCoreVInterface::emulatorWorkloopExit_ = true;
 	}
 } //end halt()
 

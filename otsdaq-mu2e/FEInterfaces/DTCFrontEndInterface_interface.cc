@@ -178,7 +178,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				__FE_COUT__ << roc.first << "::" << feMacro.first << __E__;
 
 				//make DTC FEMacro forwarding to ROC FEMacro
-				std::string macroName = roc.first + "_" +
+				std::string macroName =
+						"Link" +
+						std::to_string(roc.second->getLinkID()) +
+						"_" + roc.first + "_" +
 						feMacro.first;
 				__FE_COUTV__(macroName);
 
