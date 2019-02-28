@@ -102,10 +102,11 @@ class ROCCoreVInterface : public FEVInterface
   public:
 	virtual bool emulatorWorkLoop(void)
 	{
-		__SS__ << "This is an empty emulator! this function should be overridden "
+		__COUT__ << "This is an empty emulator workloop! this function should be overridden "
 		          "by the derived class."
 		       << __E__;
-		__SS_THROW__;
+		//__SS_THROW__;
+
 		return false;
 	}
 
