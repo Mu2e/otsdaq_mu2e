@@ -137,9 +137,11 @@ class ROCCoreVInterface : public FEVInterface
 	}  // end emulatorThread()
 
   protected:
-	volatile bool emulatorWorkloopExit_;
-	volatile bool emulatorWorkloopRunning_;
 	const unsigned int  emulatorWorkLoopPeriod_; // in microseconds
+	volatile bool emulatorWorkloopExit_;
+  private:
+	volatile bool emulatorWorkloopRunning_;
+
 
 	std::mutex workloopMutex_;
 

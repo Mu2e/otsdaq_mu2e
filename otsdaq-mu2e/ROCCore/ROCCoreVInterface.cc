@@ -13,9 +13,9 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
     : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
+	, emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
     , emulatorWorkloopExit_(false)
     , emulatorWorkloopRunning_(false)
-	, emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
 {
 	__FE_COUT__ << "Constructing..." << __E__;
 
