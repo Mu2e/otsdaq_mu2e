@@ -250,6 +250,14 @@
 "name" : "testContext_v56",
 "assigned" : "2018-12-18T09:02:27.503-0600"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T12:06:03.507-0600",
+"value" : {
+"name" : "testContext_v58",
+"assigned" : "2019-03-04T12:06:03.507-0600"
+}
 }
 ],
 "created" : "2018-11-19T15:34:13.474-0600"
@@ -272,5 +280,11 @@
 "attachments" : [
 
 ],
-"configtype" : "notprovided"
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "testContext_v58",
+"assigned" : "2019-03-04T12:06:03.507-0600"
+}
+]
 }

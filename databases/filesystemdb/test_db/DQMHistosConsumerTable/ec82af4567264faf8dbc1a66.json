@@ -1270,6 +1270,14 @@
 "name" : "defaultConfig_v96",
 "assigned" : "2019-01-25T09:42:15.191-0600"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T12:01:43.069-0600",
+"value" : {
+"name" : "defaultConfig_v97",
+"assigned" : "2019-03-04T12:01:43.069-0600"
+}
 }
 ],
 "created" : "2018-07-17T12:10:19.766-0500"
@@ -1292,5 +1300,11 @@
 "attachments" : [
 
 ],
-"configtype" : "notprovided"
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "defaultConfig_v97",
+"assigned" : "2019-03-04T12:01:43.069-0600"
+}
+]
 }
