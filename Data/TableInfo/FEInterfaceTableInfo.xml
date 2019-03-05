@@ -10,8 +10,8 @@
 				<COLUMN Type="ChildLinkUID-0" 	 Name="LinkToFETypeUID" 	 StorageName="LINK_TO_FE_TYPE_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-ControlsChannels" 	 Name="LinkToControlsChannelTable" 	 StorageName="LINK_TO_CONTROLS_CHANNEL_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,FEControlsTable"/>
 				<COLUMN Type="ChildLinkGroupID-ControlsChannels" 	 Name="LinkToControlsChannelGroupID" 	 StorageName="LINK_TO_CONTROLS_CHANNEL_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-ControlsMonitor" 	 Name="LinkToControlsMonitorTable" 	 StorageName="LINK_TO_CONTROLS_MONITOR_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ControlsSupervisorTable"/>
-				<COLUMN Type="ChildLinkUID-ControlsMonitor" 	 Name="LinkToControlsMonitorUID" 	 StorageName="LINK_TO_CONTROLS_MONITOR_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-ControlsSupervisor" 	 Name="LinkToControlsSupervisorTable" 	 StorageName="LINK_TO_CONTROLS_SUPERVISOR_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ControlsSupervisorTable"/>
+				<COLUMN Type="ChildLinkUID-ControlsSupervisor" 	 Name="LinkToControlsSupervisorUID" 	 StorageName="LINK_TO_CONTROLS_SUPERVISOR_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="ControlsTxSocketIPAddress" 	 StorageName="CONTROLS_TX_SOCKET_IP_ADDRESS" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="ControlsTxSocketPort" 	 StorageName="CONTROLS_TX_SOCKET_PORT" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="YesNo" 	 Name="ControlsLocalAggregateSavingEnabled" 	 StorageName="CONTROLS_LOCAL_AGGREGATE_SAVING_ENABLED" 		DataType="VARCHAR2" 		DataChoices=""/>
