@@ -5,7 +5,7 @@
 				<COLUMN Type="UID" 	 Name="UID" 	 StorageName="UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="GroupID-ROC" 	 Name="ROCGroupID" 	 StorageName="ROC_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="FixedChoiceData" 	 Name="ROCInterfacePluginName" 	 StorageName="ROC_INTERFACE_PLUGIN_NAME" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,ROCCoreInterface,ROCCalorimeterInterface,ROCTrackerInterface,ROCCalorimeterEmulator"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="ROCInterfacePluginName" 	 StorageName="ROC_INTERFACE_PLUGIN_NAME" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,ROCPolarFireCoreInterface,ROCCalorimeterInterface,ROCTrackerInterface,ROCCosmicRayVetoInterface,ROCExtinctionMonitorInterface,ROCStoppingTargetMonitorInterface"/>
 				<COLUMN Type="UniqueGroupData" 	 Name="linkID" 	 StorageName="LINK_ID" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="EventWindowDelayOffset" 	 StorageName="EVENT_WINDOW_DELAY_OFFSET" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-ROCParams" 	 Name="ROCTypeLinkTable" 	 StorageName="ROC_TYPE_LINK_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK"/>
