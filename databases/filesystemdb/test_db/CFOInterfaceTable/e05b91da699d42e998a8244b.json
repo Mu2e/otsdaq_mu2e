@@ -926,6 +926,62 @@
 "name" : "defaultConfig_v97",
 "assigned" : "2019-03-04T12:01:42.867-0600"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:12:37.942-0600",
+"value" : {
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T15:12:37.942-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:25:17.269-0600",
+"value" : {
+"name" : "defaultConfig_v99",
+"assigned" : "2019-03-04T15:25:17.269-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:58:15.193-0600",
+"value" : {
+"name" : "defaultConfig_v100",
+"assigned" : "2019-03-04T15:58:15.193-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:00:29.227-0600",
+"value" : {
+"name" : "defaultConfig_v101",
+"assigned" : "2019-03-04T16:00:29.227-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:01:08.373-0600",
+"value" : {
+"name" : "defaultConfig_v102",
+"assigned" : "2019-03-04T16:01:08.373-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:01:46.215-0600",
+"value" : {
+"name" : "defaultConfig_v103",
+"assigned" : "2019-03-04T16:01:46.215-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:19:51.269-0600",
+"value" : {
+"name" : "defaultConfig_v104",
+"assigned" : "2019-03-04T16:19:51.269-0600"
+}
 }
 ],
 "created" : "2018-09-10T14:46:40.727-0500"
@@ -953,6 +1009,34 @@
 {
 "name" : "defaultConfig_v97",
 "assigned" : "2019-03-04T12:01:42.867-0600"
+},
+{
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T15:12:37.942-0600"
+},
+{
+"name" : "defaultConfig_v99",
+"assigned" : "2019-03-04T15:25:17.269-0600"
+},
+{
+"name" : "defaultConfig_v100",
+"assigned" : "2019-03-04T15:58:15.193-0600"
+},
+{
+"name" : "defaultConfig_v101",
+"assigned" : "2019-03-04T16:00:29.227-0600"
+},
+{
+"name" : "defaultConfig_v102",
+"assigned" : "2019-03-04T16:01:08.373-0600"
+},
+{
+"name" : "defaultConfig_v103",
+"assigned" : "2019-03-04T16:01:46.215-0600"
+},
+{
+"name" : "defaultConfig_v104",
+"assigned" : "2019-03-04T16:19:51.269-0600"
 }
 ]
 }

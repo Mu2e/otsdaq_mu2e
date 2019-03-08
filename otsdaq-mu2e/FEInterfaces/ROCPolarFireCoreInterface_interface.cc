@@ -117,7 +117,7 @@ void ROCPolarFireCoreInterface::configure(void) try
 
 	__MCOUT_INFO__("........."
 	               << " Set delay = " << delay_ << ", readback = " << this->readDelay()
-	               << " ... ");
+	               << "... ");
 
 	this->writeDelay(delay_);
 

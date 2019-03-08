@@ -690,6 +690,70 @@
 "name" : "defaultConfig_v97",
 "assigned" : "2019-03-04T12:01:43.235-0600"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:12:38.286-0600",
+"value" : {
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T15:12:38.286-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:25:17.622-0600",
+"value" : {
+"name" : "defaultConfig_v99",
+"assigned" : "2019-03-04T15:25:17.622-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:58:15.578-0600",
+"value" : {
+"name" : "defaultConfig_v100",
+"assigned" : "2019-03-04T15:58:15.578-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:00:29.576-0600",
+"value" : {
+"name" : "defaultConfig_v101",
+"assigned" : "2019-03-04T16:00:29.576-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:01:08.774-0600",
+"value" : {
+"name" : "defaultConfig_v102",
+"assigned" : "2019-03-04T16:01:08.774-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:01:46.580-0600",
+"value" : {
+"name" : "defaultConfig_v103",
+"assigned" : "2019-03-04T16:01:46.580-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:19:51.753-0600",
+"value" : {
+"name" : "defaultConfig_v104",
+"assigned" : "2019-03-04T16:19:51.753-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:25:32.795-0600",
+"value" : {
+"name" : "defaultConfig_v105",
+"assigned" : "2019-03-04T16:25:32.795-0600"
+}
 }
 ],
 "created" : "2018-11-28T11:50:29.658-0600"
@@ -717,6 +781,38 @@
 {
 "name" : "defaultConfig_v97",
 "assigned" : "2019-03-04T12:01:43.235-0600"
+},
+{
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T15:12:38.286-0600"
+},
+{
+"name" : "defaultConfig_v99",
+"assigned" : "2019-03-04T15:25:17.622-0600"
+},
+{
+"name" : "defaultConfig_v100",
+"assigned" : "2019-03-04T15:58:15.578-0600"
+},
+{
+"name" : "defaultConfig_v101",
+"assigned" : "2019-03-04T16:00:29.576-0600"
+},
+{
+"name" : "defaultConfig_v102",
+"assigned" : "2019-03-04T16:01:08.774-0600"
+},
+{
+"name" : "defaultConfig_v103",
+"assigned" : "2019-03-04T16:01:46.580-0600"
+},
+{
+"name" : "defaultConfig_v104",
+"assigned" : "2019-03-04T16:19:51.753-0600"
+},
+{
+"name" : "defaultConfig_v105",
+"assigned" : "2019-03-04T16:25:32.795-0600"
 }
 ]
 }

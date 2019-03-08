@@ -2645,6 +2645,9 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__(writeData);
 
+	__FE_COUT__ << "ROCs size = " << rocs_.size() << __E__;
+
+
 	for(auto& roc : rocs_)
 	{
 		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
