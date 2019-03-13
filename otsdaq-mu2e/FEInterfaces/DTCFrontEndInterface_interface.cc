@@ -24,7 +24,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	universalAddressSize_ = 4;
 	universalDataSize_    = 4;
 
-	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<unsigned int>();
+	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
 
 	// label
 	device_name_ = interfaceUID;
@@ -96,11 +96,33 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	dtc_location_in_chain_ =
 	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
 
+
+
+	//check if any ROCs should be DTC-hardware emulated ROCs
+	{
+		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+				Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+
+		for(auto& roc : rocChildren)
+		{
+			bool enabled = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
+
+			if(enabled)
+			{
+				__FE_COUT__ << "roc uid '" << roc.first <<
+						"' is DTC-hardware emulated!" << __E__;
+				registerWrite(0x9110, 0x80000000);  // bit 31 = DTC Reset FPGA
+			}
+		}
+		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
+	}  // end check if any ROCs should be DTC-hardware emulated ROCs
+
+
 	// done
 	__MCOUT_INFO__("DTCFrontEndInterface instantiated with name: "
 	               << device_name_ << " dtc_location_in_chain_ = "
 	               << dtc_location_in_chain_ << " talking to /dev/mu2e" << dtc_ << __E__);
-}
+} //end constructor()
 
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
@@ -109,7 +131,9 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 		delete thisDTC_;
 	// delete theFrontEndHardware_;
 	// delete theFrontEndFirmware_;
-}
+
+	__FE_COUT__ << "Destructed." << __E__;
+} //end destructor()
 
 //========================================================================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
@@ -706,6 +730,10 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	__FE_COUT__ << "DTC configuring... # of ROCs = " << rocs_.size() << __E__;
 
+
+
+
+
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
 	// Therefore, break up configuration into several steps so as to reply before
 	// the time out As well, there is a specific order in which to configure the
@@ -716,8 +744,8 @@ void DTCFrontEndInterface::configure(void) try
 	         // If > 0, go through configuration steps this many times
 
 	const int reset_fpga               = 1;                 // 1 = yes, 0 = no
-	const int config_clock             = configure_clock_;  // 1 = yes, 0 = no
-	const int config_jitter_attenuator = configure_clock_;  // 1 = yes, 0 = no
+	const bool config_clock             = configure_clock_;  // 1 = yes, 0 = no
+	const bool config_jitter_attenuator = configure_clock_;  // 1 = yes, 0 = no
 	const int reset_rx                 = 0;                 // 1 = yes, 0 = no
 
 	const int number_of_dtc_config_steps = 7;
