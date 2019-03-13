@@ -25,6 +25,9 @@
 simple_plugin(ROCPolarFireCoreInterface "interface"
   	ROCCore
  )
+ simple_plugin(ROCDTCHardwareEmulated "interface"
+  	ROCCore
+ )
     
 simple_plugin(DTCFrontEndInterface "interface"
   	FECore
