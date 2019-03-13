@@ -103,17 +103,23 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
 				Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
 
+		int dtcHwEmulateROCmask = 0;
 		for(auto& roc : rocChildren)
 		{
 			bool enabled = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
 
 			if(enabled)
 			{
+				int linkID = roc.second.getNode("linkID").getValue<int>();
 				__FE_COUT__ << "roc uid '" << roc.first <<
-						"' is DTC-hardware emulated!" << __E__;
-				registerWrite(0x9110, 0x80000000);  // bit 31 = DTC Reset FPGA
+						"' at link=" << linkID << " is DTC-hardware emulated!" << __E__;
+				dtcHwEmulateROCmask |= (1<<linkID);
 			}
 		}
+
+		__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" <<
+				std::hex << dtcHwEmulateROCmask << std::dec << __E__;
+		registerWrite(0x9110, dtcHwEmulateROCmask);
 		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
 	}  // end check if any ROCs should be DTC-hardware emulated ROCs
 
