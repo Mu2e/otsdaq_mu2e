@@ -1,0 +1,205 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ROC_INTERFACE_TABLE",
+"COMMENT" : "Homogenize names of UID, add STM ROCs",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551802858,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"ROC_GROUP_ID" : "VARCHAR2",
+"ROC_INTERFACE_PLUGIN_NAME" : "VARCHAR2",
+"LINK_ID" : "NUMBER",
+"EVENT_WINDOW_DELAY_OFFSET" : "NUMBER",
+"ROC_TYPE_LINK_TABLE" : "VARCHAR2",
+"ROC_TYPE_LINK_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "DTC0_PolarFireROC0",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "0",
+"EVENT_WINDOW_DELAY_OFFSET" : "35",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551802858"
+},
+{
+"UID" : "DTC0_PolarFireROC1",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "1",
+"EVENT_WINDOW_DELAY_OFFSET" : "20",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551802858"
+},
+{
+"UID" : "DTC0_STMROC2",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "2",
+"EVENT_WINDOW_DELAY_OFFSET" : "15",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551801167"
+},
+{
+"UID" : "DTC1_PolarFireROC0",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "0",
+"EVENT_WINDOW_DELAY_OFFSET" : "0",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551802858"
+},
+{
+"UID" : "DTC1_PolarFireROC1",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "1",
+"EVENT_WINDOW_DELAY_OFFSET" : "40",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551802858"
+},
+{
+"UID" : "DTC1_STMROC2",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "2",
+"EVENT_WINDOW_DELAY_OFFSET" : "30",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551802858"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-05T10:20:58.271-0600",
+"rawdata" : [
+
+]
+},
+"version" : "32",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-05T10:20:58.272-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-05T10:20:58.272-0600"
+},
+{
+"name" : "defaultConfig_v112",
+"assigned" : "2019-03-05T10:21:03.546-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-05T10:20:58.272-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-05T10:20:58.272-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-05T10:20:58.272-0600",
+"value" : {
+"name" : "32",
+"assigned" : "2019-03-05T10:20:58.272-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-05T10:20:58.272-0600",
+"value" : {
+"name" : "ROCInterfaceTable",
+"assigned" : "2019-03-05T10:20:58.272-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-05T10:20:58.272-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-05T10:20:58.272-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-05T10:21:03.546-0600",
+"value" : {
+"name" : "defaultConfig_v112",
+"assigned" : "2019-03-05T10:21:03.546-0600"
+}
+}
+],
+"created" : "2019-03-05T10:20:58.271-0600"
+},
+"_id" : {
+"$oid" : "f9ec924be2684ac698af173a"
+},
+"collection" : "ROCInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

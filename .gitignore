@@ -2,3 +2,10 @@ Data*/Logs
 Data*/ServiceData/LoginData/UsersData/TooltipData
 Data*/ServiceData/ProgressBarData
 *.bk
+.Start*
+*.bak
+*.bak.*
+databases/filesystemdb/test_dbb*
+Datab*
+Data.*
+databases/filesystemdb/test_db.*

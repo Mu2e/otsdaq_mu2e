@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="FENIMPlusInterfaceTable">
+			<VIEW Name="FENIM_PLUS_INTERFACE_TABLE" Type="File,Database,DatabaseTest" Description="DelayAndWidth%20%5Beach%20bit%20is%203ns%5D%0AOutputTimeVetoDuration%20%5Bunits%20of%203ns%5D">
+				<COLUMN Type="UID" 	 Name="InterfaceID" 	 StorageName="INTERFACE_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="FirmwareVersion" 	 StorageName="FIRMWARE_VERSION" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="InterfaceIPAddress" 	 StorageName="INTERFACE_IP_ADDRESS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="InterfacePort" 	 StorageName="INTERFACE_PORT" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="HostIPAddress" 	 StorageName="HOST_IP_ADDRESS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="HostPort" 	 StorageName="HOST_PORT" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="StreamToIPAddress" 	 StorageName="STREAM_TO_IP_ADDRESS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="StreamToPort" 	 StorageName="STREAM_TO_PORT" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="EnableInputChannelA" 	 StorageName="ENABLE_INPUT_CHANNEL_A" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="EnableInputChannelB" 	 StorageName="ENABLE_INPUT_CHANNEL_B" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="EnableInputChannelC" 	 StorageName="ENABLE_INPUT_CHANNEL_C" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="EnableInputChannelD" 	 StorageName="ENABLE_INPUT_CHANNEL_D" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputSourceSelectChannel0" 	 StorageName="OUTPUT_SOURCE_SELECT_CHANNEL0" 		DataType="VARCHAR2" 		DataChoices="Coincidence%20Signal"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputSourceSelectChannel1" 	 StorageName="OUTPUT_SOURCE_SELECT_CHANNEL1" 		DataType="VARCHAR2" 		DataChoices="Coincidence%20Signal,Output%20Channel-0"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputSourceSelectChannel2" 	 StorageName="OUTPUT_SOURCE_SELECT_CHANNEL2" 		DataType="VARCHAR2" 		DataChoices="Coincidence%20Signal,Output%20Channel-0"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputMuxSelectChannelA" 	 StorageName="OUTPUT_MUX_SELECT_CHANNEL_A" 		DataType="VARCHAR2" 		DataChoices="Output%20Channel-0,Output%20Channel-1,Output%20Channel-2,Tie-Low"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputMuxSelectChannelB" 	 StorageName="OUTPUT_MUX_SELECT_CHANNEL_B" 		DataType="VARCHAR2" 		DataChoices="Output%20Channel-0,Output%20Channel-1,Output%20Channel-2,Tie-Low"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputMuxSelectChannelC" 	 StorageName="OUTPUT_MUX_SELECT_CHANNEL_C" 		DataType="VARCHAR2" 		DataChoices="Output%20Channel-0,Output%20Channel-1,Output%20Channel-2,Tie-Low"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="OutputMuxSelectChannelD" 	 StorageName="OUTPUT_MUX_SELECT_CHANNEL_D" 		DataType="VARCHAR2" 		DataChoices="Output%20Channel-0,Output%20Channel-1,Output%20Channel-2,Tie-Low"/>
+				<COLUMN Type="Data" 	 Name="CoincidenceLogicWord" 	 StorageName="COINCIDENCE_LOGIC_WORD" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-optionalParameters" 	 Name="LinkToOptionalParameters" 	 StorageName="LINK_TO_OPTIONAL_PARAMETERS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLinkUID-optionalParameters" 	 Name="LinkToOptionalParametersUID" 	 StorageName="LINK_TO_OPTIONAL_PARAMETERS_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</TABLE>
+	</ROOT>
