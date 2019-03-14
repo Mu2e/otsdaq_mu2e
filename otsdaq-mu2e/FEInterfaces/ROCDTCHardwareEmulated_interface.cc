@@ -17,7 +17,7 @@ ROCDTCHardwareEmulated::ROCDTCHardwareEmulated(
 
 	__MCOUT_INFO__("ROCDTCHardwareEmulated instantiated with link: "
 	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
-}
+} // end constructor()
 
 //==========================================================================================
 ROCDTCHardwareEmulated::~ROCDTCHardwareEmulated(void)
@@ -25,7 +25,7 @@ ROCDTCHardwareEmulated::~ROCDTCHardwareEmulated(void)
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
 	__COUT__ << FEVInterface::interfaceUID_ << "Destructed." << __E__;
-}
+} //end destructor()
 
 //==================================================================================================
 int ROCDTCHardwareEmulated::readEmulatorRegister(unsigned address)
@@ -48,8 +48,7 @@ void ROCDTCHardwareEmulated::writeROCRegister(unsigned address, unsigned data_to
 
 	thisDTC_->WriteROCRegister(linkID_, address, data_to_write);
 
-	return;
-}
+} //end writeROCRegister()
 
 //==================================================================================================
 int ROCDTCHardwareEmulated::readROCRegister(unsigned address)
@@ -65,12 +64,12 @@ int ROCDTCHardwareEmulated::readROCRegister(unsigned address)
 	}
 	catch(...)
 	{
-		__COUT__ << "DTC failed DCS read" << __E__;
+		__FE_COUT_ERR__ << "DTC failed DCS read" << __E__;
 		read_data = -999;
 	}
 
 	return read_data;
-}
+} //end readROCRegister()
 
 //==================================================================================================
 int ROCDTCHardwareEmulated::readTimestamp() { return this->readRegister(12); }
@@ -105,7 +104,7 @@ void ROCDTCHardwareEmulated::configure(void) try
 		return;
 	}
 
-}
+} //end configure()
 catch(const std::runtime_error& e)
 {
 	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
@@ -116,7 +115,7 @@ catch(...)
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
 	__FE_MOUT__ << ss.str();
 	__FE_SS_THROW__;
-}
+}  //end configure() catch
 
 //========================================================================================================================
 void ROCDTCHardwareEmulated::halt(void) {}
