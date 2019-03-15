@@ -9,7 +9,7 @@
 				<COLUMN Type="UniqueGroupData" 	 Name="linkID" 	 StorageName="LINK_ID" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="EventWindowDelayOffset" 	 StorageName="EVENT_WINDOW_DELAY_OFFSET" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="TrueFalse" 	 Name="EmulateInDTCHardware" 	 StorageName="EMULATE_IN_DTC_HARDWARE" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-ROCParams" 	 Name="ROCTypeLinkTable" 	 StorageName="ROC_TYPE_LINK_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,STMParametersTable"/>
+				<COLUMN Type="ChildLink-ROCParams" 	 Name="ROCTypeLinkTable" 	 StorageName="ROC_TYPE_LINK_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,SubsystemCRVParametersTable,SubsystemCalorimeterParametersTable,SubsystemExtinctionMonitorParametersTable,SubsystemSTMParametersTable,SubsystemTrackerParametersTable"/>
 				<COLUMN Type="ChildLinkUID-ROCParams" 	 Name="ROCTypeLinkUID" 	 StorageName="ROC_TYPE_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="TrackerParametersTable">
+			<VIEW Name="TRACKER_PARAMETERS_TABLE" Type="File,Database,DatabaseTest" Description="Example%20set%20of%20parameters%20for%20subsystems%20to%20show%20(a%20subset%20of)%20what%20is%20possible">
+				<COLUMN Type="UID" 	 Name="TrackerParametersUID" 	 StorageName="TRACKER_PARAMETERS_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="TrackerNumberParam1" 	 StorageName="TRACKER_NUMBER_PARAM1" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="TrueFalse" 	 Name="TrackerTrueFalseParam2" 	 StorageName="TRACKER_TRUE_FALSE_PARAM2" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UniqueData" 	 Name="TrackerMustBeUniqueParam3" 	 StorageName="TRACKER_MUST_BE_UNIQUE_PARAM3" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-TrackerGroupedParameters" 	 Name="LinkToTrackerGroupedParametersTable" 	 StorageName="LINK_TO_TRACKER_GROUPED_PARAMETERS_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLinkGroupID-TrackerGroupedParameters" 	 Name="LinkToTrackerGroupedParametersGroupID" 	 StorageName="LINK_TO_TRACKER_GROUPED_PARAMETERS_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</TABLE>
+	</ROOT>

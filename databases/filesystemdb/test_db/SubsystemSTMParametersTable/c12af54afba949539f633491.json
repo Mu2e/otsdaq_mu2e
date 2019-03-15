@@ -1,0 +1,181 @@
+{
+"document" : {
+"data" : {
+"NAME" : "SUBSYSTEM_STM_PARAMETERS_TABLE",
+"COMMENT" : "Example parameters and values",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552670537,
+"COL_TYPES" : {
+"SUBSYSTEM_STM_PARAMETERS_UID" : "VARCHAR2",
+"NUMBER_PARAM1" : "VARCHAR2",
+"TRUE_FALSE_PARAM2" : "VARCHAR2",
+"MUST_BE_UNIQUE_PARAM3" : "VARCHAR2",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_TABLE" : "VARCHAR2",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUBSYSTEM_STM_PARAMETERS_UID" : "STMPedanticParamSet0",
+"NUMBER_PARAM1" : "42",
+"TRUE_FALSE_PARAM2" : "True",
+"MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherRows0",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552670537"
+},
+{
+"SUBSYSTEM_STM_PARAMETERS_UID" : "STMPedanticParamSet1",
+"NUMBER_PARAM1" : "${HIST_SIZE}+3",
+"TRUE_FALSE_PARAM2" : "True",
+"MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherRows1",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552670537"
+},
+{
+"SUBSYSTEM_STM_PARAMETERS_UID" : "STMPedanticParamSet2",
+"NUMBER_PARAM1" : "b1011",
+"TRUE_FALSE_PARAM2" : "False",
+"MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherRows2",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552670537"
+},
+{
+"SUBSYSTEM_STM_PARAMETERS_UID" : "STMPedanticParamSet3",
+"NUMBER_PARAM1" : "0x10",
+"TRUE_FALSE_PARAM2" : "False",
+"MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherRows3",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_SUBSYSTEM_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552670537"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-15T12:22:17.263-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-15T12:22:17.264-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-15T12:22:17.263-0500"
+},
+{
+"name" : "defaultConfig_v132",
+"assigned" : "2019-03-15T12:23:12.492-0500"
+},
+{
+"name" : "defaultConfig_v134",
+"assigned" : "2019-03-15T12:39:08.345-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:22:17.264-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-15T12:22:17.263-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-15T12:22:17.264-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-03-15T12:22:17.264-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-15T12:22:17.264-0500",
+"value" : {
+"name" : "SubsystemSTMParametersTable",
+"assigned" : "2019-03-15T12:22:17.264-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-15T12:22:17.264-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-15T12:22:17.264-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:23:12.492-0500",
+"value" : {
+"name" : "defaultConfig_v132",
+"assigned" : "2019-03-15T12:23:12.492-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:39:08.345-0500",
+"value" : {
+"name" : "defaultConfig_v134",
+"assigned" : "2019-03-15T12:39:08.345-0500"
+}
+}
+],
+"created" : "2019-03-15T12:22:17.263-0500"
+},
+"_id" : {
+"$oid" : "c12af54afba949539f633491"
+},
+"collection" : "SubsystemSTMParametersTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

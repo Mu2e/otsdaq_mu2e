@@ -722,3 +722,4 @@ time=1552084627 authoradmin old-size=8057 new-size=8050 path=/home/mu2edaq/sync_
 time=1552084685 authoradmin old-size=8050 new-size=8114 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_stm/otsdaq-mu2e-stm/FEInterfaces/ROCStoppingTargetMonitorInterface_interface.cc
 time=1552084729 authoradmin old-size=1475 new-size=1545 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_stm/otsdaq-mu2e-stm/FEInterfaces/ROCStoppingTargetMonitorInterface.h
 time=1552084851 authoradmin old-size=8114 new-size=8116 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_stm/otsdaq-mu2e-stm/FEInterfaces/ROCStoppingTargetMonitorInterface_interface.cc
+time=1552671714 authoradmin old-size=8112 new-size=8106 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_stm/otsdaq-mu2e-stm/FEInterfaces/ROCStoppingTargetMonitorInterface_interface.cc
