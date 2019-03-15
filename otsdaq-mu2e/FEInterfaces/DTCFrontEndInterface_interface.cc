@@ -2657,7 +2657,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
 	__FE_SS_THROW__;
 
-}  // end DTCStatus()
+}  // end ReadROC()
 
 //========================================================================================================================
 // DTCStatus
