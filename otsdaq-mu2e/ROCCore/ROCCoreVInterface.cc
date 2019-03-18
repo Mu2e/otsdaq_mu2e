@@ -168,7 +168,7 @@ try
 		}
 
 	__MCOUT__(roc->interfaceUID_ << "Completed high rate check. Number of reads: " << cnt
-	                             << ", reg6cnt=" << cnts[0] << ", reg7cnt=" << cnts[1]
+	                             << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1]
 	                             << __E__);
 } //end highRateCheckThread()
 catch(...)
