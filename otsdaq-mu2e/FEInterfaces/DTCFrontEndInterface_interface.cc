@@ -190,7 +190,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_HighRate_DCS_Check",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCHighRateDCSCheck),
-					std::vector<std::string>{},
+					std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+						"correctRegisterValue0","correctRegisterValue1"},
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 
