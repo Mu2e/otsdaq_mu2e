@@ -85,10 +85,10 @@ class ROCCoreVInterface : public FEVInterface
 	resetDTCLinkLossCounter() = 0;  // pure virtual, must define in inheriting children
 
 	// ROC debugging functions
-	void        highRateCheck(void);
-	static void highRateCheckThread(ROCCoreVInterface* roc);
+	void        highRateCheck(unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
+	static void highRateCheckThread(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 
-	inline int getLinkID() { return linkID_; }
+	inline unsigned int getLinkID() { return linkID_; }
 
 	bool         emulatorMode_;
 	DTCLib::DTC* thisDTC_;

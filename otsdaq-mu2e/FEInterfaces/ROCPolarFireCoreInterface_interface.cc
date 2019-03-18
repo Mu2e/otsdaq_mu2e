@@ -147,11 +147,6 @@ void ROCPolarFireCoreInterface::configure(void) try
 		}
 	}
 
-	if(0)  // random intense check
-	{
-		highRateCheck();
-	}
-
 	__MCOUT_INFO__("......... reset DTC link loss counter ... ");
 	resetDTCLinkLossCounter();
 } //end configure()
