@@ -205,7 +205,7 @@ void CAPTANSignalGenerator::stop(void)
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
-	        ->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfCAPTANPulses")
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
 	        .getValue<unsigned int>();
 	__FE_COUTV__(numberOfCAPTANPulses);
 

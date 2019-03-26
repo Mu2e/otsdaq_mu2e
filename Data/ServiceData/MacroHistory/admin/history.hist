@@ -1,108 +1,42 @@
 {
-"Command":"w:1001:1",
+"Command":"r:9140:000000C2",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:14:00 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
+"Time":"Tue Mar 26 2019 10:18:21 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"w:1001:1",
+"Command":"r:9140:000000C2",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:14:03 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
+"Time":"Tue Mar 26 2019 10:18:33 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"w:1001:1",
+"Command":"r:9140:000000C2",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:14:25 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
+"Time":"Tue Mar 26 2019 10:18:38 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
 }#
 {
-"Command":"r:1001:000010017FF80001",
+"Command":"r:9140:000000C2",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:14:58 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
+"Time":"Tue Mar 26 2019 10:20:18 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"w:1001:1",
+"Command":"r:9140:000000C2",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:15:07 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
+"Time":"Tue Mar 26 2019 10:21:43 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:1001:0000100117710001",
+"Command":"r:9140:000000C3",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:15:12 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
+"Time":"Tue Mar 26 2019 10:23:54 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"w:1001:2",
+"Command":"r:9140:000000C3",
 "Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:15:21 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"r:1001:0000100187D80002",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 14:15:25 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:51:20 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:51:40 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:52:35 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:52:42 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:54:25 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:54:37 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:54:39 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:1001:1",
-"Format":"hex:hex",
-"Time":"Thu Jan 24 2019 15:55:00 GMT-0600 (Central Standard Time)",
-"Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
-}#
-{
-"Command":"w:9114:0",
-"Format":"hex:hex",
-"Time":"Mon Mar 25 2019 16:28:46 GMT-0500 (Central Daylight Time)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
-}#
-{
-"Command":"w:9114:0",
-"Format":"hex:hex",
-"Time":"Mon Mar 25 2019 16:45:40 GMT-0500 (Central Daylight Time)",
-"Interfaces":"CFOFrontEndInterface:210:CFO0"
+"Time":"Tue Mar 26 2019 10:29:20 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#

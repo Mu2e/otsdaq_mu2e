@@ -272,7 +272,7 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 	const int maxNumberOfLoopbacks = 10000;
 	int       numberOfLoopbacks =
 	    getConfigurationManager()
-	        ->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfLoopbacks")
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
 	        .getValue<unsigned int>();
 
 	// get initial states
@@ -626,9 +626,9 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 	const int numberOfChains       = 1;
 	int       link[numberOfChains] = {0};
 
-	const int numberOfDTCsPerChain = 2;  // assume 0, then 1
+	const int numberOfDTCsPerChain = 1;  // assume 0, then 1
 
-	const int numberOfROCsPerDTC = 2;  // assume 0, then 1
+	const int numberOfROCsPerDTC = 1;  // assume 0, then 1
 
 	// To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO
 	// (this method) work per iteration. Loop back done on all chains (in this
@@ -759,7 +759,7 @@ void CFOFrontEndInterface::stop(void)
 {
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
-	        ->getNode("/Mu2eGlobalsConfiguration/SyncDemoConfig/NumberOfCAPTANPulses")
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
 	        .getValue<unsigned int>();
 
 	__FE_COUTV__(numberOfCAPTANPulses);
