@@ -190,7 +190,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_HighRate_DCS_Check",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCHighRateDCSCheck),
-					std::vector<std::string>{},
+					std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+						"correctRegisterValue0","correctRegisterValue1"},
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 
@@ -1144,7 +1145,7 @@ void DTCFrontEndInterface::start(std::string)  // runNumber)
 	//=========== Perform loopback=============
 
 	// where are we in the procedure?
-	int activeROC = loopbackIndex % numberOfROCsPerDTC;
+	unsigned int activeROC = loopbackIndex % numberOfROCsPerDTC;
 
 	int activeDTC = -1;
 
@@ -2776,11 +2777,29 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 {
-	for(auto& roc : rocs_) {
-		roc.second->writeRegister(21,10);  //hard-coded expectation for this value
-		roc.second->highRateCheck();
-	}
-}
+	unsigned int linkIndex = 	__GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops = 		__GET_ARG_IN__("loops",unsigned int);
+	unsigned int baseAddress = 	__GET_ARG_IN__("baseAddress",unsigned int);
+	unsigned int correctRegisterValue0 = 	__GET_ARG_IN__("correctRegisterValue0",unsigned int);
+	unsigned int correctRegisterValue1 = 	__GET_ARG_IN__("correctRegisterValue1",unsigned int);
+
+	__FE_COUTV__(linkIndex);
+	__FE_COUTV__(loops);
+	__FE_COUTV__(baseAddress);
+	__FE_COUTV__(correctRegisterValue0);
+	__FE_COUTV__(correctRegisterValue1);
+
+	for(auto& roc : rocs_)
+		if(roc.second->getLinkID() == linkIndex)
+		{
+			roc.second->highRateCheck(loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
+			return;
+		}
+
+	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
+	__FE_SS_THROW__;
+
+} //end DTCHighRateDCSCheck()
 
 //========================================================================
 void DTCFrontEndInterface::DTCReset(__ARGS__) { DTCReset(); }
