@@ -60,7 +60,7 @@ int ROCPolarFireCoreInterface::readROCRegister(unsigned address)
 
 	try
 	{
-		read_data = thisDTC_->ReadROCRegister(linkID_, address, 10);
+		read_data = thisDTC_->ReadROCRegister(linkID_, address, 1);
 	}
 	catch(...)
 	{
@@ -114,13 +114,11 @@ void ROCPolarFireCoreInterface::configure(void) try
 	this->writeRegister(22, 0);
 	this->writeRegister(22, 1);
 
+	this->writeDelay(delay_);
+
 	__MCOUT_INFO__("........."
 	               << " Set delay = " << delay_ << ", readback = " << this->readDelay()
 	               << "... ");
-
-	this->writeDelay(delay_);
-
-
 
 	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
 
