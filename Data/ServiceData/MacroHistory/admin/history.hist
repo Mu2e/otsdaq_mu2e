@@ -94,3 +94,15 @@
 "Time":"Thu Jan 24 2019 15:55:00 GMT-0600 (Central Standard Time)",
 "Interfaces":"CAPTANSignalGenerator:313:CAPTAN0"
 }#
+{
+"Command":"w:9114:0",
+"Format":"hex:hex",
+"Time":"Mon Mar 25 2019 16:28:46 GMT-0500 (Central Daylight Time)",
+"Interfaces":"CFOFrontEndInterface:210:CFO0"
+}#
+{
+"Command":"w:9114:0",
+"Format":"hex:hex",
+"Time":"Mon Mar 25 2019 16:45:40 GMT-0500 (Central Daylight Time)",
+"Interfaces":"CFOFrontEndInterface:210:CFO0"
+}#
