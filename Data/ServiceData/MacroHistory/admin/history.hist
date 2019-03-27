@@ -40,3 +40,15 @@
 "Time":"Tue Mar 26 2019 10:29:20 GMT-0500 (Central Daylight Time)",
 "Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
+{
+"Command":"w:9114:0",
+"Format":"hex:hex",
+"Time":"Tue Mar 26 2019 12:04:29 GMT-0500 (Central Daylight Time)",
+"Interfaces":"CFOFrontEndInterface:210:CFO0"
+}#
+{
+"Command":"w:9114:0",
+"Format":"hex:hex",
+"Time":"Tue Mar 26 2019 17:04:04 GMT-0500 (Central Daylight Time)",
+"Interfaces":"CFOFrontEndInterface:210:CFO0"
+}#

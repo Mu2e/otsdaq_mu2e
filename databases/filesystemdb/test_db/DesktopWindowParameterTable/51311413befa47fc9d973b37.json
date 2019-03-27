@@ -892,6 +892,14 @@
 "name" : "testContext_v59",
 "assigned" : "2019-03-06T07:07:15.544-0600"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-27T08:58:55.830-0500",
+"value" : {
+"name" : "testContext_v60",
+"assigned" : "2019-03-27T08:58:55.830-0500"
+}
 }
 ],
 "created" : "2018-07-17T12:10:20.734-0500"
@@ -923,6 +931,10 @@
 {
 "name" : "testContext_v59",
 "assigned" : "2019-03-06T07:07:15.544-0600"
+},
+{
+"name" : "testContext_v60",
+"assigned" : "2019-03-27T08:58:55.830-0500"
 }
 ]
 }
