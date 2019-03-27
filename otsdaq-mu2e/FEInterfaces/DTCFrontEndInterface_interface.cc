@@ -1090,9 +1090,9 @@ void DTCFrontEndInterface::start(std::string)  // runNumber)
 	const int numberOfChains       = 1;
 	int       link[numberOfChains] = {0};
 
-	const int numberOfDTCsPerChain = 2;
+	const int numberOfDTCsPerChain = 1;
 
-	const int numberOfROCsPerDTC = 2;  // assume these are ROC0 and ROC1
+	const int numberOfROCsPerDTC = 1;  // assume these are ROC0 and ROC1
 
 	// To do loopbacks on all CFOs, first have to setup all DTCs, then the CFO
 	// (this method) work per iteration.  Loop back done on all chains (in this
@@ -1108,13 +1108,15 @@ void DTCFrontEndInterface::start(std::string)  // runNumber)
 
 	int loopbackIndex = getIterationIndex();
 
-	if(loopbackIndex == 0)
+	if(loopbackIndex == 0) //start
 	{
 		initial_9100_ = registerRead(0x9100);
 		initial_9114_ = registerRead(0x9114);
+		indicateIterationWork();
+		return;
 	}
 
-	if(loopbackIndex >= totalNumberOfMeasurements)
+	if(loopbackIndex > totalNumberOfMeasurements) //finish
 	{
 		//    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
 
@@ -1145,14 +1147,14 @@ void DTCFrontEndInterface::start(std::string)  // runNumber)
 	//=========== Perform loopback=============
 
 	// where are we in the procedure?
-	unsigned int activeROC = loopbackIndex % numberOfROCsPerDTC;
+	unsigned int activeROC = (loopbackIndex-1) % numberOfROCsPerDTC;
 
 	int activeDTC = -1;
 
 	for(int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++)
 	{
-		if(loopbackIndex >= (nDTC * numberOfROCsPerDTC) &&
-		   loopbackIndex < ((nDTC + 1) * numberOfROCsPerDTC))
+		if((loopbackIndex-1) >= (nDTC * numberOfROCsPerDTC) &&
+		   (loopbackIndex-1) < ((nDTC + 1) * numberOfROCsPerDTC))
 		{
 			activeDTC = nDTC;
 		}

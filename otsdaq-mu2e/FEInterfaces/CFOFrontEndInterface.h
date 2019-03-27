@@ -72,6 +72,10 @@ class CFOFrontEndInterface : public FEVInterface
 	float        average_loopback_;
 	float        rms_loopback_;
 	float        failed_loopback_;
+	unsigned int initial_9100_;
+	unsigned int initial_9114_;
+	unsigned int initial_91a0_;
+	unsigned int initial_9154_;
 };
 
 }  // namespace ots

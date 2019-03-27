@@ -202,6 +202,10 @@
 {
 "name" : "defaultConfig_v144",
 "assigned" : "2019-03-26T11:30:31.298-0500"
+},
+{
+"name" : "defaultConfig_v146",
+"assigned" : "2019-03-27T12:11:37.893-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -535,6 +539,14 @@
 "value" : {
 "name" : "defaultConfig_v144",
 "assigned" : "2019-03-26T11:30:31.298-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-27T12:11:37.893-0500",
+"value" : {
+"name" : "defaultConfig_v146",
+"assigned" : "2019-03-27T12:11:37.893-0500"
 }
 }
 ],

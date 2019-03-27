@@ -275,14 +275,9 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
 	        .getValue<unsigned int>();
 
-	// get initial states
-	unsigned initial_9380 = registerRead(0x9380);
-	unsigned initial_9114 = registerRead(0x9114);
-
 	__FE_COUTV__(numberOfLoopbacks);
 
-	//  int numberOfLoopbacks = 100;
-
+	// prepare histograms
 	float numerator   = 0.0;
 	float denominator = 0.0;
 	failed_loopback_  = 0;
@@ -294,6 +289,16 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 
 	for(int n = 0; n < 10000; n++)
 		loopback_distribution_[n] = 0;  // zero out the histogram
+
+	// get initial states
+	unsigned initial_9380 = registerRead(0x9380);
+	unsigned initial_9114 = registerRead(0x9114);
+
+	// clean up after the DTC has done all of its resetting...
+	__FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
+	registerWrite(0x9118, 0x000000ff);
+	registerWrite(0x9118, 0x0);
+	sleep(1);
 
 	__FE_COUT__ << "LOOPBACK: CFO status before loopback" << __E__;
 	readStatus();
@@ -325,11 +330,10 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 		//--------read delay value
 		unsigned int delay = registerRead(0x9360);
 
-		//		__FE_COUT__ << "LOOPBACK iteration " << std::dec << n << " gives " <<
-		// delay << __E__;
+		//__MCOUT_INFO__("LOOPBACK iteration " << std::dec << n << " gives " << delay << __E__);
 
-		if(delay < 10000 && n > 0)
-		{  // skip the first event since the ROC is
+		if(delay < 10000 && n > 5)
+		{  // skip the first events since the ROC is
 		   // resetting its alignment
 
 			numerator += (float)delay;
@@ -355,8 +359,8 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 		{
 			loopback_data[n] = -999;
 
-			if(n > 0)
-			{  // skip the first event since the ROC is resetting its alignment
+			if(n > 5)
+			{  // skip the first events since the ROC is resetting its alignment
 				failed_loopback_++;
 			}
 		}
@@ -373,7 +377,13 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 	__FE_COUT__ << "LOOPBACK: CFO status after loopback" << __E__;
 	readStatus();
 
+	// return back to initial state
+	registerWrite(0x9380, initial_9380);
+	registerWrite(0x9114, initial_9114);
+
+	// ---------------------------
 	// do a little bit of analysis
+	// ---------------------------
 
 	average_loopback_ = -999.;
 	if(denominator > 0.5)
@@ -415,10 +425,6 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 
 	__FE_COUT__ << "LOOPBACK: number of failed loopbacks = " << std::dec
 	            << failed_loopback_ << __E__;
-
-	// return back to initial state
-	registerWrite(0x9380, initial_9380);
-	registerWrite(0x9114, initial_9114);
 
 	return average_loopback_;
 
@@ -642,7 +648,43 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 
 	int startIndex = getIterationIndex();
 
-	if(startIndex >= numberOfMeasurements)
+	if(startIndex == 0) //setup
+	{
+		initial_9100_ = registerRead(0x9100);
+		initial_9114_ = registerRead(0x9114);
+		initial_91a0_ = registerRead(0x91a0);
+		initial_9154_ = registerRead(0x9154);
+
+		__FE_COUT__ << "CFO disable Event Start character output " << __E__;
+		registerWrite(0x9100, 0x0);
+
+		__FE_COUT__ << "CFO turn off Event Windows" << __E__;
+		registerWrite(0x91a0, 0x00000000);
+
+		__FE_COUT__ << "CFO turn off 40MHz marker interval" << __E__;
+		registerWrite(0x9154, 0x00000000);
+
+		__FE_COUT__ << "START: CFO status" << __E__;
+		readStatus();
+	
+		for(int nChain = 0; nChain < numberOfChains; nChain++)
+		{
+			for(int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++)
+			{
+				for(int nROC = 0; nROC < numberOfROCsPerDTC; nROC++)
+				{
+					delay[nChain][nDTC][nROC]        = -1;
+					delay_rms[nChain][nDTC][nROC]    = -1;
+					delay_failed[nChain][nDTC][nROC] = -1;
+				}
+			}
+		}
+		
+		indicateIterationWork();  // I still need to be touched
+		return;
+	}
+
+	if(startIndex > numberOfMeasurements) //finish
 	{
 		__MCOUT_INFO__("-------------------------" << __E__);
 		__MCOUT_INFO__("FULL SYSTEM loopback DONE" << __E__);
@@ -667,40 +709,31 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 		__MCOUT_INFO__("DTC1_ROC0 - DTC0_ROC0 = " << diff << __E__);
 		__MCOUT_INFO__("-------------------------" << __E__);
 
-		__FE_COUT__ << "CFO enable Event Start character output " << __E__;
-		registerWrite(0x9100, 0x5);
-
 		__FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
 		registerWrite(0x9118, 0x000000ff);
 		registerWrite(0x9118, 0x0);
 		usleep(50);
+		
+		__FE_COUT__ << "CFO enable Event Start character output 0x" << std::hex << __E__;
+		registerWrite(0x9100, initial_9100_);
+
+		__FE_COUT__ << "CFO enable serdes transmit and receive 0x" << __E__;
+		registerWrite(0x9114, initial_9114_);
+
+		__FE_COUT__ << "CFO set Event Window interval time" << __E__;
+		registerWrite(0x91a0, initial_91a0_);  // 40us
+
+		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
+		registerWrite(0x9154, initial_9154_);
 
 		readStatus();
 		return;
 	}
 
-	__FE_COUT__ << "START: CFO status" << __E__;
-	readStatus();
-
-	if(startIndex == 0)
-	{
-		for(int nChain = 0; nChain < numberOfChains; nChain++)
-		{
-			for(int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++)
-			{
-				for(int nROC = 0; nROC < numberOfROCsPerDTC; nROC++)
-				{
-					delay[nChain][nDTC][nROC]        = -1;
-					delay_rms[nChain][nDTC][nROC]    = -1;
-					delay_failed[nChain][nDTC][nROC] = -1;
-				}
-			}
-		}
-	}
 	//=========== Perform loopback=============
 
 	// where are we in the procedure?
-	int activeROC = startIndex % numberOfROCsPerDTC;
+	int activeROC = (startIndex-1) % numberOfROCsPerDTC;
 
 	int activeDTC = -1;
 
@@ -710,8 +743,8 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 		//		<< " nDTC = " << nDTC
 		//		<< " numberOfDTCsPerChain = " << numberOfDTCsPerChain
 		//		<< __E__;
-		if(startIndex >= (nDTC * numberOfROCsPerDTC) &&
-		   startIndex < ((nDTC + 1) * numberOfROCsPerDTC))
+		if((startIndex-1) >= (nDTC * numberOfROCsPerDTC) &&
+		   (startIndex-1) < ((nDTC + 1) * numberOfROCsPerDTC))
 		{
 			//				__FE_COUT__ << "ACTIVE DTC " << nDTC <<
 			//__E__;
@@ -722,16 +755,11 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 	//	__MOUT__ 	<< "loopback index = " << startIndex;
 	__MCOUT_INFO__(" Looping back DTC" << activeDTC << " ROC" << activeROC << __E__);
 
+
 	int chainIndex = 0;
 
 	while((chainIndex < numberOfChains))
 	{
-		// clean up after the DTC has done all of its resetting...
-		__FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
-		registerWrite(0x9118, 0x000000ff);
-		registerWrite(0x9118, 0x0);
-		sleep(1);
-
 		//__MCOUT__( "LOOPBACK: on DTC " << link[chainIndex] <<__E__);
 		MeasureLoopback(link[chainIndex]);
 
@@ -750,7 +778,6 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 	}  // (chainIndex < numberOfChains)
 
 	indicateIterationWork();  // I still need to be touched
-
 	return;
 }
 
