@@ -46,7 +46,9 @@ void ROCPolarFireCoreInterface::writeROCRegister(unsigned address, unsigned data
 	            << ", address = " << address << ", write data = " << data_to_write
 	            << __E__;
 
-	thisDTC_->WriteROCRegister(linkID_, address, data_to_write);
+	bool acknowledge_request = false;
+
+	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request);
 
 } //end writeROCRegister()
 

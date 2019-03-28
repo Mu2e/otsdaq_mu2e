@@ -158,7 +158,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("ROC_ReadBlock",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ReadROCBlock),
-					std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address"},
+				        std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address", "incrementAddress"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 
@@ -2732,7 +2732,9 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 	            << __E__;
 	__FE_COUT__ << "writeData = 0x" << std::hex << writeData << std::dec << __E__;
 
-	thisDTC_->WriteExtROCRegister(rocLinkIndex, block, address, writeData);
+	bool acknowledge_request = false;
+
+	thisDTC_->WriteExtROCRegister(rocLinkIndex, block, address, writeData, acknowledge_request);
 
 	for(auto& argOut : argsOut)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
@@ -2757,14 +2759,16 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
 	uint8_t address = __GET_ARG_IN__("address", uint8_t);
 	uint8_t number_of_words   = __GET_ARG_IN__("numberOfWords", uint8_t);
+	bool incrementAddress    = bool(__GET_ARG_IN__("incrementAddress", uint8_t));
 
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
 	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)number_of_words << __E__;
+	__FE_COUTV__(incrementAddress);
 
 	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
 	
-	auto readData = thisDTC_->ReadROCBlock(rocLinkIndex, address, number_of_words);
+	auto readData = thisDTC_->ReadROCBlock(rocLinkIndex, address, number_of_words, incrementAddress);
 
 	for (int i=0; i<number_of_words; i++) {
 		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i] << __E__;

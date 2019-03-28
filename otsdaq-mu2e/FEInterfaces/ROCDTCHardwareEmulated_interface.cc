@@ -46,7 +46,9 @@ void ROCDTCHardwareEmulated::writeROCRegister(unsigned address, unsigned data_to
 	            << ", address = " << address << ", write data = " << data_to_write
 	            << __E__;
 
-	thisDTC_->WriteROCRegister(linkID_, address, data_to_write);
+	bool acknowledge_request = false;
+
+	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request);
 
 } //end writeROCRegister()
 
@@ -60,7 +62,7 @@ int ROCDTCHardwareEmulated::readROCRegister(unsigned address)
 
 	try
 	{
-		read_data = thisDTC_->ReadROCRegister(linkID_, address, 10);
+		read_data = thisDTC_->ReadROCRegister(linkID_, address, 1);
 	}
 	catch(...)
 	{
