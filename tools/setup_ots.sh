@@ -9,9 +9,10 @@ userinput=$1
 shift        
 
 if [ x$userinput == "x" ]; then
+  echo "--> You are user $USER in the directory `pwd`"
   echo "================================================="
   echo "usage:  source setup_ots.sh <subsystem>"
-  echo "... where  subsystem = (hwdev,sync,stm,calo)"
+  echo "... where  subsystem = (hwdev,sync,stm,calo,trigger)"
   echo "================================================="
   return 1;
 fi
@@ -32,7 +33,7 @@ elif [ $userinput == "stm" ]; then
     basepath="mu2estm/test_stand"
     repository="otsdaq_mu2e_stm"
     userdataappend=""
-elif [ $userinput == "calorimeter" ]; then
+elif [ $userinput == "calo" ]; then
     export OTS_MAIN_PORT=3025
     export OTS_WIZ_MODE_MAIN_PORT=3025
     basepath="mu2ecalo/test_stand"
