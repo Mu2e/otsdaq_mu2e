@@ -18,32 +18,38 @@ fi
 
 basepath="notGoodBasepath"
 userdataappend="notGoodAppendageToUserData"
+repository="notGoodRepository"
 
 if [ $userinput == "sync" ]; then
     export OTS_MAIN_PORT=2015
     export OTS_WIZ_MODE_MAIN_PORT=3015
+    basepath="mu2edaq/sync_demo"   #keep this so that Rick can be happy "in his world" (i.e., using 02)
+    repository="otsdaq_mu2e"
     userdataappend=""
-    basepath="mu2edaq/sync_demo"
 elif [ $userinput == "stm" ]; then
     export OTS_MAIN_PORT=3035
     export OTS_WIZ_MODE_MAIN_PORT=3035
-    userdataappend=""
     basepath="mu2estm/test_stand"
+    repository="otsdaq_mu2e_stm"
+    userdataappend=""
 elif [ $userinput == "calorimeter" ]; then
     export OTS_MAIN_PORT=3025
     export OTS_WIZ_MODE_MAIN_PORT=3025
-    userdataappend=""
     basepath="mu2ecalo/test_stand"
+    repository="otsdaq_mu2e_calorimeter"
+    userdataappend=""
 elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
     export OTS_WIZ_MODE_MAIN_PORT=3045
-    userdataappend=""
     basepath="mu2etrigger/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend=""
 elif [ $userinput == "hwdev" ]; then
     export OTS_MAIN_PORT=3055
     export OTS_WIZ_MODE_MAIN_PORT=3055
-    userdataappend="_HWDev"
     basepath="mu2ehwdev/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend="_HWDev"
 fi
 
 
@@ -77,7 +83,7 @@ echo
 
 # Setup environment when building with MRB (As there's no setupARTDAQOTS file)
 
-export OTSDAQ_DEMO_LIB=${MRB_BUILDDIR}/otsdaq_mu2e/lib
+export OTSDAQ_DEMO_LIB=${MRB_BUILDDIR}/${repository}/lib
 #export OTSDAQ_LIB=${MRB_BUILDDIR}/otsdaq/lib
 #export OTSDAQ_UTILITIES_LIB=${MRB_BUILDDIR}/otsdaq_utilities/lib
 #Done with Setup environment when building with MRB (As there's no setupARTDAQOTS file)
@@ -87,9 +93,9 @@ export CETPKG_INSTALL=/home/mu2edaq/sync_demo/ots/products
 export CETPKG_J=16
 
 
-export USER_DATA="/home/${basepath}/ots/srcs/otsdaq_mu2e/Data${userdataappend}"
-export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/otsdaq_mu2e/databases${userdataappend}/filesystemdb/test_db"
-export OTSDAQ_DATA="/home/${basepath}/ots/srcs/otsdaq_mu2e/Data${userdataappend}/OutputData"
+export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
+export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
+export OTSDAQ_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/OutputData"
 
 echo -e "setup [275]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
 echo -e "setup [275]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
