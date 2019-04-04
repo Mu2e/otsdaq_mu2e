@@ -1,0 +1,181 @@
+{
+"document" : {
+"data" : {
+"NAME" : "STM_PARAMETERS_TABLE",
+"COMMENT" : "Example of subsystem configuration parameters",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552408015,
+"COL_TYPES" : {
+"STM_PARAMETERS_UID" : "VARCHAR2",
+"STM_NUMBER_PARAM1" : "VARCHAR2",
+"STM_TRUE_FALSE_PARAM2" : "VARCHAR2",
+"STM_MUST_BE_UNIQUE_PARAM3" : "VARCHAR2",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "VARCHAR2",
+"LINK_TO_STM_GROUPED_PARAMETERS_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet0",
+"STM_NUMBER_PARAM1" : "10000",
+"STM_TRUE_FALSE_PARAM2" : "True",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs0",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552408015"
+},
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet1",
+"STM_NUMBER_PARAM1" : "${HISTSIZE}+3",
+"STM_TRUE_FALSE_PARAM2" : "True",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs1",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552064549"
+},
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet2",
+"STM_NUMBER_PARAM1" : "b1101",
+"STM_TRUE_FALSE_PARAM2" : "False",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs2",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552064549"
+},
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet3",
+"STM_NUMBER_PARAM1" : "0x10",
+"STM_TRUE_FALSE_PARAM2" : "False",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs3",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_STM_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552064549"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-12T11:26:55.137-0500",
+"rawdata" : [
+
+]
+},
+"version" : "4",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-12T11:26:55.138-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-12T11:26:55.137-0500"
+},
+{
+"name" : "defaultConfig_v129",
+"assigned" : "2019-03-12T11:27:02.352-0500"
+},
+{
+"name" : "defaultConfig_v130",
+"assigned" : "2019-03-12T11:55:08.884-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-12T11:26:55.138-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-12T11:26:55.137-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-12T11:26:55.138-0500",
+"value" : {
+"name" : "4",
+"assigned" : "2019-03-12T11:26:55.138-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-12T11:26:55.138-0500",
+"value" : {
+"name" : "STMParametersTable",
+"assigned" : "2019-03-12T11:26:55.138-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-12T11:26:55.138-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-12T11:26:55.138-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-12T11:27:02.352-0500",
+"value" : {
+"name" : "defaultConfig_v129",
+"assigned" : "2019-03-12T11:27:02.352-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-12T11:55:08.884-0500",
+"value" : {
+"name" : "defaultConfig_v130",
+"assigned" : "2019-03-12T11:55:08.884-0500"
+}
+}
+],
+"created" : "2019-03-12T11:26:55.137-0500"
+},
+"_id" : {
+"$oid" : "7a8cb82a91fd426d980fabff"
+},
+"collection" : "STMParametersTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

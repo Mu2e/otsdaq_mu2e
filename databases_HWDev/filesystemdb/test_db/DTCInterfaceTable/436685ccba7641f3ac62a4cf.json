@@ -1,0 +1,222 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DTC_INTERFACE_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552409701,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"EMULATOR_MODE" : "VARCHAR2",
+"LOCATION_IN_CHAIN" : "NUMBER",
+"DEVICE_INDEX" : "NUMBER",
+"CONFIGURE_CLOCK" : "NUMBER",
+"LINK_TO_ROC_GROUP_TABLE" : "VARCHAR2",
+"LINK_TO_ROC_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "DTC0",
+"EMULATOR_MODE" : "False",
+"LOCATION_IN_CHAIN" : "0",
+"DEVICE_INDEX" : "0",
+"CONFIGURE_CLOCK" : "0",
+"LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
+"LINK_TO_ROC_GROUP_ID" : "DTC0ROCs",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551739189"
+},
+{
+"UID" : "DTC1",
+"EMULATOR_MODE" : "True",
+"LOCATION_IN_CHAIN" : "1",
+"DEVICE_INDEX" : "0",
+"CONFIGURE_CLOCK" : "0",
+"LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
+"LINK_TO_ROC_GROUP_ID" : "DTC1ROCs",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552409701"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-12T11:55:01.529-0500",
+"rawdata" : [
+
+]
+},
+"version" : "13",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-12T11:55:01.530-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-12T11:55:01.529-0500"
+},
+{
+"name" : "defaultConfig_v130",
+"assigned" : "2019-03-12T11:55:06.687-0500"
+},
+{
+"name" : "defaultConfig_v131",
+"assigned" : "2019-03-15T12:14:44.045-0500"
+},
+{
+"name" : "defaultConfig_v132",
+"assigned" : "2019-03-15T12:23:09.822-0500"
+},
+{
+"name" : "defaultConfig_v133",
+"assigned" : "2019-03-15T12:34:58.965-0500"
+},
+{
+"name" : "defaultConfig_v134",
+"assigned" : "2019-03-15T12:39:05.592-0500"
+},
+{
+"name" : "defaultConfig_v135",
+"assigned" : "2019-03-15T12:57:17.785-0500"
+},
+{
+"name" : "defaultConfig_v136",
+"assigned" : "2019-03-20T15:07:36.898-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-12T11:55:01.529-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-12T11:55:01.529-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-12T11:55:01.530-0500",
+"value" : {
+"name" : "13",
+"assigned" : "2019-03-12T11:55:01.530-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-12T11:55:01.530-0500",
+"value" : {
+"name" : "DTCInterfaceTable",
+"assigned" : "2019-03-12T11:55:01.530-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-12T11:55:01.530-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-12T11:55:01.530-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-12T11:55:06.687-0500",
+"value" : {
+"name" : "defaultConfig_v130",
+"assigned" : "2019-03-12T11:55:06.687-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:14:44.045-0500",
+"value" : {
+"name" : "defaultConfig_v131",
+"assigned" : "2019-03-15T12:14:44.045-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:23:09.822-0500",
+"value" : {
+"name" : "defaultConfig_v132",
+"assigned" : "2019-03-15T12:23:09.822-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:34:58.965-0500",
+"value" : {
+"name" : "defaultConfig_v133",
+"assigned" : "2019-03-15T12:34:58.965-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:39:05.592-0500",
+"value" : {
+"name" : "defaultConfig_v134",
+"assigned" : "2019-03-15T12:39:05.592-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-15T12:57:17.785-0500",
+"value" : {
+"name" : "defaultConfig_v135",
+"assigned" : "2019-03-15T12:57:17.785-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-20T15:07:36.898-0500",
+"value" : {
+"name" : "defaultConfig_v136",
+"assigned" : "2019-03-20T15:07:36.898-0500"
+}
+}
+],
+"created" : "2019-03-12T11:55:01.529-0500"
+},
+"_id" : {
+"$oid" : "436685ccba7641f3ac62a4cf"
+},
+"collection" : "DTCInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

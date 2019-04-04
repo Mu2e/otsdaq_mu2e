@@ -1,0 +1,137 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DATA_BUFFER_TABLE",
+"COMMENT" : "Data Buffer table for tutorial.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551722373,
+"COL_TYPES" : {
+"DATA_BUFFER_GROUP_ID" : "VARCHAR2",
+"DATA_BUFFER_UID" : "VARCHAR2",
+"LINK_TO_DATA_PROCESSOR_TABLE" : "VARCHAR2",
+"LINK_TO_DATA_PROCESSOR_GROUP_ID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-04T11:59:33.132-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-04T11:59:33.133-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-04T11:59:33.133-0600"
+},
+{
+"name" : "defaultConfig_v97",
+"assigned" : "2019-03-04T12:01:43.396-0600"
+},
+{
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T14:56:10.665-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T11:59:33.133-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-04T11:59:33.133-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-04T11:59:33.133-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-03-04T11:59:33.133-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-04T11:59:33.133-0600",
+"value" : {
+"name" : "DataBufferTable",
+"assigned" : "2019-03-04T11:59:33.133-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-04T11:59:33.133-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-04T11:59:33.133-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T12:01:43.396-0600",
+"value" : {
+"name" : "defaultConfig_v97",
+"assigned" : "2019-03-04T12:01:43.396-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:56:10.665-0600",
+"value" : {
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T14:56:10.665-0600"
+}
+}
+],
+"created" : "2019-03-04T11:59:33.132-0600"
+},
+"_id" : {
+"$oid" : "4cabb6a13b264d00b2bcce77"
+},
+"collection" : "DataBufferTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

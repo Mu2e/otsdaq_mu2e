@@ -1,0 +1,127 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_PHYSICS_FILTER_TABLE",
+"COMMENT" : "",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1504201458,
+"COL_TYPES" : {
+"FILTER_GROUP_ID" : "VARCHAR2",
+"FILTER_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"FILTER_KEY" : "VARCHAR2",
+"FILTER_MODULE_TYPE" : "VARCHAR2",
+"FILTER_MODULE_PARAMETER_LINK" : "VARCHAR2",
+"FILTER_MODULE_PARAMETER_LINK_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:44.327-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:44.328-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:44.327-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:46.945-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-02-26T11:06:44.328-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:44.327-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:44.328-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:44.328-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:44.328-0600",
+"value" : {
+"name" : "ARTDAQPhysicsFilterTable",
+"assigned" : "2019-02-26T11:06:44.328-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:44.328-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:44.328-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-02-26T11:06:46.945-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:46.945-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:44.327-0600"
+},
+"_id" : {
+"$oid" : "e295e51f768c4805b892bf28"
+},
+"collection" : "ARTDAQPhysicsFilterTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

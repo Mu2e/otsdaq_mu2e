@@ -1,0 +1,138 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DTC_INTERFACE_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551150212,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"EMULATOR_MODE" : "VARCHAR2",
+"LOCATION_IN_CHAIN" : "NUMBER",
+"DEVICE_INDEX" : "NUMBER",
+"CONFIGURE_CLOCK" : "NUMBER",
+"LINK_TO_ROC_GROUP_TABLE" : "VARCHAR2",
+"LINK_TO_ROC_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "DTC0",
+"EMULATOR_MODE" : "True",
+"LOCATION_IN_CHAIN" : "0",
+"DEVICE_INDEX" : "0",
+"CONFIGURE_CLOCK" : "0",
+"LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
+"LINK_TO_ROC_GROUP_ID" : "DTC0_ROCGroup",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551150144"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:49.303-0600",
+"rawdata" : [
+
+]
+},
+"version" : "4",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:49.304-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:49.304-0600"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "2019-02-26T11:06:49.929-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-02-26T11:06:49.304-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:49.304-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:49.304-0600",
+"value" : {
+"name" : "4",
+"assigned" : "2019-02-26T11:06:49.304-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:49.304-0600",
+"value" : {
+"name" : "DTCInterfaceTable",
+"assigned" : "2019-02-26T11:06:49.304-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:49.304-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:49.304-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-02-26T11:06:49.929-0600",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "2019-02-26T11:06:49.929-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:49.303-0600"
+},
+"_id" : {
+"$oid" : "54db2fadb9a643ba9f619f34"
+},
+"collection" : "DTCInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

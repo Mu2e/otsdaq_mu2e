@@ -1,0 +1,343 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ROC_INTERFACE_TABLE",
+"COMMENT" : "Includes 4x DTC links for STM",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551822002,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"ROC_GROUP_ID" : "VARCHAR2",
+"ROC_INTERFACE_PLUGIN_NAME" : "VARCHAR2",
+"LINK_ID" : "NUMBER",
+"EVENT_WINDOW_DELAY_OFFSET" : "NUMBER",
+"ROC_TYPE_LINK_TABLE" : "VARCHAR2",
+"ROC_TYPE_LINK_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "DTC0_ROC0_PolarFire",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "0",
+"EVENT_WINDOW_DELAY_OFFSET" : "0",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551818128"
+},
+{
+"UID" : "DTC0_ROC1_PolarFire",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "1",
+"EVENT_WINDOW_DELAY_OFFSET" : "10",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551803545"
+},
+{
+"UID" : "DTC0_ROC2_STM0",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "2",
+"EVENT_WINDOW_DELAY_OFFSET" : "20",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC0_ROC3_STM1",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "3",
+"EVENT_WINDOW_DELAY_OFFSET" : "30",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC0_ROC4_STM2",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "4",
+"EVENT_WINDOW_DELAY_OFFSET" : "40",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC0_ROC5_STM3",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "5",
+"EVENT_WINDOW_DELAY_OFFSET" : "50",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC1_ROC0_PolarFire",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "0",
+"EVENT_WINDOW_DELAY_OFFSET" : "1",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551820779"
+},
+{
+"UID" : "DTC1_ROC1_PolarFire",
+"STATUS" : "Off",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCPolarFireCoreInterface",
+"LINK_ID" : "1",
+"EVENT_WINDOW_DELAY_OFFSET" : "11",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551820779"
+},
+{
+"UID" : "DTC1_ROC2_STM0",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "2",
+"EVENT_WINDOW_DELAY_OFFSET" : "21",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC1_ROC3_STM1",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "3",
+"EVENT_WINDOW_DELAY_OFFSET" : "31",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC1_ROC4_STM2",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "4",
+"EVENT_WINDOW_DELAY_OFFSET" : "41",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+},
+{
+"UID" : "DTC1_ROC5_STM3",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC1ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCStoppingTargetMonitorInterface",
+"LINK_ID" : "5",
+"EVENT_WINDOW_DELAY_OFFSET" : "51",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551822002"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-05T15:40:02.119-0600",
+"rawdata" : [
+
+]
+},
+"version" : "37",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-05T15:40:02.120-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-05T15:40:02.119-0600"
+},
+{
+"name" : "defaultConfig_v120",
+"assigned" : "2019-03-05T15:40:07.856-0600"
+},
+{
+"name" : "defaultConfig_v121",
+"assigned" : "2019-03-08T10:33:44.051-0600"
+},
+{
+"name" : "defaultConfig_v122",
+"assigned" : "2019-03-08T10:37:07.210-0600"
+},
+{
+"name" : "defaultConfig_v123",
+"assigned" : "2019-03-08T10:48:09.409-0600"
+},
+{
+"name" : "defaultConfig_v124",
+"assigned" : "2019-03-08T10:58:35.285-0600"
+},
+{
+"name" : "defaultConfig_v125",
+"assigned" : "2019-03-08T11:02:36.125-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-05T15:40:02.119-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-05T15:40:02.119-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-05T15:40:02.120-0600",
+"value" : {
+"name" : "37",
+"assigned" : "2019-03-05T15:40:02.120-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-05T15:40:02.120-0600",
+"value" : {
+"name" : "ROCInterfaceTable",
+"assigned" : "2019-03-05T15:40:02.120-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-05T15:40:02.120-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-05T15:40:02.120-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-05T15:40:07.856-0600",
+"value" : {
+"name" : "defaultConfig_v120",
+"assigned" : "2019-03-05T15:40:07.856-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:33:44.051-0600",
+"value" : {
+"name" : "defaultConfig_v121",
+"assigned" : "2019-03-08T10:33:44.051-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:37:07.210-0600",
+"value" : {
+"name" : "defaultConfig_v122",
+"assigned" : "2019-03-08T10:37:07.210-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:48:09.409-0600",
+"value" : {
+"name" : "defaultConfig_v123",
+"assigned" : "2019-03-08T10:48:09.409-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:58:35.285-0600",
+"value" : {
+"name" : "defaultConfig_v124",
+"assigned" : "2019-03-08T10:58:35.285-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T11:02:36.125-0600",
+"value" : {
+"name" : "defaultConfig_v125",
+"assigned" : "2019-03-08T11:02:36.125-0600"
+}
+}
+],
+"created" : "2019-03-05T15:40:02.119-0600"
+},
+"_id" : {
+"$oid" : "7409b5e641d24b8282791df4"
+},
+"collection" : "ROCInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

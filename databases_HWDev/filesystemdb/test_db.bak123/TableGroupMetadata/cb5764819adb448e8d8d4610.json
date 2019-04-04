@@ -1,0 +1,128 @@
+{
+"document" : {
+"data" : {
+"NAME" : "",
+"COMMENT" : "",
+"AUTHOR" : "",
+"CREATION_TIME" : 1536269427,
+"COL_TYPES" : {
+"UNUSED_UID" : "NUMBER",
+"GROUP_ALIASES" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"GROUP_CREATION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UNUSED_UID" : "0",
+"GROUP_ALIASES" : "",
+"COMMENT_DESCRIPTION" : "",
+"AUTHOR" : "admin",
+"GROUP_CREATION_TIME" : "1547756309"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-17T14:18:29.210-0600",
+"rawdata" : [
+
+]
+},
+"version" : "271",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T14:18:29.210-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-17T14:18:29.210-0600"
+},
+{
+"name" : "TableEditWizBackbone_v50",
+"assigned" : "2019-01-17T14:18:29.483-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-01-17T14:18:29.210-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-17T14:18:29.210-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-17T14:18:29.210-0600",
+"value" : {
+"name" : "271",
+"assigned" : "2019-01-17T14:18:29.210-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-17T14:18:29.210-0600",
+"value" : {
+"name" : "TableGroupMetadata",
+"assigned" : "2019-01-17T14:18:29.210-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-17T14:18:29.210-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T14:18:29.210-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-17T14:18:29.484-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v50",
+"assigned" : "2019-01-17T14:18:29.483-0600"
+}
+}
+],
+"created" : "2019-01-17T14:18:29.210-0600"
+},
+"_id" : {
+"$oid" : "cb5764819adb448e8d8d4610"
+},
+"collection" : "TableGroupMetadata",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

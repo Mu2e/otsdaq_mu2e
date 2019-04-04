@@ -1,0 +1,312 @@
+{
+"document" : {
+"data" : {
+"NAME" : "MU2E_GLOBALS_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1548367919,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"NUMBER_OF_LOOPBACKS" : "NUMBER",
+"NUMBER_OF_CAPTAN_PULSES" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "SyncDemoConfig",
+"NUMBER_OF_LOOPBACKS" : "1000",
+"NUMBER_OF_CAPTAN_PULSES" : "100",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548367919"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-24T16:11:59.728-0600",
+"rawdata" : [
+
+]
+},
+"version" : "17",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-24T16:11:59.729-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-24T16:11:59.728-0600"
+},
+{
+"name" : "defaultConfig_v92",
+"assigned" : "2019-01-24T16:12:05.008-0600"
+},
+{
+"name" : "defaultConfig_v95",
+"assigned" : "2019-01-24T16:28:09.124-0600"
+},
+{
+"name" : "defaultConfig_v96",
+"assigned" : "2019-01-25T09:42:16.733-0600"
+},
+{
+"name" : "defaultConfig_v98",
+"assigned" : "2019-01-28T15:27:31.244-0600"
+},
+{
+"name" : "defaultConfig_v105",
+"assigned" : "2019-02-07T16:35:15.462-0600"
+},
+{
+"name" : "defaultConfig_v106",
+"assigned" : "2019-02-07T16:40:49.431-0600"
+},
+{
+"name" : "defaultConfig_v107",
+"assigned" : "2019-02-18T15:09:55.296-0600"
+},
+{
+"name" : "defaultConfig_v108",
+"assigned" : "2019-02-18T15:11:08.646-0600"
+},
+{
+"name" : "defaultConfig_v109",
+"assigned" : "2019-02-19T09:04:26.409-0600"
+},
+{
+"name" : "defaultConfig_v110",
+"assigned" : "2019-02-19T09:05:52.971-0600"
+},
+{
+"name" : "defaultConfig_v111",
+"assigned" : "2019-02-19T10:50:34.116-0600"
+},
+{
+"name" : "defaultConfig_v112",
+"assigned" : "2019-02-20T18:10:28.376-0600"
+},
+{
+"name" : "defaultConfig_v113",
+"assigned" : "2019-02-20T18:20:21.258-0600"
+},
+{
+"name" : "defaultConfig_v114",
+"assigned" : "2019-02-20T22:05:05.486-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-01-24T16:11:59.728-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-24T16:11:59.728-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-24T16:11:59.729-0600",
+"value" : {
+"name" : "17",
+"assigned" : "2019-01-24T16:11:59.729-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-24T16:11:59.729-0600",
+"value" : {
+"name" : "Mu2eGlobalsTable",
+"assigned" : "2019-01-24T16:11:59.729-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-24T16:11:59.729-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-24T16:11:59.729-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-24T16:12:05.008-0600",
+"value" : {
+"name" : "defaultConfig_v92",
+"assigned" : "2019-01-24T16:12:05.008-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-24T16:28:09.124-0600",
+"value" : {
+"name" : "defaultConfig_v95",
+"assigned" : "2019-01-24T16:28:09.124-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-25T09:42:16.733-0600",
+"value" : {
+"name" : "defaultConfig_v96",
+"assigned" : "2019-01-25T09:42:16.733-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-28T15:27:31.244-0600",
+"value" : {
+"name" : "defaultConfig_v98",
+"assigned" : "2019-01-28T15:27:31.244-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-07T16:35:15.462-0600",
+"value" : {
+"name" : "defaultConfig_v105",
+"assigned" : "2019-02-07T16:35:15.462-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-07T16:40:49.431-0600",
+"value" : {
+"name" : "defaultConfig_v106",
+"assigned" : "2019-02-07T16:40:49.431-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-18T15:09:55.296-0600",
+"value" : {
+"name" : "defaultConfig_v107",
+"assigned" : "2019-02-18T15:09:55.296-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-18T15:11:08.646-0600",
+"value" : {
+"name" : "defaultConfig_v108",
+"assigned" : "2019-02-18T15:11:08.646-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-19T09:04:26.409-0600",
+"value" : {
+"name" : "defaultConfig_v109",
+"assigned" : "2019-02-19T09:04:26.409-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-19T09:05:52.972-0600",
+"value" : {
+"name" : "defaultConfig_v110",
+"assigned" : "2019-02-19T09:05:52.971-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-19T10:50:34.116-0600",
+"value" : {
+"name" : "defaultConfig_v111",
+"assigned" : "2019-02-19T10:50:34.116-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-20T18:10:28.376-0600",
+"value" : {
+"name" : "defaultConfig_v112",
+"assigned" : "2019-02-20T18:10:28.376-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-20T18:20:21.258-0600",
+"value" : {
+"name" : "defaultConfig_v113",
+"assigned" : "2019-02-20T18:20:21.258-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-20T22:05:05.486-0600",
+"value" : {
+"name" : "defaultConfig_v114",
+"assigned" : "2019-02-20T22:05:05.486-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T12:01:44.694-0600",
+"value" : {
+"name" : "defaultConfig_v97",
+"assigned" : "2019-03-04T12:01:44.694-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:56:11.848-0600",
+"value" : {
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T14:56:11.848-0600"
+}
+}
+],
+"created" : "2019-01-24T16:11:59.728-0600"
+},
+"_id" : {
+"$oid" : "786bb5e2aed547d0a5cc476c"
+},
+"collection" : "Mu2eGlobalsTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "defaultConfig_v97",
+"assigned" : "2019-03-04T12:01:44.694-0600"
+},
+{
+"name" : "defaultConfig_v98",
+"assigned" : "2019-03-04T14:56:11.848-0600"
+}
+]
+}

@@ -1,0 +1,224 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_AGGREGATOR_DAQ_PARAMETER_TABLE",
+"COMMENT" : "Default aggregator daq parameters for the artdaq (1-1-1) tutorial.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1504821106,
+"COL_TYPES" : {
+"DAQ_PARAMETER_GROUP_ID" : "VARCHAR2",
+"DAQ_PARAMETER_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"DAQ_PARAMETER_KEY" : "VARCHAR2",
+"DAQ_PARAMETER_VALUE" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP0",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "expected_events_per_bunch",
+"DAQ_PARAMETER_VALUE" : "1",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP1",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "print_event_store_stats",
+"DAQ_PARAMETER_VALUE" : "true",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP2",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "event_queue_depth",
+"DAQ_PARAMETER_VALUE" : "20",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP3",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "event_queue_wait_time",
+"DAQ_PARAMETER_VALUE" : "5",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP4",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "onmon_event_prescale",
+"DAQ_PARAMETER_VALUE" : "1",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP5",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "xmlrpc_client_list",
+"DAQ_PARAMETER_VALUE" : "\";http://ironwork.fnal.gov:5205/RPC2,3;http://ironwork.fnal.gov:5206/RPC2,3;http://ironwork.fnal.gov:5235/RPC2,4;http://ironwork.fnal.gov:5236/RPC2,4;http://ironwork.fnal.gov:5265/RPC2,5;http://ironwork.fnal.gov:5266/RPC2,5\"",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP6",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "file_size_MB",
+"DAQ_PARAMETER_VALUE" : "0.0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP7",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "file_duration",
+"DAQ_PARAMETER_VALUE" : "0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP8",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "file_event_count",
+"DAQ_PARAMETER_VALUE" : "0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+},
+{
+"DAQ_PARAMETER_GROUP_ID" : "aggregator0daq0PGroup",
+"DAQ_PARAMETER_UID" : "aggregatorDaqP9",
+"STATUS" : "On",
+"DAQ_PARAMETER_KEY" : "is_data_logger",
+"DAQ_PARAMETER_VALUE" : "true",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1504821106"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:42.709-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:42.710-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:42.710-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:45.571-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:42.710-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:42.710-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:42.710-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:42.710-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:42.710-0600",
+"value" : {
+"name" : "ARTDAQAggregatorDaqParameterTable",
+"assigned" : "2019-02-26T11:06:42.710-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:42.710-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:42.710-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:45.571-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:45.571-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:42.709-0600"
+},
+"_id" : {
+"$oid" : "7a351035feec4ed4b8200e78"
+},
+"collection" : "ARTDAQAggregatorDaqParameterTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
