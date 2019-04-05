@@ -43,7 +43,7 @@ elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
     export OTS_WIZ_MODE_MAIN_PORT=3045
     basepath="mu2etrigger/test_stand"
-    repository="otsdaq_mu2e"
+    repository="otsdaq_mu2e_trigger"
     userdataappend=""
 elif [ $userinput == "hwdev" ]; then
     export OTS_MAIN_PORT=3055
