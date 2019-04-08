@@ -1,6 +1,7 @@
 Data*/Logs
 Data*/ServiceData/LoginData/UsersData/TooltipData
 Data*/ServiceData/ProgressBarData
+Data*/ServiceData/Start*.cmd
 *.bk
 .Start*
 *.bak
