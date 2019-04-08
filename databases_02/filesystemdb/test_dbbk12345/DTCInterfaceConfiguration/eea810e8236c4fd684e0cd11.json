@@ -1,0 +1,186 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DTC_INTERFACE_CONFIGURATION",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1547587035,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"EMULATOR_MODE" : "VARCHAR2",
+"LOCATION_IN_CHAIN" : "NUMBER",
+"DEVICE_INDEX" : "NUMBER",
+"CONFIGURE_CLOCK" : "NUMBER",
+"LINK_TO_ROC_GROUP_TABLE" : "VARCHAR2",
+"LINK_TO_ROC_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "DTC0",
+"EMULATOR_MODE" : "False",
+"LOCATION_IN_CHAIN" : "0",
+"DEVICE_INDEX" : "0",
+"CONFIGURE_CLOCK" : "0",
+"LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceConfiguration",
+"LINK_TO_ROC_GROUP_ID" : "DTC0ROCs",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1547586392"
+},
+{
+"UID" : "DTC1",
+"EMULATOR_MODE" : "False",
+"LOCATION_IN_CHAIN" : "1",
+"DEVICE_INDEX" : "0",
+"CONFIGURE_CLOCK" : "0",
+"LINK_TO_ROC_GROUP_TABLE" : "NO_LINK",
+"LINK_TO_ROC_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1539367811"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-15T15:17:15.149-0600",
+"rawdata" : [
+
+]
+},
+"version" : "6",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-15T15:17:15.150-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-15T15:17:15.150-0600"
+},
+{
+"name" : "daq02Config_v4",
+"assigned" : "2019-01-15T15:17:21.096-0600"
+},
+{
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-16T10:22:38.777-0600"
+},
+{
+"name" : "daq02Config_v6",
+"assigned" : "2019-01-16T10:24:18.744-0600"
+},
+{
+"name" : "daq02Config_v7",
+"assigned" : "2019-01-16T11:44:23.329-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:17:15.150-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-15T15:17:15.150-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-15T15:17:15.150-0600",
+"value" : {
+"name" : "6",
+"assigned" : "2019-01-15T15:17:15.150-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-15T15:17:15.150-0600",
+"value" : {
+"name" : "DTCInterfaceConfiguration",
+"assigned" : "2019-01-15T15:17:15.150-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-15T15:17:15.150-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-15T15:17:15.150-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:17:21.096-0600",
+"value" : {
+"name" : "daq02Config_v4",
+"assigned" : "2019-01-15T15:17:21.096-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T10:22:38.777-0600",
+"value" : {
+"name" : "daq02Config_v5",
+"assigned" : "2019-01-16T10:22:38.777-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T10:24:18.744-0600",
+"value" : {
+"name" : "daq02Config_v6",
+"assigned" : "2019-01-16T10:24:18.744-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-16T11:44:23.329-0600",
+"value" : {
+"name" : "daq02Config_v7",
+"assigned" : "2019-01-16T11:44:23.329-0600"
+}
+}
+],
+"created" : "2019-01-15T15:17:15.149-0600"
+},
+"_id" : {
+"$oid" : "eea810e8236c4fd684e0cd11"
+},
+"collection" : "DTCInterfaceConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

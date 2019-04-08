@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ROOT xmlns="http://www.w3.org/2001/XMLSchema-instance">
+
+  <DATA xmlns="">
+    <pref_syslayout xmlns="">FE%20Macro%20Test,,%2FWebPath%2Fhtml%2FFEMacroTest.html%3Furn%3D300,4989,4985,4989,4985,1,State%20Machine,,%2FWebPath%2Fhtml%2FStateMachine.html%3Ffsm_name%3DOtherRuns0,4961,0,4989,4985,1,Console,,%2FWebPath%2Fhtml%2FConsole.html%3Furn%3D260,0,-9,4961,10000,1;0;0;0;0</pref_syslayout>
+  </DATA>
+
+</ROOT>

@@ -1,0 +1,234 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DATA_BUFFER_CONFIGURATION",
+"COMMENT" : "Data Buffer table for tutorial.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1501079048,
+"COL_TYPES" : {
+"DATA_BUFFER_GROUP_ID" : "VARCHAR2",
+"PROCESSOR_UID" : "VARCHAR2",
+"PROCESSOR_TYPE" : "VARCHAR2",
+"PROCESSOR_PLUGIN_NAME" : "VARCHAR2",
+"LINK_TO_PROCESSOR_CONFIGURATION" : "VARCHAR2",
+"LINK_TO_PROCESSOR_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup0",
+"PROCESSOR_UID" : "DB0Producer0",
+"PROCESSOR_TYPE" : "Producer",
+"PROCESSOR_PLUGIN_NAME" : "UDPDataListenerProducer",
+"LINK_TO_PROCESSOR_CONFIGURATION" : "UDPDataListenerProducerConfiguration",
+"LINK_TO_PROCESSOR_UID" : "UDPListener0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479488752"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup0",
+"PROCESSOR_UID" : "DB0Consumer0",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "RawDataSaverConsumer",
+"LINK_TO_PROCESSOR_CONFIGURATION" : "RawDataSaverConsumerConfiguration",
+"LINK_TO_PROCESSOR_UID" : "RAWSaver0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479770727"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup0",
+"PROCESSOR_UID" : "DB0Consumer1",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "UDPDataStreamerConsumer",
+"LINK_TO_PROCESSOR_CONFIGURATION" : "UDPDataStreamerConsumerConfiguration",
+"LINK_TO_PROCESSOR_UID" : "UDPStreamer0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826252"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup1",
+"PROCESSOR_UID" : "DB1Producer0",
+"PROCESSOR_TYPE" : "Producer",
+"PROCESSOR_PLUGIN_NAME" : "UDPDataListenerProducer",
+"LINK_TO_PROCESSOR_CONFIGURATION" : "UDPDataListenerProducerConfiguration",
+"LINK_TO_PROCESSOR_UID" : "UDPListener1",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826252"
+},
+{
+"DATA_BUFFER_GROUP_ID" : "DBGroup1",
+"PROCESSOR_UID" : "DB1Consumer1",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "DemoDQMHistosConsumer",
+"LINK_TO_PROCESSOR_CONFIGURATION" : "DQMHistosConsumerConfiguration",
+"LINK_TO_PROCESSOR_UID" : "DQMHistos0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826252"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 09:25:18 2017",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+},
+{
+"name" : "defaultConfig_v2",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+},
+{
+"name" : "defaultConfig_v3",
+"assigned" : "Wed Jul 26 11:53:16 2017"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "Wed Jul 26 12:00:03 2017"
+},
+{
+"name" : "defaultConfig_v5",
+"assigned" : "Wed Jul 26 14:27:34 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "1",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "DataBufferConfiguration",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 11:53:16 2017",
+"value" : {
+"name" : "defaultConfig_v3",
+"assigned" : "Wed Jul 26 11:53:16 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 12:00:03 2017",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "Wed Jul 26 12:00:03 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 14:27:34 2017",
+"value" : {
+"name" : "defaultConfig_v5",
+"assigned" : "Wed Jul 26 14:27:34 2017"
+}
+}
+],
+"created" : "Wed Jul 26 09:25:18 2017"
+},
+"_id" : {
+"$oid" : "7fc99fe1943e47358566d9ea"
+},
+"collection" : "DataBufferConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

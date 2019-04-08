@@ -1,0 +1,128 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ROC_INTERFACE_CONFIGURATION",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1547586300,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"ROC_GROUP_ID" : "VARCHAR2",
+"ROC_INTERFACE_PLUGIN_NAME" : "VARCHAR2",
+"LINK_ID" : "NUMBER",
+"EVENT_WINDOW_DELAY_OFFSET" : "NUMBER",
+"ROC_TYPE_LINK_TABLE" : "VARCHAR2",
+"ROC_TYPE_LINK_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-15T15:05:00.369-0600",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-15T15:05:00.369-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-15T15:05:00.369-0600"
+},
+{
+"name" : "daq02Config_v3",
+"assigned" : "2019-01-15T15:05:03.267-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:05:00.369-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-15T15:05:00.369-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-15T15:05:00.369-0600",
+"value" : {
+"name" : "0",
+"assigned" : "2019-01-15T15:05:00.369-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-15T15:05:00.369-0600",
+"value" : {
+"name" : "ROCInterfaceConfiguration",
+"assigned" : "2019-01-15T15:05:00.369-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-15T15:05:00.369-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-15T15:05:00.369-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-01-15T15:05:03.267-0600",
+"value" : {
+"name" : "daq02Config_v3",
+"assigned" : "2019-01-15T15:05:03.267-0600"
+}
+}
+],
+"created" : "2019-01-15T15:05:00.369-0600"
+},
+"_id" : {
+"$oid" : "6d06d8981366462eaf55c4b0"
+},
+"collection" : "ROCInterfaceConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

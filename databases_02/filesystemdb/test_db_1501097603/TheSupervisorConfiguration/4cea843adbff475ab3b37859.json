@@ -1,0 +1,130 @@
+{
+"document" : {
+"data" : {
+"NAME" : "THE_SUPERVISOR_CONFIGURATION",
+"COMMENT" : "State Machine group link.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1483025278,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"LINK_TO_STATE_MACHINE_CONFIGURATION" : "VARCHAR2",
+"STATE_MACHINE_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUPERVISOR_UID" : "Supervisor0",
+"LINK_TO_STATE_MACHINE_CONFIGURATION" : "StateMachineConfiguration",
+"STATE_MACHINE_GROUP_ID" : "Supervisor0_FSMs",
+"COMMENT_DESCRIPTION" : "Link to a group of state machines.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1483025278"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 09:25:19 2017",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+},
+{
+"name" : "testContext_v2",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "2",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "TheSupervisorConfiguration",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "testContext_v2",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+}
+],
+"created" : "Wed Jul 26 09:25:19 2017"
+},
+"_id" : {
+"$oid" : "4cea843adbff475ab3b37859"
+},
+"collection" : "TheSupervisorConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

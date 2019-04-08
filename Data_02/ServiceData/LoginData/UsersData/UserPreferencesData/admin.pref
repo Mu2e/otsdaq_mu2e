@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ROOT xmlns="http://www.w3.org/2001/XMLSchema-instance">
+
+  <DATA xmlns="">
+    <pref_bgcolor xmlns="">rgb(0,76,151)</pref_bgcolor>
+    <pref_dbcolor xmlns="">rgb(0,40,85)</pref_dbcolor>
+    <pref_wincolor xmlns="">rgba(196,229,255,0.9)</pref_wincolor>
+    <pref_layout xmlns="">FE%20Macro%20Test,,%2FWebPath%2Fhtml%2FFEMacroTest.html%3Furn%3D300,4996,4995,4996,4995,1,State%20Machine,,%2FWebPath%2Fhtml%2FStateMachine.html%3Ffsm_name%3DOtherRuns0,4968,9,4996,4995,1,Console,,%2FWebPath%2Fhtml%2FConsole.html%3Furn%3D260,0,-9,4968,10009,1;0;0;0;0</pref_layout>
+  </DATA>
+
+</ROOT>

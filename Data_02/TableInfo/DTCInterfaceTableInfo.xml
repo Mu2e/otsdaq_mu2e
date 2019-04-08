@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="DTCInterfaceTable">
+			<VIEW Name="DTC_INTERFACE_TABLE" Type="File,Database,DatabaseTest" Description="No%20description.">
+				<COLUMN Type="UID" 	 Name="UID" 	 StorageName="UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="TrueFalse" 	 Name="EmulatorMode" 	 StorageName="EMULATOR_MODE" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="LocationInChain" 	 StorageName="LOCATION_IN_CHAIN" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="DeviceIndex" 	 StorageName="DEVICE_INDEX" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="ConfigureClock" 	 StorageName="CONFIGURE_CLOCK" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-ROC" 	 Name="LinkToROCGroupTable" 	 StorageName="LINK_TO_ROC_GROUP_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,ROCInterfaceTable,NO_LINK"/>
+				<COLUMN Type="ChildLinkGroupID-ROC" 	 Name="LinkToROCGroupID" 	 StorageName="LINK_TO_ROC_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</TABLE>
+	</ROOT>

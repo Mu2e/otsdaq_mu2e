@@ -1,0 +1,156 @@
+{
+"document" : {
+"data" : {
+"NAME" : "FE_INTERFACE_CONFIGURATION",
+"COMMENT" : "Default ots template FE for tutorial.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1531237127,
+"COL_TYPES" : {
+"FE_INTERFACE_GROUP_ID" : "VARCHAR2",
+"FE_INTERFACE_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"FE_INTERFACE_PLUGIN_NAME" : "VARCHAR2",
+"LINK_TO_FE_TYPE_CONFIGURATION" : "VARCHAR2",
+"LINK_TO_FE_TYPE_UID" : "VARCHAR2",
+"LINK_TO_SLOW_CONTROL_CHANNELS_CONFIGURATION" : "VARCHAR2",
+"LINK_TO_SLOW_CONTROL_CHANNELS_GROUP_ID" : "VARCHAR2",
+"LINK_TO_SLOW_CONTROLS_MONITOR_CONFIGURATION" : "VARCHAR2",
+"LINK_TO_SLOW_CONTROLS_MONITOR_UID" : "VARCHAR2",
+"SLOW_CONTROLS_TX_SOCKET_IP_ADDRESS" : "VARCHAR2",
+"SLOW_CONTROLS_TX_SOCKET_PORT" : "NUMBER",
+"SLOW_CONTROLS_LOCAL_AGGREGATE_SAVING_ENABLED" : "VARCHAR2",
+"SLOW_CONTROLS_LOCAL_FILE_PATH" : "VARCHAR2",
+"SLOW_CONTROLS_RADIX_FILE_NAME" : "VARCHAR2",
+"SLOW_CONTROLS_SAVE_BINARY_FILE" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"FE_INTERFACE_GROUP_ID" : "FEGroup0",
+"FE_INTERFACE_UID" : "ExampleInterface0",
+"STATUS" : "On",
+"FE_INTERFACE_PLUGIN_NAME" : "FEOtsUDPTemplateInterface",
+"LINK_TO_FE_TYPE_CONFIGURATION" : "FEOtsUDPTemplateInterfaceConfiguration",
+"LINK_TO_FE_TYPE_UID" : "OtsInterface0",
+"LINK_TO_SLOW_CONTROL_CHANNELS_CONFIGURATION" : "NO_LINK",
+"LINK_TO_SLOW_CONTROL_CHANNELS_GROUP_ID" : "OtsHwEmulatorGroup0",
+"LINK_TO_SLOW_CONTROLS_MONITOR_CONFIGURATION" : "NO_LINK",
+"LINK_TO_SLOW_CONTROLS_MONITOR_UID" : "0",
+"SLOW_CONTROLS_TX_SOCKET_IP_ADDRESS" : "127.0.0.1",
+"SLOW_CONTROLS_TX_SOCKET_PORT" : "4200",
+"SLOW_CONTROLS_LOCAL_AGGREGATE_SAVING_ENABLED" : "Yes",
+"SLOW_CONTROLS_LOCAL_FILE_PATH" : "/home/rrivera/ots/tmp/",
+"SLOW_CONTROLS_RADIX_FILE_NAME" : "SlowControls",
+"SLOW_CONTROLS_SAVE_BINARY_FILE" : "False",
+"COMMENT_DESCRIPTION" : "using for hw emulator slow controls.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1499373166"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2018-07-17T12:10:19.947-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:19.951-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:19.949-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.417-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-07-17T12:10:19.949-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2018-07-17T12:10:19.949-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2018-07-17T12:10:19.950-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2018-07-17T12:10:19.950-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2018-07-17T12:10:19.950-0500",
+"value" : {
+"name" : "FEInterfaceConfiguration",
+"assigned" : "2018-07-17T12:10:19.950-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2018-07-17T12:10:19.951-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2018-07-17T12:10:19.951-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2018-07-17T12:10:20.417-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2018-07-17T12:10:20.417-0500"
+}
+}
+],
+"created" : "2018-07-17T12:10:19.947-0500"
+},
+"_id" : {
+"$oid" : "aedda2db3ccf424ca113d11d"
+},
+"collection" : "FEInterfaceConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

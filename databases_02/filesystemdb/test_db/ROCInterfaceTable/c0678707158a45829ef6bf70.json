@@ -1,0 +1,166 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ROC_INTERFACE_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552504814,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"ROC_GROUP_ID" : "VARCHAR2",
+"ROC_INTERFACE_PLUGIN_NAME" : "VARCHAR2",
+"LINK_ID" : "NUMBER",
+"EVENT_WINDOW_DELAY_OFFSET" : "NUMBER",
+"EMULATE_IN_DTC_HARDWARE" : "VARCHAR2",
+"ROC_TYPE_LINK_TABLE" : "VARCHAR2",
+"ROC_TYPE_LINK_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "ROC0",
+"STATUS" : "On",
+"ROC_GROUP_ID" : "DTC0ROCs",
+"ROC_INTERFACE_PLUGIN_NAME" : "ROCDTCHardwareEmulated",
+"LINK_ID" : "0",
+"EVENT_WINDOW_DELAY_OFFSET" : "10",
+"EMULATE_IN_DTC_HARDWARE" : "True",
+"ROC_TYPE_LINK_TABLE" : "NO_LINK",
+"ROC_TYPE_LINK_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552504806"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-13T14:20:14.146-0500",
+"rawdata" : [
+
+]
+},
+"version" : "6",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-13T14:20:14.148-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-13T14:20:14.147-0500"
+},
+{
+"name" : "daq02Config_v11",
+"assigned" : "2019-03-13T14:20:19.896-0500"
+},
+{
+"name" : "daq02Config_v12",
+"assigned" : "2019-03-14T10:54:16.578-0500"
+},
+{
+"name" : "daq02Config_v13",
+"assigned" : "2019-03-18T10:45:55.563-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-13T14:20:14.147-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-13T14:20:14.147-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-13T14:20:14.148-0500",
+"value" : {
+"name" : "6",
+"assigned" : "2019-03-13T14:20:14.148-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-13T14:20:14.148-0500",
+"value" : {
+"name" : "ROCInterfaceTable",
+"assigned" : "2019-03-13T14:20:14.148-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-13T14:20:14.149-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-13T14:20:14.148-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-13T14:20:19.896-0500",
+"value" : {
+"name" : "daq02Config_v11",
+"assigned" : "2019-03-13T14:20:19.896-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-14T10:54:16.578-0500",
+"value" : {
+"name" : "daq02Config_v12",
+"assigned" : "2019-03-14T10:54:16.578-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-18T10:45:55.563-0500",
+"value" : {
+"name" : "daq02Config_v13",
+"assigned" : "2019-03-18T10:45:55.563-0500"
+}
+}
+],
+"created" : "2019-03-13T14:20:14.146-0500"
+},
+"_id" : {
+"$oid" : "c0678707158a45829ef6bf70"
+},
+"collection" : "ROCInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
