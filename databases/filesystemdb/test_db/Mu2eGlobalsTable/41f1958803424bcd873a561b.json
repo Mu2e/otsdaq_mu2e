@@ -1,0 +1,180 @@
+{
+"document" : {
+"data" : {
+"NAME" : "MU2E_GLOBALS_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1547746548,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"NUMBER_OF_LOOPBACKS" : "NUMBER",
+"NUMBER_OF_CAPTAN_PULSES" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "SyncDemoConfig",
+"NUMBER_OF_LOOPBACKS" : "10",
+"NUMBER_OF_CAPTAN_PULSES" : "0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1547746545"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-01-17T11:35:48.827-0600",
+"rawdata" : [
+
+]
+},
+"version" : "14",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T11:35:48.828-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-01-17T11:35:48.828-0600"
+},
+{
+"name" : "defaultConfig_v80",
+"assigned" : "2019-01-17T11:35:53.603-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-01-17T11:35:48.828-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-01-17T11:35:48.828-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-01-17T11:35:48.828-0600",
+"value" : {
+"name" : "14",
+"assigned" : "2019-01-17T11:35:48.828-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-01-17T11:35:48.828-0600",
+"value" : {
+"name" : "Mu2eGlobalsTable",
+"assigned" : "2019-01-17T11:35:48.828-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-01-17T11:35:48.828-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-01-17T11:35:48.828-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-01-17T11:35:53.603-0600",
+"value" : {
+"name" : "defaultConfig_v80",
+"assigned" : "2019-01-17T11:35:53.603-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-26T11:30:33.236-0500",
+"value" : {
+"name" : "defaultConfig_v144",
+"assigned" : "2019-03-26T11:30:33.236-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-27T12:10:46.859-0500",
+"value" : {
+"name" : "defaultConfig_v145",
+"assigned" : "2019-03-27T12:10:46.859-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-27T12:11:41.306-0500",
+"value" : {
+"name" : "defaultConfig_v146",
+"assigned" : "2019-03-27T12:11:41.306-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-27T12:16:38.610-0500",
+"value" : {
+"name" : "defaultConfig_v147",
+"assigned" : "2019-03-27T12:16:38.610-0500"
+}
+}
+],
+"created" : "2019-01-17T11:35:48.827-0600"
+},
+"_id" : {
+"$oid" : "41f1958803424bcd873a561b"
+},
+"collection" : "Mu2eGlobalsTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "defaultConfig_v144",
+"assigned" : "2019-03-26T11:30:33.236-0500"
+},
+{
+"name" : "defaultConfig_v145",
+"assigned" : "2019-03-27T12:10:46.859-0500"
+},
+{
+"name" : "defaultConfig_v146",
+"assigned" : "2019-03-27T12:11:41.306-0500"
+},
+{
+"name" : "defaultConfig_v147",
+"assigned" : "2019-03-27T12:16:38.610-0500"
+}
+]
+}

@@ -1,0 +1,126 @@
+{
+"document" : {
+"data" : {
+"NAME" : "STM_PARAMETERS_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552062236,
+"COL_TYPES" : {
+"STM_PARAMETERS_UID" : "VARCHAR2",
+"STM_NUMBER_PARAM1" : "NUMBER",
+"STM_TRUE_FALSE_PARAM2" : "VARCHAR2",
+"STM_MUST_BE_UNIQUE_PARAM3" : "VARCHAR2",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "VARCHAR2",
+"STM_GROUPED_PARAMETERS_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-08T10:23:56.652-0600",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-08T10:23:56.653-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-08T10:23:56.652-0600"
+},
+{
+"name" : "defaultConfig_v122",
+"assigned" : "2019-03-08T10:37:07.584-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:23:56.652-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-08T10:23:56.652-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-08T10:23:56.652-0600",
+"value" : {
+"name" : "0",
+"assigned" : "2019-03-08T10:23:56.652-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-08T10:23:56.653-0600",
+"value" : {
+"name" : "STMParametersTable",
+"assigned" : "2019-03-08T10:23:56.653-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-08T10:23:56.653-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-08T10:23:56.653-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:37:07.584-0600",
+"value" : {
+"name" : "defaultConfig_v122",
+"assigned" : "2019-03-08T10:37:07.584-0600"
+}
+}
+],
+"created" : "2019-03-08T10:23:56.652-0600"
+},
+"_id" : {
+"$oid" : "3febaf03692b42648e436fdb"
+},
+"collection" : "STMParametersTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

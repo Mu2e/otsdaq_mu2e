@@ -1,0 +1,92 @@
+{
+"ouid" : [
+"156516ec2f5f468e9f3c5ad3",
+"438fc97ced104771b79cc6ad",
+"5706da0e1b534a858e5d4b56",
+"94f99b0a52484484bd0ff115",
+"a545f934d5af4aefb11cf22f",
+"b6afa40433204055b041ada2",
+"d72b10c682394af0ae0f0a0b",
+"e887a4c1bdb94bdb8413aba8"
+],
+"version" : {
+"0" : [
+"d72b10c682394af0ae0f0a0b"
+],
+"1" : [
+"a545f934d5af4aefb11cf22f"
+],
+"2" : [
+"156516ec2f5f468e9f3c5ad3"
+],
+"3" : [
+"b6afa40433204055b041ada2"
+],
+"4" : [
+"5706da0e1b534a858e5d4b56"
+],
+"5" : [
+"94f99b0a52484484bd0ff115"
+],
+"6" : [
+"e887a4c1bdb94bdb8413aba8"
+],
+"7" : [
+"438fc97ced104771b79cc6ad"
+]
+},
+"configurations.name" : {
+"notprovided" : [
+"156516ec2f5f468e9f3c5ad3",
+"438fc97ced104771b79cc6ad",
+"5706da0e1b534a858e5d4b56",
+"94f99b0a52484484bd0ff115",
+"a545f934d5af4aefb11cf22f",
+"b6afa40433204055b041ada2",
+"d72b10c682394af0ae0f0a0b",
+"e887a4c1bdb94bdb8413aba8"
+],
+"defaultConfig_v2" : [
+"d72b10c682394af0ae0f0a0b"
+],
+"TableEditWizBackbone_v0" : [
+"a545f934d5af4aefb11cf22f"
+],
+"defaultConfig_v3" : [
+"156516ec2f5f468e9f3c5ad3"
+],
+"TableEditWizBackbone_v1" : [
+"b6afa40433204055b041ada2"
+],
+"defaultConfig_v4" : [
+"5706da0e1b534a858e5d4b56"
+],
+"GroupAliasTreeEditWizBackbone_v4" : [
+"94f99b0a52484484bd0ff115"
+],
+"defaultConfig_v5" : [
+"e887a4c1bdb94bdb8413aba8"
+],
+"TableEditWizBackbone_v2" : [
+"438fc97ced104771b79cc6ad"
+]
+},
+"entities.name" : {
+"OTSROOT" : [
+"156516ec2f5f468e9f3c5ad3",
+"438fc97ced104771b79cc6ad",
+"5706da0e1b534a858e5d4b56",
+"94f99b0a52484484bd0ff115",
+"a545f934d5af4aefb11cf22f",
+"b6afa40433204055b041ada2",
+"d72b10c682394af0ae0f0a0b",
+"e887a4c1bdb94bdb8413aba8"
+]
+},
+"aliases.active.name" : {
+
+},
+"runs.name" : {
+
+}
+}

@@ -1,0 +1,184 @@
+05 Apr 2019 22:13:45.728 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
+05 Apr 2019 22:13:45.730 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - Loaded profile: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/XDAQConfigurations/otsConfiguration_CMake.xml
+05 Apr 2019 22:13:45.731 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
+05 Apr 2019 22:13:45.732 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
+05 Apr 2019 22:13:45.733 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
+05 Apr 2019 22:13:45.735 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
+05 Apr 2019 22:13:45.736 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
+05 Apr 2019 22:13:45.737 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
+05 Apr 2019 22:13:45.740 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
+05 Apr 2019 22:13:45.740 [46916251137344] DEBUG gov.fnal.mu2edaq04.p:3015 <> - Create application descriptor for class: executive::Application id: 0
+05 Apr 2019 22:13:45.756 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015.executive::Application.lid(0) <> - Log URL not set (was already console)
+05 Apr 2019 22:13:45.756 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015.executive::Application.lid(0) <> - Changed Log level to INFO
+05 Apr 2019 22:13:45.761 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+05 Apr 2019 22:13:46.249 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - ConfigurationGUI version: 03.00.00, compiled on Apr  5 2019 at 17:03:21
+05 Apr 2019 22:13:46.426 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - WizardSupervisor version: 01.00.00, compiled on Apr  5 2019 at 17:03:56
+05 Apr 2019 22:13:46.440 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - Console version: 03.00.00, compiled on Apr  5 2019 at 17:03:20
+05 Apr 2019 22:13:46.447 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - CodeEditor version: 03.00.00, compiled on Apr  5 2019 at 17:03:20
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+04-05 17:13:47.850929                         UDP_mfPlugin err Error sending message 2 to 127.0.0.1, errno=17 (File exists)
+LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [33]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq04.fnal.gov:3015
+LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [34]	application->getApplicationDescriptor()->getLocalId() = 280
+LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	supervisorClass_ = ots::ConfigurationGUISupervisor
+LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [36]	supervisorClassNoNamespace_ = ConfigurationGUISupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [42]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [37]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [96]	Initializing info for Wiz mode XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [330]	Init complete
+LogDebug:ConfigurationGUISupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [43]	Wiz mode detected. So skipping configuration location work for supervisor of class 'ots::ConfigurationGUISupervisor'
+LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [52]	CorePropertySupervisorBase::supervisorContextUID_ = NO CONTEXT ID IN WIZ MODE
+LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [53]	CorePropertySupervisorBase::supervisorApplicationUID_ = 280
+LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [54]	CorePropertySupervisorBase::supervisorConfigurationPath_ = NO APP PATH IN WIZ MODE
+LogDebug:FSM-ConfigurationGUISupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [22]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:FSM-ConfigurationGUISupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [171]	Resetting RunControlStateMachine with name 'ConfigurationGUISupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [20]	Request name: StateMachine jobName: StateMachine
+LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Constructor.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:ConfigurationGUISupervisor:280:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [52]	Constructed.
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [42]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [56]	Initializing...
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [58]	Activating saved context, which may prepare for normal mode...
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [6935]	Attempting test activation of the context group.
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [393]	Destroying Backbone Key: 118
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [412]	Destroying Context Key: 59
+LogDebug:ConfigurationGUISupervisor:280:otsdaq_utilities/otsdaq-utilities/ConfigurationGUI/ConfigurationGUISupervisor.cc [47]	Constructor complete.
+LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [72]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [166]	Marked alive: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/otsdaq_is_alive-wiz-0.dat
+LogInfo:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [286]	(Reverting to default wiz security) Sequence length file NOT found: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/OtsWizardData/sequence.dat
+LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [292]	Sequence length = 4
+LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [306]	:3015/urn:xdaq-application:lid=290/Verify?code=fa37
+LogDebug:Wizard:otsdaq/otsdaq-core/WizardSupervisor/WizardSupervisor.cc [103]	Constructor complete.
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:ConsoleSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [33]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq04.fnal.gov:3015
+LogDebug:ConsoleSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [34]	application->getApplicationDescriptor()->getLocalId() = 260
+LogDebug:ConsoleSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	supervisorClass_ = ots::ConsoleSupervisor
+LogDebug:ConsoleSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [36]	supervisorClassNoNamespace_ = ConsoleSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [42]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [37]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [96]	Initializing info for Wiz mode XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [330]	Init complete
+LogDebug:ConsoleSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [43]	Wiz mode detected. So skipping configuration location work for supervisor of class 'ots::ConsoleSupervisor'
+LogDebug:ConsoleSupervisor:260:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [52]	CorePropertySupervisorBase::supervisorContextUID_ = NO CONTEXT ID IN WIZ MODE
+LogDebug:ConsoleSupervisor:260:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [53]	CorePropertySupervisorBase::supervisorApplicationUID_ = 260
+LogDebug:ConsoleSupervisor:260:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [54]	CorePropertySupervisorBase::supervisorConfigurationPath_ = NO APP PATH IN WIZ MODE
+LogDebug:FSM-ConsoleSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [22]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:FSM-ConsoleSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [171]	Resetting RunControlStateMachine with name 'ConsoleSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [20]	Request name: StateMachine jobName: StateMachine
+LogDebug:ConsoleSupervisor:260:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Constructor.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:ConsoleSupervisor:260:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [52]	Constructed.
+LogDebug:ConsoleSupervisor:260:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [44]	Constructor started.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:ConsoleSupervisor:260:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [53]	Constructor complete.
+LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [82]	
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [31]	Socket constructor 127.0.0.1:30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [46]	IPAddress: 127.0.0.1 port: 30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [60]	Constructed socket for port 30001=30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/ReceiverSocket.cc [22]	ReceiverSocket constructor 127.0.0.1:30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [89]	Initializing port 30001 htons: 12661
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [114]	]	Binding port: 30001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [126]	]	Socket Number: 9 for port: 30001 initialized.
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [146]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [150]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [154]	SOCKET ON PORT: 30001 ON IP: 127.0.0.1 INITIALIZED OK!
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [156]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [160]	:):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):):)
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [167]	]	Socket Number: 9 for port: 30001 initialized.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [184]	Setting socket receive buffer size = 65536 0x10000
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:Console:otsdaq_utilities/otsdaq-utilities/Console/ConsoleSupervisor.cc [166]	Console has first message.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:CodeEditorSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [33]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq04.fnal.gov:3015
+LogDebug:CodeEditorSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [34]	application->getApplicationDescriptor()->getLocalId() = 240
+LogDebug:CodeEditorSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	supervisorClass_ = ots::CodeEditorSupervisor
+LogDebug:CodeEditorSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [36]	supervisorClassNoNamespace_ = CodeEditorSupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [42]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [37]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [96]	Initializing info for Wiz mode XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [330]	Init complete
+LogDebug:CodeEditorSupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [43]	Wiz mode detected. So skipping configuration location work for supervisor of class 'ots::CodeEditorSupervisor'
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [52]	CorePropertySupervisorBase::supervisorContextUID_ = NO CONTEXT ID IN WIZ MODE
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [53]	CorePropertySupervisorBase::supervisorApplicationUID_ = 240
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [54]	CorePropertySupervisorBase::supervisorConfigurationPath_ = NO APP PATH IN WIZ MODE
+LogDebug:FSM-CodeEditorSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [22]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:FSM-CodeEditorSupervisor:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [171]	Resetting RunControlStateMachine with name 'CodeEditorSupervisor'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [20]	Request name: StateMachine jobName: StateMachine
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Constructor.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacility.fcl
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [52]	Constructed.
+LogDebug:CodeEditorSupervisor:240:otsdaq/otsdaq-core/CodeEditor/CodeEditorSupervisor.cc [11]	Constructed.
+05 Apr 2019 22:13:51.365 [46916251137344] INFO  gov.fnal.mu2edaq04.p:3015 <> - Ready.
+Terminating...

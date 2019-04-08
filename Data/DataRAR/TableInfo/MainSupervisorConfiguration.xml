@@ -1,0 +1,12 @@
+ <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+ <ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ConfigurationInfo.xsd">
+   <CONFIGURATION Name="XDAQContextConfiguration">    
+     <VIEW Name="XDAQ_CONTEXT_CONFIGURATION" Type="File,Database,DatabaseTest">
+       <COLUMN Name="_UID"        		 		StorageName="_UID"             				DataType="VARCHAR2"/>
+       <COLUMN Name="Security"           		StorageName="SECURITY"             				DataType="VARCHAR2"/>
+       <COLUMN Type="Comment" 	Name="Comment"		        StorageName="COMMENT"  	           	DataType="VARCHAR2"/>
+       <COLUMN Type="Author" 	Name="Author"		        StorageName="AUTHOR"  	           	DataType="VARCHAR2"		/>
+       <COLUMN Type="Timestamp" 	Name="RecordInsertionTime"  StorageName="RECORD_INSERTION_TIME" DataType="TIMESTAMP WITH TIMEZONE"/>
+     </VIEW>
+   </CONFIGURATION>
+ </ROOT>

@@ -1,0 +1,445 @@
+05 Apr 2019 22:14:06.672 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
+05 Apr 2019 22:14:06.673 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - Loaded profile: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/XDAQConfigurations/otsConfiguration_CMake.xml
+05 Apr 2019 22:14:06.674 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
+05 Apr 2019 22:14:06.675 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
+05 Apr 2019 22:14:06.676 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
+05 Apr 2019 22:14:06.678 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
+05 Apr 2019 22:14:06.679 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
+05 Apr 2019 22:14:06.679 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
+05 Apr 2019 22:14:06.682 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
+05 Apr 2019 22:14:06.682 [140717545007296] DEBUG gov.fnal.mu2edaq05.p:2017 <> - Create application descriptor for class: executive::Application id: 0
+05 Apr 2019 22:14:06.694 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017.executive::Application.lid(0) <> - Log URL not set (was already console)
+05 Apr 2019 22:14:06.694 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017.executive::Application.lid(0) <> - Changed Log level to INFO
+05 Apr 2019 22:14:06.697 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+05 Apr 2019 22:14:07.011 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - CoreSupervisors version: 03.00.00, compiled on Apr  5 2019 at 17:02:51
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+04-05 17:14:08.622763                         UDP_mfPlugin err Error sending message 2 to 192.168.157.6, errno=17 (File exists)
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [33]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq05.fnal.gov:2017
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [34]	application->getApplicationDescriptor()->getLocalId() = 311
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	supervisorClass_ = ots::FESupervisor
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [36]	supervisorClassNoNamespace_ = FESupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [42]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [37]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [98]	Initializing info for Normal mode XDAQ context...
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [330]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [393]	Destroying Backbone Key: 118
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [412]	Destroying Context Key: 59
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [59]	Getting configuration specific info for supervisor 'FESupervisorDTC0' of class ots::FESupervisor.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [109]	CorePropertySupervisorBase::supervisorContextUID_ = ContextDTC0
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [110]	CorePropertySupervisorBase::supervisorApplicationUID_ = FESupervisorDTC0
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [111]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [151]	hostname = mu2edaq05.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [166]	Marked alive: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/otsdaq_is_alive-mu2edaq05.fnal.gov-2017.dat
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [22]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [171]	Resetting RunControlStateMachine with name 'FESupervisor:FESupervisorDTC0'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [20]	Request name: StateMachine jobName: StateMachine
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Constructor.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [52]	Constructed.
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/Configurable/Configurable.cc [16]	 Configurable class constructed. 
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [25]	Constructed.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [875]	State Machine 0 WAS of type FEVInterfacesManager
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [887]	theFEInterfacesManager pointer = 0x1384c10
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [32]	Destructed.
+05 Apr 2019 22:14:09.934 [140717545007296] INFO  gov.fnal.mu2edaq05.p:2017 <> - Ready.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Initialize Par 0 Name: commandId Value: 2, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorDTC0 is Initial and attempting to Initialize
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Initialize
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [697]	transitionInitializing
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [380]	CoreSupervisorBase::stateHalted
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorDTC0 is Halted
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = InitializeDone
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Configure Par 0 Name: ConfigurationAlias Value: defaultSystemAlias, Par 0 Name: ConfigurationTableGroupKey Value: 163, Par 0 Name: ConfigurationTableGroupName Value: defaultConfig, Par 0 Name: commandId Value: 7, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorDTC0 is Halted and attempting to Configure
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Configure
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [532]	transitionConfiguring
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [546]	Configuration table group name: defaultConfig key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [339]	Deactivating Configuration group: defaultConfig
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [557]	Configuring all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [159]	Configuring FEVInterfacesManager 
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [55]	Path: /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable/LinkToFEInterfaceTable
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [63]	appNode.getValueAsString() = FESupervisorDTC0
+LogDebug:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1005]	Column Types: 
+GroupID-FE() FEInterfaceGroupID
+UID() FEInterfaceUID
+OnOff() Status
+FixedChoiceData() FEInterfacePluginName
+ChildLink-0() LinkToFETypeTable
+ChildLinkUID-0() LinkToFETypeUID
+ChildLink-SlowControlsChannels() LinkToSlowControlsChannelTable
+ChildLinkGroupID-SlowControlsChannels() LinkToSlowControlsChannelGroupID
+ChildLink-SlowControlsSupervisor() LinkToSlowControlsSupervisorTable
+ChildLinkUID-SlowControlsSupervisor() LinkToSlowControlsSupervisorUID
+Data() SlowControlsTxSocketIPAddress
+Data() SlowControlsTxSocketPort
+YesNo() SlowControlsLocalAggregateSavingEnabled
+Data() SlowControlsLocalFilePath
+Data() SlowControlsRadixFileName
+TrueFalse() SlowControlsSaveBinaryFile
+Comment() CommentDescription
+Author() Author
+Timestamp() RecordInsertionTime
+LogError:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1015]	
+:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+LogWarning:ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [2318]	Priority configuration not found. Assuming all children have equal priority (Error: :TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [75]	StringMacros::vectorToString(theFENamesByPriority_) = DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [91]	Interface Plugin Name: DTCFrontEndInterface
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [95]	Interface Name: DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [96]	XDAQContext Node: XDAQContextTable
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [97]	Path to configuration: /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable/LinkToFEInterfaceTable/DTC0/LinkToFETypeTable
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:DTC0:otsdaq/otsdaq-core/Configurable/Configurable.cc [16]	 Configurable class constructed. 
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [28]	'DTC0' Constructed.
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [18]	instantiate DTC... DTC0 XDAQContextTable /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable/LinkToFEInterfaceTable/DTC0/LinkToFETypeTable
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC0_Tracker
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC1_PolarFire
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC2_STM0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC3_STM1
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC4_STM2
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC5_STM3
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [81]	DTC roc_mask_ = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [82]	roc_mask to instantiate DTC class = 0x0
+04-05 17:14:39.771883                         OTSDAQ_TRACE d04 mu2edev::init 0 0:0 - num=100 size=65536 hwIdx=99, swIdx=99 delta=0
+04-05 17:14:39.772034                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=0 mu2e_mmap_ptrs_[0][0][0][0]=0x7ffb02e36000 p=W l=6553600
+04-05 17:14:39.772047                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=4096 mu2e_mmap_ptrs_[0][0][0][1]=0x7ffb5b4d9000 p=R l=400
+04-05 17:14:39.772071                         OTSDAQ_TRACE d04 mu2edev::init 0 0:1 - num=60 size=65536 hwIdx=0, swIdx=0 delta=60
+04-05 17:14:39.772084                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=8192 mu2e_mmap_ptrs_[0][0][1][0]=0x7ffb02a76000 p=W l=3932160
+04-05 17:14:39.772088                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=12288 mu2e_mmap_ptrs_[0][0][1][1]=0x7ffb5b4d8000 p=R l=240
+04-05 17:14:39.772883                         OTSDAQ_TRACE d04 mu2edev::init 0 1:0 - num=100 size=65536 hwIdx=3, swIdx=3 delta=0
+04-05 17:14:39.773051                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=16384 mu2e_mmap_ptrs_[0][1][0][0]=0x7ffb02436000 p=W l=6553600
+04-05 17:14:39.773060                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=20480 mu2e_mmap_ptrs_[0][1][0][1]=0x7ffb5b4ac000 p=R l=400
+04-05 17:14:39.773067                         OTSDAQ_TRACE d04 mu2edev::init 0 1:1 - num=60 size=65536 hwIdx=35, swIdx=35 delta=60
+04-05 17:14:39.773078                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=24576 mu2e_mmap_ptrs_[0][1][1][0]=0x7ffb02076000 p=W l=3932160
+04-05 17:14:39.773083                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=28672 mu2e_mmap_ptrs_[0][1][1][1]=0x7ffb5b4ab000 p=R l=240
+04-05 17:14:39.773466                                  DTC nfo CONSTRUCTOR
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [380]	Done creating 0 ROC(s)
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [202]	Getting children ROC FEMacros...
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [120]	Writing DTC-hardware emulation mask: 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [123]	End check for DTC-hardware emulated ROCs.
+LogInfo:DTCFrontEndInterface:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [130]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [151]	Done creating interfaces
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2274]	Number of front ends to transition: 1
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [184]	Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [185]	Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [186]	Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2313]	theStateMachineImplementation Iteration 0.0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [727]	getIterationIndex() = 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [728]	getSubIterationIndex() = 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [738]	DTC configuring... # of ROCs = 0
+LogInfo:DTCFrontEndInterface:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 0: DTC0 reset FPGA...LogError:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [554]	DTC: write value 0x80000000 to register 0x9100... read back 0x0
+LogInfo:DTCFrontEndInterface:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [843]	............. firmware version 19040209
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [568]	DTC0 firmware version (0x9004) = 0x19040209
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [667]	DTC0 VCCINT. = 0.985348 V
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [668]	DTC0 VCCAUX. = 1.79341 V
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [669]	DTC0 VCCBRAM = 0.999267 V
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [573]	DTC0 temperature = 57.7066 degC
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC0 SERDES reset........ (0x9118) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [578]	DTC0 SERDES disparity err (0x911c) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [580]	DTC0 SERDES unlock error. (0x9124) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [582]	DTC0 PLL locked.......... (0x9128) = 0x3ff
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [584]	DTC0 SERDES Rx status.... (0x9134) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [586]	DTC0 SERDES reset done... (0x9138) = 0xc3c3ffff
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [588]	DTC0 link status......... (0x9140) = 0xc3
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [590]	DTC0 SERDES ref clk freq. (0x915c) = 0x9502f90 = 156250000
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [593]	DTC0 control............. (0x9100) = 0x10000000
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [595]	
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2352]	FE Interface 'DTC0' is flagged for another iteration...
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq/otsdaq-core/FECore/FEVInterface.cc [52]	slowControlsGroupLink is disconnected, so done configuring slow controls.
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [38]	Starting WorkLoop: DTC0-SlowControls
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [197]	Done Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [198]	Done Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [199]	Done Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2371]	1 FE Interface state machine implementation(s) flagged for another iteration...
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [203]	Done Configuring all interfaces.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [503]	State machine 0 is flagged for another iteration...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [520]	1 state machine implementation(s) flagged for another iteration...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [394]	CoreSupervisorBase::stateConfigured
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [430]	iterationWorkFlag_ = 1
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorDTC0 is Configured
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = ConfigureIterate
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq/otsdaq-core/FECore/FEVInterface.cc [110]	slowControlsRunning
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq/otsdaq-core/FECore/FEVInterface.cc [114]	No slow controls channels to monitor, exiting slow controls workloop.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Error Par 0 Name: commandId Value: 14, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+otsdaq/otsdaq-core/ProgressBar/ProgressBar.cc [66]	File Not there
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorDTC0 is Configured and attempting to Error
+LogError:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [306]	
+:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [305]	Error was received! Halting immediately.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Halt
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [617]	Halting all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2274]	Number of front ends to transition: 1
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [227]	Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [228]	Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [229]	Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2313]	theStateMachineImplementation Iteration 0.0
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop DTC0 was not created at all! This message will be commented in the future
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [93]	initially workLoop_->isActive() yes
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [122]	WARNING: Can't remove request WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [123]	workLoop_->isActive() no
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [127]	Stopped WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [128]	workLoop_->isActive() no
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [270]	Done Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [271]	Done Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [272]	Done Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2376]	Done transitioning all state machine implementations...
+04-05 17:14:49.231223                                  DTC nfo DESTRUCTOR
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [141]	Destructed.
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [36]	DTC0 Destructed.
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [93]	initially workLoop_->isActive() no
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [103]	WARNING: Can't cancel WorkLoop job for DTC0-SlowControls because probably it has never been activated!
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [106]	workLoop_->isActive() no
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop DTC0 was not created at all! This message will be commented in the future
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [279]	Done Halting all interfaces.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [525]	Done configuration all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [380]	CoreSupervisorBase::stateHalted
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Halt Par 0 Name: commandId Value: 20, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorDTC0 is Halted and attempting to Halt
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Halt
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [617]	Halting all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2274]	Number of front ends to transition: 0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2376]	Done transitioning all state machine implementations...
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [279]	Done Halting all interfaces.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [525]	Done configuration all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [380]	CoreSupervisorBase::stateHalted
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorDTC0 is Halted
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = HaltDone
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Configure Par 0 Name: ConfigurationAlias Value: defaultSystemAlias, Par 0 Name: ConfigurationTableGroupKey Value: 163, Par 0 Name: ConfigurationTableGroupName Value: defaultConfig, Par 0 Name: commandId Value: 25, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorDTC0 is Halted and attempting to Configure
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Configure
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [532]	transitionConfiguring
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [546]	Configuration table group name: defaultConfig key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [339]	Deactivating Configuration group: defaultConfig
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [557]	Configuring all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [159]	Configuring FEVInterfacesManager 
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [55]	Path: /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable/LinkToFEInterfaceTable
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [63]	appNode.getValueAsString() = FESupervisorDTC0
+LogDebug:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1005]	Column Types: 
+GroupID-FE() FEInterfaceGroupID
+UID() FEInterfaceUID
+OnOff() Status
+FixedChoiceData() FEInterfacePluginName
+ChildLink-0() LinkToFETypeTable
+ChildLinkUID-0() LinkToFETypeUID
+ChildLink-SlowControlsChannels() LinkToSlowControlsChannelTable
+ChildLinkGroupID-SlowControlsChannels() LinkToSlowControlsChannelGroupID
+ChildLink-SlowControlsSupervisor() LinkToSlowControlsSupervisorTable
+ChildLinkUID-SlowControlsSupervisor() LinkToSlowControlsSupervisorUID
+Data() SlowControlsTxSocketIPAddress
+Data() SlowControlsTxSocketPort
+YesNo() SlowControlsLocalAggregateSavingEnabled
+Data() SlowControlsLocalFilePath
+Data() SlowControlsRadixFileName
+TrueFalse() SlowControlsSaveBinaryFile
+Comment() CommentDescription
+Author() Author
+Timestamp() RecordInsertionTime
+LogError:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1015]	
+:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+LogWarning:ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [2318]	Priority configuration not found. Assuming all children have equal priority (Error: :TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [75]	StringMacros::vectorToString(theFENamesByPriority_) = DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [91]	Interface Plugin Name: DTCFrontEndInterface
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [95]	Interface Name: DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [96]	XDAQContext Node: XDAQContextTable
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [97]	Path to configuration: /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable/LinkToFEInterfaceTable/DTC0/LinkToFETypeTable
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:DTC0:otsdaq/otsdaq-core/Configurable/Configurable.cc [16]	 Configurable class constructed. 
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [28]	'DTC0' Constructed.
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [18]	instantiate DTC... DTC0 XDAQContextTable /ContextDTC0/LinkToApplicationTable/FESupervisorDTC0/LinkToSupervisorTable/LinkToFEInterfaceTable/DTC0/LinkToFETypeTable
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC0_Tracker
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC1_PolarFire
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC2_STM0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC3_STM1
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC4_STM2
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [67]	roc uid DTC0_ROC5_STM3
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [69]	roc enable 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [81]	DTC roc_mask_ = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [82]	roc_mask to instantiate DTC class = 0x0
+04-07 18:04:46.920853                         OTSDAQ_TRACE d04 mu2edev::init 0 0:0 - num=100 size=65536 hwIdx=99, swIdx=99 delta=0
+04-07 18:04:46.920996                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=0 mu2e_mmap_ptrs_[0][0][0][0]=0x7ffaff395000 p=W l=6553600
+04-07 18:04:46.921006                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=4096 mu2e_mmap_ptrs_[0][0][0][1]=0x7ffb5b4aa000 p=R l=400
+04-07 18:04:46.921013                         OTSDAQ_TRACE d04 mu2edev::init 0 0:1 - num=60 size=65536 hwIdx=0, swIdx=0 delta=60
+04-07 18:04:46.921023                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=8192 mu2e_mmap_ptrs_[0][0][1][0]=0x7ffafefd5000 p=W l=3932160
+04-07 18:04:46.921028                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=12288 mu2e_mmap_ptrs_[0][0][1][1]=0x7ffb5b4a9000 p=R l=240
+04-07 18:04:46.921848                         OTSDAQ_TRACE d04 mu2edev::init 0 1:0 - num=100 size=65536 hwIdx=3, swIdx=3 delta=0
+04-07 18:04:46.921968                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=16384 mu2e_mmap_ptrs_[0][1][0][0]=0x7ffafe995000 p=W l=6553600
+04-07 18:04:46.921973                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=20480 mu2e_mmap_ptrs_[0][1][0][1]=0x7ffb5b4a8000 p=R l=400
+04-07 18:04:46.921979                         OTSDAQ_TRACE d04 mu2edev::init 0 1:1 - num=60 size=65536 hwIdx=35, swIdx=35 delta=60
+04-07 18:04:46.921988                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=24576 mu2e_mmap_ptrs_[0][1][1][0]=0x7ffafe5d5000 p=W l=3932160
+04-07 18:04:46.921992                         OTSDAQ_TRACE d04 mu2edev::init chnDirMap2offset=28672 mu2e_mmap_ptrs_[0][1][1][1]=0x7ffb5b4a7000 p=R l=240
+04-07 18:04:46.922171                                  DTC nfo CONSTRUCTOR
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [380]	Done creating 0 ROC(s)
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [202]	Getting children ROC FEMacros...
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [120]	Writing DTC-hardware emulation mask: 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [123]	End check for DTC-hardware emulated ROCs.
+LogInfo:DTCFrontEndInterface:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [130]	DTCFrontEndInterface instantiated with name: DTC0 dtc_location_in_chain_ = 0 talking to /dev/mu2e0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [151]	Done creating interfaces
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2274]	Number of front ends to transition: 1
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [184]	Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [185]	Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [186]	Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2313]	theStateMachineImplementation Iteration 0.0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [727]	getIterationIndex() = 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [728]	getSubIterationIndex() = 0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [738]	DTC configuring... # of ROCs = 0
+LogInfo:DTCFrontEndInterface:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [837]	Step 0: DTC0 reset FPGA...LogError:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [554]	DTC: write value 0x80000000 to register 0x9100... read back 0x0
+LogInfo:DTCFrontEndInterface:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [843]	............. firmware version 19040209
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [568]	DTC0 firmware version (0x9004) = 0x19040209
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [667]	DTC0 VCCINT. = 0.983883 V
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [668]	DTC0 VCCAUX. = 1.79267 V
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [669]	DTC0 VCCBRAM = 1.00073 V
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [573]	DTC0 temperature = 58.5679 degC
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [576]	DTC0 SERDES reset........ (0x9118) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [578]	DTC0 SERDES disparity err (0x911c) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [580]	DTC0 SERDES unlock error. (0x9124) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [582]	DTC0 PLL locked.......... (0x9128) = 0x3ff
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [584]	DTC0 SERDES Rx status.... (0x9134) = 0x0
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [586]	DTC0 SERDES reset done... (0x9138) = 0xc3c3ffff
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [588]	DTC0 link status......... (0x9140) = 0xc3
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [590]	DTC0 SERDES ref clk freq. (0x915c) = 0x9502f90 = 156250000
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [593]	DTC0 control............. (0x9100) = 0x10000000
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [595]	
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2352]	FE Interface 'DTC0' is flagged for another iteration...
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq/otsdaq-core/FECore/FEVInterface.cc [52]	slowControlsGroupLink is disconnected, so done configuring slow controls.
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [38]	Starting WorkLoop: DTC0-SlowControls
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [197]	Done Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [198]	Done Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [199]	Done Configuring interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2371]	1 FE Interface state machine implementation(s) flagged for another iteration...
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [203]	Done Configuring all interfaces.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [503]	State machine 0 is flagged for another iteration...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [520]	1 state machine implementation(s) flagged for another iteration...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [394]	CoreSupervisorBase::stateConfigured
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [430]	iterationWorkFlag_ = 1
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorDTC0 is Configured
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = ConfigureIterate
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq/otsdaq-core/FECore/FEVInterface.cc [110]	slowControlsRunning
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq/otsdaq-core/FECore/FEVInterface.cc [114]	No slow controls channels to monitor, exiting slow controls workloop.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Error Par 0 Name: commandId Value: 33, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+otsdaq/otsdaq-core/ProgressBar/ProgressBar.cc [66]	File Not there
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorDTC0 is Configured and attempting to Error
+LogError:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [306]	
+:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [305]	Error was received! Halting immediately.
+LogDebug:FSM-FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Halt
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [617]	Halting all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2274]	Number of front ends to transition: 1
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [227]	Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [228]	Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [229]	Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2313]	theStateMachineImplementation Iteration 0.0
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop DTC0 was not created at all! This message will be commented in the future
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [93]	initially workLoop_->isActive() yes
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [122]	WARNING: Can't remove request WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [123]	workLoop_->isActive() no
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [127]	Stopped WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [128]	workLoop_->isActive() no
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [270]	Done Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [271]	Done Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [272]	Done Halting interface DTC0
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2376]	Done transitioning all state machine implementations...
+04-07 18:04:55.643897                                  DTC nfo DESTRUCTOR
+LogDebug:FE:DTCFrontEndInterface:DTC0:DTC0:otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface_interface.cc [141]	Destructed.
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [36]	DTC0 Destructed.
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0-SlowControls
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [93]	initially workLoop_->isActive() no
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [103]	WARNING: Can't cancel WorkLoop job for DTC0-SlowControls because probably it has never been activated!
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [106]	workLoop_->isActive() no
+LogDebug:Workloop-DTC0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: DTC0
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop DTC0 was not created at all! This message will be commented in the future
+LogDebug:Workloop-DTC0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:ots:FESupervisor1Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [279]	Done Halting all interfaces.
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [525]	Done configuration all state machine implementations...
+LogDebug:FESupervisor:FESupervisorDTC0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [380]	CoreSupervisorBase::stateHalted

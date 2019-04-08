@@ -1,0 +1,44 @@
+<?xml version='1.0'?>
+<!-- ${OTSDAQ_LIB} instead of {PROJECT_HOME}/lib/${XDAQ_OS}-->
+<xc:Partition xmlns:xsi     = "http://www.w3.org/2001/XMLSchema-instance"  
+              xmlns:soapenc = "http://schemas.xmlsoap.org/soap/encoding/" 
+              xmlns:xc      = "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
+
+  <xc:Context id="0" url="http://$${PX_SUPERVISOR_SERVER}:$${PX_PORT}">
+
+    <xc:Application class="ots::Supervisor" id="$${PX_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libSupervisor.so</xc:Module>
+
+    <xc:Application class="ots::FEWSupervisor" id="$${PX_FEW_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libFEWSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::FERSupervisor" id="$${PX_FER_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libFERSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::ChatSupervisor" id="$${PX_CHAT_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libChatSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::LogbookSupervisor" id="$${PX_LOGBOOK_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libLogbookSupervisor.so</xc:Module>
+    
+    <xc:Application class="ots::VisualSupervisor" id="$${PX_VISUAL_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libVisualSupervisor.so</xc:Module>
+
+    <xc:Application class="ots::ConfigurationGUISupervisor" id="$${PX_CONFIGURATION_GUI_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libConfigurationGUISupervisor.so</xc:Module>
+  </xc:Context>
+
+  <xc:Context id="0" url="http://$${PX_ARTDAQ_BUILDER_SUPERVISOR_SERVER}:$${PX_ARTDAQ_BUILDER_PORT}">
+
+    <xc:Application class="ots::ARTDAQBuilderSupervisor" id="$${PX_ARTDAQ_BUILDER_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libARTDAQBuilderSupervisor.so</xc:Module>
+
+  </xc:Context>
+
+  <xc:Context id="0" url="http://$${PX_ARTDAQ_AGGREGATOR_SUPERVISOR_SERVER}:$${PX_ARTDAQ_AGGREGATOR_PORT}">
+
+    <xc:Application class="ots::ARTDAQAggregatorSupervisor" id="$${PX_ARTDAQ_AGGREGATOR_SUPERVISOR_ID}" instance="1" network="local" group="daq"/>
+    <xc:Module>${PROJECT_HOME}/lib/${XDAQ_OS}/${XDAQ_PLATFORM}/libARTDAQAggregatorSupervisor.so</xc:Module>
+
+  </xc:Context>
+</xc:Partition>

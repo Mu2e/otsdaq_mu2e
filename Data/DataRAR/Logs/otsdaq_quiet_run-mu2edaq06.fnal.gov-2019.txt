@@ -1,0 +1,360 @@
+05 Apr 2019 22:13:55.676 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - xdaq version: 05.03.01, compiled on Nov 30 2018 at 11:32:13, 64bit
+05 Apr 2019 22:13:55.677 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - Loaded profile: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/XDAQConfigurations/otsConfiguration_CMake.xml
+05 Apr 2019 22:13:55.677 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - b2innub version: 02.05.01, compiled on Nov 30 2018 at 11:35:34
+05 Apr 2019 22:13:55.678 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - executive version: 04.00.06, compiled on Nov 30 2018 at 11:35:00
+05 Apr 2019 22:13:55.679 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - b2inutils version: 04.04.05, compiled on Nov 30 2018 at 11:35:40
+05 Apr 2019 22:13:55.681 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - pthttp version: 04.05.07, compiled on Nov 30 2018 at 11:33:38
+05 Apr 2019 22:13:55.681 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - ptfifo version: 04.03.01, compiled on Nov 30 2018 at 11:34:34
+05 Apr 2019 22:13:55.682 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - xrelay version: 04.01.00, compiled on Nov 30 2018 at 11:35:26
+05 Apr 2019 22:13:55.683 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - hyperdaq version: 05.02.01, compiled on Nov 30 2018 at 11:35:24
+05 Apr 2019 22:13:55.683 [139828965730496] DEBUG gov.fnal.mu2edaq06.p:2019 <> - Create application descriptor for class: executive::Application id: 0
+05 Apr 2019 22:13:55.693 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019.executive::Application.lid(0) <> - Log URL not set (was already console)
+05 Apr 2019 22:13:55.693 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019.executive::Application.lid(0) <> - Changed Log level to INFO
+05 Apr 2019 22:13:55.696 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019.pt::http::PeerTransportHTTP.lid(1) <> - No security policies on this server
+05 Apr 2019 22:13:55.908 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - CoreSupervisors version: 03.00.00, compiled on Apr  5 2019 at 17:02:51
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+04-05 17:13:57.700492                         UDP_mfPlugin err Error sending message 2 to 192.168.157.6, errno=17 (File exists)
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [33]	application->getApplicationContext()->getContextDescriptor()->getURL() = http://mu2edaq06.fnal.gov:2019
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [34]	application->getApplicationDescriptor()->getLocalId() = 313
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [35]	supervisorClass_ = ots::FESupervisor
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [36]	supervisorClassNoNamespace_ = FESupervisor
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [42]	Initializing info based on XDAQ context...
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/SupervisorDescriptorInfoBase.cc [37]	Init
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [98]	Initializing info for Normal mode XDAQ context...
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1216]	Table: TableGroupMetadata
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1218]	Num of Views: 0 (Temporary Views: 0)
+LogDebug:TableBase-TableGroupMetadata:otsdaq/otsdaq-core/TableCore/TableBase.cc [1249]	Using Mock-up view
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [197]	ACTIVE_GROUPS_FILENAME = /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/ServiceData/ActiveTableGroups.cfg
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [198]	ARTDAQ_DATABASE_URI = filesystemdb:///home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/databases/filesystemdb/test_db
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [105]	Opened.. /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/MessageFacilityTable_table.cc [159]	Forwarding to Web GUI with UDP forward MesageFacility table.
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/XDAQContextTable_table.cc [497]	Fixing deprecated Supervisor class from ots::Supervisor to ots::GatewaySupervisorLogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Context group 'testContext(59)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Backbone group 'TableEditWizBackbone(118)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ots:otsdaq/otsdaq-core/SupervisorInfo/AllSupervisorInfo.cc [330]	Init complete
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [393]	Destroying Backbone Key: 118
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [412]	Destroying Context Key: 59
+LogDebug:FESupervisor:UNINITIALIZED_supervisorApplicationUID:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [59]	Getting configuration specific info for supervisor 'FESupervisorCAPTAN0' of class ots::FESupervisor.
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [109]	CorePropertySupervisorBase::supervisorContextUID_ = ContextCAPTAN0
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [110]	CorePropertySupervisorBase::supervisorApplicationUID_ = FESupervisorCAPTAN0
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [111]	CorePropertySupervisorBase::supervisorConfigurationPath_ = /ContextCAPTAN0/LinkToApplicationTable/FESupervisorCAPTAN0/LinkToSupervisorTable
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [151]	hostname = mu2edaq06.fnal.gov
+LogDebug:ots:otsdaq/otsdaq-core/CoreSupervisors/CorePropertySupervisorBase.cc [166]	Marked alive: /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/Logs/otsdaq_is_alive-mu2edaq06.fnal.gov-2019.dat
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [22]	Constructing FiniteStateMachine
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [171]	Resetting RunControlStateMachine with name 'FESupervisor:FESupervisorCAPTAN0'...
+LogDebug:ots:otsdaq/otsdaq-core/WorkLoopManager/WorkLoopManager.cc [20]	Request name: StateMachine jobName: StateMachine
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [28]	Constructor.
+LogDebug:ots:otsdaq/otsdaq-core/MessageFacility/MessageFacility.h [41]	Configuring message facility with /home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/MessageFacilityGen.fcl
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [52]	Constructed.
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/Configurable/Configurable.cc [16]	 Configurable class constructed. 
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [25]	Constructed.
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [875]	State Machine 0 WAS of type FEVInterfacesManager
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [887]	theFEInterfacesManager pointer = 0xcfe020
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/FESupervisor.cc [32]	Destructed.
+05 Apr 2019 22:13:59.711 [139828965730496] INFO  gov.fnal.mu2edaq06.p:2019 <> - Ready.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Initialize Par 0 Name: commandId Value: 5, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Initial and attempting to Initialize
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Initialize
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [697]	transitionInitializing
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [380]	CoreSupervisorBase::stateHalted
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorCAPTAN0 is Halted
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = InitializeDone
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Configure Par 0 Name: ConfigurationAlias Value: defaultSystemAlias, Par 0 Name: ConfigurationTableGroupKey Value: 163, Par 0 Name: ConfigurationTableGroupName Value: defaultConfig, Par 0 Name: commandId Value: 11, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Halted and attempting to Configure
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Configure
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [532]	transitionConfiguring
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [546]	Configuration table group name: defaultConfig key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [339]	Deactivating Configuration group: defaultConfig
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [557]	Configuring all state machine implementations...
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [159]	Configuring FEVInterfacesManager 
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [55]	Path: /ContextCAPTAN0/LinkToApplicationTable/FESupervisorCAPTAN0/LinkToSupervisorTable/LinkToFEInterfaceTable
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [63]	appNode.getValueAsString() = FESupervisorCAPTAN0
+LogDebug:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1005]	Column Types: 
+GroupID-FE() FEInterfaceGroupID
+UID() FEInterfaceUID
+OnOff() Status
+FixedChoiceData() FEInterfacePluginName
+ChildLink-0() LinkToFETypeTable
+ChildLinkUID-0() LinkToFETypeUID
+ChildLink-SlowControlsChannels() LinkToSlowControlsChannelTable
+ChildLinkGroupID-SlowControlsChannels() LinkToSlowControlsChannelGroupID
+ChildLink-SlowControlsSupervisor() LinkToSlowControlsSupervisorTable
+ChildLinkUID-SlowControlsSupervisor() LinkToSlowControlsSupervisorUID
+Data() SlowControlsTxSocketIPAddress
+Data() SlowControlsTxSocketPort
+YesNo() SlowControlsLocalAggregateSavingEnabled
+Data() SlowControlsLocalFilePath
+Data() SlowControlsRadixFileName
+TrueFalse() SlowControlsSaveBinaryFile
+Comment() CommentDescription
+Author() Author
+Timestamp() RecordInsertionTime
+LogError:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1015]	
+:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+LogWarning:ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [2318]	Priority configuration not found. Assuming all children have equal priority (Error: :TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [75]	StringMacros::vectorToString(theFENamesByPriority_) = CAPTAN0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [91]	Interface Plugin Name: CAPTANSignalGenerator
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [95]	Interface Name: CAPTAN0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [96]	XDAQContext Node: XDAQContextTable
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [97]	Path to configuration: /ContextCAPTAN0/LinkToApplicationTable/FESupervisorCAPTAN0/LinkToSupervisorTable/LinkToFEInterfaceTable/CAPTAN0/LinkToFETypeTable
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [31]	Socket constructor 192.168.157.6:4001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [46]	IPAddress: 192.168.157.6 port: 4001 htons: 41231
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [60]	Constructed socket for port 4001=4001 htons: 41231
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:OtsInterface0:otsdaq/otsdaq-core/Configurable/Configurable.cc [16]	 Configurable class constructed. 
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [28]	'CAPTAN0' Constructed.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/TransmitterSocket.cc [14]	TransmitterSocket constructor 
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/ReceiverSocket.cc [30]	ReceiverSocket constructor
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/TransceiverSocket.cc [12]	TransceiverSocket constructor 
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [31]	Socket constructor 192.168.133.7:2001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [46]	IPAddress: 192.168.133.7 port: 2001 htons: 53511
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [60]	Constructed socket for port 2001=2001 htons: 53511
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [89]	Initializing port 4001 htons: 41231
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [114]	]	Binding port: 4001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [126]	]	Socket Number: 9 for port: 4001 initialized.
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [132]	Error********Error********Error********Error********Error********Error
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [136]	FAILED BIND FOR PORT: 4001 ON IP: 192.168.157.6
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [138]	Error********Error********Error********Error********Error********Error
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+LogError:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [181]	
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [79]	CLOSING THE SOCKET #-1 IP: 192.168.133.7 port: 2001 htons: 53511
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [36]	CAPTAN0 Destructed.
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: CAPTAN0-SlowControls
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop CAPTAN0-SlowControls was not created at all! This message will be commented in the future
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: CAPTAN0
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop CAPTAN0 was not created at all! This message will be commented in the future
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [79]	CLOSING THE SOCKET #0 IP: 192.168.157.6 port: 4001 htons: 41231
+LogError:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [137]	
+:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+LogError:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [582]	
+:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+LogError:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [425]	Failure performing transition from H to C exception: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [408]	Fsm current state: Failed
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [463]	Unexpected Failure state for FESupervisor:FESupervisorCAPTAN0 is Failed
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [466]	Error message was as follows: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorCAPTAN0 is Failed
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = Configure Failed: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [360]	theStateMachine_.getErrorMessage() = :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Error Par 0 Name: commandId Value: 17, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+otsdaq/otsdaq-core/ProgressBar/ProgressBar.cc [66]	File Not there
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Failed and attempting to Error
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [306]	
+:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [305]	Error was received! Halting immediately.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Halt Par 0 Name: commandId Value: 23, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Failed and attempting to Halt
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Halt
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [617]	Halting all state machine implementations...
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [2274]	Number of front ends to transition: 1
+LogError:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [455]	
+:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [453]	Interface ID 'CAPTAN0' not found in configured interfaces.
+LogInfo:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [644]	Error was caught while halting (but ignoring because previous state was 'Failed'): :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [453]	Interface ID 'CAPTAN0' not found in configured interfaces.
+
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [380]	CoreSupervisorBase::stateHalted
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorCAPTAN0 is Halted
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = HaltDone
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Configure Par 0 Name: ConfigurationAlias Value: defaultSystemAlias, Par 0 Name: ConfigurationTableGroupKey Value: 163, Par 0 Name: ConfigurationTableGroupName Value: defaultConfig, Par 0 Name: commandId Value: 29, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Halted and attempting to Configure
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Configure
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [532]	transitionConfiguring
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [546]	Configuration table group name: defaultConfig key: 163
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1123]	------------------------------------- init start    	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [339]	Deactivating Configuration group: defaultConfig
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [381]	Destroying Configuration Key: 163
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [64]	*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [65]	FESlowControlsTable
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [75]	BurstDataCount
+LogDebug:ots:otsdaq/otsdaq-core/TablePluginDataFormats/FESlowControlsTable_table.cc [77]	childType=unsigned long long
+LogDebug:ConfigurationManager:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationManager.cc [1288]	------------------------------------- init complete 	 [for all plug-ins in Configuration group 'defaultConfig(163)']
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [557]	Configuring all state machine implementations...
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [471]	theStateMachineImplementation Iteration 0.0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [159]	Configuring FEVInterfacesManager 
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [55]	Path: /ContextCAPTAN0/LinkToApplicationTable/FESupervisorCAPTAN0/LinkToSupervisorTable/LinkToFEInterfaceTable
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [63]	appNode.getValueAsString() = FESupervisorCAPTAN0
+LogDebug:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1005]	Column Types: 
+GroupID-FE() FEInterfaceGroupID
+UID() FEInterfaceUID
+OnOff() Status
+FixedChoiceData() FEInterfacePluginName
+ChildLink-0() LinkToFETypeTable
+ChildLinkUID-0() LinkToFETypeUID
+ChildLink-SlowControlsChannels() LinkToSlowControlsChannelTable
+ChildLinkGroupID-SlowControlsChannels() LinkToSlowControlsChannelGroupID
+ChildLink-SlowControlsSupervisor() LinkToSlowControlsSupervisorTable
+ChildLinkUID-SlowControlsSupervisor() LinkToSlowControlsSupervisorUID
+Data() SlowControlsTxSocketIPAddress
+Data() SlowControlsTxSocketPort
+YesNo() SlowControlsLocalAggregateSavingEnabled
+Data() SlowControlsLocalFilePath
+Data() SlowControlsRadixFileName
+TrueFalse() SlowControlsSaveBinaryFile
+Comment() CommentDescription
+Author() Author
+Timestamp() RecordInsertionTime
+LogError:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1015]	
+:TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+LogWarning:ConfigurationTree:otsdaq/otsdaq-core/ConfigurationInterface/ConfigurationTree.cc [2318]	Priority configuration not found. Assuming all children have equal priority (Error: :TableView-FE_INTERFACE_TABLE:v17:otsdaq/otsdaq-core/TableCore/TableView.cc [1010]	Missing Priority Column in config named FE_INTERFACE_TABLE. (The Priority column is identified when TableView is initialized)
+
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [75]	StringMacros::vectorToString(theFENamesByPriority_) = CAPTAN0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [91]	Interface Plugin Name: CAPTANSignalGenerator
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [95]	Interface Name: CAPTAN0
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [96]	XDAQContext Node: XDAQContextTable
+LogDebug:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [97]	Path to configuration: /ContextCAPTAN0/LinkToApplicationTable/FESupervisorCAPTAN0/LinkToSupervisorTable/LinkToFEInterfaceTable/CAPTAN0/LinkToFETypeTable
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [31]	Socket constructor 192.168.157.6:4001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [46]	IPAddress: 192.168.157.6 port: 4001 htons: 41231
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [60]	Constructed socket for port 4001=4001 htons: 41231
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:OtsInterface0:otsdaq/otsdaq-core/Configurable/Configurable.cc [16]	 Configurable class constructed. 
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [23]	Constructed.
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [28]	'CAPTAN0' Constructed.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/TransmitterSocket.cc [14]	TransmitterSocket constructor 
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/ReceiverSocket.cc [30]	ReceiverSocket constructor
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/TransceiverSocket.cc [12]	TransceiverSocket constructor 
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [31]	Socket constructor 192.168.133.7:2001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [46]	IPAddress: 192.168.133.7 port: 2001 htons: 53511
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [60]	Constructed socket for port 2001=2001 htons: 53511
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [89]	Initializing port 4001 htons: 41231
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [114]	]	Binding port: 4001
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [126]	]	Socket Number: 8 for port: 4001 initialized.
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [132]	Error********Error********Error********Error********Error********Error
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [136]	FAILED BIND FOR PORT: 4001 ON IP: 192.168.157.6
+otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [138]	Error********Error********Error********Error********Error********Error
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+LogError:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [181]	
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [79]	CLOSING THE SOCKET #-1 IP: 192.168.133.7 port: 2001 htons: 53511
+LogDebug:ots:otsdaq/otsdaq-core/FECore/FEVInterface.cc [36]	CAPTAN0 Destructed.
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: CAPTAN0-SlowControls
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop CAPTAN0-SlowControls was not created at all! This message will be commented in the future
+LogDebug:Workloop-CAPTAN0-SlowControls:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [29]	Destructor.
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [81]	Stopping WorkLoop: CAPTAN0
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [86]	MEASSAGE: WorkLoop CAPTAN0 was not created at all! This message will be commented in the future
+LogDebug:Workloop-CAPTAN0:otsdaq/otsdaq-core/WorkLoopManager/WorkLoop.cc [32]	Destructed.
+LogDebug:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [79]	CLOSING THE SOCKET #0 IP: 192.168.157.6 port: 4001 htons: 41231
+LogError:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [137]	
+:ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+LogError:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [582]	
+:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+LogError:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [425]	Failure performing transition from H to C exception: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [408]	Fsm current state: Failed
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [463]	Unexpected Failure state for FESupervisor:FESupervisorCAPTAN0 is Failed
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [466]	Error message was as follows: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorCAPTAN0 is Failed
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = Configure Failed: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+07 Apr 2019 23:04:54.096 [139828714690304] ERROR gov.fnal.mu2edaq06.p:2019.pt::http::PeerTransportHTTP.lid(1) <> - Caught exception: pt::http::exception::Exception 'Bad file descriptor' raised at send(/scratch/workspace/artdaq_demo-release-build/SLF7/e15-prof/build/xdaq/v14_4_1a/build/Linux64bit+3.10-2.17-e15-prof/xdaq-14.4.1/daq/pt/http/src/common/ReceiverLoop.cc:446)
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Configure Par 0 Name: ConfigurationAlias Value: defaultSystemAlias, Par 0 Name: ConfigurationTableGroupKey Value: 163, Par 0 Name: ConfigurationTableGroupName Value: defaultConfig, Par 0 Name: commandId Value: 30, Par 0 Name: retransmission Value: 1, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [258]	Assuming a timeout occurred at Gateway waiting for a response. Attempting to avoid error, by giving last result for command 'Configure': Configure Failed: :FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [581]	Error was caught while configuring: :ots:FESupervisor3Config:otsdaq/otsdaq-core/FECore/FEVInterfacesManager.cc [130]	Failed to instantiate plugin named 'CAPTAN0' of type 'CAPTANSignalGenerator' due to the following error: 
+:ots:otsdaq/otsdaq-core/NetworkUtilities/Socket.cc [177]	FATAL: Socket could not initialize socket (IP=192.168.157.6, Port=4001). Perhaps it is already in use?
+
+
+
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Failed and attempting to Configure
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [143]	transition = Configure
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/FiniteStateMachine.cc [214]	Configure is not in the list of the transitions from current state Failed
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [438]	:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [436]	Run Control Message Handling Failed: Configure is not in the list of the transitions from current state Failed 
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [463]	Unexpected Failure state for FESupervisor:FESupervisorCAPTAN0 is Failed
+LogError:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [466]	Error message was as follows: :FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [436]	Run Control Message Handling Failed: Configure is not in the list of the transitions from current state Failed 
+
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [475]	Ending state for FESupervisor:FESupervisorCAPTAN0 is Failed
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [477]	result = Configure Failed: :FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [436]	Run Control Message Handling Failed: Configure is not in the list of the transitions from current state Failed 
+
+LogDebug:FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/CoreSupervisors/CoreSupervisorBase.cc [360]	theStateMachine_.getErrorMessage() = :FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [436]	Run Control Message Handling Failed: Configure is not in the list of the transitions from current state Failed 
+
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [215]	Received... 	Command: Error Par 0 Name: commandId Value: 36, Par 0 Name: xmlns:xdaq Value: urn:xdaq-soap:3.0,
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [228]	Defaulting iteration index to 0.
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [241]	Defaulting subIterationIndex_ index to 0.
+otsdaq/otsdaq-core/ProgressBar/ProgressBar.cc [66]	File Not there
+LogDebug:FSM-FESupervisor:FESupervisorCAPTAN0:otsdaq/otsdaq-core/FiniteStateMachine/RunControlStateMachine.cc [283]	Starting state for FESupervisor:FESupervisorCAPTAN0 is Failed and attempting to Error

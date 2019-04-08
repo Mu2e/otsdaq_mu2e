@@ -1,0 +1,214 @@
+{
+"document" : {
+"data" : {
+"NAME" : "FE_SLOW_CONTROLS_CONFIGURATION",
+"COMMENT" : "1 second period. w/latched alarms field true, w/alarms and text format. first try with hw emulator slow controls. w/ valid data type. w/status.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1480280002,
+"COL_TYPES" : {
+"FE_GROUP_ID" : "VARCHAR2",
+"CHANNEL_NAME" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"CHANNEL_DATA_TYPE" : "VARCHAR2",
+"UNIVERSAL_INTERFACE_ADDRESS" : "VARCHAR2",
+"UNIVERSAL_DATA_BIT_OFFSET" : "NUMBER",
+"READ_ACCESS" : "VARCHAR2",
+"WRITE_ACCESS" : "VARCHAR2",
+"RECORD_CHANGES_ONLY" : "VARCHAR2",
+"DELAY_BETWEEN_SAMPLES_IN_SECONDS" : "NUMBER",
+"MONITORING_ENABLED" : "VARCHAR2",
+"LOCAL_SAVING_ENABLED" : "VARCHAR2",
+"LOCAL_FILE_PATH" : "VARCHAR2",
+"RADIX_FILE_NAME" : "VARCHAR2",
+"SAVE_BINARY_FILE" : "VARCHAR2",
+"ALARMS_ENABLED" : "VARCHAR2",
+"LATCH_ALARMS" : "VARCHAR2",
+"LOW_LOW_THRESHOLD" : "VARCHAR2",
+"LOW_THRESHOLD" : "VARCHAR2",
+"HIGH_THRESHOLD" : "VARCHAR2",
+"HIGH_HIGH_THRESHOLD" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"FE_GROUP_ID" : "OtsHwEmulatorGroup0",
+"CHANNEL_NAME" : "BurstDataCount",
+"STATUS" : "On",
+"CHANNEL_DATA_TYPE" : "unsigned long long",
+"UNIVERSAL_INTERFACE_ADDRESS" : "0x1001",
+"UNIVERSAL_DATA_BIT_OFFSET" : "0",
+"READ_ACCESS" : "Yes",
+"WRITE_ACCESS" : "Yes",
+"RECORD_CHANGES_ONLY" : "True",
+"DELAY_BETWEEN_SAMPLES_IN_SECONDS" : "1",
+"MONITORING_ENABLED" : "Yes",
+"LOCAL_SAVING_ENABLED" : "Yes",
+"LOCAL_FILE_PATH" : "/home/rrivera/ots/tmp/",
+"RADIX_FILE_NAME" : "SlowControls",
+"SAVE_BINARY_FILE" : "False",
+"ALARMS_ENABLED" : "Yes",
+"LATCH_ALARMS" : "True",
+"LOW_LOW_THRESHOLD" : "0",
+"LOW_THRESHOLD" : "1",
+"HIGH_THRESHOLD" : "9",
+"HIGH_HIGH_THRESHOLD" : "10",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480280002"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 09:25:18 2017",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+},
+{
+"name" : "defaultConfig_v2",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+},
+{
+"name" : "defaultConfig_v3",
+"assigned" : "Wed Jul 26 11:53:17 2017"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "Wed Jul 26 12:00:04 2017"
+},
+{
+"name" : "defaultConfig_v5",
+"assigned" : "Wed Jul 26 14:27:34 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "1",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "FESlowControlsConfiguration",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:18 2017",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "Wed Jul 26 09:25:18 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 10:32:11 2017",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "Wed Jul 26 10:32:11 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 11:53:17 2017",
+"value" : {
+"name" : "defaultConfig_v3",
+"assigned" : "Wed Jul 26 11:53:17 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 12:00:04 2017",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "Wed Jul 26 12:00:04 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 14:27:34 2017",
+"value" : {
+"name" : "defaultConfig_v5",
+"assigned" : "Wed Jul 26 14:27:34 2017"
+}
+}
+],
+"created" : "Wed Jul 26 09:25:18 2017"
+},
+"_id" : {
+"$oid" : "0ee40c59c5fa48ceb7e22776"
+},
+"collection" : "FESlowControlsConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

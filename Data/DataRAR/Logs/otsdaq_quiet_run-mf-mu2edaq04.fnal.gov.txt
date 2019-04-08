@@ -1,0 +1,15 @@
+
+
+/home/mu2edaq/sync_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	Starting...
+
+
+
+
+/home/mu2edaq/sync_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	 port parameter file:/home/mu2edaq/sync_demo/ots/srcs/otsdaq_mu2e/Data/MessageFacilityConfigurations/QuietForwarder.cfg
+
+
+
+
+/home/mu2edaq/sync_demo/ots/srcs/otsdaq_utilities/otsdaq-utilities/Console/MF_ReceiveAndForward.cpp	 Forwarding from: 30000 to: 192.168.157.6:30001
+
+

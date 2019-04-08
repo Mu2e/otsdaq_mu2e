@@ -1,0 +1,169 @@
+{
+"document" : {
+"data" : {
+"NAME" : "STM_PARAMETERS_TABLE",
+"COMMENT" : "Example of subsystem configuration parameters",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552063682,
+"COL_TYPES" : {
+"STM_PARAMETERS_UID" : "VARCHAR2",
+"STM_NUMBER_PARAM1" : "NUMBER",
+"STM_TRUE_FALSE_PARAM2" : "VARCHAR2",
+"STM_MUST_BE_UNIQUE_PARAM3" : "VARCHAR2",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "VARCHAR2",
+"STM_GROUPED_PARAMETERS_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet0",
+"STM_NUMBER_PARAM1" : "42",
+"STM_TRUE_FALSE_PARAM2" : "True",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs0",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"STM_GROUPED_PARAMETERS_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552063682"
+},
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet1",
+"STM_NUMBER_PARAM1" : "42",
+"STM_TRUE_FALSE_PARAM2" : "True",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs1",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"STM_GROUPED_PARAMETERS_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552063682"
+},
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet2",
+"STM_NUMBER_PARAM1" : "84",
+"STM_TRUE_FALSE_PARAM2" : "False",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs2",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"STM_GROUPED_PARAMETERS_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552063682"
+},
+{
+"STM_PARAMETERS_UID" : "STMPedanticParamSet3",
+"STM_NUMBER_PARAM1" : "0x10",
+"STM_TRUE_FALSE_PARAM2" : "False",
+"STM_MUST_BE_UNIQUE_PARAM3" : "DifferentFromOtherUIDs3",
+"LINK_TO_STM_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"STM_GROUPED_PARAMETERS_UID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1552063682"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-08T10:48:02.503-0600",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-08T10:48:02.504-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-08T10:48:02.504-0600"
+},
+{
+"name" : "defaultConfig_v123",
+"assigned" : "2019-03-08T10:48:09.783-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:48:02.504-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-08T10:48:02.504-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-08T10:48:02.504-0600",
+"value" : {
+"name" : "1",
+"assigned" : "2019-03-08T10:48:02.504-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-08T10:48:02.504-0600",
+"value" : {
+"name" : "STMParametersTable",
+"assigned" : "2019-03-08T10:48:02.504-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-08T10:48:02.504-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-08T10:48:02.504-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-08T10:48:09.783-0600",
+"value" : {
+"name" : "defaultConfig_v123",
+"assigned" : "2019-03-08T10:48:09.783-0600"
+}
+}
+],
+"created" : "2019-03-08T10:48:02.503-0600"
+},
+"_id" : {
+"$oid" : "2cd0f97499da4f38a7286613"
+},
+"collection" : "STMParametersTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

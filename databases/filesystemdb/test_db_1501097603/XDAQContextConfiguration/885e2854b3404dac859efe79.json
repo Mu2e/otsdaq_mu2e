@@ -1,0 +1,138 @@
+{
+"document" : {
+"data" : {
+"NAME" : "XDAQ_CONTEXT_CONFIGURATION",
+"COMMENT" : "Example context with artdaq off with environment variables.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1499441274,
+"COL_TYPES" : {
+"CONTEXT_UID" : "VARCHAR2",
+"LINK_TO_APPLICATION_CONFIGURATION" : "VARCHAR2",
+"APPLICATION_GROUP_ID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"ID" : "NUMBER",
+"ADDRESS" : "VARCHAR2",
+"PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"CONTEXT_UID" : "mainContext",
+"LINK_TO_APPLICATION_CONFIGURATION" : "XDAQApplicationConfiguration",
+"APPLICATION_GROUP_ID" : "testContextApps",
+"STATUS" : "On",
+"ID" : "0",
+"ADDRESS" : "http://${HOSTNAME}",
+"PORT" : "${OTS_MAIN_PORT}",
+"COMMENT_DESCRIPTION" : "main context",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1499441274"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "Wed Jul 26 09:25:19 2017",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+},
+{
+"name" : "testContext_v2",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "notprovided",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "2",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "XDAQContextConfiguration",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "Wed Jul 26 09:25:19 2017",
+"value" : {
+"name" : "testContext_v2",
+"assigned" : "Wed Jul 26 09:25:19 2017"
+}
+}
+],
+"created" : "Wed Jul 26 09:25:19 2017"
+},
+"_id" : {
+"$oid" : "885e2854b3404dac859efe79"
+},
+"collection" : "XDAQContextConfiguration",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
