@@ -1,18 +1,14 @@
 echo # This script is intended to be sourced.
-###########################################
-# usage:  source setup_ots.sh <subsystem>
-#   subsystem = hwdev, sync, stm, calo
-###########################################
 
 userinput=$1
 # the next "unsets" the command line input, so as not to pass it to the mrb setup
 shift        
 
 if [ x$userinput == "x" ]; then
-  echo "--> You are user $USER in the directory `pwd`"
+  echo "--> You are user $USER on $HOSTNAME in directory `pwd`"
   echo "================================================="
   echo "usage:  source setup_ots.sh <subsystem>"
-  echo "... where  subsystem = (hwdev,sync,stm,calo,trigger)"
+  echo "... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev)"
   echo "================================================="
   return 1;
 fi
@@ -24,7 +20,7 @@ repository="notGoodRepository"
 if [ $userinput == "sync" ]; then
     export OTS_MAIN_PORT=2015
     export OTS_WIZ_MODE_MAIN_PORT=3015
-    basepath="mu2edaq/sync_demo"   #keep this so that Rick can be happy "in his world" (i.e., using 02)
+    basepath="mu2edaq/sync_demo"   
     repository="otsdaq_mu2e"
     userdataappend=""
 elif [ $userinput == "stm" ]; then
@@ -45,6 +41,16 @@ elif [ $userinput == "trigger" ]; then
     basepath="mu2etrig/test_stand"
     repository="otsdaq_mu2e_trigger"
     userdataappend=""
+elif [ $userinput == "02" ]; then
+    export OTS_MAIN_PORT=2015
+    basepath="mu2edaq/sync_demo"
+    repository="otsdaq_mu2e"
+    userdataappend="_02"
+elif [ $userinput == "dcs" ]; then
+    export OTS_MAIN_PORT=2015
+    basepath="mu2edcs/dcs_ots_demo"
+    repository="otsdaq_mu2e"
+    userdataappend="DCS"
 elif [ $userinput == "hwdev" ]; then
     export OTS_MAIN_PORT=3055
     export OTS_WIZ_MODE_MAIN_PORT=3055
@@ -68,7 +74,7 @@ unalias ots >/dev/null 2>&1
 PRODUCTS=
 
 PRODUCTS_SAVE=${PRODUCTS:+${PRODUCTS}\:}/cvmfs/fermilab.opensciencegrid.org/products/artdaq:/mu2e/ups
-# keep the next since "products is huge and we don't want to copy it" - Ryan
+# keep the next since "products is huge and we don't want to copy it to other areas" - Ryan
 source /home/mu2edaq/sync_demo/ots/products/setup
         PRODUCTS=${PRODUCTS:+${PRODUCTS}}${PRODUCTS_SAVE:+\:${PRODUCTS_SAVE}}  
 
@@ -89,9 +95,11 @@ export OTSDAQ_DEMO_LIB=${MRB_BUILDDIR}/${repository}/lib
 #export OTSDAQ_UTILITIES_LIB=${MRB_BUILDDIR}/otsdaq_utilities/lib
 #Done with Setup environment when building with MRB (As there's no setupARTDAQOTS file)
 
-# I believe we keep this for the same "products" hugeness reason, above
-export CETPKG_INSTALL=/home/mu2edaq/sync_demo/ots/products
-export CETPKG_J=16
+# MRB should set this itself
+#export CETPKG_INSTALL=/home/mu2edaq/sync_demo/ots/products
+ 
+#make the number of build threads dependent on the number of cores on the machine:
+export CETPKG_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` + 1))
 
 
 export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
