@@ -1,0 +1,126 @@
+{
+"document" : {
+"data" : {
+"NAME" : "SUBSYSTEM_EXTINCTION_MONITOR_PARAMETERS_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1552670080,
+"COL_TYPES" : {
+"SUBSYSTEM_EXTINCTION_MONITOR_PARAMETERS_UID" : "VARCHAR2",
+"NUMBER_PARAM1" : "VARCHAR2",
+"TRUE_FALSE_PARAM2" : "VARCHAR2",
+"MUST_BE_UNIQUE_PARAM3" : "VARCHAR2",
+"LINK_TO_SUBSYSTEM_EXTINCTION_MONITOR_GROUPED_PARAMETERS_TABLE" : "VARCHAR2",
+"LINK_TO_SUBSYSTEM_EXTINCTION_MONITOR_GROUPED_PARAMETERS_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-04-08T12:35:05.996-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:35:05.997-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:35:05.997-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:35:11.902-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:35:05.997-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:35:05.997-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-04-08T12:35:05.997-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-04-08T12:35:05.997-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-04-08T12:35:05.997-0500",
+"value" : {
+"name" : "SubsystemExtinctionMonitorParametersTable",
+"assigned" : "2019-04-08T12:35:05.997-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-04-08T12:35:05.997-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:35:05.997-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:35:11.902-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:35:11.902-0500"
+}
+}
+],
+"created" : "2019-04-08T12:35:05.996-0500"
+},
+"_id" : {
+"$oid" : "91fcc869e326437e84402183"
+},
+"collection" : "SubsystemExtinctionMonitorParametersTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -1,0 +1,136 @@
+{
+"document" : {
+"data" : {
+"NAME" : "SUBSYSTEM_TRACKER_PARAMETERS_TABLE",
+"COMMENT" : "Dummy parameters for vertical slice ",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1554215694,
+"COL_TYPES" : {
+"SUBSYSTEM_TRACKER_PARAMETERS_UID" : "VARCHAR2",
+"NUMBER_PARAM1" : "VARCHAR2",
+"TRUE_FALSE_PARAM2" : "VARCHAR2",
+"MUST_BE_UNIQUE_PARAM3" : "VARCHAR2",
+"LINK_TO_SUBSYSTEM_TRACKER_GROUPED_PARAMETERS_TABLE" : "VARCHAR2",
+"LINK_TO_SUBSYSTEM_TRACKER_GROUPED_PARAMETERS_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUBSYSTEM_TRACKER_PARAMETERS_UID" : "TrackerVerticalSlice",
+"NUMBER_PARAM1" : "42",
+"TRUE_FALSE_PARAM2" : "False",
+"MUST_BE_UNIQUE_PARAM3" : "Unique0",
+"LINK_TO_SUBSYSTEM_TRACKER_GROUPED_PARAMETERS_TABLE" : "NO_LINK",
+"LINK_TO_SUBSYSTEM_TRACKER_GROUPED_PARAMETERS_GROUP_ID" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1554215694"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-04-08T12:35:06.759-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:35:06.760-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:35:06.759-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:35:12.416-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:35:06.759-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:35:06.759-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-04-08T12:35:06.759-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-04-08T12:35:06.759-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-04-08T12:35:06.760-0500",
+"value" : {
+"name" : "SubsystemTrackerParametersTable",
+"assigned" : "2019-04-08T12:35:06.760-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-04-08T12:35:06.760-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:35:06.760-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:35:12.416-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:35:12.416-0500"
+}
+}
+],
+"created" : "2019-04-08T12:35:06.759-0500"
+},
+"_id" : {
+"$oid" : "537cf3c4b9bf42569d55f231"
+},
+"collection" : "SubsystemTrackerParametersTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

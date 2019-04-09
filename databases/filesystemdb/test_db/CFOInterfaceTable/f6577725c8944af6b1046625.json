@@ -1,0 +1,130 @@
+{
+"document" : {
+"data" : {
+"NAME" : "CFO_INTERFACE_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551739198,
+"COL_TYPES" : {
+"UID" : "VARCHAR2",
+"DEVICE_INDEX" : "NUMBER",
+"CONFIGURE_CLOCK" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UID" : "CFO0",
+"DEVICE_INDEX" : "0",
+"CONFIGURE_CLOCK" : "0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551739179"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-04-08T12:34:59.806-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:34:59.807-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:34:59.807-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:35:08.002-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:34:59.807-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:34:59.807-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-04-08T12:34:59.807-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-04-08T12:34:59.807-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-04-08T12:34:59.807-0500",
+"value" : {
+"name" : "CFOInterfaceTable",
+"assigned" : "2019-04-08T12:34:59.807-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-04-08T12:34:59.807-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:34:59.807-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:35:08.002-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:35:08.002-0500"
+}
+}
+],
+"created" : "2019-04-08T12:34:59.806-0500"
+},
+"_id" : {
+"$oid" : "f6577725c8944af6b1046625"
+},
+"collection" : "CFOInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
