@@ -2770,9 +2770,24 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 	
 	auto readData = thisDTC_->ReadROCBlock(rocLinkIndex, address, number_of_words, incrementAddress);
 
+	std::ofstream datafile;
+
+	std::stringstream filename;
+	filename << "/home/mu2ehwdev/test_stand/ots/ReadROCBlock_data.txt";
+	std::string filenamestring = filename.str();
+	datafile.open(filenamestring);
+
+	datafile << "link " << std::dec << rocLinkIndex << std::endl;
+	datafile << "address " << std::dec << address << std::endl;
+	datafile << "increment address " << std::dec << incrementAddress << std::endl;
+	datafile << "read " << std::dec << number_of_words << " words..." << std::endl;
+
 	for (int i=0; i<number_of_words; i++) {
+	        datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i] << std::endl;
 		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i] << __E__;
 	}
+
+	datafile.close();
 
 	//__SET_ARG_OUT__("readData", readData);
 
