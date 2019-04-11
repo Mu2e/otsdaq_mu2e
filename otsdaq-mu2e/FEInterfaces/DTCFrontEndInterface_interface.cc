@@ -2778,7 +2778,7 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 	datafile.open(filenamestring);
 
 	datafile << "link " << std::dec << rocLinkIndex << std::endl;
-	datafile << "address " << std::dec << address << std::endl;
+	datafile << "address 0x" << std::hex << address << std::endl;
 	datafile << "increment address " << std::dec << incrementAddress << std::endl;
 	datafile << "read " << std::dec << number_of_words << " words..." << std::endl;
 
