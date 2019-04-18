@@ -114,6 +114,9 @@
 ],
 "daq02Config_v14" : [
 "32b5728fedfc4d2aafb68b39"
+],
+"daq02Config_v15" : [
+"32b5728fedfc4d2aafb68b39"
 ]
 },
 "entities.name" : {
@@ -231,6 +234,9 @@
 ],
 "daq02Config_v14" : [
 "2019-04-04T11:15:37.917-0500"
+],
+"daq02Config_v15" : [
+"2019-04-16T13:50:43.723-0500"
 ]
 }
 }
