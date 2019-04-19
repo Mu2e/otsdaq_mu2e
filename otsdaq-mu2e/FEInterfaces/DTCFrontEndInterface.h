@@ -74,6 +74,7 @@ class DTCFrontEndInterface : public FEVInterface
 	unsigned    roc_mask_              = 0;
 	std::string device_name_;
 	bool        emulatorMode_;
+	int         emulate_cfo_           = 0;
 
 	std::ofstream datafile_[8];
 

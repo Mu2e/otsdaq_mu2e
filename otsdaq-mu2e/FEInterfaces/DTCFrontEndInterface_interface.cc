@@ -25,6 +25,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	universalDataSize_    = 4;
 
 	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
+	emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
 
 	// label
 	device_name_ = interfaceUID;
@@ -844,6 +845,19 @@ void DTCFrontEndInterface::configure(void) try
 
 			DTCReset();
 		}
+
+		if (emulate_cfo_ == 1) 
+		{
+		  __MCOUT_INFO__("..... enable CFO emulation...");
+		  registerWrite(0x9100, 0x40000000);
+
+		  __FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
+		  registerWrite(0x91f0, 0x00000000);
+
+		  __FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
+		  registerWrite(0x91f4, 0x00000000);
+		}
+
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
@@ -1009,6 +1023,25 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
+	  if (emulate_cfo_ == 1) 
+	  {
+		__MCOUT_INFO__("Step " << config_step
+		                       << ": CFO emulation enable Event start characters "
+		                          "and event window interval"
+		                       << __E__);
+
+		__FE_COUT__ << "CFO emulation:  set Event Window interval time" << __E__;
+		//    registerWrite(0x91f0,0x154);   //1.7us
+		registerWrite(0x91f0, 0x1f40);  // 40us
+		// 	registerWrite(0x91f0,0x00000000); 	// for NO markers, write these
+		// values
+
+		__FE_COUT__ << "CFO emulation:  set 40MHz marker interval" << __E__;
+		registerWrite(0x91f4, 0x0800);
+		// 	registerWrite(0x91f4,0x00000000); 	// for NO markers, write these
+		// values
+
+	  }
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"
 		                       << __E__);
 
