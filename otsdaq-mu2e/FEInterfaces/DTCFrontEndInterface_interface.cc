@@ -614,9 +614,7 @@ float DTCFrontEndInterface::readTemperature()
 void DTCFrontEndInterface::turnOnLED()
 {
 	int dataInReg = registerRead(0x9100);
-
-	int dataToWrite = dataInReg | 0x001f0000;
-
+	int dataToWrite = dataInReg | 0x001f0000;  // bit[16-20] = 1
 	registerWrite(0x9100, dataToWrite);
 
 	return;
@@ -628,9 +626,7 @@ void DTCFrontEndInterface::turnOnLED()
 void DTCFrontEndInterface::turnOffLED()
 {
 	int dataInReg = registerRead(0x9100);
-
-	int dataToWrite = dataInReg & 0xffe0ffff;
-
+	int dataToWrite = dataInReg & 0xffe0ffff;  // bit[16-20] = 0
 	registerWrite(0x9100, dataToWrite);
 
 	return;
@@ -785,6 +781,8 @@ void DTCFrontEndInterface::configure(void) try
 			if(checkLinkStatus() == 1)
 			{
 				// links OK,  continue with the rest of the configuration
+			        __FE_COUT__ << device_name_ << " Link Status is OK = 0x" << std::hex
+				            << registerRead(0x9140) << std::dec << __E__;
 
 				indicateIterationWork();
 				turnOffLED();
@@ -837,7 +835,9 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " reset FPGA...");
 
-			registerWrite(0x9100, 0x80000000);  // bit 31 = DTC Reset FPGA
+			int dataInReg = registerRead(0x9100);
+			int dataToWrite = dataInReg | 0x80000000; // bit 31 = DTC Reset FPGA
+			registerWrite(0x9100, dataToWrite);
 			sleep(3);
 
 			__MCOUT_INFO__("............. firmware version "
@@ -848,14 +848,21 @@ void DTCFrontEndInterface::configure(void) try
 
 		if (emulate_cfo_ == 1) 
 		{
-		  __MCOUT_INFO__("..... enable CFO emulation...");
-		  registerWrite(0x9100, 0x40000000);
+		  __MCOUT_INFO__("..... enable CFO emulation and internal clock...");
+		  int dataInReg = registerRead(0x9100);
+		  int dataToWrite = dataInReg | 0x400000c0; // bit 30 = CFO emulation; bit 6-7 internal clock
+		  registerWrite(0x9100, dataToWrite);
 
 		  __FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
 		  registerWrite(0x91f0, 0x00000000);
 
 		  __FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
 		  registerWrite(0x91f4, 0x00000000);
+		} else
+		{
+		  int dataInReg = registerRead(0x9100);
+		  int dataToWrite = dataInReg & 0xbfffff3f; // bit 30 = CFO emulation; bit 6-7 internal clock
+		  registerWrite(0x9100, dataToWrite);		  
 		}
 
 	}
@@ -864,8 +871,6 @@ void DTCFrontEndInterface::configure(void) try
 		if(config_clock == 1 && config_step < number_of_dtc_config_steps)
 		{
 			// only configure the clock/crystal the first loop through...
-
-			//  registerWrite(0x9100,0x10000000);	// bit 31 = DTC Reset FPGA
 
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " reset clock..." << __E__);
@@ -958,24 +963,30 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 4)
 	{
+
+		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
+		                       << " wait for links..." << __E__);
+
 		// reset ROC links, first what is sent out, then what is received, then
 		// check links
 
 		// RESETTING THE LINKS SHOULD NOT BE NECESSARY with firmware version
 		// 20181024, however, we DO want to confirm that the links are OK...
 
-		// 	 __FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
-		// 	 registerWrite(0x9118,0x00003f00);
-		// 	 registerWrite(0x9118,0x00000000);
-		//
-		//	 sleep(3);
-		//
-		// 	 __FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
-		// 	 registerWrite(0x9118,0x3f000000);
-		// 	 registerWrite(0x9118,0x00000000);
-		//
-		// 	 sleep(3);
-		//
+		if (emulate_cfo_ == 1) 
+		{
+
+		 	 __FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
+		 	 registerWrite(0x9118,0x00003f00);
+		 	 registerWrite(0x9118,0x00000000);
+		
+			 sleep(3);
+		
+		 	 __FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
+		 	 registerWrite(0x9118,0x3f000000);
+		 	 registerWrite(0x9118,0x00000000);
+		
+		}
 		// 	 // WILL NEED TO CONFIGURE THE ROC LINKS HERE BEFORE RESETTING WHAT IS
 		// RECEIVED
 		//
@@ -985,8 +996,6 @@ void DTCFrontEndInterface::configure(void) try
 		//
 		// 	 sleep(6);
 
-		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-		                       << " wait for links..." << __E__);
 
 		indicateSubIterationWork();  // tell state machine to stay in configure state
 		                             // ("come back to me")
@@ -1012,7 +1021,10 @@ void DTCFrontEndInterface::configure(void) try
 
 		// put DTC CFO link output into loopback mode
 		__FE_COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
-		registerWrite(0x9100, 0x00000000);
+
+		int dataInReg = registerRead(0x9100);
+		int dataToWrite = dataInReg & 0xefffffff; //bit 28 = 0
+		registerWrite(0x9100, dataToWrite);
 
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure ROCs"
 		                       << __E__);
@@ -1201,7 +1213,9 @@ void DTCFrontEndInterface::start(std::string)  // runNumber)
 	if(activeDTC == dtc_location_in_chain_)
 	{
 		__FE_COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
-		registerWrite(0x9100, 0x00000000);
+		int dataInReg = registerRead(0x9100);
+		int dataToWrite = dataInReg & 0xefffffff; //bit 28 = 0
+		registerWrite(0x9100, dataToWrite);
 	}
 	else
 	{
@@ -1210,7 +1224,10 @@ void DTCFrontEndInterface::start(std::string)  // runNumber)
 		__FE_COUT__ << "active DTC = " << activeDTC
 		            << " is NOT this DTC = " << dtc_location_in_chain_
 		            << "... pass signal through" << __E__;
-		registerWrite(0x9100, 0x10000000);
+
+		int dataInReg = registerRead(0x9100);
+		int dataToWrite = dataInReg | 0x10000000;  // bit 28 = 1
+		registerWrite(0x9100, dataToWrite);
 	}
 
 	int ROCToEnable =
