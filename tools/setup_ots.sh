@@ -8,7 +8,7 @@ if [ x$userinput == "x" ]; then
   echo "--> You are user $USER on $HOSTNAME in directory `pwd`"
   echo "================================================="
   echo "usage:  source setup_ots.sh <subsystem>"
-  echo "... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev)"
+  echo "... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker)"
   echo "================================================="
   return 1;
 fi
@@ -34,6 +34,12 @@ elif [ $userinput == "calo" ]; then
     export OTS_WIZ_MODE_MAIN_PORT=3025
     basepath="mu2ecalo/test_stand"
     repository="otsdaq_mu2e_calorimeter"
+    userdataappend=""
+elif [ $userinput == "tracker" ]; then
+    export OTS_MAIN_PORT=3015
+    export OTS_WIZ_MODE_MAIN_PORT=3015
+    basepath="mu2etrk/test_stand"
+    repository="otsdaq_mu2e_tracker"
     userdataappend=""
 elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
