@@ -846,29 +846,10 @@ void DTCFrontEndInterface::configure(void) try
 			DTCReset();
 		}
 
-		if (emulate_cfo_ == 1) 
-		{
-		  __MCOUT_INFO__("..... enable CFO emulation and internal clock...");
-		  int dataInReg = registerRead(0x9100);
-		  int dataToWrite = dataInReg | 0x400000c0; // bit 30 = CFO emulation; bit 6-7 internal clock
-		  registerWrite(0x9100, dataToWrite);
-
-		  __FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
-		  registerWrite(0x91f0, 0x00000000);
-
-		  __FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
-		  registerWrite(0x91f4, 0x00000000);
-		} else
-		{
-		  int dataInReg = registerRead(0x9100);
-		  int dataToWrite = dataInReg & 0xbfffff3f; // bit 30 = CFO emulation; bit 6-7 internal clock
-		  registerWrite(0x9100, dataToWrite);		  
-		}
-
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
-		if(config_clock == 1 && config_step < number_of_dtc_config_steps)
+	        if( (config_clock == 1 || emulate_cfo_ == 1) && config_step < number_of_dtc_config_steps)
 		{
 			// only configure the clock/crystal the first loop through...
 
@@ -915,7 +896,7 @@ void DTCFrontEndInterface::configure(void) try
 	{
 		// configure Jitter Attenuator to recover clock
 
-		if(config_jitter_attenuator == 1 && config_step < number_of_dtc_config_steps)
+	        if( (config_jitter_attenuator == 1 || emulate_cfo_ == 1 ) && config_step < number_of_dtc_config_steps)
 		{
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " configure Jitter Attenuator..." << __E__);
@@ -934,6 +915,27 @@ void DTCFrontEndInterface::configure(void) try
 	{
 		// reset CFO links, first what is received from upstream, then what is
 		// transmitted downstream
+
+		if (emulate_cfo_ == 1) 
+		{
+		  __MCOUT_INFO__("Step " << config_step << ": " << device_name_
+                                 << " enable CFO emulation and internal clock");
+		  int dataInReg = registerRead(0x9100);
+		  int dataToWrite = dataInReg | 0x400000c0; // bit 30 = CFO emulation; bit 6-7 internal clock
+		  registerWrite(0x9100, dataToWrite);
+
+		  __FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
+		  registerWrite(0x91f0, 0x00000000);
+
+		  __FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
+		  registerWrite(0x91f4, 0x00000000);
+		} else
+		{
+		  int dataInReg = registerRead(0x9100);
+		  int dataToWrite = dataInReg & 0xbfffff3f; // bit 30 = CFO emulation; bit 6-7 internal clock
+		  registerWrite(0x9100, dataToWrite);		  
+		}
+
 
 		// THIS SHOULD NOT BE NECESSARY with firmware version 20181024
 		if(reset_rx == 1)
