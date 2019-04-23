@@ -98,6 +98,14 @@
 "name" : "TableEditWizBackbone_v3",
 "assigned" : "2019-04-08T12:35:19.258-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-23T15:52:25.091-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v4",
+"assigned" : "2019-04-23T15:52:25.091-0500"
+}
 }
 ],
 "created" : "2019-04-08T12:35:18.728-0500"
@@ -120,5 +128,11 @@
 "attachments" : [
 
 ],
-"configtype" : "notprovided"
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "TableEditWizBackbone_v4",
+"assigned" : "2019-04-23T15:52:25.091-0500"
+}
+]
 }

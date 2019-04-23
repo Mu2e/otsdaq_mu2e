@@ -3,7 +3,7 @@
 		xmlns:soapenc	= "http://schemas.xmlsoap.org/soap/encoding/"
 		xmlns:xc	= "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
 
-	<!-- ContextUID='mainContext' sourceConfig='XDAQContextTable_v3 @ 1554821919' -->
+	<!-- ContextUID='mainContext' sourceConfig='XDAQContextTable_v4 @ 1556052794' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:2015">
 
 		<!-- Application GroupID = 'mainContext' UID='Supervisor' sourceConfig='XDAQApplicationTable_v2 @ 1551877632' -->
@@ -57,10 +57,10 @@
 
 	</xc:Context>
 
-	<!-- ContextUID='ContextDTC0' sourceConfig='XDAQContextTable_v3 @ 1554821919' -->
+	<!-- ContextUID='ContextDTC0' sourceConfig='XDAQContextTable_v4 @ 1556052794' -->
+	<!--
 	<xc:Context id="0" url="http://mu2edaq05.fnal.gov:2017">
 
-		<!-- Application GroupID = 'ContextDTC0' UID='FESupervisorDTC0' sourceConfig='XDAQApplicationTable_v2 @ 1551877632' -->
 		<xc:Application class="ots::FESupervisor" id="311" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:FESupervisor" xsi:type="soapenc:Struct">
 			</properties>
@@ -68,11 +68,12 @@
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
 
 	</xc:Context>
+	-->
 
-	<!-- ContextUID='ContextCFO0' sourceConfig='XDAQContextTable_v3 @ 1554821919' -->
+	<!-- ContextUID='ContextCFO0' sourceConfig='XDAQContextTable_v4 @ 1556052794' -->
+	<!--
 	<xc:Context id="0" url="http://mu2edaq04.fnal.gov:2016">
 
-		<!-- Application GroupID = 'ContextCFO0' UID='FESupervisorCFO0' sourceConfig='XDAQApplicationTable_v2 @ 1551877632' -->
 		<xc:Application class="ots::FESupervisor" id="210" instance="1" network="local" group="daq">
 			<properties xmlns="urn:xdaq-application:FESupervisor" xsi:type="soapenc:Struct">
 			</properties>
@@ -80,8 +81,9 @@
 		<xc:Module>/home/mu2edaq/sync_demo/ots/build_slf7.x86_64/otsdaq/lib/libCoreSupervisors.so</xc:Module>
 
 	</xc:Context>
+	-->
 
-	<!-- ContextUID='ContextDTC1' sourceConfig='XDAQContextTable_v3 @ 1554821919' -->
+	<!-- ContextUID='ContextDTC1' sourceConfig='XDAQContextTable_v4 @ 1556052794' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:2018">
 
 		<!-- Application GroupID = 'ContextDTC1' UID='FESupervisorDTC1' sourceConfig='XDAQApplicationTable_v2 @ 1551877632' -->
@@ -93,7 +95,7 @@
 
 	</xc:Context>
 
-	<!-- ContextUID='ContextCAPTAN0' sourceConfig='XDAQContextTable_v3 @ 1554821919' -->
+	<!-- ContextUID='ContextCAPTAN0' sourceConfig='XDAQContextTable_v4 @ 1556052794' -->
 	<!--
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:2019">
 

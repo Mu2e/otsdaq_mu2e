@@ -140,6 +140,14 @@
 "name" : "defaultConfig_v1",
 "assigned" : "2019-04-08T12:35:10.471-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-23T15:52:19.278-0500",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "2019-04-23T15:52:19.278-0500"
+}
 }
 ],
 "created" : "2019-04-08T12:35:02.945-0500"
@@ -162,5 +170,11 @@
 "attachments" : [
 
 ],
-"configtype" : "notprovided"
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "defaultConfig_v2",
+"assigned" : "2019-04-23T15:52:19.278-0500"
+}
+]
 }
