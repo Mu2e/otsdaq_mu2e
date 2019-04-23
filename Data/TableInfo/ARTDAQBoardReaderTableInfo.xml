@@ -7,11 +7,11 @@
 				<COLUMN Type="UniqueData" 	 Name="OffsetPort" 	 StorageName="OFFSET_PORT" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="FixedChoiceData" 	 Name="daqGeneratorPluginType" 	 StorageName="DAQ_GENERATOR_PLUGIN_TYPE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,UDPReceiver"/>
 				<COLUMN Type="FixedChoiceData" 	 Name="daqGeneratorFragmentType" 	 StorageName="DAQ_GENERATOR_FRAGMENT_TYPE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,UDP"/>
-				<COLUMN Type="ChildLink-daqParameters" 	 Name="daqParametersLink" 	 StorageName="DAQ_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-daqParameters" 	 Name="daqParametersLink" 	 StorageName="DAQ_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQBoardReaderDaqParameterTable"/>
 				<COLUMN Type="ChildLinkGroupID-daqParameters" 	 Name="daqParametersLinkGroupID" 	 StorageName="DAQ_PARAMETERS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-destinations" 	 Name="daqDestinationsLink" 	 StorageName="DAQ_DESTINATIONS_LINK" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-destinations" 	 Name="daqDestinationsLink" 	 StorageName="DAQ_DESTINATIONS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDestinationTable"/>
 				<COLUMN Type="ChildLinkGroupID-destinations" 	 Name="daqDestinationsLinkGroupID" 	 StorageName="DAQ_DESTINATIONS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-metrics" 	 Name="daqMetricsLink" 	 StorageName="DAQ_METRICS_LINK" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-metrics" 	 Name="daqMetricsLink" 	 StorageName="DAQ_METRICS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDaqMetricTable"/>
 				<COLUMN Type="ChildLinkGroupID-metrics" 	 Name="daqMetricsLinkUID" 	 StorageName="DAQ_METRICS_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
