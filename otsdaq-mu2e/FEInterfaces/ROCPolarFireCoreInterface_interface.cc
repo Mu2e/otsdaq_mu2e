@@ -135,7 +135,7 @@ void ROCPolarFireCoreInterface::configure(void) try
 		if(val != 4860)
 		{
 			__FE_SS__ << "Bad read not 4860! val = " << val << __E__;
-			__FE_SS_THROW__;
+			//__FE_SS_THROW__;   disable for the moment, so we can debug
 		}
 
 		val = this->readDelay();
@@ -143,7 +143,7 @@ void ROCPolarFireCoreInterface::configure(void) try
 		if(val != delay_)
 		{
 			__FE_SS__ << "Bad read not " << delay_ << "! val = " << val << __E__;
-			__FE_SS_THROW__;
+			//__FE_SS_THROW__;   disable for the moment, so we can debug
 		}
 	}
 
