@@ -5,6 +5,11 @@ ARTDAQ/*
 ../../../otsdaq_mu2e/Data/TableInfo/DTC*
 ../../../otsdaq_mu2e/Data/TableInfo/CFO*
 ../../../otsdaq_mu2e/Data/TableInfo/Mu2e*
+../../../otsdaq_mu2e_calorimeter/Data/TableInfo/SubsystemCalorimeter*
+../../../otsdaq_mu2e_crv/Data/TableInfo/SubsystemCRV*
+../../../otsdaq_mu2e_extmon/Data/TableInfo/SubsystemExtinctionMonitor*
+../../../otsdaq_mu2e_stm/Data/TableInfo/SubsystemSTM*
+../../../otsdaq_mu2e_tracker/Data/TableInfo/SubsystemTracker*
 ContextGroup/DesktopIconTable
 ContextGroup/DesktopWindowParameterTable
 ContextGroup/GatewaySupervisorTable
