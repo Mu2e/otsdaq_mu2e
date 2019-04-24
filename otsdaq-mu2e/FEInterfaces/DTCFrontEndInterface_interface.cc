@@ -1046,13 +1046,13 @@ void DTCFrontEndInterface::configure(void) try
 
 		__FE_COUT__ << "CFO emulation:  set Event Window interval time" << __E__;
 		//    registerWrite(0x91f0,0x154);   //1.7us
-		registerWrite(0x91f0, 0x1f40);  // 40us
-		// 	registerWrite(0x91f0,0x00000000); 	// for NO markers, write these
+		//registerWrite(0x91f0, 0x1f40);  // 40us
+		 	registerWrite(0x91f0,0x00000000); 	// for NO markers, write these
 		// values
 
 		__FE_COUT__ << "CFO emulation:  set 40MHz marker interval" << __E__;
-		registerWrite(0x91f4, 0x0800);
-		// 	registerWrite(0x91f4,0x00000000); 	// for NO markers, write these
+		//registerWrite(0x91f4, 0x0800);
+		 	registerWrite(0x91f4,0x00000000); 	// for NO markers, write these
 		// values
 
 	  }
