@@ -4,7 +4,7 @@
 "NAME" : "DTC_INTERFACE_TABLE",
 "COMMENT" : "Auto-generated from mock-up.",
 "AUTHOR" : "admin",
-"CREATION_TIME" : 1556052734,
+"CREATION_TIME" : 1556219698,
 "COL_TYPES" : {
 "UID" : "VARCHAR2",
 "EMULATOR_MODE" : "VARCHAR2",
@@ -24,26 +24,26 @@
 "EMULATOR_MODE" : "False",
 "LOCATION_IN_CHAIN" : "0",
 "DEVICE_INDEX" : "0",
-"EMULATE_CFO" : "No",
+"EMULATE_CFO" : "Yes",
 "CONFIGURE_CLOCK" : "No",
 "LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
 "LINK_TO_ROC_GROUP_ID" : "DTC0ROCs",
 "COMMENT_DESCRIPTION" : "No Comment",
 "AUTHOR" : "admin",
-"RECORD_INSERTION_TIME" : "1551739189"
+"RECORD_INSERTION_TIME" : "1556219698"
 },
 {
 "UID" : "DTC1",
 "EMULATOR_MODE" : "False",
 "LOCATION_IN_CHAIN" : "1",
 "DEVICE_INDEX" : "0",
-"EMULATE_CFO" : "Yes",
+"EMULATE_CFO" : "No",
 "CONFIGURE_CLOCK" : "No",
 "LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
 "LINK_TO_ROC_GROUP_ID" : "DTC1ROCs",
 "COMMENT_DESCRIPTION" : "No Comment",
 "AUTHOR" : "admin",
-"RECORD_INSERTION_TIME" : "1556052734"
+"RECORD_INSERTION_TIME" : "1556219698"
 }
 ]
 },
@@ -61,30 +61,30 @@
 "source" : "template",
 "name" : "notprovided",
 "format" : "json",
-"created" : "2019-04-23T15:52:14.445-0500",
+"created" : "2019-04-25T14:14:58.225-0500",
 "rawdata" : [
 
 ]
 },
-"version" : "2",
+"version" : "3",
 "entities" : [
 {
 "name" : "OTSROOT",
-"assigned" : "2019-04-23T15:52:14.447-0500"
+"assigned" : "2019-04-25T14:14:58.226-0500"
 }
 ],
 "configurations" : [
 {
 "name" : "notprovided",
-"assigned" : "2019-04-23T15:52:14.446-0500"
+"assigned" : "2019-04-25T14:14:58.226-0500"
 },
 {
-"name" : "defaultConfig_v2",
-"assigned" : "2019-04-23T15:52:17.478-0500"
+"name" : "defaultConfig_v3",
+"assigned" : "2019-04-25T14:15:00.844-0500"
 },
 {
-"name" : "defaultConfig_v4",
-"assigned" : "2019-04-25T14:15:59.509-0500"
+"name" : "defaultConfig_v5",
+"assigned" : "2019-04-25T14:19:46.357-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -94,57 +94,57 @@
 "updates" : [
 {
 "event" : "addConfiguration",
-"timestamp" : "2019-04-23T15:52:14.446-0500",
+"timestamp" : "2019-04-25T14:14:58.226-0500",
 "value" : {
 "name" : "notprovided",
-"assigned" : "2019-04-23T15:52:14.446-0500"
+"assigned" : "2019-04-25T14:14:58.226-0500"
 }
 },
 {
 "event" : "setVersion",
-"timestamp" : "2019-04-23T15:52:14.446-0500",
+"timestamp" : "2019-04-25T14:14:58.226-0500",
 "value" : {
-"name" : "2",
-"assigned" : "2019-04-23T15:52:14.446-0500"
+"name" : "3",
+"assigned" : "2019-04-25T14:14:58.226-0500"
 }
 },
 {
 "event" : "setCollection",
-"timestamp" : "2019-04-23T15:52:14.447-0500",
+"timestamp" : "2019-04-25T14:14:58.226-0500",
 "value" : {
 "name" : "DTCInterfaceTable",
-"assigned" : "2019-04-23T15:52:14.447-0500"
+"assigned" : "2019-04-25T14:14:58.226-0500"
 }
 },
 {
 "event" : "addEntity",
-"timestamp" : "2019-04-23T15:52:14.447-0500",
+"timestamp" : "2019-04-25T14:14:58.227-0500",
 "value" : {
 "name" : "OTSROOT",
-"assigned" : "2019-04-23T15:52:14.447-0500"
+"assigned" : "2019-04-25T14:14:58.226-0500"
 }
 },
 {
 "event" : "addConfiguration",
-"timestamp" : "2019-04-23T15:52:17.478-0500",
+"timestamp" : "2019-04-25T14:15:00.844-0500",
 "value" : {
-"name" : "defaultConfig_v2",
-"assigned" : "2019-04-23T15:52:17.478-0500"
+"name" : "defaultConfig_v3",
+"assigned" : "2019-04-25T14:15:00.844-0500"
 }
 },
 {
 "event" : "addConfiguration",
-"timestamp" : "2019-04-25T14:15:59.509-0500",
+"timestamp" : "2019-04-25T14:19:46.357-0500",
 "value" : {
-"name" : "defaultConfig_v4",
-"assigned" : "2019-04-25T14:15:59.509-0500"
+"name" : "defaultConfig_v5",
+"assigned" : "2019-04-25T14:19:46.357-0500"
 }
 }
 ],
-"created" : "2019-04-23T15:52:14.445-0500"
+"created" : "2019-04-25T14:14:58.225-0500"
 },
 "_id" : {
-"$oid" : "056dc540c2e94463a04d84c2"
+"$oid" : "0864d4d25ff342e087a3947e"
 },
 "collection" : "DTCInterfaceTable",
 "aliases" : {

@@ -112,6 +112,30 @@
 "name" : "defaultConfig_v2",
 "assigned" : "2019-04-23T15:52:16.960-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-25T14:15:00.269-0500",
+"value" : {
+"name" : "defaultConfig_v3",
+"assigned" : "2019-04-25T14:15:00.269-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-25T14:15:58.391-0500",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "2019-04-25T14:15:58.391-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-25T14:19:45.408-0500",
+"value" : {
+"name" : "defaultConfig_v5",
+"assigned" : "2019-04-25T14:19:45.408-0500"
+}
 }
 ],
 "created" : "2019-04-08T12:34:59.806-0500"
@@ -139,6 +163,18 @@
 {
 "name" : "defaultConfig_v2",
 "assigned" : "2019-04-23T15:52:16.960-0500"
+},
+{
+"name" : "defaultConfig_v3",
+"assigned" : "2019-04-25T14:15:00.269-0500"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "2019-04-25T14:15:58.391-0500"
+},
+{
+"name" : "defaultConfig_v5",
+"assigned" : "2019-04-25T14:19:45.408-0500"
 }
 ]
 }
