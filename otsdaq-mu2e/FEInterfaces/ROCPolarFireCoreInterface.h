@@ -29,10 +29,12 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	// write and read to registers
 	virtual void writeROCRegister(unsigned address, unsigned data_to_write) override;
 	virtual int  readROCRegister(unsigned address) override;
+	virtual void readROCBlock(std::vector<uint16_t>& data, unsigned address,unsigned numberOfReads, unsigned incrementAddress) override;
 	virtual void writeEmulatorRegister(unsigned address, unsigned data_to_write) override
 	{
 	}
 	virtual int readEmulatorRegister(unsigned address) override;
+	virtual void readEmulatorBlock(std::vector<uint16_t>& data, unsigned address,unsigned numberOfReads, unsigned incrementAddress) override;
 
 	// specific ROC functions
 	virtual int  readTimestamp() override;

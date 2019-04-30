@@ -56,21 +56,37 @@ class ROCCoreVInterface : public FEVInterface
 	//----------------
 
 	// write and read to registers
-	//	Philosophy: call writeRegister/readRegister and implement once
-	//		writeROCRegister/writeEmulatorRegister/readROCRegister/readEmulatorRegister
+	//	Philosophy: call writeRegister/readRegister/readBlock and implement once
+	//              readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock
+	//		writeROCRegister/writeEmulatorRegister 
+	//       ... let's wait for the moment to implement writeBlocks
 	void         writeRegister(unsigned address,
 	                           unsigned writeData);  // chooses ROC or Emulator version
 	int          readRegister(unsigned address);     // chooses ROC or Emulator version
+	void 		readBlock(std::vector<uint16_t>& data, unsigned address,unsigned numberOfReads, unsigned incrementAddress);     // chooses ROC or Emulator version
+
 	virtual void writeROCRegister(
 	    unsigned address,
 	    unsigned writeData) = 0;  // pure virtual, must define in inheriting children
 	virtual int readROCRegister(
 	    unsigned address) = 0;  // pure virtual, must define in inheriting children
+	virtual void readROCBlock(
+		std::vector<uint16_t>& data,
+	    unsigned address,
+	    unsigned numberOfReads, 
+	    unsigned incrementAddress) = 0; // pure virtual, must define in inheriting children
+
 	virtual void writeEmulatorRegister(
 	    unsigned address,
 	    unsigned writeData) = 0;  // pure virtual, must define in inheriting children
 	virtual int readEmulatorRegister(
 	    unsigned address) = 0;  // pure virtual, must define in inheriting children
+	virtual void readEmulatorBlock(
+		std::vector<uint16_t>& data,
+	    unsigned address,
+	    unsigned numberOfReads, 
+	    unsigned incrementAddress) = 0; // pure virtual, must define in inheriting children
+
 
 	// pure virtual specific ROC functions
 	virtual int  readTimestamp() = 0;  // pure virtual, must define in inheriting children
@@ -87,6 +103,9 @@ class ROCCoreVInterface : public FEVInterface
 	// ROC debugging functions
 	void        highRateCheck(unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 	static void highRateCheckThread(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
+
+	void        highRateBlockCheck(unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
+	static void highRateBlockCheckThread(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 
 	inline unsigned int getLinkID() { return linkID_; }
 

@@ -25,6 +25,9 @@
 ],
 "defaultConfig_v5" : [
 "90a323550dd74c6799119efd"
+],
+"defaultConfig_v6" : [
+"90a323550dd74c6799119efd"
 ]
 },
 "entities.name" : {
@@ -56,6 +59,9 @@
 ],
 "defaultConfig_v5" : [
 "2019-04-25T14:19:51.048-0500"
+],
+"defaultConfig_v6" : [
+"2019-04-30T11:13:15.329-0500"
 ]
 }
 }

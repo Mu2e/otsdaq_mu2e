@@ -162,6 +162,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				        std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address", "incrementAddress"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
+					
+					
 
 	// registration of FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by
 	// 'admin' using MacroMaker.
@@ -191,6 +193,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_HighRate_DCS_Check",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCHighRateDCSCheck),
+					std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+						"correctRegisterValue0","correctRegisterValue1"},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+					
+	registerFEMacroFunction("DTC_HighRate_DCS_Block_Check",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DTCHighRateBlockCheck),
 					std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
 						"correctRegisterValue0","correctRegisterValue1"},
 					std::vector<std::string>{},
@@ -2820,7 +2830,8 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 
 	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
 	
-	auto readData = thisDTC_->ReadROCBlock(rocLinkIndex, address, number_of_words, incrementAddress);
+	std::vector<uint16_t> readData;
+	thisDTC_->ReadROCBlock(readData, rocLinkIndex, address, number_of_words, incrementAddress);
 
 	std::ofstream datafile;
 
@@ -2845,7 +2856,35 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 
 	//for(auto& argOut : argsOut)
 	//  __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
-}
+} // end ReadROCBlock()
+
+//========================================================================
+void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
+{
+	unsigned int linkIndex = 	__GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops = 		__GET_ARG_IN__("loops",unsigned int);
+	unsigned int baseAddress = 	__GET_ARG_IN__("baseAddress",unsigned int);
+	unsigned int correctRegisterValue0 = 	__GET_ARG_IN__("correctRegisterValue0",unsigned int);
+	unsigned int correctRegisterValue1 = 	__GET_ARG_IN__("correctRegisterValue1",unsigned int);
+
+	__FE_COUTV__(linkIndex);
+	__FE_COUTV__(loops);
+	__FE_COUTV__(baseAddress);
+	__FE_COUTV__(correctRegisterValue0);
+	__FE_COUTV__(correctRegisterValue1);
+
+	for(auto& roc : rocs_)
+		if(roc.second->getLinkID() == linkIndex)
+		{
+			roc.second->highRateBlockCheck(loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
+			return;
+		}
+
+	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
+	__FE_SS_THROW__;
+
+} //end DTCHighRateBlockCheck()
+
 
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)

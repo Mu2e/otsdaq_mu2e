@@ -92,6 +92,7 @@ class DTCFrontEndInterface : public FEVInterface
 	void WriteROC(__ARGS__);
 	void WriteROCBlock(__ARGS__);
 	void ReadROCBlock(__ARGS__);
+	void DTCHighRateBlockCheck(__ARGS__);
 	void DTCReset(__ARGS__);
 	void DTCReset();
 	void DTCHighRateDCSCheck(__ARGS__);
