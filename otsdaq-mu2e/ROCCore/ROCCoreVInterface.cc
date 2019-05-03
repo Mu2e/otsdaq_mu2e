@@ -241,8 +241,9 @@ try
 
 			roc->readBlock(val, baseAddress + j,r,0);
 
-			for(int rr = 0; rr < r; rr++)
-			{
+			if (val.size() != 0) {
+			  for(size_t rr = 0; rr < val.size(); rr++)
+			    {
 				++cnt;
 				++cnts[j];
 				
@@ -255,6 +256,9 @@ try
 					__MOUT__ << ss.str();
 					__SS_THROW__;
 				}
+			    }
+			} else {
+			  __MCOUT__(roc->interfaceUID_ << i << " buffer size 0! "<< __E__);
 			}
 		}
 
