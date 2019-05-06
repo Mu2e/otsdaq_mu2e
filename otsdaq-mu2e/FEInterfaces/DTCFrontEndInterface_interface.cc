@@ -1117,6 +1117,11 @@ catch(...)
 //========================================================================================================================
 void DTCFrontEndInterface::halt(void)
 {
+  for(auto& roc : rocs_)  //halt "as usual"
+    {
+      roc.second->halt();
+    }
+
 	//	__FE_COUT__ << "HALT: DTC status" << __E__;
 	//	readStatus();
 }
@@ -1124,6 +1129,11 @@ void DTCFrontEndInterface::halt(void)
 //========================================================================================================================
 void DTCFrontEndInterface::pause(void)
 {
+  for(auto& roc : rocs_)  //pause "as usual"
+    {
+      roc.second->pause();
+    }
+
 	//	__FE_COUT__ << "PAUSE: DTC status" << __E__;
 	//	readStatus();
 }
@@ -1131,18 +1141,43 @@ void DTCFrontEndInterface::pause(void)
 //========================================================================================================================
 void DTCFrontEndInterface::resume(void)
 {
+  for(auto& roc : rocs_)  //resume "as usual"
+    {
+      roc.second->resume();
+    }
+
 	//	__FE_COUT__ << "RESUME: DTC status" << __E__;
 	//	readStatus();
 }
 
 //========================================================================================================================
-void DTCFrontEndInterface::start(std::string)  // runNumber)
+void DTCFrontEndInterface::start(std::string runNumber)
 {
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator DTC starting..." << __E__;
 		return;
 	}
+
+	int numberOfLoopbacks =
+	    getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
+	        .getValue<unsigned int>();
+
+	      
+	__FE_COUTV__(numberOfLoopbacks);
+
+	int stopIndex = getIterationIndex();
+
+	if(numberOfLoopbacks == 0)
+	{
+	  for(auto& roc : rocs_)  //start "as usual"
+		{
+		  roc.second->start(runNumber);
+		}
+		return;
+	}
+
 
 	const int numberOfChains       = 1;
 	int       link[numberOfChains] = {0};
@@ -1273,12 +1308,17 @@ void DTCFrontEndInterface::stop(void)
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
 	        .getValue<unsigned int>();
 
+	      
 	__FE_COUTV__(numberOfCAPTANPulses);
 
 	int stopIndex = getIterationIndex();
 
 	if(numberOfCAPTANPulses == 0)
 	{
+	  for(auto& roc : rocs_)  //stop "as usual"
+		{
+		  roc.second->stop();
+		}
 		return;
 	}
 
@@ -1336,10 +1376,14 @@ bool DTCFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
 	{
+		for(auto& roc : rocs_) 
+		{
+			roc.second->running();
+		}
 		break;
 	}
 
-	return false;
+	return true;
 }
 
 //=====================================
@@ -2836,7 +2880,7 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 	std::ofstream datafile;
 
 	std::stringstream filename;
-	filename << "/home/mu2ehwdev/test_stand/ots/ReadROCBlock_data.txt";
+	filename << "/home/mu2etrk/test_stand/ots/ReadROCBlock_data.txt";
 	std::string filenamestring = filename.str();
 	datafile.open(filenamestring);
 
