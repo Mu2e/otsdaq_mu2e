@@ -1,0 +1,130 @@
+{
+"document" : {
+"data" : {
+"NAME" : "GROUP_ALIASES_TABLE",
+"COMMENT" : "Default Backbone.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1556219993,
+"COL_TYPES" : {
+"GROUP_KEY_ALIAS" : "VARCHAR2",
+"GROUP_NAME" : "VARCHAR2",
+"GROUP_KEY" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"GROUP_KEY_ALIAS" : "defaultSystemAlias",
+"GROUP_NAME" : "defaultConfig",
+"GROUP_KEY" : "5",
+"COMMENT_DESCRIPTION" : "default safe running",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1556219993"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-04-25T14:19:53.925-0500",
+"rawdata" : [
+
+]
+},
+"version" : "7",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-04-25T14:19:53.926-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-04-25T14:19:53.926-0500"
+},
+{
+"name" : "TableEditWizBackbone_v7",
+"assigned" : "2019-04-25T14:19:56.438-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-25T14:19:53.926-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-04-25T14:19:53.926-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-04-25T14:19:53.926-0500",
+"value" : {
+"name" : "7",
+"assigned" : "2019-04-25T14:19:53.926-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-04-25T14:19:53.926-0500",
+"value" : {
+"name" : "GroupAliasesTable",
+"assigned" : "2019-04-25T14:19:53.926-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-04-25T14:19:53.926-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-04-25T14:19:53.926-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-25T14:19:56.438-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v7",
+"assigned" : "2019-04-25T14:19:56.438-0500"
+}
+}
+],
+"created" : "2019-04-25T14:19:53.925-0500"
+},
+"_id" : {
+"$oid" : "053390b539fc4be28e95b76d"
+},
+"collection" : "GroupAliasesTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

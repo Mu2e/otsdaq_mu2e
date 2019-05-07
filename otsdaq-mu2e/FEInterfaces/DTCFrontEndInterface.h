@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include "dtcInterfaceLib/DTC.h"
+#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t
 #include "otsdaq-core/FECore/FEVInterface.h"
 #include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
@@ -73,8 +74,9 @@ class DTCFrontEndInterface : public FEVInterface
 	bool        configure_clock_       = 0;
 	unsigned    roc_mask_              = 0;
 	std::string device_name_;
-	bool        emulatorMode_;
+	bool      emulatorMode_;
 	int         emulate_cfo_           = 0;
+	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
 
 	std::ofstream datafile_[8];
 
@@ -92,6 +94,7 @@ class DTCFrontEndInterface : public FEVInterface
 	void WriteROC(__ARGS__);
 	void WriteROCBlock(__ARGS__);
 	void ReadROCBlock(__ARGS__);
+	void DTCHighRateBlockCheck(__ARGS__);
 	void DTCReset(__ARGS__);
 	void DTCReset();
 	void DTCHighRateDCSCheck(__ARGS__);

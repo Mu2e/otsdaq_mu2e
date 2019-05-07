@@ -74,6 +74,44 @@ int ROCPolarFireCoreInterface::readROCRegister(unsigned address)
 } //end readROCRegister()
 
 //==================================================================================================
+void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
+	unsigned address,unsigned numberOfReads, unsigned incrementAddress)
+{
+	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
+	            << ", address = " << address 
+	            << ", numberOfReads = " << numberOfReads 
+	            << ", incrementAddress = " << incrementAddress << __E__;
+
+	//int read_data = 0;
+
+	//	try
+	//	{
+	thisDTC_->ReadROCBlock(data, linkID_, address, numberOfReads, incrementAddress);
+
+	//	}
+	//	catch(...)
+	//	{
+	//		__FE_COUT_ERR__ << "DTC failed DCS read" << __E__;
+	//		read_data = -999;
+	//	}
+
+} //end readROCBlock()
+
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::readEmulatorBlock(
+	std::vector<uint16_t>& data,
+	unsigned address,unsigned numberOfReads, unsigned incrementAddress)
+{
+	__FE_COUT__ << "Calling read emulator block: link number " << std::dec << linkID_
+	            << ", address = " << address 
+	            << ", numberOfReads = " << numberOfReads 
+	            << ", incrementAddress = " << incrementAddress << __E__;
+
+} //end readEmulatorBlock()
+
+
+//==================================================================================================
 int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================

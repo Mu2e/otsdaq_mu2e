@@ -34,6 +34,10 @@ class ROCDTCHardwareEmulated : public ROCCoreVInterface
 	}
 	virtual int readEmulatorRegister(unsigned address) override;
 
+	virtual void readROCBlock(std::vector<uint16_t>& data, unsigned address,unsigned numberOfReads,unsigned incrementAddress) override {	}
+	virtual void readEmulatorBlock(std::vector<uint16_t>& data, unsigned address,unsigned numberOfReads,unsigned incrementAddress) override {	}
+
+
 	// specific ROC functions
 	virtual int  readTimestamp() override;
 	virtual void writeDelay(unsigned delay) override;  // 5ns steps

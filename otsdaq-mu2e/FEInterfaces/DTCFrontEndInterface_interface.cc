@@ -14,6 +14,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
     const std::string&       interfaceConfigurationPath)
     : FEVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
     , thisDTC_(0)
+    , EmulatedCFO_(0)
 {
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
@@ -90,6 +91,23 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
 
+	if (emulate_cfo_ == 1) {
+
+	  bool useCFOEmulator = true;
+	  uint16_t debugPacketCount = 0;
+	  auto debugType = DTCLib::DTC_DebugType_ExternalSerialWithReset;
+	  bool stickyDebugType = false;
+          bool quiet = false; 
+	  bool asyncRR = false; 
+	  bool forceNoDebugMode = false;
+
+	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator, debugPacketCount, 
+				debugType, stickyDebugType, quiet,  asyncRR, forceNoDebugMode);
+  
+
+	  //https://cdcvs.fnal.gov/redmine/projects/pcie_linux_kernel_module/repository/revisions/develop/entry/dtcInterfaceLib/util_main.cc#L696
+	}
+
 	createROCs();
 	registerFEMacros();
 
@@ -162,6 +180,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				        std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address", "incrementAddress"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
+					
+					
 
 	// registration of FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by
 	// 'admin' using MacroMaker.
@@ -191,6 +211,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_HighRate_DCS_Check",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCHighRateDCSCheck),
+					std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+						"correctRegisterValue0","correctRegisterValue1"},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+					
+	registerFEMacroFunction("DTC_HighRate_DCS_Block_Check",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DTCHighRateBlockCheck),
 					std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
 						"correctRegisterValue0","correctRegisterValue1"},
 					std::vector<std::string>{},
@@ -1107,6 +1135,11 @@ catch(...)
 //========================================================================================================================
 void DTCFrontEndInterface::halt(void)
 {
+  for(auto& roc : rocs_)  //halt "as usual"
+    {
+      roc.second->halt();
+    }
+
 	//	__FE_COUT__ << "HALT: DTC status" << __E__;
 	//	readStatus();
 }
@@ -1114,6 +1147,11 @@ void DTCFrontEndInterface::halt(void)
 //========================================================================================================================
 void DTCFrontEndInterface::pause(void)
 {
+  for(auto& roc : rocs_)  //pause "as usual"
+    {
+      roc.second->pause();
+    }
+
 	//	__FE_COUT__ << "PAUSE: DTC status" << __E__;
 	//	readStatus();
 }
@@ -1121,18 +1159,43 @@ void DTCFrontEndInterface::pause(void)
 //========================================================================================================================
 void DTCFrontEndInterface::resume(void)
 {
+  for(auto& roc : rocs_)  //resume "as usual"
+    {
+      roc.second->resume();
+    }
+
 	//	__FE_COUT__ << "RESUME: DTC status" << __E__;
 	//	readStatus();
 }
 
 //========================================================================================================================
-void DTCFrontEndInterface::start(std::string)  // runNumber)
+void DTCFrontEndInterface::start(std::string runNumber)
 {
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator DTC starting..." << __E__;
 		return;
 	}
+
+	int numberOfLoopbacks =
+	    getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
+	        .getValue<unsigned int>();
+
+	      
+	__FE_COUTV__(numberOfLoopbacks);
+
+	int stopIndex = getIterationIndex();
+
+	if(numberOfLoopbacks == 0)
+	{
+	  for(auto& roc : rocs_)  //start "as usual"
+		{
+		  roc.second->start(runNumber);
+		}
+		return;
+	}
+
 
 	const int numberOfChains       = 1;
 	int       link[numberOfChains] = {0};
@@ -1263,12 +1326,17 @@ void DTCFrontEndInterface::stop(void)
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
 	        .getValue<unsigned int>();
 
+	      
 	__FE_COUTV__(numberOfCAPTANPulses);
 
 	int stopIndex = getIterationIndex();
 
 	if(numberOfCAPTANPulses == 0)
 	{
+	  for(auto& roc : rocs_)  //stop "as usual"
+		{
+		  roc.second->stop();
+		}
 		return;
 	}
 
@@ -1324,12 +1392,27 @@ void DTCFrontEndInterface::stop(void)
 //========================================================================================================================
 bool DTCFrontEndInterface::running(void)
 {
+
+  if (emulate_cfo_ == 1) 
+  {
+    int number=100;
+    auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(1));
+    bool incrementTimestamp = true; 
+    uint32_t cfodelay = 1000; 
+    int requestsAhead = 1;
+    EmulatedCFO_->SendRequestsForRange(number, start, incrementTimestamp, cfodelay, requestsAhead);
+  }
+
 	while(WorkLoop::continueWorkLoop_)
 	{
+		for(auto& roc : rocs_) 
+		{
+			roc.second->running();
+		}
 		break;
 	}
 
-	return false;
+	return true;
 }
 
 //=====================================
@@ -2820,12 +2903,13 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 
 	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
 	
-	auto readData = thisDTC_->ReadROCBlock(rocLinkIndex, address, number_of_words, incrementAddress);
+	std::vector<uint16_t> readData;
+	thisDTC_->ReadROCBlock(readData, rocLinkIndex, address, number_of_words, incrementAddress);
 
 	std::ofstream datafile;
 
 	std::stringstream filename;
-	filename << "/home/mu2ehwdev/test_stand/ots/ReadROCBlock_data.txt";
+	filename << "/home/mu2etrk/test_stand/ots/ReadROCBlock_data.txt";
 	std::string filenamestring = filename.str();
 	datafile.open(filenamestring);
 
@@ -2845,7 +2929,35 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 
 	//for(auto& argOut : argsOut)
 	//  __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
-}
+} // end ReadROCBlock()
+
+//========================================================================
+void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
+{
+	unsigned int linkIndex = 	__GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops = 		__GET_ARG_IN__("loops",unsigned int);
+	unsigned int baseAddress = 	__GET_ARG_IN__("baseAddress",unsigned int);
+	unsigned int correctRegisterValue0 = 	__GET_ARG_IN__("correctRegisterValue0",unsigned int);
+	unsigned int correctRegisterValue1 = 	__GET_ARG_IN__("correctRegisterValue1",unsigned int);
+
+	__FE_COUTV__(linkIndex);
+	__FE_COUTV__(loops);
+	__FE_COUTV__(baseAddress);
+	__FE_COUTV__(correctRegisterValue0);
+	__FE_COUTV__(correctRegisterValue1);
+
+	for(auto& roc : rocs_)
+		if(roc.second->getLinkID() == linkIndex)
+		{
+			roc.second->highRateBlockCheck(loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
+			return;
+		}
+
+	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
+	__FE_SS_THROW__;
+
+} //end DTCHighRateBlockCheck()
+
 
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
