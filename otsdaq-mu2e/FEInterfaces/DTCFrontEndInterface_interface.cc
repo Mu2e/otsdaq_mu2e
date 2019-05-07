@@ -14,6 +14,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
     const std::string&       interfaceConfigurationPath)
     : FEVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
     , thisDTC_(0)
+    , EmulatedCFO_(0)
 {
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
@@ -89,6 +90,23 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
+
+	if (emulate_cfo_ == 1) {
+
+	  bool useCFOEmulator = true;
+	  uint16_t debugPacketCount = 0;
+	  auto debugType = DTCLib::DTC_DebugType_ExternalSerialWithReset;
+	  bool stickyDebugType = false;
+          bool quiet = false; 
+	  bool asyncRR = false; 
+	  bool forceNoDebugMode = false;
+
+	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator, debugPacketCount, 
+				debugType, stickyDebugType, quiet,  asyncRR, forceNoDebugMode);
+  
+
+	  //https://cdcvs.fnal.gov/redmine/projects/pcie_linux_kernel_module/repository/revisions/develop/entry/dtcInterfaceLib/util_main.cc#L696
+	}
 
 	createROCs();
 	registerFEMacros();
@@ -1374,6 +1392,17 @@ void DTCFrontEndInterface::stop(void)
 //========================================================================================================================
 bool DTCFrontEndInterface::running(void)
 {
+
+  if (emulate_cfo_ == 1) 
+  {
+    int number=100;
+    auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(1));
+    bool incrementTimestamp = true; 
+    uint32_t cfodelay = 1000; 
+    int requestsAhead = 1;
+    EmulatedCFO_->SendRequestsForRange(number, start, incrementTimestamp, cfodelay, requestsAhead);
+  }
+
 	while(WorkLoop::continueWorkLoop_)
 	{
 		for(auto& roc : rocs_) 
