@@ -20,46 +20,54 @@ repository="notGoodRepository"
 if [ $userinput == "sync" ]; then
     export OTS_MAIN_PORT=2015
     export OTS_WIZ_MODE_MAIN_PORT=3015
+    export CONSOLE_SUPERVISOR_IP=192.168.157.6
     basepath="mu2edaq/sync_demo"   
     repository="otsdaq_mu2e"
     userdataappend=""
 elif [ $userinput == "stm" ]; then
     export OTS_MAIN_PORT=3035
     export OTS_WIZ_MODE_MAIN_PORT=3035
+    export CONSOLE_SUPERVISOR_IP=192.168.157.10
     basepath="mu2estm/test_stand"
     repository="otsdaq_mu2e_stm"
     userdataappend=""
 elif [ $userinput == "calo" ]; then
     export OTS_MAIN_PORT=3025
     export OTS_WIZ_MODE_MAIN_PORT=3025
+    export CONSOLE_SUPERVISOR_IP=192.168.157.10
     basepath="mu2ecalo/test_stand"
     repository="otsdaq_mu2e_calorimeter"
     userdataappend=""
 elif [ $userinput == "tracker" ]; then
     export OTS_MAIN_PORT=3015
     export OTS_WIZ_MODE_MAIN_PORT=3015
+    export CONSOLE_SUPERVISOR_IP=127.0.0.1
     basepath="mu2etrk/test_stand"
     repository="otsdaq_mu2e_tracker"
     userdataappend=""
 elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
     export OTS_WIZ_MODE_MAIN_PORT=3045
+    export CONSOLE_SUPERVISOR_IP=192.168.157.10
     basepath="mu2etrig/test_stand"
     repository="otsdaq_mu2e_trigger"
     userdataappend=""
 elif [ $userinput == "02" ]; then
     export OTS_MAIN_PORT=2015
+    export CONSOLE_SUPERVISOR_IP=127.0.0.1
     basepath="mu2edaq/sync_demo"
     repository="otsdaq_mu2e"
     userdataappend="_02"
 elif [ $userinput == "dcs" ]; then
     export OTS_MAIN_PORT=2015
+    export CONSOLE_SUPERVISOR_IP=127.0.0.1
     basepath="mu2edcs/dcs_ots_demo"
     repository="otsdaq_mu2e"
     userdataappend="DCS"
 elif [ $userinput == "hwdev" ]; then
     export OTS_MAIN_PORT=3055
     export OTS_WIZ_MODE_MAIN_PORT=3055
+    export CONSOLE_SUPERVISOR_IP=192.168.157.6
     basepath="mu2ehwdev/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_HWDev"
