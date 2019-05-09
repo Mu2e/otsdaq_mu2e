@@ -97,7 +97,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	  uint16_t debugPacketCount = 0;
 	  auto debugType = DTCLib::DTC_DebugType_ExternalSerialWithReset;
 	  bool stickyDebugType = false;
-          bool quiet = false; 
+      bool quiet = false; 
 	  bool asyncRR = false; 
 	  bool forceNoDebugMode = false;
 
@@ -224,7 +224,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 
-
+	registerFEMacroFunction("DTC_SendHeartbeatAndDataRequest",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
+					std::vector<std::string>{"numberOfRequests","timestampStart"},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
 
 
 	{ //add ROC FE Macros
@@ -1392,16 +1397,6 @@ void DTCFrontEndInterface::stop(void)
 //========================================================================================================================
 bool DTCFrontEndInterface::running(void)
 {
-
-  if (emulate_cfo_ == 1) 
-  {
-    int number=100;
-    auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(1));
-    bool incrementTimestamp = true; 
-    uint32_t cfodelay = 1000; 
-    int requestsAhead = 1;
-    EmulatedCFO_->SendRequestsForRange(number, start, incrementTimestamp, cfodelay, requestsAhead);
-  }
 
 	while(WorkLoop::continueWorkLoop_)
 	{
@@ -2985,6 +2980,33 @@ void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 	__FE_SS_THROW__;
 
 } //end DTCHighRateDCSCheck()
+
+//========================================================================
+void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
+{
+	unsigned int number = 	__GET_ARG_IN__("numberOfRequests", unsigned int);
+	unsigned int timestampStart = 		__GET_ARG_IN__("timestampStart",unsigned int);
+
+	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
+
+	bool incrementTimestamp = true;
+	uint32_t cfodelay = 1000;
+	int requestsAhead = 1;
+
+	__FE_COUTV__(number);
+	__FE_COUTV__(timestampStart);
+
+	if (emulate_cfo_ == 1) 
+	{
+	    EmulatedCFO_->SendRequestsForRange(number, start, incrementTimestamp, cfodelay, requestsAhead);
+	    
+	} else {
+
+		__FE_SS__ << "Error! DTC must be in CFOEmulate mode" << __E__;
+		__FE_SS_THROW__;		
+	}
+
+} //end DTCSendHeartbeatAndDataRequest()
 
 //========================================================================
 void DTCFrontEndInterface::DTCReset(__ARGS__) { DTCReset(); }

@@ -99,6 +99,7 @@ class DTCFrontEndInterface : public FEVInterface
 	void DTCReset();
 	void DTCHighRateDCSCheck(__ARGS__);
 	void RunROCFEMacro(__ARGS__);
+	void DTCSendHeartbeatAndDataRequest(__ARGS__);
 };
 }  // namespace ots
 #endif
