@@ -138,6 +138,14 @@
 "name" : "GroupAliasTreeEditWizBackbone_v0",
 "assigned" : "2019-04-30T11:13:21.245-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-05-09T10:47:30.292-0500",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v1",
+"assigned" : "2019-05-09T10:47:30.292-0500"
+}
 }
 ],
 "created" : "2019-04-08T12:35:18.728-0500"
@@ -181,6 +189,10 @@
 {
 "name" : "GroupAliasTreeEditWizBackbone_v0",
 "assigned" : "2019-04-30T11:13:21.245-0500"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v1",
+"assigned" : "2019-05-09T10:47:30.292-0500"
 }
 ]
 }
