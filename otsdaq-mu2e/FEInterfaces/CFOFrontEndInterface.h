@@ -5,7 +5,7 @@
 #include <string>
 #include "otsdaq-core/FECore/FEVInterface.h"
 
-#include "dtcInterfaceLib/DTC.h"
+#include "cfoInterfaceLib/CFO_Registers.h"
 
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t
 
@@ -61,7 +61,7 @@ class CFOFrontEndInterface : public FEVInterface
 	char         devfile_[11];
 	int          fd_;
 	int          dtc_ = -1;
-	DTCLib::DTC* thisCFO_;
+	CFOLib::CFO_Registers* thisCFO_;
 	int          configure_clock_ = 0;
 
 	m_ioc_reg_access_t reg_access_;

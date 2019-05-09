@@ -479,6 +479,22 @@
 "name" : "daq02Config_v15",
 "assigned" : "2019-04-16T13:50:43.723-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-24T11:25:32.172-0500",
+"value" : {
+"name" : "daq02Config_v16",
+"assigned" : "2019-04-24T11:25:32.172-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-24T16:35:27.227-0500",
+"value" : {
+"name" : "daq02Config_v17",
+"assigned" : "2019-04-24T16:35:27.227-0500"
+}
 }
 ],
 "created" : "2018-09-06T16:32:22.644-0500"
@@ -534,6 +550,14 @@
 {
 "name" : "daq02Config_v15",
 "assigned" : "2019-04-16T13:50:43.723-0500"
+},
+{
+"name" : "daq02Config_v16",
+"assigned" : "2019-04-24T11:25:32.172-0500"
+},
+{
+"name" : "daq02Config_v17",
+"assigned" : "2019-04-24T16:35:27.227-0500"
 }
 ]
 }

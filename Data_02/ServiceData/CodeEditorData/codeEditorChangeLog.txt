@@ -62,3 +62,7 @@ time=1547660262 old-size=7555 new-size=7647 path=/home/mu2edaq/sync_demo/ots_02/
 time=1547660272 old-size=7647 new-size=7650 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
 time=1547660319 old-size=7650 new-size=7649 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
 time=1547660330 old-size=7649 new-size=7651 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/ROCCoreInterface_interface.cc
+time=1557351438 authoradmin old-size=29339 new-size=29384 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1557351517 authoradmin old-size=29384 new-size=29445 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1557351523 authoradmin old-size=29445 new-size=29447 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc
+time=1557351551 authoradmin old-size=29447 new-size=29447 path=/home/mu2edaq/sync_demo/ots_02/srcs//otsdaq_mu2e/otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface_interface.cc

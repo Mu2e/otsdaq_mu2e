@@ -38,7 +38,7 @@ simple_plugin(DTCFrontEndInterface "interface"
  
 simple_plugin(CFOFrontEndInterface "interface"
   	FECore
-	DTCInterface
+	CFOInterface
  )
    
    

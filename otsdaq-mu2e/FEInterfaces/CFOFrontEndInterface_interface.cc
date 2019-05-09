@@ -17,6 +17,8 @@ CFOFrontEndInterface::CFOFrontEndInterface(
     const std::string&       interfaceConfigurationPath)
     : FEVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
 {
+	__FE_COUT__ << "Constructing..." << __E__;
+
 	// theFrontEndHardware_ = new FrontEndHardwareTemplate();
 	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
 	universalAddressSize_ = 4;
@@ -28,11 +30,13 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
 	fd_ = open(devfile_, O_RDONLY);
 
+	__FE_COUT__ << "Device file descriptor opened!" << __E__;
+	
 	unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
-	thisCFO_ = new DTCLib::DTC(mode, dtc_, roc_mask, expectedDesignVersion);
+	thisCFO_ = new CFOLib::CFO_Registers(mode, dtc_, expectedDesignVersion);
 
 	__FE_COUT__ << "CFOFrontEndInterface instantiated with name: " << interfaceUID
 	            << " talking to /dev/mu2e" << dtc_ << __E__;
@@ -46,7 +50,7 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 	// delete theFrontEndFirmware_;
 }
 
-//===========================================================================================
+//==fd=========================================================================================
 // universalRead
 //	Must implement this function for Macro Maker to work with this
 // interface. 	When Macro Maker calls:
@@ -512,7 +516,7 @@ void CFOFrontEndInterface::configure(void)
 			__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
 			            << targetFrequency << " MHz" << __E__;
 
-			thisCFO_->SetNewOscillatorFrequency(oscillator, targetFrequency);
+			thisCFO_->SetNewOscillatorFrequency(targetFrequency);
 
 			//-----end code snippet pulled from: mu2eUtil program_clock -C 0 -F
 			// 200000000
