@@ -115,6 +115,34 @@ export OTSDAQ_DEMO_LIB=${MRB_BUILDDIR}/${repository}/lib
 #make the number of build threads dependent on the number of cores on the machine:
 export CETPKG_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` + 1))
 
+#make logfile on local directory to make logging faster
+echo 
+echo -e "--> Remove old logs, make new link /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs to /tmp/otsdaqLog_${userinput}"
+if [ -e /tmp/otsdaqLogs_${userinput} ]; then
+  echo -e "Logfile /tmp/otsdaqLog_${userinput} exists"
+else 
+  echo -e "Create logfile /tmp/otsdaqLog_${userinput}"
+  mkdir /tmp/otsdaqLogs_${userinput}
+#  mkdir /tmp/otsdaqLogs_${userinput}/OtsConfigurationWizard
+#  mkdir /tmp/otsdaqLogs_${userinput}/CoreSupervisorBase
+#  mkdir /tmp/otsdaqLogs_${userinput}/ConfigurationGUI
+#  mkdir /tmp/otsdaqLogs_${userinput}/ConsoleSupervisor
+#  mkdir /tmp/otsdaqLogs_${userinput}/GatewaySupervisor
+#  mkdir /tmp/otsdaqLogs_${userinput}/ChatSupervisor
+#  mkdir /tmp/otsdaqLogs_${userinput}/LogbookSupervisor
+#  mkdir /tmp/otsdaqLogs_${userinput}/MacroMaker
+#  mkdir /tmp/otsdaqLogs_${userinput}/ROCStoppingTargetMonitorInterface
+#  mkdir /tmp/otsdaqLogs_${userinput}/ROCCoreVInterface
+#  mkdir /tmp/otsdaqLogs_${userinput}/ROCPolarFireCoreInterface
+#  mkdir /tmp/otsdaqLogs_${userinput}/ROCCalorimeterInterface
+#  mkdir /tmp/otsdaqLogs_${userinput}/RunControlStateMachine
+#  mkdir /tmp/otsdaqLogs_${userinput}/CorePropertySupervisorBase
+fi
+
+echo 
+rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
+ln -sf /tmp/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
+
 
 export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
 export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
