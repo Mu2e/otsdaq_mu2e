@@ -3,6 +3,7 @@
 		<TABLE Name="SubsystemSTMParametersTable">
 			<VIEW Name="SUBSYSTEM_STM_PARAMETERS_TABLE" Type="File,Database,DatabaseTest" Description="No%20description.">
 				<COLUMN Type="UID" 	 Name="SubsystemSTMParametersUID" 	 StorageName="SUBSYSTEM_STM_PARAMETERS_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="tempColum" 	 StorageName="TEMP_COLUM" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="NumberParam1" 	 StorageName="NUMBER_PARAM1" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="TrueFalse" 	 Name="TrueFalseParam2" 	 StorageName="TRUE_FALSE_PARAM2" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="UniqueData" 	 Name="MustBeUniqueParam3" 	 StorageName="MUST_BE_UNIQUE_PARAM3" 		DataType="VARCHAR2" 		DataChoices=""/>
