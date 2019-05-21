@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 
 	if(dtc == -1)
 	{
-		char* dtcE = getenv("DTCLIB_DTC");
+		char* dtcE = __ENV__("DTCLIB_DTC");
 		if(dtcE != NULL)
 			dtc = strtol(dtcE, NULL, 0);
 		else
