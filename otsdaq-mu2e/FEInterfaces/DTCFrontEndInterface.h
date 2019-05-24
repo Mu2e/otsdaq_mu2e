@@ -89,6 +89,8 @@ class DTCFrontEndInterface : public FEVInterface
 	unsigned initial_9100_ = 0;
 	unsigned initial_9114_ = 0;
 
+	std::ofstream outputStream;
+
   public:
 	void ReadROC(__ARGS__);
 	void WriteROC(__ARGS__);

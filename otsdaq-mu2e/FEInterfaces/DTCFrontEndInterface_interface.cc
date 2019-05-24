@@ -94,8 +94,9 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	if (emulate_cfo_ == 1) {
 
 	  bool useCFOEmulator = true;
-	  uint16_t debugPacketCount = 0;
-	  auto debugType = DTCLib::DTC_DebugType_ExternalSerialWithReset;
+	  uint16_t debugPacketCount = 300;
+	  //	  auto debugType = DTCLib::DTC_DebugType_ExternalSerialWithReset;
+	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
 	  bool stickyDebugType = false;
       bool quiet = false; 
 	  bool asyncRR = false; 
@@ -2990,15 +2991,153 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
 	bool incrementTimestamp = true;
-	uint32_t cfodelay = 1000;
-	int requestsAhead = 1;
+	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't know if 10000 works, either)
+	int requestsAhead = 0;
 
 	__FE_COUTV__(number);
 	__FE_COUTV__(timestampStart);
 
+	unsigned quietCount = 1;
+	bool quiet = true;
+
+	auto device = thisDTC_->GetDevice();
+	
+	auto initTime = device->GetDeviceTime();
+	device->ResetDeviceTime();
+	auto afterInit = std::chrono::steady_clock::now();
+
 	if (emulate_cfo_ == 1) 
 	{
-	    EmulatedCFO_->SendRequestsForRange(number, start, incrementTimestamp, cfodelay, requestsAhead);
+	  registerWrite(0x9100,0x40008004); //bit 
+
+	  //set number of null heartbeats
+	  registerWrite(0x91BC,0x0);
+
+	  //# Send data
+	  //#disable 40mhz marker
+	  registerWrite(0x91f4,0x0);
+	  //#set num dtcs
+	  registerWrite(0x9158,0x1);
+
+	  EmulatedCFO_->SendRequestsForRange(number, start, incrementTimestamp, cfodelay, requestsAhead);
+
+	  //		DTCSoftwareCFO cfo(thisDTC, useCFOEmulator, packetCount, debugType, stickyDebugType, quiet, false, forceNoDebug);
+
+	  //		if (genDMABlocks > 0)
+	  //		{
+	  //			WriteGeneratedData(thisDTC);
+	  //		}
+	  //	else if (useSimFile)
+	  //	{
+	  //		auto overwrite = false;
+	  //		if (simFile.size() > 0) overwrite = true;
+	  //		thisDTC->WriteSimFileToDTC(simFile, false, overwrite, rawOutputFile, skipVerify);
+	  //		if (readGenerated)
+	  //		{
+	  //			exit(0);
+	  //		}
+	  //	}
+	  //	else if (readGenerated)
+	  //	{
+	  //		thisDTC->DisableDetectorEmulator();
+	  //		thisDTC->EnableDetectorEmulatorMode();
+	  //		thisDTC->SetDetectorEmulationDMACount(number);
+	  //		thisDTC->EnableDetectorEmulator();
+	  //	}
+	  //
+	  //	if (thisDTC->ReadSimMode() != DTC_SimMode_Loopback && timestampFile != "")
+	  //	{
+	  //		syncRequests = false;
+	  //		std::set<DTC_Timestamp> timestamps;
+	  //		std::ifstream is(timestampFile);
+	  //		uint64_t a;
+	  //		while (is >> a)
+	  //		{
+	  //			timestamps.insert(DTC_Timestamp(a));
+	  //		}
+	  //		number = timestamps.size();
+	  //		cfo.SendRequestsForList(timestamps, cfodelay);
+	  //	}
+	  //	else if (thisDTC->ReadSimMode() != DTC_SimMode_Loopback && !syncRequests)
+	  //	{
+	  //		cfo.SendRequestsForRange(number, DTC_Timestamp(timestampOffset), incrementTimestamp, cfodelay, requestsAhead);
+	  //	}
+	  //	else if (thisDTC->ReadSimMode() == DTC_SimMode_Loopback)
+	  //	{
+	  //		uint64_t ts = timestampOffset;
+	  //		DTC_DataHeaderPacket header(DTC_Link_0, static_cast<uint16_t>(0), DTC_DataStatus_Valid, 0, 0, DTC_Timestamp(ts));
+	  //		TLOG(TLVL_INFO) << "Request: " << header.toJSON() << std::endl;
+	  //		thisDTC->WriteDMAPacket(header);
+	  //	}
+	  //
+	  auto readoutRequestTime = device->GetDeviceTime();
+	  device->ResetDeviceTime();
+	  auto afterRequests = std::chrono::steady_clock::now();
+
+	  for (unsigned ii = 0; ii < number; ++ii)
+	    {
+	      //			if (syncRequests)
+	      //			{
+	      //		auto startRequest = std::chrono::steady_clock::now();
+	      //	      EmulatedCFO_->SendRequestForTimestamp(DTCLib::DTC_Timestamp(start + (incrementTimestamp ? ii : 0)));
+	      //		auto endRequest = std::chrono::steady_clock::now();
+	      //		readoutRequestTime +=
+	      //			std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(endRequest - startRequest).count();
+	      //		}
+	      //			TLOG(reallyQuiet ? 9 : TLVL_INFO) << "Buffer Read " << std::dec << ii << std::endl;
+			std::cout << "Buffer Read " << std::dec << ii << std::endl;
+			mu2e_databuff_t* buffer;
+			auto tmo_ms = 1500;
+			//		TLOG(TLVL_TRACE) << "util - before read for DAQ - ii=" << ii;
+			std::cout << "util - before read for DAQ - ii=" << ii;
+			auto sts = device->read_data(DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
+			//			TLOG(TLVL_TRACE) << "util - after read for DAQ - ii=" << ii << ", sts=" << sts << ", buffer=" << (void*)buffer;
+			std::cout << "util - after read for DAQ - ii=" << ii << ", sts=" << sts << ", buffer=" << (void*)buffer;
+
+			if (sts > 0)
+			{
+				void* readPtr = &buffer[0];
+				auto bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
+				readPtr = static_cast<uint8_t*>(readPtr) + 8;
+				//				TLOG(reallyQuiet ? 9 : TLVL_INFO) << "Buffer reports DMA size of " << std::dec << bufSize << " bytes. Device driver reports read of "
+				std::cout << "Buffer reports DMA size of " << std::dec << bufSize << " bytes. Device driver reports read of "
+												  << sts << " bytes," << std::endl;
+
+				//				TLOG(TLVL_TRACE) << "util - bufSize is " << bufSize;
+				std::cout << "util - bufSize is " << bufSize;
+				//				if (rawOutput) 
+				outputStream.write(static_cast<char*>(readPtr), sts - 8);
+
+				//				if (!reallyQuiet)
+				if (1)
+				{
+					auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
+					for (unsigned line = 0; line < maxLine; ++line)
+					{
+						std::stringstream ostr;
+						ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line << "0: ";
+						for (unsigned byte = 0; byte < 8; ++byte)
+						{
+							if (line * 16 + 2 * byte < sts - 8u)
+							{
+								auto thisWord = reinterpret_cast<uint16_t*>(buffer)[4 + line * 8 + byte];
+								ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
+							}
+						}
+						//		TLOG(TLVL_INFO) << ostr.str();
+						std::cout << ostr.str();
+						if (maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
+						{
+							line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) - (1 + quietCount);
+						}
+					}
+				}
+			}
+			//			else if (checkSERDES)
+			//				break;
+			device->read_release(DTC_DMA_Engine_DAQ, 1);
+	    }
+
 	    
 	} else {
 
