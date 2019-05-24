@@ -18,6 +18,8 @@ if [ $userinput == "sync" ]; then
     basepath="mu2edaq/sync_demo"
 elif [ $userinput == "hwdev" ]; then
     basepath="mu2ehwdev/test_stand"
+elif [ $userinput == "stm" ]; then
+    basepath="mu2estm/test_stand"
 fi
 
 
@@ -36,4 +38,7 @@ if [[ "$HOSTNAME" == "mu2edaq06.fnal.gov" ]]; then
     echo -e "${Reset}Starting OTS on remote machines (XDAQ supervisors only)${Reset}"
     ssh mu2edaq04 /home/${basepath}/ots/distributed_setup_ots.sh ${userinput} &
     ssh mu2edaq05 /home/${basepath}/ots/distributed_setup_ots.sh ${userinput} &
+elif [[ "$HOSTNAME" == "mu2edaq10.fnal.gov" ]]; then
+    echo -e "${Reset}Starting OTS on remote machines (XDAQ supervisors only)${Reset}"
+    ssh mu2edaq05 /home/${basepath}/ots/srcs/otsdaq_mu2e/tools/distributed_setup_ots.sh ${userinput} &
 fi
