@@ -1,6 +1,6 @@
 console : { 
  	type : "cout" 
  	threshold : "DEBUG" 
- 	noTimeStamps : true 
- 	noLineBreaks: true
+ 	#noTimeStamps : true 
+ 	#noLineBreaks: true
 }
