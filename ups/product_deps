@@ -18,9 +18,9 @@ fcldir      fq_dir      fcl
 
 #
 product		 version	optional
-otsdaq              v2_01_01
-otsdaq_utilities    v2_01_01
-otsdaq_components   v2_01_01
+otsdaq              v2_04_00
+otsdaq_utilities    v2_04_00
+otsdaq_components   v2_04_00
 pcie_linux_kernel_module	v2_00_02
 cetbuildtools       v7_02_01    -        only_for_build
 end_product_list
