@@ -3075,7 +3075,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	  //print out stuff
 	  unsigned quietCount = 1;
-	  bool quiet = true;
+	  quiet = true;
 
 	  for (unsigned ii = 0; ii < number; ++ii)
 	    {
