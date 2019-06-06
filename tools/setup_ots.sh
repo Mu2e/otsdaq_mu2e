@@ -2,13 +2,12 @@ echo # This script is intended to be sourced.
 
 userinput=$1
 # the next "unsets" the command line input, so as not to pass it to the mrb setup
-shift        
 
 if [ x$userinput == "x" ]; then
   echo "--> You are user $USER on $HOSTNAME in directory `pwd`"
   echo "================================================="
   echo "usage:  source setup_ots.sh <subsystem>"
-  echo "... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker)"
+  echo "... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker,shift)"
   echo "================================================="
   return 1;
 fi
@@ -39,12 +38,19 @@ elif [ $userinput == "calo" ]; then
     repository="otsdaq_mu2e_calorimeter"
     userdataappend=""
 elif [ $userinput == "tracker" ]; then
-    export OTS_MAIN_PORT=3015
-    export OTS_WIZ_MODE_MAIN_PORT=3015
-    export CONSOLE_SUPERVISOR_IP=127.0.0.1
+    export OTS_MAIN_PORT=3065
+    export OTS_WIZ_MODE_MAIN_PORT=3065
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2etrk/test_stand"
     repository="otsdaq_mu2e_tracker"
     userdataappend=""
+elif [ $userinput == "shift" ]; then
+    export OTS_MAIN_PORT=3075
+    export OTS_WIZ_MODE_MAIN_PORT=3075
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    basepath="mu2eshift/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend="_shift"
 elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
     export OTS_WIZ_MODE_MAIN_PORT=3045
