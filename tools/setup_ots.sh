@@ -77,6 +77,9 @@ elif [ $userinput == "hwdev" ]; then
     basepath="mu2ehwdev/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_HWDev"
+else
+    echo -e "Invalid parameter!"
+    return 1
 fi
 
 
