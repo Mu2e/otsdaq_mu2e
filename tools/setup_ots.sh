@@ -79,14 +79,14 @@ elif [ $userinput == "hwdev" ]; then
     userdataappend="_HWDev"
 else
     echo -e "Invalid parameter!"
-    return 1
+    return 1;
 fi
 
 
 sh -c "[ `ps $$ | grep bash | wc -l` -gt 0 ] || { echo 'Please switch to the bash shell before running the otsdaq-demo.'; exit; }" || exit
 
-echo -e "setup [275]  \t ======================================================"
-echo -e "setup [275]  \t Initially your products path was PRODUCTS=${PRODUCTS}"
+echo -e "setup [${LINENO}]  \t ======================================================"
+echo -e "setup [${LINENO}]  \t Initially your products path was PRODUCTS=${PRODUCTS}"
 
 unsetup_all
 
@@ -108,7 +108,7 @@ source mrbSetEnv
 
 ulimit -c unlimited
 
-echo -e "setup [275]  \t Now your products path is PRODUCTS=${PRODUCTS}"
+echo -e "setup [${LINENO}]  \t Now your products path is PRODUCTS=${PRODUCTS}"
 echo
 
 # Setup environment when building with MRB (As there's no setupARTDAQOTS file)
@@ -157,20 +157,20 @@ export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}
 export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
 export OTSDAQ_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/OutputData"
 
-echo -e "setup [275]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
-echo -e "setup [275]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
-echo -e "setup [275]  \t Now your output data path is OTSDAQ_DATA \t = ${OTSDAQ_DATA}"
+echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
+echo -e "setup [${LINENO}]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
+echo -e "setup [${LINENO}]  \t Now your output data path is OTSDAQ_DATA \t = ${OTSDAQ_DATA}"
 echo
 
 alias rawEventDump="art -c /home/${basepath}/ots/srcs/otsdaq/artdaq-ots/ArtModules/fcl/rawEventDump.fcl"
 alias kx='ots -k'
 
 echo
-echo -e "setup [275]  \t Now use 'ots --wiz' to configure otsdaq"
-echo -e "setup [275]  \t  	Then use 'ots' to start otsdaq"
-echo -e "setup [275]  \t  	Or use 'ots --help' for more options"
+echo -e "setup [${LINENO}]  \t Now use 'ots --wiz' to configure otsdaq"
+echo -e "setup [${LINENO}]  \t  	Then use 'ots' to start otsdaq"
+echo -e "setup [${LINENO}]  \t  	Or use 'ots --help' for more options"
 echo
-echo -e "setup [275]  \t     use 'kx' to kill otsdaq processes"
+echo -e "setup [${LINENO}]  \t     use 'kx' to kill otsdaq processes"
 echo
 echo Activating TRACE via export TRACE_MSGMAX=0
 export TRACE_MSGMAX=0
