@@ -4,11 +4,11 @@ userinput=$1
 # the next "unsets" the command line input, so as not to pass it to the mrb setup
 
 if [ x$userinput == "x" ]; then
-  echo "--> You are user $USER on $HOSTNAME in directory `pwd`"
-  echo "================================================="
-  echo "usage:  source setup_ots.sh <subsystem>"
-  echo "... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker,shift)"
-  echo "================================================="
+  echo -e "setup [${LINENO}]  \t --> You are user $USER on $HOSTNAME in directory `pwd`"
+  echo -e "setup [${LINENO}]  \t ================================================="
+  echo -e "setup [${LINENO}]  \t usage:  source setup_ots.sh <subsystem>"
+  echo -e "setup [${LINENO}]  \t ... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker,shift)"
+  echo -e "setup [${LINENO}]  \t ================================================="
   return 1;
 fi
 
@@ -177,7 +177,7 @@ export TRACE_MSGMAX=0
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
 echo Do tshow to show the trace memory buffer.
-echo "Do \"tshow | grep . | tdelta -d 1 -ct 1\" with appropriate grep re to"
-echo "filter traces. Piping into the tdelta command to add deltas and convert"
-echo "the timestamp."
+echo -e "setup [${LINENO}]  \t Do \"tshow | grep . | tdelta -d 1 -ct 1\" with appropriate grep re to"
+echo -e "setup [${LINENO}]  \t filter traces. Piping into the tdelta command to add deltas and convert"
+echo -e "setup [${LINENO}]  \t the timestamp."
 
