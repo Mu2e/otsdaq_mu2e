@@ -62,7 +62,7 @@ elif [ $userinput == "dqmcalo" ]; then
     export OTS_MAIN_PORT=3095
     export OTS_WIZ_MODE_MAIN_PORT=3095
     export CONSOLE_SUPERVISOR_IP=192.168.157.11
-    basepath="mu2etrig/test_stand"
+    basepath="mu2etrig/test_stand_dqmcalo"
     repository="otsdaq_mu2e_trigger"
     userdataappend="_dqmcalo"
 elif [ $userinput == "02" ]; then
