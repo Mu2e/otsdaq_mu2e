@@ -7,7 +7,7 @@ if [ x$userinput == "x" ]; then
   echo -e "setup [${LINENO}]  \t --> You are user $USER on $HOSTNAME in directory `pwd`"
   echo -e "setup [${LINENO}]  \t ================================================="
   echo -e "setup [${LINENO}]  \t usage:  source setup_ots.sh <subsystem>"
-  echo -e "setup [${LINENO}]  \t ... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker,shift)"
+  echo -e "setup [${LINENO}]  \t ... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker,shift,dqmcalo)"
   echo -e "setup [${LINENO}]  \t ================================================="
   return 1;
 fi
@@ -58,6 +58,13 @@ elif [ $userinput == "trigger" ]; then
     basepath="mu2etrig/test_stand"
     repository="otsdaq_mu2e_trigger"
     userdataappend=""
+elif [ $userinput == "dqmcalo" ]; then
+    export OTS_MAIN_PORT=3095
+    export OTS_WIZ_MODE_MAIN_PORT=3095
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    basepath="mu2etrig/test_stand"
+    repository="otsdaq_mu2e_trigger"
+    userdataappend="_dqmcalo"
 elif [ $userinput == "02" ]; then
     export OTS_MAIN_PORT=2015
     export CONSOLE_SUPERVISOR_IP=127.0.0.1
