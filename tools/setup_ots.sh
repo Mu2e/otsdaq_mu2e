@@ -163,10 +163,12 @@ ln -sf /tmp/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Dat
 export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
 export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
 export OTSDAQ_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/OutputData"
+export USER_WEB_PATH=/home/${basepath}/ots/srcs/${repository}/UserWebGUI
 
 echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
 echo -e "setup [${LINENO}]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
 echo -e "setup [${LINENO}]  \t Now your output data path is OTSDAQ_DATA \t = ${OTSDAQ_DATA}"
+echo -e "setup [${LINENO}]  \t Now your output data path is USER_WEB_PATH \t = ${USER_WEB_PATH}"
 echo
 
 alias rawEventDump="art -c /home/${basepath}/ots/srcs/otsdaq/artdaq-ots/ArtModules/fcl/rawEventDump.fcl"
