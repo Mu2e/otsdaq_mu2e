@@ -51,6 +51,13 @@ elif [ $userinput == "shift" ]; then
     basepath="mu2eshift/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_shift"
+elif [ $userinput == "crv" ]; then
+    export OTS_MAIN_PORT=3085
+    export OTS_WIZ_MODE_MAIN_PORT=3085
+    export CONSOLE_SUPERVISOR_IP=192.168.157.10
+    basepath="mu2ecrv/test_stand"
+    repository="otsdaq_mu2e_crv"
+    userdataappend=""
 elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
     export OTS_WIZ_MODE_MAIN_PORT=3045
@@ -133,31 +140,31 @@ export CETPKG_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` +
 
 #make logfile on local directory to make logging faster
 echo 
-echo -e "--> Remove old logs, make new link /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs to /tmp/otsdaqLog_${userinput}"
-if [ -e /tmp/otsdaqLogs_${userinput} ]; then
-  echo -e "Logfile /tmp/otsdaqLog_${userinput} exists"
+echo -e "--> Remove old logs, make new link /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs to /scratch/mu2e/otsdaqLog_${userinput}"
+if [ -e /scratch/mu2e/otsdaqLogs_${userinput} ]; then
+  echo -e "Logfile /scratch/mu2e/otsdaqLog_${userinput} exists"
 else 
-  echo -e "Create logfile /tmp/otsdaqLog_${userinput}"
-  mkdir /tmp/otsdaqLogs_${userinput}
-#  mkdir /tmp/otsdaqLogs_${userinput}/OtsConfigurationWizard
-#  mkdir /tmp/otsdaqLogs_${userinput}/CoreSupervisorBase
-#  mkdir /tmp/otsdaqLogs_${userinput}/ConfigurationGUI
-#  mkdir /tmp/otsdaqLogs_${userinput}/ConsoleSupervisor
-#  mkdir /tmp/otsdaqLogs_${userinput}/GatewaySupervisor
-#  mkdir /tmp/otsdaqLogs_${userinput}/ChatSupervisor
-#  mkdir /tmp/otsdaqLogs_${userinput}/LogbookSupervisor
-#  mkdir /tmp/otsdaqLogs_${userinput}/MacroMaker
-#  mkdir /tmp/otsdaqLogs_${userinput}/ROCStoppingTargetMonitorInterface
-#  mkdir /tmp/otsdaqLogs_${userinput}/ROCCoreVInterface
-#  mkdir /tmp/otsdaqLogs_${userinput}/ROCPolarFireCoreInterface
-#  mkdir /tmp/otsdaqLogs_${userinput}/ROCCalorimeterInterface
-#  mkdir /tmp/otsdaqLogs_${userinput}/RunControlStateMachine
-#  mkdir /tmp/otsdaqLogs_${userinput}/CorePropertySupervisorBase
+  echo -e "Create logfile /scratch/mu2e/otsdaqLog_${userinput}"
+  mkdir /scratch/mu2e/otsdaqLogs_${userinput}
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/OtsConfigurationWizard
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/CoreSupervisorBase
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ConfigurationGUI
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ConsoleSupervisor
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/GatewaySupervisor
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ChatSupervisor
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/LogbookSupervisor
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/MacroMaker
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCStoppingTargetMonitorInterface
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCCoreVInterface
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCPolarFireCoreInterface
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCCalorimeterInterface
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/RunControlStateMachine
+#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/CorePropertySupervisorBase
 fi
 
 echo 
 rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
-ln -sf /tmp/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
 
 
 export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
