@@ -125,7 +125,14 @@ ulimit -c unlimited
 echo -e "setup [${LINENO}]  \t Now your products path is PRODUCTS=${PRODUCTS}"
 echo
 
+echo Activating TRACE via export TRACE_MSGMAX=0
+echo Do tshow to show the trace memory buffer.
+echo -e "setup [${LINENO}]  \t Do \"tshow | grep . | tdelta -d 1 -ct 1\" with appropriate grep re to"
+echo -e "setup [${LINENO}]  \t filter traces. Piping into the tdelta command to add deltas and convert"
+echo -e "setup [${LINENO}]  \t the timestamp."
+
 # Setup environment when building with MRB (As there's no setupARTDAQOTS file)
+
 
 export OTSDAQ_DEMO_LIB=${MRB_BUILDDIR}/${repository}/lib
 #export OTSDAQ_LIB=${MRB_BUILDDIR}/otsdaq/lib
@@ -166,6 +173,7 @@ echo
 rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
 ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
 
+export OTS_OWNER=Mu2e
 
 export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
 export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
@@ -188,12 +196,7 @@ echo -e "setup [${LINENO}]  \t  	Or use 'ots --help' for more options"
 echo
 echo -e "setup [${LINENO}]  \t     use 'kx' to kill otsdaq processes"
 echo
-echo Activating TRACE via export TRACE_MSGMAX=0
-export TRACE_MSGMAX=0
+export TRACE_MSGMAX=0 #Activating TRACE
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
-echo Do tshow to show the trace memory buffer.
-echo -e "setup [${LINENO}]  \t Do \"tshow | grep . | tdelta -d 1 -ct 1\" with appropriate grep re to"
-echo -e "setup [${LINENO}]  \t filter traces. Piping into the tdelta command to add deltas and convert"
-echo -e "setup [${LINENO}]  \t the timestamp."
 
