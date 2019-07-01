@@ -199,4 +199,5 @@ echo
 export TRACE_MSGMAX=0 #Activating TRACE
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
-
+tonMg 0-4 #to memory
+tonSg 0-3 #to slow path (i.e. UDP)
