@@ -19,10 +19,8 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-	// theFrontEndHardware_ = new FrontEndHardwareTemplate();
-	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
-	universalAddressSize_ = 4;
-	universalDataSize_    = 4;
+	universalAddressSize_ = 2;
+	universalDataSize_    = 2;
 
 	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
 	emulate_cfo_     = getSelfNode().getNode("EmulateCFO").getValue<bool>();
@@ -175,12 +173,12 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 //========================================================================================================================
 void DTCFrontEndInterface::configureSlowControls(void)
 {
-	__COUT__ << "Configuring slow controls..." << __E__;
+	__FE_COUT__ << "Configuring slow controls..." << __E__;
 
 	// parent configure adds DTC slow controls channels
 	FEVInterface::configureSlowControls();  // also resets DTC-proper channels
 
-	__COUT__ << "DTC '" << getInterfaceUID()
+	__FE_COUT__ << "DTC '" << getInterfaceUID()
 	         << "' slow controls channel count (BEFORE considering ROCs): "
 	         << mapOfSlowControlsChannels_.size() << __E__;
 
@@ -205,7 +203,7 @@ void DTCFrontEndInterface::configureSlowControls(void)
 			    "/" + rocChildPair.first /*subInterfaceID*/,
 			    &mapOfROCSlowControlsChannels_);
 
-			__COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
+			__FE_COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
 			         << "' slow controls channel count: "
 			         << mapOfROCSlowControlsChannels_.size() - initialChannelCount
 			         << __E__;
@@ -214,14 +212,14 @@ void DTCFrontEndInterface::configureSlowControls(void)
 
 	}  // end ROC channel handling
 	else
-		__COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
+		__FE_COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
 
-	__COUT__ << "DTC '" << getInterfaceUID()
+	__FE_COUT__ << "DTC '" << getInterfaceUID()
 	         << "' slow controls channel count (AFTER considering ROCs): "
 	         << mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size()
 	         << __E__;
 
-	__COUT__ << "Done configuring slow controls." << __E__;
+	__FE_COUT__ << "Done configuring slow controls." << __E__;
 
 }  // end configureSlowControls()
 
@@ -251,7 +249,19 @@ FESlowControlsChannel* DTCFrontEndInterface::getNextSlowControlsChannel(void)
 		return nullptr;
 
 	if(currentChannelIsInROC_)
-		currentChannelROCUID_ = slowControlsChannelsIterator_->first;
+	{
+		std::vector<std::string> uidParts;
+		StringMacros::getVectorFromString(
+				slowControlsChannelsIterator_->second.interfaceUID_,
+				uidParts,{'/'} /*delimiters*/);
+		if(uidParts.size() != 2)
+		{
+			__FE_SS__ << "Illegal ROC slow controls channel name '" <<
+					slowControlsChannelsIterator_->second.interfaceUID_ <<
+					".' Format should be DTC/ROC." << __E__;
+		}
+		currentChannelROCUID_ = uidParts[1]; //format DTC/ROC names, take 2nd part as ROC UID
+	}
 	return &(
 	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
 }  // end getNextSlowControlsChannel()
@@ -270,6 +280,7 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 {
 	__FE_COUTV__(currentChannelIsInROC_);
 	__FE_COUTV__(currentChannelROCUID_);
+	__FE_COUTV__(universalDataSize_);
 	if(!currentChannelIsInROC_)
 	{
 		readValue.resize(universalDataSize_);
@@ -290,9 +301,12 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 			ss << __E__;
 			__FE_SS_THROW__;
 		}
-		readValue = rocIt->second->readRegister(
-		    *((uint16_t*)channel.getUniversalAddress()));
+		readValue.resize(universalDataSize_);
+		*((uint16_t*)(&readValue[0])) = rocIt->second->readRegister(
+								    *((uint16_t*)channel.getUniversalAddress()));
 	}
+
+	__FE_COUTV__(readValue.size());
 }  // end getNextSlowControlsChannel()
 
 //========================================================================================================================

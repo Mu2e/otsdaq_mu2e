@@ -68,7 +68,7 @@ void ROCCoreVInterface::writeRegister(uint16_t address, uint16_t writeData)
 }  // end writeRegister()
 
 //==================================================================================================
-int ROCCoreVInterface::readRegister(uint16_t address)
+uint16_t ROCCoreVInterface::readRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;

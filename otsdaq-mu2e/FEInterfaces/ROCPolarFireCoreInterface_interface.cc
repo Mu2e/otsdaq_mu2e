@@ -28,7 +28,7 @@ ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 }  // end destructor()
 
 //==================================================================================================
-int ROCPolarFireCoreInterface::readEmulatorRegister(uint16_t address)
+uint16_t ROCPolarFireCoreInterface::readEmulatorRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec
 	            << linkID_ << ", address = " << address << __E__;
@@ -53,7 +53,7 @@ void ROCPolarFireCoreInterface::writeROCRegister(uint16_t address, uint16_t data
 }  // end writeROCRegister()
 
 //==================================================================================================
-int ROCPolarFireCoreInterface::readROCRegister(uint16_t address)
+uint16_t ROCPolarFireCoreInterface::readROCRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;

@@ -30,9 +30,9 @@ class ROCDTCHardwareEmulated : public ROCCoreVInterface
 
 	// write and read to registers
 	virtual void 							writeROCRegister		(uint16_t address, uint16_t data_to_write) override;
-	virtual int  							readROCRegister			(uint16_t address) override;
+	virtual uint16_t  						readROCRegister			(uint16_t address) override;
 	virtual void 							writeEmulatorRegister	(uint16_t address, uint16_t data_to_write) override { }
-	virtual int 							readEmulatorRegister	(uint16_t address) override;
+	virtual uint16_t						readEmulatorRegister	(uint16_t address) override;
 
 	virtual void 							readROCBlock			(std::vector<uint16_t>& data, uint16_t address, uint16_t numberOfReads, bool incrementAddress) override { }
 	virtual void 							readEmulatorBlock		(std::vector<uint16_t>& data, uint16_t address, uint16_t numberOfReads, bool incrementAddress) override { }

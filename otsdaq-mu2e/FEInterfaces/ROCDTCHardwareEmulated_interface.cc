@@ -28,7 +28,7 @@ ROCDTCHardwareEmulated::~ROCDTCHardwareEmulated(void)
 }  // end destructor()
 
 //==================================================================================================
-int ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
+uint16_t ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec
 	            << linkID_ << ", address = " << address << __E__;
@@ -53,12 +53,12 @@ void ROCDTCHardwareEmulated::writeROCRegister(uint16_t address, uint16_t data_to
 }  // end writeROCRegister()
 
 //==================================================================================================
-int ROCDTCHardwareEmulated::readROCRegister(uint16_t address)
+uint16_t ROCDTCHardwareEmulated::readROCRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
 
-	int read_data = 0;
+	uint16_t read_data = 0;
 
 	try
 	{
