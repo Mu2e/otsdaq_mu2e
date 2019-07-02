@@ -268,8 +268,8 @@ unsigned int DTCFrontEndInterface::getSlowControlsChannelCount(void)
 void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
                                                 std::string&           readValue)
 {
-	__COUTV__(currentChannelIsInROC_);
-	__COUTV__(currentChannelROCUID_);
+	__FE_COUTV__(currentChannelIsInROC_);
+	__FE_COUTV__(currentChannelROCUID_);
 	if(!currentChannelIsInROC_)
 	{
 		readValue.resize(universalDataSize_);
@@ -277,7 +277,20 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 	}
 	else
 	{
-		readValue = rocs_[currentChannelROCUID_]->readRegister(
+		auto rocIt = rocs_.find(currentChannelROCUID_);
+		if(rocIt == rocs_.end())
+		{
+			__FE_SS__ << "ROC UID '" << currentChannelROCUID_ <<
+					"' was not found in ROC map." << __E__;
+			ss << "Here are the existing ROCs: ";
+			bool first = true;
+			for(auto& rocPair:rocs_)
+				if(!first) ss << ", " << rocPair.first;
+				else { ss << rocPair.first; first = false; }
+			ss << __E__;
+			__FE_SS_THROW__;
+		}
+		readValue = rocIt->second->readRegister(
 		    *((uint16_t*)channel.getUniversalAddress()));
 	}
 }  // end getNextSlowControlsChannel()
