@@ -30,6 +30,13 @@ elif [ $userinput == "stm" ]; then
     basepath="mu2estm/test_stand"
     repository="otsdaq_mu2e_stm"
     userdataappend=""
+elif [ $userinput == "stmdbtest" ]; then
+    export OTS_MAIN_PORT=4005
+    export OTS_WIZ_MODE_MAIN_PORT=4005
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    basepath="mu2estm/test_stand"
+    repository="otsdaq_mu2e_stm"
+    userdataappend="_dbtest"
 elif [ $userinput == "calo" ]; then
     export OTS_MAIN_PORT=3025
     export OTS_WIZ_MODE_MAIN_PORT=3025
@@ -102,6 +109,9 @@ sh -c "[ `ps $$ | grep bash | wc -l` -gt 0 ] || { echo 'Please switch to the bas
 echo -e "setup [${LINENO}]  \t ======================================================"
 echo -e "setup [${LINENO}]  \t Initially your products path was PRODUCTS=${PRODUCTS}"
 
+echo -e "setup [${LINENO}]  \t userdataappend=${userdataappend}"
+
+
 unsetup_all
 
 #unalias because the original VM aliased for users
@@ -117,7 +127,7 @@ source /home/mu2edaq/sync_demo/ots/products/setup
 
 setup mrb
 setup git
-source /home/${basepath}/ots/localProducts*/setup
+source /home/${basepath}/ots${userdataappend}/localProducts*/setup
 source mrbSetEnv
 
 ulimit -c unlimited
@@ -175,10 +185,10 @@ ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${reposi
 
 export OTS_OWNER=Mu2e
 
-export USER_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}"
-export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
-export OTSDAQ_DATA="/home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/OutputData"
-export USER_WEB_PATH=/home/${basepath}/ots/srcs/${repository}/UserWebGUI
+export USER_DATA="/home/${basepath}/ots${userdataappend}/srcs/${repository}/Data${userdataappend}"
+export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots${userdataappend}/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
+export OTSDAQ_DATA="/home/${basepath}/ots${userdataappend}/srcs/${repository}/Data${userdataappend}/OutputData"
+export USER_WEB_PATH=/home/${basepath}/ots${userdataappend}/srcs/${repository}/UserWebGUI
 
 echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
 echo -e "setup [${LINENO}]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
@@ -186,7 +196,7 @@ echo -e "setup [${LINENO}]  \t Now your output data path is OTSDAQ_DATA \t = ${O
 echo -e "setup [${LINENO}]  \t Now your output data path is USER_WEB_PATH \t = ${USER_WEB_PATH}"
 echo
 
-alias rawEventDump="art -c /home/${basepath}/ots/srcs/otsdaq/artdaq-ots/ArtModules/fcl/rawEventDump.fcl"
+alias rawEventDump="art -c /home/${basepath}/ots${userdataappend}/srcs/otsdaq/artdaq-ots/ArtModules/fcl/rawEventDump.fcl"
 alias kx='ots -k'
 
 echo
