@@ -7,7 +7,7 @@ if [ x$userinput == "x" ]; then
   echo -e "setup [${LINENO}]  \t --> You are user $USER on $HOSTNAME in directory `pwd`"
   echo -e "setup [${LINENO}]  \t ================================================="
   echo -e "setup [${LINENO}]  \t usage:  source setup_ots.sh <subsystem>"
-  echo -e "setup [${LINENO}]  \t ... where  subsystem = (sync,stm,calo,trigger,02,dcs,hwdev,tracker,shift,dqmcalo)"
+  echo -e "setup [${LINENO}]  \t ... where  subsystem = (sync,stm,stmdbtest,calo,trigger,02,dcs,hwdev,tracker,shift,dqmcalo)"
   echo -e "setup [${LINENO}]  \t ================================================="
   return 1;
 fi
