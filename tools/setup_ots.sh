@@ -31,8 +31,8 @@ elif [ $userinput == "stm" ]; then
     repository="otsdaq_mu2e_stm"
     userdataappend=""
 elif [ $userinput == "stmdbtest" ]; then
-    export OTS_MAIN_PORT=4005
-    export OTS_WIZ_MODE_MAIN_PORT=4005
+    export OTS_MAIN_PORT=3040
+    export OTS_WIZ_MODE_MAIN_PORT=3040
     export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2estm/test_stand"
     repository="otsdaq_mu2e_stm"
