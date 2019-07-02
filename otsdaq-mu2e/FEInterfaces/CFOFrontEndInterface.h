@@ -58,11 +58,11 @@ class CFOFrontEndInterface : public FEVInterface
 	// FrontEndFirmwareTemplate* theFrontEndFirmware_;
 
   private:
-	char         devfile_[11];
-	int          fd_;
-	int          dtc_ = -1;
+	char                   devfile_[11];
+	int                    fd_;
+	int                    dtc_ = -1;
 	CFOLib::CFO_Registers* thisCFO_;
-	int          configure_clock_ = 0;
+	int                    configure_clock_ = 0;
 
 	m_ioc_reg_access_t reg_access_;
 

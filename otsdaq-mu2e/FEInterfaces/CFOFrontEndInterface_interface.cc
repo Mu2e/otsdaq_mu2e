@@ -31,7 +31,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	fd_ = open(devfile_, O_RDONLY);
 
 	__FE_COUT__ << "Device file descriptor opened!" << __E__;
-	
+
 	unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
@@ -334,7 +334,8 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 		//--------read delay value
 		unsigned int delay = registerRead(0x9360);
 
-		//__MCOUT_INFO__("LOOPBACK iteration " << std::dec << n << " gives " << delay << __E__);
+		//__MCOUT_INFO__("LOOPBACK iteration " << std::dec << n << " gives " << delay <<
+		//__E__);
 
 		if(delay < 10000 && n > 5)
 		{  // skip the first events since the ROC is
@@ -652,7 +653,7 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 
 	int startIndex = getIterationIndex();
 
-	if(startIndex == 0) //setup
+	if(startIndex == 0)  // setup
 	{
 		initial_9100_ = registerRead(0x9100);
 		initial_9114_ = registerRead(0x9114);
@@ -670,7 +671,7 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 
 		__FE_COUT__ << "START: CFO status" << __E__;
 		readStatus();
-	
+
 		for(int nChain = 0; nChain < numberOfChains; nChain++)
 		{
 			for(int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++)
@@ -683,12 +684,12 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 				}
 			}
 		}
-		
+
 		indicateIterationWork();  // I still need to be touched
 		return;
 	}
 
-	if(startIndex > numberOfMeasurements) //finish
+	if(startIndex > numberOfMeasurements)  // finish
 	{
 		__MCOUT_INFO__("-------------------------" << __E__);
 		__MCOUT_INFO__("FULL SYSTEM loopback DONE" << __E__);
@@ -717,7 +718,7 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 		registerWrite(0x9118, 0x000000ff);
 		registerWrite(0x9118, 0x0);
 		usleep(50);
-		
+
 		__FE_COUT__ << "CFO enable Event Start character output 0x" << std::hex << __E__;
 		registerWrite(0x9100, initial_9100_);
 
@@ -737,7 +738,7 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 	//=========== Perform loopback=============
 
 	// where are we in the procedure?
-	int activeROC = (startIndex-1) % numberOfROCsPerDTC;
+	int activeROC = (startIndex - 1) % numberOfROCsPerDTC;
 
 	int activeDTC = -1;
 
@@ -747,8 +748,8 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 		//		<< " nDTC = " << nDTC
 		//		<< " numberOfDTCsPerChain = " << numberOfDTCsPerChain
 		//		<< __E__;
-		if((startIndex-1) >= (nDTC * numberOfROCsPerDTC) &&
-		   (startIndex-1) < ((nDTC + 1) * numberOfROCsPerDTC))
+		if((startIndex - 1) >= (nDTC * numberOfROCsPerDTC) &&
+		   (startIndex - 1) < ((nDTC + 1) * numberOfROCsPerDTC))
 		{
 			//				__FE_COUT__ << "ACTIVE DTC " << nDTC <<
 			//__E__;
@@ -758,7 +759,6 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 
 	//	__MOUT__ 	<< "loopback index = " << startIndex;
 	__MCOUT_INFO__(" Looping back DTC" << activeDTC << " ROC" << activeROC << __E__);
-
 
 	int chainIndex = 0;
 

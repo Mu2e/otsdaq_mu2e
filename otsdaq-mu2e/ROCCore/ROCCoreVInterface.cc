@@ -13,7 +13,7 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
     : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
-	, emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
+    , emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
     , emulatorWorkloopExit_(false)
     , emulatorWorkloopRunning_(false)
 {
@@ -51,7 +51,7 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 }
 
 //==================================================================================================
-void ROCCoreVInterface::writeRegister(unsigned address, unsigned writeData)
+void ROCCoreVInterface::writeRegister(uint16_t address, uint16_t writeData)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << writeData << __E__;
@@ -68,7 +68,7 @@ void ROCCoreVInterface::writeRegister(unsigned address, unsigned writeData)
 }  // end writeRegister()
 
 //==================================================================================================
-int ROCCoreVInterface::readRegister(unsigned address)
+int ROCCoreVInterface::readRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -84,12 +84,14 @@ int ROCCoreVInterface::readRegister(unsigned address)
 
 }  // end readRegister()
 //
-void ROCCoreVInterface::readBlock(std::vector<uint16_t>& data, unsigned address,unsigned numberOfReads, unsigned incrementAddress)
+void ROCCoreVInterface::readBlock(std::vector<uint16_t>& data,
+                                  uint16_t               address,
+                                  uint16_t               numberOfReads,
+                                  bool                   incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
-	            << ", address = " << address
-		    << ", numberofReads = " << numberOfReads
-		    << ", incrementAddress = " << incrementAddress << __E__;
+	            << ", address = " << address << ", numberofReads = " << numberOfReads
+	            << ", incrementAddress = " << incrementAddress << __E__;
 
 	if(emulatorMode_)
 	{
@@ -126,19 +128,27 @@ void ROCCoreVInterface::readBlock(std::vector<uint16_t>& data, unsigned address,
 //}
 
 //==================================================================================================
-void ROCCoreVInterface::highRateCheck(unsigned int loops, unsigned int baseAddress,
-		unsigned int correctRegisterValue0, unsigned int correctRegisterValue1)
+void ROCCoreVInterface::highRateCheck(unsigned int loops,
+                                      unsigned int baseAddress,
+                                      unsigned int correctRegisterValue0,
+                                      unsigned int correctRegisterValue1)
 {
 	__FE_MCOUT__("Starting the high rate check... " << __E__);
 
 	std::thread(
-	    [](ROCCoreVInterface* roc,unsigned int loops, unsigned int baseAddress,
-	    		int correctRegisterValue0, int correctRegisterValue1)
-				{
-		ROCCoreVInterface::highRateCheckThread(roc,
-	    		loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
-				},
-				this,loops,baseAddress,correctRegisterValue0,correctRegisterValue1)
+	    [](ROCCoreVInterface* roc,
+	       unsigned int       loops,
+	       unsigned int       baseAddress,
+	       int                correctRegisterValue0,
+	       int                correctRegisterValue1) {
+		    ROCCoreVInterface::highRateCheckThread(
+		        roc, loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
+	    },
+	    this,
+	    loops,
+	    baseAddress,
+	    correctRegisterValue0,
+	    correctRegisterValue1)
 	    .detach();
 
 	__FE_MCOUT__("Thread launched..." << __E__);
@@ -146,27 +156,30 @@ void ROCCoreVInterface::highRateCheck(unsigned int loops, unsigned int baseAddre
 
 //==================================================================================================
 void ROCCoreVInterface::highRateCheckThread(ROCCoreVInterface* roc,
-		unsigned int loops, unsigned int baseAddress,
-		unsigned int correctRegisterValue0, unsigned int correctRegisterValue1)
-try
+                                            unsigned int       loops,
+                                            unsigned int       baseAddress,
+                                            unsigned int       correctRegisterValue0,
+                                            unsigned int       correctRegisterValue1) try
 {
 	__MCOUT__(roc->interfaceUID_ << "Starting the high rate check... " << __E__);
 	srand(time(NULL));
 
 	int          r;
 	unsigned int val;
-	//int          loops  = loops;//10 * 1000;
-	int          cnt    = 0;
-	int          cnts[] = {0, 0};
+	// int          loops  = loops;//10 * 1000;
+	int cnt    = 0;
+	int cnts[] = {0, 0};
 
-	unsigned int correct[] = {correctRegisterValue0,correctRegisterValue1};//{4860, 10};
+	unsigned int correct[] = {correctRegisterValue0,
+	                          correctRegisterValue1};  //{4860, 10};
 
 	for(unsigned int i = 0; i < loops; i++)
 		for(unsigned int j = 0; j < 2; j++)
 		{
 			r = rand() % 100;
 			__MCOUT__(roc->interfaceUID_ << i << "\t of " << loops << "\tx " << r
-			                             << " :\t read register " << baseAddress + j << __E__);
+			                             << " :\t read register " << baseAddress + j
+			                             << __E__);
 
 			for(int rr = 0; rr < r; rr++)
 			{
@@ -176,9 +189,9 @@ try
 				if(val != correct[j])
 				{
 					__SS__ << roc->interfaceUID_ << i << "\tx " << r << " :\t "
-					       << "read register " << baseAddress + j << ". Mismatch on read " << val
-					       << " vs " << correct[j] << ". Read failed on read number "
-					       << cnt << __E__;
+					       << "read register " << baseAddress + j << ". Mismatch on read "
+					       << val << " vs " << correct[j]
+					       << ". Read failed on read number " << cnt << __E__;
 					__MOUT__ << ss.str();
 					__SS_THROW__;
 				}
@@ -186,30 +199,37 @@ try
 		}
 
 	__MCOUT__(roc->interfaceUID_ << "Completed high rate check. Number of reads: " << cnt
-	                             << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1]
-	                             << __E__);
-} //end highRateCheckThread()
+	                             << ", firstRegCnt=" << cnts[0]
+	                             << ", secondRegcnt=" << cnts[1] << __E__);
+}  // end highRateCheckThread()
 catch(...)
 {
 	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
 	__MCOUT__(ss.str());
-} //end highRateCheckThread() catch
-
+}  // end highRateCheckThread() catch
 
 //==================================================================================================
-void ROCCoreVInterface::highRateBlockCheck(unsigned int loops, unsigned int baseAddress,
-		unsigned int correctRegisterValue0, unsigned int correctRegisterValue1)
+void ROCCoreVInterface::highRateBlockCheck(unsigned int loops,
+                                           unsigned int baseAddress,
+                                           unsigned int correctRegisterValue0,
+                                           unsigned int correctRegisterValue1)
 {
 	__FE_MCOUT__("Starting the high rate block check... " << __E__);
 
 	std::thread(
-	    [](ROCCoreVInterface* roc,unsigned int loops, unsigned int baseAddress,
-	    		int correctRegisterValue0, int correctRegisterValue1)
-				{
-		ROCCoreVInterface::highRateBlockCheckThread(roc,
-	    		loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
-				},
-				this,loops,baseAddress,correctRegisterValue0,correctRegisterValue1)
+	    [](ROCCoreVInterface* roc,
+	       unsigned int       loops,
+	       unsigned int       baseAddress,
+	       int                correctRegisterValue0,
+	       int                correctRegisterValue1) {
+		    ROCCoreVInterface::highRateBlockCheckThread(
+		        roc, loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
+	    },
+	    this,
+	    loops,
+	    baseAddress,
+	    correctRegisterValue0,
+	    correctRegisterValue1)
 	    .detach();
 
 	__FE_MCOUT__("Thread launched..." << __E__);
@@ -217,61 +237,66 @@ void ROCCoreVInterface::highRateBlockCheck(unsigned int loops, unsigned int base
 
 //==================================================================================================
 void ROCCoreVInterface::highRateBlockCheckThread(ROCCoreVInterface* roc,
-		unsigned int loops, unsigned int baseAddress,
-		unsigned int correctRegisterValue0, unsigned int correctRegisterValue1)
-try
+                                                 unsigned int       loops,
+                                                 unsigned int       baseAddress,
+                                                 unsigned int       correctRegisterValue0,
+                                                 unsigned int correctRegisterValue1) try
 {
 	__MCOUT__(roc->interfaceUID_ << "Starting the high rate block check... " << __E__);
 	srand(time(NULL));
 
-	int          r;
+	int                   r;
 	std::vector<uint16_t> val;
-	//int          loops  = loops;//10 * 1000;
-	int          cnt    = 0;
-	int          cnts[] = {0, 0};
+	// int          loops  = loops;//10 * 1000;
+	int cnt    = 0;
+	int cnts[] = {0, 0};
 
-	unsigned int correct[] = {correctRegisterValue0,correctRegisterValue1};//{4860, 10};
+	unsigned int correct[] = {correctRegisterValue0,
+	                          correctRegisterValue1};  //{4860, 10};
 
 	for(unsigned int i = 0; i < loops; i++)
 		for(unsigned int j = 0; j < 2; j++)
 		{
 			r = rand() % 100;
 			__MCOUT__(roc->interfaceUID_ << i << "\t of " << loops << "\tx " << r
-			                             << " :\t read register " << baseAddress + j << __E__);
+			                             << " :\t read register " << baseAddress + j
+			                             << __E__);
 
-			roc->readBlock(val, baseAddress + j,r,0);
+			roc->readBlock(val, baseAddress + j, r, 0);
 
-			if (val.size() != 0) {
-			  for(size_t rr = 0; rr < val.size(); rr++)
-			    {
-				++cnt;
-				++cnts[j];
-				
-				if(val[rr] != correct[j])
+			if(val.size() != 0)
+			{
+				for(size_t rr = 0; rr < val.size(); rr++)
 				{
-					__SS__ << roc->interfaceUID_ << i << "\tx " << r << " :\t "
-					       << "read register " << baseAddress + j << ". Mismatch on read " << val[rr]
-					       << " vs " << correct[j] << ". Read failed on read number "
-					       << cnt << __E__;
-					__MOUT__ << ss.str();
-					__SS_THROW__;
+					++cnt;
+					++cnts[j];
+
+					if(val[rr] != correct[j])
+					{
+						__SS__ << roc->interfaceUID_ << i << "\tx " << r << " :\t "
+						       << "read register " << baseAddress + j
+						       << ". Mismatch on read " << val[rr] << " vs " << correct[j]
+						       << ". Read failed on read number " << cnt << __E__;
+						__MOUT__ << ss.str();
+						__SS_THROW__;
+					}
 				}
-			    }
-			} else {
-			  __MCOUT__(roc->interfaceUID_ << i << " buffer size 0! "<< __E__);
+			}
+			else
+			{
+				__MCOUT__(roc->interfaceUID_ << i << " buffer size 0! " << __E__);
 			}
 		}
 
-	__MCOUT__(roc->interfaceUID_ << "Completed high rate block check. Number of reads: " << cnt
-	                             << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1]
-	                             << __E__);
-} //end highRateBlockCheckThread()
+	__MCOUT__(roc->interfaceUID_
+	          << "Completed high rate block check. Number of reads: " << cnt
+	          << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1] << __E__);
+}  // end highRateBlockCheckThread()
 catch(...)
 {
 	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
 	__MCOUT__(ss.str());
-} //end highRateBlockCheckThread() catch
-
+}  // end highRateBlockCheckThread() catch
 
 //==================================================================================================
 void ROCCoreVInterface::configure(void) try
@@ -347,7 +372,7 @@ void ROCCoreVInterface::halt(void)
 		__FE_COUT__ << "Halting and attempting to exit emulator workloop..." << __E__;
 		ROCCoreVInterface::emulatorWorkloopExit_ = true;
 	}
-} //end halt()
+}  // end halt()
 
 //========================================================================================================================
 void ROCCoreVInterface::pause(void) {}

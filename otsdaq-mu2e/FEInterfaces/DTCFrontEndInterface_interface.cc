@@ -19,14 +19,13 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-
 	// theFrontEndHardware_ = new FrontEndHardwareTemplate();
 	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
 	universalAddressSize_ = 4;
 	universalDataSize_    = 4;
 
 	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
-	emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
+	emulate_cfo_     = getSelfNode().getNode("EmulateCFO").getValue<bool>();
 
 	// label
 	device_name_ = interfaceUID;
@@ -91,36 +90,38 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
 	std::cout << "DTC arguments..." << std::endl;
-	std::cout << "dtc_ = "     << dtc_ << std::endl;
-	std::cout << "rocMask = "       << dtc_class_roc_mask << std::endl;
+	std::cout << "dtc_ = " << dtc_ << std::endl;
+	std::cout << "rocMask = " << dtc_class_roc_mask << std::endl;
 	std::cout << "expectedDesignVersion = " << expectedDesignVersion << std::endl;
 	std::cout << "END END DTC arguments..." << std::endl;
 
 	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
 
-	if (emulate_cfo_ == 1) { // do NOT instantiate the DTCSoftwareCFO here, do it just when you need it
+	if(emulate_cfo_ == 1)
+	{  // do NOT instantiate the DTCSoftwareCFO here, do it just when you need it
 
-	  //	  bool useCFOEmulator = true;
-	  //	  uint16_t debugPacketCount = 0;
-	  //	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
-	  //	  bool stickyDebugType = true;
-	  //	  bool quiet = false; 
-	  //	  bool asyncRR = false; 
-	  //	  bool forceNoDebugMode = true;
+		//	  bool useCFOEmulator = true;
+		//	  uint16_t debugPacketCount = 0;
+		//	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
+		//	  bool stickyDebugType = true;
+		//	  bool quiet = false;
+		//	  bool asyncRR = false;
+		//	  bool forceNoDebugMode = true;
 
-	  //	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
-	  //	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
-	  //	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
-	  //	  std::cout << "debugType = "       << debugType << std::endl;
-	  //	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
-	  //	  std::cout << "quiet = "           << quiet << std::endl;
-	  //	  std::cout << "asyncRR = "           << asyncRR << std::endl;
-	  //	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
-	  //	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
+		//	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
+		//	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
+		//	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
+		//	  std::cout << "debugType = "       << debugType << std::endl;
+		//	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
+		//	  std::cout << "quiet = "           << quiet << std::endl;
+		//	  std::cout << "asyncRR = "           << asyncRR << std::endl;
+		//	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
+		//	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
 
-	  //	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator, debugPacketCount, 
-	  //				debugType, stickyDebugType, quiet,  asyncRR, forceNoDebugMode);
-  	}
+		//	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator,
+		//debugPacketCount, 				debugType, stickyDebugType, quiet,  asyncRR,
+		//forceNoDebugMode);
+	}
 
 	createROCs();
 	registerFEMacros();
@@ -129,12 +130,10 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	dtc_location_in_chain_ =
 	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
 
-
-
-	//check if any ROCs should be DTC-hardware emulated ROCs
+	// check if any ROCs should be DTC-hardware emulated ROCs
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-				Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
 
 		int dtcHwEmulateROCmask = 0;
 		for(auto& roc : rocChildren)
@@ -144,24 +143,23 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 			if(enabled)
 			{
 				int linkID = roc.second.getNode("linkID").getValue<int>();
-				__FE_COUT__ << "roc uid '" << roc.first <<
-						"' at link=" << linkID << " is DTC-hardware emulated!" << __E__;
-				dtcHwEmulateROCmask |= (1<<linkID);
+				__FE_COUT__ << "roc uid '" << roc.first << "' at link=" << linkID
+				            << " is DTC-hardware emulated!" << __E__;
+				dtcHwEmulateROCmask |= (1 << linkID);
 			}
 		}
 
-		__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" <<
-				std::hex << dtcHwEmulateROCmask << std::dec << __E__;
+		__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
+		            << dtcHwEmulateROCmask << std::dec << __E__;
 		registerWrite(0x9110, dtcHwEmulateROCmask);
 		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
 	}  // end check if any ROCs should be DTC-hardware emulated ROCs
-
 
 	// done
 	__MCOUT_INFO__("DTCFrontEndInterface instantiated with name: "
 	               << device_name_ << " dtc_location_in_chain_ = "
 	               << dtc_location_in_chain_ << " talking to /dev/mu2e" << dtc_ << __E__);
-} //end constructor()
+}  // end constructor()
 
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
@@ -172,7 +170,117 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 	// delete theFrontEndFirmware_;
 
 	__FE_COUT__ << "Destructed." << __E__;
-} //end destructor()
+}  // end destructor()
+
+//========================================================================================================================
+void DTCFrontEndInterface::configureSlowControls(void)
+{
+	__COUT__ << "Configuring slow controls..." << __E__;
+
+	// parent configure adds DTC slow controls channels
+	FEVInterface::configureSlowControls();  // also resets DTC-proper channels
+
+	__COUT__ << "DTC '" << getInterfaceUID()
+	         << "' slow controls channel count (BEFORE considering ROCs): "
+	         << mapOfSlowControlsChannels_.size() << __E__;
+
+	mapOfROCSlowControlsChannels_.clear();  // reset ROC channels
+
+	// now add ROC slow controls channels
+	ConfigurationTree ROCLink =
+	    Configurable::getSelfNode().getNode("LinkToROCGroupTable");
+	if(!ROCLink.isDisconnected())
+	{
+		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+		    ROCLink.getChildren();
+
+		unsigned int initialChannelCount;
+
+		for(auto& rocChildPair : rocChildren)
+		{
+			initialChannelCount = mapOfROCSlowControlsChannels_.size();
+
+			FEVInterface::addSlowControlsChannels(
+			    rocChildPair.second.getNode("LinkToSlowControlsChannelTable"),
+			    "/" + rocChildPair.first /*subInterfaceID*/,
+			    &mapOfROCSlowControlsChannels_);
+
+			__COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
+			         << "' slow controls channel count: "
+			         << mapOfROCSlowControlsChannels_.size() - initialChannelCount
+			         << __E__;
+
+		}  // end ROC children loop
+
+	}  // end ROC channel handling
+	else
+		__COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
+
+	__COUT__ << "DTC '" << getInterfaceUID()
+	         << "' slow controls channel count (AFTER considering ROCs): "
+	         << mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size()
+	         << __E__;
+
+	__COUT__ << "Done configuring slow controls." << __E__;
+
+}  // end configureSlowControls()
+
+//========================================================================================================================
+// virtual in case channels are handled in multiple maps, for example
+void DTCFrontEndInterface::resetSlowControlsChannelIterator(void)
+{
+	// call parent
+	FEVInterface::resetSlowControlsChannelIterator();
+
+	currentChannelIsInROC_ = false;
+}  // end resetSlowControlsChannelIterator()
+
+//========================================================================================================================
+// virtual in case channels are handled in multiple maps, for example
+FESlowControlsChannel* DTCFrontEndInterface::getNextSlowControlsChannel(void)
+{
+	// if finished with DTC slow controls channels, move on to ROC list
+	if(slowControlsChannelsIterator_ == mapOfSlowControlsChannels_.end())
+	{
+		slowControlsChannelsIterator_ = mapOfROCSlowControlsChannels_.begin();
+		currentChannelIsInROC_        = true;  // switch to ROC mode
+	}
+
+	// if finished with ROC list, then done
+	if(slowControlsChannelsIterator_ == mapOfROCSlowControlsChannels_.end())
+		return nullptr;
+
+	if(currentChannelIsInROC_)
+		currentChannelROCUID_ = slowControlsChannelsIterator_->first;
+	return &(
+	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
+}  // end getNextSlowControlsChannel()
+
+//========================================================================================================================
+// virtual in case channels are handled in multiple maps, for example
+unsigned int DTCFrontEndInterface::getSlowControlsChannelCount(void)
+{
+	return mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size();
+}  // end getSlowControlsChannelCount()
+
+//========================================================================================================================
+// virtual in case read should be different than universalread
+void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
+                                                std::string&           readValue)
+{
+	__COUTV__(currentChannelIsInROC_);
+	__COUTV__(currentChannelROCUID_);
+	if(!currentChannelIsInROC_)
+	{
+		readValue.resize(universalDataSize_);
+		universalRead(channel.getUniversalAddress(), &readValue[0]);
+	}
+	else
+	{
+		readValue = rocs_[currentChannelROCUID_]->readRegister(
+		    *((uint16_t*)channel.getUniversalAddress()));
+	}
+}  // end getNextSlowControlsChannel()
 
 //========================================================================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
@@ -291,7 +399,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	// clang-format on
 
-} //end registerFEMacros()
+}  // end registerFEMacros()
 
 //========================================================================================================================
 void DTCFrontEndInterface::createROCs(void)
@@ -350,7 +458,7 @@ void DTCFrontEndInterface::createROCs(void)
 						// all ROCs support emulator mode
 
 						//						// verify ROCCoreVEmulator class
-						//functionality  with  dynamic_cast
+						// functionality  with  dynamic_cast
 						// ROCCoreVEmulator&  tmpEmulator =
 						// dynamic_cast<ROCCoreVEmulator&>(
 						//						    tmpRoc);  //
@@ -368,7 +476,7 @@ void DTCFrontEndInterface::createROCs(void)
 					//					catch(const std::bad_cast& e)
 					//					{
 					//						__SS__ << "Cast to ROCCoreVEmulator failed!
-					//Verify  the  emulator " 						          "plugin
+					// Verify  the  emulator " 						          "plugin
 					// inherits
 					// from  ROCCoreVEmulator."
 					//						       << __E__;
@@ -427,8 +535,6 @@ void DTCFrontEndInterface::createROCs(void)
 
 	__FE_COUT__ << "Done creating " << rocs_.size() << " ROC(s)" << std::endl;
 
-
-
 }  // end createROCs
 
 //==========================================================================================
@@ -445,6 +551,7 @@ void DTCFrontEndInterface::universalRead(char* address, char* returnValue)
 
 	if(emulatorMode_)
 	{
+		__FE_COUT__ << "Emulator read " << __E__;
 		for(unsigned int i = 0; i < universalDataSize_; ++i)
 			returnValue[i] = 0xF0 | i;
 		return;
@@ -514,7 +621,10 @@ void DTCFrontEndInterface::universalWrite(char* address, char* writeValue)
 {
 	// __FE_COUT__ << "DTC WRITE" << __E__;
 	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator write " << __E__;
 		return;
+	}
 
 	reg_access_.access_type = 1;  // 0 = read, 1 = write
 
@@ -660,7 +770,7 @@ float DTCFrontEndInterface::readTemperature()
 //
 void DTCFrontEndInterface::turnOnLED()
 {
-	int dataInReg = registerRead(0x9100);
+	int dataInReg   = registerRead(0x9100);
 	int dataToWrite = dataInReg | 0x001f0000;  // bit[16-20] = 1
 	registerWrite(0x9100, dataToWrite);
 
@@ -672,7 +782,7 @@ void DTCFrontEndInterface::turnOnLED()
 //
 void DTCFrontEndInterface::turnOffLED()
 {
-	int dataInReg = registerRead(0x9100);
+	int dataInReg   = registerRead(0x9100);
 	int dataToWrite = dataInReg & 0xffe0ffff;  // bit[16-20] = 0
 	registerWrite(0x9100, dataToWrite);
 
@@ -781,10 +891,6 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	__FE_COUT__ << "DTC configuring... # of ROCs = " << rocs_.size() << __E__;
 
-
-
-
-
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
 	// Therefore, break up configuration into several steps so as to reply before
 	// the time out As well, there is a specific order in which to configure the
@@ -794,10 +900,10 @@ void DTCFrontEndInterface::configure(void) try
 	    -1;  // if < 0, keep trying until links are OK.
 	         // If > 0, go through configuration steps this many times
 
-	const int reset_fpga               = 1;                 // 1 = yes, 0 = no
+	const int  reset_fpga               = 1;                 // 1 = yes, 0 = no
 	const bool config_clock             = configure_clock_;  // 1 = yes, 0 = no
 	const bool config_jitter_attenuator = configure_clock_;  // 1 = yes, 0 = no
-	const int reset_rx                 = 0;                 // 1 = yes, 0 = no
+	const int  reset_rx                 = 0;                 // 1 = yes, 0 = no
 
 	const int number_of_dtc_config_steps = 7;
 
@@ -828,7 +934,7 @@ void DTCFrontEndInterface::configure(void) try
 			if(checkLinkStatus() == 1)
 			{
 				// links OK,  continue with the rest of the configuration
-			        __FE_COUT__ << device_name_ << " Link Status is OK = 0x" << std::hex
+				__FE_COUT__ << device_name_ << " Link Status is OK = 0x" << std::hex
 				            << registerRead(0x9140) << std::dec << __E__;
 
 				indicateIterationWork();
@@ -882,8 +988,8 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " reset FPGA...");
 
-			int dataInReg = registerRead(0x9100);
-			int dataToWrite = dataInReg | 0x80000000; // bit 31 = DTC Reset FPGA
+			int dataInReg   = registerRead(0x9100);
+			int dataToWrite = dataInReg | 0x80000000;  // bit 31 = DTC Reset FPGA
 			registerWrite(0x9100, dataToWrite);
 			sleep(3);
 
@@ -892,11 +998,11 @@ void DTCFrontEndInterface::configure(void) try
 
 			DTCReset();
 		}
-
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
-	        if( (config_clock == 1 || emulate_cfo_ == 1) && config_step < number_of_dtc_config_steps)
+		if((config_clock == 1 || emulate_cfo_ == 1) &&
+		   config_step < number_of_dtc_config_steps)
 		{
 			// only configure the clock/crystal the first loop through...
 
@@ -943,7 +1049,8 @@ void DTCFrontEndInterface::configure(void) try
 	{
 		// configure Jitter Attenuator to recover clock
 
-	        if( (config_jitter_attenuator == 1 || emulate_cfo_ == 1 ) && config_step < number_of_dtc_config_steps)
+		if((config_jitter_attenuator == 1 || emulate_cfo_ == 1) &&
+		   config_step < number_of_dtc_config_steps)
 		{
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " configure Jitter Attenuator..." << __E__);
@@ -963,26 +1070,30 @@ void DTCFrontEndInterface::configure(void) try
 		// reset CFO links, first what is received from upstream, then what is
 		// transmitted downstream
 
-		if (emulate_cfo_ == 1) 
+		if(emulate_cfo_ == 1)
 		{
-		  __MCOUT_INFO__("Step " << config_step << ": " << device_name_
-                                 << " enable CFO emulation and internal clock");
-		  int dataInReg = registerRead(0x9100);
-		  int dataToWrite = dataInReg | 0x40008000; // bit 30 = CFO emulation enable; bit 15 CFO emulation mode
-		  registerWrite(0x9100, dataToWrite);
+			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
+			                       << " enable CFO emulation and internal clock");
+			int dataInReg = registerRead(0x9100);
+			int dataToWrite =
+			    dataInReg |
+			    0x40008000;  // bit 30 = CFO emulation enable; bit 15 CFO emulation mode
+			registerWrite(0x9100, dataToWrite);
 
-		  __FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
-		  registerWrite(0x91f0, 0x00000000);
+			__FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
+			registerWrite(0x91f0, 0x00000000);
 
-		  __FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
-		  registerWrite(0x91f4, 0x00000000);
-		} else
-		{
-		  int dataInReg = registerRead(0x9100);
-		  int dataToWrite = dataInReg & 0xbfff7fff; // bit 30 = CFO emulation enable; bit 15 CFO emulation mode
-		  registerWrite(0x9100, dataToWrite);		  
+			__FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
+			registerWrite(0x91f4, 0x00000000);
 		}
-
+		else
+		{
+			int dataInReg = registerRead(0x9100);
+			int dataToWrite =
+			    dataInReg &
+			    0xbfff7fff;  // bit 30 = CFO emulation enable; bit 15 CFO emulation mode
+			registerWrite(0x9100, dataToWrite);
+		}
 
 		// THIS SHOULD NOT BE NECESSARY with firmware version 20181024
 		if(reset_rx == 1)
@@ -1012,7 +1123,6 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 4)
 	{
-
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 		                       << " wait for links..." << __E__);
 
@@ -1022,19 +1132,17 @@ void DTCFrontEndInterface::configure(void) try
 		// RESETTING THE LINKS SHOULD NOT BE NECESSARY with firmware version
 		// 20181024, however, we DO want to confirm that the links are OK...
 
-		if (emulate_cfo_ == 1) 
+		if(emulate_cfo_ == 1)
 		{
+			__FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
+			registerWrite(0x9118, 0x00003f00);
+			registerWrite(0x9118, 0x00000000);
 
-		 	 __FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
-		 	 registerWrite(0x9118,0x00003f00);
-		 	 registerWrite(0x9118,0x00000000);
-		
-			 sleep(3);
-		
-		 	 __FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
-		 	 registerWrite(0x9118,0x3f000000);
-		 	 registerWrite(0x9118,0x00000000);
-		
+			sleep(3);
+
+			__FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
+			registerWrite(0x9118, 0x3f000000);
+			registerWrite(0x9118, 0x00000000);
 		}
 		// 	 // WILL NEED TO CONFIGURE THE ROC LINKS HERE BEFORE RESETTING WHAT IS
 		// RECEIVED
@@ -1044,7 +1152,6 @@ void DTCFrontEndInterface::configure(void) try
 		// 	 registerWrite(0x9118,0x00000000);
 		//
 		// 	 sleep(6);
-
 
 		indicateSubIterationWork();  // tell state machine to stay in configure state
 		                             // ("come back to me")
@@ -1071,8 +1178,8 @@ void DTCFrontEndInterface::configure(void) try
 		// put DTC CFO link output into loopback mode
 		__FE_COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
 
-		int dataInReg = registerRead(0x9100);
-		int dataToWrite = dataInReg & 0xefffffff; //bit 28 = 0
+		int dataInReg   = registerRead(0x9100);
+		int dataToWrite = dataInReg & 0xefffffff;  // bit 28 = 0
 		registerWrite(0x9100, dataToWrite);
 
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure ROCs"
@@ -1084,25 +1191,24 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
-	  if (emulate_cfo_ == 1) 
-	  {
-		__MCOUT_INFO__("Step " << config_step
-		                       << ": CFO emulation enable Event start characters "
-		                          "and event window interval"
-		                       << __E__);
+		if(emulate_cfo_ == 1)
+		{
+			__MCOUT_INFO__("Step " << config_step
+			                       << ": CFO emulation enable Event start characters "
+			                          "and event window interval"
+			                       << __E__);
 
-		__FE_COUT__ << "CFO emulation:  set Event Window interval time" << __E__;
-		//    registerWrite(0x91f0,0x154);   //1.7us
-		//registerWrite(0x91f0, 0x1f40);  // 40us
-		 	registerWrite(0x91f0,0x00000000); 	// for NO markers, write these
-		// values
+			__FE_COUT__ << "CFO emulation:  set Event Window interval time" << __E__;
+			//    registerWrite(0x91f0,0x154);   //1.7us
+			// registerWrite(0x91f0, 0x1f40);  // 40us
+			registerWrite(0x91f0, 0x00000000);  // for NO markers, write these
+			// values
 
-		__FE_COUT__ << "CFO emulation:  set 40MHz marker interval" << __E__;
-		//registerWrite(0x91f4, 0x0800);
-		 	registerWrite(0x91f4,0x00000000); 	// for NO markers, write these
-		// values
-
-	  }
+			__FE_COUT__ << "CFO emulation:  set 40MHz marker interval" << __E__;
+			// registerWrite(0x91f4, 0x0800);
+			registerWrite(0x91f4, 0x00000000);  // for NO markers, write these
+			                                    // values
+		}
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"
 		                       << __E__);
 
@@ -1154,10 +1260,10 @@ catch(...)
 //========================================================================================================================
 void DTCFrontEndInterface::halt(void)
 {
-  for(auto& roc : rocs_)  //halt "as usual"
-    {
-      roc.second->halt();
-    }
+	for(auto& roc : rocs_)  // halt "as usual"
+	{
+		roc.second->halt();
+	}
 
 	//	__FE_COUT__ << "HALT: DTC status" << __E__;
 	//	readStatus();
@@ -1166,10 +1272,10 @@ void DTCFrontEndInterface::halt(void)
 //========================================================================================================================
 void DTCFrontEndInterface::pause(void)
 {
-  for(auto& roc : rocs_)  //pause "as usual"
-    {
-      roc.second->pause();
-    }
+	for(auto& roc : rocs_)  // pause "as usual"
+	{
+		roc.second->pause();
+	}
 
 	//	__FE_COUT__ << "PAUSE: DTC status" << __E__;
 	//	readStatus();
@@ -1178,10 +1284,10 @@ void DTCFrontEndInterface::pause(void)
 //========================================================================================================================
 void DTCFrontEndInterface::resume(void)
 {
-  for(auto& roc : rocs_)  //resume "as usual"
-    {
-      roc.second->resume();
-    }
+	for(auto& roc : rocs_)  // resume "as usual"
+	{
+		roc.second->resume();
+	}
 
 	//	__FE_COUT__ << "RESUME: DTC status" << __E__;
 	//	readStatus();
@@ -1201,20 +1307,18 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
 	        .getValue<unsigned int>();
 
-	      
 	__FE_COUTV__(numberOfLoopbacks);
 
 	int stopIndex = getIterationIndex();
 
 	if(numberOfLoopbacks == 0)
 	{
-	  for(auto& roc : rocs_)  //start "as usual"
+		for(auto& roc : rocs_)  // start "as usual"
 		{
-		  roc.second->start(runNumber);
+			roc.second->start(runNumber);
 		}
 		return;
 	}
-
 
 	const int numberOfChains       = 1;
 	int       link[numberOfChains] = {0};
@@ -1237,7 +1341,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 	int loopbackIndex = getIterationIndex();
 
-	if(loopbackIndex == 0) //start
+	if(loopbackIndex == 0)  // start
 	{
 		initial_9100_ = registerRead(0x9100);
 		initial_9114_ = registerRead(0x9114);
@@ -1245,7 +1349,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		return;
 	}
 
-	if(loopbackIndex > totalNumberOfMeasurements) //finish
+	if(loopbackIndex > totalNumberOfMeasurements)  // finish
 	{
 		//    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
 
@@ -1276,14 +1380,14 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	//=========== Perform loopback=============
 
 	// where are we in the procedure?
-	unsigned int activeROC = (loopbackIndex-1) % numberOfROCsPerDTC;
+	unsigned int activeROC = (loopbackIndex - 1) % numberOfROCsPerDTC;
 
 	int activeDTC = -1;
 
 	for(int nDTC = 0; nDTC < numberOfDTCsPerChain; nDTC++)
 	{
-		if((loopbackIndex-1) >= (nDTC * numberOfROCsPerDTC) &&
-		   (loopbackIndex-1) < ((nDTC + 1) * numberOfROCsPerDTC))
+		if((loopbackIndex - 1) >= (nDTC * numberOfROCsPerDTC) &&
+		   (loopbackIndex - 1) < ((nDTC + 1) * numberOfROCsPerDTC))
 		{
 			activeDTC = nDTC;
 		}
@@ -1297,8 +1401,8 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	if(activeDTC == dtc_location_in_chain_)
 	{
 		__FE_COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
-		int dataInReg = registerRead(0x9100);
-		int dataToWrite = dataInReg & 0xefffffff; //bit 28 = 0
+		int dataInReg   = registerRead(0x9100);
+		int dataToWrite = dataInReg & 0xefffffff;  // bit 28 = 0
 		registerWrite(0x9100, dataToWrite);
 	}
 	else
@@ -1309,7 +1413,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		            << " is NOT this DTC = " << dtc_location_in_chain_
 		            << "... pass signal through" << __E__;
 
-		int dataInReg = registerRead(0x9100);
+		int dataInReg   = registerRead(0x9100);
 		int dataToWrite = dataInReg | 0x10000000;  // bit 28 = 1
 		registerWrite(0x9100, dataToWrite);
 	}
@@ -1345,16 +1449,15 @@ void DTCFrontEndInterface::stop(void)
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
 	        .getValue<unsigned int>();
 
-	      
 	__FE_COUTV__(numberOfCAPTANPulses);
 
 	int stopIndex = getIterationIndex();
 
 	if(numberOfCAPTANPulses == 0)
 	{
-	  for(auto& roc : rocs_)  //stop "as usual"
+		for(auto& roc : rocs_)  // stop "as usual"
 		{
-		  roc.second->stop();
+			roc.second->stop();
 		}
 		return;
 	}
@@ -1411,10 +1514,9 @@ void DTCFrontEndInterface::stop(void)
 //========================================================================================================================
 bool DTCFrontEndInterface::running(void)
 {
-
 	while(WorkLoop::continueWorkLoop_)
 	{
-		for(auto& roc : rocs_) 
+		for(auto& roc : rocs_)
 		{
 			roc.second->running();
 		}
@@ -2828,7 +2930,6 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 
 	__FE_COUT__ << "ROCs size = " << rocs_.size() << __E__;
 
-
 	for(auto& roc : rocs_)
 	{
 		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
@@ -2878,7 +2979,8 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 
 	bool acknowledge_request = false;
 
-	thisDTC_->WriteExtROCRegister(rocLinkIndex, block, address, writeData, acknowledge_request);
+	thisDTC_->WriteExtROCRegister(
+	    rocLinkIndex, block, address, writeData, acknowledge_request);
 
 	for(auto& argOut : argsOut)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
@@ -2901,19 +3003,22 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 
 	DTCLib::DTC_Link_ID rocLinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
-	uint8_t address = __GET_ARG_IN__("address", uint8_t);
-	uint8_t number_of_words   = __GET_ARG_IN__("numberOfWords", uint8_t);
-	bool incrementAddress    = bool(__GET_ARG_IN__("incrementAddress", uint8_t));
+	uint8_t address          = __GET_ARG_IN__("address", uint8_t);
+	uint8_t number_of_words  = __GET_ARG_IN__("numberOfWords", uint8_t);
+	bool    incrementAddress = bool(__GET_ARG_IN__("incrementAddress", uint8_t));
 
 	__FE_COUTV__(rocLinkIndex);
-	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec << __E__;
-	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)number_of_words << __E__;
+	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
+	            << __E__;
+	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)number_of_words
+	            << __E__;
 	__FE_COUTV__(incrementAddress);
 
 	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
-	
+
 	std::vector<uint16_t> readData;
-	thisDTC_->ReadROCBlock(readData, rocLinkIndex, address, number_of_words, incrementAddress);
+	thisDTC_->ReadROCBlock(
+	    readData, rocLinkIndex, address, number_of_words, incrementAddress);
 
 	std::ofstream datafile;
 
@@ -2927,27 +3032,32 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 	datafile << "increment address " << std::dec << incrementAddress << std::endl;
 	datafile << "read " << std::dec << number_of_words << " words..." << std::endl;
 
-	for (int i=0; i<number_of_words; i++) {
-	        datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i] << std::endl;
-		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i] << __E__;
+	for(int i = 0; i < number_of_words; i++)
+	{
+		datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i]
+		         << std::endl;
+		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex
+		            << readData[i] << __E__;
 	}
 
 	datafile.close();
 
 	//__SET_ARG_OUT__("readData", readData);
 
-	//for(auto& argOut : argsOut)
+	// for(auto& argOut : argsOut)
 	//  __FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
-} // end ReadROCBlock()
+}  // end ReadROCBlock()
 
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
 {
-	unsigned int linkIndex = 	__GET_ARG_IN__("rocLinkIndex", unsigned int);
-	unsigned int loops = 		__GET_ARG_IN__("loops",unsigned int);
-	unsigned int baseAddress = 	__GET_ARG_IN__("baseAddress",unsigned int);
-	unsigned int correctRegisterValue0 = 	__GET_ARG_IN__("correctRegisterValue0",unsigned int);
-	unsigned int correctRegisterValue1 = 	__GET_ARG_IN__("correctRegisterValue1",unsigned int);
+	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
+	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
+	unsigned int correctRegisterValue0 =
+	    __GET_ARG_IN__("correctRegisterValue0", unsigned int);
+	unsigned int correctRegisterValue1 =
+	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
 
 	__FE_COUTV__(linkIndex);
 	__FE_COUTV__(loops);
@@ -2958,24 +3068,26 @@ void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
 	for(auto& roc : rocs_)
 		if(roc.second->getLinkID() == linkIndex)
 		{
-			roc.second->highRateBlockCheck(loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
+			roc.second->highRateBlockCheck(
+			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
 			return;
 		}
 
 	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
 	__FE_SS_THROW__;
 
-} //end DTCHighRateBlockCheck()
-
+}  // end DTCHighRateBlockCheck()
 
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 {
-	unsigned int linkIndex = 	__GET_ARG_IN__("rocLinkIndex", unsigned int);
-	unsigned int loops = 		__GET_ARG_IN__("loops",unsigned int);
-	unsigned int baseAddress = 	__GET_ARG_IN__("baseAddress",unsigned int);
-	unsigned int correctRegisterValue0 = 	__GET_ARG_IN__("correctRegisterValue0",unsigned int);
-	unsigned int correctRegisterValue1 = 	__GET_ARG_IN__("correctRegisterValue1",unsigned int);
+	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
+	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
+	unsigned int correctRegisterValue0 =
+	    __GET_ARG_IN__("correctRegisterValue0", unsigned int);
+	unsigned int correctRegisterValue1 =
+	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
 
 	__FE_COUTV__(linkIndex);
 	__FE_COUTV__(loops);
@@ -2986,147 +3098,166 @@ void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 	for(auto& roc : rocs_)
 		if(roc.second->getLinkID() == linkIndex)
 		{
-			roc.second->highRateCheck(loops,baseAddress,correctRegisterValue0,correctRegisterValue1);
+			roc.second->highRateCheck(
+			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
 			return;
 		}
 
 	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
 	__FE_SS_THROW__;
 
-} //end DTCHighRateDCSCheck()
+}  // end DTCHighRateDCSCheck()
 
 //========================================================================
 void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 {
-	unsigned int number = 	__GET_ARG_IN__("numberOfRequests", unsigned int);
-	unsigned int timestampStart = 		__GET_ARG_IN__("timestampStart",unsigned int);
+	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
+	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
-	bool incrementTimestamp = true;
-	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't know if 10000 works, either)
+	bool     incrementTimestamp = true;
+	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't
+	                            // know if 10000 works, either)
 	int requestsAhead = 0;
 
 	__FE_COUTV__(number);
 	__FE_COUTV__(timestampStart);
 
 	auto device = thisDTC_->GetDevice();
-	
+
 	auto initTime = device->GetDeviceTime();
 	device->ResetDeviceTime();
 	auto afterInit = std::chrono::steady_clock::now();
 
-	if (emulate_cfo_ == 1) 
+	if(emulate_cfo_ == 1)
 	{
-	  registerWrite(0x9100,0x40008004); //bit 30 = CFO emulation enable, bit 15 = CFO emulation mode, bit 2 = DCS enable
-	  sleep(1);
+		registerWrite(0x9100, 0x40008004);  // bit 30 = CFO emulation enable, bit 15 = CFO
+		                                    // emulation mode, bit 2 = DCS enable
+		sleep(1);
 
-	  //set number of null heartbeats
-	  registerWrite(0x91BC,0x0);
-	  //	  sleep(1);
+		// set number of null heartbeats
+		registerWrite(0x91BC, 0x0);
+		//	  sleep(1);
 
-	  //# Send data
-	  //#disable 40mhz marker
-	  registerWrite(0x91f4,0x0);
-	  //	  sleep(1);
+		//# Send data
+		//#disable 40mhz marker
+		registerWrite(0x91f4, 0x0);
+		//	  sleep(1);
 
-	  //#set num dtcs
-	  registerWrite(0x9158,0x1);
-	  //	  sleep(1);
+		//#set num dtcs
+		registerWrite(0x9158, 0x1);
+		//	  sleep(1);
 
-	  bool useCFOEmulator = true;
-	  uint16_t debugPacketCount = 0;
-	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
-	  bool stickyDebugType = true;
-	  bool quiet = false; 
-	  bool asyncRR = false; 
-	  bool forceNoDebugMode = true;
+		bool     useCFOEmulator   = true;
+		uint16_t debugPacketCount = 0;
+		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
+		bool     stickyDebugType  = true;
+		bool     quiet            = false;
+		bool     asyncRR          = false;
+		bool     forceNoDebugMode = true;
 
-	  //	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
-	  //	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
-	  //	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
-	  //	  std::cout << "debugType = "       << debugType << std::endl;
-	  //	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
-	  //	  std::cout << "quiet = "           << quiet << std::endl;
-	  //	  std::cout << "asyncRR = "           << asyncRR << std::endl;
-	  //	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
-	  //	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
+		//	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
+		//	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
+		//	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
+		//	  std::cout << "debugType = "       << debugType << std::endl;
+		//	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
+		//	  std::cout << "quiet = "           << quiet << std::endl;
+		//	  std::cout << "asyncRR = "           << asyncRR << std::endl;
+		//	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
+		//	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
 
-	  DTCLib::DTCSoftwareCFO* EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator, debugPacketCount, 
-	  			debugType, stickyDebugType, quiet,  asyncRR, forceNoDebugMode);
-	  
-	  //	  std::cout << "SendRequestsForRange arguments..." << std::endl;
-	  //	  std::cout << "number = "             << number << std::endl;
-	  //	  std::cout << "timestampOffset = "    << timestampStart << std::endl;
-	  //	  std::cout << "incrementTimestamp = " << incrementTimestamp << std::endl;
-	  //	  std::cout << "cfodelay = "           << cfodelay << std::endl;
-	  //	  std::cout << "requestsAhead = "      << requestsAhead << std::endl;
-	  //	  std::cout << "END END SendRequestsForRange arguments..." << std::endl;
+		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
+		    new DTCLib::DTCSoftwareCFO(thisDTC_,
+		                               useCFOEmulator,
+		                               debugPacketCount,
+		                               debugType,
+		                               stickyDebugType,
+		                               quiet,
+		                               asyncRR,
+		                               forceNoDebugMode);
 
-	  EmulatedCFO_->SendRequestsForRange(number, DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)), 
-	  				     incrementTimestamp, cfodelay, requestsAhead);
-	  
-	  delete EmulatedCFO_;
+		//	  std::cout << "SendRequestsForRange arguments..." << std::endl;
+		//	  std::cout << "number = "             << number << std::endl;
+		//	  std::cout << "timestampOffset = "    << timestampStart << std::endl;
+		//	  std::cout << "incrementTimestamp = " << incrementTimestamp << std::endl;
+		//	  std::cout << "cfodelay = "           << cfodelay << std::endl;
+		//	  std::cout << "requestsAhead = "      << requestsAhead << std::endl;
+		//	  std::cout << "END END SendRequestsForRange arguments..." << std::endl;
 
-	  auto readoutRequestTime = device->GetDeviceTime();
-	  device->ResetDeviceTime();
-	  auto afterRequests = std::chrono::steady_clock::now();
+		EmulatedCFO_->SendRequestsForRange(
+		    number,
+		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+		    incrementTimestamp,
+		    cfodelay,
+		    requestsAhead);
 
+		delete EmulatedCFO_;
 
-	  //print out stuff
-	  unsigned quietCount = 1;
-	  quiet = true;
+		auto readoutRequestTime = device->GetDeviceTime();
+		device->ResetDeviceTime();
+		auto afterRequests = std::chrono::steady_clock::now();
 
-	  for (unsigned ii = 0; ii < number; ++ii)
-	    {
-	      std::cout << "Buffer Read " << std::dec << ii << std::endl;
-	      mu2e_databuff_t* buffer;
-	      auto tmo_ms = 1500;
-	      std::cout << "util - before read for DAQ - ii=" << ii;
-	      auto sts = device->read_data(DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
-	      std::cout << "util - after read for DAQ - ii=" << ii << ", sts=" << sts << ", buffer=" << (void*)buffer;
-	      
-	      if (sts > 0)
+		// print out stuff
+		unsigned quietCount = 1;
+		quiet               = true;
+
+		for(unsigned ii = 0; ii < number; ++ii)
 		{
-		  void* readPtr = &buffer[0];
-		  auto bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
-		  readPtr = static_cast<uint8_t*>(readPtr) + 8;
-		  std::cout << "Buffer reports DMA size of " << std::dec << bufSize << " bytes. Device driver reports read of "
-			    << sts << " bytes," << std::endl;
+			std::cout << "Buffer Read " << std::dec << ii << std::endl;
+			mu2e_databuff_t* buffer;
+			auto             tmo_ms = 1500;
+			std::cout << "util - before read for DAQ - ii=" << ii;
+			auto sts = device->read_data(
+			    DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
+			std::cout << "util - after read for DAQ - ii=" << ii << ", sts=" << sts
+			          << ", buffer=" << (void*)buffer;
 
-		  std::cout << "util - bufSize is " << bufSize;
-		  outputStream.write(static_cast<char*>(readPtr), sts - 8);
-
-		  auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
-		  for (unsigned line = 0; line < maxLine; ++line)
-		    {
-		      std::stringstream ostr;
-		      ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line << "0: ";
-		      for (unsigned byte = 0; byte < 8; ++byte)
+			if(sts > 0)
 			{
-			  if (line * 16 + 2 * byte < sts - 8u)
-			    {
-			      auto thisWord = reinterpret_cast<uint16_t*>(buffer)[4 + line * 8 + byte];
-			      ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
-			    }
-			}
-		      std::cout << ostr.str();
-		      if (maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
-			{
-			  line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) - (1 + quietCount);
-			}
-		    }
-		} 
-	      device->read_release(DTC_DMA_Engine_DAQ, 1);
-	    }
-	    
-	} else {
+				void* readPtr = &buffer[0];
+				auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
+				readPtr       = static_cast<uint8_t*>(readPtr) + 8;
+				std::cout << "Buffer reports DMA size of " << std::dec << bufSize
+				          << " bytes. Device driver reports read of " << sts << " bytes,"
+				          << std::endl;
 
+				std::cout << "util - bufSize is " << bufSize;
+				outputStream.write(static_cast<char*>(readPtr), sts - 8);
+
+				auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
+				for(unsigned line = 0; line < maxLine; ++line)
+				{
+					std::stringstream ostr;
+					ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line
+					     << "0: ";
+					for(unsigned byte = 0; byte < 8; ++byte)
+					{
+						if(line * 16 + 2 * byte < sts - 8u)
+						{
+							auto thisWord =
+							    reinterpret_cast<uint16_t*>(buffer)[4 + line * 8 + byte];
+							ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
+						}
+					}
+					std::cout << ostr.str();
+					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
+					{
+						line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) -
+						       (1 + quietCount);
+					}
+				}
+			}
+			device->read_release(DTC_DMA_Engine_DAQ, 1);
+		}
+	}
+	else
+	{
 		__FE_SS__ << "Error! DTC must be in CFOEmulate mode" << __E__;
-		__FE_SS_THROW__;		
+		__FE_SS_THROW__;
 	}
 
-} //end DTCSendHeartbeatAndDataRequest()
+}  // end DTCSendHeartbeatAndDataRequest()
 
 //========================================================================
 void DTCFrontEndInterface::DTCReset(__ARGS__) { DTCReset(); }
@@ -3201,22 +3332,21 @@ void DTCFrontEndInterface::DTCReset()
 //========================================================================
 void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 {
-//	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
-//	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
-//
-//	__FE_COUTV__(feMacroName);
-//	__FE_COUTV__(rocUID);
+	//	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
+	//	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
+	//
+	//	__FE_COUTV__(feMacroName);
+	//	__FE_COUTV__(rocUID);
 
 	auto feMacroIt = rocFEMacroMap_.find(feMacroStruct.feMacroName_);
 	if(feMacroIt == rocFEMacroMap_.end())
 	{
-		__FE_SS__ << "Fatal error - ROC FE Macro name '" <<
-				feMacroStruct.feMacroName_ <<
-				"' not found in DTC's map!" << __E__;
+		__FE_SS__ << "Fatal error - ROC FE Macro name '" << feMacroStruct.feMacroName_
+		          << "' not found in DTC's map!" << __E__;
 		__FE_SS_THROW__;
 	}
 
-	const std::string& rocUID = feMacroIt->second.first;
+	const std::string& rocUID         = feMacroIt->second.first;
 	const std::string& rocFEMacroName = feMacroIt->second.second;
 
 	__FE_COUTV__(rocUID);
@@ -3225,16 +3355,13 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 	auto rocIt = rocs_.find(rocUID);
 	if(rocIt == rocs_.end())
 	{
-		__FE_SS__ << "Fatal error - ROC name '" <<
-				rocUID <<
-				"' not found in DTC's map!" << __E__;
+		__FE_SS__ << "Fatal error - ROC name '" << rocUID << "' not found in DTC's map!"
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
-	rocIt->second->runSelfFrontEndMacro(rocFEMacroName,
-			argsIn,argsOut);
+	rocIt->second->runSelfFrontEndMacro(rocFEMacroName, argsIn, argsOut);
 
-
-} //end RunROCFEMacro()
+}  // end RunROCFEMacro()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)

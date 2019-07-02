@@ -17,7 +17,7 @@ ROCDTCHardwareEmulated::ROCDTCHardwareEmulated(
 
 	__MCOUT_INFO__("ROCDTCHardwareEmulated instantiated with link: "
 	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
-} // end constructor()
+}  // end constructor()
 
 //==========================================================================================
 ROCDTCHardwareEmulated::~ROCDTCHardwareEmulated(void)
@@ -25,22 +25,22 @@ ROCDTCHardwareEmulated::~ROCDTCHardwareEmulated(void)
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
 	__COUT__ << FEVInterface::interfaceUID_ << "Destructed." << __E__;
-} //end destructor()
+}  // end destructor()
 
 //==================================================================================================
-int ROCDTCHardwareEmulated::readEmulatorRegister(unsigned address)
+int ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 {
-	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec << linkID_
-	            << ", address = " << address << __E__;
+	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec
+	            << linkID_ << ", address = " << address << __E__;
 	if(address == 6)
 		return 4860;
 	else if(address == 7)
 		return delay_;
 	return -1;
-} //end readEmulatorRegister
+}  // end readEmulatorRegister
 
 //==================================================================================================
-void ROCDTCHardwareEmulated::writeROCRegister(unsigned address, unsigned data_to_write)
+void ROCDTCHardwareEmulated::writeROCRegister(uint16_t address, uint16_t data_to_write)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << data_to_write
@@ -50,10 +50,10 @@ void ROCDTCHardwareEmulated::writeROCRegister(unsigned address, unsigned data_to
 
 	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request);
 
-} //end writeROCRegister()
+}  // end writeROCRegister()
 
 //==================================================================================================
-int ROCDTCHardwareEmulated::readROCRegister(unsigned address)
+int ROCDTCHardwareEmulated::readROCRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -71,13 +71,13 @@ int ROCDTCHardwareEmulated::readROCRegister(unsigned address)
 	}
 
 	return read_data;
-} //end readROCRegister()
+}  // end readROCRegister()
 
 //==================================================================================================
 int ROCDTCHardwareEmulated::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================
-void ROCDTCHardwareEmulated::writeDelay(unsigned delay)
+void ROCDTCHardwareEmulated::writeDelay(uint16_t delay)
 {
 	this->writeRegister(21, delay);
 	return;
@@ -99,14 +99,13 @@ void ROCDTCHardwareEmulated::resetDTCLinkLossCounter()
 //==================================================================================================
 void ROCDTCHardwareEmulated::configure(void) try
 {
-
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
 		return;
 	}
 
-} //end configure()
+}  // end configure()
 catch(const std::runtime_error& e)
 {
 	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
@@ -117,7 +116,7 @@ catch(...)
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
 	__FE_MOUT__ << ss.str();
 	__FE_SS_THROW__;
-}  //end configure() catch
+}  // end configure() catch
 
 //========================================================================================================================
 void ROCDTCHardwareEmulated::halt(void) {}

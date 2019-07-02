@@ -17,7 +17,7 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 
 	__MCOUT_INFO__("ROCPolarFireCoreInterface instantiated with link: "
 	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
-} //end constructor()
+}  // end constructor()
 
 //==========================================================================================
 ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
@@ -25,22 +25,22 @@ ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
 	__COUT__ << FEVInterface::interfaceUID_ << "Destructed." << __E__;
-} //end destructor()
+}  // end destructor()
 
 //==================================================================================================
-int ROCPolarFireCoreInterface::readEmulatorRegister(unsigned address)
+int ROCPolarFireCoreInterface::readEmulatorRegister(uint16_t address)
 {
-	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec << linkID_
-	            << ", address = " << address << __E__;
+	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec
+	            << linkID_ << ", address = " << address << __E__;
 	if(address == 6)
 		return 4860;
 	else if(address == 7)
 		return delay_;
 	return -1;
-} //end readEmulatorRegister()
+}  // end readEmulatorRegister()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::writeROCRegister(unsigned address, unsigned data_to_write)
+void ROCPolarFireCoreInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << data_to_write
@@ -50,10 +50,10 @@ void ROCPolarFireCoreInterface::writeROCRegister(unsigned address, unsigned data
 
 	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request);
 
-} //end writeROCRegister()
+}  // end writeROCRegister()
 
 //==================================================================================================
-int ROCPolarFireCoreInterface::readROCRegister(unsigned address)
+int ROCPolarFireCoreInterface::readROCRegister(uint16_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -71,18 +71,19 @@ int ROCPolarFireCoreInterface::readROCRegister(unsigned address)
 	}
 
 	return read_data;
-} //end readROCRegister()
+}  // end readROCRegister()
 
 //==================================================================================================
 void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
-	unsigned address,unsigned numberOfReads, unsigned incrementAddress)
+                                             uint16_t               address,
+                                             uint16_t               numberOfReads,
+                                             bool                   incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
-	            << ", address = " << address 
-	            << ", numberOfReads = " << numberOfReads 
+	            << ", address = " << address << ", numberOfReads = " << numberOfReads
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
-	//int read_data = 0;
+	// int read_data = 0;
 
 	//	try
 	//	{
@@ -95,27 +96,25 @@ void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
 	//		read_data = -999;
 	//	}
 
-} //end readROCBlock()
-
+}  // end readROCBlock()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::readEmulatorBlock(
-	std::vector<uint16_t>& data,
-	unsigned address,unsigned numberOfReads, unsigned incrementAddress)
+void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<uint16_t>& data,
+                                                  uint16_t               address,
+                                                  uint16_t               numberOfReads,
+                                                  bool                   incrementAddress)
 {
 	__FE_COUT__ << "Calling read emulator block: link number " << std::dec << linkID_
-	            << ", address = " << address 
-	            << ", numberOfReads = " << numberOfReads 
+	            << ", address = " << address << ", numberOfReads = " << numberOfReads
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
-} //end readEmulatorBlock()
-
+}  // end readEmulatorBlock()
 
 //==================================================================================================
 int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::writeDelay(unsigned delay)
+void ROCPolarFireCoreInterface::writeDelay(uint16_t delay)
 {
 	this->writeRegister(21, delay);
 	return;
@@ -137,7 +136,6 @@ void ROCPolarFireCoreInterface::resetDTCLinkLossCounter()
 //==================================================================================================
 void ROCPolarFireCoreInterface::configure(void) try
 {
-
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
@@ -187,7 +185,7 @@ void ROCPolarFireCoreInterface::configure(void) try
 
 	__MCOUT_INFO__("......... reset DTC link loss counter ... ");
 	resetDTCLinkLossCounter();
-} //end configure()
+}  // end configure()
 catch(const std::runtime_error& e)
 {
 	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
@@ -198,7 +196,7 @@ catch(...)
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
 	__FE_MOUT__ << ss.str();
 	__FE_SS_THROW__;
-} //end configure() catch
+}  // end configure() catch
 
 //========================================================================================================================
 void ROCPolarFireCoreInterface::halt(void) {}

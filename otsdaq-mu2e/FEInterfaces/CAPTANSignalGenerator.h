@@ -19,6 +19,8 @@ class CAPTANSignalGenerator : public FEVInterface,
 	                      const std::string&       interfaceConfigurationPath);
 	virtual ~CAPTANSignalGenerator(void);
 
+	// state machine
+	//----------------
 	void configure(void) override;
 	void halt(void) override;
 	void pause(void) override;
