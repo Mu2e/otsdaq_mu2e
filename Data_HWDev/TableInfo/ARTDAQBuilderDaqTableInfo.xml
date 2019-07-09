@@ -7,9 +7,9 @@
 				<COLUMN Type="Data" 	 Name="daqEventBuilderBufferCount" 	 StorageName="DAQ_EVENT_BUILDER_BUFFER_COUNT" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-daqParameters" 	 Name="daqEventBuilderParametersLink" 	 StorageName="DAQ_EVENT_BUILDER_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQBuilderDaqParameterTable"/>
 				<COLUMN Type="ChildLinkGroupID-daqParameters" 	 Name="daqEventBuilderParametersLinkGroupID" 	 StorageName="DAQ_EVENT_BUILDER_PARAMETERS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-sources" 	 Name="daqEventBuilderSourcesLink" 	 StorageName="DAQ_EVENT_BUILDER_SOURCES_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDaqSourceTable"/>
+				<COLUMN Type="ChildLink-sources" 	 Name="daqEventBuilderSourcesLink" 	 StorageName="DAQ_EVENT_BUILDER_SOURCES_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQSourceTable"/>
 				<COLUMN Type="ChildLinkGroupID-sources" 	 Name="daqEventBuilderSourcesLinkGroupID" 	 StorageName="DAQ_EVENT_BUILDER_SOURCES_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-metrics" 	 Name="daqMetricsLink" 	 StorageName="DAQ_METRICS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDaqMetricTable"/>
+				<COLUMN Type="ChildLink-metrics" 	 Name="daqMetricsLink" 	 StorageName="DAQ_METRICS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQMetricTable"/>
 				<COLUMN Type="ChildLinkGroupID-metrics" 	 Name="daqMetricsLinkGroupID" 	 StorageName="DAQ_METRICS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>

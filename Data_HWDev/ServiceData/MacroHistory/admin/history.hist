@@ -910,3 +910,33 @@
 "Time":"Tue Jun 04 2019 15:10:57 GMT-0500 (Central Daylight Time)",
 "Interfaces":"DTCFrontEndInterface:312:DTC1"
 }#
+{
+"Command":"w:9100:40008004",
+"Format":"hex:hex",
+"Time":"Wed Jun 05 2019 12:20:52 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#
+{
+"Command":"r:9100:40008004",
+"Format":"hex:hex",
+"Time":"Wed Jun 05 2019 12:23:28 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#
+{
+"Command":"r:9140:000000C3",
+"Format":"hex:hex",
+"Time":"Mon Jun 10 2019 21:10:24 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#
+{
+"Command":"r:9140:000000C2",
+"Format":"hex:hex",
+"Time":"Mon Jun 10 2019 21:10:37 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#
+{
+"Command":"r:9140:000000C3",
+"Format":"hex:hex",
+"Time":"Mon Jun 10 2019 21:10:49 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#

@@ -769,3 +769,12 @@ time=1554216894 authoradmin old-size=3555 new-size=3977 path=/home/mu2edaq/sync_
 time=1554216981 authoradmin old-size=3977 new-size=4156 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_tracker/otsdaq-mu2e-tracker/FEInterfaces/ROCTrackerInterface_interface.cc
 time=1554217217 authoradmin old-size=1175 new-size=1176 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_tracker/otsdaq-mu2e-tracker/FEInterfaces/ROCTrackerInterface.h
 time=1554217293 authoradmin old-size=1176 new-size=1247 path=/home/mu2edaq/sync_demo/ots/srcs//otsdaq_mu2e_tracker/otsdaq-mu2e-tracker/FEInterfaces/ROCTrackerInterface.h
+time=1559769223 authoradmin old-size=33076 new-size=33170 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/util_main.cc
+time=1559769237 authoradmin old-size=33170 new-size=33194 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/util_main.cc
+time=1559769324 authoradmin old-size=33194 new-size=33206 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/util_main.cc
+time=1559769411 authoradmin old-size=33206 new-size=33235 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/util_main.cc
+time=1559769534 authoradmin old-size=33235 new-size=33346 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/util_main.cc
+time=1559769734 authoradmin old-size=10600 new-size=11167 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/DTCSoftwareCFO.cpp
+time=1559770291 authoradmin old-size=11167 new-size=11204 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/DTCSoftwareCFO.cpp
+time=1559770294 authoradmin old-size=33346 new-size=33449 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/util_main.cc
+time=1559770305 authoradmin old-size=171865 new-size=172184 path=/home/mu2ehwdev/test_stand/ots/srcs//pcie_linux_kernel_module/dtcInterfaceLib/DTC_Registers.cpp
