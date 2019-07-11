@@ -189,6 +189,8 @@ export USER_DATA="/home/${basepath}/ots${userdataappend}/srcs/${repository}/Data
 export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots${userdataappend}/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
 export OTSDAQ_DATA="/home/${basepath}/ots${userdataappend}/srcs/${repository}/Data${userdataappend}/OutputData"
 export USER_WEB_PATH=/home/${basepath}/ots${userdataappend}/srcs/${repository}/UserWebGUI
+offlineFhiclDir=/mu2e/ups/offline/trig_0_4_1/fcl
+export FHICL_FILE_PATH=$FHICL_FILE_PATH:$USER_DATA:$offlineFhiclDir
 
 echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
 echo -e "setup [${LINENO}]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
