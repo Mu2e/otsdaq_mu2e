@@ -3060,7 +3060,7 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 				{
 					if(!first) readDataString += ", ";
 					else first = false;
-					readDataString += BinaryStringMacros::binaryToHexString(&data,2,"0x");
+					readDataString += BinaryStringMacros::binaryNumberToHexString(data);
 				}
 			}
 			//StringMacros::vectorToString(readData);
