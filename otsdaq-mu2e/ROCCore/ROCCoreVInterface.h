@@ -76,7 +76,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	virtual void 							writeEmulatorRegister		(uint16_t address, uint16_t writeData) = 0;  // pure virtual, must define in inheriting children
 	virtual uint16_t 						readEmulatorRegister		(uint16_t address) = 0;  // pure virtual, must define in inheriting children
-	virtual void 							readEmulatorBlock			(std::vector<uint16_t>& data, uint16_t address, uint16_t wordCount, bool incrementAddress) = 0; // pure virtual, must define in inheriting children
+	virtual void 							readEmulatorBlock		(std::vector<uint16_t>& data, uint16_t address, uint16_t wordCount, bool incrementAddress) = 0; // pure virtual, must define in inheriting children
 
 
 	// pure virtual specific ROC functions

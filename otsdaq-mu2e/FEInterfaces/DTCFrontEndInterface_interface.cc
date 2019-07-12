@@ -1,6 +1,7 @@
 #include "otsdaq-core/Macros/InterfacePluginMacros.h"
 #include "otsdaq-core/PluginMakers/MakeInterface.h"
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
+#include "otsdaq-core/Macros/BinaryStringMacros.h"
 
 using namespace ots;
 
@@ -3030,44 +3031,84 @@ void DTCFrontEndInterface::ReadROCBlock(__ARGS__)
 
 	DTCLib::DTC_Link_ID rocLinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
-	uint8_t address          = __GET_ARG_IN__("address", uint8_t);
-	uint8_t number_of_words  = __GET_ARG_IN__("numberOfWords", uint8_t);
-	bool    incrementAddress = bool(__GET_ARG_IN__("incrementAddress", uint8_t));
+	uint16_t address          = __GET_ARG_IN__("address", uint16_t);
+	uint16_t wordCount  = __GET_ARG_IN__("numberOfWords", uint16_t);
+	bool    incrementAddress = __GET_ARG_IN__("incrementAddress", bool);
 
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
 	            << __E__;
-	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)number_of_words
+	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)wordCount
 	            << __E__;
 	__FE_COUTV__(incrementAddress);
 
-	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
-
-	std::vector<uint16_t> readData;
-	thisDTC_->ReadROCBlock(
-	    readData, rocLinkIndex, address, number_of_words, incrementAddress);
-
-	std::ofstream datafile;
-
-	std::stringstream filename;
-	filename << "/home/mu2etrk/test_stand/ots/ReadROCBlock_data.txt";
-	std::string filenamestring = filename.str();
-	datafile.open(filenamestring);
-
-	datafile << "link " << std::dec << rocLinkIndex << std::endl;
-	datafile << "address 0x" << std::hex << address << std::endl;
-	datafile << "increment address " << std::dec << incrementAddress << std::endl;
-	datafile << "read " << std::dec << number_of_words << " words..." << std::endl;
-
-	for(int i = 0; i < number_of_words; i++)
+	for(auto& roc : rocs_)
 	{
-		datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i]
-		         << std::endl;
-		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex
-		            << readData[i] << __E__;
+		__FE_COUT__ << "At ROC link ID " << roc.second->getLinkID() << ", looking for "
+		            << rocLinkIndex << __E__;
+
+		if(rocLinkIndex == roc.second->getLinkID())
+		{
+			std::vector<uint16_t> readData;
+		
+			roc.second->readBlock(readData, address, wordCount, incrementAddress);
+
+			std::string readDataString = "";
+			{
+				bool first = true;
+				for(const auto& data: readData)
+				{
+					if(!first) readDataString += ", ";
+					else first = false;
+					readDataString += BinaryStringMacros::binaryToHexString(&data,2,"0x");
+				}
+			}
+			//StringMacros::vectorToString(readData);
+						
+			__SET_ARG_OUT__("readData", readDataString);
+
+			// for(auto &argOut:argsOut)
+			__FE_COUT__ << "readData"
+			            << ": " << readDataString << __E__;
+			return;
+		}
 	}
 
-	datafile.close();
+	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS_THROW__;
+
+
+
+
+
+
+//	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
+//
+//	std::vector<uint16_t> readData;
+//	thisDTC_->ReadROCBlock(
+//	    readData, rocLinkIndex, address, number_of_words, incrementAddress);
+//
+//	std::ofstream datafile;
+//
+//	std::stringstream filename;
+//	filename << "/home/mu2etrk/test_stand/ots/ReadROCBlock_data.txt";
+//	std::string filenamestring = filename.str();
+//	datafile.open(filenamestring);
+//
+//	datafile << "link " << std::dec << rocLinkIndex << std::endl;
+//	datafile << "address 0x" << std::hex << address << std::endl;
+//	datafile << "increment address " << std::dec << incrementAddress << std::endl;
+//	datafile << "read " << std::dec << number_of_words << " words..." << std::endl;
+//
+//	for(int i = 0; i < number_of_words; i++)
+//	{
+//		datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i]
+//		         << std::endl;
+//		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex
+//		            << readData[i] << __E__;
+//	}
+//
+//	datafile.close();
 
 	//__SET_ARG_OUT__("readData", readData);
 

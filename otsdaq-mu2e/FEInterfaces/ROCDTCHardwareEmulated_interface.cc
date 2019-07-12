@@ -38,6 +38,21 @@ uint16_t ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 		return delay_;
 	return -1;
 }  // end readEmulatorRegister
+//==================================================================================================
+void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<uint16_t>&	data,
+						uint16_t 		address,
+						uint16_t 		numberOfReads,
+						bool			incrementAddress)	
+{
+	__FE_COUT__ << "Calling read emulator BLOCK: link number " << std::dec
+	            << linkID_ << ", address = " << address << ", numberOfReads = " << numberOfReads 
+	            << __E__;
+//	if(address == 6)
+//		return 4860;
+//	else if(address == 7)
+//		return delay_;
+	return;
+}  // end readEmulatorBlock
 
 //==================================================================================================
 void ROCDTCHardwareEmulated::writeROCRegister(uint16_t address, uint16_t data_to_write)

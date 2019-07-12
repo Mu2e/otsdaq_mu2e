@@ -101,13 +101,16 @@ void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
 //==================================================================================================
 void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<uint16_t>& data,
                                                   uint16_t               address,
-                                                  uint16_t               numberOfReads,
+                                                  uint16_t               wordCount,
                                                   bool                   incrementAddress)
 {
 	__FE_COUT__ << "Calling read emulator block: link number " << std::dec << linkID_
-	            << ", address = " << address << ", numberOfReads = " << numberOfReads
+	            << ", address = " << address << ", wordCount = " << wordCount
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
+
+	for(unsigned int i=0;i<wordCount;++i)
+		data.push_back(address + (incrementAddress?i:0));
 }  // end readEmulatorBlock()
 
 //==================================================================================================

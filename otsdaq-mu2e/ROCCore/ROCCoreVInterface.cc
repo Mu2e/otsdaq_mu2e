@@ -86,21 +86,21 @@ uint16_t ROCCoreVInterface::readRegister(uint16_t address)
 //
 void ROCCoreVInterface::readBlock(std::vector<uint16_t>& data,
                                   uint16_t               address,
-                                  uint16_t               numberOfReads,
+                                  uint16_t               wordCount,
                                   bool                   incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
-	            << ", address = " << address << ", numberofReads = " << numberOfReads
+	            << ", address = " << address << ", wordCount = " << wordCount
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode read." << __E__;
 		std::lock_guard<std::mutex> lock(workloopMutex_);
-		return readEmulatorBlock(data, address, numberOfReads, incrementAddress);
+		return readEmulatorBlock(data, address, wordCount, incrementAddress);
 	}
 	else
-		return readROCBlock(data, address, numberOfReads, incrementAddress);
+		return readROCBlock(data, address, wordCount, incrementAddress);
 
 }  // end readBlock()
 
