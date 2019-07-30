@@ -2,6 +2,7 @@ echo # This script is intended to be sourced.
 
 userinput=$1
 # the next "unsets" the command line input, so as not to pass it to the mrb setup
+export LOGNAME=$USER #ksu might have messed up LOGNAME
 
 if [ x$userinput == "x" ]; then
   echo -e "setup [${LINENO}]  \t --> You are user $USER on $HOSTNAME in directory `pwd`"
