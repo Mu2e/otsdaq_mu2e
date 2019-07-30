@@ -103,12 +103,20 @@ else
     return 1;
 fi
 
+#setup ots path append
+if [ $userinput == "hwdev" ]; then
+    otsPathAppend=""
+else
+    otsPathAppend=$userdataappend
+fi
+
 
 sh -c "[ `ps $$ | grep bash | wc -l` -gt 0 ] || { echo 'Please switch to the bash shell before running the otsdaq-demo.'; exit; }" || exit
 
 echo -e "setup [${LINENO}]  \t ======================================================"
 echo -e "setup [${LINENO}]  \t Initially your products path was PRODUCTS=${PRODUCTS}"
 
+echo -e "setup [${LINENO}]  \t otsPathAppend=${otsPathAppend}"
 echo -e "setup [${LINENO}]  \t userdataappend=${userdataappend}"
 
 
@@ -127,7 +135,7 @@ source /home/mu2edaq/sync_demo/ots/products/setup
 
 setup mrb
 setup git
-source /home/${basepath}/ots${userdataappend}/localProducts*/setup
+source /home/${basepath}/ots${otsPathAppend}/localProducts*/setup
 source mrbSetEnv
 
 ulimit -c unlimited
@@ -135,9 +143,7 @@ ulimit -c unlimited
 echo -e "setup [${LINENO}]  \t Now your products path is PRODUCTS=${PRODUCTS}"
 echo
 
-echo Activating TRACE via export TRACE_MSGMAX=0
-echo Do tshow to show the trace memory buffer.
-echo -e "setup [${LINENO}]  \t Do \"tshow | grep . | tdelta -d 1 -ct 1\" with appropriate grep re to"
+echo -e "setup [${LINENO}]  \t To use trace, do \"tshow | grep . | tdelta -d 1 -ct 1\" with appropriate grep re to"
 echo -e "setup [${LINENO}]  \t filter traces. Piping into the tdelta command to add deltas and convert"
 echo -e "setup [${LINENO}]  \t the timestamp."
 
@@ -157,26 +163,13 @@ export CETPKG_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` +
 
 #make logfile on local directory to make logging faster
 echo 
-echo -e "--> Remove old logs, make new link /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs to /scratch/mu2e/otsdaqLog_${userinput}"
+
+echo -e "setup [${LINENO}]  \t Remove old logs, make new link /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/Logs to /scratch/mu2e/otsdaqLog_${userinput}"
 if [ -e /scratch/mu2e/otsdaqLogs_${userinput} ]; then
-  echo -e "Logfile /scratch/mu2e/otsdaqLog_${userinput} exists"
+    echo -e "setup [${LINENO}]  \t Logfile /scratch/mu2e/otsdaqLog_${userinput} exists"
 else 
-  echo -e "Create logfile /scratch/mu2e/otsdaqLog_${userinput}"
-  mkdir /scratch/mu2e/otsdaqLogs_${userinput}
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/OtsConfigurationWizard
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/CoreSupervisorBase
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ConfigurationGUI
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ConsoleSupervisor
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/GatewaySupervisor
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ChatSupervisor
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/LogbookSupervisor
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/MacroMaker
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCStoppingTargetMonitorInterface
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCCoreVInterface
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCPolarFireCoreInterface
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/ROCCalorimeterInterface
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/RunControlStateMachine
-#  mkdir /scratch/mu2e/otsdaqLogs_${userinput}/CorePropertySupervisorBase
+    echo -e "setup [${LINENO}]  \t Create logfile /scratch/mu2e/otsdaqLog_${userinput}"
+    mkdir /scratch/mu2e/otsdaqLogs_${userinput}
 fi
 
 echo 
@@ -185,10 +178,10 @@ ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${reposi
 
 export OTS_OWNER=Mu2e
 
-export USER_DATA="/home/${basepath}/ots${userdataappend}/srcs/${repository}/Data${userdataappend}"
-export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots${userdataappend}/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
-export OTSDAQ_DATA="/home/${basepath}/ots${userdataappend}/srcs/${repository}/Data${userdataappend}/OutputData"
-export USER_WEB_PATH=/home/${basepath}/ots${userdataappend}/srcs/${repository}/UserWebGUI
+export USER_DATA="/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}"
+export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots${otsPathAppend}/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
+export OTSDAQ_DATA="/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/OutputData"
+export USER_WEB_PATH=/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/UserWebGUI
 offlineFhiclDir=/mu2e/ups/offline/trig_0_4_1/fcl
 export FHICL_FILE_PATH=$FHICL_FILE_PATH:$USER_DATA:$offlineFhiclDir
 
@@ -208,8 +201,9 @@ echo -e "setup [${LINENO}]  \t  	Or use 'ots --help' for more options"
 echo
 echo -e "setup [${LINENO}]  \t     use 'kx' to kill otsdaq processes"
 echo
+
 export TRACE_MSGMAX=0 #Activating TRACE
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
-tonMg 0-4 #to memory
-tonSg 0-3 #to slow path (i.e. UDP)
+tonMg 0-4 &>/dev/null 2>&1 #hide output #enable trace to memory
+tonSg 0-3 &>/dev/null 2>&1 #hide output #enable trace to slow path (i.e. UDP)
