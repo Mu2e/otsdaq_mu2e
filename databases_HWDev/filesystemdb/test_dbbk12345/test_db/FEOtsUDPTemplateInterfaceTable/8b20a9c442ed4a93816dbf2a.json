@@ -1,0 +1,263 @@
+{
+"document" : {
+"data" : {
+"NAME" : "FE_OTS_UDP_TEMPLATE_INTERFACE_TABLE",
+"COMMENT" : "ots template interface ON",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1536269542,
+"COL_TYPES" : {
+"INTERFACE_ID" : "VARCHAR2",
+"FIRMWARE_VERSION" : "NUMBER",
+"INTERFACE_IP_ADDRESS" : "VARCHAR2",
+"INTERFACE_PORT" : "NUMBER",
+"HOST_IP_ADDRESS" : "VARCHAR2",
+"HOST_PORT" : "NUMBER",
+"STREAM_TO_IP_ADDRESS" : "VARCHAR2",
+"STREAM_TO_PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"INTERFACE_ID" : "OtsInterface0",
+"FIRMWARE_VERSION" : "-1",
+"INTERFACE_IP_ADDRESS" : "192.168.133.7",
+"INTERFACE_PORT" : "2001",
+"HOST_IP_ADDRESS" : "192.168.157.6",
+"HOST_PORT" : "4001",
+"STREAM_TO_IP_ADDRESS" : "192.168.157.6",
+"STREAM_TO_PORT" : "4005",
+"COMMENT_DESCRIPTION" : "Using HW emulator port 4000",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1536269534"
+},
+{
+"INTERFACE_ID" : "KC705_Interface0",
+"FIRMWARE_VERSION" : "0",
+"INTERFACE_IP_ADDRESS" : "192.168.133.4",
+"INTERFACE_PORT" : "4020",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4021",
+"STREAM_TO_IP_ADDRESS" : "127.0.0.1",
+"STREAM_TO_PORT" : "4131",
+"COMMENT_DESCRIPTION" : "Using KC705 with data gen FW",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480652283"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-04-08T12:21:18.852-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:21:18.853-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:21:18.853-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:21:23.888-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:21:18.853-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-04-08T12:21:18.853-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-04-08T12:21:18.853-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-04-08T12:21:18.853-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-04-08T12:21:18.853-0500",
+"value" : {
+"name" : "FEOtsUDPTemplateInterfaceTable",
+"assigned" : "2019-04-08T12:21:18.853-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-04-08T12:21:18.853-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-04-08T12:21:18.853-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T12:21:23.888-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2019-04-08T12:21:23.888-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-08T14:35:04.969-0500",
+"value" : {
+"name" : "defaultConfig_v2",
+"assigned" : "2019-04-08T14:35:04.969-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-15T11:19:51.802-0500",
+"value" : {
+"name" : "defaultConfig_v3",
+"assigned" : "2019-04-15T11:19:51.802-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-17T11:41:38.436-0500",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "2019-04-17T11:41:38.436-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-18T10:59:22.841-0500",
+"value" : {
+"name" : "defaultConfig_v5",
+"assigned" : "2019-04-18T10:59:22.841-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-19T10:40:45.564-0500",
+"value" : {
+"name" : "defaultConfig_v6",
+"assigned" : "2019-04-19T10:40:45.564-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-19T16:18:20.764-0500",
+"value" : {
+"name" : "defaultConfig_v7",
+"assigned" : "2019-04-19T16:18:20.764-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-19T16:52:49.187-0500",
+"value" : {
+"name" : "defaultConfig_v8",
+"assigned" : "2019-04-19T16:52:49.187-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-22T12:15:02.216-0500",
+"value" : {
+"name" : "defaultConfig_v9",
+"assigned" : "2019-04-22T12:15:02.216-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-24T13:28:21.083-0500",
+"value" : {
+"name" : "defaultConfig_v10",
+"assigned" : "2019-04-24T13:28:21.083-0500"
+}
+}
+],
+"created" : "2019-04-08T12:21:18.852-0500"
+},
+"_id" : {
+"$oid" : "8b20a9c442ed4a93816dbf2a"
+},
+"collection" : "FEOtsUDPTemplateInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "defaultConfig_v2",
+"assigned" : "2019-04-08T14:35:04.969-0500"
+},
+{
+"name" : "defaultConfig_v3",
+"assigned" : "2019-04-15T11:19:51.802-0500"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "2019-04-17T11:41:38.436-0500"
+},
+{
+"name" : "defaultConfig_v5",
+"assigned" : "2019-04-18T10:59:22.841-0500"
+},
+{
+"name" : "defaultConfig_v6",
+"assigned" : "2019-04-19T10:40:45.564-0500"
+},
+{
+"name" : "defaultConfig_v7",
+"assigned" : "2019-04-19T16:18:20.764-0500"
+},
+{
+"name" : "defaultConfig_v8",
+"assigned" : "2019-04-19T16:52:49.187-0500"
+},
+{
+"name" : "defaultConfig_v9",
+"assigned" : "2019-04-22T12:15:02.216-0500"
+},
+{
+"name" : "defaultConfig_v10",
+"assigned" : "2019-04-24T13:28:21.083-0500"
+}
+]
+}

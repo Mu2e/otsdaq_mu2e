@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
 		<TABLE Name="ROCInterfaceTable">
-			<VIEW Name="ROC_INTERFACE_TABLE" Type="File,Database,DatabaseTest" Description="No%20description.">
+			<VIEW Name="ROC_INTERFACE_TABLE" Type="File,Database,DatabaseTest" Description="This%20table%20describes%20parameters%20associated%20with%20Mu2e%20Readout%20Controller%20(ROC)%20records.%0A%0AOptionally%2C%20it%20can%20associate%20a%20set%20of%20slow%20controls%20channels%20to%20a%20ROC%20through%20the%20field%20'LinkToSlowControlsChannelTable.'">
 				<COLUMN Type="UID" 	 Name="UID" 	 StorageName="UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="GroupID-ROC" 	 Name="ROCGroupID" 	 StorageName="ROC_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
@@ -11,6 +11,8 @@
 				<COLUMN Type="TrueFalse" 	 Name="EmulateInDTCHardware" 	 StorageName="EMULATE_IN_DTC_HARDWARE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-ROCParams" 	 Name="ROCTypeLinkTable" 	 StorageName="ROC_TYPE_LINK_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,SubsystemCRVParametersTable,SubsystemCalorimeterParametersTable,SubsystemExtinctionMonitorParametersTable,SubsystemSTMParametersTable,SubsystemTrackerParametersTable"/>
 				<COLUMN Type="ChildLinkUID-ROCParams" 	 Name="ROCTypeLinkUID" 	 StorageName="ROC_TYPE_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-SlowControlsChannels" 	 Name="LinkToSlowControlsChannelTable" 	 StorageName="LINK_TO_SLOW_CONTROLS_CHANNEL_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,FESlowControlsTable"/>
+				<COLUMN Type="ChildLinkGroupID-SlowControlsChannels" 	 Name="LinkToSlowControlsChannelGroupID" 	 StorageName="LINK_TO_SLOW_CONTROLS_CHANNEL_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>

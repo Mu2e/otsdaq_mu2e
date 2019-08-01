@@ -3,7 +3,7 @@
 		xmlns:soapenc	= "http://schemas.xmlsoap.org/soap/encoding/"
 		xmlns:xc	= "http://xdaq.web.cern.ch/xdaq/xsd/2004/XMLConfiguration-30">
 
-	<!-- ContextUID='mainContext' sourceConfig='XDAQContextTable_v3 @ 1555688874' -->
+	<!-- ContextUID='mainContext' sourceConfig='XDAQContextTable_v5 @ 1563921301' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:3055">
 
 		<!-- Application GroupID = 'mainContext' UID='Supervisor' sourceConfig='XDAQApplicationTable_v2 @ 1551877632' -->
@@ -57,7 +57,7 @@
 
 	</xc:Context>
 
-	<!-- ContextUID='ContextDTC0' sourceConfig='XDAQContextTable_v3 @ 1555688874' -->
+	<!-- ContextUID='ContextDTC0' sourceConfig='XDAQContextTable_v5 @ 1563921301' -->
 	<!--
 	<xc:Context id="0" url="http://mu2edaq05.fnal.gov:3057">
 
@@ -70,7 +70,7 @@
 	</xc:Context>
 	-->
 
-	<!-- ContextUID='ContextCFO0' sourceConfig='XDAQContextTable_v3 @ 1555688874' -->
+	<!-- ContextUID='ContextCFO0' sourceConfig='XDAQContextTable_v5 @ 1563921301' -->
 	<!--
 	<xc:Context id="0" url="http://mu2edaq04.fnal.gov:3056">
 
@@ -83,7 +83,7 @@
 	</xc:Context>
 	-->
 
-	<!-- ContextUID='ContextDTC1' sourceConfig='XDAQContextTable_v3 @ 1555688874' -->
+	<!-- ContextUID='ContextDTC1' sourceConfig='XDAQContextTable_v5 @ 1563921301' -->
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:3058">
 
 		<!-- Application GroupID = 'ContextDTC1' UID='FESupervisorDTC1' sourceConfig='XDAQApplicationTable_v2 @ 1551877632' -->
@@ -95,7 +95,7 @@
 
 	</xc:Context>
 
-	<!-- ContextUID='ContextCAPTAN0' sourceConfig='XDAQContextTable_v3 @ 1555688874' -->
+	<!-- ContextUID='ContextCAPTAN0' sourceConfig='XDAQContextTable_v5 @ 1563921301' -->
 	<!--
 	<xc:Context id="0" url="http://mu2edaq06.fnal.gov:3059">
 

@@ -940,3 +940,15 @@
 "Time":"Mon Jun 10 2019 21:10:49 GMT-0500 (Central Daylight Time)",
 "Interfaces":"DTCFrontEndInterface:312:DTC1"
 }#
+{
+"Command":"r:9140:0080",
+"Format":"hex:hex",
+"Time":"Wed Jul 31 2019 15:48:29 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#
+{
+"Command":"r:9140:0080",
+"Format":"hex:hex",
+"Time":"Wed Jul 31 2019 15:48:45 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:312:DTC1"
+}#
