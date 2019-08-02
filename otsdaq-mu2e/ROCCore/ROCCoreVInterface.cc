@@ -51,7 +51,7 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 }
 
 //==================================================================================================
-void ROCCoreVInterface::writeRegister(uint16_t address, uint16_t writeData)
+void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << writeData << __E__;
@@ -68,7 +68,7 @@ void ROCCoreVInterface::writeRegister(uint16_t address, uint16_t writeData)
 }  // end writeRegister()
 
 //==================================================================================================
-uint16_t ROCCoreVInterface::readRegister(uint16_t address)
+DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -84,8 +84,8 @@ uint16_t ROCCoreVInterface::readRegister(uint16_t address)
 
 }  // end readRegister()
 //
-void ROCCoreVInterface::readBlock(std::vector<uint16_t>& data,
-                                  uint16_t               address,
+void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
+                                  DTCLib::roc_address_t  address,
                                   uint16_t               wordCount,
                                   bool                   incrementAddress)
 {

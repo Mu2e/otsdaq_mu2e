@@ -20,8 +20,8 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-	universalAddressSize_ = 2;
-	universalDataSize_    = 2;
+	universalAddressSize_ = sizeof(dtc_address_t);
+	universalDataSize_    = sizeof(dtc_data_t);
 
 	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
 	emulate_cfo_     = getSelfNode().getNode("EmulateCFO").getValue<bool>();
@@ -584,60 +584,66 @@ void DTCFrontEndInterface::universalRead(char* address, char* returnValue)
 			returnValue[i] = 0xF0 | i;
 		return;
 	}
-
-	reg_access_.access_type = 0;  // 0 = read, 1 = write
-
-	reg_access_.reg_offset = *((int*)address);
-	// __COUTV__(reg_access.reg_offset);
-
-	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
-	{
-		__SS__ << "ERROR: DTC universal read - Does file exist? -> /dev/mu2e" << dtc_
-		       << __E__;
-		__SS_THROW__;
-	}
-
-	std::memcpy(returnValue, &reg_access_.val, universalDataSize_);
+	
+	(*((dtc_address_t*)returnValue)) = registerRead(*((dtc_address_t*)address));
+	
 	// __COUTV__(reg_access_.val);
-}
+	
+} //end universalRead()
 
 //===========================================================================================
 // registerRead: return = value read from register at address "address"
 //
-int DTCFrontEndInterface::registerRead(int address)
-{
-	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
-	                                                      // of interface size
-	uint8_t* data =
-	    new uint8_t[universalDataSize_];  // create data buffer of interface size
+dtc_data_t DTCFrontEndInterface::registerRead(const dtc_address_t address)
+{	
+	reg_access_.access_type = 0;  // 0 = read, 1 = write
+	reg_access_.reg_offset = address;
+	// __COUTV__(reg_access.reg_offset);
 
-	uint8_t macroAddrs[20] =
-	    {};  // total hack, assuming we'll never have 200 bytes in an address
+	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
+	{
+		__SS__ << "ERROR: DTC register read - Does file exist? -> /dev/mu2e" << dtc_
+		       << __E__;
+		__SS_THROW__;
+	}
 
-	// fill byte-by-byte
-	for(unsigned int i = 0; i < universalAddressSize_; i++)
-		macroAddrs[i] = 0xff & (address >> i * 8);
-
-	// 0-pad
-	for(unsigned int i = 0; i < universalAddressSize_; ++i)
-		addrs[i] = (i < 2) ? macroAddrs[i] : 0;
-
-	universalRead((char*)addrs, (char*)data);
-
-	unsigned int readvalue = 0x00000000;
-
-	// unpack byte-by-byte
-	for(uint8_t i = universalDataSize_; i > 0; i--)
-		readvalue = (readvalue << 8 & 0xffffff00) | data[i - 1];
-
-	// __FE_COUT__ << "DTC: readvalue register 0x" << std::hex << address
-	//	<< " is..." << std::hex << readvalue << __E__;
-
-	delete[] addrs;  // free the memory
-	delete[] data;   // free the memory
-
-	return readvalue;
-}
+	return reg_access_.val;
+	
+} // end registerRead()
+	
+//	
+//	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
+//	                                                      // of interface size
+//	uint8_t* data =
+//	    new uint8_t[universalDataSize_];  // create data buffer of interface size
+//
+//	uint8_t macroAddrs[20] =
+//	    {};  // total hack, assuming we'll never have 200 bytes in an address
+//
+//	// fill byte-by-byte
+//	for(unsigned int i = 0; i < universalAddressSize_; i++)
+//		macroAddrs[i] = 0xff & (address >> i * 8);
+//
+//	// 0-pad
+//	for(unsigned int i = 0; i < universalAddressSize_; ++i)
+//		addrs[i] = (i < 2) ? macroAddrs[i] : 0;
+//
+//	universalRead((char*)addrs, (char*)data);
+//
+//	unsigned int readvalue = 0x00000000;
+//
+//	// unpack byte-by-byte
+//	for(uint8_t i = universalDataSize_; i > 0; i--)
+//		readvalue = (readvalue << 8 & 0xffffff00) | data[i - 1];
+//
+//	// __FE_COUT__ << "DTC: readvalue register 0x" << std::hex << address
+//	//	<< " is..." << std::hex << readvalue << __E__;
+//
+//	delete[] addrs;  // free the memory
+//	delete[] data;   // free the memory
+//
+//	return readvalue;
+//}
 
 //=====================================================================================
 // universalWrite
@@ -653,100 +659,99 @@ void DTCFrontEndInterface::universalWrite(char* address, char* writeValue)
 		__FE_COUT__ << "Emulator write " << __E__;
 		return;
 	}
+	
+	registerWrite(*((dtc_address_t*)address),*((dtc_data_t*) writeValue));
+} //end universalWrite()
 
+//===============================================================================================
+// registerWrite: return = value readback from register at address "address"
+//
+dtc_data_t DTCFrontEndInterface::registerWrite(const dtc_address_t address, dtc_data_t dataToWrite)
+{
 	reg_access_.access_type = 1;  // 0 = read, 1 = write
-
-	reg_access_.reg_offset = *((int*)address);
+	reg_access_.reg_offset = address;
 	// __COUTV__(reg_access.reg_offset);
-
-	reg_access_.val = *((int*)writeValue);
+	reg_access_.val = dataToWrite;
 	// __COUTV__(reg_access.val);
 
 	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
 		__FE_COUT_ERR__ << "ERROR: DTC universal write - Does file exist? /dev/mu2e"
 		                << dtc_ << __E__;
-
-	return;
-}
-
-//===============================================================================================
-// registerWrite: return = value readback from register at address "address"
+	return registerRead(address);	                
+} //end registerWrite()
+//	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
+//	                                                      // of interface size
+//	uint8_t* data =
+//	    new uint8_t[universalDataSize_];  // create data buffer of interface size
 //
-int DTCFrontEndInterface::registerWrite(int address, int dataToWrite)
-{
-	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
-	                                                      // of interface size
-	uint8_t* data =
-	    new uint8_t[universalDataSize_];  // create data buffer of interface size
-
-	uint8_t macroAddrs[20] = {};  // assume we'll never have 20 bytes in an address
-	uint8_t macroData[20] =
-	    {};  // assume we'll never have 20 bytes read out from a register
-
-	// fill byte-by-byte
-	for(unsigned int i = 0; i < universalAddressSize_; i++)
-		macroAddrs[i] = 0xff & (address >> i * 8);
-
-	// 0-pad
-	for(unsigned int i = 0; i < universalAddressSize_; ++i)
-		addrs[i] = (i < 2) ? macroAddrs[i] : 0;
-
-	// fill byte-by-byte
-	for(unsigned int i = 0; i < universalDataSize_; i++)
-		macroData[i] = 0xff & (dataToWrite >> i * 8);
-
-	// 0-pad
-	for(unsigned int i = 0; i < universalDataSize_; ++i)
-		data[i] = (i < 4) ? macroData[i] : 0;
-
-	universalWrite((char*)addrs, (char*)data);
-
-	// usleep(100);
-
-	int readbackValue = registerRead(address);
-
-	int i = 0;
-
-	// this is an I2C register, it clears bit0 when transaction finishes
-	if((address == 0x916c) && ((dataToWrite & 0x1) == 1))
-	{
-		// wait for I2C to clear...
-		while((readbackValue & 0x1) != 0)
-		{
-			i++;
-			readbackValue = registerRead(address);
-			usleep(100);
-			if((i % 10) == 0)
-				__FE_COUT__ << "DTC I2C waited " << i << " times..." << __E__;
-		}
-		// if (i > 0) __FE_COUT__ << "DTC I2C waited " << i << " times..." << __E__;
-	}
-
-	// lowest 8-bits are the I2C read value. But we aren't reading anything back
-	// for the moment...
-	if(address == 0x9168)
-	{
-		if((readbackValue & 0xffffff00) != (dataToWrite & 0xffffff00))
-		{
-			__FE_COUT_ERR__ << "DTC: write value 0x" << std::hex << dataToWrite
-			                << " to register 0x" << std::hex << address
-			                << "... read back 0x" << std::hex << readbackValue << __E__;
-		}
-	}
-
-	// if it is not 0x9168 or 0x916c, make sure read = write
-	if(readbackValue != dataToWrite && address != 0x9168 && address != 0x916c)
-	{
-		__FE_COUT_ERR__ << "DTC: write value 0x" << std::hex << dataToWrite
-		                << " to register 0x" << std::hex << address << "... read back 0x"
-		                << std::hex << readbackValue << __E__;
-	}
-
-	delete[] addrs;  // free the memory
-	delete[] data;   // free the memory
-
-	return readbackValue;
-}
+//	uint8_t macroAddrs[20] = {};  // assume we'll never have 20 bytes in an address
+//	uint8_t macroData[20] =
+//	    {};  // assume we'll never have 20 bytes read out from a register
+//
+//	// fill byte-by-byte
+//	for(unsigned int i = 0; i < universalAddressSize_; i++)
+//		macroAddrs[i] = 0xff & (address >> i * 8);
+//
+//	// 0-pad
+//	for(unsigned int i = 0; i < universalAddressSize_; ++i)
+//		addrs[i] = (i < 2) ? macroAddrs[i] : 0;
+//
+//	// fill byte-by-byte
+//	for(unsigned int i = 0; i < universalDataSize_; i++)
+//		macroData[i] = 0xff & (dataToWrite >> i * 8);
+//
+//	// 0-pad
+//	for(unsigned int i = 0; i < universalDataSize_; ++i)
+//		data[i] = (i < 4) ? macroData[i] : 0;
+//
+//	universalWrite((char*)addrs, (char*)data);
+//
+//	// usleep(100);
+//
+//	int readbackValue = registerRead(address);
+//
+//	int i = 0;
+//
+//	// this is an I2C register, it clears bit0 when transaction finishes
+//	if((address == 0x916c) && ((dataToWrite & 0x1) == 1))
+//	{
+//		// wait for I2C to clear...
+//		while((readbackValue & 0x1) != 0)
+//		{
+//			i++;
+//			readbackValue = registerRead(address);
+//			usleep(100);
+//			if((i % 10) == 0)
+//				__FE_COUT__ << "DTC I2C waited " << i << " times..." << __E__;
+//		}
+//		// if (i > 0) __FE_COUT__ << "DTC I2C waited " << i << " times..." << __E__;
+//	}
+//
+//	// lowest 8-bits are the I2C read value. But we aren't reading anything back
+//	// for the moment...
+//	if(address == 0x9168)
+//	{
+//		if((readbackValue & 0xffffff00) != (dataToWrite & 0xffffff00))
+//		{
+//			__FE_COUT_ERR__ << "DTC: write value 0x" << std::hex << dataToWrite
+//			                << " to register 0x" << std::hex << address
+//			                << "... read back 0x" << std::hex << readbackValue << __E__;
+//		}
+//	}
+//
+//	// if it is not 0x9168 or 0x916c, make sure read = write
+//	if(readbackValue != dataToWrite && address != 0x9168 && address != 0x916c)
+//	{
+//		__FE_COUT_ERR__ << "DTC: write value 0x" << std::hex << dataToWrite
+//		                << " to register 0x" << std::hex << address << "... read back 0x"
+//		                << std::hex << readbackValue << __E__;
+//	}
+//
+//	delete[] addrs;  // free the memory
+//	delete[] data;   // free the memory
+//
+//	return readbackValue;
+//}
 
 //==================================================================================================
 void DTCFrontEndInterface::readStatus(void)
