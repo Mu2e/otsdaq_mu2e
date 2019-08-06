@@ -1,0 +1,132 @@
+{
+"document" : {
+"data" : {
+"NAME" : "RAW_DATA_SAVER_CONSUMER_TABLE",
+"COMMENT" : "For hw emulator.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1501097254,
+"COL_TYPES" : {
+"PROCESSOR_UID" : "VARCHAR2",
+"FILE_PATH" : "VARCHAR2",
+"RADIX_FILE_NAME" : "VARCHAR2",
+"MAX_FILE_SIZE" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"PROCESSOR_UID" : "RAWSaver0",
+"FILE_PATH" : "${OTSDAQ_DATA}",
+"RADIX_FILE_NAME" : "Run",
+"MAX_FILE_SIZE" : "0",
+"COMMENT_DESCRIPTION" : "saving hw emulator data.",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1501097254"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-06-12T10:30:21.245-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:21.247-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:21.247-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2019-06-12T10:30:21.954-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:21.247-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:21.247-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-06-12T10:30:21.247-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-06-12T10:30:21.247-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-06-12T10:30:21.247-0500",
+"value" : {
+"name" : "RawDataSaverConsumerTable",
+"assigned" : "2019-06-12T10:30:21.247-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-06-12T10:30:21.247-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:21.247-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:21.954-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2019-06-12T10:30:21.954-0500"
+}
+}
+],
+"created" : "2019-06-12T10:30:21.245-0500"
+},
+"_id" : {
+"$oid" : "b417972fb41c4174ae66e3f1"
+},
+"collection" : "RawDataSaverConsumerTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

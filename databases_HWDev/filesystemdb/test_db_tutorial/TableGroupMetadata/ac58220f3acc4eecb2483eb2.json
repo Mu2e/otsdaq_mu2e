@@ -1,0 +1,128 @@
+{
+"document" : {
+"data" : {
+"NAME" : "",
+"COMMENT" : "",
+"AUTHOR" : "",
+"CREATION_TIME" : 1548699839,
+"COL_TYPES" : {
+"UNUSED_UID" : "NUMBER",
+"GROUP_ALIASES" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"GROUP_CREATION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"UNUSED_UID" : "0",
+"GROUP_ALIASES" : "",
+"COMMENT_DESCRIPTION" : "",
+"AUTHOR" : "admin",
+"GROUP_CREATION_TIME" : "1560353406"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-06-12T10:30:20.265-0500",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:20.266-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:20.265-0500"
+},
+{
+"name" : "TableEditWizBackbone_v0",
+"assigned" : "2019-06-12T10:30:20.410-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:20.266-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:20.265-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-06-12T10:30:20.266-0500",
+"value" : {
+"name" : "0",
+"assigned" : "2019-06-12T10:30:20.266-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-06-12T10:30:20.266-0500",
+"value" : {
+"name" : "TableGroupMetadata",
+"assigned" : "2019-06-12T10:30:20.266-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-06-12T10:30:20.266-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:20.266-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:20.410-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v0",
+"assigned" : "2019-06-12T10:30:20.410-0500"
+}
+}
+],
+"created" : "2019-06-12T10:30:20.265-0500"
+},
+"_id" : {
+"$oid" : "ac58220f3acc4eecb2483eb2"
+},
+"collection" : "TableGroupMetadata",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

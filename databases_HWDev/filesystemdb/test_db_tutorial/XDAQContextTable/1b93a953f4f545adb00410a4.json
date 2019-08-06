@@ -1,0 +1,140 @@
+{
+"document" : {
+"data" : {
+"NAME" : "XDAQ_CONTEXT_TABLE",
+"COMMENT" : "Example context with artdaq off with environment variables.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1531237127,
+"COL_TYPES" : {
+"CONTEXT_UID" : "VARCHAR2",
+"LINK_TO_APPLICATION_TABLE" : "VARCHAR2",
+"APPLICATION_GROUP_ID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"ID" : "NUMBER",
+"ADDRESS" : "VARCHAR2",
+"PORT" : "NUMBER",
+"ARTDAQ_DATA_PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"CONTEXT_UID" : "mainContext",
+"LINK_TO_APPLICATION_TABLE" : "XDAQApplicationTable",
+"APPLICATION_GROUP_ID" : "testContextApps",
+"STATUS" : "On",
+"ID" : "0",
+"ADDRESS" : "http://${HOSTNAME}",
+"PORT" : "${OTS_MAIN_PORT}",
+"ARTDAQ_DATA_PORT" : "0",
+"COMMENT_DESCRIPTION" : "main context",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1499441274"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-06-12T10:30:22.722-0500",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:22.723-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:22.723-0500"
+},
+{
+"name" : "testContext_v2",
+"assigned" : "2019-06-12T10:30:23.308-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:22.723-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:22.723-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-06-12T10:30:22.723-0500",
+"value" : {
+"name" : "2",
+"assigned" : "2019-06-12T10:30:22.723-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-06-12T10:30:22.723-0500",
+"value" : {
+"name" : "XDAQContextTable",
+"assigned" : "2019-06-12T10:30:22.723-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-06-12T10:30:22.723-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:22.723-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:23.308-0500",
+"value" : {
+"name" : "testContext_v2",
+"assigned" : "2019-06-12T10:30:23.308-0500"
+}
+}
+],
+"created" : "2019-06-12T10:30:22.723-0500"
+},
+"_id" : {
+"$oid" : "1b93a953f4f545adb00410a4"
+},
+"collection" : "XDAQContextTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
