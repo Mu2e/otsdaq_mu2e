@@ -18,6 +18,8 @@
 				<COLUMN Type="ChildLinkUID-source" 	 Name="sourceLinkUID" 	 StorageName="SOURCE_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-processName" 	 Name="ARTDAQGlobalTableForProcessNameLink" 	 StorageName="ARTDAQ_GLOBAL_TABLE_FOR_PROCESS_NAME_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQGlobalTable"/>
 				<COLUMN Type="ChildLinkUID-processName" 	 Name="ARTDAQGlobalTableForProcessNameLinkUID" 	 StorageName="ARTDAQ_GLOBAL_TABLE_FOR_PROCESS_NAME_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-preambleParameters daqParameters" 	 Name="preambleParametersLink" 	 StorageName="PREAMBLE_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQBuilderDaqParameterTable"/>
+				<COLUMN Type="ChildLinkGroupID-preambleParameters daqParameters" 	 Name="preambleParametersLinkGroupID" 	 StorageName="PREAMBLE_PARAMETERS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-addOnParameters daqParameters" 	 Name="addOnParametersLink" 	 StorageName="ADD_ON_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQBuilderDaqParameterTable"/>
 				<COLUMN Type="ChildLinkGroupID-addOnParameters daqParameters" 	 Name="addOnParametersLinkGroupID" 	 StorageName="ADD_ON_PARAMETERS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>

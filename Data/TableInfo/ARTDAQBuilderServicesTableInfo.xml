@@ -3,7 +3,6 @@
 		<TABLE Name="ARTDAQBuilderServicesTable">
 			<VIEW Name="ARTDAQ_BUILDER_SERVICES_TABLE" Type="File,Database,DatabaseTest" Description="No%20description.">
 				<COLUMN Type="UID" 	 Name="servicesUID" 	 StorageName="SERVICES_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="Data" 	 Name="schedulerFileMode" 	 StorageName="SCHEDULER_FILE_MODE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="TrueFalse" 	 Name="schedulerErrorOnFailtureToPut" 	 StorageName="SCHEDULER_ERROR_ON_FAILTURE_TO_PUT" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="NetMonTrasportServiceInterfaceServiceProvider" 	 StorageName="NET_MON_TRASPORT_SERVICE_INTERFACE_SERVICE_PROVIDER" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-destinations" 	 Name="NetMonTrasportServiceInterfaceDestinationsLink" 	 StorageName="NET_MON_TRASPORT_SERVICE_INTERFACE_DESTINATIONS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQBuilderServicesDestinationTable"/>
