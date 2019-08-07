@@ -89,17 +89,17 @@
 		
 		//init called once body has loaded
 		function init() {			
-						
+			var windowTooltip = "Welcome to the Configuration-Subset GUI. Here you can manipulate the fields " +
+				"of a subset of your <i>otsdaq</i> system. \n\n" +
+				"The organization of the Configuration-Subset GUI is in the form of two panes, a left and right.\n\n" +
+
+				"Briefly, here is a description of the two panes: " +
+				"\n\t- 'Left Pane' is for selecting one or many records to target." +
+				"\n\t- 'Right Pane' is for modifying the common fields associated with the selected records.";			
 			Debug.log("CfgGUI_sebset init ");
 			DesktopContent.tooltip("Configuration-Subset GUI Introduction",
-					"Welcome to the Configuration-Subset GUI. Here you can manipulate the fields "+
-					"of a subset of your <i>otsdaq</i> system. \n\n" +
-					"The organization of the Configuration-Subset GUI is in the form of two panes, a left and right.\n\n" +
-					
-					"Briefly, here is a description of the two panes: " +
-					"\n\t- 'Left Pane' is for selecting one or many records to target." +
-					"\n\t- 'Right Pane' is for modifying the common fields associated with the selected records."
-			);
+				windowTooltip);
+			DesktopContent.setWindowTooltip(windowTooltip);
 			
 			//extract get parameters
 			//		<subsetBasePath> 	= Records at this path are the target of this GUI, e.g. “FEInterfaceConfiguration”

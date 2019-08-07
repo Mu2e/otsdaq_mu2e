@@ -105,7 +105,7 @@ else
 fi
 
 #setup ots path append
-if [ $userinput == "hwdev" ]; then
+if [[ $userinput == "hwdev" || $userinput == "shift" ]]; then
     otsPathAppend=""
 else
     otsPathAppend=$userdataappend
