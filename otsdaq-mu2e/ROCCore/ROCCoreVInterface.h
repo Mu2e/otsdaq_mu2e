@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <string>
-#include "dtcInterfaceLib/DTC.h"
+#include "dtcInterfaceLib/DTC.h" /* for DTC data types*/
 #include "otsdaq-core/FECore/FEVInterface.h"
 
 namespace ots

@@ -31,6 +31,7 @@ simple_plugin(ROCPolarFireCoreInterface "interface"
     
 simple_plugin(DTCFrontEndInterface "interface"
   	FECore
+  	CFOandDTCCore
 	DTCInterface  
 	ROCCore
 	#otsdaq-mu2e_FEInterfaces_ROCPolarFireCoreInterface_interface
@@ -38,6 +39,7 @@ simple_plugin(DTCFrontEndInterface "interface"
  
 simple_plugin(CFOFrontEndInterface "interface"
   	FECore
+  	CFOandDTCCore
 	CFOInterface
  )
    

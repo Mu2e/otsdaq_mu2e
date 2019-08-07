@@ -5,10 +5,10 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "dtcInterfaceLib/DTC.h"
 #include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
-#include "otsdaq-core/FECore/FEVInterface.h"
 #include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
 
 namespace ots
@@ -16,7 +16,7 @@ namespace ots
 // class FrontEndHardwareTemplate;
 // class FrontEndFirmwareTemplate;
 
-class DTCFrontEndInterface : public FEVInterface
+class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 {
 	// clang-format off
   public:
@@ -33,9 +33,11 @@ class DTCFrontEndInterface : public FEVInterface
 	virtual FESlowControlsChannel*		getNextSlowControlsChannel	(void) override;
 	virtual unsigned int				getSlowControlsChannelCount	(void) override;
 	virtual void						getSlowControlsValue		(FESlowControlsChannel& channel, std::string& readValue) override;
+  private:
 	bool											currentChannelIsInROC_;
 	std::string										currentChannelROCUID_;
 
+  public:
 	// state machine
 	//----------------
 	void 								configure					(void);
@@ -52,20 +54,20 @@ class DTCFrontEndInterface : public FEVInterface
 
 	// hardware access
 	//----------------
-	void 								universalRead				(char* address, char* readValue) override;
-	void 								universalWrite				(char* address, char* writeValue) override;
-	dtc_data_t							registerRead				(const dtc_address_t address);
-	dtc_data_t  						registerWrite				(const dtc_address_t address, dtc_data_t dataToWrite);  // return read value after having written dataToWrite
+//	void 								universalRead				(char* address, char* readValue) override;
+//	void 								universalWrite				(char* address, char* writeValue) override;
+//	dtc_data_t							registerRead				(const dtc_address_t address);
+//	dtc_data_t  						registerWrite				(const dtc_address_t address, dtc_data_t dataToWrite);  // return read value after having written dataToWrite
 
 	// DTC specific items
 	//----------------
-	void  								configureJitterAttenuator	(void);
-	void  								readStatus					(void);
-	float 								readTemperature				(void);  // return temperature of FPGA in degC
-	void  								printVoltages				(void);
+	//void  								configureJitterAttenuator	(void);
+	virtual void  						readStatus					(void) override;
+	//float 								readTemperature				(void);  // return temperature of FPGA in degC
+	//void  								printVoltages				(void);
 
-	void 								turnOnLED					(void);   // turn on LED on visible side of timing card
-	void 								turnOffLED					(void);  // turn off LED on visible side of timing card
+	//void 								turnOnLED					(void);   // turn on LED on visible side of timing card
+	//void 								turnOffLED					(void);  // turn off LED on visible side of timing card
 
 	bool 								ROCActive					(unsigned int ROC_link);
 	int  								getROCLinkStatus			(int ROC_link);
@@ -78,14 +80,14 @@ class DTCFrontEndInterface : public FEVInterface
 	void 								createROCs					(void);
 	void 								registerFEMacros			(void);
 
-	char        									devfile_[11];
-	int         									fd_;
-	int         									dtc_                   = -1;
+//	char        									devfile_[11];
+//	int         									fd_;
+//	int         									dtc_                   = -1;
 	int         									dtc_location_in_chain_ = -1;
-	bool        									configure_clock_       = 0;
+	//bool        									configure_clock_       = 0;
 	unsigned    									roc_mask_              = 0;
-	std::string 									device_name_;
-	bool      										emulatorMode_;
+	//std::string 									device_name_;
+	//bool      										emulatorMode_;
 	int         									emulate_cfo_           = 0;
 	DTCLib::DTCSoftwareCFO* 						EmulatedCFO_;
 
