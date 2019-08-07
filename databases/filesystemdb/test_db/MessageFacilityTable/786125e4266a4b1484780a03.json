@@ -120,7 +120,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-09T09:58:42.703-0500",
 "value" : {
 "name" : "testContext_v3",
@@ -128,7 +128,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-23T15:53:17.672-0500",
 "value" : {
 "name" : "testContext_v4",
@@ -157,7 +157,7 @@
 
 ],
 "configtype" : "notprovided",
-"configurations" : [
+"tables" : [
 {
 "name" : "testContext_v3",
 "assigned" : "2019-04-09T09:58:42.703-0500"

@@ -378,7 +378,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-09T09:58:41.830-0500",
 "value" : {
 "name" : "testContext_v3",
@@ -386,7 +386,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-23T15:53:16.721-0500",
 "value" : {
 "name" : "testContext_v4",
@@ -394,7 +394,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-24T14:47:07.915-0500",
 "value" : {
 "name" : "testContext_v5",
@@ -402,7 +402,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-24T14:48:39.754-0500",
 "value" : {
 "name" : "testContext_v6",
@@ -410,7 +410,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-25T14:17:20.506-0500",
 "value" : {
 "name" : "testContext_v7",
@@ -418,7 +418,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-05-09T10:46:17.117-0500",
 "value" : {
 "name" : "testContext_v8",
@@ -447,7 +447,7 @@
 
 ],
 "configtype" : "notprovided",
-"configurations" : [
+"tables" : [
 {
 "name" : "testContext_v3",
 "assigned" : "2019-04-09T09:58:41.830-0500"

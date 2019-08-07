@@ -1,0 +1,134 @@
+{
+"document" : {
+"data" : {
+"NAME" : "UDP_DATA_STREAMER_CONSUMER_TABLE",
+"COMMENT" : "streaming to DQM DB1",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1499539121,
+"COL_TYPES" : {
+"PROCESSOR_UID" : "VARCHAR2",
+"HOST_IP_ADDRESS" : "VARCHAR2",
+"HOST_PORT" : "NUMBER",
+"STREAM_TO_IP_ADDRESS" : "VARCHAR2",
+"STREAM_TO_PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"PROCESSOR_UID" : "UDPStreamer0",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4100",
+"STREAM_TO_IP_ADDRESS" : "127.0.0.1",
+"STREAM_TO_PORT" : "4101",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1479826470"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-06-12T10:30:21.411-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:21.413-0500"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:21.413-0500"
+},
+{
+"name" : "defaultConfig_v1",
+"assigned" : "2019-06-12T10:30:22.151-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:21.413-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-06-12T10:30:21.413-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-06-12T10:30:21.413-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-06-12T10:30:21.413-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-06-12T10:30:21.413-0500",
+"value" : {
+"name" : "UDPDataStreamerConsumerTable",
+"assigned" : "2019-06-12T10:30:21.413-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-06-12T10:30:21.413-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-06-12T10:30:21.413-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-06-12T10:30:22.151-0500",
+"value" : {
+"name" : "defaultConfig_v1",
+"assigned" : "2019-06-12T10:30:22.151-0500"
+}
+}
+],
+"created" : "2019-06-12T10:30:21.411-0500"
+},
+"_id" : {
+"$oid" : "45b790cd972e44edb0d044ae"
+},
+"collection" : "UDPDataStreamerConsumerTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

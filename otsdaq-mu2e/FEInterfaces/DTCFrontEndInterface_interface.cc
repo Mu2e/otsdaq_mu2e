@@ -1152,11 +1152,14 @@ void DTCFrontEndInterface::configure(void) try
 			    0x40008000;  // bit 30 = CFO emulation enable; bit 15 CFO emulation mode
 			registerWrite(0x9100, dataToWrite);
 
-			__FE_COUT__ << "CFO emulation: turn off Event Windows" << __E__;
+			__FE_COUT__ << ".......  CFO emulation: turn off Event Windows" << __E__;
 			registerWrite(0x91f0, 0x00000000);
 
-			__FE_COUT__ << "CFO emulation: turn off 40MHz marker interval" << __E__;
+			__FE_COUT__ << ".......  CFO emulation: turn off 40MHz marker interval" << __E__;
 			registerWrite(0x91f4, 0x00000000);
+
+			__FE_COUT__ << ".......  CFO emulation: turn off heartbeat packets" << __E__;
+			registerWrite(0x91a8, 0x00000000);
 		}
 		else
 		{
@@ -1270,15 +1273,21 @@ void DTCFrontEndInterface::configure(void) try
 			                          "and event window interval"
 			                       << __E__);
 
-			__FE_COUT__ << "CFO emulation:  set Event Window interval time" << __E__;
-			//    registerWrite(0x91f0,0x154);   //1.7us
+			__FE_COUT__ << "CFO emulation:  set Event Window interval" << __E__;
+			//			registerWrite(0x91f0, cfo_emulate_event_window_interval_); 
+			// registerWrite(0x91f0,0x154);   //1.7us
 			// registerWrite(0x91f0, 0x1f40);  // 40us
-			registerWrite(0x91f0, 0x00000000);  // for NO markers, write these
+			 registerWrite(0x91f0, 0x00000000);  // for NO markers, write these
 			// values
 
 			__FE_COUT__ << "CFO emulation:  set 40MHz marker interval" << __E__;
 			// registerWrite(0x91f4, 0x0800);
 			registerWrite(0x91f4, 0x00000000);  // for NO markers, write these
+			                                    // values
+
+			__FE_COUT__ << "CFO emulation:  set heartbeat interval " << __E__;
+			//registerWrite(0x91a8, 0x0800);
+			registerWrite(0x91a8, 0x00000000);  // for NO markers, write these
 			                                    // values
 		}
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"

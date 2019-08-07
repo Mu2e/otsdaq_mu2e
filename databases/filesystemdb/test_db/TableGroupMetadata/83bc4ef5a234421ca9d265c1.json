@@ -48,7 +48,7 @@
 "assigned" : "2019-05-09T10:47:28.916-0500"
 }
 ],
-"configurations" : [
+"tables" : [
 {
 "name" : "notprovided",
 "assigned" : "2019-05-09T10:47:28.916-0500"
@@ -64,7 +64,7 @@
 "isreadonly" : false,
 "updates" : [
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-05-09T10:47:28.916-0500",
 "value" : {
 "name" : "notprovided",
@@ -96,7 +96,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-05-09T10:47:29.890-0500",
 "value" : {
 "name" : "GroupAliasTreeEditWizBackbone_v1",

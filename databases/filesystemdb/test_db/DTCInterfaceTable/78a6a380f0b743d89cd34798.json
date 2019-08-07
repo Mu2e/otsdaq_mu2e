@@ -73,7 +73,7 @@
 "assigned" : "2019-04-30T11:13:10.335-0500"
 }
 ],
-"configurations" : [
+"tables" : [
 {
 "name" : "notprovided",
 "assigned" : "2019-04-30T11:13:10.334-0500"
@@ -89,7 +89,7 @@
 "isreadonly" : false,
 "updates" : [
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-30T11:13:10.335-0500",
 "value" : {
 "name" : "notprovided",
@@ -121,7 +121,7 @@
 }
 },
 {
-"event" : "addConfiguration",
+"event" : "addTable",
 "timestamp" : "2019-04-30T11:13:12.934-0500",
 "value" : {
 "name" : "defaultConfig_v6",
