@@ -2,9 +2,9 @@
 "document" : {
 "data" : {
 "NAME" : "DTC_INTERFACE_TABLE",
-"COMMENT" : "Auto-generated from mock-up.",
+"COMMENT" : "Switch between CFO emulator and not, depending on location in chain.",
 "AUTHOR" : "admin",
-"CREATION_TIME" : 1556219698,
+"CREATION_TIME" : 1565040612,
 "COL_TYPES" : {
 "UID" : "VARCHAR2",
 "EMULATOR_MODE" : "VARCHAR2",
@@ -24,26 +24,26 @@
 "EMULATOR_MODE" : "False",
 "LOCATION_IN_CHAIN" : "0",
 "DEVICE_INDEX" : "0",
-"EMULATE_CFO" : "Yes",
-"CONFIGURE_CLOCK" : "No",
+"EMULATE_CFO" : "No",
+"CONFIGURE_CLOCK" : "Yes",
 "LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
 "LINK_TO_ROC_GROUP_ID" : "DTC0ROCs",
 "COMMENT_DESCRIPTION" : "No Comment",
 "AUTHOR" : "admin",
-"RECORD_INSERTION_TIME" : "1556219698"
+"RECORD_INSERTION_TIME" : "1565040612"
 },
 {
 "UID" : "DTC1",
 "EMULATOR_MODE" : "False",
 "LOCATION_IN_CHAIN" : "1",
 "DEVICE_INDEX" : "0",
-"EMULATE_CFO" : "No",
-"CONFIGURE_CLOCK" : "No",
+"EMULATE_CFO" : "Yes",
+"CONFIGURE_CLOCK" : "Yes",
 "LINK_TO_ROC_GROUP_TABLE" : "ROCInterfaceTable",
 "LINK_TO_ROC_GROUP_ID" : "DTC1ROCs",
 "COMMENT_DESCRIPTION" : "No Comment",
 "AUTHOR" : "admin",
-"RECORD_INSERTION_TIME" : "1556219698"
+"RECORD_INSERTION_TIME" : "1565040612"
 }
 ]
 },
@@ -61,30 +61,26 @@
 "source" : "template",
 "name" : "notprovided",
 "format" : "json",
-"created" : "2019-04-25T14:14:58.225-0500",
+"created" : "2019-08-05T16:30:12.519-0500",
 "rawdata" : [
 
 ]
 },
-"version" : "3",
+"version" : "6",
 "entities" : [
 {
 "name" : "OTSROOT",
-"assigned" : "2019-04-25T14:14:58.226-0500"
+"assigned" : "2019-08-05T16:30:12.520-0500"
 }
 ],
-"tables" : [
+"configurations" : [
 {
 "name" : "notprovided",
-"assigned" : "2019-04-25T14:14:58.226-0500"
+"assigned" : "2019-08-05T16:30:12.519-0500"
 },
 {
-"name" : "defaultConfig_v3",
-"assigned" : "2019-04-25T14:15:00.844-0500"
-},
-{
-"name" : "defaultConfig_v5",
-"assigned" : "2019-04-25T14:19:46.357-0500"
+"name" : "defaultConfig_v8",
+"assigned" : "2019-08-05T16:30:13.806-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -93,58 +89,50 @@
 "isreadonly" : false,
 "updates" : [
 {
-"event" : "addTable",
-"timestamp" : "2019-04-25T14:14:58.226-0500",
+"event" : "addConfiguration",
+"timestamp" : "2019-08-05T16:30:12.519-0500",
 "value" : {
 "name" : "notprovided",
-"assigned" : "2019-04-25T14:14:58.226-0500"
+"assigned" : "2019-08-05T16:30:12.519-0500"
 }
 },
 {
 "event" : "setVersion",
-"timestamp" : "2019-04-25T14:14:58.226-0500",
+"timestamp" : "2019-08-05T16:30:12.519-0500",
 "value" : {
-"name" : "3",
-"assigned" : "2019-04-25T14:14:58.226-0500"
+"name" : "6",
+"assigned" : "2019-08-05T16:30:12.519-0500"
 }
 },
 {
 "event" : "setCollection",
-"timestamp" : "2019-04-25T14:14:58.226-0500",
+"timestamp" : "2019-08-05T16:30:12.520-0500",
 "value" : {
 "name" : "DTCInterfaceTable",
-"assigned" : "2019-04-25T14:14:58.226-0500"
+"assigned" : "2019-08-05T16:30:12.520-0500"
 }
 },
 {
 "event" : "addEntity",
-"timestamp" : "2019-04-25T14:14:58.227-0500",
+"timestamp" : "2019-08-05T16:30:12.520-0500",
 "value" : {
 "name" : "OTSROOT",
-"assigned" : "2019-04-25T14:14:58.226-0500"
+"assigned" : "2019-08-05T16:30:12.520-0500"
 }
 },
 {
-"event" : "addTable",
-"timestamp" : "2019-04-25T14:15:00.844-0500",
+"event" : "addConfiguration",
+"timestamp" : "2019-08-05T16:30:13.806-0500",
 "value" : {
-"name" : "defaultConfig_v3",
-"assigned" : "2019-04-25T14:15:00.844-0500"
-}
-},
-{
-"event" : "addTable",
-"timestamp" : "2019-04-25T14:19:46.357-0500",
-"value" : {
-"name" : "defaultConfig_v5",
-"assigned" : "2019-04-25T14:19:46.357-0500"
+"name" : "defaultConfig_v8",
+"assigned" : "2019-08-05T16:30:13.806-0500"
 }
 }
 ],
-"created" : "2019-04-25T14:14:58.225-0500"
+"created" : "2019-08-05T16:30:12.519-0500"
 },
 "_id" : {
-"$oid" : "0864d4d25ff342e087a3947e"
+"$oid" : "e7f540736c284d668ccc9375"
 },
 "collection" : "DTCInterfaceTable",
 "aliases" : {

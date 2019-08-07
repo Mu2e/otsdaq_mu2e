@@ -31,6 +31,9 @@
 ],
 "defaultConfig_v7" : [
 "0e337e3a23fa434f9eee4da0"
+],
+"defaultConfig_v8" : [
+"0e337e3a23fa434f9eee4da0"
 ]
 },
 "entities.name" : {
@@ -68,6 +71,9 @@
 ],
 "defaultConfig_v7" : [
 "2019-05-09T10:47:17.421-0500"
+],
+"defaultConfig_v8" : [
+"2019-08-05T16:30:13.689-0500"
 ]
 }
 }
