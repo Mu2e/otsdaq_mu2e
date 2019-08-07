@@ -10,6 +10,8 @@
 				<COLUMN Type="YesNo" 	 Name="ConfigureClock" 	 StorageName="CONFIGURE_CLOCK" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-ROC" 	 Name="LinkToROCGroupTable" 	 StorageName="LINK_TO_ROC_GROUP_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,ROCInterfaceTable,NO_LINK"/>
 				<COLUMN Type="ChildLinkGroupID-ROC" 	 Name="LinkToROCGroupID" 	 StorageName="LINK_TO_ROC_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-buffer" 	 Name="LinkToDataBufferTable" 	 StorageName="LINK_TO_DATA_BUFFER_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,DataBufferTable"/>
+				<COLUMN Type="ChildLinkUID-buffer" 	 Name="LinkToDataBufferUID" 	 StorageName="LINK_TO_DATA_BUFFER_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
