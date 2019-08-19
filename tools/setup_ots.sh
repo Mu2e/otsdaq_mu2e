@@ -176,6 +176,8 @@ fi
 echo 
 rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
 ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
+rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
 
 export OTS_OWNER=Mu2e
 
