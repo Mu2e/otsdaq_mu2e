@@ -205,9 +205,18 @@ echo
 echo -e "setup [${LINENO}]  \t     use 'kx' to kill otsdaq processes"
 echo
 
+#=============================
+#Trace setup and helpful commented lines:
 export TRACE_MSGMAX=0 #Activating TRACE
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
-tonMg 0-4  #hide output #enable trace to memory
+
+tonMg 0-4  #enable trace to memory
 tonSg 0-3  #enable trace to slow path (i.e. UDP)
 offSg 4-64 #apparently not turned off by default?
+
+#enable kernel trace to memory buffer:
+#+test -f /proc/trace/buffer && { export TRACE_FILE=/proc/trace/buffer; tlvls | grep 'KERNEL 0xffffffff00ffffff' >/dev/null || { tonMg 0-63; toffM 24-31 -nKERNEL; }; }
+
+#end Trace helpful info
+#============================

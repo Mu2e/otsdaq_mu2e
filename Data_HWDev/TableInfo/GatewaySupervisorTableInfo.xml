@@ -6,6 +6,7 @@
 				<COLUMN Type="Data" 	 Name="NumberOfStateMachineBroadcastThreads" 	 StorageName="NUMBER_OF_STATE_MACHINE_BROADCAST_THREADS" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-FSM" 	 Name="LinkToStateMachineTable" 	 StorageName="LINK_TO_STATE_MACHINE_TABLE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLinkGroupID-FSM" 	 Name="StateMachineGroupID" 	 StorageName="STATE_MACHINE_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="EnableApplicationStatusMonitoring" 	 StorageName="ENABLE_APPLICATION_STATUS_MONITORING" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="YesNo" 	 Name="EnableStateChangesOverUDP" 	 StorageName="ENABLE_STATE_CHANGES_OVER_UDP" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="IPAddressForStateChangesOverUDP" 	 StorageName="IP_ADDRESS_FOR_STATE_CHANGES_OVER_UDP" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="PortForStateChangesOverUDP" 	 StorageName="PORT_FOR_STATE_CHANGES_OVER_UDP" 		DataType="NUMBER" 		DataChoices=""/>
