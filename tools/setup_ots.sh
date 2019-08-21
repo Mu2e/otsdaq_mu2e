@@ -208,5 +208,6 @@ echo
 export TRACE_MSGMAX=0 #Activating TRACE
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
-tonMg 0-4 &>/dev/null 2>&1 #hide output #enable trace to memory
-tonSg 0-3 &>/dev/null 2>&1 #hide output #enable trace to slow path (i.e. UDP)
+tonMg 0-4  #hide output #enable trace to memory
+tonSg 0-3  #enable trace to slow path (i.e. UDP)
+offSg 4-64 #apparently not turned off by default?
