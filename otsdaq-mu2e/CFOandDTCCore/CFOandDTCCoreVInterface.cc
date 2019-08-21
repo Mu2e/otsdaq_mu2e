@@ -13,7 +13,7 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
     const std::string&       interfaceUID,
     const ConfigurationTree& theXDAQContextConfigTree,
     const std::string&       interfaceConfigurationPath)
-    : FEProducerVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
+    : FEVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
  //   , thisDTC_(0)
  //   , EmulatedCFO_(0)
 {
