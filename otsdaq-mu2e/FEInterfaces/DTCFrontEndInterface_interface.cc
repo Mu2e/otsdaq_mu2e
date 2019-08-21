@@ -88,11 +88,11 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
-	std::cout << "DTC arguments..." << std::endl;
-	std::cout << "dtc_ = " << dtc_ << std::endl;
-	std::cout << "rocMask = " << dtc_class_roc_mask << std::endl;
-	std::cout << "expectedDesignVersion = " << expectedDesignVersion << std::endl;
-	std::cout << "END END DTC arguments..." << std::endl;
+	__COUT__ << "DTC arguments..." << std::endl;
+	__COUTV__(dtc_);
+	__COUTV__(dtc_class_roc_mask);
+	__COUTV__ (expectedDesignVersion);
+	__COUT__ << "END END DTC arguments..." << std::endl;
 
 	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
 
