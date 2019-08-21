@@ -1,0 +1,129 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_PHYSICS_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1566232097,
+"COL_TYPES" : {
+"PHYSICS_UID" : "VARCHAR2",
+"ANALYZERS_LINK" : "VARCHAR2",
+"ANALYZERS_LINK_GROUP_ID" : "VARCHAR2",
+"PRODUCERS_LINK" : "VARCHAR2",
+"PRODUCERS_LINK_GROUP_ID" : "VARCHAR2",
+"FILTERS_LINK" : "VARCHAR2",
+"FILTERS_LINK_GROUP_ID" : "VARCHAR2",
+"PHYSICS_OTHER_PARAMETERS_LINK" : "VARCHAR2",
+"PHYSICS_OTHER_PARAMETERS_LINK_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-08-19T11:28:17.109-0500",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:28:17.110-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:28:17.110-0500"
+},
+{
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:23.687-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:17.110-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:28:17.110-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-08-19T11:28:17.110-0500",
+"value" : {
+"name" : "0",
+"assigned" : "2019-08-19T11:28:17.110-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-08-19T11:28:17.110-0500",
+"value" : {
+"name" : "ARTDAQPhysicsTable",
+"assigned" : "2019-08-19T11:28:17.110-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-08-19T11:28:17.110-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:28:17.110-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:23.687-0500",
+"value" : {
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:23.687-0500"
+}
+}
+],
+"created" : "2019-08-19T11:28:17.109-0500"
+},
+"_id" : {
+"$oid" : "9a49b090aa2b49a8bc454663"
+},
+"collection" : "ARTDAQPhysicsTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

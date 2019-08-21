@@ -12,7 +12,7 @@
 				<COLUMN Type="ChildLink-destinations" 	 Name="daqDestinationsLink" 	 StorageName="DAQ_DESTINATIONS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDestinationTable"/>
 				<COLUMN Type="ChildLinkGroupID-destinations" 	 Name="daqDestinationsLinkGroupID" 	 StorageName="DAQ_DESTINATIONS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-metrics" 	 Name="daqMetricsLink" 	 StorageName="DAQ_METRICS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQMetricTable"/>
-				<COLUMN Type="ChildLinkGroupID-metrics" 	 Name="daqMetricsLinkUID" 	 StorageName="DAQ_METRICS_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLinkGroupID-metrics" 	 Name="daqMetricsLinkGroupID" 	 StorageName="DAQ_METRICS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>

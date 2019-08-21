@@ -1,0 +1,129 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_OUTPUT_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1566232096,
+"COL_TYPES" : {
+"OUTPUT_GROUP_ID" : "VARCHAR2",
+"OUTPUT_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"OUTPUT_KEY" : "VARCHAR2",
+"OUTPUT_MODULE_TYPE" : "VARCHAR2",
+"OUTPUT_MODULE_PARAMETER_LINK" : "VARCHAR2",
+"OUTPUT_MODULE_PARAMETER_LINK_GROUP_ID" : "VARCHAR2",
+"OUTPUT_MODULE_DESTINATION_LINK" : "VARCHAR2",
+"OUTPUT_MODULE_DESTINATION_LINK_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-08-19T11:28:16.215-0500",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:28:16.215-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:28:16.215-0500"
+},
+{
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:22.430-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:16.215-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:28:16.215-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-08-19T11:28:16.215-0500",
+"value" : {
+"name" : "0",
+"assigned" : "2019-08-19T11:28:16.215-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-08-19T11:28:16.215-0500",
+"value" : {
+"name" : "ARTDAQOutputTable",
+"assigned" : "2019-08-19T11:28:16.215-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-08-19T11:28:16.215-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:28:16.215-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:22.430-0500",
+"value" : {
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:22.430-0500"
+}
+}
+],
+"created" : "2019-08-19T11:28:16.215-0500"
+},
+"_id" : {
+"$oid" : "8ccd43d77ffb4abdbe51b72b"
+},
+"collection" : "ARTDAQOutputTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -8,6 +8,7 @@
 				<COLUMN Type="Data" 	 Name="DeviceIndex" 	 StorageName="DEVICE_INDEX" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="YesNo" 	 Name="EmulateCFO" 	 StorageName="EMULATE_CFO" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="YesNo" 	 Name="ConfigureClock" 	 StorageName="CONFIGURE_CLOCK" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="YesNo" 	 Name="EnableROCConfigureStep" 	 StorageName="ENABLE_ROC_CONFIGURE_STEP" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-ROC" 	 Name="LinkToROCGroupTable" 	 StorageName="LINK_TO_ROC_GROUP_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,ROCInterfaceTable,NO_LINK"/>
 				<COLUMN Type="ChildLinkGroupID-ROC" 	 Name="LinkToROCGroupID" 	 StorageName="LINK_TO_ROC_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-buffer" 	 Name="LinkToDataBufferTable" 	 StorageName="LINK_TO_DATA_BUFFER_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,DataBufferTable"/>

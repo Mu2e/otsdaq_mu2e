@@ -1,96 +1,54 @@
 {
-"Command":"r:9140:00000080",
+"Command":"r:9100:00008000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:19:27 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Tue Aug 13 2019 15:23:14 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9140:00000080",
+"Command":"r:9100:40008000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:19:32 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Tue Aug 13 2019 15:28:11 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9118:00000000",
+"Command":"w:9100:a0000000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:02 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:02 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9124:000002FF",
+"Command":"w:9118:0000003f",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:03 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:02 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9128:00000100",
+"Command":"w:9100:00000000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:03 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:02 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9134:00000000",
+"Command":"w:9100:10000000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:03 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:03 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9138:00008080",
+"Command":"w:9100:30000000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:03 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:03 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:9140:00000080",
+"Command":"w:9100:10000000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:03 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:03 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#
 {
-"Command":"r:915c:0000C200",
+"Command":"w:9118:00000000",
 "Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:34:04 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:9118:00000000",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:21 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:9124:000002FF",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:21 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:9128:00000100",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:21 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:9134:00000000",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:21 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:9138:00008080",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:21 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:9140:00000080",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:22 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
-}#
-{
-"Command":"r:915c:0000C200",
-"Format":"hex:hex",
-"Time":"Thu Aug 01 2019 16:45:22 GMT-0500 (Central Daylight Time)",
-"Interfaces":"DTCFrontEndInterface:312:DTC1"
+"Time":"Thu Aug 15 2019 15:05:03 GMT-0500 (Central Daylight Time)",
+"Interfaces":"DTCFrontEndInterface:311:DTC0"
 }#

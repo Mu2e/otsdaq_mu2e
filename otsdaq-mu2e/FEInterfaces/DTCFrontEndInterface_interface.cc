@@ -1259,8 +1259,17 @@ void DTCFrontEndInterface::configure(void) try
 
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure ROCs"
 		                       << __E__);
-		for(auto& roc : rocs_)
-			roc.second->configure();
+		                       
+		                       
+		bool doConfigureROCs = false;
+		try
+		{
+			doConfigureROCs = Configurable::getSelfNode().getNode("EnableROCConfigureStep").getValue<bool>();
+		}
+		catch(...){		} //ignore missing field
+		if(doConfigureROCs)
+			for(auto& roc : rocs_)
+				roc.second->configure();
 
 		sleep(1);
 	}

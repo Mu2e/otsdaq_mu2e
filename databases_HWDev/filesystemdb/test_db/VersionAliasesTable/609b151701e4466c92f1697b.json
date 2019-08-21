@@ -170,6 +170,110 @@
 "name" : "TableEditWizBackbone_v12",
 "assigned" : "2019-04-24T13:28:26.631-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-06T15:20:39.680-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v13",
+"assigned" : "2019-08-06T15:20:39.680-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-06T15:27:27.939-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v14",
+"assigned" : "2019-08-06T15:27:27.939-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T15:22:28.183-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v15",
+"assigned" : "2019-08-07T15:22:28.183-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T15:28:32.785-0500",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v0",
+"assigned" : "2019-08-07T15:28:32.785-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T15:43:07.609-0500",
+"value" : {
+"name" : "GroupAliasTreeEditWizBackbone_v1",
+"assigned" : "2019-08-07T15:43:07.609-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:32.063-0500",
+"value" : {
+"name" : "TableEditWizBackbone_v16",
+"assigned" : "2019-08-19T11:28:32.063-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:44:20.233-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v0",
+"assigned" : "2019-08-19T11:44:20.233-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:45:39.404-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v1",
+"assigned" : "2019-08-19T11:45:39.404-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:46:30.939-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v2",
+"assigned" : "2019-08-19T11:46:30.939-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:50:04.997-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v3",
+"assigned" : "2019-08-19T11:50:04.997-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:50:47.527-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v4",
+"assigned" : "2019-08-19T11:50:47.527-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:52:21.962-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v5",
+"assigned" : "2019-08-19T11:52:21.962-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T15:58:22.583-0500",
+"value" : {
+"name" : "GroupAliasWizBackbone_v6",
+"assigned" : "2019-08-19T15:58:22.583-0500"
+}
 }
 ],
 "created" : "2019-04-08T12:21:32.932-0500"
@@ -229,6 +333,60 @@
 {
 "name" : "TableEditWizBackbone_v12",
 "assigned" : "2019-04-24T13:28:26.631-0500"
+}
+],
+"configurations" : [
+{
+"name" : "TableEditWizBackbone_v13",
+"assigned" : "2019-08-06T15:20:39.680-0500"
+},
+{
+"name" : "TableEditWizBackbone_v14",
+"assigned" : "2019-08-06T15:27:27.939-0500"
+},
+{
+"name" : "TableEditWizBackbone_v15",
+"assigned" : "2019-08-07T15:22:28.183-0500"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v0",
+"assigned" : "2019-08-07T15:28:32.785-0500"
+},
+{
+"name" : "GroupAliasTreeEditWizBackbone_v1",
+"assigned" : "2019-08-07T15:43:07.609-0500"
+},
+{
+"name" : "TableEditWizBackbone_v16",
+"assigned" : "2019-08-19T11:28:32.063-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v0",
+"assigned" : "2019-08-19T11:44:20.233-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v1",
+"assigned" : "2019-08-19T11:45:39.404-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v2",
+"assigned" : "2019-08-19T11:46:30.939-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v3",
+"assigned" : "2019-08-19T11:50:04.997-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v4",
+"assigned" : "2019-08-19T11:50:47.527-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v5",
+"assigned" : "2019-08-19T11:52:21.962-0500"
+},
+{
+"name" : "GroupAliasWizBackbone_v6",
+"assigned" : "2019-08-19T15:58:22.583-0500"
 }
 ]
 }
