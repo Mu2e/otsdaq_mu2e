@@ -178,6 +178,8 @@ rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
 ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
 rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
 ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
+rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
 
 export OTS_OWNER=Mu2e
 
@@ -185,7 +187,7 @@ export USER_DATA="/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data$
 export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots${otsPathAppend}/srcs/${repository}/databases${userdataappend}/filesystemdb/test_db"
 export OTSDAQ_DATA="/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/OutputData"
 export USER_WEB_PATH=/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/UserWebGUI
-offlineFhiclDir=/mu2e/ups/offline/trig_0_4_1/fcl
+offlineFhiclDir=/mu2e/ups/offline/trig_0_4_2/fcl
 export FHICL_FILE_PATH=$FHICL_FILE_PATH:$USER_DATA:$offlineFhiclDir
 
 echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
