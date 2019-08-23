@@ -1,0 +1,134 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_AGGREGATOR_DAQ_PARAMETER_TABLE",
+"COMMENT" : "Uploaded table version",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1566231817,
+"COL_TYPES" : {
+"DAQ_PARAMETER_GROUP_ID" : "VARCHAR2",
+"DAQ_PARAMETER_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"DAQ_PARAMETER_KEY" : "VARCHAR2",
+"DAQ_PARAMETER_VALUE" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"DAQ_PARAMETER_GROUP_ID" : "",
+"DAQ_PARAMETER_UID" : "DEFAULT",
+"STATUS" : "Off",
+"DAQ_PARAMETER_KEY" : "DEFAULT",
+"DAQ_PARAMETER_VALUE" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1566231817"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-08-19T11:23:37.531-0500",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:23:37.532-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:23:37.532-0500"
+},
+{
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:19.651-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:23:37.532-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:23:37.532-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-08-19T11:23:37.532-0500",
+"value" : {
+"name" : "0",
+"assigned" : "2019-08-19T11:23:37.532-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-08-19T11:23:37.532-0500",
+"value" : {
+"name" : "ARTDAQAggregatorDaqParameterTable",
+"assigned" : "2019-08-19T11:23:37.532-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-08-19T11:23:37.532-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:23:37.532-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:19.651-0500",
+"value" : {
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:19.651-0500"
+}
+}
+],
+"created" : "2019-08-19T11:23:37.531-0500"
+},
+"_id" : {
+"$oid" : "c57b66cb953c45ad833d9c8e"
+},
+"collection" : "ARTDAQAggregatorDaqParameterTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -9,13 +9,13 @@
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
-#include "otsdaq-core/FECore/FEProducerVInterface.h"
+#include "otsdaq-core/FECore/FEVInterface.h"
 #include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
 
 namespace ots
 {
 
-class CFOandDTCCoreVInterface : public FEProducerVInterface
+class CFOandDTCCoreVInterface : public FEVInterface
 {
 	// clang-format off
   public:

@@ -27,7 +27,7 @@ if [ $userinput == "sync" ]; then
 elif [ $userinput == "stm" ]; then
     export OTS_MAIN_PORT=3035
     export OTS_WIZ_MODE_MAIN_PORT=3035
-    export CONSOLE_SUPERVISOR_IP=192.168.157.10
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2estm/test_stand"
     repository="otsdaq_mu2e_stm"
     userdataappend=""
@@ -41,7 +41,7 @@ elif [ $userinput == "stmdbtest" ]; then
 elif [ $userinput == "calo" ]; then
     export OTS_MAIN_PORT=3025
     export OTS_WIZ_MODE_MAIN_PORT=3025
-    export CONSOLE_SUPERVISOR_IP=192.168.157.10
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2ecalo/test_stand"
     repository="otsdaq_mu2e_calorimeter"
     userdataappend=""
@@ -62,14 +62,14 @@ elif [ $userinput == "shift" ]; then
 elif [ $userinput == "crv" ]; then
     export OTS_MAIN_PORT=3085
     export OTS_WIZ_MODE_MAIN_PORT=3085
-    export CONSOLE_SUPERVISOR_IP=192.168.157.10
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2ecrv/test_stand"
     repository="otsdaq_mu2e_crv"
     userdataappend=""
 elif [ $userinput == "trigger" ]; then
     export OTS_MAIN_PORT=3045
     export OTS_WIZ_MODE_MAIN_PORT=3045
-    export CONSOLE_SUPERVISOR_IP=192.168.157.10
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2etrig/test_stand"
     repository="otsdaq_mu2e_trigger"
     userdataappend=""
@@ -95,7 +95,7 @@ elif [ $userinput == "dcs" ]; then
 elif [ $userinput == "hwdev" ]; then
     export OTS_MAIN_PORT=3055
     export OTS_WIZ_MODE_MAIN_PORT=3055
-    export CONSOLE_SUPERVISOR_IP=192.168.157.6
+    export CONSOLE_SUPERVISOR_IP=192.168.157.5
     basepath="mu2ehwdev/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_HWDev"
@@ -207,8 +207,18 @@ echo
 echo -e "setup [${LINENO}]  \t     use 'kx' to kill otsdaq processes"
 echo
 
+#=============================
+#Trace setup and helpful commented lines:
 export TRACE_MSGMAX=0 #Activating TRACE
 #echo Turning on all memory tracing via: tonMg 0-63 
 #tonMg 0-63
-tonMg 0-4 &>/dev/null 2>&1 #hide output #enable trace to memory
-tonSg 0-3 &>/dev/null 2>&1 #hide output #enable trace to slow path (i.e. UDP)
+
+tonMg 0-4  #enable trace to memory
+tonSg 0-3  #enable trace to slow path (i.e. UDP)
+offSg 4-64 #apparently not turned off by default?
+
+#enable kernel trace to memory buffer:
+#+test -f /proc/trace/buffer && { export TRACE_FILE=/proc/trace/buffer; tlvls | grep 'KERNEL 0xffffffff00ffffff' >/dev/null || { tonMg 0-63; toffM 24-31 -nKERNEL; }; }
+
+#end Trace helpful info
+#============================

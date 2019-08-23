@@ -1,0 +1,162 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DATA_PROCESSOR_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1565209703,
+"COL_TYPES" : {
+"DATA_PROCESSOR_GROUP_ID" : "VARCHAR2",
+"PROCESSOR_UID" : "VARCHAR2",
+"PROCESSOR_TYPE" : "VARCHAR2",
+"PROCESSOR_PLUGIN_NAME" : "VARCHAR2",
+"LINK_TO_PROCESSOR_TABLE" : "VARCHAR2",
+"LINK_TO_PROCESSOR_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"DATA_PROCESSOR_GROUP_ID" : "DTC0_Buffer0_Processors",
+"PROCESSOR_UID" : "rawDataSaver0",
+"PROCESSOR_TYPE" : "Consumer",
+"PROCESSOR_PLUGIN_NAME" : "RawDataSaverConsumer",
+"LINK_TO_PROCESSOR_TABLE" : "RawDataSaverConsumerTable",
+"LINK_TO_PROCESSOR_UID" : "RAWSaver0",
+"STATUS" : "On",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1565209663"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-08-07T15:28:23.976-0500",
+"rawdata" : [
+
+]
+},
+"version" : "1",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-08-07T15:28:23.976-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-08-07T15:28:23.976-0500"
+},
+{
+"name" : "defaultConfig_v14",
+"assigned" : "2019-08-07T15:28:26.389-0500"
+},
+{
+"name" : "defaultConfig_v15",
+"assigned" : "2019-08-07T15:43:04.229-0500"
+},
+{
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:25.117-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T15:28:23.976-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-08-07T15:28:23.976-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-08-07T15:28:23.976-0500",
+"value" : {
+"name" : "1",
+"assigned" : "2019-08-07T15:28:23.976-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-08-07T15:28:23.976-0500",
+"value" : {
+"name" : "DataProcessorTable",
+"assigned" : "2019-08-07T15:28:23.976-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-08-07T15:28:23.976-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-08-07T15:28:23.976-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T15:28:26.389-0500",
+"value" : {
+"name" : "defaultConfig_v14",
+"assigned" : "2019-08-07T15:28:26.389-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T15:43:04.229-0500",
+"value" : {
+"name" : "defaultConfig_v15",
+"assigned" : "2019-08-07T15:43:04.229-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:25.117-0500",
+"value" : {
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:25.117-0500"
+}
+}
+],
+"created" : "2019-08-07T15:28:23.976-0500"
+},
+"_id" : {
+"$oid" : "6b9e3ae3ec0e48f7b8ca8a2f"
+},
+"collection" : "DataProcessorTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

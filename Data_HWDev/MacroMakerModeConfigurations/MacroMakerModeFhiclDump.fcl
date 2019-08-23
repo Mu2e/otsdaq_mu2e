@@ -15,11 +15,12 @@ DTC0: {
 			EmulatorMode: 				"False"
 			LocationInChain: 				0
 			DeviceIndex: 				0
-			EmulateCFO: 				"No"
+			EmulateCFO: 				"Yes"
 			ConfigureClock: 				"Yes"
+			EnableROCConfigureStep: 				"No"
 			LinkToROCGroupTable_ROCInterfaceTable 	{
 				DTC0_ROC0_Polarfire: 	{
-					Status: 						"Off"
+					Status: 						"On"
 					ROCGroupID: 						"DTC0ROCs"
 					ROCInterfacePluginName: 						"ROCPolarFireCoreInterface"
 					linkID: 						0
@@ -102,120 +103,141 @@ DTC0: {
 						} //end STMPedanticParamSet3 record
 					} //end SubsystemSTMParametersTable link record
 				} //end DTC0_ROC5_STM3 record
-			} //end DTC0 record
-		} //end DTCInterfaceTable link record
-	} //end DTC0
-
-	DTC1: {
-		FEInterfacePluginName: 	"DTCFrontEndInterface"
-		LinkToFETypeTable_DTCInterfaceTable 	{
-			DTC1: 	{
-				EmulatorMode: 					"False"
-				LocationInChain: 					1
-				DeviceIndex: 					0
-				EmulateCFO: 					"Yes"
-				ConfigureClock: 					"Yes"
-				LinkToROCGroupTable_ROCInterfaceTable 	{
-					DTC1_ROC0_Polarfire: 	{
-						Status: 							"On"
-						ROCGroupID: 							"DTC1ROCs"
-						ROCInterfacePluginName: 							"ROCPolarFireCoreInterface"
-						linkID: 							0
-						EventWindowDelayOffset: 							1
-						EmulateInDTCHardware: 							"False"
-					} //end DTC1_ROC0_Polarfire record
-					DTC1_ROC1_PolarFire: 	{
-						Status: 							"Off"
-						ROCGroupID: 							"DTC1ROCs"
-						ROCInterfacePluginName: 							"ROCPolarFireCoreInterface"
-						linkID: 							1
-						EventWindowDelayOffset: 							11
-						EmulateInDTCHardware: 							"False"
-					} //end DTC1_ROC1_PolarFire record
-					DTC1_ROC2_STM0: 	{
-						Status: 							"Off"
-						ROCGroupID: 							"DTC1ROCs"
-						ROCInterfacePluginName: 							"ROCStoppingTargetMonitorInterface"
-						linkID: 							2
-						EventWindowDelayOffset: 							21
-						EmulateInDTCHardware: 							"False"
-						ROCTypeLinkTable_SubsystemSTMParametersTable 	{
-							STMPedanticParamSet0: 	{
-								tempColumn2: 									"DEFAULT"
-								tempColumn1: 									"DEFAULT"
-								NumberParam1: 									"42"
-								TrueFalseParam2: 									"True"
-								MustBeUniqueParam3: 									"DifferentFromOtherRows0"
-							} //end STMPedanticParamSet0 record
-						} //end SubsystemSTMParametersTable link record
-					} //end DTC1_ROC2_STM0 record
-					DTC1_ROC3_STM1: 	{
-						Status: 							"Off"
-						ROCGroupID: 							"DTC1ROCs"
-						ROCInterfacePluginName: 							"ROCStoppingTargetMonitorInterface"
-						linkID: 							3
-						EventWindowDelayOffset: 							31
-						EmulateInDTCHardware: 							"False"
-						ROCTypeLinkTable_SubsystemSTMParametersTable 	{
-							STMPedanticParamSet1: 	{
-								tempColumn2: 									"DEFAULT"
-								tempColumn1: 									"DEFAULT"
-								NumberParam1: 									"${HISTSIZE}+3"
-								TrueFalseParam2: 									"True"
-								MustBeUniqueParam3: 									"DifferentFromOtherRows1"
-							} //end STMPedanticParamSet1 record
-						} //end SubsystemSTMParametersTable link record
-					} //end DTC1_ROC3_STM1 record
-					DTC1_ROC4_STM2: 	{
-						Status: 							"Off"
-						ROCGroupID: 							"DTC1ROCs"
-						ROCInterfacePluginName: 							"ROCStoppingTargetMonitorInterface"
-						linkID: 							4
-						EventWindowDelayOffset: 							41
-						EmulateInDTCHardware: 							"False"
-						ROCTypeLinkTable_SubsystemSTMParametersTable 	{
-							STMPedanticParamSet2: 	{
-								tempColumn2: 									"DEFAULT"
-								tempColumn1: 									"DEFAULT"
-								NumberParam1: 									"b1011"
-								TrueFalseParam2: 									"False"
-								MustBeUniqueParam3: 									"DifferentFromOtherRows2"
-							} //end STMPedanticParamSet2 record
-						} //end SubsystemSTMParametersTable link record
-					} //end DTC1_ROC4_STM2 record
-					DTC1_ROC5_STM3: 	{
-						Status: 							"Off"
-						ROCGroupID: 							"DTC1ROCs"
-						ROCInterfacePluginName: 							"ROCStoppingTargetMonitorInterface"
-						linkID: 							5
-						EventWindowDelayOffset: 							51
-						EmulateInDTCHardware: 							"False"
-						ROCTypeLinkTable_SubsystemSTMParametersTable 	{
-							STMPedanticParamSet3: 	{
-								tempColumn2: 									"DEFAULT"
-								tempColumn1: 									"DEFAULT"
-								NumberParam1: 									"0x10"
-								TrueFalseParam2: 									"False"
-								MustBeUniqueParam3: 									"DifferentFromOtherRows3"
-							} //end STMPedanticParamSet3 record
-						} //end SubsystemSTMParametersTable link record
-					} //end DTC1_ROC5_STM3 record
-				} //end DTC1 record
+				LinkToDataBufferTable_DataBufferTable 	{
+					dtc0Buffer0: 	{
+						DataBufferGroupID: 							"dtc0DataBuffers"
+						LinkToDataProcessorTable_DataProcessorTable 	{
+							rawDataSaver0: 	{
+								DataProcessorGroupID: 									"DTC0_Buffer0_Processors"
+								ProcessorType: 									"Consumer"
+								ProcessorPluginName: 									"RawDataSaverConsumer"
+								LinkToProcessorTable_RawDataSaverConsumerTable 	{
+									RAWSaver0: 	{
+										FilePath: 											"${OTSDAQ_DATA}"
+										RadixFileName: 											"Run"
+										MaxFileSize: 											0
+									} //end RAWSaver0 record
+								} //end RawDataSaverConsumerTable link record
+								Status: 									"On"
+							} //end rawDataSaver0 record
+							Status: 								"On"
+						} //end dtc0Buffer0 record
+					} //end DataBufferTable link record
+				} //end DTC0 record
 			} //end DTCInterfaceTable link record
-		} //end DTC1
+		} //end DTC0
 
-		CAPTAN0: {
-			FEInterfacePluginName: 	"CAPTANSignalGenerator"
-			LinkToFETypeTable_FEOtsUDPTemplateInterfaceTable 	{
-				OtsInterface0: 	{
-					FirmwareVersion: 						-1
-					InterfaceIPAddress: 						"192.168.133.7"
-					InterfacePort: 						2001
-					HostIPAddress: 						"192.168.157.6"
-					HostPort: 						4001
-					StreamToIPAddress: 						"192.168.157.6"
-					StreamToPort: 						4005
-				} //end OtsInterface0 record
-			} //end FEOtsUDPTemplateInterfaceTable link record
-		} //end CAPTAN0
+		DTC1: {
+			FEInterfacePluginName: 	"DTCFrontEndInterface"
+			LinkToFETypeTable_DTCInterfaceTable 	{
+				DTC1: 	{
+					EmulatorMode: 						"False"
+					LocationInChain: 						1
+					DeviceIndex: 						0
+					EmulateCFO: 						"Yes"
+					ConfigureClock: 						"Yes"
+					EnableROCConfigureStep: 						"No"
+					LinkToROCGroupTable_ROCInterfaceTable 	{
+						DTC1_ROC0_Polarfire: 	{
+							Status: 								"Off"
+							ROCGroupID: 								"DTC1ROCs"
+							ROCInterfacePluginName: 								"ROCPolarFireCoreInterface"
+							linkID: 								0
+							EventWindowDelayOffset: 								1
+							EmulateInDTCHardware: 								"False"
+						} //end DTC1_ROC0_Polarfire record
+						DTC1_ROC1_PolarFire: 	{
+							Status: 								"Off"
+							ROCGroupID: 								"DTC1ROCs"
+							ROCInterfacePluginName: 								"ROCPolarFireCoreInterface"
+							linkID: 								1
+							EventWindowDelayOffset: 								11
+							EmulateInDTCHardware: 								"False"
+						} //end DTC1_ROC1_PolarFire record
+						DTC1_ROC2_STM0: 	{
+							Status: 								"Off"
+							ROCGroupID: 								"DTC1ROCs"
+							ROCInterfacePluginName: 								"ROCStoppingTargetMonitorInterface"
+							linkID: 								2
+							EventWindowDelayOffset: 								21
+							EmulateInDTCHardware: 								"False"
+							ROCTypeLinkTable_SubsystemSTMParametersTable 	{
+								STMPedanticParamSet0: 	{
+									tempColumn2: 										"DEFAULT"
+									tempColumn1: 										"DEFAULT"
+									NumberParam1: 										"42"
+									TrueFalseParam2: 										"True"
+									MustBeUniqueParam3: 										"DifferentFromOtherRows0"
+								} //end STMPedanticParamSet0 record
+							} //end SubsystemSTMParametersTable link record
+						} //end DTC1_ROC2_STM0 record
+						DTC1_ROC3_STM1: 	{
+							Status: 								"Off"
+							ROCGroupID: 								"DTC1ROCs"
+							ROCInterfacePluginName: 								"ROCStoppingTargetMonitorInterface"
+							linkID: 								3
+							EventWindowDelayOffset: 								31
+							EmulateInDTCHardware: 								"False"
+							ROCTypeLinkTable_SubsystemSTMParametersTable 	{
+								STMPedanticParamSet1: 	{
+									tempColumn2: 										"DEFAULT"
+									tempColumn1: 										"DEFAULT"
+									NumberParam1: 										"${HISTSIZE}+3"
+									TrueFalseParam2: 										"True"
+									MustBeUniqueParam3: 										"DifferentFromOtherRows1"
+								} //end STMPedanticParamSet1 record
+							} //end SubsystemSTMParametersTable link record
+						} //end DTC1_ROC3_STM1 record
+						DTC1_ROC4_STM2: 	{
+							Status: 								"Off"
+							ROCGroupID: 								"DTC1ROCs"
+							ROCInterfacePluginName: 								"ROCStoppingTargetMonitorInterface"
+							linkID: 								4
+							EventWindowDelayOffset: 								41
+							EmulateInDTCHardware: 								"False"
+							ROCTypeLinkTable_SubsystemSTMParametersTable 	{
+								STMPedanticParamSet2: 	{
+									tempColumn2: 										"DEFAULT"
+									tempColumn1: 										"DEFAULT"
+									NumberParam1: 										"b1011"
+									TrueFalseParam2: 										"False"
+									MustBeUniqueParam3: 										"DifferentFromOtherRows2"
+								} //end STMPedanticParamSet2 record
+							} //end SubsystemSTMParametersTable link record
+						} //end DTC1_ROC4_STM2 record
+						DTC1_ROC5_STM3: 	{
+							Status: 								"Off"
+							ROCGroupID: 								"DTC1ROCs"
+							ROCInterfacePluginName: 								"ROCStoppingTargetMonitorInterface"
+							linkID: 								5
+							EventWindowDelayOffset: 								51
+							EmulateInDTCHardware: 								"False"
+							ROCTypeLinkTable_SubsystemSTMParametersTable 	{
+								STMPedanticParamSet3: 	{
+									tempColumn2: 										"DEFAULT"
+									tempColumn1: 										"DEFAULT"
+									NumberParam1: 										"0x10"
+									TrueFalseParam2: 										"False"
+									MustBeUniqueParam3: 										"DifferentFromOtherRows3"
+								} //end STMPedanticParamSet3 record
+							} //end SubsystemSTMParametersTable link record
+						} //end DTC1_ROC5_STM3 record
+					} //end DTC1 record
+				} //end DTCInterfaceTable link record
+			} //end DTC1
+
+			CAPTAN0: {
+				FEInterfacePluginName: 	"CAPTANSignalGenerator"
+				LinkToFETypeTable_FEOtsUDPTemplateInterfaceTable 	{
+					OtsInterface0: 	{
+						FirmwareVersion: 							-1
+						InterfaceIPAddress: 							"192.168.133.7"
+						InterfacePort: 							2001
+						HostIPAddress: 							"192.168.157.6"
+						HostPort: 							4001
+						StreamToIPAddress: 							"192.168.157.6"
+						StreamToPort: 							4005
+					} //end OtsInterface0 record
+				} //end FEOtsUDPTemplateInterfaceTable link record
+			} //end CAPTAN0
 

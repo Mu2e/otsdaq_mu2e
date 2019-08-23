@@ -40,7 +40,7 @@ uint16_t ROCPolarFireCoreInterface::readEmulatorRegister(uint16_t address)
 }  // end readEmulatorRegister()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::writeROCRegister(uint16_t address, uint16_t data_to_write)
+void ROCPolarFireCoreInterface::writeROCRegister(DTCLib::roc_address_t address, DTCLib::roc_data_t data_to_write)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << data_to_write
@@ -53,24 +53,24 @@ void ROCPolarFireCoreInterface::writeROCRegister(uint16_t address, uint16_t data
 }  // end writeROCRegister()
 
 //==================================================================================================
-uint16_t ROCPolarFireCoreInterface::readROCRegister(uint16_t address)
+DTCLib::roc_data_t ROCPolarFireCoreInterface::readROCRegister(DTCLib::roc_address_t address)
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
-	            << ", address = " << address << __E__;
+	            << ", address = 0x" << std::hex << address << __E__;
 
-	int read_data = 0;
-
-	try
-	{
-		read_data = thisDTC_->ReadROCRegister(linkID_, address, 1);
-	}
-	catch(...)
-	{
-		__FE_COUT_ERR__ << "DTC failed DCS read" << __E__;
-		read_data = -999;
-	}
-
-	return read_data;
+	DTCLib::roc_data_t read_data = 0;
+	return thisDTC_->ReadROCRegister(linkID_, address, 100 /* retries */);
+//	try
+//	{
+//		read_data = thisDTC_->ReadROCRegister(linkID_, address, 1);
+//	}
+//	catch(...)
+//	{
+//		__FE_COUT_ERR__ << "DTC failed DCS read" << __E__;
+//		read_data = -999;
+//	}
+//
+//	return read_data;
 }  // end readROCRegister()
 
 //==================================================================================================

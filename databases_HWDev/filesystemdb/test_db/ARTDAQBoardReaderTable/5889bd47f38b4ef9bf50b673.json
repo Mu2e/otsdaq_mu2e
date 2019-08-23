@@ -1,0 +1,131 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_BOARD_READER_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1566232095,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"OFFSET_PORT" : "NUMBER",
+"DAQ_GENERATOR_PLUGIN_TYPE" : "VARCHAR2",
+"DAQ_GENERATOR_FRAGMENT_TYPE" : "VARCHAR2",
+"DAQ_PARAMETERS_LINK" : "VARCHAR2",
+"DAQ_PARAMETERS_LINK_GROUP_ID" : "VARCHAR2",
+"DAQ_DESTINATIONS_LINK" : "VARCHAR2",
+"DAQ_DESTINATIONS_LINK_GROUP_ID" : "VARCHAR2",
+"DAQ_METRICS_LINK" : "VARCHAR2",
+"DAQ_METRICS_LINK_UID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-08-19T11:28:15.266-0500",
+"rawdata" : [
+
+]
+},
+"version" : "0",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:28:15.266-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:28:15.266-0500"
+},
+{
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:20.504-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:15.266-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-08-19T11:28:15.266-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-08-19T11:28:15.266-0500",
+"value" : {
+"name" : "0",
+"assigned" : "2019-08-19T11:28:15.266-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-08-19T11:28:15.266-0500",
+"value" : {
+"name" : "ARTDAQBoardReaderTable",
+"assigned" : "2019-08-19T11:28:15.266-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-08-19T11:28:15.266-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-08-19T11:28:15.266-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-19T11:28:20.504-0500",
+"value" : {
+"name" : "defaultConfig_v16",
+"assigned" : "2019-08-19T11:28:20.504-0500"
+}
+}
+],
+"created" : "2019-08-19T11:28:15.266-0500"
+},
+"_id" : {
+"$oid" : "5889bd47f38b4ef9bf50b673"
+},
+"collection" : "ARTDAQBoardReaderTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

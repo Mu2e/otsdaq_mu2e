@@ -13,7 +13,7 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
     const std::string&       interfaceUID,
     const ConfigurationTree& theXDAQContextConfigTree,
     const std::string&       interfaceConfigurationPath)
-    : FEProducerVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
+    : FEVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
  //   , thisDTC_(0)
  //   , EmulatedCFO_(0)
 {
@@ -595,7 +595,7 @@ void CFOandDTCCoreVInterface::universalRead(char* address, char* returnValue)
 		return;
 	}
 	
-	(*((dtc_address_t*)returnValue)) = registerRead(*((dtc_address_t*)address));
+	(*((dtc_data_t*)returnValue)) = registerRead(*((dtc_address_t*)address));
 	
 	// __COUTV__(reg_access_.val);
 	
@@ -616,6 +616,8 @@ dtc_data_t CFOandDTCCoreVInterface::registerRead(const dtc_address_t address)
 		       << __E__;
 		__SS_THROW__;
 	}
+	
+	__COUT__ << "reg_access_.val 0x" << std::hex << reg_access_.val << __E__;
 
 	return reg_access_.val;
 	
