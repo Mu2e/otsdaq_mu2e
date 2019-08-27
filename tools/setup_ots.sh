@@ -188,7 +188,9 @@ export ARTDAQ_DATABASE_URI="filesystemdb:///home/${basepath}/ots${otsPathAppend}
 export OTSDAQ_DATA="/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/OutputData"
 export USER_WEB_PATH=/home/${basepath}/ots${otsPathAppend}/srcs/${repository}/UserWebGUI
 offlineFhiclDir=/mu2e/ups/offline/trig_0_4_2/fcl
-export FHICL_FILE_PATH=$FHICL_FILE_PATH:$USER_DATA:$offlineFhiclDir
+triggerEpilogDir=/home/${basepath}/ots/srcs/otsdaq_mu2e_trigger/Data/TriggerConfigurations
+dataFilesDir=/mu2e/DataFiles
+export FHICL_FILE_PATH=$FHICL_FILE_PATH:$USER_DATA:$offlineFhiclDir:$triggerEpilogDir:$dataFilesDir
 
 echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
 echo -e "setup [${LINENO}]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"
