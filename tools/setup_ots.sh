@@ -56,14 +56,14 @@ elif [ $userinput == "tracker" ]; then
 elif [ $userinput == "shift" ]; then
     export OTS_MAIN_PORT=3075
     export OTS_WIZ_MODE_MAIN_PORT=3075
-    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
     basepath="mu2eshift/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_shift"
 elif [ $userinput == "crv" ]; then
     export OTS_MAIN_PORT=3085
     export OTS_WIZ_MODE_MAIN_PORT=3085
-    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
     basepath="mu2ecrv/test_stand"
     repository="otsdaq_mu2e_crv"
     userdataappend=""
