@@ -60,6 +60,20 @@ elif [ $userinput == "shift" ]; then
     basepath="mu2eshift/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_shift"
+elif [ $userinput == "shift1" ]; then
+    export OTS_MAIN_PORT=4015
+    export OTS_WIZ_MODE_MAIN_PORT=4015
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
+    basepath="mu2eshift/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend="_shift1"
+elif [ $userinput == "shift2" ]; then
+    export OTS_MAIN_PORT=4025
+    export OTS_WIZ_MODE_MAIN_PORT=4025
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
+    basepath="mu2eshift/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend="_shift2"
 elif [ $userinput == "crv" ]; then
     export OTS_MAIN_PORT=3085
     export OTS_WIZ_MODE_MAIN_PORT=3085
@@ -175,12 +189,12 @@ else
 fi
 
 echo 
-rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
-ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
-rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
-ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
-rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
-ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
+rm -rf /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/Logs
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/Logs
+rm -rf /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
+rm -rf /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
 
 export OTS_OWNER=Mu2e
 
