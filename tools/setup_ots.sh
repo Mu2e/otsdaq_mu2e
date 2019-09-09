@@ -1,3 +1,4 @@
+#!/bin/sh
 echo # This script is intended to be sourced.
 
 userinput=$1
@@ -55,14 +56,14 @@ elif [ $userinput == "tracker" ]; then
 elif [ $userinput == "shift" ]; then
     export OTS_MAIN_PORT=3075
     export OTS_WIZ_MODE_MAIN_PORT=3075
-    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
     basepath="mu2eshift/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_shift"
 elif [ $userinput == "crv" ]; then
     export OTS_MAIN_PORT=3085
     export OTS_WIZ_MODE_MAIN_PORT=3085
-    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
     basepath="mu2ecrv/test_stand"
     repository="otsdaq_mu2e_crv"
     userdataappend=""
@@ -218,10 +219,14 @@ export TRACE_MSGMAX=0 #Activating TRACE
 
 tonMg 0-4  #enable trace to memory
 tonSg 0-3  #enable trace to slow path (i.e. UDP)
-offSg 4-64 #apparently not turned off by default?
+toffSg 4-64 #apparently not turned off by default?
 
 #enable kernel trace to memory buffer:
 #+test -f /proc/trace/buffer && { export TRACE_FILE=/proc/trace/buffer; tlvls | grep 'KERNEL 0xffffffff00ffffff' >/dev/null || { tonMg 0-63; toffM 24-31 -nKERNEL; }; }
+
+#tlvls #to see what is enabled by name
+#tonS -N DTC* 0-63 #to enable by name
+#tshow | grep DTC #to see memory printouts by name
 
 #end Trace helpful info
 #============================
