@@ -426,7 +426,7 @@ void CFOFrontEndInterface::configure(void)
 	// links in the chain of CFO->DTC0->DTC1->...DTCN
 
 	const int number_of_system_configs =
-	    -1;  // if < 0, keep trying until links are OK.
+	    2;  // if < 0, keep trying until links are OK.
 	         // If > 0, go through configuration steps this many times
 	int       config_clock = configure_clock_;  // 1 = yes, 0 = no
 	const int reset_tx     = 1;                 // 1 = yes, 0 = no

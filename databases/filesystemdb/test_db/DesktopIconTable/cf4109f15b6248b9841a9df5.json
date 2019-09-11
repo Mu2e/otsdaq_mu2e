@@ -1,0 +1,145 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DESKTOP_ICON_TABLE",
+"COMMENT" : "Default Desktop Icons for First Demo Tutorial.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1565195732,
+"COL_TYPES" : {
+"ICON_NAME" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"CAPTION" : "VARCHAR2",
+"ALTERNATE_TEXT" : "VARCHAR2",
+"FORCE_ONLY_ONE_INSTANCE" : "VARCHAR2",
+"REQUIRED_PERMISSION_LEVEL" : "VARCHAR2",
+"IMAGE_URL" : "VARCHAR2",
+"WINDOW_CONTENT_URL" : "VARCHAR2",
+"LINK_TO_APPLICATION_TABLE" : "VARCHAR2",
+"LINK_TO_APPLICATION_UID" : "VARCHAR2",
+"LINK_TO_PARAMETER_TABLE" : "VARCHAR2",
+"LINK_TO_PARAMETER_GROUP_ID" : "VARCHAR2",
+"FOLDER_PATH" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-08-07T11:35:33.001-0500",
+"rawdata" : [
+
+]
+},
+"version" : "3",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-08-07T11:35:33.003-0500"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-08-07T11:35:33.002-0500"
+},
+{
+"name" : "testContext_v12",
+"assigned" : "2019-08-07T11:35:33.817-0500"
+},
+{
+"name" : "testContext_v13",
+"assigned" : "2019-08-07T11:35:55.044-0500"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:33.002-0500",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-08-07T11:35:33.002-0500"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-08-07T11:35:33.002-0500",
+"value" : {
+"name" : "3",
+"assigned" : "2019-08-07T11:35:33.002-0500"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-08-07T11:35:33.002-0500",
+"value" : {
+"name" : "DesktopIconTable",
+"assigned" : "2019-08-07T11:35:33.002-0500"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-08-07T11:35:33.003-0500",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-08-07T11:35:33.003-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:33.817-0500",
+"value" : {
+"name" : "testContext_v12",
+"assigned" : "2019-08-07T11:35:33.817-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:55.044-0500",
+"value" : {
+"name" : "testContext_v13",
+"assigned" : "2019-08-07T11:35:55.044-0500"
+}
+}
+],
+"created" : "2019-08-07T11:35:33.001-0500"
+},
+"_id" : {
+"$oid" : "cf4109f15b6248b9841a9df5"
+},
+"collection" : "DesktopIconTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -13,7 +13,7 @@
 				<COLUMN Type="ChildLink-app" 	 Name="LinkToApplicationTable" 	 StorageName="LINK_TO_APPLICATION_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,XDAQApplicationTable"/>
 				<COLUMN Type="ChildLinkUID-app" 	 Name="LinkToApplicationUID" 	 StorageName="LINK_TO_APPLICATION_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-windowParameters" 	 Name="LinkToParameterTable" 	 StorageName="LINK_TO_PARAMETER_TABLE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,DesktopWindowParameterTable"/>
-				<COLUMN Type="ChildLinkGroupID-windowParameters" 	 Name="LinkToParameterUID" 	 StorageName="LINK_TO_PARAMETER_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLinkGroupID-windowParameters" 	 Name="LinkToParameterGroupID" 	 StorageName="LINK_TO_PARAMETER_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="FolderPath" 	 StorageName="FOLDER_PATH" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>

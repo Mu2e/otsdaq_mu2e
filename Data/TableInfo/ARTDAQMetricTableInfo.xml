@@ -8,7 +8,7 @@
 				<COLUMN Type="Data" 	 Name="metricKey" 	 StorageName="METRIC_KEY" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="metricPluginType" 	 StorageName="METRIC_PLUGIN_TYPE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="metricLevel" 	 StorageName="METRIC_LEVEL" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-metricParameters" 	 Name="metricParametersLink" 	 StorageName="METRIC_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-metricParameters" 	 Name="metricParametersLink" 	 StorageName="METRIC_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQMetricParameterTable"/>
 				<COLUMN Type="ChildLinkGroupID-metricParameters" 	 Name="metricParametersLinkGroupID" 	 StorageName="METRIC_PARAMETERS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>

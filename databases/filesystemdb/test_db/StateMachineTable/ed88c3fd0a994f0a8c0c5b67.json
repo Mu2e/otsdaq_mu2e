@@ -204,6 +204,78 @@
 "name" : "testContext_v8",
 "assigned" : "2019-05-09T10:46:19.155-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:34:20.601-0500",
+"value" : {
+"name" : "testContext_v9",
+"assigned" : "2019-08-07T09:34:20.601-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:40:46.615-0500",
+"value" : {
+"name" : "testContext_v10",
+"assigned" : "2019-08-07T09:40:46.615-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:46:02.849-0500",
+"value" : {
+"name" : "testContext_v11",
+"assigned" : "2019-08-07T09:46:02.849-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:34.367-0500",
+"value" : {
+"name" : "testContext_v12",
+"assigned" : "2019-08-07T11:35:34.367-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:55.527-0500",
+"value" : {
+"name" : "testContext_v13",
+"assigned" : "2019-08-07T11:35:55.527-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:46:52.864-0500",
+"value" : {
+"name" : "testContext_v14",
+"assigned" : "2019-08-07T11:46:52.864-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-09-10T16:32:20.391-0500",
+"value" : {
+"name" : "testContext_v15",
+"assigned" : "2019-09-10T16:32:20.391-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-09-11T12:19:33.826-0500",
+"value" : {
+"name" : "testContext_v16",
+"assigned" : "2019-09-11T12:19:33.826-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-09-11T12:41:41.453-0500",
+"value" : {
+"name" : "testContext_v17",
+"assigned" : "2019-09-11T12:41:41.453-0500"
+}
 }
 ],
 "created" : "2019-04-08T12:35:15.159-0500"
@@ -251,6 +323,44 @@
 {
 "name" : "testContext_v8",
 "assigned" : "2019-05-09T10:46:19.155-0500"
+}
+],
+"configurations" : [
+{
+"name" : "testContext_v9",
+"assigned" : "2019-08-07T09:34:20.601-0500"
+},
+{
+"name" : "testContext_v10",
+"assigned" : "2019-08-07T09:40:46.615-0500"
+},
+{
+"name" : "testContext_v11",
+"assigned" : "2019-08-07T09:46:02.849-0500"
+},
+{
+"name" : "testContext_v12",
+"assigned" : "2019-08-07T11:35:34.367-0500"
+},
+{
+"name" : "testContext_v13",
+"assigned" : "2019-08-07T11:35:55.527-0500"
+},
+{
+"name" : "testContext_v14",
+"assigned" : "2019-08-07T11:46:52.864-0500"
+},
+{
+"name" : "testContext_v15",
+"assigned" : "2019-09-10T16:32:20.391-0500"
+},
+{
+"name" : "testContext_v16",
+"assigned" : "2019-09-11T12:19:33.826-0500"
+},
+{
+"name" : "testContext_v17",
+"assigned" : "2019-09-11T12:41:41.453-0500"
 }
 ]
 }

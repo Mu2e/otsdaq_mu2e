@@ -118,6 +118,62 @@
 "name" : "testContext_v8",
 "assigned" : "2019-05-09T10:46:18.758-0500"
 }
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:34:20.465-0500",
+"value" : {
+"name" : "testContext_v9",
+"assigned" : "2019-08-07T09:34:20.465-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:40:46.555-0500",
+"value" : {
+"name" : "testContext_v10",
+"assigned" : "2019-08-07T09:40:46.555-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:46:02.721-0500",
+"value" : {
+"name" : "testContext_v11",
+"assigned" : "2019-08-07T09:46:02.721-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:34.241-0500",
+"value" : {
+"name" : "testContext_v12",
+"assigned" : "2019-08-07T11:35:34.241-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:35:55.409-0500",
+"value" : {
+"name" : "testContext_v13",
+"assigned" : "2019-08-07T11:35:55.409-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T11:46:52.811-0500",
+"value" : {
+"name" : "testContext_v14",
+"assigned" : "2019-08-07T11:46:52.811-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-09-10T16:32:20.145-0500",
+"value" : {
+"name" : "testContext_v15",
+"assigned" : "2019-09-10T16:32:20.145-0500"
+}
 }
 ],
 "created" : "2019-05-09T10:46:14.157-0500"
@@ -140,5 +196,35 @@
 "attachments" : [
 
 ],
-"configtype" : "notprovided"
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "testContext_v9",
+"assigned" : "2019-08-07T09:34:20.465-0500"
+},
+{
+"name" : "testContext_v10",
+"assigned" : "2019-08-07T09:40:46.555-0500"
+},
+{
+"name" : "testContext_v11",
+"assigned" : "2019-08-07T09:46:02.721-0500"
+},
+{
+"name" : "testContext_v12",
+"assigned" : "2019-08-07T11:35:34.241-0500"
+},
+{
+"name" : "testContext_v13",
+"assigned" : "2019-08-07T11:35:55.409-0500"
+},
+{
+"name" : "testContext_v14",
+"assigned" : "2019-08-07T11:46:52.811-0500"
+},
+{
+"name" : "testContext_v15",
+"assigned" : "2019-09-10T16:32:20.145-0500"
+}
+]
 }

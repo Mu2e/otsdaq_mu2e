@@ -9,8 +9,6 @@
 				<COLUMN Type="Data" 	 Name="outputModuleType" 	 StorageName="OUTPUT_MODULE_TYPE" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="ChildLink-outputParameters" 	 Name="outputModuleParameterLink" 	 StorageName="OUTPUT_MODULE_PARAMETER_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQOutputModuleParameterTable"/>
 				<COLUMN Type="ChildLinkGroupID-outputParameters" 	 Name="outputModuleParameterLinkGroupID" 	 StorageName="OUTPUT_MODULE_PARAMETER_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="ChildLink-destinations" 	 Name="outputModuleDestinationLink" 	 StorageName="OUTPUT_MODULE_DESTINATION_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDestinationTable"/>
-				<COLUMN Type="ChildLinkGroupID-destinations" 	 Name="outputModuleDestinationLinkGroupID" 	 StorageName="OUTPUT_MODULE_DESTINATION_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
