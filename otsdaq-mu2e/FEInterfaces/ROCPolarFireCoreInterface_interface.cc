@@ -1,4 +1,4 @@
-#include "otsdaq-core/Macros/InterfacePluginMacros.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq-mu2e/FEInterfaces/ROCPolarFireCoreInterface.h"
 
 using namespace ots;

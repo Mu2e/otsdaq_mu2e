@@ -1,4 +1,4 @@
-#include "otsdaq-core/Macros/InterfacePluginMacros.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq-mu2e/FEInterfaces/ROCDTCHardwareEmulated.h"
 
 using namespace ots;

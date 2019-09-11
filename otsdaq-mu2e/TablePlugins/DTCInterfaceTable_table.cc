@@ -1,4 +1,4 @@
-#include "otsdaq-core/Macros/TablePluginMacros.h"
+#include "otsdaq/Macros/TablePluginMacros.h" //for DEFINE_OTS_TABLE
 #include "otsdaq-mu2e/TablePlugins/DTCInterfaceTable.h"
 
 #include <sys/stat.h>  //for mkdir
