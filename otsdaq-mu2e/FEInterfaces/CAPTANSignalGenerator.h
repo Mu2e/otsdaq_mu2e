@@ -3,7 +3,7 @@
 
 #include "otsdaq-components/DAQHardware/OtsUDPFirmwareDataGen.h"
 #include "otsdaq-components/DAQHardware/OtsUDPHardware.h"
-#include "otsdaq-core/FECore/FEVInterface.h"
+#include "otsdaq/FECore/FEVInterface.h"
 
 #include <string>
 

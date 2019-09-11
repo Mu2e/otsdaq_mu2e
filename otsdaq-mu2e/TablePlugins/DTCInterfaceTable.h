@@ -1,8 +1,8 @@
 #ifndef _ots_DTCInterfaceTable_h_
 #define _ots_DTCInterfaceTable_h_
 
-#include "otsdaq-core/ConfigurationInterface/ConfigurationManager.h"
-#include "otsdaq-core/TableCore/TableBase.h"
+#include "otsdaq/ConfigurationInterface/ConfigurationManager.h"
+#include "otsdaq/TableCore/TableBase.h"
 
 namespace ots
 {

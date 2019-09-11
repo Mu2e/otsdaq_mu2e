@@ -1,7 +1,7 @@
 #ifndef _ots_TemplateSupervisor_h
 #define _ots_TemplateSupervisor_h
 
-#include "otsdaq-core/SOAPUtilities/SOAPMessenger.h"
+#include "otsdaq/SOAPUtilities/SOAPMessenger.h"
 
 #include <xdaq/Application.h>
 #include <xgi/Method.h>

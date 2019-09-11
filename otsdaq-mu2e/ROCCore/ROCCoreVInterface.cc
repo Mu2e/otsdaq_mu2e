@@ -1,5 +1,5 @@
 #include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
-#include "otsdaq-core/Macros/InterfacePluginMacros.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 
 using namespace ots;
 

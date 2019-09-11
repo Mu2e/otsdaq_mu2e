@@ -1,7 +1,7 @@
-#include "otsdaq-core/Macros/InterfacePluginMacros.h"
-#include "otsdaq-core/PluginMakers/MakeInterface.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
+#include "otsdaq/PluginMakers/MakeInterface.h"
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
-#include "otsdaq-core/Macros/BinaryStringMacros.h"
+#include "otsdaq/Macros/BinaryStringMacros.h"
 
 using namespace ots;
 
