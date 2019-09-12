@@ -3,6 +3,7 @@ Data*/ServiceData/LoginData/UsersData/TooltipData
 Data*/ServiceData/ProgressBarData
 Data*/ServiceData/Start*.cmd
 *.bk
+*bk1234*
 .Start*
 *.bak
 *.bak.*

@@ -1,0 +1,278 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DQM_HISTOS_CONSUMER_TABLE",
+"COMMENT" : "DQM for HW emulator.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1501088403,
+"COL_TYPES" : {
+"PROCESSOR_ID" : "VARCHAR2",
+"SAVE_DQM_FILE" : "VARCHAR2",
+"DQM_FILE_PATH" : "VARCHAR2",
+"DQM_FILE_NAME_PREFIX" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"PROCESSOR_ID" : "DQMHistos0",
+"SAVE_DQM_FILE" : "Yes",
+"DQM_FILE_PATH" : "${OTSDAQ_DATA}",
+"DQM_FILE_NAME_PREFIX" : "DQMHistosRun",
+"COMMENT_DESCRIPTION" : "DQM for hw emulator",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1501087901"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:44.669-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:44.670-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:44.670-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:47.243-0600"
+},
+{
+"name" : "defaultConfig_v4",
+"assigned" : "2019-02-26T11:06:49.876-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:44.670-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:44.670-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:44.670-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:44.670-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:44.670-0600",
+"value" : {
+"name" : "DQMHistosConsumerTable",
+"assigned" : "2019-02-26T11:06:44.670-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:44.670-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:44.670-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:47.243-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:47.243-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:49.876-0600",
+"value" : {
+"name" : "defaultConfig_v4",
+"assigned" : "2019-02-26T11:06:49.876-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T14:24:13.684-0600",
+"value" : {
+"name" : "defaultConfig_v5",
+"assigned" : "2019-03-04T14:24:13.684-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T14:26:37.386-0600",
+"value" : {
+"name" : "defaultConfig_v6",
+"assigned" : "2019-03-04T14:26:37.386-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T14:36:57.536-0600",
+"value" : {
+"name" : "defaultConfig_v7",
+"assigned" : "2019-03-04T14:36:57.536-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T14:50:29.732-0600",
+"value" : {
+"name" : "defaultConfig_v8",
+"assigned" : "2019-03-04T14:50:29.732-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T16:59:43.999-0600",
+"value" : {
+"name" : "defaultConfig_v9",
+"assigned" : "2019-03-04T16:59:43.999-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T17:17:21.878-0600",
+"value" : {
+"name" : "defaultConfig_v10",
+"assigned" : "2019-03-04T17:17:21.878-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T17:19:27.871-0600",
+"value" : {
+"name" : "defaultConfig_v11",
+"assigned" : "2019-03-04T17:19:27.871-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T17:24:25.530-0600",
+"value" : {
+"name" : "defaultConfig_v12",
+"assigned" : "2019-03-04T17:24:25.530-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T18:15:59.160-0600",
+"value" : {
+"name" : "defaultConfig_v13",
+"assigned" : "2019-03-04T18:15:59.160-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T18:16:30.592-0600",
+"value" : {
+"name" : "defaultConfig_v14",
+"assigned" : "2019-03-04T18:16:30.592-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-18T11:09:29.138-0500",
+"value" : {
+"name" : "defaultConfig_v15",
+"assigned" : "2019-04-18T11:09:29.138-0500"
+}
+}
+],
+"created" : "2019-02-26T11:06:44.670-0600"
+},
+"_id" : {
+"$oid" : "2af9f1f51ff242d1951c0f9f"
+},
+"collection" : "DQMHistosConsumerTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided",
+"tables" : [
+{
+"name" : "defaultConfig_v5",
+"assigned" : "2019-03-04T14:24:13.684-0600"
+},
+{
+"name" : "defaultConfig_v6",
+"assigned" : "2019-03-04T14:26:37.386-0600"
+},
+{
+"name" : "defaultConfig_v7",
+"assigned" : "2019-03-04T14:36:57.536-0600"
+},
+{
+"name" : "defaultConfig_v8",
+"assigned" : "2019-03-04T14:50:29.732-0600"
+},
+{
+"name" : "defaultConfig_v9",
+"assigned" : "2019-03-04T16:59:43.999-0600"
+},
+{
+"name" : "defaultConfig_v10",
+"assigned" : "2019-03-04T17:17:21.878-0600"
+},
+{
+"name" : "defaultConfig_v11",
+"assigned" : "2019-03-04T17:19:27.871-0600"
+},
+{
+"name" : "defaultConfig_v12",
+"assigned" : "2019-03-04T17:24:25.530-0600"
+},
+{
+"name" : "defaultConfig_v13",
+"assigned" : "2019-03-04T18:15:59.160-0600"
+},
+{
+"name" : "defaultConfig_v14",
+"assigned" : "2019-03-04T18:16:30.592-0600"
+},
+{
+"name" : "defaultConfig_v15",
+"assigned" : "2019-04-18T11:09:29.138-0500"
+}
+]
+}

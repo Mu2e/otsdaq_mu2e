@@ -1,0 +1,153 @@
+{
+"document" : {
+"data" : {
+"NAME" : "FE_OTS_UDP_TEMPLATE_INTERFACE_TABLE",
+"COMMENT" : "testing off",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1505424546,
+"COL_TYPES" : {
+"INTERFACE_ID" : "VARCHAR2",
+"FIRMWARE_VERSION" : "NUMBER",
+"INTERFACE_IP_ADDRESS" : "VARCHAR2",
+"INTERFACE_PORT" : "NUMBER",
+"HOST_IP_ADDRESS" : "VARCHAR2",
+"HOST_PORT" : "NUMBER",
+"STREAM_TO_IP_ADDRESS" : "VARCHAR2",
+"STREAM_TO_PORT" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"INTERFACE_ID" : "OtsInterface0",
+"FIRMWARE_VERSION" : "-1",
+"INTERFACE_IP_ADDRESS" : "127.0.0.1",
+"INTERFACE_PORT" : "4000",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4002",
+"STREAM_TO_IP_ADDRESS" : "127.0.0.1",
+"STREAM_TO_PORT" : "4121",
+"COMMENT_DESCRIPTION" : "Using HW emulator port 4000",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1505424541"
+},
+{
+"INTERFACE_ID" : "KC705_Interface0",
+"FIRMWARE_VERSION" : "0",
+"INTERFACE_IP_ADDRESS" : "192.168.133.4",
+"INTERFACE_PORT" : "4020",
+"HOST_IP_ADDRESS" : "127.0.0.1",
+"HOST_PORT" : "4021",
+"STREAM_TO_IP_ADDRESS" : "127.0.0.1",
+"STREAM_TO_PORT" : "4131",
+"COMMENT_DESCRIPTION" : "Using KC705 with data gen FW",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1480652283"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:45.023-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:45.024-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:45.024-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:47.547-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:45.024-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:45.024-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:45.024-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:45.024-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:45.024-0600",
+"value" : {
+"name" : "FEOtsUDPTemplateInterfaceTable",
+"assigned" : "2019-02-26T11:06:45.024-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:45.024-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:45.024-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:47.547-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:47.547-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:45.023-0600"
+},
+"_id" : {
+"$oid" : "7400f423f2304cc78b78addd"
+},
+"collection" : "FEOtsUDPTemplateInterfaceTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

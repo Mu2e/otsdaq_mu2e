@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+	<ROOT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="TableInfo.xsd">
+		<TABLE Name="ARTDAQBoardReaderTable">
+			<VIEW Name="ARTDAQ_BOARD_READER_TABLE" Type="File,Database,DatabaseTest" Description="Here%20is%20a%20description%20of%20some%20particular%20fields%3A%0A%3CINDENT%3E%0A%3Cb%3EdaqGeneratorPluginType%3C%2Fb%3E%20is%20the%20artdaq%20Board%20Reader%20plug-in%20type.%20Common%20plug-in%20names%20are%20listed%20in%20the%20drop-down%2C%20however%20arbitrary%20editing%20is%20allowed.%20This%20field%20translates%20to%20'generator'%20in%20the%20artdaq%20fcl%20string.%0A%0A%3Cb%3EdaqGeneratorFragmentType%3C%2Fb%3E%20is%20the%20fragment%20data-type%20for%20the%20artdaq%20Board%20Reader%20plug-in.%20Common%20fragment%20data-types%20are%20listed%20in%20the%20drop-down%2C%20however%20arbitrary%20editing%20is%20allowed.This%20field%20translates%20to%20'fragment_type'%20in%20the%20artdaq%20fcl%20string.%0A%3C%2FINDENT%3E">
+				<COLUMN Type="GroupID-boardreaders" 	 Name="boardReadersGroupID" 	 StorageName="BOARD_READERS_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UID" 	 Name="SupervisorUID" 	 StorageName="SUPERVISOR_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="OnOff" 	 Name="Status" 	 StorageName="STATUS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="UniqueData" 	 Name="OffsetPort" 	 StorageName="OFFSET_PORT" 		DataType="NUMBER" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="DAQInterfaceHostname" 	 StorageName="DAQ_INTERFACE_HOSTNAME" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-subsystem" 	 Name="SubsystemLink" 	 StorageName="SUBSYSTEM_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQSubsystemTable"/>
+				<COLUMN Type="ChildLinkUID-subsystem" 	 Name="SubsystemLinkUID" 	 StorageName="SUBSYSTEM_LINK_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="FixedChoiceData" 	 Name="daqGeneratorPluginType" 	 StorageName="DAQ_GENERATOR_PLUGIN_TYPE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,UDPReceiver"/>
+				<COLUMN Type="FixedChoiceData" 	 Name="daqGeneratorFragmentType" 	 StorageName="DAQ_GENERATOR_FRAGMENT_TYPE" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=1,UDP"/>
+				<COLUMN Type="ChildLink-daqParameters" 	 Name="daqParametersLink" 	 StorageName="DAQ_PARAMETERS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQDaqParameterTable"/>
+				<COLUMN Type="ChildLinkGroupID-daqParameters" 	 Name="daqParametersLinkGroupID" 	 StorageName="DAQ_PARAMETERS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="ChildLink-metrics" 	 Name="daqMetricsLink" 	 StorageName="DAQ_METRICS_LINK" 		DataType="VARCHAR2" 		DataChoices="arbitraryBool=0,NO_LINK,ARTDAQMetricTable"/>
+				<COLUMN Type="ChildLinkGroupID-metrics" 	 Name="daqMetricsLinkGroupID" 	 StorageName="DAQ_METRICS_LINK_GROUP_ID" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Timestamp" 	 Name="RecordInsertionTime" 	 StorageName="RECORD_INSERTION_TIME" 		DataType="TIMESTAMP WITH TIMEZONE" 		DataChoices=""/>
+			</VIEW>
+		</TABLE>
+	</ROOT>

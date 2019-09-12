@@ -102,7 +102,7 @@ elif [ $userinput == "02" ]; then
     repository="otsdaq_mu2e"
     userdataappend="_02"
 elif [ $userinput == "dcs" ]; then
-    export OTS_MAIN_PORT=2015
+    export OTS_MAIN_PORT=5019
     export CONSOLE_SUPERVISOR_IP=127.0.0.1
     basepath="mu2edcs/dcs_ots_demo"
     repository="otsdaq_mu2e"
@@ -120,7 +120,7 @@ else
 fi
 
 #setup ots path append
-if [[ $userinput == "hwdev" || $userinput == "shift" ]]; then
+if [[ $userinput == "hwdev" || $userinput == "shift" || $userinput == "dcs" ]]; then
     otsPathAppend=""
 else
     otsPathAppend=$userdataappend

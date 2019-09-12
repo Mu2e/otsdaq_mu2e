@@ -1,0 +1,260 @@
+{
+"document" : {
+"data" : {
+"NAME" : "XDAQ_APPLICATION_PROPERTY_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1548716292,
+"COL_TYPES" : {
+"PROPERTY_GROUP_ID" : "VARCHAR2",
+"UID" : "VARCHAR2",
+"STATUS" : "VARCHAR2",
+"PROPERTY_NAME" : "VARCHAR2",
+"PROPERTY_TYPE" : "VARCHAR2",
+"PROPERTY_VALUE" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:48.413-0600",
+"rawdata" : [
+
+]
+},
+"version" : "3",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:48.414-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:48.414-0600"
+},
+{
+"name" : "artdaqContext_v3",
+"assigned" : "2019-02-26T11:06:49.019-0600"
+},
+{
+"name" : "testContext_v5",
+"assigned" : "2019-02-26T11:06:51.263-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:48.414-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:48.414-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:48.414-0600",
+"value" : {
+"name" : "3",
+"assigned" : "2019-02-26T11:06:48.414-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:48.414-0600",
+"value" : {
+"name" : "XDAQApplicationPropertyTable",
+"assigned" : "2019-02-26T11:06:48.414-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:48.414-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:48.414-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:49.019-0600",
+"value" : {
+"name" : "artdaqContext_v3",
+"assigned" : "2019-02-26T11:06:49.019-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:51.263-0600",
+"value" : {
+"name" : "testContext_v5",
+"assigned" : "2019-02-26T11:06:51.263-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:26:39.065-0600",
+"value" : {
+"name" : "testContext_v6",
+"assigned" : "2019-03-04T14:26:39.065-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:45:44.058-0600",
+"value" : {
+"name" : "testContext_v7",
+"assigned" : "2019-03-04T14:45:44.058-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T15:10:58.391-0600",
+"value" : {
+"name" : "testContext_v8",
+"assigned" : "2019-03-04T15:10:58.391-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T18:14:55.389-0600",
+"value" : {
+"name" : "testContext_v9",
+"assigned" : "2019-03-04T18:14:55.389-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-08T11:32:16.594-0500",
+"value" : {
+"name" : "Mu2etestContext_v0",
+"assigned" : "2019-04-08T11:32:16.594-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-04-08T11:40:17.824-0500",
+"value" : {
+"name" : "testContext_v10",
+"assigned" : "2019-04-08T11:40:17.824-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-05-07T12:30:02.370-0500",
+"value" : {
+"name" : "testContext_v11",
+"assigned" : "2019-05-07T12:30:02.370-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-05-07T12:36:01.065-0500",
+"value" : {
+"name" : "testContext_v12",
+"assigned" : "2019-05-07T12:36:01.065-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-05-07T14:10:51.121-0500",
+"value" : {
+"name" : "testContext_v13",
+"assigned" : "2019-05-07T14:10:51.121-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-05-07T14:12:12.661-0500",
+"value" : {
+"name" : "testContext_v14",
+"assigned" : "2019-05-07T14:12:12.661-0500"
+}
+}
+],
+"created" : "2019-02-26T11:06:48.413-0600"
+},
+"_id" : {
+"$oid" : "8378f9da84324349ba2731ee"
+},
+"collection" : "XDAQApplicationPropertyTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided",
+"configurations" : [
+{
+"name" : "testContext_v6",
+"assigned" : "2019-03-04T14:26:39.065-0600"
+},
+{
+"name" : "testContext_v7",
+"assigned" : "2019-03-04T14:45:44.058-0600"
+},
+{
+"name" : "testContext_v8",
+"assigned" : "2019-03-04T15:10:58.391-0600"
+},
+{
+"name" : "testContext_v9",
+"assigned" : "2019-03-04T18:14:55.389-0600"
+},
+{
+"name" : "Mu2etestContext_v0",
+"assigned" : "2019-04-08T11:32:16.594-0500"
+},
+{
+"name" : "testContext_v10",
+"assigned" : "2019-04-08T11:40:17.824-0500"
+},
+{
+"name" : "testContext_v11",
+"assigned" : "2019-05-07T12:30:02.370-0500"
+},
+{
+"name" : "testContext_v12",
+"assigned" : "2019-05-07T12:36:01.065-0500"
+},
+{
+"name" : "testContext_v13",
+"assigned" : "2019-05-07T14:10:51.121-0500"
+},
+{
+"name" : "testContext_v14",
+"assigned" : "2019-05-07T14:12:12.661-0500"
+}
+]
+}

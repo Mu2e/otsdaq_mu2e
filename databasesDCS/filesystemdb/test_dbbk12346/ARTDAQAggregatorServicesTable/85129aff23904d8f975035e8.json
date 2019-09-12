@@ -1,0 +1,132 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_AGGREGATOR_SERVICES_TABLE",
+"COMMENT" : "",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1504820939,
+"COL_TYPES" : {
+"SERVICES_UID" : "VARCHAR2",
+"SCHEDULER_FILE_MODE" : "VARCHAR2",
+"SCHEDULER_ERROR_ON_FAILTURE_TO_PUT" : "VARCHAR2",
+"NET_MON_TRASPORT_SERVICE_INTERFACE_SERVICE_PROVIDER" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SERVICES_UID" : "aggregator0services0",
+"SCHEDULER_FILE_MODE" : "NOMERGE",
+"SCHEDULER_ERROR_ON_FAILTURE_TO_PUT" : "False",
+"NET_MON_TRASPORT_SERVICE_INTERFACE_SERVICE_PROVIDER" : "NetMonTransportService",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "DEFAULT",
+"RECORD_INSERTION_TIME" : "0"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:42.841-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:42.842-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:42.842-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:45.680-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:42.842-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:42.842-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:42.842-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:42.842-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:42.842-0600",
+"value" : {
+"name" : "ARTDAQAggregatorServicesTable",
+"assigned" : "2019-02-26T11:06:42.842-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:42.842-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:42.842-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:45.680-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:45.680-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:42.841-0600"
+},
+"_id" : {
+"$oid" : "85129aff23904d8f975035e8"
+},
+"collection" : "ARTDAQAggregatorServicesTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}
