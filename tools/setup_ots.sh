@@ -88,6 +88,13 @@ elif [ $userinput == "trigger" ]; then
     basepath="mu2etrig/test_stand"
     repository="otsdaq_mu2e_trigger"
     userdataappend=""
+elif [ $userinput == "tem" ]; then
+    export OTS_MAIN_PORT=4045
+    export OTS_WIZ_MODE_MAIN_PORT=4045
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    basepath="mu2etem/test_stand"
+    repository="otsdaq_mu2e_extmon"
+    userdataappend=""
 elif [ $userinput == "dqmcalo" ]; then
     export OTS_MAIN_PORT=3095
     export OTS_WIZ_MODE_MAIN_PORT=3095
