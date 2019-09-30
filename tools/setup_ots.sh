@@ -229,3 +229,9 @@ toffSg 4-64 #apparently not turned off by default?
 
 #end Trace helpful info
 #============================
+
+#setup ninja generator
+#============================
+setup ninja v1_8_2
+alias makeninja='pushd $MRB_BUILDDIR; ninja; popd'
+
