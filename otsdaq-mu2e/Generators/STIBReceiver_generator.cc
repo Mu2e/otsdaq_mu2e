@@ -1,4 +1,4 @@
-#include "otsdaq-core/Macros/CoutMacros.h"
+#include "otsdaq/Macros/CoutMacros.h"
 #include "otsdaq-demo/Generators/STIBReceiver.hh"
 
 //#include "art/Utilities/Exception.h"

@@ -1,6 +1,6 @@
 #include "otsdaq-demo/TemplateDirectory/TemplateSupervisor.h"
-#include "otsdaq-core/Macros/CoutMacros.h"
-#include "otsdaq-core/MessageFacility/MessageFacility.h"
+#include "otsdaq/Macros/CoutMacros.h"
+#include "otsdaq/MessageFacility/MessageFacility.h"
 
 #include <xdaq/NamespaceURI.h>
 

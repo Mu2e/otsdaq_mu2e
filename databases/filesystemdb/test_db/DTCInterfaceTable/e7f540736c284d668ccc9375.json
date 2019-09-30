@@ -81,6 +81,10 @@
 {
 "name" : "defaultConfig_v8",
 "assigned" : "2019-08-05T16:30:13.806-0500"
+},
+{
+"name" : "defaultConfig_v9",
+"assigned" : "2019-08-07T09:34:54.772-0500"
 }
 ],
 "changelog" : "notprovided",
@@ -126,6 +130,14 @@
 "value" : {
 "name" : "defaultConfig_v8",
 "assigned" : "2019-08-05T16:30:13.806-0500"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-08-07T09:34:54.772-0500",
+"value" : {
+"name" : "defaultConfig_v9",
+"assigned" : "2019-08-07T09:34:54.772-0500"
 }
 }
 ],

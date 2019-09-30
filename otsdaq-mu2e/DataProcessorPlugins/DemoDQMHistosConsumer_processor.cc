@@ -1,6 +1,6 @@
-#include "otsdaq-core/Macros/CoutMacros.h"
-#include "otsdaq-core/Macros/ProcessorPluginMacros.h"
-#include "otsdaq-core/MessageFacility/MessageFacility.h"
+#include "otsdaq/Macros/CoutMacros.h"
+#include "otsdaq/Macros/ProcessorPluginMacros.h"
+#include "otsdaq/MessageFacility/MessageFacility.h"
 #include "otsdaq-demo/DataProcessorPlugins/DemoDQMHistosConsumer.h"
 #include "otsdaq-demo/DemoRootUtilities/DemoDQMHistos.h"
 

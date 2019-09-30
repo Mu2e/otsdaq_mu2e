@@ -1,0 +1,132 @@
+{
+"document" : {
+"data" : {
+"NAME" : "ARTDAQ_GLOBAL_TABLE",
+"COMMENT" : "",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1504798799,
+"COL_TYPES" : {
+"ARTDAQ_UID" : "VARCHAR2",
+"PROCESS_NAME_FOR_BUILDERS" : "VARCHAR2",
+"PROCESS_NAME_FOR_AGGREGATORS" : "VARCHAR2",
+"MAX_FRAGMENT_SIZE_WORDS" : "NUMBER",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"ARTDAQ_UID" : "artdaq0",
+"PROCESS_NAME_FOR_BUILDERS" : "DAQ",
+"PROCESS_NAME_FOR_AGGREGATORS" : "DAQAG",
+"MAX_FRAGMENT_SIZE_WORDS" : "2097152",
+"COMMENT_DESCRIPTION" : "global parameters for an artdaq system",
+"AUTHOR" : "DEFAULT",
+"RECORD_INSERTION_TIME" : "0"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:43.913-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:43.914-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:43.914-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:46.602-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:43.914-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:43.914-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:43.914-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:43.914-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:43.914-0600",
+"value" : {
+"name" : "ARTDAQGlobalTable",
+"assigned" : "2019-02-26T11:06:43.914-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:43.914-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:43.914-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:46.602-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:46.602-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:43.913-0600"
+},
+"_id" : {
+"$oid" : "a6248ecc042a42f1aec6ea86"
+},
+"collection" : "ARTDAQGlobalTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

@@ -1,0 +1,188 @@
+{
+"document" : {
+"data" : {
+"NAME" : "CONTROLS_SUPERVISOR_TABLE",
+"COMMENT" : "Auto-generated from mock-up.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551732629,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"CONTROLS_INTERFACE_PLUGIN_TYPE" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUPERVISOR_UID" : "controlsSupervisor0",
+"CONTROLS_INTERFACE_PLUGIN_TYPE" : "ControlsOtsInterface",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551732623"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-04T14:50:29.053-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-04T14:50:29.055-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-04T14:50:29.054-0600"
+},
+{
+"name" : "defaultConfig_v8",
+"assigned" : "2019-03-04T14:50:29.686-0600"
+},
+{
+"name" : "defaultConfig_v9",
+"assigned" : "2019-03-04T16:59:43.947-0600"
+},
+{
+"name" : "defaultConfig_v10",
+"assigned" : "2019-03-04T17:17:21.831-0600"
+},
+{
+"name" : "defaultConfig_v11",
+"assigned" : "2019-03-04T17:19:27.824-0600"
+},
+{
+"name" : "defaultConfig_v12",
+"assigned" : "2019-03-04T17:24:25.480-0600"
+},
+{
+"name" : "defaultConfig_v13",
+"assigned" : "2019-03-04T18:15:58.993-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:50:29.054-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-04T14:50:29.054-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-04T14:50:29.055-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-03-04T14:50:29.055-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-04T14:50:29.055-0600",
+"value" : {
+"name" : "ControlsSupervisorTable",
+"assigned" : "2019-03-04T14:50:29.055-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-04T14:50:29.055-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-04T14:50:29.055-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:50:29.686-0600",
+"value" : {
+"name" : "defaultConfig_v8",
+"assigned" : "2019-03-04T14:50:29.686-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T16:59:43.947-0600",
+"value" : {
+"name" : "defaultConfig_v9",
+"assigned" : "2019-03-04T16:59:43.947-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T17:17:21.831-0600",
+"value" : {
+"name" : "defaultConfig_v10",
+"assigned" : "2019-03-04T17:17:21.831-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T17:19:27.824-0600",
+"value" : {
+"name" : "defaultConfig_v11",
+"assigned" : "2019-03-04T17:19:27.824-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T17:24:25.480-0600",
+"value" : {
+"name" : "defaultConfig_v12",
+"assigned" : "2019-03-04T17:24:25.480-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T18:15:58.993-0600",
+"value" : {
+"name" : "defaultConfig_v13",
+"assigned" : "2019-03-04T18:15:58.993-0600"
+}
+}
+],
+"created" : "2019-03-04T14:50:29.053-0600"
+},
+"_id" : {
+"$oid" : "ed46c9a10b48487e9e41e487"
+},
+"collection" : "ControlsSupervisorTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

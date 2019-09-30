@@ -1,0 +1,340 @@
+{
+"document" : {
+"data" : {
+"NAME" : "STATE_MACHINE_TABLE",
+"COMMENT" : "three FSMs for The Supervisor.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1496767347,
+"COL_TYPES" : {
+"STATE_MACHINE_GROUP_ID" : "VARCHAR2",
+"STATE_MACHINE_UID" : "VARCHAR2",
+"SYSTEM_ALIAS_FILTER" : "VARCHAR2",
+"RUN_DISPLAY_ALIAS" : "VARCHAR2",
+"ENABLE_TABLE_DUMP_ON_CONFIGURE_TRANSITION" : "VARCHAR2",
+"TABLE_DUMP_ON_CONFIGURE_FORMAT" : "VARCHAR2",
+"TABLE_DUMP_ON_CONFIGURE_FILE_PATH" : "VARCHAR2",
+"TABLE_DUMP_ON_CONFIGURE_FILE_RADIX" : "VARCHAR2",
+"ENABLE_TABLE_DUMP_ON_RUN_TRANSITION" : "VARCHAR2",
+"TABLE_DUMP_ON_RUN_FORMAT" : "VARCHAR2",
+"TABLE_DUMP_ON_RUN_FILE_PATH" : "VARCHAR2",
+"TABLE_DUMP_ON_RUN_FILE_RADIX" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"STATE_MACHINE_GROUP_ID" : "Supervisor0_FSMs",
+"STATE_MACHINE_UID" : "PhysicsRuns0",
+"SYSTEM_ALIAS_FILTER" : "*Physics*Config*",
+"RUN_DISPLAY_ALIAS" : "Physics Run",
+"ENABLE_TABLE_DUMP_ON_CONFIGURE_TRANSITION" : "No",
+"TABLE_DUMP_ON_CONFIGURE_FORMAT" : "DEFAULT",
+"TABLE_DUMP_ON_CONFIGURE_FILE_PATH" : "DEFAULT",
+"TABLE_DUMP_ON_CONFIGURE_FILE_RADIX" : "DEFAULT",
+"ENABLE_TABLE_DUMP_ON_RUN_TRANSITION" : "No",
+"TABLE_DUMP_ON_RUN_FORMAT" : "DEFAULT",
+"TABLE_DUMP_ON_RUN_FILE_PATH" : "DEFAULT",
+"TABLE_DUMP_ON_RUN_FILE_RADIX" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "System alias filter will only show Physics config groups. And the FSM display will show \"Physics Run.\"",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1483025802"
+},
+{
+"STATE_MACHINE_GROUP_ID" : "Supervisor0_FSMs",
+"STATE_MACHINE_UID" : "CalibrationRuns0",
+"SYSTEM_ALIAS_FILTER" : "*Calib*Config*",
+"RUN_DISPLAY_ALIAS" : "Calibration",
+"ENABLE_TABLE_DUMP_ON_CONFIGURE_TRANSITION" : "No",
+"TABLE_DUMP_ON_CONFIGURE_FORMAT" : "DEFAULT",
+"TABLE_DUMP_ON_CONFIGURE_FILE_PATH" : "DEFAULT",
+"TABLE_DUMP_ON_CONFIGURE_FILE_RADIX" : "DEFAULT",
+"ENABLE_TABLE_DUMP_ON_RUN_TRANSITION" : "No",
+"TABLE_DUMP_ON_RUN_FORMAT" : "DEFAULT",
+"TABLE_DUMP_ON_RUN_FILE_PATH" : "DEFAULT",
+"TABLE_DUMP_ON_RUN_FILE_RADIX" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "Filter selects only groups with Calib in the name (for Calibrations). Displays runs as \"Calibration.\"",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1483025802"
+},
+{
+"STATE_MACHINE_GROUP_ID" : "Supervisor0_FSMs",
+"STATE_MACHINE_UID" : "OtherRuns0",
+"SYSTEM_ALIAS_FILTER" : "!*Context*",
+"RUN_DISPLAY_ALIAS" : "Run",
+"ENABLE_TABLE_DUMP_ON_CONFIGURE_TRANSITION" : "No",
+"TABLE_DUMP_ON_CONFIGURE_FORMAT" : "DEFAULT",
+"TABLE_DUMP_ON_CONFIGURE_FILE_PATH" : "DEFAULT",
+"TABLE_DUMP_ON_CONFIGURE_FILE_RADIX" : "DEFAULT",
+"ENABLE_TABLE_DUMP_ON_RUN_TRANSITION" : "No",
+"TABLE_DUMP_ON_RUN_FORMAT" : "DEFAULT",
+"TABLE_DUMP_ON_RUN_FILE_PATH" : "DEFAULT",
+"TABLE_DUMP_ON_RUN_FILE_RADIX" : "DEFAULT",
+"COMMENT_DESCRIPTION" : "System alias filter will only show non-context config groups. And the FSM display will show \"Oddball-Run.\"",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1483025802"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:48.345-0600",
+"rawdata" : [
+
+]
+},
+"version" : "3",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:48.346-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:48.346-0600"
+},
+{
+"name" : "artdaqContext_v3",
+"assigned" : "2019-02-26T11:06:48.903-0600"
+},
+{
+"name" : "testContext_v5",
+"assigned" : "2019-02-26T11:06:51.159-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:48.346-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:48.346-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:48.346-0600",
+"value" : {
+"name" : "3",
+"assigned" : "2019-02-26T11:06:48.346-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:48.346-0600",
+"value" : {
+"name" : "StateMachineTable",
+"assigned" : "2019-02-26T11:06:48.346-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:48.347-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:48.346-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:48.903-0600",
+"value" : {
+"name" : "artdaqContext_v3",
+"assigned" : "2019-02-26T11:06:48.903-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:51.159-0600",
+"value" : {
+"name" : "testContext_v5",
+"assigned" : "2019-02-26T11:06:51.159-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T14:26:38.942-0600",
+"value" : {
+"name" : "testContext_v6",
+"assigned" : "2019-03-04T14:26:38.941-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T14:45:43.971-0600",
+"value" : {
+"name" : "testContext_v7",
+"assigned" : "2019-03-04T14:45:43.971-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T15:10:58.313-0600",
+"value" : {
+"name" : "testContext_v8",
+"assigned" : "2019-03-04T15:10:58.313-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-03-04T18:14:55.075-0600",
+"value" : {
+"name" : "testContext_v9",
+"assigned" : "2019-03-04T18:14:55.075-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T11:32:16.144-0500",
+"value" : {
+"name" : "Mu2etestContext_v0",
+"assigned" : "2019-04-08T11:32:16.144-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-04-08T11:40:17.312-0500",
+"value" : {
+"name" : "testContext_v10",
+"assigned" : "2019-04-08T11:40:17.312-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-05-07T12:30:01.434-0500",
+"value" : {
+"name" : "testContext_v11",
+"assigned" : "2019-05-07T12:30:01.434-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-05-07T12:35:58.958-0500",
+"value" : {
+"name" : "testContext_v12",
+"assigned" : "2019-05-07T12:35:58.958-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-05-07T14:10:50.663-0500",
+"value" : {
+"name" : "testContext_v13",
+"assigned" : "2019-05-07T14:10:50.663-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-05-07T14:12:12.245-0500",
+"value" : {
+"name" : "testContext_v14",
+"assigned" : "2019-05-07T14:12:12.245-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-06-05T14:29:15.595-0500",
+"value" : {
+"name" : "testContext_v15",
+"assigned" : "2019-06-05T14:29:15.595-0500"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-06-05T14:33:24.206-0500",
+"value" : {
+"name" : "testContext_v16",
+"assigned" : "2019-06-05T14:33:24.206-0500"
+}
+}
+],
+"created" : "2019-02-26T11:06:48.346-0600"
+},
+"_id" : {
+"$oid" : "beee12273d564ab99325b2a4"
+},
+"collection" : "StateMachineTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided",
+"tables" : [
+{
+"name" : "testContext_v6",
+"assigned" : "2019-03-04T14:26:38.941-0600"
+},
+{
+"name" : "testContext_v7",
+"assigned" : "2019-03-04T14:45:43.971-0600"
+},
+{
+"name" : "testContext_v8",
+"assigned" : "2019-03-04T15:10:58.313-0600"
+},
+{
+"name" : "testContext_v9",
+"assigned" : "2019-03-04T18:14:55.075-0600"
+},
+{
+"name" : "Mu2etestContext_v0",
+"assigned" : "2019-04-08T11:32:16.144-0500"
+},
+{
+"name" : "testContext_v10",
+"assigned" : "2019-04-08T11:40:17.312-0500"
+},
+{
+"name" : "testContext_v11",
+"assigned" : "2019-05-07T12:30:01.434-0500"
+},
+{
+"name" : "testContext_v12",
+"assigned" : "2019-05-07T12:35:58.958-0500"
+},
+{
+"name" : "testContext_v13",
+"assigned" : "2019-05-07T14:10:50.663-0500"
+},
+{
+"name" : "testContext_v14",
+"assigned" : "2019-05-07T14:12:12.245-0500"
+},
+{
+"name" : "testContext_v15",
+"assigned" : "2019-06-05T14:29:15.595-0500"
+},
+{
+"name" : "testContext_v16",
+"assigned" : "2019-06-05T14:33:24.206-0500"
+}
+]
+}

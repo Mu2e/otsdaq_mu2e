@@ -1,0 +1,146 @@
+{
+"document" : {
+"data" : {
+"NAME" : "DATA_MANAGER_SUPERVISOR_TABLE",
+"COMMENT" : "Tutorial Data Manager Supervisor table for artdaq.",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1548819632,
+"COL_TYPES" : {
+"SUPERVISOR_UID" : "VARCHAR2",
+"LINK_TO_DATA_BUFFER_TABLE" : "VARCHAR2",
+"LINK_TO_DATA_BUFFER_GROUP_ID" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"SUPERVISOR_UID" : "DataManagerSupervisor0",
+"LINK_TO_DATA_BUFFER_TABLE" : "DataBufferTable",
+"LINK_TO_DATA_BUFFER_GROUP_ID" : "DMGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548791341"
+},
+{
+"SUPERVISOR_UID" : "VisualSupervisor0",
+"LINK_TO_DATA_BUFFER_TABLE" : "DataBufferTable",
+"LINK_TO_DATA_BUFFER_GROUP_ID" : "DMVisualizerGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548791341"
+},
+{
+"SUPERVISOR_UID" : "ARTDAQDataManagerSupervisor0",
+"LINK_TO_DATA_BUFFER_TABLE" : "DataBufferTable",
+"LINK_TO_DATA_BUFFER_GROUP_ID" : "ARTDAQDMGroup0",
+"COMMENT_DESCRIPTION" : "No Comment",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548819632"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-02-26T11:06:44.809-0600",
+"rawdata" : [
+
+]
+},
+"version" : "2",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:44.810-0600"
+}
+],
+"tables" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:44.810-0600"
+},
+{
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:47.363-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:44.810-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-02-26T11:06:44.810-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-02-26T11:06:44.810-0600",
+"value" : {
+"name" : "2",
+"assigned" : "2019-02-26T11:06:44.810-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-02-26T11:06:44.810-0600",
+"value" : {
+"name" : "DataManagerSupervisorTable",
+"assigned" : "2019-02-26T11:06:44.810-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-02-26T11:06:44.810-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-02-26T11:06:44.810-0600"
+}
+},
+{
+"event" : "addTable",
+"timestamp" : "2019-02-26T11:06:47.363-0600",
+"value" : {
+"name" : "artdaqConfig_v2",
+"assigned" : "2019-02-26T11:06:47.363-0600"
+}
+}
+],
+"created" : "2019-02-26T11:06:44.809-0600"
+},
+"_id" : {
+"$oid" : "8454113bad3d4d8889e6a173"
+},
+"collection" : "DataManagerSupervisorTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

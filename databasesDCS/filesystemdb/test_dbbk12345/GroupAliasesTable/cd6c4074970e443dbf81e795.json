@@ -1,0 +1,154 @@
+{
+"document" : {
+"data" : {
+"NAME" : "GROUP_ALIASES_TABLE",
+"COMMENT" : "Default Backbone for artdaq (1-1-1).",
+"AUTHOR" : "admin",
+"CREATION_TIME" : 1551731054,
+"COL_TYPES" : {
+"GROUP_KEY_ALIAS" : "VARCHAR2",
+"GROUP_NAME" : "VARCHAR2",
+"GROUP_KEY" : "VARCHAR2",
+"COMMENT_DESCRIPTION" : "VARCHAR2",
+"AUTHOR" : "VARCHAR2",
+"RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+},
+"DATA_SET" : [
+{
+"GROUP_KEY_ALIAS" : "defaultContextAlias",
+"GROUP_NAME" : "testContext",
+"GROUP_KEY" : "5",
+"COMMENT_DESCRIPTION" : "default safe context",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551200769"
+},
+{
+"GROUP_KEY_ALIAS" : "defaultSystemAlias",
+"GROUP_NAME" : "defaultConfig",
+"GROUP_KEY" : "5",
+"COMMENT_DESCRIPTION" : "default safe running",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1551731054"
+},
+{
+"GROUP_KEY_ALIAS" : "artdaqContextAlias",
+"GROUP_NAME" : "artdaqContext",
+"GROUP_KEY" : "3",
+"COMMENT_DESCRIPTION" : "default artdaq (1-1-1) context",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548820427"
+},
+{
+"GROUP_KEY_ALIAS" : "artdaqSystemAlias",
+"GROUP_NAME" : "artdaqConfig",
+"GROUP_KEY" : "2",
+"COMMENT_DESCRIPTION" : "default artdaq (1-1-1) config",
+"AUTHOR" : "admin",
+"RECORD_INSERTION_TIME" : "1548821972"
+}
+]
+},
+"metadata" : {
+
+},
+"search" : [
+
+]
+},
+"comments" : [
+
+],
+"origin" : {
+"source" : "template",
+"name" : "notprovided",
+"format" : "json",
+"created" : "2019-03-04T14:24:14.667-0600",
+"rawdata" : [
+
+]
+},
+"version" : "7",
+"entities" : [
+{
+"name" : "OTSROOT",
+"assigned" : "2019-03-04T14:24:14.668-0600"
+}
+],
+"configurations" : [
+{
+"name" : "notprovided",
+"assigned" : "2019-03-04T14:24:14.667-0600"
+},
+{
+"name" : "TableEditWizBackbone_v7",
+"assigned" : "2019-03-04T14:24:15.075-0600"
+}
+],
+"changelog" : "notprovided",
+"bookkeeping" : {
+"isdeleted" : false,
+"isreadonly" : false,
+"updates" : [
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:24:14.667-0600",
+"value" : {
+"name" : "notprovided",
+"assigned" : "2019-03-04T14:24:14.667-0600"
+}
+},
+{
+"event" : "setVersion",
+"timestamp" : "2019-03-04T14:24:14.667-0600",
+"value" : {
+"name" : "7",
+"assigned" : "2019-03-04T14:24:14.667-0600"
+}
+},
+{
+"event" : "setCollection",
+"timestamp" : "2019-03-04T14:24:14.668-0600",
+"value" : {
+"name" : "GroupAliasesTable",
+"assigned" : "2019-03-04T14:24:14.668-0600"
+}
+},
+{
+"event" : "addEntity",
+"timestamp" : "2019-03-04T14:24:14.668-0600",
+"value" : {
+"name" : "OTSROOT",
+"assigned" : "2019-03-04T14:24:14.668-0600"
+}
+},
+{
+"event" : "addConfiguration",
+"timestamp" : "2019-03-04T14:24:15.075-0600",
+"value" : {
+"name" : "TableEditWizBackbone_v7",
+"assigned" : "2019-03-04T14:24:15.075-0600"
+}
+}
+],
+"created" : "2019-03-04T14:24:14.667-0600"
+},
+"_id" : {
+"$oid" : "cd6c4074970e443dbf81e795"
+},
+"collection" : "GroupAliasesTable",
+"aliases" : {
+"active" : [
+
+],
+"history" : [
+
+]
+},
+"runs" : [
+
+],
+"attachments" : [
+
+],
+"configtype" : "notprovided"
+}

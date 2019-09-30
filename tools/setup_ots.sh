@@ -60,6 +60,20 @@ elif [ $userinput == "shift" ]; then
     basepath="mu2eshift/test_stand"
     repository="otsdaq_mu2e"
     userdataappend="_shift"
+elif [ $userinput == "shift1" ]; then
+    export OTS_MAIN_PORT=4015
+    export OTS_WIZ_MODE_MAIN_PORT=4015
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
+    basepath="mu2eshift/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend="_shift1"
+elif [ $userinput == "shift2" ]; then
+    export OTS_MAIN_PORT=4025
+    export OTS_WIZ_MODE_MAIN_PORT=4025
+    export CONSOLE_SUPERVISOR_IP=192.168.157.12
+    basepath="mu2eshift/test_stand"
+    repository="otsdaq_mu2e"
+    userdataappend="_shift2"
 elif [ $userinput == "crv" ]; then
     export OTS_MAIN_PORT=3085
     export OTS_WIZ_MODE_MAIN_PORT=3085
@@ -73,6 +87,13 @@ elif [ $userinput == "trigger" ]; then
     export CONSOLE_SUPERVISOR_IP=192.168.157.11
     basepath="mu2etrig/test_stand"
     repository="otsdaq_mu2e_trigger"
+    userdataappend=""
+elif [ $userinput == "tem" ]; then
+    export OTS_MAIN_PORT=4045
+    export OTS_WIZ_MODE_MAIN_PORT=4045
+    export CONSOLE_SUPERVISOR_IP=192.168.157.11
+    basepath="mu2etem/test_stand"
+    repository="otsdaq_mu2e_extmon"
     userdataappend=""
 elif [ $userinput == "dqmcalo" ]; then
     export OTS_MAIN_PORT=3095
@@ -88,7 +109,7 @@ elif [ $userinput == "02" ]; then
     repository="otsdaq_mu2e"
     userdataappend="_02"
 elif [ $userinput == "dcs" ]; then
-    export OTS_MAIN_PORT=2015
+    export OTS_MAIN_PORT=5019
     export CONSOLE_SUPERVISOR_IP=127.0.0.1
     basepath="mu2edcs/dcs_ots_demo"
     repository="otsdaq_mu2e"
@@ -106,7 +127,7 @@ else
 fi
 
 #setup ots path append
-if [[ $userinput == "hwdev" || $userinput == "shift" ]]; then
+if [[ $userinput == "hwdev" || $userinput == "shift" || $userinput == "dcs" ]]; then
     otsPathAppend=""
 else
     otsPathAppend=$userdataappend
@@ -175,12 +196,12 @@ else
 fi
 
 echo 
-rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
-ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/Logs
-rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
-ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
-rm -rf /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
-ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
+rm -rf /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/Logs
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/Logs
+rm -rf /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/ARTDAQConfigurations
+rm -rf /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
+ln -sf /scratch/mu2e/otsdaqLogs_${userinput} /home/${basepath}/ots${otsPathAppend}/srcs/${repository}/Data${userdataappend}/TriggerConfigurations
 
 export OTS_OWNER=Mu2e
 
@@ -192,6 +213,7 @@ offlineFhiclDir=/mu2e/ups/offline/trig_0_4_2/fcl
 triggerEpilogDir=/home/${basepath}/ots/srcs/otsdaq_mu2e_trigger/Data/TriggerConfigurations
 dataFilesDir=/mu2e/DataFiles
 export FHICL_FILE_PATH=$FHICL_FILE_PATH:$USER_DATA:$offlineFhiclDir:$triggerEpilogDir:$dataFilesDir
+export MU2E_SEARCH_PATH=$MU2E_SEARCH_PATH:/mu2e/DataFiles
 
 echo -e "setup [${LINENO}]  \t Now your user data path is USER_DATA \t\t = ${USER_DATA}"
 echo -e "setup [${LINENO}]  \t Now your database path is ARTDAQ_DATABASE_URI \t = ${ARTDAQ_DATABASE_URI}"

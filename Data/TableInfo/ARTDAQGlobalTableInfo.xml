@@ -4,7 +4,8 @@
 			<VIEW Name="ARTDAQ_GLOBAL_TABLE" Type="File,Database,DatabaseTest" Description="No%20description.">
 				<COLUMN Type="UID" 	 Name="artdaqUID" 	 StorageName="ARTDAQ_UID" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="processNameForBuilders" 	 StorageName="PROCESS_NAME_FOR_BUILDERS" 		DataType="VARCHAR2" 		DataChoices=""/>
-				<COLUMN Type="Data" 	 Name="processNameForAggregators" 	 StorageName="PROCESS_NAME_FOR_AGGREGATORS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="processNameForDataloggers" 	 StorageName="PROCESS_NAME_FOR_DATALOGGERS" 		DataType="VARCHAR2" 		DataChoices=""/>
+				<COLUMN Type="Data" 	 Name="processNameForDispatchers" 	 StorageName="PROCESS_NAME_FOR_DISPATCHERS" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Data" 	 Name="maxFragmentSizeBytes" 	 StorageName="MAX_FRAGMENT_SIZE_BYTES" 		DataType="NUMBER" 		DataChoices=""/>
 				<COLUMN Type="Comment" 	 Name="CommentDescription" 	 StorageName="COMMENT_DESCRIPTION" 		DataType="VARCHAR2" 		DataChoices=""/>
 				<COLUMN Type="Author" 	 Name="Author" 	 StorageName="AUTHOR" 		DataType="VARCHAR2" 		DataChoices=""/>

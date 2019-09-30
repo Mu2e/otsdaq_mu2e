@@ -1,8 +1,8 @@
 #ifndef _ots_DemoDQMHistosConsumer_h_
 #define _ots_DemoDQMHistosConsumer_h_
 
-#include "otsdaq-core/Configurable/Configurable.h"
-#include "otsdaq-core/DataManager/DQMHistosConsumerBase.h"
+#include "otsdaq/Configurable/Configurable.h"
+#include "otsdaq/DataManager/DQMHistosConsumerBase.h"
 
 #include <string>
 
