@@ -1,4 +1,4 @@
-#!/bin/sh
+7#!/bin/sh
 echo # This script is intended to be sourced.
 
 userinput=$1
@@ -256,4 +256,5 @@ toffSg 4-64 #apparently not turned off by default?
 #============================
 setup ninja v1_8_2
 alias makeninja='pushd $MRB_BUILDDIR; ninja; popd'
-
+alias mb='makeninja'
+alias mz='mrb z; mrbsetenv; mrb b --generator ninja'
