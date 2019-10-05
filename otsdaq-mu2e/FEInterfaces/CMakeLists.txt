@@ -58,8 +58,8 @@ simple_plugin(CAPTANSignalGenerator "interface"
   ${CETLIB}
   ${CETLIB_EXCEPT}
   ${MF_MESSAGELOGGER}
-	 ${XDAQ_BASIC_LIB_LIST}	 
-	 $ENV{XERCES_C_LIB}/libxerces-c.so
+  ${XDAQ_BASIC_LIB_LIST}	 
+  ${XDAQ_XERCES-C}
 )
 
 install_headers()
