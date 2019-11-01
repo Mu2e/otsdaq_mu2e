@@ -68,7 +68,7 @@ find_ups_boost( v1_50_0 filesystem
 find_package(MPI QUIET)
 
 # macros for art_dictionary and simple_plugin
-include(ArtDictionary)
+
 include(ArtMake)
 include(BuildPlugins)
 include(CetTest)

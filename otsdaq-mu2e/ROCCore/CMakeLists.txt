@@ -6,6 +6,14 @@ cet_make(LIBRARY_NAME ROCCore
 		 LIBRARIES
 		  	FECore		
 		  	DTCInterface
+			Configurable
+			ConfigurationInterface
+			TableCore
+			artdaq-core_Utilities
+			Macros
+			WorkLoopManager
+			${XDAQ_BASIC_LIB_LIST}
+			${XDAQ_XERCES-C}	
 )
 
 install_headers()

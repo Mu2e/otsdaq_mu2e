@@ -6,6 +6,13 @@ cet_make(LIBRARY_NAME CFOandDTCCore
 		 LIBRARIES
 		  	FECore		
 		  	DTCInterface
+			Configurable
+			ConfigurationInterface
+			TableCore
+			Macros
+			WorkLoopManager
+			${XDAQ_BASIC_LIB_LIST}
+			${XDAQ_XERCES-C}		
 )
 
 install_headers()

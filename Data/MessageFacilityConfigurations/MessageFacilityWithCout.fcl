@@ -1,6 +1,0 @@
-console : { 
- 	type : "cout" 
- 	threshold : "DEBUG" 
- 	#noTimeStamps : true 
- 	#noLineBreaks: true
-}

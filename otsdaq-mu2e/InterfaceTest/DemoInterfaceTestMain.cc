@@ -2,14 +2,14 @@
 #include <iostream>
 
 #include "otsdaq-components/FEInterfaces/FEOtsUDPTemplateInterface.h"
-#include "otsdaq-core/ConfigurationInterface/ConfigurationInterface.h"
-#include "otsdaq-core/ConfigurationInterface/ConfigurationManager.h"
-#include "otsdaq-core/TableCore/TableGroupKey.h"
+#include "otsdaq/ConfigurationInterface/ConfigurationInterface.h"
+#include "otsdaq/ConfigurationInterface/ConfigurationManager.h"
+#include "otsdaq/TableCore/TableGroupKey.h"
 /*
 
 #include "otsdaq-components/FEInterfaces/FEWOtsUDPFSSRInterface.h"
 #include "otsdaq-components/FEInterfaces/FEWOtsUDPHCALInterface.h"
-#include "otsdaq-core/ConfigurationDataFormats/FEWOtsUDPHardwareTable.h"
+#include "otsdaq/ConfigurationDataFormats/FEWOtsUDPHardwareTable.h"
 */
 using namespace ots;
 

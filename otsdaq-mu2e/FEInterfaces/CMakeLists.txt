@@ -34,6 +34,8 @@ simple_plugin(DTCFrontEndInterface "interface"
   	CFOandDTCCore
 	DTCInterface  
 	ROCCore
+	PluginMakers
+	${CETLIB_EXCEPT}
 	#otsdaq-mu2e_FEInterfaces_ROCPolarFireCoreInterface_interface
  )
  
@@ -49,8 +51,15 @@ simple_plugin(CAPTANSignalGenerator "interface"
   FECore
   WorkLoopManager
   Configurable
+  ConfigurationInterface
+  TableCore
+  NetworkUtilities
+  Macros
   ${CETLIB}
   ${CETLIB_EXCEPT}
+  ${MF_MESSAGELOGGER}
+  ${XDAQ_BASIC_LIB_LIST}	 
+  ${XDAQ_XERCES-C}
 )
 
 install_headers()
