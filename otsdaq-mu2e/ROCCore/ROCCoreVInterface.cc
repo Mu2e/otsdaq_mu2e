@@ -19,7 +19,7 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 {
 	__FE_COUT__ << "Constructing..." << __E__;
 
-	INIT_MF("ROCCoreVInterface");
+	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
 	linkID_ =
 	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());

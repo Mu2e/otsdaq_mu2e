@@ -14,7 +14,7 @@ XDAQ_INSTANTIATOR_IMPL(TemplateSupervisor)
 TemplateSupervisor::TemplateSupervisor(xdaq::ApplicationStub* s)
     : xdaq::Application(s), SOAPMessenger(this)
 {
-	INIT_MF("TemplateSupervisor");
+	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 	xgi::bind(this, &TemplateSupervisor::Default, "Default");
 	init();
 }
