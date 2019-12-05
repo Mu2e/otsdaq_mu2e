@@ -9,7 +9,7 @@
 #
 # NOTE!!! <snapshot name> must be unique, or snapshot will be overwritten with no warning!
 #
-# usage: --snapshot <snapshot name> --data <path of user data to clone> --database <path of database to clone>
+# usage: --name <snapshot name> --data <path of user data to clone> --database <path of database to clone>
 # 
 #   snapshot 
 #		e.g. a, b, or c
@@ -19,13 +19,13 @@
 #	database
 #		is the full path to the databases folder for the snapshot
 #
-#  example run:
-#	./create_mu2e_user_snapshot.sh --snapshot a --data /home/rrivera/ots/NoGitData --database /home/rrivera/databases
+#  example run: (if not compiled, use ./create_mu2e_user_snapshot.sh)
+#	create_mu2e_user_snapshot.sh --name a --data /home/rrivera/ots/NoGitData --database /home/rrivera/databases
 #
 
 echo
 echo
-echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t Do not source this script, run it as ./create_mu2e_user_snapshot.sh"
+echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t Do not source this script, run it as create_mu2e_user_snapshot.sh"
 return  >/dev/null 2>&1 #return is used if script is sourced
 		
 echo
@@ -37,7 +37,7 @@ UDATA=${USER_DATA}
 UDATABASES=`echo ${ARTDAQ_DATABASE_URI}|sed 's|.*//|/|'`
 		
 
-if [[ "$1"  == "--snapshot" && "x$2" != "x" ]]; then
+if [[ "$1"  == "--name" && "x$2" != "x" ]]; then
 	SNAPSHOT="$2"
 fi
 
@@ -54,7 +54,11 @@ echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t DATA    
 echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t DATABASE \t= $UDATABASES"
 
 if [[ "x$SNAPSHOT" == "x" ]]; then 		#require a snapshot name
-	echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t usage: --snapshot <snapshot name> --data <path of user data to clone> --database <path of database to clone>"
+	echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t usage: --name <snapshot name> --data <path of user data to clone> --database <path of database to clone>"
+	echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t"
+	echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t\t for example..."
+	echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t\t\t create_mu2e_user_snapshot.sh --name a"
+	echo -e `date +"%h%y %T"` "create_mu2e_user_snapshot.sh [${LINENO}]  \t"
 	exit
 fi
 

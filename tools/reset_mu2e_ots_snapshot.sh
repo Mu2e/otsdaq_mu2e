@@ -3,13 +3,13 @@
 #	Launches the specified otsdaq snapshot from the Mu2e NFS server. 
 #	Your username must be on the k5login for mu2eshift.
 #
-# usage: --snapshot <snapshot name>
+# usage: --name <snapshot name>
 #
 #   snapshot 
 #		e.g. a, b, or c
 #
-#  example run:
-#	./reset_mu2e_ots_snapshot.sh --snapshot a
+#  example run: (if not compiled, use ./reset_mu2e_ots_snapshot.sh)
+#	reset_mu2e_ots_snapshot.sh --name a
 #
 
 #setup default parameters
@@ -23,12 +23,12 @@ echo " _|_"
 echo " \ /"
 echo "  - "
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t ========================================================"
-echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t usage: --snapshot <snapshot name>"
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t usage: --name <snapshot name>"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t note: snapshot will default to '${SNAPSHOT}'"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t for example..."
-echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t\t ./reset_mu2e_ots_snapshot.sh --snapshot a"
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t\t reset_mu2e_ots_snapshot.sh --name a"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
 
@@ -40,9 +40,9 @@ echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Extracting
 echo
 
 
-if [[ "$1"  == "--snapshot" && "x$2" != "x" ]]; then
+if [[ "$1"  == "--name" && "x$2" != "x" ]]; then
 	SNAPSHOT="$2"
-elif [[ "x$1" != "x" ]]; then
+elif [[ "x$1" == "x" ]]; then
 
 	echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Illegal parameters.. See above for usage."
 	return  >/dev/null 2>&1 #return is used if script is sourced
@@ -61,12 +61,12 @@ killall -9 ots_udp_hw_emulator
 #download and run get_snapshot_data script
 wget https://cdcvs.fnal.gov/redmine/projects/otsdaq_mu2e/repository/demo/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
 chmod 755 get_snapshot_data.sh
-./get_snapshot_data.sh --snapshot ${SNAPSHOT}
+./get_snapshot_data.sh --name ${SNAPSHOT}
 	
 #download and run get_snapshot_database script
 wget https://cdcvs.fnal.gov/redmine/projects/otsdaq_mu2e/repository/demo/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate	
 chmod 755 get_snapshot_database.sh
-./get_snapshot_database.sh --snapshot ${SNAPSHOT}
+./get_snapshot_database.sh --name ${SNAPSHOT}
 
 #clean up
 rm get_snapshot_database.sh

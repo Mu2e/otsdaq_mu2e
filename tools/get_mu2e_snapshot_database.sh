@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# usage: --snapshot <snapshot name>
+# usage: --name <snapshot name>
 #
 #   snapshot 
 #		e.g. a, b, or c
 #
 #  example run:
-#	./get_mu2e_snapshot_database.sh --snapshot a
+#	./get_mu2e_snapshot_database.sh --name a
 #
 
 if ! [ -e setup_ots.sh ]; then
@@ -30,7 +30,7 @@ exec 2> >(tee "$Base/script_log/$(basename $0)_stderr.script")
 #setup defaul parameters
 SNAPSHOT='a'
 
-if [[ "$1"  == "--snapshot" && "x$2" != "x" ]]; then
+if [[ "$1"  == "--name" && "x$2" != "x" ]]; then
 	SNAPSHOT="$2"
 fi
 
