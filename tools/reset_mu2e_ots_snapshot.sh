@@ -59,12 +59,12 @@ ots --killall
 killall -9 ots_udp_hw_emulator
 
 #download and run get_snapshot_data script
-wget https://cdcvs.fnal.gov/redmine/projects/otsdaq_mu2e/repository/demo/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
+wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
 chmod 755 get_snapshot_data.sh
 ./get_snapshot_data.sh --name ${SNAPSHOT}
 	
 #download and run get_snapshot_database script
-wget https://cdcvs.fnal.gov/redmine/projects/otsdaq_mu2e/repository/demo/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate	
+wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate	
 chmod 755 get_snapshot_database.sh
 ./get_snapshot_database.sh --name ${SNAPSHOT}
 
