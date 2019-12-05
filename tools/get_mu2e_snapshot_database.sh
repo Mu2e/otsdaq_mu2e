@@ -110,7 +110,18 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Install
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}"
 echo
-mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}
+
+#hard to be sure of depth of table folders, so check
+if [ -d tmpd1234/databases/XDAQContextTable ]; then
+	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases ${ADU_PATH}"
+	mv tmpd1234/databases ${ADU_PATH}
+elif [ -d tmpd1234/databases/filesystemdb/XDAQContextTable ]; then
+	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb ${ADU_PATH}"
+	mv tmpd1234/databases/filesystemdb ${ADU_PATH}
+else
+	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}"	
+	mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}
+fi
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Cleaning up downloads.."
