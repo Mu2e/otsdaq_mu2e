@@ -1,6 +1,7 @@
 *~
 \#*\#
 bin
+*.bin
 build_*
 cetpkg_variable_report
 checkinAll.log
