@@ -3,8 +3,7 @@
 
 using namespace ots;
 
-#undef __MF_SUBJECT__
-#define __MF_SUBJECT__ "FE-ROCCoreVInterface"
+
 
 //=========================================================================================
 ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
@@ -69,6 +68,7 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address, DTCLib::roc
 
 //==================================================================================================
 DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address)
+try
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -83,6 +83,12 @@ DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address
 		return readROCRegister(address);
 
 }  // end readRegister()
+ catch(...)
+   {
+     __SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
+     __FE_COUT_ERR__ << ss.str();
+     throw;
+   }
 //
 void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
                                   DTCLib::roc_address_t  address,

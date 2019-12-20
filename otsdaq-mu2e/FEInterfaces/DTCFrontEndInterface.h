@@ -115,6 +115,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								WriteROC					(__ARGS__);
 	void 								WriteROCBlock				(__ARGS__);
 	void 								ReadROCBlock				(__ARGS__);
+        void                                                            BlockReadROC                            (__ARGS__);
 	void 								DTCHighRateBlockCheck		(__ARGS__);
 	void 								DTCReset					(__ARGS__);
 	void 								DTCReset					(void);

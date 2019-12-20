@@ -324,14 +324,19 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},  // namesOfOutputArgs
 					1);                          // requiredUserPermissions
 
-	registerFEMacroFunction("ROC_ReadBlock",
+	registerFEMacroFunction("ROC_MultipleRead",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ReadROCBlock),
 				        std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address", "incrementAddress"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 					
-					
+	registerFEMacroFunction("ROC_ReadBlock",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::BlockReadROC),
+				        std::vector<std::string>{"rocLinkIndex", "block", "address"},
+					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions					
 
 	// registration of FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by
 	// 'admin' using MacroMaker.
@@ -1441,7 +1446,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 	if(loopbackIndex > totalNumberOfMeasurements)  // finish
 	{
-		//    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
+		__MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
 
 		if(checkLinkStatus() == 1)
 		{
@@ -1454,7 +1459,8 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			//      registerRead(0x9140) << std::dec << __E__);
 		}
 
-		for(auto& roc : rocs_)
+		if(0)
+		  for(auto& roc : rocs_)
 		{
 			__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost "
 			                          << roc.second->readDTCLinkLossCounter()
@@ -1516,6 +1522,9 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 	registerWrite(0x9114, ROCToEnable);
 
+
+	indicateIterationWork(); //FIXME -- go back to including the ROC (could not 'read' for some reason)
+	return;
 	// Re-align the links for the activeROC
 	for(auto& roc : rocs_)
 	{
@@ -3074,6 +3083,56 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 
 	for(auto& argOut : argsOut)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
+}
+
+//========================================================================================================================
+void DTCFrontEndInterface::BlockReadROC(__ARGS__)
+{
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
+	for(auto& argIn : argsIn)
+		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
+
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	uint8_t  address   = __GET_ARG_IN__("address", uint8_t);
+	uint8_t  block     = __GET_ARG_IN__("block", uint8_t);
+	__FE_COUTV__(rocLinkIndex);
+	__FE_COUT__ << "block = " << std::dec << (unsigned int)block << __E__;
+	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
+	            << __E__;
+
+	bool acknowledge_request = false;
+
+	for(auto& roc : rocs_)
+	{
+		__FE_COUT__ << "At ROC link ID " << roc.second->getLinkID() << ", looking for "
+		            << rocLinkIndex << __E__;
+
+		if(rocLinkIndex == roc.second->getLinkID())
+		{
+			uint16_t readData;
+		
+			readData = thisDTC_-> ReadExtROCRegister(
+			rocLinkIndex, block, address);
+
+			std::string readDataString = "";
+			readDataString = BinaryStringMacros::binaryNumberToHexString(readData);
+
+			//StringMacros::vectorToString(readData);
+						
+			__SET_ARG_OUT__("readData", readDataString);
+
+			// for(auto &argOut:argsOut)
+			__FE_COUT__ << "readData"
+			            << ": " << readDataString << __E__;
+			return;
+		}
+	}
+
+	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS_THROW__;
 }
 
 //========================================================================
