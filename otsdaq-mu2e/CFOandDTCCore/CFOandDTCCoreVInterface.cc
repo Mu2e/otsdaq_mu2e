@@ -174,7 +174,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 	__FE_COUT__ << "Destructed." << __E__;
 }  // end destructor()
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::configureSlowControls(void)
 //{
 //	__FE_COUT__ << "Configuring slow controls..." << __E__;
@@ -234,7 +234,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //
 //}  // end configureSlowControls()
 //
-////========================================================================================================================
+////==============================================================================
 //// virtual in case channels are handled in multiple maps, for example
 //void CFOandDTCCoreVInterface::resetSlowControlsChannelIterator(void)
 //{
@@ -244,7 +244,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //	currentChannelIsInROC_ = false;
 //}  // end resetSlowControlsChannelIterator()
 //
-////========================================================================================================================
+////==============================================================================
 //// virtual in case channels are handled in multiple maps, for example
 //FESlowControlsChannel* CFOandDTCCoreVInterface::getNextSlowControlsChannel(void)
 //{
@@ -277,14 +277,14 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
 //}  // end getNextSlowControlsChannel()
 //
-////========================================================================================================================
+////==============================================================================
 //// virtual in case channels are handled in multiple maps, for example
 //unsigned int CFOandDTCCoreVInterface::getSlowControlsChannelCount(void)
 //{
 //	return mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size();
 //}  // end getSlowControlsChannelCount()
 //
-////========================================================================================================================
+////==============================================================================
 //// virtual in case read should be different than universalread
 //void CFOandDTCCoreVInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 //                                                std::string&           readValue)
@@ -320,7 +320,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //	__FE_COUTV__(readValue.size());
 //}  // end getNextSlowControlsChannel()
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::registerFEMacros(void)
 //{
 //	mapOfFEMacroFunctions_.clear();
@@ -439,7 +439,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //
 //}  // end registerFEMacros()
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::createROCs(void)
 //{
 //	rocs_.clear();
@@ -980,32 +980,32 @@ void CFOandDTCCoreVInterface::printVoltages()
 //	__FE_SS_THROW__;
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::halt(void)
 //{
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::pause(void)
 //{
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::resume(void)
 //{
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::start(std::string runNumber)
 //{
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::stop(void)
 //{
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //bool CFOandDTCCoreVInterface::running(void)
 //{
 //	return true; //true to end loop
@@ -2344,7 +2344,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 	return;
 }
 //
-////========================================================================================================================
+////==============================================================================
 //// rocRead
 //void CFOandDTCCoreVInterface::ReadROC(__ARGS__)
 //{
@@ -2393,7 +2393,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //
 //}  // end ReadROC()
 //
-////========================================================================================================================
+////==============================================================================
 //// DTCStatus
 ////	FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by 'admin' using
 //// MacroMaker. 	Macro Notes:
@@ -2435,7 +2435,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //	__FE_SS_THROW__;
 //}
 //
-////========================================================================================================================
+////==============================================================================
 //void CFOandDTCCoreVInterface::WriteROCBlock(__ARGS__)
 //{
 //	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;

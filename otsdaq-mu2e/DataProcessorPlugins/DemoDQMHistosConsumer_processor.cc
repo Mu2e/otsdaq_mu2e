@@ -6,7 +6,7 @@
 
 using namespace ots;
 
-//========================================================================================================================
+//==============================================================================
 DemoDQMHistosConsumer::DemoDQMHistosConsumer(
     std::string              supervisorApplicationUID,
     std::string              bufferUID,
@@ -31,10 +31,10 @@ DemoDQMHistosConsumer::DemoDQMHistosConsumer(
 {
 }
 
-//========================================================================================================================
+//==============================================================================
 DemoDQMHistosConsumer::~DemoDQMHistosConsumer(void) { closeFile(); }
 
-//========================================================================================================================
+//==============================================================================
 void DemoDQMHistosConsumer::startProcessingData(std::string runNumber)
 {
 	// IMPORTANT
@@ -47,7 +47,7 @@ void DemoDQMHistosConsumer::startProcessingData(std::string runNumber)
 	DataConsumer::startProcessingData(runNumber);
 }
 
-//========================================================================================================================
+//==============================================================================
 void DemoDQMHistosConsumer::stopProcessingData(void)
 {
 	DataConsumer::stopProcessingData();
@@ -58,7 +58,7 @@ void DemoDQMHistosConsumer::stopProcessingData(void)
 	closeFile();
 }
 
-//========================================================================================================================
+//==============================================================================
 bool DemoDQMHistosConsumer::workLoopThread(toolbox::task::WorkLoop* workLoop)
 {
 	//__COUT__ << DataProcessor::processorUID_ << " running, because workloop: "
@@ -67,7 +67,7 @@ bool DemoDQMHistosConsumer::workLoopThread(toolbox::task::WorkLoop* workLoop)
 	return WorkLoop::continueWorkLoop_;
 }
 
-//========================================================================================================================
+//==============================================================================
 void DemoDQMHistosConsumer::fastRead(void)
 {
 	//__COUT__ << processorUID_ << " running!" << std::endl;
@@ -88,7 +88,7 @@ void DemoDQMHistosConsumer::fastRead(void)
 	DataConsumer::setReadSubBuffer<std::string, std::map<std::string, std::string>>();
 }
 
-//========================================================================================================================
+//==============================================================================
 void DemoDQMHistosConsumer::slowRead(void)
 {
 	//__COUT__ << DataProcessor::processorUID_ << " running!" << std::endl;

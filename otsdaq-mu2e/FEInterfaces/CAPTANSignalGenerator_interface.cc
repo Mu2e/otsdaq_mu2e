@@ -10,7 +10,7 @@ using namespace ots;
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "FE-CAPTANSignalGenerator"
 
-//========================================================================================================================
+//==============================================================================
 CAPTANSignalGenerator::CAPTANSignalGenerator(
     const std::string&       interfaceUID,
     const ConfigurationTree& theXDAQContextConfigTree,
@@ -56,10 +56,10 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	universalDataSize_    = 8;
 }
 
-//========================================================================================================================
+//==============================================================================
 CAPTANSignalGenerator::~CAPTANSignalGenerator(void) {}
 
-//========================================================================================================================
+//==============================================================================
 void CAPTANSignalGenerator::configure(void)
 {
 	//	unsigned int i = VStateMachine::getIterationIndex();
@@ -142,34 +142,34 @@ void CAPTANSignalGenerator::configure(void)
 	__FE_COUT__ << "Done with ots Template configuring." << __E__;
 }
 
-//========================================================================================================================
+//==============================================================================
 // void CAPTANSignalGenerator::configureDetector(const DACStream& theDACStream)
 //{
 //	__FE_COUT__ << "\tconfigureDetector" << __E__;
 //}
 
-//========================================================================================================================
+//==============================================================================
 void CAPTANSignalGenerator::halt(void)
 {
 	__FE_COUT__ << "\tHalt" << __E__;
 	stop();
 }
 
-//========================================================================================================================
+//==============================================================================
 void CAPTANSignalGenerator::pause(void)
 {
 	__FE_COUT__ << "\tPause" << __E__;
 	stop();
 }
 
-//========================================================================================================================
+//==============================================================================
 void CAPTANSignalGenerator::resume(void)
 {
 	__FE_COUT__ << "\tResume" << __E__;
 	start("");
 }
 
-//========================================================================================================================
+//==============================================================================
 void CAPTANSignalGenerator::start(std::string)  // runNumber)
 {
 	__FE_COUT__ << "\tStart" << __E__;
@@ -198,7 +198,7 @@ void CAPTANSignalGenerator::start(std::string)  // runNumber)
 	OtsUDPHardware::write(sendBuffer);
 }
 
-//========================================================================================================================
+//==============================================================================
 void CAPTANSignalGenerator::stop(void)
 {
 	__FE_COUT__ << "\tStop" << __E__;
@@ -260,7 +260,7 @@ void CAPTANSignalGenerator::stop(void)
 	return;
 }
 
-//========================================================================================================================
+//==============================================================================
 bool CAPTANSignalGenerator::running(void)
 {
 	__FE_COUT__ << "\tRunning" << __E__;
@@ -325,7 +325,7 @@ bool CAPTANSignalGenerator::running(void)
 	return false;
 }
 
-//========================================================================================================================
+//==============================================================================
 // NOTE: buffer for address must be at least size universalAddressSize_
 // NOTE: buffer for returnValue must be max UDP size to handle return
 // possibility
@@ -348,7 +348,7 @@ void ots::CAPTANSignalGenerator::universalRead(char* address, char* returnValue)
 
 }  // end universalRead()
 
-//========================================================================================================================
+//==============================================================================
 // NOTE: buffer for address must be at least size universalAddressSize_
 // NOTE: buffer for writeValue must be at least size universalDataSize_
 void ots::CAPTANSignalGenerator::universalWrite(char* address, char* writeValue)
@@ -365,7 +365,7 @@ void ots::CAPTANSignalGenerator::universalWrite(char* address, char* writeValue)
 	OtsUDPHardware::write(sendBuffer);  // data request
 }  // end universalWrite()
 
-//========================================================================================================================
+//==============================================================================
 // varTest
 //	FEMacro 'varTest' generated, Oct-11-2018 11:36:28, by 'admin' using
 // MacroMaker. 	Macro Notes: This is a great test!
@@ -435,7 +435,7 @@ void CAPTANSignalGenerator::varTest(__ARGS__)
 
 }  // end varTest()
 
-//========================================================================================================================
+//==============================================================================
 // varTest2
 //	FEMacro 'varTest2' generated, Oct-11-2018 02:28:57, by 'admin' using
 // MacroMaker. 	Macro Notes: [Modified 14:28 10/11/2018] This is a great test!
