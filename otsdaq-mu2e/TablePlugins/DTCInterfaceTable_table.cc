@@ -46,7 +46,7 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 	outputEpicsPVFile(configManager);
 }  // end init()
 
-//========================================================================================================================
+//==============================================================================
 void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 {
 	/*

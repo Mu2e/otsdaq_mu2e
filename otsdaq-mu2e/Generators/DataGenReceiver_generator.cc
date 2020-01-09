@@ -14,7 +14,7 @@
 #include <iostream>
 #include <iterator>
 
-//========================================================================================================================
+//==============================================================================
 ots::DataGenReceiver::DataGenReceiver(fhicl::ParameterSet const& ps)
     : WorkLoop("DataGenReceiver")
     , DataConsumer(ps.get<std::string>("SupervisorApplicationUID", "ARTDAQDataManager"),
@@ -39,7 +39,7 @@ ots::DataGenReceiver::DataGenReceiver(fhicl::ParameterSet const& ps)
 	registerToBuffer();
 }
 
-//========================================================================================================================
+//==============================================================================
 bool ots::DataGenReceiver::getNext_(artdaq::FragmentPtrs& output)
 {
 	//__COUT__ << "READING DATA!" << std::endl;
@@ -63,7 +63,7 @@ bool ots::DataGenReceiver::getNext_(artdaq::FragmentPtrs& output)
 	return true;
 }
 
-//========================================================================================================================
+//==============================================================================
 void ots::DataGenReceiver::ProcessData_(artdaq::FragmentPtrs& frags)
 {
 	std::cout << __COUT_HDR_FL__ << __PRETTY_FUNCTION__ << std::endl;
@@ -128,19 +128,19 @@ void ots::DataGenReceiver::ProcessData_(artdaq::FragmentPtrs& frags)
 	return;
 }
 
-//========================================================================================================================
+//==============================================================================
 void ots::DataGenReceiver::start()
 {
 #pragma message "Using default implementation of DataGenReceiver::start_()"
 }
 
-//========================================================================================================================
+//==============================================================================
 void ots::DataGenReceiver::stop()
 {
 #pragma message "Using default implementation of DataGenReceiver::stop()"
 }
 
-//========================================================================================================================
+//==============================================================================
 void ots::DataGenReceiver::stopNoMutex(){
 #pragma message "Using default implementation of DataGenReceiver::stopNoMutex()"
 }

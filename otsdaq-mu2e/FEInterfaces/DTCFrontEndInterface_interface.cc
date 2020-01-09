@@ -171,7 +171,7 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 	__FE_COUT__ << "Destructed." << __E__;
 }  // end destructor()
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::configureSlowControls(void)
 {
 	__FE_COUT__ << "Configuring slow controls..." << __E__;
@@ -224,7 +224,7 @@ void DTCFrontEndInterface::configureSlowControls(void)
 
 }  // end configureSlowControls()
 
-//========================================================================================================================
+//==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 void DTCFrontEndInterface::resetSlowControlsChannelIterator(void)
 {
@@ -234,7 +234,7 @@ void DTCFrontEndInterface::resetSlowControlsChannelIterator(void)
 	currentChannelIsInROC_ = false;
 }  // end resetSlowControlsChannelIterator()
 
-//========================================================================================================================
+//==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 FESlowControlsChannel* DTCFrontEndInterface::getNextSlowControlsChannel(void)
 {
@@ -267,14 +267,14 @@ FESlowControlsChannel* DTCFrontEndInterface::getNextSlowControlsChannel(void)
 	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
 }  // end getNextSlowControlsChannel()
 
-//========================================================================================================================
+//==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 unsigned int DTCFrontEndInterface::getSlowControlsChannelCount(void)
 {
 	return mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size();
 }  // end getSlowControlsChannelCount()
 
-//========================================================================================================================
+//==============================================================================
 // virtual in case read should be different than universalread
 void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
                                                 std::string&           readValue)
@@ -310,7 +310,7 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 	__FE_COUTV__(readValue.size());
 }  // end getNextSlowControlsChannel()
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
 	mapOfFEMacroFunctions_.clear();
@@ -434,7 +434,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 }  // end registerFEMacros()
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::createROCs(void)
 {
 	rocs_.clear();
@@ -1352,7 +1352,7 @@ catch(...)
 	__FE_SS_THROW__;
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::halt(void)
 {
 	for(auto& roc : rocs_)  // halt "as usual"
@@ -1364,7 +1364,7 @@ void DTCFrontEndInterface::halt(void)
 	//	readStatus();
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::pause(void)
 {
 	for(auto& roc : rocs_)  // pause "as usual"
@@ -1376,7 +1376,7 @@ void DTCFrontEndInterface::pause(void)
 	//	readStatus();
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::resume(void)
 {
 	for(auto& roc : rocs_)  // resume "as usual"
@@ -1388,7 +1388,7 @@ void DTCFrontEndInterface::resume(void)
 	//	readStatus();
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
 	if(emulatorMode_)
@@ -1540,7 +1540,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	return;
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
 	int numberOfCAPTANPulses =
@@ -1610,7 +1610,7 @@ void DTCFrontEndInterface::stop(void)
 	return;
 }
 
-//========================================================================================================================
+//==============================================================================
 bool DTCFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
@@ -2958,7 +2958,7 @@ bool DTCFrontEndInterface::running(void)
 //	return;
 //}
 
-//========================================================================================================================
+//==============================================================================
 // rocRead
 void DTCFrontEndInterface::ReadROC(__ARGS__)
 {
@@ -3007,7 +3007,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 }  // end ReadROC()
 
-//========================================================================================================================
+//==============================================================================
 // DTCStatus
 //	FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by 'admin' using
 // MacroMaker. 	Macro Notes:
@@ -3049,7 +3049,7 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 	__FE_SS_THROW__;
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
@@ -3085,7 +3085,7 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 }
 
-//========================================================================================================================
+//==============================================================================
 void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
