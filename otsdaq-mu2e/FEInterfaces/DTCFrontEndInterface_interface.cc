@@ -383,7 +383,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
 					std::vector<std::string>{"numberOfRequests","timestampStart"},
-					std::vector<std::string>{},
+					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 
 
@@ -1154,17 +1154,17 @@ void DTCFrontEndInterface::configure(void) try
 			int dataInReg = registerRead(0x9100);
 			int dataToWrite =
 			    dataInReg |
-			    0x40008000;  // bit 30 = CFO emulation enable; bit 15 CFO emulation mode
+			    0x40808404;  // new incantation from Rick K. 12/18/2019m
 			registerWrite(0x9100, dataToWrite);
 
 			__FE_COUT__ << ".......  CFO emulation: turn off Event Windows" << __E__;
-			registerWrite(0x91f0, 0x00000000);
+			registerWrite(0x91f0, 0x1000);
 
 			__FE_COUT__ << ".......  CFO emulation: turn off 40MHz marker interval" << __E__;
 			registerWrite(0x91f4, 0x00000000);
 
-			__FE_COUT__ << ".......  CFO emulation: turn off heartbeat packets" << __E__;
-			registerWrite(0x91a8, 0x00000000);
+			__FE_COUT__ << ".......  CFO emulation: enable heartbeats" << __E__;
+			registerWrite(0x91a8, 0x15000);
 		}
 		else
 		{
@@ -3326,7 +3326,8 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		sleep(1);
 
 		// set number of null heartbeats
-		registerWrite(0x91BC, 0x0);
+		// registerWrite(0x91BC, 0x0);
+		registerWrite(0x91BC, 0x10);  // new incantaton from Rick K. 12/18/2019
 		//	  sleep(1);
 
 		//# Send data
@@ -3388,8 +3389,8 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		auto afterRequests = std::chrono::steady_clock::now();
 
 		// print out stuff
-		unsigned quietCount = 1;
-		quiet               = true;
+		unsigned quietCount = 20;
+		quiet               = false;
 
 		for(unsigned ii = 0; ii < number; ++ii)
 		{
@@ -3402,16 +3403,22 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 			std::cout << "util - after read for DAQ - ii=" << ii << ", sts=" << sts
 			          << ", buffer=" << (void*)buffer;
 
+
 			if(sts > 0)
 			{
 				void* readPtr = &buffer[0];
 				auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
 				readPtr       = static_cast<uint8_t*>(readPtr) + 8;
-				std::cout << "Buffer reports DMA size of " << std::dec << bufSize
+				
+
+	                       std::cout << "Buffer reports DMA size of " << std::dec << bufSize
 				          << " bytes. Device driver reports read of " << sts << " bytes,"
 				          << std::endl;
 
 				std::cout << "util - bufSize is " << bufSize;
+				//	__SET_ARG_OUT__("bufSize", bufSize);
+
+				//	__FE_COUT__ << "bufSize" << bufSize;
 				outputStream.write(static_cast<char*>(readPtr), sts - 8);
 
 				auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
@@ -3430,6 +3437,11 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 						}
 					}
 					std::cout << ostr.str();
+	        
+					__SET_ARG_OUT__("readData", ostr.str()); // write to data file
+
+
+					__FE_COUT__ << ostr.str(); // write to log file
 					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
 					{
 						line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) -
