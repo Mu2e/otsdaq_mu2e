@@ -42,7 +42,7 @@ echo
 
 if [[ "$1"  == "--name" && "x$2" != "x" ]]; then
 	SNAPSHOT="$2"
-elif [[ "x$1" == "x" ]]; then
+elif [[ "x$1" == "x" || "$1" != "--name" ]]; then
 
 	echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Illegal parameters.. See above for usage."
 	return  >/dev/null 2>&1 #return is used if script is sourced
@@ -50,7 +50,7 @@ elif [[ "x$1" == "x" ]]; then
 fi
 
 
-#echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t SNAPSHOT \t= $SNAPSHOT"
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t SNAPSHOT \t= $SNAPSHOT"
 echo		
 
 source setup_ots.sh
