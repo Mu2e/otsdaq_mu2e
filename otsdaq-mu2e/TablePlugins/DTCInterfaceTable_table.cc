@@ -144,7 +144,7 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 
 				    ++numberOfChannels;
 
-				    std::string subsystem = "TDAQ";
+				    std::string subsystem = std::string("TDAQ_") + __ENV__("LOGNAME");
 				    std::string pvName    = channel.first;
 				    std::string comment =
 				        channel.second.getNode(TableViewColumnInfo::COL_NAME_COMMENT)
