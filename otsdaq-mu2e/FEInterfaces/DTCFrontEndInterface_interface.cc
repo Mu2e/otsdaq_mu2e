@@ -1543,6 +1543,12 @@ void DTCFrontEndInterface::start(std::string runNumber)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC starting..." << __E__;
+		return;
+	}
+
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
