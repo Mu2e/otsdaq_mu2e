@@ -30,7 +30,7 @@ echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
 if [ $USER == "root" ]; then
 
 	#install ots dependencies
-	yum install -y libuuid-devel openssl-devel
+	yum install -y libuuid-devel openssl-devel python-devel
 	
 	#install cvmfs
 	yum install -y https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
