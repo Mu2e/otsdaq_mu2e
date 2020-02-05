@@ -163,6 +163,9 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
 {
+  //destroy ROCs before DTC destruction
+  	rocs_.clear();
+
 	if(thisDTC_)
 		delete thisDTC_;
 	// delete theFrontEndHardware_;
@@ -1355,18 +1358,25 @@ catch(...)
 //==============================================================================
 void DTCFrontEndInterface::halt(void)
 {
+  __FE_COUT__ << "Halting..." << __E__;
+
 	for(auto& roc : rocs_)  // halt "as usual"
 	{
 		roc.second->halt();
 	}
 
+	rocs_.clear();
+
+	__FE_COUT__ << "Halted." << __E__;
+
 	//	__FE_COUT__ << "HALT: DTC status" << __E__;
 	//	readStatus();
-}
+} //end halt()
 
 //==============================================================================
 void DTCFrontEndInterface::pause(void)
 {
+  __FE_COUT__ << "Pausing..." << __E__;
 	for(auto& roc : rocs_)  // pause "as usual"
 	{
 		roc.second->pause();
@@ -1374,11 +1384,14 @@ void DTCFrontEndInterface::pause(void)
 
 	//	__FE_COUT__ << "PAUSE: DTC status" << __E__;
 	//	readStatus();
+
+	__FE_COUT__ << "Paused." << __E__;
 }
 
 //==============================================================================
 void DTCFrontEndInterface::resume(void)
 {
+  __FE_COUT__ << "Resuming..." << __E__;
 	for(auto& roc : rocs_)  // resume "as usual"
 	{
 		roc.second->resume();
@@ -1386,7 +1399,9 @@ void DTCFrontEndInterface::resume(void)
 
 	//	__FE_COUT__ << "RESUME: DTC status" << __E__;
 	//	readStatus();
-}
+
+	__FE_COUT__ << "Resumed." << __E__;
+} //end resume()
 
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
@@ -1538,14 +1553,14 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 	indicateIterationWork();
 	return;
-}
+} //end start()
 
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
 	if(emulatorMode_)
 	{
-		__FE_COUT__ << "Emulator DTC starting..." << __E__;
+		__FE_COUT__ << "Emulator DTC stopping..." << __E__;
 		return;
 	}
 
@@ -1614,7 +1629,7 @@ void DTCFrontEndInterface::stop(void)
 
 	indicateIterationWork();
 	return;
-}
+} //end stop()
 
 //==============================================================================
 bool DTCFrontEndInterface::running(void)
@@ -1629,7 +1644,7 @@ bool DTCFrontEndInterface::running(void)
 	}
 
 	return true;
-}
+} //end running()
 //
 ////=====================================
 //void DTCFrontEndInterface::configureJitterAttenuator(void)

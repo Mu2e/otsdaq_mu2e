@@ -105,11 +105,11 @@ class ROCCoreVInterface : public FEVInterface
 	const unsigned int  							delay_;
 
 	//----------------- Emulator members
-	// return false when done with workloop
+	// return false when done with workLoop
   public:
 	virtual bool 							emulatorWorkLoop			(void)
 	{
-		__COUT__ << "This is an empty emulator workloop! this function should be overridden "
+		__COUT__ << "This is an empty emulator work loop! this function should be overridden "
 		          "by the derived class."
 		       << __E__;
 		//__SS_THROW__;
@@ -119,40 +119,43 @@ class ROCCoreVInterface : public FEVInterface
 
 	static void 							emulatorThread				(ROCCoreVInterface* roc)
 	{
-		roc->emulatorWorkloopRunning_ = true;
+		roc->emulatorWorkLoopRunning_ = true;
 
 		bool stillWorking = true;
-		while(!roc->emulatorWorkloopExit_ && stillWorking)
-		{
-			usleep(roc->emulatorWorkLoopPeriod_ /*microseconds*/);
-
-			//__COUT__ << "Calling emulator WorkLoop..." << __E__;
+		while(!roc->emulatorWorkLoopExit_ && stillWorking)
+		{		  
+		  //__COUT__ << "Calling emulator Work Loop..." << __E__;
 
 			{
 				// lockout member variables for the remainder of the scope
 				// this guarantees the emulator thread can safely access the members
 				//	Note: other functions (e.g. write and read) must also lock for
 				// this to work!
-				std::lock_guard<std::mutex> lock(roc->workloopMutex_);
+				std::lock_guard<std::mutex> lock(roc->workLoopMutex_);
 				stillWorking = roc->emulatorWorkLoop();
 			}
 
-		}
-		__COUT__ << "Exited emulator WorkLoop." << __E__;
+			
+			usleep(roc->emulatorWorkLoopPeriod_ /*microseconds*/);
 
-		roc->emulatorWorkloopRunning_ = false;
+			
+		}
+		__COUT__ << "Exited emulator Work Loop." << __E__;
+
+		roc->emulatorWorkLoopRunning_ = false;
 	}  // end emulatorThread()
 
   protected:
 	const unsigned int  							emulatorWorkLoopPeriod_; // in microseconds
-	volatile bool 									emulatorWorkloopExit_;
+	volatile bool 									emulatorWorkLoopExit_;
   private:
-	volatile bool 									emulatorWorkloopRunning_;
+	volatile bool 									emulatorWorkLoopRunning_;
 
 
-	std::mutex 										workloopMutex_;
+	std::mutex 										workLoopMutex_;
 
 	//----------------- end Emulator members
+	
 
 	// clang-format on
 };  // end ROCCoreVInterface declaration

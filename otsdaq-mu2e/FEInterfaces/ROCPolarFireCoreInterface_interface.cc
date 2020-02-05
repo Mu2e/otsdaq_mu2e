@@ -24,7 +24,8 @@ ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 {
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
-	__COUT__ << FEVInterface::interfaceUID_ << "Destructed." << __E__;
+  // Instead use __GEN_COUT__ which decorates using mfSubject_
+	__GEN_COUT__ << "Destructed." << __E__;
 }  // end destructor()
 
 //==================================================================================================
@@ -202,7 +203,13 @@ catch(...)
 }  // end configure() catch
 
 //==============================================================================
-void ROCPolarFireCoreInterface::halt(void) {}
+void ROCPolarFireCoreInterface::halt(void) {
+  //Call Core Halt() first to stop emulator threads properly
+  ROCCoreVInterface::halt(); 
+
+  //do specifics here:
+  // ...
+} //end halt()
 
 //==============================================================================
 void ROCPolarFireCoreInterface::pause(void) {}

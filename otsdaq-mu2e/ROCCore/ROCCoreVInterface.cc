@@ -13,8 +13,8 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
     , emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
-    , emulatorWorkloopExit_(false)
-    , emulatorWorkloopRunning_(false)
+    , emulatorWorkLoopExit_(false)
+    , emulatorWorkLoopRunning_(false)
 {
 	__FE_COUT__ << "Constructing..." << __E__;
 
@@ -23,31 +23,32 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 	linkID_ =
 	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());
 
-	__MCOUT_INFO__("ROCCoreVInterface instantiated with link: "
-	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: "
+	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	__FE_COUT__ << "Constructed." << __E__;
-}
+} //end constructor()
 
 //==========================================================================================
 ROCCoreVInterface::~ROCCoreVInterface(void)
 {
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
-	__COUT__ << FEVInterface::interfaceUID_ << "Destructing..." << __E__;
+  // Instead use __GEN_COUT__ which decorates using mfSubject_
+	__GEN_COUT__ << "Destructing..." << __E__;
 
-	while(emulatorWorkloopRunning_)
+	while(emulatorWorkLoopRunning_)
 	{
-		__COUT__ << FEVInterface::interfaceUID_ << "Attempting to exit thread..."
-		         << __E__;
-		emulatorWorkloopExit_ = true;
+		__GEN_COUT__ << "Attempting to exit thread..." << __E__;
+		emulatorWorkLoopExit_ = true;
 		sleep(1);
+
 	}
 
-	__COUT__ << FEVInterface::interfaceUID_ << "Workloop thread is not running." << __E__;
+	__GEN_COUT__ << "Work Loop thread is not running." << __E__;
 
-	__COUT__ << FEVInterface::interfaceUID_ << "Destructed." << __E__;
-}
+	__GEN_COUT__ << "Destructed." << __E__;
+} //end destructor()
 
 //==================================================================================================
 void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData)
@@ -58,7 +59,7 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address, DTCLib::roc
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode write." << __E__;
-		std::lock_guard<std::mutex> lock(workloopMutex_);
+		std::lock_guard<std::mutex> lock(workLoopMutex_);
 		return writeEmulatorRegister(address, writeData);
 	}
 	else
@@ -76,7 +77,7 @@ try
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode read." << __E__;
-		std::lock_guard<std::mutex> lock(workloopMutex_);
+		std::lock_guard<std::mutex> lock(workLoopMutex_);
 		return readEmulatorRegister(address);
 	}
 	else
@@ -102,7 +103,7 @@ void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode read." << __E__;
-		std::lock_guard<std::mutex> lock(workloopMutex_);
+		std::lock_guard<std::mutex> lock(workLoopMutex_);
 		return readEmulatorBlock(data, address, wordCount, incrementAddress);
 	}
 	else
@@ -373,10 +374,10 @@ catch(...)
 //==============================================================================
 void ROCCoreVInterface::halt(void)
 {
-	if(emulatorWorkloopRunning_)
+	if(emulatorWorkLoopRunning_)
 	{
 		__FE_COUT__ << "Halting and attempting to exit emulator workloop..." << __E__;
-		ROCCoreVInterface::emulatorWorkloopExit_ = true;
+		ROCCoreVInterface::emulatorWorkLoopExit_ = true;
 	}
 }  // end halt()
 
