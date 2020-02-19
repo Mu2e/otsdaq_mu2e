@@ -1,9 +1,9 @@
 #include <iostream>
 #include <set>
+#include "otsdaq-mu2e/FEInterfaces/CAPTANSignalGenerator.h"
 #include "otsdaq/Macros/CoutMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq/MessageFacility/MessageFacility.h"
-#include "otsdaq-mu2e/FEInterfaces/CAPTANSignalGenerator.h"
 
 using namespace ots;
 

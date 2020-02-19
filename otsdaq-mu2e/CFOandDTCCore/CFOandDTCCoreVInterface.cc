@@ -1,7 +1,7 @@
-#include "otsdaq/Macros/InterfacePluginMacros.h"
-#include "otsdaq/PluginMakers/MakeInterface.h"
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/Macros/BinaryStringMacros.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
+#include "otsdaq/PluginMakers/MakeInterface.h"
 
 using namespace ots;
 
@@ -14,8 +14,8 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
     const ConfigurationTree& theXDAQContextConfigTree,
     const std::string&       interfaceConfigurationPath)
     : FEVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
- //   , thisDTC_(0)
- //   , EmulatedCFO_(0)
+//   , thisDTC_(0)
+//   , EmulatedCFO_(0)
 {
 	__FE_COUT__ << "instantiate DTC... " << interfaceUID << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
@@ -24,7 +24,7 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 	universalDataSize_    = sizeof(dtc_data_t);
 
 	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
-	//emulate_cfo_     = getSelfNode().getNode("EmulateCFO").getValue<bool>();
+	// emulate_cfo_     = getSelfNode().getNode("EmulateCFO").getValue<bool>();
 
 	// label
 	device_name_ = interfaceUID;
@@ -42,14 +42,14 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 		emulatorMode_ = false;
 	}
 	__FE_COUTV__(emulatorMode_);
-//
-//	if(emulatorMode_)
-//	{
-//		__FE_COUT__ << "Emulator DTC mode starting up..." << __E__;
-//		createROCs();
-//		registerFEMacros();
-//		return;
-//	}
+	//
+	//	if(emulatorMode_)
+	//	{
+	//		__FE_COUT__ << "Emulator DTC mode starting up..." << __E__;
+	//		createROCs();
+	//		registerFEMacros();
+	//		return;
+	//	}
 	// else not emulator mode
 
 	snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
@@ -57,117 +57,122 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 
 	__FE_COUT__ << "Constructed." << __E__;
 	return;
-//	unsigned dtc_class_roc_mask = 0;
-//	// create roc mask for DTC
-//	{
-//		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-//		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-//
-//		roc_mask_ = 0;
-//
-//		for(auto& roc : rocChildren)
-//		{
-//			__FE_COUT__ << "roc uid " << roc.first << __E__;
-//			bool enabled = roc.second.getNode("Status").getValue<bool>();
-//			__FE_COUT__ << "roc enable " << enabled << __E__;
-//
-//			if(enabled)
-//			{
-//				int linkID = roc.second.getNode("linkID").getValue<int>();
-//				roc_mask_ |= (0x1 << linkID);
-//				dtc_class_roc_mask |=
-//				    (0x1 << (linkID * 4));  // the DTC class instantiation expects each
-//				                            // ROC has its own hex nibble
-//			}
-//		}
-//
-//		__FE_COUT__ << "DTC roc_mask_ = 0x" << std::hex << roc_mask_ << std::dec << __E__;
-//		__FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex
-//		            << dtc_class_roc_mask << std::dec << __E__;
-//
-//	}  // end create roc mask
-//
-//	// instantiate DTC with the appropriate ROCs enabled
-//	std::string expectedDesignVersion = "";
-//	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
-//
-//	std::cout << "DTC arguments..." << std::endl;
-//	std::cout << "dtc_ = " << dtc_ << std::endl;
-//	std::cout << "rocMask = " << dtc_class_roc_mask << std::endl;
-//	std::cout << "expectedDesignVersion = " << expectedDesignVersion << std::endl;
-//	std::cout << "END END DTC arguments..." << std::endl;
-//
-//	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
-//
-//	if(emulate_cfo_ == 1)
-//	{  // do NOT instantiate the DTCSoftwareCFO here, do it just when you need it
-//
-//		//	  bool useCFOEmulator = true;
-//		//	  uint16_t debugPacketCount = 0;
-//		//	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
-//		//	  bool stickyDebugType = true;
-//		//	  bool quiet = false;
-//		//	  bool asyncRR = false;
-//		//	  bool forceNoDebugMode = true;
-//
-//		//	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
-//		//	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
-//		//	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
-//		//	  std::cout << "debugType = "       << debugType << std::endl;
-//		//	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
-//		//	  std::cout << "quiet = "           << quiet << std::endl;
-//		//	  std::cout << "asyncRR = "           << asyncRR << std::endl;
-//		//	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
-//		//	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
-//
-//		//	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator,
-//		//debugPacketCount, 				debugType, stickyDebugType, quiet,  asyncRR,
-//		//forceNoDebugMode);
-//	}
-//
-//	createROCs();
-//	registerFEMacros();
-//
-//	// DTC-specific info
-//	dtc_location_in_chain_ =
-//	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
-//
-//	// check if any ROCs should be DTC-hardware emulated ROCs
-//	{
-//		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-//		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-//
-//		int dtcHwEmulateROCmask = 0;
-//		for(auto& roc : rocChildren)
-//		{
-//			bool enabled = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
-//
-//			if(enabled)
-//			{
-//				int linkID = roc.second.getNode("linkID").getValue<int>();
-//				__FE_COUT__ << "roc uid '" << roc.first << "' at link=" << linkID
-//				            << " is DTC-hardware emulated!" << __E__;
-//				dtcHwEmulateROCmask |= (1 << linkID);
-//			}
-//		}
-//
-//		__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
-//		            << dtcHwEmulateROCmask << std::dec << __E__;
-//		registerWrite(0x9110, dtcHwEmulateROCmask);
-//		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
-//	}  // end check if any ROCs should be DTC-hardware emulated ROCs
-//
-//	// done
-//	__MCOUT_INFO__("CFOandDTCCoreVInterface instantiated with name: "
-//	               << device_name_ << " dtc_location_in_chain_ = "
-//	               << dtc_location_in_chain_ << " talking to /dev/mu2e" << dtc_ << __E__);
+	//	unsigned dtc_class_roc_mask = 0;
+	//	// create roc mask for DTC
+	//	{
+	//		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+	//		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+	//
+	//		roc_mask_ = 0;
+	//
+	//		for(auto& roc : rocChildren)
+	//		{
+	//			__FE_COUT__ << "roc uid " << roc.first << __E__;
+	//			bool enabled = roc.second.getNode("Status").getValue<bool>();
+	//			__FE_COUT__ << "roc enable " << enabled << __E__;
+	//
+	//			if(enabled)
+	//			{
+	//				int linkID = roc.second.getNode("linkID").getValue<int>();
+	//				roc_mask_ |= (0x1 << linkID);
+	//				dtc_class_roc_mask |=
+	//				    (0x1 << (linkID * 4));  // the DTC class instantiation expects
+	//each
+	//				                            // ROC has its own hex nibble
+	//			}
+	//		}
+	//
+	//		__FE_COUT__ << "DTC roc_mask_ = 0x" << std::hex << roc_mask_ << std::dec <<
+	//__E__;
+	//		__FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex
+	//		            << dtc_class_roc_mask << std::dec << __E__;
+	//
+	//	}  // end create roc mask
+	//
+	//	// instantiate DTC with the appropriate ROCs enabled
+	//	std::string expectedDesignVersion = "";
+	//	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
+	//
+	//	std::cout << "DTC arguments..." << std::endl;
+	//	std::cout << "dtc_ = " << dtc_ << std::endl;
+	//	std::cout << "rocMask = " << dtc_class_roc_mask << std::endl;
+	//	std::cout << "expectedDesignVersion = " << expectedDesignVersion << std::endl;
+	//	std::cout << "END END DTC arguments..." << std::endl;
+	//
+	//	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
+	//
+	//	if(emulate_cfo_ == 1)
+	//	{  // do NOT instantiate the DTCSoftwareCFO here, do it just when you need it
+	//
+	//		//	  bool useCFOEmulator = true;
+	//		//	  uint16_t debugPacketCount = 0;
+	//		//	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
+	//		//	  bool stickyDebugType = true;
+	//		//	  bool quiet = false;
+	//		//	  bool asyncRR = false;
+	//		//	  bool forceNoDebugMode = true;
+	//
+	//		//	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
+	//		//	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
+	//		//	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
+	//		//	  std::cout << "debugType = "       << debugType << std::endl;
+	//		//	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
+	//		//	  std::cout << "quiet = "           << quiet << std::endl;
+	//		//	  std::cout << "asyncRR = "           << asyncRR << std::endl;
+	//		//	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
+	//		//	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
+	//
+	//		//	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator,
+	//		//debugPacketCount, 				debugType, stickyDebugType, quiet,
+	//asyncRR,
+	//		//forceNoDebugMode);
+	//	}
+	//
+	//	createROCs();
+	//	registerFEMacros();
+	//
+	//	// DTC-specific info
+	//	dtc_location_in_chain_ =
+	//	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+	//
+	//	// check if any ROCs should be DTC-hardware emulated ROCs
+	//	{
+	//		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+	//		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+	//
+	//		int dtcHwEmulateROCmask = 0;
+	//		for(auto& roc : rocChildren)
+	//		{
+	//			bool enabled =
+	//roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
+	//
+	//			if(enabled)
+	//			{
+	//				int linkID = roc.second.getNode("linkID").getValue<int>();
+	//				__FE_COUT__ << "roc uid '" << roc.first << "' at link=" << linkID
+	//				            << " is DTC-hardware emulated!" << __E__;
+	//				dtcHwEmulateROCmask |= (1 << linkID);
+	//			}
+	//		}
+	//
+	//		__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
+	//		            << dtcHwEmulateROCmask << std::dec << __E__;
+	//		registerWrite(0x9110, dtcHwEmulateROCmask);
+	//		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
+	//	}  // end check if any ROCs should be DTC-hardware emulated ROCs
+	//
+	//	// done
+	//	__MCOUT_INFO__("CFOandDTCCoreVInterface instantiated with name: "
+	//	               << device_name_ << " dtc_location_in_chain_ = "
+	//	               << dtc_location_in_chain_ << " talking to /dev/mu2e" << dtc_ <<
+	//__E__);
 }  // end constructor()
 
 //==========================================================================================
 CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 {
-//	if(thisDTC_)
-//		delete thisDTC_;
+	//	if(thisDTC_)
+	//		delete thisDTC_;
 	// delete theFrontEndHardware_;
 	// delete theFrontEndFirmware_;
 
@@ -175,7 +180,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 }  // end destructor()
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::configureSlowControls(void)
+// void CFOandDTCCoreVInterface::configureSlowControls(void)
 //{
 //	__FE_COUT__ << "Configuring slow controls..." << __E__;
 //
@@ -236,7 +241,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //
 ////==============================================================================
 //// virtual in case channels are handled in multiple maps, for example
-//void CFOandDTCCoreVInterface::resetSlowControlsChannelIterator(void)
+// void CFOandDTCCoreVInterface::resetSlowControlsChannelIterator(void)
 //{
 //	// call parent
 //	FEVInterface::resetSlowControlsChannelIterator();
@@ -246,7 +251,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //
 ////==============================================================================
 //// virtual in case channels are handled in multiple maps, for example
-//FESlowControlsChannel* CFOandDTCCoreVInterface::getNextSlowControlsChannel(void)
+// FESlowControlsChannel* CFOandDTCCoreVInterface::getNextSlowControlsChannel(void)
 //{
 //	// if finished with DTC slow controls channels, move on to ROC list
 //	if(slowControlsChannelsIterator_ == mapOfSlowControlsChannels_.end())
@@ -271,7 +276,8 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //					slowControlsChannelsIterator_->second.interfaceUID_ <<
 //					".' Format should be DTC/ROC." << __E__;
 //		}
-//		currentChannelROCUID_ = uidParts[1]; //format DTC/ROC names, take 2nd part as ROC UID
+//		currentChannelROCUID_ = uidParts[1]; //format DTC/ROC names, take 2nd part as ROC
+//UID
 //	}
 //	return &(
 //	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
@@ -279,14 +285,14 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //
 ////==============================================================================
 //// virtual in case channels are handled in multiple maps, for example
-//unsigned int CFOandDTCCoreVInterface::getSlowControlsChannelCount(void)
+// unsigned int CFOandDTCCoreVInterface::getSlowControlsChannelCount(void)
 //{
 //	return mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size();
 //}  // end getSlowControlsChannelCount()
 //
 ////==============================================================================
 //// virtual in case read should be different than universalread
-//void CFOandDTCCoreVInterface::getSlowControlsValue(FESlowControlsChannel& channel,
+// void CFOandDTCCoreVInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 //                                                std::string&           readValue)
 //{
 //	__FE_COUTV__(currentChannelIsInROC_);
@@ -321,7 +327,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //}  // end getNextSlowControlsChannel()
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::registerFEMacros(void)
+// void CFOandDTCCoreVInterface::registerFEMacros(void)
 //{
 //	mapOfFEMacroFunctions_.clear();
 //
@@ -330,15 +336,15 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //			"ROC_WriteBlock",  // feMacroName
 //			static_cast<FEVInterface::frontEndMacroFunction_t>(
 //					&CFOandDTCCoreVInterface::WriteROCBlock),  // feMacroFunction
-//					std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
-//					std::vector<std::string>{},  // namesOfOutputArgs
+//					std::vector<std::string>{"rocLinkIndex", "block", "address",
+//"writeData"}, 					std::vector<std::string>{},  // namesOfOutputArgs
 //					1);                          // requiredUserPermissions
 //
 //	registerFEMacroFunction("ROC_ReadBlock",
 //			static_cast<FEVInterface::frontEndMacroFunction_t>(
 //					&CFOandDTCCoreVInterface::ReadROCBlock),
-//				        std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address", "incrementAddress"},
-//					std::vector<std::string>{"readData"},
+//				        std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address",
+//"incrementAddress"}, 					std::vector<std::string>{"readData"},
 //					1);  // requiredUserPermissions
 //
 //
@@ -356,9 +362,10 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //	registerFEMacroFunction(
 //			"ROC_Read",
 //			static_cast<FEVInterface::frontEndMacroFunction_t>(
-//					&CFOandDTCCoreVInterface::ReadROC),                  // feMacroFunction
-//					std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
-//					std::vector<std::string>{"readData"},
+//					&CFOandDTCCoreVInterface::ReadROC),                  //
+//feMacroFunction
+//					std::vector<std::string>{"rocLinkIndex", "address"},  //
+//namesOfInputArgs 					std::vector<std::string>{"readData"},
 //					1);  // requiredUserPermissions
 //
 //	registerFEMacroFunction("DTC_Reset",
@@ -440,7 +447,7 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //}  // end registerFEMacros()
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::createROCs(void)
+// void CFOandDTCCoreVInterface::createROCs(void)
 //{
 //	rocs_.clear();
 //
@@ -589,26 +596,26 @@ void CFOandDTCCoreVInterface::universalRead(char* address, char* returnValue)
 
 	if(emulatorMode_)
 	{
-		__FE_COUT__ << "Emulator read " << __E__;		
-		
+		__FE_COUT__ << "Emulator read " << __E__;
+
 		for(unsigned int i = 0; i < universalDataSize_; ++i)
 			returnValue[i] = (0xF0 | i) + rand() % 100;
 		return;
 	}
-	
+
 	(*((dtc_data_t*)returnValue)) = registerRead(*((dtc_address_t*)address));
-	
+
 	// __COUTV__(reg_access_.val);
-	
-} //end universalRead()
+
+}  // end universalRead()
 
 //===========================================================================================
 // registerRead: return = value read from register at address "address"
 //
 dtc_data_t CFOandDTCCoreVInterface::registerRead(const dtc_address_t address)
-{	
+{
 	reg_access_.access_type = 0;  // 0 = read, 1 = write
-	reg_access_.reg_offset = address;
+	reg_access_.reg_offset  = address;
 	// __COUTV__(reg_access.reg_offset);
 
 	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
@@ -617,14 +624,14 @@ dtc_data_t CFOandDTCCoreVInterface::registerRead(const dtc_address_t address)
 		       << __E__;
 		__SS_THROW__;
 	}
-	
+
 	__COUT__ << "reg_access_.val 0x" << std::hex << reg_access_.val << __E__;
 
 	return reg_access_.val;
-	
-} // end registerRead()
-	
-//	
+
+}  // end registerRead()
+
+//
 //	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
 //	                                                      // of interface size
 //	uint8_t* data =
@@ -672,17 +679,18 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 		__FE_COUT__ << "Emulator write " << __E__;
 		return;
 	}
-	
-	registerWrite(*((dtc_address_t*)address),*((dtc_data_t*) writeValue));
-} //end universalWrite()
+
+	registerWrite(*((dtc_address_t*)address), *((dtc_data_t*)writeValue));
+}  // end universalWrite()
 
 //===============================================================================================
 // registerWrite: return = value readback from register at address "address"
 //
-dtc_data_t CFOandDTCCoreVInterface::registerWrite(const dtc_address_t address, dtc_data_t dataToWrite)
+dtc_data_t CFOandDTCCoreVInterface::registerWrite(const dtc_address_t address,
+                                                  dtc_data_t          dataToWrite)
 {
 	reg_access_.access_type = 1;  // 0 = read, 1 = write
-	reg_access_.reg_offset = address;
+	reg_access_.reg_offset  = address;
 	// __COUTV__(reg_access.reg_offset);
 	reg_access_.val = dataToWrite;
 	// __COUTV__(reg_access.val);
@@ -690,8 +698,7 @@ dtc_data_t CFOandDTCCoreVInterface::registerWrite(const dtc_address_t address, d
 	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
 		__FE_COUT_ERR__ << "ERROR: DTC universal write - Does file exist? /dev/mu2e"
 		                << dtc_ << __E__;
-	//return registerRead(address);
-
+	// return registerRead(address);
 
 	dtc_data_t readbackValue = registerRead(address);
 
@@ -719,8 +726,8 @@ dtc_data_t CFOandDTCCoreVInterface::registerWrite(const dtc_address_t address, d
 		if((readbackValue & 0xffffff00) != (dataToWrite & 0xffffff00))
 		{
 			__FE_COUT_ERR__ << "DTC: write value 0x" << std::hex << dataToWrite
-					<< " to register 0x" << std::hex << address
-					<< "... read back 0x" << std::hex << readbackValue << __E__;
+			                << " to register 0x" << std::hex << address
+			                << "... read back 0x" << std::hex << readbackValue << __E__;
 		}
 	}
 
@@ -728,12 +735,12 @@ dtc_data_t CFOandDTCCoreVInterface::registerWrite(const dtc_address_t address, d
 	if(readbackValue != dataToWrite && address != 0x9168 && address != 0x916c)
 	{
 		__FE_COUT_ERR__ << "DTC: write value 0x" << std::hex << dataToWrite
-				<< " to register 0x" << std::hex << address << "... read back 0x"
-				<< std::hex << readbackValue << __E__;
+		                << " to register 0x" << std::hex << address << "... read back 0x"
+		                << std::hex << readbackValue << __E__;
 	}
 
 	return readbackValue;
-} //end registerWrite()
+}  // end registerWrite()
 //	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
 //	                                                      // of interface size
 //	uint8_t* data =
@@ -809,7 +816,7 @@ dtc_data_t CFOandDTCCoreVInterface::registerWrite(const dtc_address_t address, d
 //}
 //
 ////==================================================================================================
-//void CFOandDTCCoreVInterface::readStatus(void)
+// void CFOandDTCCoreVInterface::readStatus(void)
 //{
 //	__FE_COUT__ << device_name_ << " firmware version (0x9004) = 0x" << std::hex
 //	            << registerRead(0x9004) << __E__;
@@ -878,7 +885,7 @@ void CFOandDTCCoreVInterface::turnOffLED()
 }
 //
 ////==================================================================================================
-//int CFOandDTCCoreVInterface::getROCLinkStatus(int ROC_link)
+// int CFOandDTCCoreVInterface::getROCLinkStatus(int ROC_link)
 //{
 //	int overall_link_status = registerRead(0x9140);
 //
@@ -887,7 +894,7 @@ void CFOandDTCCoreVInterface::turnOffLED()
 //	return ROC_link_status;
 //}
 //
-//int CFOandDTCCoreVInterface::getCFOLinkStatus()
+// int CFOandDTCCoreVInterface::getCFOLinkStatus()
 //{
 //	int overall_link_status = registerRead(0x9140);
 //
@@ -913,7 +920,7 @@ void CFOandDTCCoreVInterface::printVoltages()
 	return;
 }
 //
-//int CFOandDTCCoreVInterface::checkLinkStatus()
+// int CFOandDTCCoreVInterface::checkLinkStatus()
 //{
 //	int ROCs_OK = 1;
 //
@@ -948,7 +955,7 @@ void CFOandDTCCoreVInterface::printVoltages()
 //	}
 //}
 //
-//bool CFOandDTCCoreVInterface::ROCActive(unsigned ROC_link)
+// bool CFOandDTCCoreVInterface::ROCActive(unsigned ROC_link)
 //{
 //	// __FE_COUTV__(roc_mask_);
 //	// __FE_COUTV__(ROC_link);
@@ -964,50 +971,50 @@ void CFOandDTCCoreVInterface::printVoltages()
 //}
 //
 ////==================================================================================================
-//void CFOandDTCCoreVInterface::configure(void) try
+// void CFOandDTCCoreVInterface::configure(void) try
 //{
 //	__FE_COUTV__(getIterationIndex());
 //	__FE_COUTV__(getSubIterationIndex());
 //
 //}  // end configure()
-//catch(const std::runtime_error& e)
+// catch(const std::runtime_error& e)
 //{
 //	__FE_SS__ << "Error caught: " << e.what() << __E__;
 //	__FE_SS_THROW__;
 //}
-//catch(...)
+// catch(...)
 //{
 //	__FE_SS__ << "Unknown error caught. Check the printouts!" << __E__;
 //	__FE_SS_THROW__;
 //}
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::halt(void)
+// void CFOandDTCCoreVInterface::halt(void)
 //{
 //}
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::pause(void)
+// void CFOandDTCCoreVInterface::pause(void)
 //{
 //}
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::resume(void)
+// void CFOandDTCCoreVInterface::resume(void)
 //{
 //}
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::start(std::string runNumber)
+// void CFOandDTCCoreVInterface::start(std::string runNumber)
 //{
 //}
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::stop(void)
+// void CFOandDTCCoreVInterface::stop(void)
 //{
 //}
 //
 ////==============================================================================
-//bool CFOandDTCCoreVInterface::running(void)
+// bool CFOandDTCCoreVInterface::running(void)
 //{
 //	return true; //true to end loop
 //}
@@ -2347,7 +2354,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //
 ////==============================================================================
 //// rocRead
-//void CFOandDTCCoreVInterface::ReadROC(__ARGS__)
+// void CFOandDTCCoreVInterface::ReadROC(__ARGS__)
 //{
 //	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
 //	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
@@ -2398,7 +2405,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //// DTCStatus
 ////	FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by 'admin' using
 //// MacroMaker. 	Macro Notes:
-//void CFOandDTCCoreVInterface::WriteROC(__ARGS__)
+// void CFOandDTCCoreVInterface::WriteROC(__ARGS__)
 //{
 //	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
 //	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
@@ -2437,7 +2444,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}
 //
 ////==============================================================================
-//void CFOandDTCCoreVInterface::WriteROCBlock(__ARGS__)
+// void CFOandDTCCoreVInterface::WriteROCBlock(__ARGS__)
 //{
 //	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
 //	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
@@ -2473,7 +2480,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::ReadROCBlock(__ARGS__)
+// void CFOandDTCCoreVInterface::ReadROCBlock(__ARGS__)
 //{
 //	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
 //	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
@@ -2540,7 +2547,8 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //
 //
 //
-////	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
+////	//	uint16_t readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block,
+///address);
 ////
 ////	std::vector<uint16_t> readData;
 ////	thisDTC_->ReadROCBlock(
@@ -2560,8 +2568,8 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 ////
 ////	for(int i = 0; i < number_of_words; i++)
 ////	{
-////		datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex << readData[i]
-////		         << std::endl;
+////		datafile << "read data [" << std::dec << i << "]  = 0x" << std::hex <<
+///readData[i] /		         << std::endl;
 ////		__FE_COUT__ << "read data [" << std::dec << i << "]  = 0x" << std::hex
 ////		            << readData[i] << __E__;
 ////	}
@@ -2575,7 +2583,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}  // end ReadROCBlock()
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::DTCHighRateBlockCheck(__ARGS__)
+// void CFOandDTCCoreVInterface::DTCHighRateBlockCheck(__ARGS__)
 //{
 //	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
 //	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
@@ -2605,7 +2613,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}  // end DTCHighRateBlockCheck()
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::DTCHighRateDCSCheck(__ARGS__)
+// void CFOandDTCCoreVInterface::DTCHighRateDCSCheck(__ARGS__)
 //{
 //	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
 //	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
@@ -2635,7 +2643,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}  // end DTCHighRateDCSCheck()
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
+// void CFOandDTCCoreVInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 //{
 //	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 //	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
@@ -2786,10 +2794,10 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}  // end DTCSendHeartbeatAndDataRequest()
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::DTCReset(__ARGS__) { DTCReset(); }
+// void CFOandDTCCoreVInterface::DTCReset(__ARGS__) { DTCReset(); }
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::DTCReset()
+// void CFOandDTCCoreVInterface::DTCReset()
 //{
 //	{
 //		char* address = new char[universalAddressSize_]{
@@ -2856,7 +2864,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //}
 //
 ////========================================================================
-//void CFOandDTCCoreVInterface::RunROCFEMacro(__ARGS__)
+// void CFOandDTCCoreVInterface::RunROCFEMacro(__ARGS__)
 //{
 //	//	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
 //	//	std::string rocUID = __GET_ARG_IN__("ROC_UID", std::string);
@@ -2889,4 +2897,3 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //	rocIt->second->runSelfFrontEndMacro(rocFEMacroName, argsIn, argsOut);
 //
 //}  // end RunROCFEMacro()
-

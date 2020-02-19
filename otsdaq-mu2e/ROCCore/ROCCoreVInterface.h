@@ -155,7 +155,6 @@ class ROCCoreVInterface : public FEVInterface
 	std::mutex 										workLoopMutex_;
 
 	//----------------- end Emulator members
-	
 
 	// clang-format on
 };  // end ROCCoreVInterface declaration

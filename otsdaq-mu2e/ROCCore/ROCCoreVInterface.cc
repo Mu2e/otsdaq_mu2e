@@ -3,8 +3,6 @@
 
 using namespace ots;
 
-
-
 //=========================================================================================
 ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
                                      const ConfigurationTree& theXDAQContextConfigTree,
@@ -23,18 +21,18 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 	linkID_ =
 	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());
 
-	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: "
-	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__;
+	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: " << linkID_
+	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	__FE_COUT__ << "Constructed." << __E__;
-} //end constructor()
+}  // end constructor()
 
 //==========================================================================================
 ROCCoreVInterface::~ROCCoreVInterface(void)
 {
 	// NOTE:: be careful not to call __FE_COUT__ decoration because it uses the
 	// tree and it may already be destructed partially
-  // Instead use __GEN_COUT__ which decorates using mfSubject_
+	// Instead use __GEN_COUT__ which decorates using mfSubject_
 	__GEN_COUT__ << "Destructing..." << __E__;
 
 	while(emulatorWorkLoopRunning_)
@@ -42,16 +40,16 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 		__GEN_COUT__ << "Attempting to exit thread..." << __E__;
 		emulatorWorkLoopExit_ = true;
 		sleep(1);
-
 	}
 
 	__GEN_COUT__ << "Work Loop thread is not running." << __E__;
 
 	__GEN_COUT__ << "Destructed." << __E__;
-} //end destructor()
+}  // end destructor()
 
 //==================================================================================================
-void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData)
+void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
+                                      DTCLib::roc_data_t    writeData)
 {
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << writeData << __E__;
@@ -68,8 +66,7 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address, DTCLib::roc
 }  // end writeRegister()
 
 //==================================================================================================
-DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address)
-try
+DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address) try
 {
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << __E__;
@@ -84,17 +81,17 @@ try
 		return readROCRegister(address);
 
 }  // end readRegister()
- catch(...)
-   {
-     __SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
-     __FE_COUT_ERR__ << ss.str();
-     throw;
-   }
+catch(...)
+{
+	__SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
+	__FE_COUT_ERR__ << ss.str();
+	throw;
+}
 //
 void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
-                                  DTCLib::roc_address_t  address,
-                                  uint16_t               wordCount,
-                                  bool                   incrementAddress)
+                                  DTCLib::roc_address_t            address,
+                                  uint16_t                         wordCount,
+                                  bool                             incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
 	            << ", address = " << address << ", wordCount = " << wordCount
