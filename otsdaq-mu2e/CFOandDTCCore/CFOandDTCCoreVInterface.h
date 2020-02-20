@@ -24,8 +24,11 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	virtual ~CFOandDTCCoreVInterface(void);
 
-	// specialized ROC handling slow controls
-	//----------------
+	// specialized handling of slow controls
+	//----------------		
+	void 			outputEpicsPVFile	(ConfigurationManager* configManager);
+	
+	
 //	virtual void 						configureSlowControls		(void) override;
 //	virtual void						resetSlowControlsChannelIterator (void) override;
 //	virtual FESlowControlsChannel*		getNextSlowControlsChannel	(void) override;
