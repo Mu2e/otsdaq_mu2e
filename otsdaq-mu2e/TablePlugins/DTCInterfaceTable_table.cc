@@ -13,13 +13,13 @@ using namespace ots;
 #define EPICS_PV_FILE_PATH \
 		std::string( \
 			getenv("OTSDAQ_EPICS_DATA")? \
-			(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + __ENV__("MU2E_OWNER") + "_otsdaq_dtc-ai.dbg"): \
-			(EPICS_CONFIG_PATH + "/otsdaq_dtc-ai.dbg")  )
+				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + __ENV__("MU2E_OWNER") + "_otsdaq_dtc-ai.dbg"): \
+				(EPICS_CONFIG_PATH + "/otsdaq_dtc-ai.dbg")  )
 #define EPICS_DIRTY_FILE_PATH \
 		std::string( \
 			getenv("OTSDAQ_EPICS_DATA")? \
-			(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + "dirtyFlag.txt"): \
-			(EPICS_CONFIG_PATH + "/dirtyFlag.txt")  )
+				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + "dirtyFlag.txt"): \
+				(EPICS_CONFIG_PATH + "/dirtyFlag.txt")  )
 
 
 // clang-format on
@@ -32,7 +32,11 @@ using namespace ots;
 #define POPCOMMENT commentStr.resize(commentStr.size() - 2)
 
 //==============================================================================
-DTCInterfaceTable::DTCInterfaceTable(void) : TableBase("DTCInterfaceTable") {}
+DTCInterfaceTable::DTCInterfaceTable(void) 
+: SlowControlsTableBase("DTCInterfaceTable")
+, isFirstAppInContext_	(false)
+, channelListHasChanged_(false)
+, lastConfigManager_	(nullptr) {}
 
 //==============================================================================
 DTCInterfaceTable::~DTCInterfaceTable(void) {}
@@ -42,12 +46,17 @@ DTCInterfaceTable::~DTCInterfaceTable(void) {}
 //	Generates EPICS PV config file
 void DTCInterfaceTable::init(ConfigurationManager* configManager)
 {
+	
+	lastConfigManager_ = configManager;
+	
 	// use isFirstAppInContext to only run once per context, for example to avoid
 	//	generating files on local disk multiple times.
-	bool isFirstAppInContext = configManager->isOwnerFirstAppInContext();
-
+	isFirstAppInContext_ = configManager->isOwnerFirstAppInContext();
+	
+	channelListHasChanged_ = false;
+	
 	//__COUTV__(isFirstAppInContext);
-	if(!isFirstAppInContext)
+	if(!isFirstAppInContext_)
 		return;
 
 	// make directory just in case
@@ -61,8 +70,34 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 }  // end init()
 
 //==============================================================================
-void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
+bool DTCInterfaceTable::slowControlsChannelListHasChanged (void) const
 {
+	__COUT__ << "channelListHasChanged()" << __E__;
+	if(isFirstAppInContext_)
+		return channelListHasChanged_;
+				
+	if(lastConfigManager_ == nullptr)	
+	{
+		__SS__ << "Illegal call to get status of channel list, no config manager has been initialized!" << __E__;
+		__SS_THROW__;
+	}
+
+	//if here, lastConfigManager_ pointer is defined
+	return outputEpicsPVFile(lastConfigManager_);	
+} //end slowControlsChannelListHasChanged()
+
+
+//==============================================================================
+void DTCInterfaceTable::getSlowControlsChannelList(std::vector<std::string /*channelName*/>& channelList) const
+{	
+	outputEpicsPVFile(lastConfigManager_,&channelList);
+} //end getSlowControlsChannelList()
+
+//==============================================================================
+//return channel list if pointer passed
+bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
+		std::vector<std::string /*channelName*/>* channelList /*= 0*/) const
+{	
 	/*
 	    the file will look something like this:
 
@@ -136,10 +171,11 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 	
 
 	// create lambda function to handle slow controls link
-	std::function<unsigned int(std::string&, ConfigurationTree)>
+	std::function<unsigned int(std::string&, ConfigurationTree, std::vector<std::string /*channelName*/>*)>
 	    localSlowControlsHandler = [this, &out, &tabStr, &commentStr](
 	                                   std::string&      location,
-	                                   ConfigurationTree slowControlsLink) {
+	                                   ConfigurationTree slowControlsLink,
+	                                   std::vector<std::string /*channelName*/>* channelList /*= 0*/) {
 
 		    unsigned int numberOfChannels = 0;
 		    __COUT__ << "localSlowControlsHandler" << __E__;
@@ -227,6 +263,8 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 				    std::string units =
 				        channel.second.getNode(channelColNames_.colChannelDataType_)
 				            .getValue<std::string>();
+				            
+				    if(channelList != nullptr) channelList->push_back(pvName);
 
 				    // output channel
 				    OUT << "{ \"" << subsystem << "\", \"" << location << "\", \""
@@ -299,7 +337,7 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 			ConfigurationTree slowControlsLink =
 				fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
 			unsigned int numberOfDTCSlowControlsChannels =
-				localSlowControlsHandler(fePair.first, slowControlsLink);
+				localSlowControlsHandler(fePair.first, slowControlsLink, channelList);
 			
 			__COUT__ << "DTC '" << fePair.first
 				<< "' number of slow controls channels: "
@@ -344,7 +382,7 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 				ConfigurationTree slowControlsLink = rocChildPair.second.getNode(
 						rocColNames_.colLinkToSlowControlsChannelTable_);
 				numberOfROCSlowControlsChannels =
-					localSlowControlsHandler(rocChildPair.first, slowControlsLink);
+					localSlowControlsHandler(rocChildPair.first, slowControlsLink, channelList);
 			}
 			catch(const std::runtime_error& e)
 			{
@@ -370,27 +408,35 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 		
 		__COUT__ << "Configuration has changed! Marking dirty flag..." << __E__;
 		
-		std::fstream fout;
-		fout.open(filename, std::fstream::out | std::fstream::trunc);
-		if(fout.fail())
+		//only write files if first app in context AND channelList is not passed, i.e. init() is only time we write!
+		if(isFirstAppInContext_ && channelList == nullptr)
 		{
-			__SS__ << "Failed to open EPICS PV file: " << filename << __E__;
-			__SS_THROW__;
+			std::fstream fout;
+			fout.open(filename, std::fstream::out | std::fstream::trunc);
+			if(fout.fail())
+			{
+				__SS__ << "Failed to open EPICS PV file: " << filename << __E__;
+				__SS_THROW__;
+			}
+			
+			fout << out.str();
+			fout.close();
+			
+			std::FILE* fp = fopen(EPICS_DIRTY_FILE_PATH.c_str(),"w");
+			if(fp)
+			{			
+				fprintf(fp,"1"); //set dirty flag
+				fclose(fp);
+			}
+			else
+				__COUT_WARN__ << "Could not open dirty file: " << EPICS_DIRTY_FILE_PATH << __E__;
 		}
 		
-		fout << out.str();
-		fout.close();
-		
-		std::FILE* fp = fopen(EPICS_DIRTY_FILE_PATH.c_str(),"w");
-		if(fp)
-		{			
-			fprintf(fp,"1"); //set dirty flag
-			fclose(fp);
-		}
-		else
-			__COUT_WARN__ << "Could not open dirty file: " << EPICS_DIRTY_FILE_PATH << __E__;
+		//Indicate that PV list has changed 
+		//	if otsdaq_epics plugin is listening, then write PV data to archive db:	SQL insert or modify of ROW for PV
+		return true;
 	} //end handling of previous contents
-
+	return false;
 }  // end outputEpicsPVFile()
 
 DEFINE_OTS_TABLE(DTCInterfaceTable)

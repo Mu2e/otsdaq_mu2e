@@ -7,6 +7,7 @@
 simple_plugin(DTCInterfaceTable "table"
   TableCore
   ConfigurationInterface
+  SlowControlsTableBase
   Macros
   ${CETLIB}
   ${MF_MESSAGELOGGER}
