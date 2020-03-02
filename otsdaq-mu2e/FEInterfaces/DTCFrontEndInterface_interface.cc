@@ -1573,11 +1573,8 @@ void DTCFrontEndInterface::stop(void)
 {
 	if(emulatorMode_)
 	{
-<<<<<<< HEAD
-		__FE_COUT__ << "Emulator DTC starting..." << __E__;
-=======
+
 		__FE_COUT__ << "Emulator DTC stopping..." << __E__;
->>>>>>> b7d2f15c7f91f8c6249880f71390c2103c8d2b82
 		return;
 	}
 
