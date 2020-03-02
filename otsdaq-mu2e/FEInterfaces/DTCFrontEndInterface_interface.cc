@@ -1543,6 +1543,12 @@ void DTCFrontEndInterface::start(std::string runNumber)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC starting..." << __E__;
+		return;
+	}
+
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
@@ -2990,14 +2996,15 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 			// uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
 			// delete tmpDTC;
 
-			//  char readDataStr[100];
-			//  sprintf(readDataStr,"0x%X",readData);
-			//  __SET_ARG_OUT__("readData",readDataStr);
-			__SET_ARG_OUT__("readData", readData);
+			  char readDataStr[100];
+			  sprintf(readDataStr,"0x%X",readData);
+			  __SET_ARG_OUT__("readData",readDataStr);
+			//__SET_ARG_OUT__("readData", readData);
 
 			// for(auto &argOut:argsOut)
 			__FE_COUT__ << "readData"
 			            << ": " << std::hex << readData << std::dec << __E__;
+			__FE_COUT__ << "End of Data";
 			return;
 		}
 	}
@@ -3321,8 +3328,9 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	if(emulate_cfo_ == 1)
 	{
-		registerWrite(0x9100, 0x40008004);  // bit 30 = CFO emulation enable, bit 15 = CFO
+		registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO
 		                                    // emulation mode, bit 2 = DCS enable
+		                                    // bit 10 turns off retry which isn't working right now
 		sleep(1);
 
 		// set number of null heartbeats
@@ -3382,7 +3390,8 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		    cfodelay,
 		    requestsAhead);
 
-		delete EmulatedCFO_;
+		//		delete EmulatedCFO_; 
+		// moved to later (after reads)
 
 		auto readoutRequestTime = device->GetDeviceTime();
 		device->ResetDeviceTime();
@@ -3391,6 +3400,9 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		// print out stuff
 		unsigned quietCount = 20;
 		quiet               = false;
+
+		std::stringstream ostr;
+		ostr << std::endl;
 
 		for(unsigned ii = 0; ii < number; ++ii)
 		{
@@ -3422,10 +3434,10 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 				outputStream.write(static_cast<char*>(readPtr), sts - 8);
 
 				auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
+				std::cout << "maxLine " << maxLine;
 				for(unsigned line = 0; line < maxLine; ++line)
 				{
-					std::stringstream ostr;
-					ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line
+		   		        ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line
 					     << "0: ";
 					for(unsigned byte = 0; byte < 8; ++byte)
 					{
@@ -3436,12 +3448,9 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 							ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
 						}
 					}
-					std::cout << ostr.str();
+					ostr << std::endl;
+					//	std::cout << ostr.str();
 	        
-					__SET_ARG_OUT__("readData", ostr.str()); // write to data file
-
-
-					__FE_COUT__ << ostr.str(); // write to log file
 					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
 					{
 						line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) -
@@ -3450,13 +3459,23 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 				}
 			}
 			device->read_release(DTC_DMA_Engine_DAQ, 1);
+       
 		}
+		ostr << std::endl;
+		__SET_ARG_OUT__("readData", ostr.str()); // write to data file
+
+		__FE_COUT__ << ostr.str(); // write to log file
+
+		delete EmulatedCFO_; 
+
+
 	}
 	else
 	{
 		__FE_SS__ << "Error! DTC must be in CFOEmulate mode" << __E__;
 		__FE_SS_THROW__;
 	}
+	
 
 }  // end DTCSendHeartbeatAndDataRequest()
 
