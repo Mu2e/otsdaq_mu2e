@@ -9,12 +9,11 @@
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
-#include "otsdaq/FECore/FEVInterface.h"
 #include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
+#include "otsdaq/FECore/FEVInterface.h"
 
 namespace ots
 {
-
 class CFOandDTCCoreVInterface : public FEVInterface
 {
 	// clang-format off
@@ -25,8 +24,11 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	virtual ~CFOandDTCCoreVInterface(void);
 
-	// specialized ROC handling slow controls
-	//----------------
+	// specialized handling of slow controls
+	//----------------		
+	void 			outputEpicsPVFile	(ConfigurationManager* configManager);
+	
+	
 //	virtual void 						configureSlowControls		(void) override;
 //	virtual void						resetSlowControlsChannelIterator (void) override;
 //	virtual FESlowControlsChannel*		getNextSlowControlsChannel	(void) override;

@@ -1,5 +1,5 @@
-#include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
 
@@ -15,22 +15,24 @@ CFOFrontEndInterface::CFOFrontEndInterface(
     const std::string&       interfaceUID,
     const ConfigurationTree& theXDAQContextConfigTree,
     const std::string&       interfaceConfigurationPath)
-    : CFOandDTCCoreVInterface(interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
+    : CFOandDTCCoreVInterface(
+          interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
 {
 	__FE_COUT__ << "Constructing..." << __E__;
 
 	// theFrontEndHardware_ = new FrontEndHardwareTemplate();
-////	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
-////	universalAddressSize_ = 4;
-////	universalDataSize_    = 4;
-////
-////	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<unsigned int>();
-//
-//	dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
-//	snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
-//	fd_ = open(devfile_, O_RDONLY);
-//
-//	__FE_COUT__ << "Device file descriptor opened!" << __E__;
+	////	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
+	////	universalAddressSize_ = 4;
+	////	universalDataSize_    = 4;
+	////
+	////	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<unsigned
+	///int>();
+	//
+	//	dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
+	//	snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
+	//	fd_ = open(devfile_, O_RDONLY);
+	//
+	//	__FE_COUT__ << "Device file descriptor opened!" << __E__;
 
 	unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
@@ -40,7 +42,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 
 	__FE_COUT__ << "CFOFrontEndInterface instantiated with name: " << interfaceUID
 	            << " talking to /dev/mu2e" << dtc_ << __E__;
-} //end constructor()
+}  // end constructor()
 
 //===========================================================================================
 CFOFrontEndInterface::~CFOFrontEndInterface(void)
@@ -58,7 +60,7 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 ////		- returnValue will be a [universalDataSize_] byte long char
 //// array
 ////		- expects exception thrown on failure/timeout
-//void DTCFrontEndInterface::universalRead(char* address, char* returnValue)
+// void DTCFrontEndInterface::universalRead(char* address, char* returnValue)
 //{
 //	// __FE_COUT__ << "DTC READ" << __E__;
 //
@@ -79,7 +81,7 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 ////===========================================================================================
 //// registerRead: return = value read from register at address "address"
 ////
-//dtc_data_t DTCFrontEndInterface::registerRead(const dtc_address_t address)
+// dtc_data_t DTCFrontEndInterface::registerRead(const dtc_address_t address)
 //{
 //	reg_access_.access_type = 0;  // 0 = read, 1 = write
 //	reg_access_.reg_offset = address;
@@ -102,7 +104,7 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 //// interface. 	When Macro Maker calls:
 ////		- address will be a [universalAddressSize_] byte long char array
 ////		- writeValue will be a [universalDataSize_] byte long char array
-//void CFOFrontEndInterface::universalWrite(char* address, char* writeValue)
+// void CFOFrontEndInterface::universalWrite(char* address, char* writeValue)
 //{
 //	// __FE_COUT__ << "CFO WRITE" << __E__;
 //
@@ -124,7 +126,7 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 ////===============================================================================================
 //// registerWrite: return = value readback from register at address "address"
 ////
-//int CFOFrontEndInterface::registerWrite(int address, int dataToWrite)
+// int CFOFrontEndInterface::registerWrite(int address, int dataToWrite)
 //{
 //	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
 //	                                                      // of interface size
@@ -427,7 +429,7 @@ void CFOFrontEndInterface::configure(void)
 
 	const int number_of_system_configs =
 	    2;  // if < 0, keep trying until links are OK.
-	         // If > 0, go through configuration steps this many times
+	        // If > 0, go through configuration steps this many times
 	int       config_clock = configure_clock_;  // 1 = yes, 0 = no
 	const int reset_tx     = 1;                 // 1 = yes, 0 = no
 

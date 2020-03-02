@@ -2,26 +2,28 @@
 #define _ots_DTCInterfaceTable_h_
 
 #include "otsdaq/ConfigurationInterface/ConfigurationManager.h"
-#include "otsdaq/TableCore/TableBase.h"
+#include "otsdaq/TablePlugins/SlowControlsTableBase/SlowControlsTableBase.h"
 
 namespace ots
 {
-class DTCInterfaceTable : public TableBase
+class DTCInterfaceTable : public SlowControlsTableBase
 {
 	// clang-format off
 
   public:
-	DTCInterfaceTable					(void);
-	virtual ~DTCInterfaceTable			(void);
+	DTCInterfaceTable						(void);
+	virtual ~DTCInterfaceTable				(void);
 
 	// Methods
-	void 			init				(ConfigurationManager* configManager) override;
-
+	void 			init					(ConfigurationManager* configManager) override;
+	
 	// Getters
+	virtual bool 	slowControlsChannelListHasChanged 	(void) const override;
+	virtual void	getSlowControlsChannelList 			(std::vector<std::string /*channelName*/>& channelList) const override;
 
   private:
 
-	void 			outputEpicsPVFile	(ConfigurationManager* configManager);
+	bool 			outputEpicsPVFile					(ConfigurationManager* configManager, std::vector<std::string /*channelName*/>* channelList = 0) const;
 
 	// Column names
 	struct ColFE
@@ -67,8 +69,10 @@ class DTCInterfaceTable : public TableBase
 		std::string const colHighHighThreshold_ 	= "HighHighThreshold";
 	} channelColNames_;
 
-	std::string const DTC_FE_PLUGIN_TYPE 			= "DTCFrontEndInterface";
+	std::string const 		DTC_FE_PLUGIN_TYPE 			= "DTCFrontEndInterface";
 
+	bool					isFirstAppInContext_, channelListHasChanged_; //for managing if PV list has changed
+	ConfigurationManager* 	lastConfigManager_;
 	// clang-format on
 };
 }  // namespace ots

@@ -30,7 +30,7 @@ echo -e "quick_mu2e_ots_install.sh [${LINENO}]  "
 if [ $USER == "root" ]; then
 
 	#install ots dependencies
-	yum install -y libuuid-devel openssl-devel
+	yum install -y libuuid-devel openssl-devel python-devel
 	
 	#install cvmfs
 	yum install -y https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
@@ -73,7 +73,7 @@ for p in ${REPO_DIR[@]}; do
 			echo -e "UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
 			
 			cd $p
-			if [ $bp == "otsdaq_mu2e_config"]; then
+			if [ $bp == "otsdaq_mu2e_config" ]; then
 				git checkout .  #get all Data and databases
 			fi 
 			git pull
@@ -86,7 +86,7 @@ done
 rm -rf change_ots_qualifiers.sh
 cp srcs/otsdaq_utilities/tools/change_ots_qualifiers.sh .
 chmod 755 change_ots_qualifiers.sh
-./change_ots_qualifiers.sh DEFAULT DEFAULT
+./change_ots_qualifiers.sh DEFAULT s85:e17:prof
 
 source setup_ots.sh
 
@@ -128,6 +128,7 @@ echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t source setup_ots.sh     ###
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t mb                      #########################################   #for incremental build"
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t mz                      #########################################   #for clean build"
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t UpdateOTS.sh            #########################################   #to see update options"
+echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t ./change_ots_qualifiers.sh           ############################   #to see qualifier options"
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t chmod 755 reset_ots_tutorial.sh; ./reset_ots_tutorial.sh --list     #to see tutorial options"
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t reset_mu2e_ots_snapshot.sh —name trigger_Dev_20200116     			 #to reset ots to a named mu2e snapshot"
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t ots -w                  #########################################   #to run ots in wiz(safe) mode"
