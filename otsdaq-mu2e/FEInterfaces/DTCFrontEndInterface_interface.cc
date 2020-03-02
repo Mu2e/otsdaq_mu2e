@@ -3495,7 +3495,8 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 			device->read_release(DTC_DMA_Engine_DAQ, 1);
        
 		}
-		ostr << std::endl;
+		ostr << std::endl; 
+    
 		__SET_ARG_OUT__("readData", ostr.str()); // write to data file
 
 		__FE_COUT__ << ostr.str(); // write to log file
