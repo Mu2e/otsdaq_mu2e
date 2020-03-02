@@ -3471,17 +3471,17 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 							ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
 						}
 					}
-<<<<<<< HEAD
+
 					ostr << std::endl;
 					//	std::cout << ostr.str();
 	        
-=======
+
 					std::cout << ostr.str();
 
 					__SET_ARG_OUT__("readData", ostr.str());  // write to data file
 
 					__FE_COUT__ << ostr.str();  // write to log file
->>>>>>> b7d2f15c7f91f8c6249880f71390c2103c8d2b82
+
 					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
 					{
 						line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) -
