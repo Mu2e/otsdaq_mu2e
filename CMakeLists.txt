@@ -83,7 +83,9 @@ add_subdirectory(tools)
 #add_subdirectory(test)
 
 # Documentation directory
-add_subdirectory(doc)
+if( $ENV{OTS_DOXY} MATCHES "DOIT" )
+	add_subdirectory(doc)
+endif()
 
 # UPS
 add_subdirectory(ups)
