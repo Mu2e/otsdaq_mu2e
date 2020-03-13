@@ -1422,6 +1422,15 @@ void DTCFrontEndInterface::resume(void)
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC starting... # of ROCs = " << rocs_.size()
+		            << __E__;
+		for(auto& roc : rocs_)
+			roc.second->start();
+		return;
+	}
+
 
   // open a file for this run number to write data to, if it hasn't been opened yet
   // define a data file 
