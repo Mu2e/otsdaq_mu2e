@@ -1,5 +1,5 @@
-#include "otsdaq/Macros/TablePluginMacros.h" //for DEFINE_OTS_TABLE
 #include "otsdaq-mu2e/TablePlugins/DTCInterfaceTable.h"
+#include "otsdaq/Macros/TablePluginMacros.h"  //for DEFINE_OTS_TABLE
 
 #include <sys/stat.h>  //for mkdir
 #include <fstream>     // std::fstream
@@ -7,8 +7,22 @@
 
 using namespace ots;
 
+// clang-format off
+
+#define EPICS_CONFIG_PATH (std::string(__ENV__("USER_DATA")) + "/" + "EPICSConfigurations/")
 #define EPICS_PV_FILE_PATH \
-	std::string(__ENV__("USER_DATA")) + "/" + "EPICSConfigurations/"
+		std::string( \
+			getenv("OTSDAQ_EPICS_DATA")? \
+				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + __ENV__("MU2E_OWNER") + "_otsdaq_dtc-ai.dbg"): \
+				(EPICS_CONFIG_PATH + "/otsdaq_dtc-ai.dbg")  )
+#define EPICS_DIRTY_FILE_PATH \
+		std::string( \
+			getenv("OTSDAQ_EPICS_DATA")? \
+				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + "dirtyFlag.txt"): \
+				(EPICS_CONFIG_PATH + "/dirtyFlag.txt")  )
+
+
+// clang-format on
 
 // helpers
 #define OUT out << tabStr << commentStr
@@ -18,7 +32,11 @@ using namespace ots;
 #define POPCOMMENT commentStr.resize(commentStr.size() - 2)
 
 //==============================================================================
-DTCInterfaceTable::DTCInterfaceTable(void) : TableBase("DTCInterfaceTable") {}
+DTCInterfaceTable::DTCInterfaceTable(void) 
+: SlowControlsTableBase("DTCInterfaceTable")
+, isFirstAppInContext_	(false)
+, channelListHasChanged_(false)
+, lastConfigManager_	(nullptr) {}
 
 //==============================================================================
 DTCInterfaceTable::~DTCInterfaceTable(void) {}
@@ -28,16 +46,21 @@ DTCInterfaceTable::~DTCInterfaceTable(void) {}
 //	Generates EPICS PV config file
 void DTCInterfaceTable::init(ConfigurationManager* configManager)
 {
+	
+	lastConfigManager_ = configManager;
+	
 	// use isFirstAppInContext to only run once per context, for example to avoid
 	//	generating files on local disk multiple times.
-	bool isFirstAppInContext = configManager->isOwnerFirstAppInContext();
-
+	isFirstAppInContext_ = configManager->isOwnerFirstAppInContext();
+	
+	channelListHasChanged_ = false;
+	
 	//__COUTV__(isFirstAppInContext);
-	if(!isFirstAppInContext)
+	if(!isFirstAppInContext_)
 		return;
 
 	// make directory just in case
-	mkdir((EPICS_PV_FILE_PATH).c_str(), 0755);
+	mkdir(EPICS_CONFIG_PATH.c_str(), 0755);
 
 	// check for valid data types
 	__COUT__ << "*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*" << __E__;
@@ -47,8 +70,34 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 }  // end init()
 
 //==============================================================================
-void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
+bool DTCInterfaceTable::slowControlsChannelListHasChanged (void) const
 {
+	__COUT__ << "channelListHasChanged()" << __E__;
+	if(isFirstAppInContext_)
+		return channelListHasChanged_;
+				
+	if(lastConfigManager_ == nullptr)	
+	{
+		__SS__ << "Illegal call to get status of channel list, no config manager has been initialized!" << __E__;
+		__SS_THROW__;
+	}
+
+	//if here, lastConfigManager_ pointer is defined
+	return outputEpicsPVFile(lastConfigManager_);	
+} //end slowControlsChannelListHasChanged()
+
+
+//==============================================================================
+void DTCInterfaceTable::getSlowControlsChannelList(std::vector<std::string /*channelName*/>& channelList) const
+{	
+	outputEpicsPVFile(lastConfigManager_,&channelList);
+} //end getSlowControlsChannelList()
+
+//==============================================================================
+//return channel list if pointer passed
+bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
+		std::vector<std::string /*channelName*/>* channelList /*= 0*/) const
+{	
 	/*
 	    the file will look something like this:
 
@@ -91,29 +140,42 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 	    }
 	*/
 
-	std::string filename = EPICS_PV_FILE_PATH + "/otsdaq_dtc_to_epics_pvs.dat";
+	std::string filename = EPICS_PV_FILE_PATH;
 
 	__COUT__ << "EPICS PV file: " << filename << __E__;
+	
+	std::string previousConfigFileContents;
+	{
+		std::FILE* fp = std::fopen(filename.c_str(), "rb");
+		if(fp)
+		{
+			std::fseek(fp, 0, SEEK_END);
+			previousConfigFileContents.resize(std::ftell(fp));
+			std::rewind(fp);
+			std::fread(&previousConfigFileContents[0], 1, previousConfigFileContents.size(), fp);
+			std::fclose(fp);
+		}
+		else 
+			__COUT_WARN__ <<  "Could not open EPICS IOC config file at " << filename << __E__;
+			
+	} //done reading 
 
 	/////////////////////////
 	// generate xdaq run parameter file
-	std::fstream out;
+	
+	std::stringstream out;
 
 	std::string tabStr     = "";
 	std::string commentStr = "";
 
-	out.open(filename, std::fstream::out | std::fstream::trunc);
-	if(out.fail())
-	{
-		__SS__ << "Failed to open EPICS PV file: " << filename << __E__;
-		__SS_THROW__;
-	}
+	
 
 	// create lambda function to handle slow controls link
-	std::function<unsigned int(std::string&, ConfigurationTree)>
+	std::function<unsigned int(std::string&, ConfigurationTree, std::vector<std::string /*channelName*/>*)>
 	    localSlowControlsHandler = [this, &out, &tabStr, &commentStr](
 	                                   std::string&      location,
-	                                   ConfigurationTree slowControlsLink) {
+	                                   ConfigurationTree slowControlsLink,
+	                                   std::vector<std::string /*channelName*/>* channelList /*= 0*/) {
 
 		    unsigned int numberOfChannels = 0;
 		    __COUT__ << "localSlowControlsHandler" << __E__;
@@ -134,7 +196,7 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 				    if(first)  // if first, output header
 				    {
 					    first = false;
-					    OUT << "file \"soft_bi.dbt\" {" << __E__;
+					    OUT << "file \"dbt/soft_bi.dbt\" {" << __E__;
 					    PUSHTAB;
 					    OUT << "pattern  { Subsystem, loc, pvar, ZNAM, ONAM, ZSV, OSV, "
 					           "COSV, DESC  }"
@@ -183,17 +245,17 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 				    if(first)  // if first, output header
 				    {
 					    first = false;
-					    OUT << "file \"soft_ai.dbt\" {" << __E__;
+					    OUT << "file \"dbt/subst_ai.dbt\" {" << __E__;
 					    PUSHTAB;
-					    OUT << "pattern  { Subsystem, loc, var, PREC, EGU, LOLO, LOW, "
-					           "HIGH, HIHI, MDEL, ADEL, DESC }"
+					    OUT << "pattern  { Subsystem, loc, pvar, PREC, EGU, LOLO, LOW, "
+					           "HIGH, HIHI, MDEL, ADEL, INP, SCAN, DTYP, DESC }"
 					        << __E__;
 					    PUSHTAB;
 				    }
 
 				    ++numberOfChannels;
 
-				    std::string subsystem = std::string("TDAQ_") + __ENV__("LOGNAME");
+				    std::string subsystem = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
 				    std::string pvName    = channel.first;
 				    std::string comment =
 				        channel.second.getNode(TableViewColumnInfo::COL_NAME_COMMENT)
@@ -201,6 +263,8 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 				    std::string units =
 				        channel.second.getNode(channelColNames_.colChannelDataType_)
 				            .getValue<std::string>();
+				            
+				    if(channelList != nullptr) channelList->push_back(pvName);
 
 				    // output channel
 				    OUT << "{ \"" << subsystem << "\", \"" << location << "\", \""
@@ -211,21 +275,27 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 				            .getValue<std::string>()
 				        << "\", \""
 				        << channel.second.getNode(channelColNames_.colLowLowThreshold_)
-				               .getValue<std::string>()
+				               .getValueWithDefault<std::string>("-1000")
 				        << "\", \""
 				        << channel.second.getNode(channelColNames_.colLowThreshold_)
-				               .getValue<std::string>()
+				               .getValueWithDefault<std::string>("-100")
 				        << "\", \""
 				        << channel.second.getNode(channelColNames_.colHighThreshold_)
-				               .getValue<std::string>()
+				               .getValueWithDefault<std::string>("100")
 				        << "\", \""
 				        << channel.second.getNode(channelColNames_.colHighHighThreshold_)
-				               .getValue<std::string>()
+				               .getValueWithDefault<std::string>("1000")
 				        << "\", \""
 				        << ""
 				        << "\", \"" <<  // MDEL
 				        ""
 				        << "\", \"" <<  // ADEL
+				        ""
+				        << "\", \"" <<  // INP
+				        ""
+				        << "\", \"" <<  // SCAN
+				        ""
+				        << "\", \"" <<  // DTYP
 				        comment << "\"  }" << __E__;
 
 			    }           // end binary channel loop
@@ -244,102 +314,129 @@ void DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager)
 		    return numberOfChannels;
 	    };  //end localSlowControlsHandler()
 
-	try
-	{  // try-catch to make sure to close file
-
-		// loop through DTC records starting at FE Interface Table
-		std::vector<std::pair<std::string, ConfigurationTree>> feRecords =
-		    configManager->getNode("FEInterfaceTable").getChildren();
-
-		std::string  rocPluginType;
-		unsigned int numberOfDTCs = 0;
-
-		for(auto& fePair : feRecords)  // start main fe/DTC record loop
-		{
-			if(fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
-			       .getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
-				continue;
-
-			++numberOfDTCs;
-
-			// check each row in table
-			__COUT__ << "DTC record: " << fePair.first << __E__;
-
-			// loop through each DTC slow controls channel and make entry in EPICS file
-			{
-				ConfigurationTree slowControlsLink =
-				    fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
-				unsigned int numberOfDTCSlowControlsChannels =
-				    localSlowControlsHandler(fePair.first, slowControlsLink);
-
-				__COUT__ << "DTC '" << fePair.first
-				         << "' number of slow controls channels: "
-				         << numberOfDTCSlowControlsChannels << __E__;
-			}  // end DTC slow controls channel handling
-
-			// loop through ROC records
-			//	use plugin type to indicate subsystem type
-
-			ConfigurationTree DTCLink =
-			    fePair.second.getNode(feColNames_.colLinkToFETypeTable);
-			if(DTCLink.isDisconnected())
-			{
-				__COUT__
-				    << "Disconnected DTC type table information. So assuming no ROCs."
-				    << __E__;
-				continue;
-			}
-			ConfigurationTree ROCLink =
-			    DTCLink.getNode(dtcColNames_.colLinkToROCGroupTable_);
-			if(ROCLink.isDisconnected())
-			{
-				__COUT__ << "Disconnected ROC link. So assuming no ROCs." << __E__;
-				continue;
-			}
-			std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-			    ROCLink.getChildren();
-
-			unsigned int numberOfROCSlowControlsChannels;
-			for(auto& rocChildPair : rocChildren)
-			{
-				__COUT__ << "\t"
-				         << "ROC record: " << rocChildPair.first << __E__;
-				numberOfROCSlowControlsChannels = 0;
-				try
-				{
-					rocPluginType = rocChildPair.second
-					                    .getNode(rocColNames_.colROCInterfacePluginName_)
-					                    .getValue<std::string>();
-					__COUTV__(rocPluginType);
-
-					ConfigurationTree slowControlsLink = rocChildPair.second.getNode(
-					    rocColNames_.colLinkToSlowControlsChannelTable_);
-					numberOfROCSlowControlsChannels =
-					    localSlowControlsHandler(rocChildPair.first, slowControlsLink);
-				}
-				catch(const std::runtime_error& e)
-				{
-					__COUT_ERR__ << "Ignoring ROC error: " << e.what() << __E__;
-				}
-
-				__COUT__ << "\t"
-				         << "ROC '" << rocChildPair.first
-				         << "' number of slow controls channels: "
-				         << numberOfROCSlowControlsChannels << __E__;
-
-			}  // end ROC record loop
-		}      // end main fe/DTC record loop
-
-		out.close();
-
-		__COUTV__(numberOfDTCs);
-	}
-	catch(...)
+	// loop through DTC records starting at FE Interface Table
+	std::vector<std::pair<std::string, ConfigurationTree>> feRecords =
+		configManager->getNode("FEInterfaceTable").getChildren();
+	
+	std::string  rocPluginType;
+	unsigned int numberOfDTCs = 0;
+	
+	for(auto& fePair : feRecords)  // start main fe/DTC record loop
 	{
-		out.close();
-		throw;
-	}  // make sure to close file on exception
-
+		if(fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
+				.getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
+			continue;
+		
+		++numberOfDTCs;
+		
+		// check each row in table
+		__COUT__ << "DTC record: " << fePair.first << __E__;
+		
+		// loop through each DTC slow controls channel and make entry in EPICS file
+		{
+			ConfigurationTree slowControlsLink =
+				fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
+			unsigned int numberOfDTCSlowControlsChannels =
+				localSlowControlsHandler(fePair.first, slowControlsLink, channelList);
+			
+			__COUT__ << "DTC '" << fePair.first
+				<< "' number of slow controls channels: "
+				<< numberOfDTCSlowControlsChannels << __E__;
+		}  // end DTC slow controls channel handling
+		
+		// loop through ROC records
+		//	use plugin type to indicate subsystem type
+		
+		ConfigurationTree DTCLink =
+			fePair.second.getNode(feColNames_.colLinkToFETypeTable);
+		if(DTCLink.isDisconnected())
+		{
+			__COUT__
+				<< "Disconnected DTC type table information. So assuming no ROCs."
+				<< __E__;
+			continue;
+		}
+		ConfigurationTree ROCLink =
+			DTCLink.getNode(dtcColNames_.colLinkToROCGroupTable_);
+		if(ROCLink.isDisconnected())
+		{
+			__COUT__ << "Disconnected ROC link. So assuming no ROCs." << __E__;
+			continue;
+		}
+		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+			ROCLink.getChildren();
+		
+		unsigned int numberOfROCSlowControlsChannels;
+		for(auto& rocChildPair : rocChildren)
+		{
+			__COUT__ << "\t"
+				<< "ROC record: " << rocChildPair.first << __E__;
+			numberOfROCSlowControlsChannels = 0;
+			try
+			{
+				rocPluginType = rocChildPair.second
+					.getNode(rocColNames_.colROCInterfacePluginName_)
+					.getValue<std::string>();
+				__COUTV__(rocPluginType);
+				
+				ConfigurationTree slowControlsLink = rocChildPair.second.getNode(
+						rocColNames_.colLinkToSlowControlsChannelTable_);
+				numberOfROCSlowControlsChannels =
+					localSlowControlsHandler(rocChildPair.first, slowControlsLink, channelList);
+			}
+			catch(const std::runtime_error& e)
+			{
+				__COUT_ERR__ << "Ignoring ROC error: " << e.what() << __E__;
+			}
+			
+			__COUT__ << "\t"
+				<< "ROC '" << rocChildPair.first
+				<< "' number of slow controls channels: "
+				<< numberOfROCSlowControlsChannels << __E__;
+			
+		}  // end ROC record loop
+	}      // end main fe/DTC record loop
+	
+	
+	__COUTV__(numberOfDTCs);	
+	
+	
+	//check if need to restart EPICS ioc
+	//	if dbg string has changed, then mark ioc configuration dirty
+	if(previousConfigFileContents != out.str())
+	{
+		
+		__COUT__ << "Configuration has changed! Marking dirty flag..." << __E__;
+		
+		//only write files if first app in context AND channelList is not passed, i.e. init() is only time we write!
+		if(isFirstAppInContext_ && channelList == nullptr)
+		{
+			std::fstream fout;
+			fout.open(filename, std::fstream::out | std::fstream::trunc);
+			if(fout.fail())
+			{
+				__SS__ << "Failed to open EPICS PV file: " << filename << __E__;
+				__SS_THROW__;
+			}
+			
+			fout << out.str();
+			fout.close();
+			
+			std::FILE* fp = fopen(EPICS_DIRTY_FILE_PATH.c_str(),"w");
+			if(fp)
+			{			
+				fprintf(fp,"1"); //set dirty flag
+				fclose(fp);
+			}
+			else
+				__COUT_WARN__ << "Could not open dirty file: " << EPICS_DIRTY_FILE_PATH << __E__;
+		}
+		
+		//Indicate that PV list has changed 
+		//	if otsdaq_epics plugin is listening, then write PV data to archive db:	SQL insert or modify of ROW for PV
+		return true;
+	} //end handling of previous contents
+	return false;
 }  // end outputEpicsPVFile()
 
 DEFINE_OTS_TABLE(DTCInterfaceTable)

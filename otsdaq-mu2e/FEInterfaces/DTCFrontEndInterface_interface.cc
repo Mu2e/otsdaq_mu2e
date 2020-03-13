@@ -3654,10 +3654,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 					ostr << std::endl;
 					//	std::cout << ostr.str();
-	        
-
-	    				__SET_ARG_OUT__("readData", ostr.str());  // write to data file
-
+	       
 					__FE_COUT__ << ostr.str();  // write to log file
 
 					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
