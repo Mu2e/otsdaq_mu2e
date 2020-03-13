@@ -7,10 +7,8 @@
 
 #include "cfoInterfaceLib/CFO_Registers.h"
 
-
 namespace ots
 {
-
 class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 {
 	// clang-format off
@@ -73,7 +71,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	unsigned int initial_9154_;
 };
 
-	// clang-format on
+// clang-format on
 }  // namespace ots
 
 #endif

@@ -1,5 +1,5 @@
-#include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq-mu2e/FEInterfaces/ROCDTCHardwareEmulated.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 
 using namespace ots;
 
@@ -39,18 +39,18 @@ uint16_t ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 	return -1;
 }  // end readEmulatorRegister
 //==================================================================================================
-void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<uint16_t>&	data,
-						uint16_t 		address,
-						uint16_t 		numberOfReads,
-						bool			incrementAddress)	
+void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<uint16_t>& data,
+                                               uint16_t               address,
+                                               uint16_t               numberOfReads,
+                                               bool                   incrementAddress)
 {
-	__FE_COUT__ << "Calling read emulator BLOCK: link number " << std::dec
-	            << linkID_ << ", address = " << address << ", numberOfReads = " << numberOfReads 
+	__FE_COUT__ << "Calling read emulator BLOCK: link number " << std::dec << linkID_
+	            << ", address = " << address << ", numberOfReads = " << numberOfReads
 	            << __E__;
-//	if(address == 6)
-//		return 4860;
-//	else if(address == 7)
-//		return delay_;
+	//	if(address == 6)
+	//		return 4860;
+	//	else if(address == 7)
+	//		return delay_;
 	return;
 }  // end readEmulatorBlock
 
