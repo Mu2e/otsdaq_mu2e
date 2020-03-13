@@ -1427,7 +1427,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		__FE_COUT__ << "Emulator DTC starting... # of ROCs = " << rocs_.size()
 		            << __E__;
 		for(auto& roc : rocs_)
-			roc.second->start();
+			roc.second->start(runNumber);
 		return;
 	}
 
