@@ -66,7 +66,7 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 	__COUT__ << "*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*" << __E__;
 	__COUT__ << configManager->__SELF_NODE__ << __E__;
 
-	outputEpicsPVFile(configManager);
+	//outputEpicsPVFile(configManager);
 }  // end init()
 
 //==============================================================================
@@ -83,7 +83,9 @@ bool DTCInterfaceTable::slowControlsChannelListHasChanged (void) const
 	}
 
 	//if here, lastConfigManager_ pointer is defined
-	return outputEpicsPVFile(lastConfigManager_);	
+	bool changed = outputEpicsPVFile(lastConfigManager_);
+	__COUT__ << "slowControlsChannelListHasChanged(): return " << std::boolalpha << std::to_string(changed) << __E__;
+	return changed;
 } //end slowControlsChannelListHasChanged()
 
 
@@ -158,7 +160,7 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 		else 
 			__COUT_WARN__ <<  "Could not open EPICS IOC config file at " << filename << __E__;
 			
-	} //done reading 
+	} //done reading
 
 	/////////////////////////
 	// generate xdaq run parameter file
@@ -264,7 +266,8 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 				        channel.second.getNode(channelColNames_.colChannelDataType_)
 				            .getValue<std::string>();
 				            
-				    if(channelList != nullptr) channelList->push_back(pvName);
+				    if(channelList != nullptr)
+					    channelList->push_back("Mu2e_" + subsystem + "_" + location + "/" + pvName);
 
 				    // output channel
 				    OUT << "{ \"" << subsystem << "\", \"" << location << "\", \""
@@ -409,7 +412,8 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 		__COUT__ << "Configuration has changed! Marking dirty flag..." << __E__;
 		
 		//only write files if first app in context AND channelList is not passed, i.e. init() is only time we write!
-		if(isFirstAppInContext_ && channelList == nullptr)
+		//if(isFirstAppInContext_ && channelList == nullptr)
+		if(channelList == nullptr)
 		{
 			std::fstream fout;
 			fout.open(filename, std::fstream::out | std::fstream::trunc);
@@ -434,8 +438,10 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 		
 		//Indicate that PV list has changed 
 		//	if otsdaq_epics plugin is listening, then write PV data to archive db:	SQL insert or modify of ROW for PV
+		__COUT__ << "outputEpicsPVFile() return true" << __E__;
 		return true;
 	} //end handling of previous contents
+	__COUT__ << "outputEpicsPVFile() return false" << __E__;
 	return false;
 }  // end outputEpicsPVFile()
 
