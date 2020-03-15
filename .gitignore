@@ -19,3 +19,6 @@ products
 *ProgressBarData*
 setupARTDAQOTS
 *.vcxproj*
+*.tmp
+*.bk
+*.tmp
