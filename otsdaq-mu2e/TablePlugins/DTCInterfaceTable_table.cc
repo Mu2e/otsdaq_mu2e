@@ -90,15 +90,19 @@ bool DTCInterfaceTable::slowControlsChannelListHasChanged (void) const
 
 
 //==============================================================================
-void DTCInterfaceTable::getSlowControlsChannelList(std::vector<std::string /*channelName*/>& channelList) const
+void DTCInterfaceTable::getSlowControlsChannelList(
+    std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>&
+        channelList) const
 {	
 	outputEpicsPVFile(lastConfigManager_,&channelList);
 } //end getSlowControlsChannelList()
 
 //==============================================================================
 //return channel list if pointer passed
-bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
-		std::vector<std::string /*channelName*/>* channelList /*= 0*/) const
+bool DTCInterfaceTable::outputEpicsPVFile(
+    ConfigurationManager* configManager,
+    std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>*
+        channelList /*= 0*/) const
 {	
 	/*
 	    the file will look something like this:
@@ -170,14 +174,18 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 	std::string tabStr     = "";
 	std::string commentStr = "";
 
-	
 
 	// create lambda function to handle slow controls link
-	std::function<unsigned int(std::string&, ConfigurationTree, std::vector<std::string /*channelName*/>*)>
+	std::function<unsigned int(
+	    std::string&,
+	    ConfigurationTree,
+	    std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>*)>
 	    localSlowControlsHandler = [this, &out, &tabStr, &commentStr](
 	                                   std::string&      location,
 	                                   ConfigurationTree slowControlsLink,
-	                                   std::vector<std::string /*channelName*/>* channelList /*= 0*/) {
+	                                   std::vector<std::pair<std::string /*channelName*/,
+	                                                         std::vector<std::string>>>*
+	                                       channelList /*= 0*/) {
 
 		    unsigned int numberOfChannels = 0;
 		    __COUT__ << "localSlowControlsHandler" << __E__;
@@ -257,37 +265,59 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 
 				    ++numberOfChannels;
 
-				    std::string subsystem = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
-				    std::string pvName    = channel.first;
-				    std::string comment =
+				    std::string subsystem      = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
+				    std::string pvName         = channel.first;
+				    std::string comment        =
 				        channel.second.getNode(TableViewColumnInfo::COL_NAME_COMMENT)
 				            .getValue<std::string>();
-				    std::string units =
-				        channel.second.getNode(channelColNames_.colChannelDataType_)
-				            .getValue<std::string>();
-				            
+					std::string precision      = "0";
+				    std::string units          =
+						channel.second.getNode(channelColNames_.colUnits_)
+							.getValue<std::string>();
+				        // channel.second.getNode(channelColNames_.colChannelDataType_)
+				        //     .getValue<std::string>();
+				    std::string low_alarm_lmt  =
+				        channel.second.getNode(channelColNames_.colLowLowThreshold_)
+				            .getValueWithDefault<std::string>("-1000");
+				    std::string low_warn_lmt   =
+						channel.second.getNode(channelColNames_.colLowThreshold_)
+				            .getValueWithDefault<std::string>("-100");
+				    std::string high_warn_lmt  =
+				        channel.second.getNode(channelColNames_.colHighThreshold_)
+				            .getValueWithDefault<std::string>("100");
+				    std::string high_alarm_lmt =
+				        channel.second.getNode(channelColNames_.colHighHighThreshold_)
+				            .getValueWithDefault<std::string>("1000");
+
 				    if(channelList != nullptr)
-					    channelList->push_back("Mu2e_" + subsystem + "_" + location + "/" + pvName);
+				    {
+						std::vector<std::string> pvSettings;
+					    pvSettings.push_back(comment);
+					    pvSettings.push_back(low_warn_lmt);
+					    pvSettings.push_back(high_warn_lmt);
+					    pvSettings.push_back(low_alarm_lmt);
+					    pvSettings.push_back(high_alarm_lmt);
+					    pvSettings.push_back(precision);
+					    pvSettings.push_back(units);
+					    channelList->push_back(std::make_pair(
+					        "Mu2e_" + subsystem + "_" + location + "/" + pvName,
+					    	pvSettings));
+				    }
 
 				    // output channel
 				    OUT << "{ \"" << subsystem << "\", \"" << location << "\", \""
 				        << pvName << "\", \""
-				        << "0"
-				        << "\", \"" <<  // PREC
-				        channel.second.getNode(channelColNames_.colUnits_)
-				            .getValue<std::string>()
+				        << precision // PREC
 				        << "\", \""
-				        << channel.second.getNode(channelColNames_.colLowLowThreshold_)
-				               .getValueWithDefault<std::string>("-1000")
+						<< units
 				        << "\", \""
-				        << channel.second.getNode(channelColNames_.colLowThreshold_)
-				               .getValueWithDefault<std::string>("-100")
+				        << low_alarm_lmt
 				        << "\", \""
-				        << channel.second.getNode(channelColNames_.colHighThreshold_)
-				               .getValueWithDefault<std::string>("100")
+				        << low_warn_lmt
 				        << "\", \""
-				        << channel.second.getNode(channelColNames_.colHighHighThreshold_)
-				               .getValueWithDefault<std::string>("1000")
+				        << high_warn_lmt
+				        << "\", \""
+				        << high_alarm_lmt
 				        << "\", \""
 				        << ""
 				        << "\", \"" <<  // MDEL
@@ -315,7 +345,7 @@ bool DTCInterfaceTable::outputEpicsPVFile(ConfigurationManager* configManager,
 			             << __E__;
 
 		    return numberOfChannels;
-	    };  //end localSlowControlsHandler()
+	    };  // end localSlowControlsHandler()
 
 	// loop through DTC records starting at FE Interface Table
 	std::vector<std::pair<std::string, ConfigurationTree>> feRecords =

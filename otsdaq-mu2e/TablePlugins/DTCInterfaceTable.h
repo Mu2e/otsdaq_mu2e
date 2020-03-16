@@ -19,11 +19,11 @@ class DTCInterfaceTable : public SlowControlsTableBase
 	
 	// Getters
 	virtual bool 	slowControlsChannelListHasChanged 	(void) const override;
-	virtual void	getSlowControlsChannelList 			(std::vector<std::string /*channelName*/>& channelList) const override;
+	virtual void	getSlowControlsChannelList 			(std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>& channelList) const override;
 
   private:
 
-	bool 			outputEpicsPVFile					(ConfigurationManager* configManager, std::vector<std::string /*channelName*/>* channelList = 0) const;
+	bool 			outputEpicsPVFile					(ConfigurationManager* configManager, std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>* channelList = 0) const;
 
 	// Column names
 	struct ColFE
