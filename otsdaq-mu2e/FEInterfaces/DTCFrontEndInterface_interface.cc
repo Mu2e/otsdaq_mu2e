@@ -1452,13 +1452,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	}
 	}
   
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator DTC starting..." << __E__;
-		return;
-	}
-
 	int numberOfLoopbacks =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
@@ -1605,6 +1598,16 @@ void DTCFrontEndInterface::start(std::string runNumber)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+	
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size()
+		            << __E__;
+		for(auto& roc : rocs_)
+			roc.second->stop();
+		return;
+	}
+
 
   if (DataFile.is_open()) {
 	DataFile.close();
@@ -1686,13 +1689,25 @@ void DTCFrontEndInterface::stop(void)
 }  // end stop()
 
 //==============================================================================
+//return true to keep running
 bool DTCFrontEndInterface::running(void)
 {
+	
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC running... # of ROCs = " << rocs_.size()
+		            << __E__;
+		bool stillRunning = false;
+		for(auto& roc : rocs_)
+			stillRunning = stillRunning || roc.second->running();
+		
+		return stillRunning;
+	}
   // first setup DTC and CFO.  This is stolen from "getheartbeatanddatarequest"
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
-        std::time_t current_time;	
+    std::time_t current_time;	
 	bool     incrementTimestamp = true;
 
 	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't
@@ -1759,8 +1774,8 @@ bool DTCFrontEndInterface::running(void)
 
 	}
 
-		while(WorkLoop::continueWorkLoop_)
-		{
+	while(WorkLoop::continueWorkLoop_)
+	{
 		for(auto& roc : rocs_)
 		{
 			roc.second->running();
