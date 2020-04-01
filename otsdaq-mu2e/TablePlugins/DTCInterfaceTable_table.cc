@@ -356,7 +356,8 @@ bool DTCInterfaceTable::outputEpicsPVFile(
 	
 	for(auto& fePair : feRecords)  // start main fe/DTC record loop
 	{
-		if(fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
+		if(!fePair.second.status() ||
+				fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
 				.getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
 			continue;
 		
