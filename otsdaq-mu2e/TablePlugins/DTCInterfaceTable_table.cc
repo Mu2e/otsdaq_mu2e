@@ -26,7 +26,8 @@ using namespace ots;
 
 //==============================================================================
 DTCInterfaceTable::DTCInterfaceTable(void) 
-: SlowControlsTableBase("DTCInterfaceTable")
+: TableBase("DTCInterfaceTable")
+, SlowControlsTableBase("DTCInterfaceTable")
 , isFirstAppInContext_	(false)
 , channelListHasChanged_(false)
 , lastConfigManager_	(nullptr) {}
