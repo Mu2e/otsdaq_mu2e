@@ -58,16 +58,16 @@ class DTCInterfaceTable : public SlowControlsTableBase
 		std::string const colLinkToSlowControlsChannelTable_ 	= "LinkToSlowControlsChannelTable";
 	} rocColNames_;
 
-	struct ColChannel
-	{
-		std::string const colStatus_ 				= "Status";
-		std::string const colUnits_ 				= "Units";
-		std::string const colChannelDataType_		= "ChannelDataType";
-		std::string const colLowLowThreshold_		= "LowLowThreshold";
-		std::string const colLowThreshold_ 			= "LowThreshold";
-		std::string const colHighThreshold_			= "HighThreshold";
-		std::string const colHighHighThreshold_ 	= "HighHighThreshold";
-	} channelColNames_;
+	// struct ColChannel
+	// {
+	// 	std::string const colStatus_ 				= "Status";
+	// 	std::string const colUnits_ 				= "Units";
+	// 	std::string const colChannelDataType_		= "ChannelDataType";
+	// 	std::string const colLowLowThreshold_		= "LowLowThreshold";
+	// 	std::string const colLowThreshold_ 			= "LowThreshold";
+	// 	std::string const colHighThreshold_			= "HighThreshold";
+	// 	std::string const colHighHighThreshold_ 	= "HighHighThreshold";
+	// } channelColNames_;
 
 	std::string const 		DTC_FE_PLUGIN_TYPE 			= "DTCFrontEndInterface";
 

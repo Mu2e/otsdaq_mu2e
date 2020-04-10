@@ -9,18 +9,11 @@ using namespace ots;
 
 // clang-format off
 
-#define EPICS_CONFIG_PATH (std::string(__ENV__("USER_DATA")) + "/" + "EPICSConfigurations/")
 #define EPICS_PV_FILE_PATH \
 		std::string( \
 			getenv("OTSDAQ_EPICS_DATA")? \
 				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + __ENV__("MU2E_OWNER") + "_otsdaq_dtc-ai.dbg"): \
 				(EPICS_CONFIG_PATH + "/otsdaq_dtc-ai.dbg")  )
-#define EPICS_DIRTY_FILE_PATH \
-		std::string( \
-			getenv("OTSDAQ_EPICS_DATA")? \
-				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + "dirtyFlag.txt"): \
-				(EPICS_CONFIG_PATH + "/dirtyFlag.txt")  )
-
 
 // clang-format on
 
@@ -216,7 +209,9 @@ bool DTCInterfaceTable::outputEpicsPVFile(
 
 				    ++numberOfChannels;
 
-				    std::string subsystem = std::string("TDAQ_") + __ENV__("LOGNAME");
+				    //std::string subsystem = std::string("TDAQ_") + __ENV__("LOGNAME");
+				    std::string subsystem = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
+
 				    std::string pvName    = channel.first;
 				    std::string comment =
 				        channel.second.getNode(TableViewColumnInfo::COL_NAME_COMMENT)
