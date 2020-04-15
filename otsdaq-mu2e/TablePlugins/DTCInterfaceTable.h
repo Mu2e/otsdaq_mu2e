@@ -16,7 +16,14 @@ class DTCInterfaceTable : public SlowControlsTableBase
 
 	// Methods
 	void 			init					(ConfigurationManager* configManager) override;
-	virtual bool 	outputEpicsPVFile		(ConfigurationManager* configManager, std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>* channelList = 0) const  override;
+
+	virtual unsigned int	slowControlsHandlerConfig	(
+															  std::stringstream& out
+															, ConfigurationManager* configManager
+															, std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>* channelList /*= 0*/
+														) const override;
+
+	virtual std::string		setFilePath					()  const override;
 
   private:
 
