@@ -1,5 +1,6 @@
 
 
+
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
 parent otsdaq_mu2e	v2_04_02
@@ -30,6 +31,7 @@ end_product_list
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier    	   otsdaq	 otsdaq_utilities	 otsdaq_components	pcie_linux_kernel_module 	 xdaq	       notes
+e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:prof		-std=c++17		
 e19:s94:debug		e19:s94:debug		e19:s94:debug		e19:s94:debug		e19:s94:debug		e19:debug		-std=c++17		
 e19:s94:prof		e19:s94:prof		e19:s94:prof		e19:s94:prof		e19:s94:prof		e19:prof		-std=c++17		
 e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:prof		-std=c++17		
