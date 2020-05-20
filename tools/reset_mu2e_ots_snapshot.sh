@@ -72,8 +72,8 @@ chmod 755 get_snapshot_database.sh
 rm get_snapshot_database.sh
 rm get_snapshot_data.sh
 
-ots --wiz #just to test activate the saved groups  
-ots  #launch normal mode and open firefox
+#ots --wiz #just to test activate the saved groups  
+#ots  #launch normal mode and open firefox
 
 echo
 echo
