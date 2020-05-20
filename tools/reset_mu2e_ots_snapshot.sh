@@ -50,10 +50,10 @@ elif [[ "x$1" == "x" || "$1" != "--name" ]]; then
 fi
 
 
-echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t SNAPSHOT \t= $SNAPSHOT"
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t SNAPSHOT name \t= $SNAPSHOT"
 echo		
 
-source setup_ots.sh
+#source setup_ots.sh
 
 ots --killall
 killall -9 ots_udp_hw_emulator
