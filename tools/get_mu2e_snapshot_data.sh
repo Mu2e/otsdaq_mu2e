@@ -83,7 +83,7 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Downloading snapshot user data.."
 echo 
-cmd='scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip .'
+cmd="scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ${cmd}"
 echo
 
