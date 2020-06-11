@@ -133,6 +133,10 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t rm -rf tmp0
 echo
 rm -rf tmp01234; rm -rf snapshot_${SNAPSHOT}_Data.zip
 
+echo
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Preserving your run number.."
+cp ${USER_DATA}.bak/ServiceData/RunNumber/* ${USER_DATA}/ServiceData/RunNumber/ #*/ fix comment text coloring
+
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo 
