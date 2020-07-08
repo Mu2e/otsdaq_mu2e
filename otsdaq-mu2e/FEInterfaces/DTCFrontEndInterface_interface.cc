@@ -7,6 +7,9 @@ using namespace ots;
 
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "DTCFrontEndInterface"
+// some global variables, probably a bad idea. But temporary
+std::string RunDataFN = "";
+std::fstream DataFile;
 
 //=========================================================================================
 DTCFrontEndInterface::DTCFrontEndInterface(
@@ -1419,6 +1422,28 @@ void DTCFrontEndInterface::resume(void)
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
+
+  // open a file for this run number to write data to, if it hasn't been opened yet
+  // define a data file 
+
+  //	RunDataFN = "/home/mu2ehwdev/test_stand/ots/srcs/otsdaq_mu2e_config/Data_HWDev/OutputData/RunData_" + runNumber + ".dat";
+  char* dataPath(std::getenv("OTSDAQ_DATA"));
+	RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
+
+	__FE_COUT__ << "Run data FN is: "<< RunDataFN;
+	if (!DataFile.is_open()) {
+	  DataFile.open (RunDataFN, std::ios::out | std::ios::app);
+	  
+	  if (DataFile.fail()) {
+	  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
+
+	  }
+	  else {
+	  __FE_COUT__ << "opened data file RunData" << RunDataFN;
+	}
+	}
+  
+
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator DTC starting..." << __E__;
@@ -1571,6 +1596,12 @@ void DTCFrontEndInterface::start(std::string runNumber)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+
+  if (DataFile.is_open()) {
+	DataFile.close();
+	__FE_COUT__ << "closed data file";
+  }
+
 	if(emulatorMode_)
 	{
 
@@ -1648,15 +1679,164 @@ void DTCFrontEndInterface::stop(void)
 //==============================================================================
 bool DTCFrontEndInterface::running(void)
 {
-	while(WorkLoop::continueWorkLoop_)
+  // first setup DTC and CFO.  This is stolen from "getheartbeatanddatarequest"
+
+	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
+
+        std::time_t current_time;	
+	bool     incrementTimestamp = true;
+
+	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't
+	                            // know if 10000 works, either)
+	int requestsAhead = 0;
+	unsigned int number = -1; // largest number of events?
+	unsigned int timestampStart = 0;
+
+	auto device = thisDTC_->GetDevice();
+	auto initTime = device->GetDeviceTime();
+	device->ResetDeviceTime();
+	auto afterInit = std::chrono::steady_clock::now();
+
+	
+	if(emulate_cfo_ == 1)
 	{
+		registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO
+		                                    // emulation mode, bit 2 = DCS enable
+		                                    // bit 10 turns off retry which isn't working right now
+		sleep(1);
+
+		// set number of null heartbeats
+		// registerWrite(0x91BC, 0x0);
+		registerWrite(0x91BC, 0x10);  // new incantaton from Rick K. 12/18/2019
+		//	  sleep(1);
+
+		//# Send data
+		//#disable 40mhz marker
+		registerWrite(0x91f4, 0x0);
+		//	  sleep(1);
+
+		//#set num dtcs
+		registerWrite(0x9158, 0x1);
+		//	  sleep(1);
+
+		bool     useCFOEmulator   = true;
+		uint16_t debugPacketCount = 0;
+		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
+		bool     stickyDebugType  = true;
+		bool     quiet            = false;
+		bool     asyncRR          = false;
+		bool     forceNoDebugMode = true;
+
+		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
+		    new DTCLib::DTCSoftwareCFO(thisDTC_,
+		                               useCFOEmulator,
+		                               debugPacketCount,
+		                               debugType,
+		                               stickyDebugType,
+		                               quiet,
+		                               asyncRR,
+		                               forceNoDebugMode);
+
+		EmulatedCFO_->SendRequestsForRange(
+		    number,
+		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+		    incrementTimestamp,
+		    cfodelay,
+		    requestsAhead);
+
+		auto readoutRequestTime = device->GetDeviceTime();
+		device->ResetDeviceTime();
+		auto afterRequests = std::chrono::steady_clock::now();
+
+	}
+
+		while(WorkLoop::continueWorkLoop_)
+		{
 		for(auto& roc : rocs_)
 		{
 			roc.second->running();
 		}
-		break;
-	}
 
+		// print out stuff
+		unsigned quietCount = 20;
+		bool quiet       = false;
+
+		std::stringstream ostr;
+		ostr << std::endl;
+
+
+		//		std::cout << "Buffer Read " << std::dec << ii << std::endl;
+		mu2e_databuff_t* buffer;
+		auto             tmo_ms = 1500;
+		__FE_COUT__ << "util - before read for DAQ in running";
+		auto sts = device->read_data(
+		DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
+		__FE_COUT__ << "util - after read for DAQ in running " << " sts=" << sts
+			          << ", buffer=" << (void*)buffer;
+
+		if(sts > 0)
+		  {
+		    void* readPtr = &buffer[0];
+		    auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
+		    readPtr       = static_cast<uint8_t*>(readPtr) + 8;
+
+		    __FE_COUT__ << "Buffer reports DMA size of " << std::dec << bufSize
+			      << " bytes. Device driver reports read of " << sts << " bytes,"
+			      << std::endl;
+
+		    __FE_COUT__ << "util - bufSize is " << bufSize;
+		    outputStream.write(static_cast<char*>(readPtr), sts - 8);
+		    auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
+		    __FE_COUT__ << "maxLine " << maxLine;
+		    for(unsigned line = 0; line < maxLine; ++line)
+		      {
+			ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line
+			     << "0: ";
+			for(unsigned byte = 0; byte < 8; ++byte)
+			  {
+			    if(line * 16 + 2 * byte < sts - 8u)
+			      {
+				auto thisWord =
+				  reinterpret_cast<uint16_t*>(buffer)[4 + line * 8 + byte];
+				ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
+			      }
+			  }
+
+		  	ostr << std::endl;
+			//	std::cout << ostr.str();
+
+			//     __SET_ARG_OUT__("readData", ostr.str());  // write to data file
+
+			__FE_COUT__ << "writing to DataFile";
+			if (DataFile.bad())
+			  __FE_COUT__ << " something bad happened when writing to datafile? \n";
+			if (!DataFile.is_open())
+			  __FE_COUT__ << "trying to write to the data file but it isnt open. \n";
+			DataFile << ostr.str();
+
+			__FE_COUT__ << ostr.str();  // write to log file
+	    
+			if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
+			  {
+			    line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) -
+			      (1 + quietCount);
+			  }
+		      }
+		  }
+		device->read_release(DTC_DMA_Engine_DAQ, 1);
+       
+		ostr << std::endl; 
+    
+		//		__SET_ARG_OUT__("readData", ostr.str()); // write to data file
+		DataFile << ostr.str();
+		DataFile.flush(); // flush to disk
+
+		__FE_COUT__ << ostr.str(); // write to log file
+
+		delete EmulatedCFO_; 
+
+		break;
+		  }
 	return true;
 }  // end running()
 //
@@ -3431,13 +3611,13 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 		for(unsigned ii = 0; ii < number; ++ii)
 		{
-			std::cout << "Buffer Read " << std::dec << ii << std::endl;
+			__FE_COUT__ << "Buffer Read " << std::dec << ii << std::endl;
 			mu2e_databuff_t* buffer;
 			auto             tmo_ms = 1500;
-			std::cout << "util - before read for DAQ - ii=" << ii;
+			__FE_COUT__ << "util - before read for DAQ - ii=" << ii;
 			auto sts = device->read_data(
 			    DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
-			std::cout << "util - after read for DAQ - ii=" << ii << ", sts=" << sts
+			__FE_COUT__ << "util - after read for DAQ - ii=" << ii << ", sts=" << sts
 			          << ", buffer=" << (void*)buffer;
 
 			if(sts > 0)
@@ -3476,9 +3656,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 					//	std::cout << ostr.str();
 	        
 
-					std::cout << ostr.str();
-
-					__SET_ARG_OUT__("readData", ostr.str());  // write to data file
+	    				__SET_ARG_OUT__("readData", ostr.str());  // write to data file
 
 					__FE_COUT__ << ostr.str();  // write to log file
 
