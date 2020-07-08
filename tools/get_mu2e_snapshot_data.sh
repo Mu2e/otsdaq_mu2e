@@ -40,7 +40,7 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t SNAPSHOT \t
 echo		
 
 
-source setup_ots.sh
+#source setup_ots.sh
 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ********************************************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ************ Gettings otsdaq snapshot Data (user settings, etc.)... ************"
@@ -83,10 +83,23 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Downloading snapshot user data.."
 echo 
-echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
+cmd="scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ${cmd}"
 echo
 
-scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip .
+errlog=.tmp_scp_error.txt
+${cmd} 2> "$errlog"
+if [[ -s "$errlog" ]]; then
+    error=`cat "$errlog"`
+    # File exists and has a size greater than zero
+    echo "THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
+    echo $error
+    rm $errlog
+    exit
+else
+    echo "SCP OK"  
+    rm $errlog
+fi
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Unzipping snapshot user data.."
@@ -119,6 +132,10 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t rm -rf tmp01234; rm -rf snapshot_${SNAPSHOT}_Data.zip"
 echo
 rm -rf tmp01234; rm -rf snapshot_${SNAPSHOT}_Data.zip
+
+echo
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Preserving your run number.."
+cp ${USER_DATA}.bak/ServiceData/RunNumber/* ${USER_DATA}/ServiceData/RunNumber/ #*/ fix comment text coloring
 
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"

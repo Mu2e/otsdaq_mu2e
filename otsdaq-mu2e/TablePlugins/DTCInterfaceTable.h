@@ -16,14 +16,16 @@ class DTCInterfaceTable : public SlowControlsTableBase
 
 	// Methods
 	void 			init					(ConfigurationManager* configManager) override;
-	
-	// Getters
-	virtual bool 	slowControlsChannelListHasChanged 	(void) const override;
-	virtual void	getSlowControlsChannelList 			(std::vector<std::string /*channelName*/>& channelList) const override;
+
+	virtual unsigned int	slowControlsHandlerConfig	(
+															  std::stringstream& out
+															, ConfigurationManager* configManager
+															, std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>* channelList /*= 0*/
+														) const override;
+
+	virtual std::string		setFilePath					()  const override;
 
   private:
-
-	bool 			outputEpicsPVFile					(ConfigurationManager* configManager, std::vector<std::string /*channelName*/>* channelList = 0) const;
 
 	// Column names
 	struct ColFE
@@ -58,21 +60,8 @@ class DTCInterfaceTable : public SlowControlsTableBase
 		std::string const colLinkToSlowControlsChannelTable_ 	= "LinkToSlowControlsChannelTable";
 	} rocColNames_;
 
-	struct ColChannel
-	{
-		std::string const colStatus_ 				= "Status";
-		std::string const colUnits_ 				= "Units";
-		std::string const colChannelDataType_		= "ChannelDataType";
-		std::string const colLowLowThreshold_		= "LowLowThreshold";
-		std::string const colLowThreshold_ 			= "LowThreshold";
-		std::string const colHighThreshold_			= "HighThreshold";
-		std::string const colHighHighThreshold_ 	= "HighHighThreshold";
-	} channelColNames_;
-
 	std::string const 		DTC_FE_PLUGIN_TYPE 			= "DTCFrontEndInterface";
 
-	bool					isFirstAppInContext_, channelListHasChanged_; //for managing if PV list has changed
-	ConfigurationManager* 	lastConfigManager_;
 	// clang-format on
 };
 }  // namespace ots

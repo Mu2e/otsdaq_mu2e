@@ -38,7 +38,7 @@ fi
 echo -e `date +"%h%y %T"` "get_snapshot_data.sh [${LINENO}]  \t SNAPSHOT \t= $SNAPSHOT"
 echo		
 
-source setup_ots.sh
+#source setup_ots.sh
 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t ********************************************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t **** Gettings otsdaq snapshot Database (configuration tables, etc.)... *********"
@@ -82,10 +82,24 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Downloading snapshot database.."
 echo 
-echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_database.zip ."
+echo
+cmd="scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_database.zip ."
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t ${cmd}"
 echo
 
-scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_database.zip .
+errlog=.tmp_scp_error.txt
+${cmd} 2> "$errlog"
+if [[ -s "$errlog" ]]; then
+    error=`cat "$errlog"`
+    # File exists and has a size greater than zero                                                                                                                                  
+    echo "THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
+    echo $error
+    rm $errlog
+    exit
+else
+    echo "SCP OK"
+    rm $errlog
+fi
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Unzipping snapshot database.."
