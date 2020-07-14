@@ -10,8 +10,12 @@ using namespace ots;
 // some global variables, probably a bad idea. But temporary
 std::string RunDataFN = "";
 std::fstream DataFile;
+
+
+
 int FEWriteFile = 0;
 bool artdaqMode_ = true;
+
 //=========================================================================================
 DTCFrontEndInterface::DTCFrontEndInterface(
     const std::string&       interfaceUID,
@@ -1144,6 +1148,28 @@ void DTCFrontEndInterface::resume(void)
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
+
+  // open a file for this run number to write data to, if it hasn't been opened yet
+  // define a data file 
+
+  //	RunDataFN = "/home/mu2ehwdev/test_stand/ots/srcs/otsdaq_mu2e_config/Data_HWDev/OutputData/RunData_" + runNumber + ".dat";
+  char* dataPath(std::getenv("OTSDAQ_DATA"));
+	RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
+
+	__FE_COUT__ << "Run data FN is: "<< RunDataFN;
+	if (!DataFile.is_open()) {
+	  DataFile.open (RunDataFN, std::ios::out | std::ios::app);
+	  
+	  if (DataFile.fail()) {
+	  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
+
+	  }
+	  else {
+	  __FE_COUT__ << "opened data file RunData" << RunDataFN;
+	}
+	}
+  
+
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator DTC starting... # of ROCs = " << rocs_.size()
@@ -1336,33 +1362,29 @@ void DTCFrontEndInterface::start(std::string runNumber)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+
   // If using artdaq, all data goes through the BoardReader, not here!
   if(artdaqMode_){
     __FE_COUT__ << "Stopping in artdaqmode" << __E__;
     return;
   }
 
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size()
-		            << __E__;
-		for(auto& roc : rocs_)
-			roc.second->stop();
-		return;
-	}
-
-
   if (DataFile.is_open()) {
-	DataFile.close();
+    DataFile.close();
 	__FE_COUT__ << "closed data file";
   }
+  
+  if(emulatorMode_)
+    {
+      __FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size()
+		  << __E__;
+      for(auto& roc : rocs_)
+	roc.second->stop();
+      return;
+    }
 
-	if(emulatorMode_)
-	{
 
-		__FE_COUT__ << "Emulator DTC stopping..." << __E__;
-		return;
-	}
+
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
@@ -1435,6 +1457,7 @@ void DTCFrontEndInterface::stop(void)
 //return true to keep running
 bool DTCFrontEndInterface::running(void)
 {
+
   if(artdaqMode_) {
     __FE_COUT__ << "Running in artdaqmode" << __E__;
     return true;
@@ -1449,11 +1472,14 @@ bool DTCFrontEndInterface::running(void)
 		
 		return stillRunning;
 	}
+
   // first setup DTC and CFO.  This is stolen from "getheartbeatanddatarequest"
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
-    std::time_t current_time;	
+
+        std::time_t current_time;	
+
 	bool     incrementTimestamp = true;
 
 	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't
@@ -1522,6 +1548,58 @@ bool DTCFrontEndInterface::running(void)
 
 	while(WorkLoop::continueWorkLoop_)
 	{
+		registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO
+		                                    // emulation mode, bit 2 = DCS enable
+		                                    // bit 10 turns off retry which isn't working right now
+		sleep(1);
+
+		// set number of null heartbeats
+		// registerWrite(0x91BC, 0x0);
+		registerWrite(0x91BC, 0x10);  // new incantaton from Rick K. 12/18/2019
+		//	  sleep(1);
+
+		//# Send data
+		//#disable 40mhz marker
+		registerWrite(0x91f4, 0x0);
+		//	  sleep(1);
+
+		//#set num dtcs
+		registerWrite(0x9158, 0x1);
+		//	  sleep(1);
+
+		bool     useCFOEmulator   = true;
+		uint16_t debugPacketCount = 0;
+		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
+		bool     stickyDebugType  = true;
+		bool     quiet            = false;
+		bool     asyncRR          = false;
+		bool     forceNoDebugMode = true;
+
+		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
+		    new DTCLib::DTCSoftwareCFO(thisDTC_,
+		                               useCFOEmulator,
+		                               debugPacketCount,
+		                               debugType,
+		                               stickyDebugType,
+		                               quiet,
+		                               asyncRR,
+		                               forceNoDebugMode);
+
+		EmulatedCFO_->SendRequestsForRange(
+		    number,
+		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+		    incrementTimestamp,
+		    cfodelay,
+		    requestsAhead);
+
+		auto readoutRequestTime = device->GetDeviceTime();
+		device->ResetDeviceTime();
+		auto afterRequests = std::chrono::steady_clock::now();
+
+	}
+
+		while(WorkLoop::continueWorkLoop_)
+		{
 		for(auto& roc : rocs_)
 		{
 			roc.second->running();
@@ -1577,6 +1655,7 @@ bool DTCFrontEndInterface::running(void)
 
 			//     __SET_ARG_OUT__("readData", ostr.str());  // write to data file
 
+
 			if (FEWriteFile) { // overkill. If the file isn't open, won't try to write.
 			  __FE_COUT__ << "writing to DataFile";
 			  if (DataFile.bad())
@@ -1599,11 +1678,13 @@ bool DTCFrontEndInterface::running(void)
        
 		ostr << std::endl; 
     
+
 		if (FEWriteFile) {
 		  DataFile << ostr.str();
 		  DataFile.flush(); // flush to disk
 		}
 		//__FE_COUT__ << ostr.str(); 
+
 
 		delete EmulatedCFO_; 
 
@@ -2059,7 +2140,11 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 					ostr << std::endl;
 					//	std::cout << ostr.str();
-	       
+
+	        
+					
+	    				//__SET_ARG_OUT__("readData", ostr.str());  // write to data file
+
 					__FE_COUT__ << ostr.str();  // write to log file
 
 					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
