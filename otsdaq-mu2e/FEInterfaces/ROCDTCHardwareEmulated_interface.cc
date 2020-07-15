@@ -36,6 +36,8 @@ uint16_t ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 		return 4860;
 	else if(address == 7)
 		return delay_;
+	else
+		return address + (time(NULL)&0xF);
 	return -1;
 }  // end readEmulatorRegister
 //==================================================================================================
