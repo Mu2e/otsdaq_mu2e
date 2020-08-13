@@ -122,7 +122,11 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								DTCHighRateDCSCheck			(__ARGS__);
 	void 								RunROCFEMacro				(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest(__ARGS__);
-
+	void								GetUpstreamControlLinkStatus(__ARGS__);
+	void								ShutdownLinkTx(__ARGS__);
+	void								StartupLinkTx(__ARGS__);
+	void								WriteDTC(__ARGS__);
+	void								ReadDTC(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots
