@@ -439,7 +439,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("Shutdown Link Tx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ShutdownLinkTx),
-					std::vector<std::string>{"Link to Shutdown (0-7, 6 is Control)"},
+				        std::vector<std::string>{"Link to Shutdown (0-7, 6 is Control)"},
 					std::vector<std::string>{						
 						"Reset Status",
 						"Link Reset Register"},
@@ -452,6 +452,13 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Reset Status",
 						"Link Reset Register"},
 					1);  // requiredUserPermissions
+					
+	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
+		
+	std::make_pair("Link to Shutdown (0-7, 6 is Control)","0")},
+	"Link to Shutdown (0-7, 6 is Control)");
+			
+			__COUTV__(value);
 
 
 	{ //add ROC FE Macros
@@ -2264,7 +2271,10 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 				
 	std::stringstream los;
 	val = (readData >> 9)&7;
-	los << "Upstream Control Link Rx Recovered Clock (" << (((val>>0)&1)?"MISSING":"OK");
+	los << "...below <br><br>Loss-of-Lock: " << (((readData>>8)&1)?"Not Locked":"LOCKED");
+	sprintf(readDataStr,"%X",((readData>>8) & 0x0FF));
+	los << "<br>  Raw data: 0x" << std::hex << readDataStr << " = " << ((readData>>8) & 0x0FF) << std::dec << " ...";
+	los << "<br><br>  Upstream Control Link Rx Recovered Clock (" << (((val>>0)&1)?"MISSING":"OK");
 	los << "), \nRJ45 Upstream Rx Clock (" << (((val>>1)&1)?"MISSING":"OK");
 	los << "), \nTiming Card Selectable (SFP+ or FPGA) Input Clock (" << (((val>>2)&1)?"MISSING":"OK");
 	los << ")";
@@ -2289,7 +2299,7 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
 {	
-	uint32_t link = __GET_ARG_IN__("Link to Shutdown(0-7, 6 is Control)", uint32_t);
+	uint32_t link = __GET_ARG_IN__("Link to Shutdown (0-7, 6 is Control)", uint32_t);
 	link %= 8;
 	__FE_COUTV__((unsigned int)link);
 	
@@ -2320,7 +2330,7 @@ void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::StartupLinkTx(__ARGS__)
 {	
-	uint32_t link = __GET_ARG_IN__("Link to Shutdown(0-7, 6 is Control)", uint32_t);
+	uint32_t link = __GET_ARG_IN__("Link to Startup (0-7, 6 is Control)", uint32_t);
 	link %= 8;
 	__FE_COUTV__((unsigned int)link);
 	

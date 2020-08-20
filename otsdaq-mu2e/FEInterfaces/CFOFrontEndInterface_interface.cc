@@ -422,6 +422,14 @@ void CFOFrontEndInterface::configure(void)
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
+	if(getConfigurationManager()
+	   ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
+	   .getValue<bool>())
+	  {
+	    __FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
+	    return;
+	  }
+
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
 	// Therefore, break up configuration into several steps so as to reply before
 	// the time out As well, there is a specific order in which to configure the
