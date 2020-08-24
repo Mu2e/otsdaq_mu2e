@@ -375,6 +375,22 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
+					
+	registerFEMacroFunction(
+			"DTC_Write",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::WriteDTC),  // feMacroFunction
+					std::vector<std::string>{"address", "writeData"},
+					std::vector<std::string>{},  // namesOfOutput
+					1);                          // requiredUserPermissions
+
+	registerFEMacroFunction(
+			"DTC_Read",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ReadDTC),                  // feMacroFunction
+					std::vector<std::string>{"address"},  // namesOfInputArgs
+					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
 
 	registerFEMacroFunction("DTC_Reset",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -404,7 +420,45 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
 					std::vector<std::string>{"numberOfRequests","timestampStart"},
 					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions					
+					
+	registerFEMacroFunction("Get Upstream Rx Control Link Status",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::GetUpstreamControlLinkStatus),
+					std::vector<std::string>{},
+					std::vector<std::string>{						
+						"Upstream Rx Lock Loss Count",
+						"Upstream Rx CDR Lock Status",
+						"Upstream Rx PLL Lock Status",
+						"Jitter Attenuator Reset",
+						"Jitter Attenuator Input Select",
+						"Jitter Attenuator Loss-of-Signal",
+						"Reset Done"},
 					1);  // requiredUserPermissions
+					
+	registerFEMacroFunction("Shutdown Link Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ShutdownLinkTx),
+				        std::vector<std::string>{"Link to Shutdown (0-7, 6 is Control)"},
+					std::vector<std::string>{						
+						"Reset Status",
+						"Link Reset Register"},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction("Startup Link Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::StartupLinkTx),
+					std::vector<std::string>{"Link to Startup (0-7, 6 is Control)"},
+					std::vector<std::string>{						
+						"Reset Status",
+						"Link Reset Register"},
+					1);  // requiredUserPermissions
+					
+	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
+		
+	std::make_pair("Link to Shutdown (0-7, 6 is Control)","0")},
+	"Link to Shutdown (0-7, 6 is Control)");
+			
+			__COUTV__(value);
 
 
 	{ //add ROC FE Macros
@@ -417,18 +471,16 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			{
 				__FE_COUT__ << roc.first << "::" << feMacro.first << __E__;
 
-				//make DTC FEMacro forwarding to ROC FEMacro
-				std::string macroName =
-						"Link" +
-						std::to_string(roc.second->getLinkID()) +
-						"_" + roc.first + "_" +
-						feMacro.first;
-				__FE_COUTV__(macroName);
-
-				std::vector<std::string> inputArgs,outputArgs;
-
-				//inputParams.push_back("ROC_UID");
-				//inputParams.push_back("ROC_FEMacroName");
+				//make DTC FEMacro forwarding to ROC FEMacro				
+                std::string macroName =
+                                "Link" +
+                                std::to_string(roc.second->getLinkID()) +
+                                "_" + roc.first + "_" +
+                                feMacro.first;
+                __FE_COUTV__(macroName);
+                std::vector<std::string> inputArgs,outputArgs;
+                //inputParams.push_back("ROC_UID");
+                //inputParams.push_back("ROC_FEMacroName");
 				for(auto& inArg: feMacro.second.namesOfInputArguments_)
 					inputArgs.push_back(inArg);
 				for(auto& outArg: feMacro.second.namesOfOutputArguments_)
@@ -699,7 +751,15 @@ void DTCFrontEndInterface::configure(void) try
 {
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
-
+	
+	if(getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
+	        .getValue<bool>())
+	{
+		__FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
+		return;
+	}
+	
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator DTC configuring... # of ROCs = " << rocs_.size()
@@ -2175,6 +2235,153 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	
 
 }  // end DTCSendHeartbeatAndDataRequest()
+
+
+//========================================================================
+void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
+{
+	
+	//0x93c8 is RX CDR Unlock counter (32-bit)
+	uint32_t readData = registerRead(0x93c8); 
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"%d",readData);
+	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr);
+	
+	//0x9140 bit-6 is RX CDR is locked
+	readData = registerRead(0x9140); 
+	bool isUpstreamLocked = (readData >> 6)&1;
+	__SET_ARG_OUT__("Upstream Rx CDR Lock Status",isUpstreamLocked?"LOCKED":"Not Locked");
+	
+	//0x9128 bit-6 is RX PLL
+	readData = registerRead(0x9128); 
+	isUpstreamLocked = (readData >> 6)&1;
+	__SET_ARG_OUT__("Upstream Rx PLL Lock Status",isUpstreamLocked?"LOCKED":"Not Locked");
+	
+	//Jitter attenuator has configurable "Free Running" mode
+	//LOL == Loss of Lock, LOS == Loss of Signal (4-inputs to jitter attenuator)
+	//0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
+	readData = registerRead(0x9308); 
+	uint32_t val = (readData >> 0)&1;
+	__SET_ARG_OUT__("Jitter Attenuator Reset",val?"RESET":"Not Reset");
+	val = (readData >> 4)&3;
+	__SET_ARG_OUT__("Jitter Attenuator Input Select",val==0?
+		"Upstream Control Link Rx Recovered Clock":
+		(val == 1?"RJ45 Upstream Rx Clock":"Timing Card Selectable (SFP+ or FPGA) Input Clock"));
+				
+	std::stringstream los;
+	val = (readData >> 9)&7;
+	los << "...below <br><br>Loss-of-Lock: " << (((readData>>8)&1)?"Not Locked":"LOCKED");
+	sprintf(readDataStr,"%X",((readData>>8) & 0x0FF));
+	los << "<br>  Raw data: 0x" << std::hex << readDataStr << " = " << ((readData>>8) & 0x0FF) << std::dec << " ...";
+	los << "<br><br>  Upstream Control Link Rx Recovered Clock (" << (((val>>0)&1)?"MISSING":"OK");
+	los << "), \nRJ45 Upstream Rx Clock (" << (((val>>1)&1)?"MISSING":"OK");
+	los << "), \nTiming Card Selectable (SFP+ or FPGA) Input Clock (" << (((val>>2)&1)?"MISSING":"OK");
+	los << ")";
+	__SET_ARG_OUT__("Jitter Attenuator Loss-of-Signal",los.str());
+	
+	//0x9138 Reset Done register
+	//	TX reset done bit-7:0, 
+	//	TX FSM IP reset done bit-15:8,
+	//	RX reset done bit-23:16,
+	//	RX FSM IP reset done bit-31:24
+	val= registerRead(0x9138); 
+	std::stringstream rd;
+	rd << "TX reset done (" << (((val>>6)&1)?"DONE":"Not done");
+	rd << "), \nTX FSM IP reset done (" << (((val>>14)&1)?"DONE":"Not done");
+	rd << "), \nRX reset done (" << (((val>>22)&1)?"DONE":"Not done");
+	rd << "), \nRX FSM IP reset done (" << (((val>>30)&1)?"DONE":"Not done");
+	rd << ")";	
+	__SET_ARG_OUT__("Reset Done",rd.str());
+	
+} //end GetUpstreamControlLinkStatus()
+
+//========================================================================
+void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__("Link to Shutdown (0-7, 6 is Control)", uint32_t);
+	link %= 8;
+	__FE_COUTV__((unsigned int)link);
+	
+	//0x9118 controls link resets
+	//	bit-7:0 SERDES reset
+	//	bit-15:8 PLL reset
+	//	bit-23:16 RX reset
+	//	bit-31:24 TX reset
+	
+	registerWrite(0x9118, 1<<(24+link));  
+	
+	uint32_t val = registerRead(0x9118); 
+	
+	std::stringstream rd;
+	rd << "Link " << link << " SERDES reset (" << (((val>>(0+link))&1)?"RESET":"Not Reset");
+	rd << "), \nLink " << link << "PLL reset (" << (((val>>(8+link))&1)?"RESET":"Not Reset");
+	rd << "), \nLink " << link << "RX reset (" << (((val>>(16+link))&1)?"RESET":"Not Reset");
+	rd << "), \nLink " << link << "TX reset (" << (((val>>(24+link))&1)?"RESET":"Not Reset");	
+	rd << ")";
+	__SET_ARG_OUT__("Reset Status",rd.str());
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"0x%8.8X",val);
+	__SET_ARG_OUT__("Link Reset Register",readDataStr);
+	
+} //end ShutdownLinkTx()
+
+//========================================================================
+void DTCFrontEndInterface::StartupLinkTx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__("Link to Startup (0-7, 6 is Control)", uint32_t);
+	link %= 8;
+	__FE_COUTV__((unsigned int)link);
+	
+	//0x9118 controls link resets
+	//	bit-7:0 SERDES reset
+	//	bit-15:8 PLL reset
+	//	bit-23:16 RX reset
+	//	bit-31:24 TX reset
+	
+	uint32_t val = registerRead(0x9118); 
+	uint32_t mask = ~(1<<(24+link));
+	
+	registerWrite(0x9118, val&mask);  
+	
+	val = registerRead(0x9118); 
+	
+	std::stringstream rd;
+	rd << "Control Link SERDES reset (" << (((val>>(0+6))&1)?"RESET":"Not Reset");
+	rd << "), \nControl Link PLL reset (" << (((val>>(8+6))&1)?"RESET":"Not Reset");
+	rd << "), \nControl Link RX reset (" << (((val>>(16+6))&1)?"RESET":"Not Reset");
+	rd << "), \nControl Link TX reset (" << (((val>>(24+6))&1)?"RESET":"Not Reset");
+	rd << ")";
+	__SET_ARG_OUT__("Reset Status",rd.str());
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"0x%8.8X",val);
+	__SET_ARG_OUT__("Link Reset Register",readDataStr);
+	
+} //end StartupDownstreaControlLink()
+
+//========================================================================
+void DTCFrontEndInterface::WriteDTC(__ARGS__)
+{	
+	uint32_t address = __GET_ARG_IN__("address", uint32_t);
+	uint32_t writeData = __GET_ARG_IN__("writeData", uint32_t);
+	__FE_COUTV__((unsigned int)address);
+	__FE_COUTV__((unsigned int)writeData);
+	registerWrite(address, writeData);  
+} //end WriteDTC()
+
+//========================================================================
+void DTCFrontEndInterface::ReadDTC(__ARGS__)
+{	
+	uint32_t address = __GET_ARG_IN__("address", uint32_t);
+	__FE_COUTV__((unsigned int)address);
+	uint32_t readData = registerRead(address);  
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"0x%X",readData);
+	__SET_ARG_OUT__("readData",readDataStr);
+} //end ReadDTC()
 
 //========================================================================
 void DTCFrontEndInterface::DTCReset(__ARGS__) { DTCReset(); }
