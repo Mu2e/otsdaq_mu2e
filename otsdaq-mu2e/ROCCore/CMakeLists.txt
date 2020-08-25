@@ -13,7 +13,8 @@ cet_make(LIBRARY_NAME ROCCore
 			Macros
 			WorkLoopManager
 			${XDAQ_BASIC_LIB_LIST}
-			${XDAQ_XERCES-C}	
+			${XDAQ_XERCES-C}
+			${MF_MESSAGELOGGER}	
 )
 
 install_headers()

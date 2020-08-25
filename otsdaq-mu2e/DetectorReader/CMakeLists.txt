@@ -14,8 +14,8 @@ cet_make(LIBRARY_NAME DetectorReader
 		 MessageFacility
 		 ${MF_UTILITIES}
          	 ${XDAQ_BASIC_LIB_LIST}
+		 ${XDAQ_XERCES-C}
 	         ${ROOT_CORE}
-         	 $ENV{XERCES_C_LIB}/libxerces-c.so
          	 SOAPUtilities
 		 TableCore
 		 ConfigurationInterface

@@ -1,10 +1,7 @@
-
-
-
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent otsdaq_mu2e	v2_04_02
-defaultqual	e15:s64
+parent otsdaq_mu2e v1_00_00
+defaultqual	e19:s96
 
 # These optional lines define the installed directories where
 # headers, libraries, and executables will be found
@@ -20,31 +17,25 @@ bindir      fq_dir      bin
 fcldir      fq_dir      fcl
 
 #
-product		 version	optional
-otsdaq              v2_04_02
-otsdaq_utilities    v2_04_02
-otsdaq_components   v2_04_02
-pcie_linux_kernel_module	v2_02_01
-cetbuildtools       v7_13_02    -        only_for_build
+product		 		version		optional
+otsdaq              		v2_05_03
+otsdaq_utilities    		v2_05_03
+otsdaq_components   		v2_05_03
+pcie_linux_kernel_module	v2_03_05
+xdaq                            v15_14_0
+cetbuildtools       		v7_17_01	-        only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
-qualifier    	   otsdaq	 otsdaq_utilities	 otsdaq_components	pcie_linux_kernel_module 	 xdaq	       notes
-e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:prof		-std=c++17		
-e19:s94:debug		e19:s94:debug		e19:s94:debug		e19:s94:debug		e19:s94:debug		e19:debug		-std=c++17		
-e19:s94:prof		e19:s94:prof		e19:s94:prof		e19:s94:prof		e19:s94:prof		e19:prof		-std=c++17		
-e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:s96:prof		e19:prof		-std=c++17		
+qualifier    	   otsdaq		otsdaq_utilities	 otsdaq_components	pcie_linux_kernel_module	xdaq		notes
+e20:s100:prof	   e20:s100:prof	e20:s100:prof		 e20:s100:prof		e20:s100:prof			e20:prof	-std=c++17
+e20:s100:debug	   e20:s100:debug	e20:s100:debug		 e20:s100:debug		e20:s100:debug			e20:debug	-std=c++17
+e19:s100:prof	   e19:s100:prof	e19:s100:prof		 e19:s100:prof		e19:s100:prof			e19:prof	-std=c++17
+e19:s100:debug	   e19:s100:debug	e19:s100:debug		 e19:s100:debug		e19:s100:debug			e19:debug	-std=c++17
 
-e19:s89:prof       e19:s89:prof  e19:s89:prof 		 e19:s89:prof       	e19:s89:prof      	        	 e19:prof      -std=c++17
-e19:s89:debug       e19:s89:debug  e19:s89:debug 		 e19:s89:debug       	e19:s89:debug      	        	 e19:debug      -std=c++17
-
-e17:s87:prof       e17:s87:prof  e17:s87:prof		 e17:s87:prof          	e17:s87:prof                         e17:prof      -std=c++17
-e17:s85:prof       e17:s85:prof  e17:s85:prof		 e17:s85:prof          	e17:s85:prof                         e17:prof      -std=c++17
-e17:s73:prof       e17:s73:prof  e17:s73:prof            e17:s73:prof           e17:s73:prof                         e17:prof      -std=c++17
-e19:s82:prof       e19:s82:prof  e19:s82:prof 		 e19:s82:prof       	e19:s82:prof      	        	 e19:prof      -std=c++17
-e15:s67:prof       e15:s67:prof  e15:s67:prof            e15:s67:prof           e15:s67:prof			 e15:prof      -std=c++14
-e15:s67:debug      e15:s67:debug e15:s67:debug           e15:s67:debug          e15:s67:debug			 e15:debug     -std=c++14
+e19:s96:prof	   e19:s96:prof		e19:s96:prof		 e19:s96:prof		e19:s96:prof			e19:prof	-std=c++17
+e19:s96:debug	   e19:s96:debug	e19:s96:debug		 e19:s96:debug		e19:s96:debug			e19:debug	-std=c++17
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
