@@ -124,8 +124,6 @@ chmod 755 -R ${USER_DATA} #make sure it can be moved
 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t mv ${USER_DATA} ${USER_DATA}.bak"
 echo
-return
-exit
 
 mv ${USER_DATA} ${USER_DATA}.bak
 
