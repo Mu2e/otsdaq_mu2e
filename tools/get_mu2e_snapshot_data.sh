@@ -103,8 +103,13 @@ fi
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Unzipping snapshot user data.."
+
+chmod 755 -R tmp01234 #make sure it can be deleted
+rm -rf tmp01234
+
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t unzip snapshot_${SNAPSHOT}_Data.zip -d tmp01234"
+
 unzip snapshot_${SNAPSHOT}_Data.zip -d tmp01234
 
 # bkup current user data
@@ -112,9 +117,16 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Backing up current user data.."
 echo 
+
+chmod 755 -R ${USER_DATA}.bak #make sure it can be deleted
+rm -rf ${USER_DATA}.bak
+chmod 755 -R ${USER_DATA} #make sure it can be moved
+
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t mv ${USER_DATA} ${USER_DATA}.bak"
 echo
-rm -rf ${USER_DATA}.bak
+return
+exit
+
 mv ${USER_DATA} ${USER_DATA}.bak
 
 # move download user data into position
@@ -124,6 +136,8 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Installing 
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t mv tmp01234/NoGitData ${USER_DATA}"
 echo
+chmod 755 -R tmp01234/NoGitData #make sure it can be moved
+chmod 755 -R ${USER_DATA} #make sure it can be moved
 mv tmp01234/NoGitData ${USER_DATA}
 
 echo
@@ -131,6 +145,7 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Cleaning up
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t rm -rf tmp01234; rm -rf snapshot_${SNAPSHOT}_Data.zip"
 echo
+chmod 755 -R tmp01234 #make sure it can be deleted
 rm -rf tmp01234; rm -rf snapshot_${SNAPSHOT}_Data.zip
 
 echo

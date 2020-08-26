@@ -22,7 +22,6 @@ otsdaq              		v2_05_03
 otsdaq_utilities    		v2_05_03
 otsdaq_components   		v2_05_03
 pcie_linux_kernel_module	v2_03_05
-xdaq                            v15_14_0
 cetbuildtools       		v7_17_01	-        only_for_build
 end_product_list
 
