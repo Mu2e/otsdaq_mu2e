@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent otsdaq_mu2e v1_00_00a
+parent otsdaq_mu2e v1_00_01
 defaultqual	e19:s96
 
 # These optional lines define the installed directories where
@@ -21,21 +21,20 @@ product		 		version		optional
 otsdaq              		v2_05_03
 otsdaq_utilities    		v2_05_03
 otsdaq_components   		v2_05_03
-mu2e_artdaq                     v1_03_01
-pcie_linux_kernel_module	v2_03_05
+mu2e_artdaq                     v1_03_02
 cetbuildtools       		v7_17_01	-        only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
-qualifier    	   otsdaq		otsdaq_utilities	 otsdaq_components	mu2e_artdaq	pcie_linux_kernel_module	notes
-e20:s100:prof	   e20:s100:prof	e20:s100:prof		 e20:s100:prof		e20:s100:prof	e20:s100:prof			-std=c++17
-e20:s100:debug	   e20:s100:debug	e20:s100:debug		 e20:s100:debug		e20:s100:debug	e20:s100:debug			-std=c++17
-e19:s100:prof	   e19:s100:prof	e19:s100:prof		 e19:s100:prof		e19:s100:prof	e19:s100:prof			-std=c++17
-e19:s100:debug	   e19:s100:debug	e19:s100:debug		 e19:s100:debug		e19:s100:debug	e19:s100:debug			-std=c++17
+qualifier    	   otsdaq		otsdaq_utilities	 otsdaq_components	mu2e_artdaq	notes
+e20:s100:prof	   e20:s100:prof	e20:s100:prof		 e20:s100:prof		e20:s100:prof	-std=c++17
+e20:s100:debug	   e20:s100:debug	e20:s100:debug		 e20:s100:debug		e20:s100:debug	-std=c++17
+e19:s100:prof	   e19:s100:prof	e19:s100:prof		 e19:s100:prof		e19:s100:prof	-std=c++17
+e19:s100:debug	   e19:s100:debug	e19:s100:debug		 e19:s100:debug		e19:s100:debug	-std=c++17
 
-e19:s96:prof	   e19:s96:prof		e19:s96:prof		 e19:s96:prof		e19:s96:prof	e19:s96:prof			-std=c++17
-e19:s96:debug	   e19:s96:debug	e19:s96:debug		 e19:s96:debug		e19:s96:debug	e19:s96:debug			-std=c++17
+e19:s96:prof	   e19:s96:prof		e19:s96:prof		 e19:s96:prof		e19:s96:prof	-std=c++17
+e19:s96:debug	   e19:s96:debug	e19:s96:debug		 e19:s96:debug		e19:s96:debug	-std=c++17
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
