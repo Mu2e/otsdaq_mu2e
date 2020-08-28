@@ -103,6 +103,8 @@ fi
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Unzipping snapshot database.."
+chmod 755 -R tmpd1234 #make sure it can be deleted
+rm -rf tmpd1234
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t unzip snapshot_${SNAPSHOT}_database.zip -d tmpd1234"
 unzip snapshot_${SNAPSHOT}_database.zip -d tmpd1234
@@ -112,9 +114,13 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Backing up current database.."
 echo 
+
+chmod 755 -R ${ADU_PATH}.bak #make sure it can be deleted
+chmod 755 -R ${ADU_PATH} #make sure it can be moved
+
+rm -rf ${ADU_PATH}.bak
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv ${ADU_PATH} ${ADU_PATH}.bak"
 echo
-rm -rf ${ADU_PATH}.bak
 mv ${ADU_PATH} ${ADU_PATH}.bak
 
 # move download user data into position
