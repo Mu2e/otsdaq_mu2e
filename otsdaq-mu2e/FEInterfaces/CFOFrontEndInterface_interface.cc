@@ -38,7 +38,8 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
-	thisCFO_ = new CFOLib::CFO_Registers(mode, dtc_, expectedDesignVersion);
+	//Note: if we do not skip init, then the CFO::SetSimMode writes registers!
+	thisCFO_ = new CFOLib::CFO_Registers(mode, dtc_, expectedDesignVersion, true /*skipInit*/);
 
 	__FE_COUT__ << "CFOFrontEndInterface instantiated with name: " << interfaceUID
 	            << " talking to /dev/mu2e" << dtc_ << __E__;
@@ -554,7 +555,7 @@ void CFOFrontEndInterface::configure(void)
 		sleep(3);
 
 		__FE_COUT__ << "CFO enable Event Start character output " << __E__;
-		registerWrite(0x9100, 0x5);
+		registerWrite(0x9100, 0x5); //bit-0 is clock enable, bit-2 enables accelerator RF-0 input
 
 		__FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
 		registerWrite(0x9114, 0x0000ffff);
