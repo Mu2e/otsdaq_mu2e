@@ -333,6 +333,8 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 //==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
+	__FE_COUT__ << "Registering FE Macros..." << __E__;	
+
 	mapOfFEMacroFunctions_.clear();
 
 	// clang-format off
@@ -864,8 +866,8 @@ void DTCFrontEndInterface::configure(void) try
 		{
 			// only reset the FPGA the first time through
 
-			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-			                       << " reset FPGA...");
+			__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+			                       << " reset FPGA..." << __E__;
 
 			int dataInReg   = registerRead(0x9100);
 			int dataToWrite = dataInReg | 0x80000000;  // bit 31 = DTC Reset FPGA
@@ -885,8 +887,37 @@ void DTCFrontEndInterface::configure(void) try
 		{
 			// only configure the clock/crystal the first loop through...
 
-			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-			                       << " reset clock..." << __E__);
+			__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+			                       << " reset clock..." << __E__;
+			                       
+			                       
+			//choose jitter attenuator input select (reg 0x9308, bits 5:4)
+			// 0 is Upstream Control Link Rx Recovered Clock
+			// 1 is RJ45 Upstream Clock
+			// 2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
+			{
+				uint32_t readData = registerRead(0x9308);
+				uint32_t val = 0;
+				try
+				{
+					val =  getSelfNode().getNode("JitterAttenuatorInputSource").getValue<uint32_t>();
+					
+				}
+				catch(...)
+				{
+					__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to val = " << val << __E__;
+				}
+				readData &= ~(3<<4); //clear the two bits
+				readData |= (val & 3); //set the two bits to selected value
+				
+				registerWrite(0x9308, readData );
+				__FE_COUT__ << "Jitter Attenuator Input Select: " << val << " ==> " <<
+					(val==0?
+					"Upstream Control Link Rx Recovered Clock":
+					(val == 1?"RJ45 Upstream Clock":"Timing Card Selectable (SFP+ or FPGA) Input Clock")) 
+					<< __E__;
+			}
+			                       
 
 			__FE_COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
 			registerWrite(0x915c, 0x09502F90);
@@ -2267,7 +2298,7 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 	val = (readData >> 4)&3;
 	__SET_ARG_OUT__("Jitter Attenuator Input Select",val==0?
 		"Upstream Control Link Rx Recovered Clock":
-		(val == 1?"RJ45 Upstream Rx Clock":"Timing Card Selectable (SFP+ or FPGA) Input Clock"));
+		(val == 1?"RJ45 Upstream Clock":"Timing Card Selectable (SFP+ or FPGA) Input Clock"));
 				
 	std::stringstream los;
 	val = (readData >> 9)&7;
