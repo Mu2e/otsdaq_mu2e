@@ -1,7 +1,7 @@
 #!/bin/bash
-HOSTS=(05 06 14 17 12)
+HOSTS=(05 06 14 17 16)
 # We don't know if 11 and 10 are in the right order
-DTCORDER=(1 0 3 2 5 4 9 8 11 10)
+DTCORDER=(1 0 3 2 5 4 9 8 7 6)
 DTCIDX=0
 # remember dtcs are 1 0 order in chain because confusion
 

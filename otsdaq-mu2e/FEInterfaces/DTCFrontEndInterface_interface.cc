@@ -424,6 +424,21 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions					
 					
+	registerFEMacroFunction("Reset Loss-of-Lock Counter",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetLossOfLockCounter),
+					std::vector<std::string>{},
+					std::vector<std::string>{						
+						"Upstream Rx Lock Loss Count"},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction("Read Loss-of-Lock Counter",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ReadLossOfLockCounter),
+					std::vector<std::string>{},
+					std::vector<std::string>{						
+						"Upstream Rx Lock Loss Count"},
+					1);  // requiredUserPermissions
+
 	registerFEMacroFunction("Get Upstream Rx Control Link Status",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::GetUpstreamControlLinkStatus),
@@ -436,7 +451,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Jitter Attenuator Input Select",
 						"Jitter Attenuator Loss-of-Signal",
 						"Reset Done"},
-					1);  // requiredUserPermissions
+					1 /* requiredUserPermissions */,
+					"*" /* allowedCallingFEs */,
+					"Get the status of the upstream control link, which is the forwarded synchronization and control sourced from the CFO through DTC daisy-chains." /* feMacroTooltip */
+	);
 					
 	registerFEMacroFunction("Shutdown Link Tx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -2267,6 +2285,31 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 }  // end DTCSendHeartbeatAndDataRequest()
 
+//========================================================================
+void DTCFrontEndInterface::ResetLossOfLockCounter(__ARGS__)
+{
+	//write anything to reset
+	//0x93c8 is RX CDR Unlock counter (32-bit)
+	registerWrite(0x93c8, 0); 
+
+	//now check
+	uint32_t readData = registerRead(0x93c8); 
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"%d",readData);
+	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr);
+} //end ResetLossOfLockCounter()
+
+//========================================================================
+void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
+{
+	//0x93c8 is RX CDR Unlock counter (32-bit)
+	uint32_t readData = registerRead(0x93c8); 
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"%d",readData);
+	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr);
+} //end ReadLossOfLockCounter()
 
 //========================================================================
 void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)

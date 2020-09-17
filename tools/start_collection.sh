@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is temporary and needs to be replaced by actually pulling the contexts from the DB
-CONTEXTS=(05 06 14 17 12)
+CONTEXTS=(05 06 14 17 16)
 CONTEXT_PREFIX="mu2edaq"
 
 OTS_PATH=test_stand/ots
