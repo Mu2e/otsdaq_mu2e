@@ -178,6 +178,25 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 
 	__FE_COUT__ << "Destructed." << __E__;
 }  // end destructor()
+
+
+
+//===========================================================================================
+void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
+{
+	
+	// clang-format off
+	registerFEMacroFunction(
+			"Get Firmware Version",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetFirmwareVersion),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
+					1);    
+	// clang-format on
+} //end registerCFOandDTCFEMacros()
+
+
 //
 ////==============================================================================
 // void CFOandDTCCoreVInterface::configureSlowControls(void)
@@ -2351,56 +2370,30 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 
 	return;
 }
-//
-////==============================================================================
-//// rocRead
-// void CFOandDTCCoreVInterface::ReadROC(__ARGS__)
-//{
-//	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
-//	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
-//	for(auto& argIn : argsIn)
-//		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
-//
-//	DTCLib::DTC_Link_ID rocLinkIndex =
-//	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
-//	uint8_t address = __GET_ARG_IN__("address", uint8_t);
-//	__FE_COUTV__(rocLinkIndex);
-//	__FE_COUTV__((unsigned int)address);
-//
-//	// DTCLib::DTC* tmpDTC = new
-//	// DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,dtc_,roc_mask_,"");
-//
-//	uint16_t readData = -999;
-//
-//	for(auto& roc : rocs_)
-//	{
-//		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
-//		            << rocLinkIndex << __E__;
-//
-//		if(rocLinkIndex == roc.second->getLinkID())
-//		{
-//			readData = roc.second->readRegister(address);
-//
-//			// uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
-//			// delete tmpDTC;
-//
-//			//  char readDataStr[100];
-//			//  sprintf(readDataStr,"0x%X",readData);
-//			//  __SET_ARG_OUT__("readData",readDataStr);
-//			__SET_ARG_OUT__("readData", readData);
-//
-//			// for(auto &argOut:argsOut)
-//			__FE_COUT__ << "readData"
-//			            << ": " << std::hex << readData << std::dec << __E__;
-//			return;
-//		}
-//	}
-//
-//	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
-//	__FE_SS_THROW__;
-//
-//}  // end ReadROC()
-//
+
+//==============================================================================
+// GetFirmwareVersion
+ void CFOandDTCCoreVInterface::GetFirmwareVersion(__ARGS__)
+{
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
+	for(auto& argIn : argsIn)
+		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
+
+	
+	uint32_t readData = registerRead(0x9004); 
+	__FE_COUTV__(readData);
+	
+	std::stringstream dateSs;
+	dateSs << ((readData>>16)&0xFF) << "/" << 
+		((readData>>8)&0xFF) << "/20" << 
+		((readData>>24)&0xFF) << " " <<
+		((readData>>0)&0xFF) << ":00";
+	
+	__SET_ARG_OUT__("Firmware Version Date", dateSs.str());
+
+}  // end GetFirmwareVersion()
+
 ////==============================================================================
 //// DTCStatus
 ////	FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by 'admin' using

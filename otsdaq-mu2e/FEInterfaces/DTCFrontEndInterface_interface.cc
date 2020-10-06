@@ -339,6 +339,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	// clang-format off
 	registerFEMacroFunction(
+			"Flash_LEDs",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::FlashLEDs),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{},  // namesOfOutputArgs
+					1);                          // requiredUserPermissions
+
+
+	registerFEMacroFunction(
 			"ROC_WriteBlock",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteROCBlock),  // feMacroFunction
@@ -523,6 +532,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	} //end add ROC FE Macros
 
 	// clang-format on
+	
+	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
 }  // end registerFEMacros()
 
@@ -2369,6 +2380,26 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 	__SET_ARG_OUT__("Reset Done",rd.str());
 	
 } //end GetUpstreamControlLinkStatus()
+
+
+//========================================================================
+void DTCFrontEndInterface::FlashLEDs(__ARGS__)
+{	
+	
+	
+	//0x9100 LEDs at 19:17
+	
+	
+	uint32_t val = registerRead(0x9100); 
+	
+	val |= 0x0E0000;
+	registerWrite(0x9100, val);  
+
+	sleep(1);
+	val &= ~(0x0E0000);
+	registerWrite(0x9100, val);  
+	
+} //end FlashLEDs()
 
 //========================================================================
 void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)

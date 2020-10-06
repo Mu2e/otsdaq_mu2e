@@ -50,7 +50,12 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	float delay_rms[8][6][8];
 	float delay_failed[8][6][8];
 
+  protected: 
+  	
+
   private:
+	void 								registerFEMacros			(void);
+	
 //	char                   devfile_[11];
 //	int                    fd_;
 //	int                    dtc_ = -1;

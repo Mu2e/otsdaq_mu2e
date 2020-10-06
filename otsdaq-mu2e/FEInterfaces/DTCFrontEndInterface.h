@@ -111,24 +111,25 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	std::ofstream 									outputStream;
 
   public:
-	void 								ReadROC						(__ARGS__);
-	void 								WriteROC					(__ARGS__);
-	void 								WriteROCBlock				(__ARGS__);
-	void 								ReadROCBlock				(__ARGS__);
-    void                               BlockReadROC                 (__ARGS__);
-	void 								DTCHighRateBlockCheck		(__ARGS__);
-	void 								DTCReset					(__ARGS__);
-	void 								DTCReset					(void);
-	void 								DTCHighRateDCSCheck			(__ARGS__);
-	void 								RunROCFEMacro				(__ARGS__);
-	void 								DTCSendHeartbeatAndDataRequest(__ARGS__);
-	void								ResetLossOfLockCounter		(__ARGS__);
-	void								ReadLossOfLockCounter		(__ARGS__);
-	void								GetUpstreamControlLinkStatus(__ARGS__);
-	void								ShutdownLinkTx				(__ARGS__);
-	void								StartupLinkTx				(__ARGS__);
-	void								WriteDTC					(__ARGS__);
-	void								ReadDTC						(__ARGS__);
+	void 								FlashLEDs						(__ARGS__);
+	void 								ReadROC							(__ARGS__);
+	void 								WriteROC						(__ARGS__);
+	void 								WriteROCBlock					(__ARGS__);
+	void 								ReadROCBlock					(__ARGS__);
+    void                              	BlockReadROC                	(__ARGS__);
+	void 								DTCHighRateBlockCheck			(__ARGS__);
+	void 								DTCReset						(__ARGS__);
+	void 								DTCReset						(void);
+	void 								DTCHighRateDCSCheck				(__ARGS__);
+	void 								RunROCFEMacro					(__ARGS__);
+	void 								DTCSendHeartbeatAndDataRequest	(__ARGS__);
+	void								ResetLossOfLockCounter			(__ARGS__);
+	void								ReadLossOfLockCounter			(__ARGS__);
+	void								GetUpstreamControlLinkStatus	(__ARGS__);
+	void								ShutdownLinkTx					(__ARGS__);
+	void								StartupLinkTx					(__ARGS__);
+	void								WriteDTC						(__ARGS__);
+	void								ReadDTC							(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots

@@ -38,6 +38,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 //	bool											currentChannelIsInROC_;
 //	std::string										currentChannelROCUID_;
 
+  
   public:
 	// state machine
 	//----------------
@@ -78,8 +79,10 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	//DTCLib::DTC* 									thisDTC_;
 
   protected:
-	//oid 								createROCs					(void);
+	//void 								createROCs					(void);
 	//void 								registerFEMacros			(void);
+	
+	void 								registerCFOandDTCFEMacros	(void);
 
 	char        									devfile_[11];
 	int         									fd_;
@@ -112,7 +115,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	std::ofstream 									outputStream;
 
   public:
-//	void 								ReadROC						(__ARGS__);
+	void 								GetFirmwareVersion			(__ARGS__);
 //	void 								WriteROC					(__ARGS__);
 //	void 								WriteROCBlock				(__ARGS__);
 //	void 								ReadROCBlock				(__ARGS__);

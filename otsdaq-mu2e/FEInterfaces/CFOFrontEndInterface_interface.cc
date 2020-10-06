@@ -52,6 +52,32 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 	// delete theFrontEndHardware_;
 	// delete theFrontEndFirmware_;
 }
+
+
+//==============================================================================
+void CFOFrontEndInterface::registerFEMacros(void)
+{
+	__FE_COUT__ << "Registering FE Macros..." << __E__;	
+
+	mapOfFEMacroFunctions_.clear();
+
+	// clang-format off
+	// registerFEMacroFunction(
+	// 		"ROC_WriteBlock",  // feMacroName
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOFrontEndInterface::WriteROCBlock),  // feMacroFunction
+	// 				std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
+	// 				std::vector<std::string>{},  // namesOfOutputArgs
+	// 				1);                          // requiredUserPermissions
+
+
+	// clang-format on
+
+
+	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
+
+} //end registerFEMacros()
+
 //
 ////==========================================================================================
 //// universalRead
