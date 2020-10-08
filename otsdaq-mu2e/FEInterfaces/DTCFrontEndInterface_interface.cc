@@ -429,7 +429,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_SendHeartbeatAndDataRequest",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
-					std::vector<std::string>{"numberOfRequests","timestampStart"},
+					std::vector<std::string>{"numberOfRequests","timestampStart","useCFOEmulator"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions					
 					
@@ -2120,6 +2120,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 {
 	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
+	bool useCFOEmulator 		= __GET_ARG_IN__("useCFOEmulator", bool);
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
@@ -2158,7 +2159,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		registerWrite(0x9158, 0x1);
 		//	  sleep(1);
 
-		bool     useCFOEmulator   = true;
+		//bool     useCFOEmulator   = true;
 		uint16_t debugPacketCount = 0;
 		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
 		bool     stickyDebugType  = true;

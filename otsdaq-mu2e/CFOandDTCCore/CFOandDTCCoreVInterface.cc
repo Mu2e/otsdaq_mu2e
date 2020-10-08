@@ -2388,7 +2388,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 	dateSs << ((readData>>16)&0xFF) << "/" << 
 		((readData>>8)&0xFF) << "/20" << 
 		((readData>>24)&0xFF) << " " <<
-		((readData>>0)&0xFF) << ":00";
+		((readData>>0)&0xFF) << ":00   raw-data: 0x" << std::hex << readData << __E__;
 	
 	__SET_ARG_OUT__("Firmware Version Date", dateSs.str());
 
