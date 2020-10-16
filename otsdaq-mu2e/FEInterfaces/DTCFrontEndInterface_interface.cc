@@ -1302,39 +1302,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	}
 
 
-  // open a file for this run number to write data to, if it hasn't been opened yet
-  // define a data file if FEWRITE_RUNFILE environmental variable is not zero
-  //
-  //      if (std::getenv("FEWRITE_RUNFILE" != NULL)
-	__FE_COUT__ << " Trying to get the FEWRITE_RUNFILE info";
-	    FEWriteFile = std::atoi(std::getenv("FEWRITE_RUNFILE"));
-	    __FE_COUT__ << "FEWriteFile is " << FEWriteFile;
-	    FEWriteFile = 0;
-	    if (FEWriteFile) {
-	      char* dataPath(std::getenv("OTSDAQ_DATA"));
-	      RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
-
-	      __FE_COUT__ << "Run data FN is: "<< RunDataFN;
-	      if (!DataFile.is_open()) {
-		DataFile.open (RunDataFN, std::ios::out | std::ios::app);
-	  
-		if (DataFile.fail()) {
-		  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
-
-
-		}
-		else {
-		  __FE_COUT__ << "opened data file RunData" << RunDataFN;
-		}
-	      }
-	    }
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator DTC starting..." << __E__;
-		return;
-	}
-
+//
 
 	int numberOfLoopbacks =
 	    getConfigurationManager()
