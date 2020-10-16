@@ -2320,7 +2320,17 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	
 	char readDataStr[100];
 	sprintf(readDataStr,"%d",readData);
-	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr);
+
+	//0x9140 bit-6 is RX CDR is locked
+	readData = registerRead(0x9140); 
+	bool isUpstreamLocked = (readData >> 6)&1;
+	//__SET_ARG_OUT__("Upstream Rx CDR Lock Status",isUpstreamLocked?"LOCKED":"Not Locked");
+
+	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr +
+		std::string(isUpstreamLocked?" LOCKED":" Not Locked"));
+
+
+
 } //end ReadLossOfLockCounter()
 
 //========================================================================
