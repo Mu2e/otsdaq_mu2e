@@ -126,6 +126,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								ResetLossOfLockCounter			(__ARGS__);
 	void								ReadLossOfLockCounter			(__ARGS__);
 	void								GetUpstreamControlLinkStatus	(__ARGS__);
+	void								ResetLinkRx						(__ARGS__);
 	void								ShutdownLinkTx					(__ARGS__);
 	void								StartupLinkTx					(__ARGS__);
 	void								WriteDTC						(__ARGS__);

@@ -30,7 +30,7 @@ echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
 if [ $USER == "root" ]; then
 
 	#install ots dependencies
-	yum install -y libuuid-devel openssl-devel python-devel
+	yum install -y libuuid-devel openssl-devel python-devel elfutils-libelf-devel
 	
 	#install cvmfs
 	yum install -y https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
@@ -75,7 +75,9 @@ for p in ${REPO_DIR[@]}; do
 			cd $p
 			if [ $bp == "otsdaq_mu2e_config" ]; then
 				git checkout .  #get all Data and databases
-			fi 
+			elif [ $bp == "otsdaq_utilities" ]; then
+			    git checkout WebGUI 
+			fi
 			git pull
 			cd -
 		fi
@@ -86,8 +88,10 @@ done
 rm -rf change_ots_qualifiers.sh
 cp srcs/otsdaq_utilities/tools/change_ots_qualifiers.sh .
 chmod 755 change_ots_qualifiers.sh
-./change_ots_qualifiers.sh DEFAULT s89:e19:prof
+./change_ots_qualifiers.sh DEFAULT DEFAULT #s89:e19:prof
 
+echo "" >> setup_ots.sh
+echo "alias UpdateOTS.sh='${MRB_SOURCE}/otsdaq_utilities/tools/UpdateOTS.sh'" >> setup_ots.sh
 source setup_ots.sh
 
 #update all (need to do again, after setup, or else ninja does not do mrbsetenv correctly(?))
@@ -102,6 +106,9 @@ for p in ${REPO_DIR[@]}; do
 			echo -e "UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
 			
 			cd $p
+			if [ $bp == "otsdaq_utilities" ]; then
+			    git checkout WebGUI 
+			fi
 			git pull
 			cd -
 		fi
@@ -130,7 +137,7 @@ echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t mz                 
 echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t UpdateOTS.sh            #########################################   #to see update options"
 echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ./change_ots_qualifiers.sh           ############################   #to see qualifier options"
 echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t chmod 755 reset_ots_tutorial.sh; ./reset_ots_tutorial.sh --list     #to see tutorial options"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t reset_mu2e_ots_snapshot.sh —name trigger_Dev_20200116     			 #to reset ots to a named mu2e snapshot"
+echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t reset_mu2e_ots_snapshot.sh name trigger_Dev_20200116     			 #to reset ots to a named mu2e snapshot"
 echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ots -w                  #########################################   #to run ots in wiz(safe) mode"
 echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ots                     #########################################   #to run ots in normal mode"
 

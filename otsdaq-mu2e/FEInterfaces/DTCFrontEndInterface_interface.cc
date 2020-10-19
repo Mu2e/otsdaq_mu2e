@@ -464,6 +464,13 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*" /* allowedCallingFEs */,
 					"Get the status of the upstream control link, which is the forwarded synchronization and control sourced from the CFO through DTC daisy-chains." /* feMacroTooltip */
 	);
+	
+	registerFEMacroFunction("Reset Link Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetLinkRx),
+				        std::vector<std::string>{"Link to Reset (0-7, 6 is Control)"},
+						std::vector<std::string>{},
+					1);  // requiredUserPermissions
 					
 	registerFEMacroFunction("Shutdown Link Tx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -716,8 +723,9 @@ int DTCFrontEndInterface::getROCLinkStatus(int ROC_link)
 	int ROC_link_status = (overall_link_status >> ROC_link) & 0x1;
 
 	return ROC_link_status;
-}
+} //end getROCLinkStatus()
 
+//==================================================================================================
 int DTCFrontEndInterface::getCFOLinkStatus()
 {
 	int overall_link_status = registerRead(0x9140);
@@ -725,8 +733,9 @@ int DTCFrontEndInterface::getCFOLinkStatus()
 	int CFO_link_status = (overall_link_status >> 6) & 0x1;
 
 	return CFO_link_status;
-}
+} //end getCFOLinkStatus()
 
+//==================================================================================================
 int DTCFrontEndInterface::checkLinkStatus()
 {
 	int ROCs_OK = 1;
@@ -760,8 +769,9 @@ int DTCFrontEndInterface::checkLinkStatus()
 
 		return 0;
 	}
-}
+} //end checkLinkStatus()
 
+//==================================================================================================
 bool DTCFrontEndInterface::ROCActive(unsigned ROC_link)
 {
 	// __FE_COUTV__(roc_mask_);
@@ -775,7 +785,7 @@ bool DTCFrontEndInterface::ROCActive(unsigned ROC_link)
 	{
 		return false;
 	}
-}
+} //end ROCActive()
 
 //==================================================================================================
 void DTCFrontEndInterface::configure(void) try
@@ -857,7 +867,7 @@ void DTCFrontEndInterface::configure(void) try
 
 				__FE_COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex
 				            << registerRead(0x9140) << std::dec << __E__;
-				sleep(1);
+				//sleep(1);
 
 				indicateIterationWork();
 				turnOffLED();
@@ -901,7 +911,7 @@ void DTCFrontEndInterface::configure(void) try
 			int dataInReg   = registerRead(0x9100);
 			int dataToWrite = dataInReg | 0x80000000;  // bit 31 = DTC Reset FPGA
 			registerWrite(0x9100, dataToWrite);
-			sleep(3);
+			usleep(500000 /*500ms*/); //sleep(3);
 
 			__MCOUT_INFO__("............. firmware version "
 			               << std::hex << registerRead(0x9004) << std::dec << __E__);
@@ -937,7 +947,8 @@ void DTCFrontEndInterface::configure(void) try
 					__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to val = " << val << __E__;
 				}
 				readData &= ~(3<<4); //clear the two bits
-				readData |= (val & 3); //set the two bits to selected value
+				readData &= ~(1); //ensure unreset of jitter attenuator
+				readData |= (val & 3)<<4; //set the two bits to selected value
 				
 				registerWrite(0x9308, readData );
 				__FE_COUT__ << "Jitter Attenuator Input Select: " << val << " ==> " <<
@@ -955,7 +966,7 @@ void DTCFrontEndInterface::configure(void) try
 			registerWrite(0x9168, 0x5d870100);
 			registerWrite(0x916c, 0x00000001);
 
-			sleep(5);
+			usleep(500000 /*500ms*/); //sleep(5);
 
 			int targetFrequency = 200000000;
 
@@ -976,7 +987,7 @@ void DTCFrontEndInterface::configure(void) try
 			//--- end code snippet pulled from: mu2eUtil program_clock -C 2 -F
 			// 200000000
 
-			sleep(5);
+			usleep(500000 /*500ms*/); //sleep(5);
 		}
 		else
 		{
@@ -996,7 +1007,7 @@ void DTCFrontEndInterface::configure(void) try
 
 			configureJitterAttenuator();
 
-			sleep(5);
+			usleep(500000 /*500ms*/); //sleep(5);
 		}
 		else
 		{
@@ -1044,13 +1055,13 @@ void DTCFrontEndInterface::configure(void) try
 			registerWrite(0x9118, 0x00004000);
 			registerWrite(0x9118, 0x00000000);
 
-			sleep(3);
+			usleep(500000 /*500ms*/); //sleep(3);
 
 			__FE_COUT__ << "DTC reset CFO link RX" << __E__;
 			registerWrite(0x9118, 0x00400000);
 			registerWrite(0x9118, 0x00000000);
 
-			sleep(3);
+			usleep(500000 /*500ms*/); //sleep(3);
 		}
 		else
 		{
@@ -2340,7 +2351,7 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 	los << "<br>  Raw data: 0x" << std::hex << readDataStr << " = " << ((readData>>8) & 0x0FF) << std::dec << " ...";
 	los << "<br><br>  Upstream Control Link Rx Recovered Clock (" << (((val>>0)&1)?"MISSING":"OK");
 	los << "), \nRJ45 Upstream Rx Clock (" << (((val>>1)&1)?"MISSING":"OK");
-	los << "), \nTiming Card Selectable (SFP+ or FPGA) Input Clock (" << (((val>>2)&1)?"MISSING":"OK");
+	los << "), \nTiming Card Selectable, SFP+ or FPGA, Input Clock (" << (((val>>2)&1)?"MISSING":"OK");
 	los << ")";
 	__SET_ARG_OUT__("Jitter Attenuator Loss-of-Signal",los.str());
 	
@@ -2379,6 +2390,30 @@ void DTCFrontEndInterface::FlashLEDs(__ARGS__)
 	registerWrite(0x9100, val);  
 	
 } //end FlashLEDs()
+
+
+//========================================================================
+void DTCFrontEndInterface::ResetLinkRx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__("Link to Reset (0-7, 6 is Control)", uint32_t);
+	link %= 8;
+	__FE_COUTV__((unsigned int)link);
+	
+	//0x9118 controls link resets
+	//	bit-7:0 SERDES reset
+	//	bit-15:8 PLL reset
+	//	bit-23:16 RX reset
+	//	bit-31:24 TX reset
+	
+	registerWrite(0x9118, 1<<(16+link));  
+	
+	sleep(1);
+	
+	registerWrite(0x9118, ~(1<<(16+link)));  
+	
+	__FE_COUT__ << "Done with reset link Rx: " << link << __E__;
+	
+} //end ResetLinkRx()
 
 //========================================================================
 void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
