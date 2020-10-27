@@ -2385,10 +2385,12 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 	__FE_COUTV__(readData);
 	
 	std::stringstream dateSs;
-	dateSs << ((readData>>16)&0xFF) << "/" << 
-		((readData>>8)&0xFF) << "/20" << 
-		((readData>>24)&0xFF) << " " <<
-		((readData>>0)&0xFF) << ":00   raw-data: 0x" << std::hex << readData << __E__;
+	std::vector<std::string> months({"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"});
+	int mon =  ((readData>>20)&0xF)*10 + ((readData>>16)&0xF);
+	dateSs << months[mon-1] << "/" << 
+		((readData>>12)&0xF) << ((readData>>8)&0xF) << "/20" << 
+		((readData>>28)&0xF) << ((readData>>24)&0xF) << " " <<
+		((readData>>4)&0xF) << ((readData>>0)&0xF) << ":00   raw-data: 0x" << std::hex << readData << __E__;
 	
 	__SET_ARG_OUT__("Firmware Version Date", dateSs.str());
 
