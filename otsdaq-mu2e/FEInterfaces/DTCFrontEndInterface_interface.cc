@@ -2580,6 +2580,19 @@ void DTCFrontEndInterface::DTCReset(__ARGS__) { DTCReset(); }
 //========================================================================
 void DTCFrontEndInterface::DTCReset()
 {
+	/*
+	  my_cntl write 0x9100 0x80000000  >/dev/null # reset DTC  reset serdes osc
+  my_cntl write 0x9100 0x00008000 > /dev/null # Turn on CFO Emulation Mode for Serdes Reset
+  my_cntl write 0x9118 0ffff00ff  >/dev/null  # SERDES resets
+  my_cntl write 0x9118 0x00000000  >/dev/null  # clear SERDES reset on link 0
+
+  sleep 1
+
+
+  echo "SERDES Reset Done after reset: "
+  my_cntl read 0x9138
+	*/
+
 	{
 		char* address = new char[universalAddressSize_]{
 		    0};  //create address buffer of interface size and init to all 0
@@ -2598,21 +2611,22 @@ void DTCFrontEndInterface::DTCReset()
 		universalWrite(address, data);
 		usleep(1000);
 
-		// command-#1: Write(0x9118 /*address*/,0x0000003f /*data*/);
-		macroAddress = 0x9118;
+		// command-#5: Write(0x9100 /*address*/,0x10000000 /*data*/);
+		macroAddress = 0x9100;
 		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x000000ff;
+		macroData = 0x00008000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
 		usleep(1000);
 
-		// command-#5: Write(0x9100 /*address*/,0x10000000 /*data*/);
-		macroAddress = 0x9100;
+		// command-#1: Write(0x9118 /*address*/,0x0000003f /*data*/);
+		macroAddress = 0x9118;
 		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x00000000;
+		macroData = 0xffff00ff;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
 		usleep(1000);
+
 
 		// command-#6: Write(0x9118 /*address*/,0x00000000 /*data*/);
 		macroAddress = 0x9118;
@@ -2620,6 +2634,22 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0x00000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+
+		bool first = true;
+		macroData    = 0x00000000;
+		while(macroData != 0xffffffff)
+		{
+			macroAddress = 0x9138;
+			memcpy(address, &macroAddress, 8);
+			macroData = 0x00000000;
+			memcpy(data, &macroData, 8);  // copy macro data to buffer
+			universalRead(address, data);
+			memcpy(&macroData, data, 8);
+			if(!first)
+				usleep(1000);
+
+			first = false;
+		}
 
 		delete[] address;  // free the memory
 		delete[] data;     // free the memory
