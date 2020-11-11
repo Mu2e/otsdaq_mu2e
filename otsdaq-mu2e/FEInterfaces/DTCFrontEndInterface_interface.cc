@@ -2132,7 +2132,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
 	bool     incrementTimestamp = true;
-	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't
+	uint32_t cfodelay = 20000;  // have no idea what this is, but 1000 didn't work (don't
 	                            // know if 10000 works, either)
 	int requestsAhead = 0;
 
@@ -2596,6 +2596,7 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0xa0000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+		usleep(1000);
 
 		// command-#1: Write(0x9118 /*address*/,0x0000003f /*data*/);
 		macroAddress = 0x9118;
@@ -2603,6 +2604,7 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0x0000003f;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+		usleep(1000);
 
 		// command-#2: Write(0x9100 /*address*/,0x00000000 /*data*/);
 		macroAddress = 0x9100;
@@ -2610,6 +2612,7 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0x00000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+		usleep(1000);
 
 		// command-#3: Write(0x9100 /*address*/,0x10000000 /*data*/);
 		macroAddress = 0x9100;
@@ -2617,6 +2620,7 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0x10000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+		usleep(1000);
 
 		// command-#4: Write(0x9100 /*address*/,0x30000000 /*data*/);
 		macroAddress = 0x9100;
@@ -2624,6 +2628,7 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0x30000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+		usleep(1000);
 
 		// command-#5: Write(0x9100 /*address*/,0x10000000 /*data*/);
 		macroAddress = 0x9100;
@@ -2631,6 +2636,7 @@ void DTCFrontEndInterface::DTCReset()
 		macroData = 0x10000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
+		usleep(1000);
 
 		// command-#6: Write(0x9118 /*address*/,0x00000000 /*data*/);
 		macroAddress = 0x9118;
