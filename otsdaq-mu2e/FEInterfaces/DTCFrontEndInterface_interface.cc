@@ -2593,7 +2593,7 @@ void DTCFrontEndInterface::DTCReset()
 		// command-#0: Write(0x9100 /*address*/,0xa0000000 /*data*/);
 		macroAddress = 0x9100;
 		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0xa0000000;
+		macroData = 0x80000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
 		usleep(1000);
@@ -2601,31 +2601,7 @@ void DTCFrontEndInterface::DTCReset()
 		// command-#1: Write(0x9118 /*address*/,0x0000003f /*data*/);
 		macroAddress = 0x9118;
 		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x0000003f;
-		memcpy(data, &macroData, 8);  // copy macro data to buffer
-		universalWrite(address, data);
-		usleep(1000);
-
-		// command-#2: Write(0x9100 /*address*/,0x00000000 /*data*/);
-		macroAddress = 0x9100;
-		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x00000000;
-		memcpy(data, &macroData, 8);  // copy macro data to buffer
-		universalWrite(address, data);
-		usleep(1000);
-
-		// command-#3: Write(0x9100 /*address*/,0x10000000 /*data*/);
-		macroAddress = 0x9100;
-		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x10000000;
-		memcpy(data, &macroData, 8);  // copy macro data to buffer
-		universalWrite(address, data);
-		usleep(1000);
-
-		// command-#4: Write(0x9100 /*address*/,0x30000000 /*data*/);
-		macroAddress = 0x9100;
-		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x30000000;
+		macroData = 0x000000ff;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
 		usleep(1000);
@@ -2633,7 +2609,7 @@ void DTCFrontEndInterface::DTCReset()
 		// command-#5: Write(0x9100 /*address*/,0x10000000 /*data*/);
 		macroAddress = 0x9100;
 		memcpy(address, &macroAddress, 8);  // copy macro address to buffer
-		macroData = 0x10000000;
+		macroData = 0x00000000;
 		memcpy(data, &macroData, 8);  // copy macro data to buffer
 		universalWrite(address, data);
 		usleep(1000);
