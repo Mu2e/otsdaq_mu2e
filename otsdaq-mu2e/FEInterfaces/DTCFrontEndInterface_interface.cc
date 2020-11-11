@@ -105,31 +105,6 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 
 	thisDTC_ = new DTCLib::DTC(mode, dtc_, dtc_class_roc_mask, expectedDesignVersion);
 
-	if(emulate_cfo_ == 1)
-	{  // do NOT instantiate the DTCSoftwareCFO here, do it just when you need it
-
-		//	  bool useCFOEmulator = true;
-		//	  uint16_t debugPacketCount = 0;
-		//	  auto debugType = DTCLib::DTC_DebugType_SpecialSequence;
-		//	  bool stickyDebugType = true;
-		//	  bool quiet = false;
-		//	  bool asyncRR = false;
-		//	  bool forceNoDebugMode = true;
-
-		//	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
-		//	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
-		//	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
-		//	  std::cout << "debugType = "       << debugType << std::endl;
-		//	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
-		//	  std::cout << "quiet = "           << quiet << std::endl;
-		//	  std::cout << "asyncRR = "           << asyncRR << std::endl;
-		//	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
-		//	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
-
-		//	  EmulatedCFO_ = new DTCLib::DTCSoftwareCFO(thisDTC_, useCFOEmulator,
-		// debugPacketCount, 				debugType, stickyDebugType, quiet,  asyncRR,
-		// forceNoDebugMode);
-	}
 
 	createROCs();
 	registerFEMacros();
@@ -429,7 +404,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_SendHeartbeatAndDataRequest",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
-					std::vector<std::string>{"numberOfRequests","timestampStart","useCFOEmulator"},
+					std::vector<std::string>{"numberOfRequests","timestampStart","useSWCFOEmulator"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions					
 					
@@ -971,10 +946,12 @@ void DTCFrontEndInterface::configure(void) try
 			                       
 
 			__FE_COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
-			registerWrite(0x915c, 0x09502F90);
+			registerWrite(0x915c, 0x09502F90); // original, but in chants its the line below
+		//	registerWrite(0x9160, 0x09502F90);
 
 			// set RST_REG bit
-			registerWrite(0x9168, 0x5d870100);
+			registerWrite(0x9168, 0x5d870100); // original, but in chants its the line below
+		//	registerWrite(0x9168, 0x55870100);
 			registerWrite(0x916c, 0x00000001);
 
 			//usleep(500000 /*500ms*/); 
@@ -1039,8 +1016,10 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " enable CFO emulation and internal clock");
 			int dataInReg = registerRead(0x9100);
-			int dataToWrite =
-			    dataInReg | 0x40808404;  // new incantation from Rick K. 12/18/2019m
+			int dataToWrite = dataInReg | 0x40808004; // enable stand alone clock?
+			registerWrite(0x9100, dataToWrite);
+			dataToWrite =
+			    dataInReg | 0x40808404;  // new incantation from Rick K.(disable retransmission) 12/18/2019m
 			registerWrite(0x9100, dataToWrite);
 
 			__FE_COUT__ << ".......  CFO emulation: turn off Event Windows" << __E__;
@@ -1048,7 +1027,7 @@ void DTCFrontEndInterface::configure(void) try
 
 			__FE_COUT__ << ".......  CFO emulation: turn off 40MHz marker interval"
 			            << __E__;
-			registerWrite(0x91f4, 0x00000000);
+			registerWrite(0x91f4, 0x00000000); // not in chants. do we need this?
 
 			__FE_COUT__ << ".......  CFO emulation: enable heartbeats" << __E__;
 			registerWrite(0x91a8, 0x15000);
@@ -1065,19 +1044,18 @@ void DTCFrontEndInterface::configure(void) try
 		// THIS SHOULD NOT BE NECESSARY with firmware version 20181024
 		if(reset_rx == 1)
 		{
-			__FE_COUT__ << "DTC reset CFO link CPLL" << __E__;
-			registerWrite(0x9118, 0x00004000);
-			registerWrite(0x9118, 0x00000000);
+		  //	__FE_COUT__ << "DTC reset CFO link CPLL" << __E__;
+		  //	registerWrite(0x9118, 0x00004000);
+		  //	registerWrite(0x9118, 0x00000000);
+
+		  //	sleep(3);
+
+		  //	__FE_COUT__ << "DTC reset CFO link RX" << __E__;
+		  //	registerWrite(0x9118, 0x00400000);
+		  //	registerWrite(0x9118, 0x00000000);
 
 			//usleep(500000 /*500ms*/); 
-			sleep(3);
-
-			__FE_COUT__ << "DTC reset CFO link RX" << __E__;
-			registerWrite(0x9118, 0x00400000);
-			registerWrite(0x9118, 0x00000000);
-
-			//usleep(500000 /*500ms*/); 
-			sleep(3);
+		  //	sleep(3);
 		}
 		else
 		{
@@ -1103,16 +1081,15 @@ void DTCFrontEndInterface::configure(void) try
 
 		if(emulate_cfo_ == 1)
 		{
-			__FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
-			registerWrite(0x9118, 0x00003f00);
-			registerWrite(0x9118, 0x00000000);
+		  //	__FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
+		  //		registerWrite(0x9118, 0x00003f00);
+		  //	registerWrite(0x9118, 0x00000000);
 
-			//usleep(500000 /*500ms*/); 
-			sleep(3);
+		  //	sleep(3);
 
-			__FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
-			registerWrite(0x9118, 0x3f000000);
-			registerWrite(0x9118, 0x00000000);
+		  //	__FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
+		  //	registerWrite(0x9118, 0x3f000000);
+		  //	registerWrite(0x9118, 0x00000000);
 		}
 		// 	 // WILL NEED TO CONFIGURE THE ROC LINKS HERE BEFORE RESETTING WHAT IS
 		// RECEIVED
@@ -1332,7 +1309,39 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	}
 
 
-//
+  // open a file for this run number to write data to, if it hasn't been opened yet
+  // define a data file if FEWRITE_RUNFILE environmental variable is not zero
+  //
+  //      if (std::getenv("FEWRITE_RUNFILE" != NULL)
+//	__FE_COUT__ << " Trying to get the FEWRITE_RUNFILE info";
+//	    FEWriteFile = std::atoi(std::getenv("FEWRITE_RUNFILE"));
+//	    __FE_COUT__ << "FEWriteFile is " << FEWriteFile;
+	    FEWriteFile = 0;
+	    if (FEWriteFile) {
+	      char* dataPath(std::getenv("OTSDAQ_DATA"));
+	      RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
+
+	      __FE_COUT__ << "Run data FN is: "<< RunDataFN;
+	      if (!DataFile.is_open()) {
+		DataFile.open (RunDataFN, std::ios::out | std::ios::app);
+	  
+		if (DataFile.fail()) {
+		  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
+
+
+		}
+		else {
+		  __FE_COUT__ << "opened data file RunData" << RunDataFN;
+		}
+	      }
+	    }
+
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC starting..." << __E__;
+		return;
+	}
+
 
 	int numberOfLoopbacks =
 	    getConfigurationManager()
@@ -1633,7 +1642,7 @@ bool DTCFrontEndInterface::running(void)
 		registerWrite(0x9158, 0x1);
 		//	  sleep(1);
 
-		bool     useCFOEmulator   = true;
+		bool     useSWCFOEmulator   = true;
 		uint16_t debugPacketCount = 0;
 		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
 		bool     stickyDebugType  = true;
@@ -1643,7 +1652,7 @@ bool DTCFrontEndInterface::running(void)
 
 		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
 		    new DTCLib::DTCSoftwareCFO(thisDTC_,
-		                               useCFOEmulator,
+		                               useSWCFOEmulator,
 		                               debugPacketCount,
 		                               debugType,
 		                               stickyDebugType,
@@ -1685,7 +1694,7 @@ bool DTCFrontEndInterface::running(void)
 		registerWrite(0x9158, 0x1);
 		//	  sleep(1);
 
-		bool     useCFOEmulator   = true;
+		bool     useSWCFOEmulator   = true;
 		uint16_t debugPacketCount = 0;
 		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
 		bool     stickyDebugType  = true;
@@ -1695,7 +1704,7 @@ bool DTCFrontEndInterface::running(void)
 
 		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
 		    new DTCLib::DTCSoftwareCFO(thisDTC_,
-		                               useCFOEmulator,
+		                               useSWCFOEmulator,
 		                               debugPacketCount,
 		                               debugType,
 		                               stickyDebugType,
@@ -2118,7 +2127,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 {
 	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
-	bool useCFOEmulator 		= __GET_ARG_IN__("useCFOEmulator", bool);
+	bool useSWCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
@@ -2129,6 +2138,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	__FE_COUTV__(number);
 	__FE_COUTV__(timestampStart);
+	__FE_COUTV__(useSWCFOEmulator);
 
 	auto device = thisDTC_->GetDevice();
 
@@ -2138,7 +2148,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	if(emulate_cfo_ == 1)
 	{
-		registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO
+		registerWrite(0x9100, 0x40808404);  // bit 30 = CFO emulation enable, bit 15 = CFO
 		                                    // emulation mode, bit 2 = DCS enable
 		                                    // bit 10 turns off retry which isn't working right now
 		sleep(1);
@@ -2157,7 +2167,6 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		registerWrite(0x9158, 0x1);
 		//	  sleep(1);
 
-		//bool     useCFOEmulator   = true;
 		uint16_t debugPacketCount = 0;
 		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
 		bool     stickyDebugType  = true;
@@ -2165,33 +2174,16 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		bool     asyncRR          = false;
 		bool     forceNoDebugMode = true;
 
-		//	  std::cout << "DTCSoftwareCFO arguments..." << std::endl;
-		//	  std::cout << "useCFOEmulator = "  << useCFOEmulator << std::endl;
-		//	  std::cout << "packetCount = "     << debugPacketCount << std::endl;
-		//	  std::cout << "debugType = "       << debugType << std::endl;
-		//	  std::cout << "stickyDebugType = " << stickyDebugType << std::endl;
-		//	  std::cout << "quiet = "           << quiet << std::endl;
-		//	  std::cout << "asyncRR = "           << asyncRR << std::endl;
-		//	  std::cout << "forceNoDebug = "     << forceNoDebugMode << std::endl;
-		//	  std::cout << "END END DTCSoftwareCFO arguments..." << std::endl;
 
 		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
 		    new DTCLib::DTCSoftwareCFO(thisDTC_,
-		                               useCFOEmulator,
+		                               useSWCFOEmulator,
 		                               debugPacketCount,
 		                               debugType,
 		                               stickyDebugType,
 		                               quiet,
 		                               asyncRR,
 		                               forceNoDebugMode);
-
-		//	  std::cout << "SendRequestsForRange arguments..." << std::endl;
-		//	  std::cout << "number = "             << number << std::endl;
-		//	  std::cout << "timestampOffset = "    << timestampStart << std::endl;
-		//	  std::cout << "incrementTimestamp = " << incrementTimestamp << std::endl;
-		//	  std::cout << "cfodelay = "           << cfodelay << std::endl;
-		//	  std::cout << "requestsAhead = "      << requestsAhead << std::endl;
-		//	  std::cout << "END END SendRequestsForRange arguments..." << std::endl;
 
 		EmulatedCFO_->SendRequestsForRange(
 		    number,
@@ -2200,8 +2192,6 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		    cfodelay,
 		    requestsAhead);
 
-		//		delete EmulatedCFO_; 
-		// moved to later (after reads)
 
 		auto readoutRequestTime = device->GetDeviceTime();
 		device->ResetDeviceTime();
