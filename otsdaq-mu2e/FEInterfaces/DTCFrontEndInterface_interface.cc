@@ -1030,7 +1030,7 @@ void DTCFrontEndInterface::configure(void) try
 			registerWrite(0x91f4, 0x00000000); // not in chants. do we need this?
 
 			__FE_COUT__ << ".......  CFO emulation: enable heartbeats" << __E__;
-			registerWrite(0x91a8, 0x15000);
+			registerWrite(0x91a8, 0x4e20);
 		}
 		else
 		{
@@ -1172,8 +1172,7 @@ void DTCFrontEndInterface::configure(void) try
 
 			__FE_COUT__ << "CFO emulation:  set heartbeat interval " << __E__;
 			// registerWrite(0x91a8, 0x0800);
-			registerWrite(0x91a8, 0x00000000);  // for NO markers, write these
-			                                    // values
+			// registerWrite(0x91a8, 0x00000000); 
 		}
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"
 		                       << __E__);
