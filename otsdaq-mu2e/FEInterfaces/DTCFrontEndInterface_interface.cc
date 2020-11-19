@@ -946,12 +946,12 @@ void DTCFrontEndInterface::configure(void) try
 			                       
 
 			__FE_COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
-			registerWrite(0x915c, 0x09502F90); // original, but in chants its the line below
-		//	registerWrite(0x9160, 0x09502F90);
+		//	registerWrite(0x915c, 0x09502F90); 
+			registerWrite(0x9160, 0x0bebc200);
 
 			// set RST_REG bit
-			registerWrite(0x9168, 0x5d870100); // original, but in chants its the line below
-		//	registerWrite(0x9168, 0x55870100);
+		//	registerWrite(0x9168, 0x5d870100); // original, but in chants its the line below
+			registerWrite(0x9168, 0x55870100);
 			registerWrite(0x916c, 0x00000001);
 
 			//usleep(500000 /*500ms*/); 
@@ -1016,20 +1016,19 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " enable CFO emulation and internal clock");
 			int dataInReg = registerRead(0x9100);
-			int dataToWrite = dataInReg | 0x40808004; // enable stand alone clock?
+//			int dataToWrite = dataInReg | 0x40808004; 
+//			registerWrite(0x9100, dataToWrite);
+			int dataToWrite = 0x40808404;  // new incantation from Rick K.(disable retransmission) 12/18/2019m
 			registerWrite(0x9100, dataToWrite);
-			dataToWrite =
-			    dataInReg | 0x40808404;  // new incantation from Rick K.(disable retransmission) 12/18/2019m
-			registerWrite(0x9100, dataToWrite);
 
-			__FE_COUT__ << ".......  CFO emulation: turn off Event Windows" << __E__;
-			registerWrite(0x91f0, 0x1000);
+			__FE_COUT__ << ".......  CFO emulation: set time between Event Windows" << __E__;
+			registerWrite(0x91f0, 0x4e20);
 
-			__FE_COUT__ << ".......  CFO emulation: turn off 40MHz marker interval"
-			            << __E__;
-			registerWrite(0x91f4, 0x00000000); // not in chants. do we need this?
+			//__FE_COUT__ << ".......  CFO emulation: turn off 40MHz marker interval"
+			//            << __E__;
+			// registerWrite(0x91f4, 0x00000000); 
 
-			__FE_COUT__ << ".......  CFO emulation: enable heartbeats" << __E__;
+			__FE_COUT__ << ".......  CFO emulation: time between data requests" << __E__;
 			registerWrite(0x91a8, 0x4e20);
 		}
 		else
@@ -1113,7 +1112,7 @@ void DTCFrontEndInterface::configure(void) try
 		// enable markers, tx and rx
 
 		int data_to_write = (roc_mask_ << 8) | roc_mask_;
-		__FE_COUT__ << "DTC enable markers - enabled ROC links 0x" << std::hex
+		__FE_COUT__ << "CFO enable markers - enabled ROC links 0x" << std::hex
 		            << data_to_write << std::dec << __E__;
 		registerWrite(0x91f8, data_to_write);
 
@@ -1122,12 +1121,18 @@ void DTCFrontEndInterface::configure(void) try
 		            << data_to_write << std::dec << __E__;
 		registerWrite(0x9114, data_to_write);
 
+		data_to_write = 0x00014141; // DMA timeout from chants.
+		__FE_COUT__ << "set DMA timeout" << std::hex
+		            << data_to_write << std::dec << __E__;
+		registerWrite(0x9144, data_to_write);
+
 		// put DTC CFO link output into loopback mode
 		__FE_COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
 
-		int dataInReg   = registerRead(0x9100);
-		int dataToWrite = dataInReg & 0xefffffff;  // bit 28 = 0
-		registerWrite(0x9100, dataToWrite);
+//		int dataInReg   = registerRead(0x9100);
+//		int dataToWrite = dataInReg & 0xefffffff;  
+
+	//	registerWrite(0x9100, dataToWrite);
 
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure ROCs"
 		                       << __E__);
@@ -1532,19 +1537,19 @@ void DTCFrontEndInterface::stop(void)
 
 	if(stopIndex == 0)
 	{
-		int i = 0;
+//		int i = 0;
 		for(auto& roc : rocs_)
 		{
 			// re-align link
 			roc.second->writeRegister(22, 0);
 			roc.second->writeRegister(22, 1);
 
-			std::stringstream filename;
-			filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC"
-			         << roc.second->getLinkID() << "data.txt";
-			std::string filenamestring = filename.str();
-			datafile_[i].open(filenamestring);
-			i++;
+			//std::stringstream filename;
+			//filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC"
+			//         << roc.second->getLinkID() << "data.txt";
+			//std::string filenamestring = filename.str();
+			//datafile_[i].open(filenamestring);
+		//	i++;
 		}
 	}
 
@@ -2126,7 +2131,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 {
 	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
-	bool useDTCCFOEmulator 		= __GET_ARG_IN__("useDTCCFOEmulator", bool);
+	bool useDTCCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
@@ -2134,11 +2139,14 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	uint32_t cfodelay = 20000;  // have no idea what this is, but 1000 didn't work (don't
 	                            // know if 10000 works, either)
 	int requestsAhead = 0;
+	int heartbeatPackets = 32;
 
 	__FE_COUTV__(number);
 	__FE_COUTV__(timestampStart);
 	__FE_COUTV__(useDTCCFOEmulator);
 
+	if(thisDTC_) delete thisDTC_;
+	thisDTC_ = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO, dtc_, 0x3F,"" );
 	auto device = thisDTC_->GetDevice();
 
 	auto initTime = device->GetDeviceTime();
@@ -2147,14 +2155,16 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	if(emulate_cfo_ == 1)
 	{
-		registerWrite(0x9100, 0x40808404);  // bit 30 = CFO emulation enable, bit 15 = CFO
+
+	  thisDTC_->SetSequenceNumberDisable(); // Set 9100 bit 10
+	  //registerWrite(0x9100, 0x40808404);  // bit 30 = CFO emulation enable, bit 15 = CFO
 		                                    // emulation mode, bit 2 = DCS enable
 		                                    // bit 10 turns off retry which isn't working right now
-		sleep(1);
+	  //	sleep(1);
 
 		// set number of null heartbeats
 		// registerWrite(0x91BC, 0x0);
-		registerWrite(0x91BC, 0x10);  // new incantaton from Rick K. 12/18/2019
+	  //	registerWrite(0x91BC, 0x10);  // new incantaton from Rick K. 12/18/2019
 		//	  sleep(1);
 
 		//# Send data
@@ -2189,7 +2199,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
-		    requestsAhead);
+		    requestsAhead, heartbeatPackets);
 
 
 		auto readoutRequestTime = device->GetDeviceTime();
