@@ -807,7 +807,7 @@ void DTCFrontEndInterface::configure(void) try
 	const bool config_jitter_attenuator = configure_clock_;  // 1 = yes, 0 = no
 	const int  reset_rx                 = 0;                 // 1 = yes, 0 = no
 
-	const int number_of_dtc_config_steps = 7;
+	const int number_of_dtc_config_steps = 7; 
 
 	const int max_number_of_tries = 3;  // max number to wait for links OK
 
@@ -1016,17 +1016,11 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " enable CFO emulation and internal clock");
 			int dataInReg = registerRead(0x9100);
-//			int dataToWrite = dataInReg | 0x40808004; 
-//			registerWrite(0x9100, dataToWrite);
 			int dataToWrite = 0x40808404;  // new incantation from Rick K.(disable retransmission) 12/18/2019m
 			registerWrite(0x9100, dataToWrite);
 
 			__FE_COUT__ << ".......  CFO emulation: set time between Event Windows" << __E__;
 			registerWrite(0x91f0, 0x4e20);
-
-			//__FE_COUT__ << ".......  CFO emulation: turn off 40MHz marker interval"
-			//            << __E__;
-			// registerWrite(0x91f4, 0x00000000); 
 
 			__FE_COUT__ << ".......  CFO emulation: time between data requests" << __E__;
 			registerWrite(0x91a8, 0x4e20);
@@ -1040,64 +1034,13 @@ void DTCFrontEndInterface::configure(void) try
 			registerWrite(0x9100, dataToWrite);
 		}
 
-		// THIS SHOULD NOT BE NECESSARY with firmware version 20181024
-		if(reset_rx == 1)
-		{
-		  //	__FE_COUT__ << "DTC reset CFO link CPLL" << __E__;
-		  //	registerWrite(0x9118, 0x00004000);
-		  //	registerWrite(0x9118, 0x00000000);
-
-		  //	sleep(3);
-
-		  //	__FE_COUT__ << "DTC reset CFO link RX" << __E__;
-		  //	registerWrite(0x9118, 0x00400000);
-		  //	registerWrite(0x9118, 0x00000000);
-
-			//usleep(500000 /*500ms*/); 
-		  //	sleep(3);
-		}
-		else
-		{
-			__FE_COUT__ << "DTC do NOT reset PLL and CFO RX" << __E__;
-		}
-		//
-		// 	 __FE_COUT__ << "DTC reset CFO link TX" << __E__;
-		// 	 registerWrite(0x9118,0x40000000);
-		// 	 registerWrite(0x9118,0x00000000);
-		//
-		// 	 sleep(6);
 	}
 	else if((config_step % number_of_dtc_config_steps) == 4)
 	{
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 		                       << " wait for links..." << __E__);
 
-		// reset ROC links, first what is sent out, then what is received, then
-		// check links
-
-		// RESETTING THE LINKS SHOULD NOT BE NECESSARY with firmware version
-		// 20181024, however, we DO want to confirm that the links are OK...
-
-		if(emulate_cfo_ == 1)
-		{
-		  //	__FE_COUT__ << "DTC reset ROC link SERDES CPLLs" << __E__;
-		  //		registerWrite(0x9118, 0x00003f00);
-		  //	registerWrite(0x9118, 0x00000000);
-
-		  //	sleep(3);
-
-		  //	__FE_COUT__ << "DTC reset ROC link SERDES TX" << __E__;
-		  //	registerWrite(0x9118, 0x3f000000);
-		  //	registerWrite(0x9118, 0x00000000);
-		}
-		// 	 // WILL NEED TO CONFIGURE THE ROC LINKS HERE BEFORE RESETTING WHAT IS
-		// RECEIVED
-		//
-		// 	 __FE_COUT__ << "DTC reset ROC link SERDES RX" << __E__;
-		// 	 registerWrite(0x9118,0x003f0000);
-		// 	 registerWrite(0x9118,0x00000000);
-		//
-		// 	 sleep(6);
+	// this step no longer necessary. Just return.
 
 		indicateSubIterationWork();  // tell state machine to stay in configure state
 		                             // ("come back to me")
@@ -1129,10 +1072,6 @@ void DTCFrontEndInterface::configure(void) try
 		// put DTC CFO link output into loopback mode
 		__FE_COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
 
-//		int dataInReg   = registerRead(0x9100);
-//		int dataToWrite = dataInReg & 0xefffffff;  
-
-	//	registerWrite(0x9100, dataToWrite);
 
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure ROCs"
 		                       << __E__);
@@ -1151,7 +1090,6 @@ void DTCFrontEndInterface::configure(void) try
 			for(auto& roc : rocs_)
 				roc.second->configure();
 
-		//usleep(500000 /*500ms*/); 
 		sleep(1);
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
@@ -1164,20 +1102,13 @@ void DTCFrontEndInterface::configure(void) try
 			                       << __E__);
 
 			__FE_COUT__ << "CFO emulation:  set Event Window interval" << __E__;
-			//			registerWrite(0x91f0, cfo_emulate_event_window_interval_);
-			// registerWrite(0x91f0,0x154);   //1.7us
-			// registerWrite(0x91f0, 0x1f40);  // 40us
 			registerWrite(0x91f0, 0x00000000);  // for NO markers, write these
-			// values
+			
 
 			__FE_COUT__ << "CFO emulation:  set 40MHz marker interval" << __E__;
-			// registerWrite(0x91f4, 0x0800);
 			registerWrite(0x91f4, 0x00000000);  // for NO markers, write these
-			                                    // values
 
 			__FE_COUT__ << "CFO emulation:  set heartbeat interval " << __E__;
-			// registerWrite(0x91a8, 0x0800);
-			// registerWrite(0x91a8, 0x00000000); 
 		}
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"
 		                       << __E__);
@@ -1187,12 +1118,14 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex
 			                            << registerRead(0x9140) << std::dec << __E__);
 
-			//usleep(500000 /*500ms*/); 
 			sleep(1);
 			turnOffLED();
 
 			if(number_of_system_configs < 0)
 			{
+				// do a final DTC Reset
+	  			__MCOUT_INFO__("Last step in configuration; doing DTCReset" << __E__);
+	  			DTCReset();
 				return;  // links OK, kick out of configure
 			}
 		}
@@ -1283,8 +1216,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
   // open a file for this run number to write data to, if it hasn't been opened yet
   // define a data file 
 
-  //	RunDataFN = "/home/mu2ehwdev/test_stand/ots/srcs/otsdaq_mu2e_config/Data_HWDev/OutputData/RunData_" + runNumber + ".dat";
-  char* dataPath(std::getenv("OTSDAQ_DATA"));
+  	char* dataPath(std::getenv("OTSDAQ_DATA"));
 	RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
 
 	__FE_COUT__ << "Run data FN is: "<< RunDataFN;
@@ -1294,12 +1226,11 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	  if (DataFile.fail()) {
 	  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
 
-	  }
+	    }
 	  else {
 	  __FE_COUT__ << "opened data file RunData" << RunDataFN;
 	}
 	}
-  
 
 	if(emulatorMode_)
 	{
@@ -1309,40 +1240,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		  __FE_COUT__ << "Starting ROC ";
 			roc.second->start(runNumber);
 			__FE_COUT__ << "Done starting ROC";}
-		return;
-	}
-
-
-  // open a file for this run number to write data to, if it hasn't been opened yet
-  // define a data file if FEWRITE_RUNFILE environmental variable is not zero
-  //
-  //      if (std::getenv("FEWRITE_RUNFILE" != NULL)
-//	__FE_COUT__ << " Trying to get the FEWRITE_RUNFILE info";
-//	    FEWriteFile = std::atoi(std::getenv("FEWRITE_RUNFILE"));
-//	    __FE_COUT__ << "FEWriteFile is " << FEWriteFile;
-	    FEWriteFile = 0;
-	    if (FEWriteFile) {
-	      char* dataPath(std::getenv("OTSDAQ_DATA"));
-	      RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
-
-	      __FE_COUT__ << "Run data FN is: "<< RunDataFN;
-	      if (!DataFile.is_open()) {
-		DataFile.open (RunDataFN, std::ios::out | std::ios::app);
-	  
-		if (DataFile.fail()) {
-		  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
-
-
-		}
-		else {
-		  __FE_COUT__ << "opened data file RunData" << RunDataFN;
-		}
-	      }
-	    }
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator DTC starting..." << __E__;
 		return;
 	}
 
