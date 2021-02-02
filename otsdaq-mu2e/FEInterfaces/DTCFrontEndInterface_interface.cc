@@ -2034,7 +2034,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 {
 	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
-	bool useDTCCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
+	bool useSWCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
         unsigned int rocMask        = __GET_ARG_IN__("rocMask", unsigned int);
 
 	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
@@ -2047,7 +2047,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	__FE_COUTV__(number);
 	__FE_COUTV__(timestampStart);
-	__FE_COUTV__(useDTCCFOEmulator);
+	__FE_COUTV__(useSWCFOEmulator);
         __FE_COUTV__(rocMask);
 
 	if(thisDTC_) delete thisDTC_;
