@@ -404,7 +404,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction("DTC_SendHeartbeatAndDataRequest",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
-					std::vector<std::string>{"numberOfRequests","timestampStart","useSWCFOEmulator"},
+					std::vector<std::string>{"numberOfRequests","timestampStart","useSWCFOEmulator","rocMask"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions					
 					
@@ -850,8 +850,8 @@ void DTCFrontEndInterface::configure(void) try
 				__FE_COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex
 				            << registerRead(0x9140) << std::dec << __E__;
 
-				//usleep(500000 /*500ms*/); 
-				sleep(1);
+				usleep(500000 /*500ms*/); 
+				//sleep(1);
 
 				indicateIterationWork();
 				turnOffLED();
@@ -863,8 +863,8 @@ void DTCFrontEndInterface::configure(void) try
 
 				__FE_COUT__ << "Waiting for DTC Link Status = 0x" << std::hex
 				            << registerRead(0x9140) << std::dec << __E__;
-				//usleep(500000 /*500ms*/); 							
-				sleep(1);
+				usleep(500000 /*500ms*/); 							
+				//sleep(1);
 			}
 		}
 
@@ -896,8 +896,8 @@ void DTCFrontEndInterface::configure(void) try
 			int dataInReg   = registerRead(0x9100);
 			int dataToWrite = dataInReg | 0x80000000;  // bit 31 = DTC Reset FPGA
 			registerWrite(0x9100, dataToWrite);
-			//usleep(500000 /*500ms*/); 
-			sleep(3);
+			usleep(500000 /*500ms*/); 
+			//sleep(3);
 
 			__MCOUT_INFO__("............. firmware version "
 			               << std::hex << registerRead(0x9004) << std::dec << __E__);
@@ -907,83 +907,86 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
-		if((config_clock == 1 || emulate_cfo_ == 1) &&
-		   config_step < number_of_dtc_config_steps)
-		{
-			// only configure the clock/crystal the first loop through...
+		__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+				<< " select/setup clock..." << __E__;
 
-			__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
-			                       << " reset clock..." << __E__;
-			                       
-			                       
-			//choose jitter attenuator input select (reg 0x9308, bits 5:4)
-			// 0 is Upstream Control Link Rx Recovered Clock
-			// 1 is RJ45 Upstream Clock
-			// 2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
+		//choose jitter attenuator input select (reg 0x9308, bits 5:4)
+		// 0 is Upstream Control Link Rx Recovered Clock
+		// 1 is RJ45 Upstream Clock
+		// 2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
+		{
+			uint32_t readData = registerRead(0x9308);
+			uint32_t val = 0;
+			try
 			{
-				uint32_t readData = registerRead(0x9308);
-				uint32_t val = 0;
-				try
-				{
-					val =  getSelfNode().getNode("JitterAttenuatorInputSource").getValue<uint32_t>();
-					
-				}
-				catch(...)
-				{
-					__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to val = " << val << __E__;
-				}
-				readData &= ~(3<<4); //clear the two bits
-				readData &= ~(1); //ensure unreset of jitter attenuator
-				readData |= (val & 3)<<4; //set the two bits to selected value
+				val =  getSelfNode().getNode("JitterAttenuatorInputSource").getValue<uint32_t>();
 				
-				registerWrite(0x9308, readData );
-				__FE_COUT__ << "Jitter Attenuator Input Select: " << val << " ==> " <<
-					(val==0?
-					"Upstream Control Link Rx Recovered Clock":
-					(val == 1?"RJ45 Upstream Clock":"Timing Card Selectable (SFP+ or FPGA) Input Clock")) 
-					<< __E__;
 			}
+			catch(...)
+			{
+				__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to val = " << val << __E__;
+			}
+			readData &= ~(3<<4); //clear the two bits
+			readData &= ~(1); //ensure unreset of jitter attenuator
+			readData |= (val & 3)<<4; //set the two bits to selected value
+			
+			registerWrite(0x9308, readData );
+			__FE_COUT__ << "Jitter Attenuator Input Select: " << val << " ==> " <<
+				(val==0?
+				"Upstream Control Link Rx Recovered Clock":
+				(val == 1?"RJ45 Upstream Clock":"Timing Card Selectable (SFP+ or FPGA) Input Clock")) 
+				<< __E__;
+		}
+		
+		//Rick says DTC crystals should be correct by default, so removing crystal configuration
+
+		// if((config_clock == 1 || emulate_cfo_ == 1) &&
+		//    config_step < number_of_dtc_config_steps)
+		// {
+		// 	// only configure the clock/crystal the first loop through...
+
+		// 	__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+		// 	                       << " reset clock..." << __E__;
 			                       
+		// 	__FE_COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
+		// //	registerWrite(0x915c, 0x09502F90); 
+		// 	registerWrite(0x9160, 0x0bebc200);
 
-			__FE_COUT__ << "DTC - set crystal frequency to 156.25 MHz" << __E__;
-		//	registerWrite(0x915c, 0x09502F90); 
-			registerWrite(0x9160, 0x0bebc200);
+		// 	// set RST_REG bit
+		// //	registerWrite(0x9168, 0x5d870100); // original, but in chants its the line below
+		// 	registerWrite(0x9168, 0x55870100);
+		// 	registerWrite(0x916c, 0x00000001);
 
-			// set RST_REG bit
-		//	registerWrite(0x9168, 0x5d870100); // original, but in chants its the line below
-			registerWrite(0x9168, 0x55870100);
-			registerWrite(0x916c, 0x00000001);
+		// 	//usleep(500000 /*500ms*/); 
+		// 	sleep(5);
 
-			//usleep(500000 /*500ms*/); 
-			sleep(5);
+		// 	int targetFrequency = 200000000;
 
-			int targetFrequency = 200000000;
+		// 	//--- begin code snippet pulled from: mu2eUtil program_clock -C 2 -F
+		// 	// 200000000
 
-			//--- begin code snippet pulled from: mu2eUtil program_clock -C 2 -F
-			// 200000000
+		// 	// auto oscillator = DTCLib::DTC_OscillatorType_SERDES; //-C 0 = CFO (main
+		// 	// board SERDES clock) auto oscillator = DTCLib::DTC_OscillatorType_DDR;
+		// 	// //-C 1 (DDR clock)
+		// 	auto oscillator =
+		// 	    DTCLib::DTC_OscillatorType_Timing;  //-C 2 = DTC (with timing card)
 
-			// auto oscillator = DTCLib::DTC_OscillatorType_SERDES; //-C 0 = CFO (main
-			// board SERDES clock) auto oscillator = DTCLib::DTC_OscillatorType_DDR;
-			// //-C 1 (DDR clock)
-			auto oscillator =
-			    DTCLib::DTC_OscillatorType_Timing;  //-C 2 = DTC (with timing card)
+		// 	__FE_COUT__ << "DTC - set oscillator frequency to " << std::dec
+		// 	            << targetFrequency << " MHz" << __E__;
 
-			__FE_COUT__ << "DTC - set oscillator frequency to " << std::dec
-			            << targetFrequency << " MHz" << __E__;
+		// 	thisDTC_->SetNewOscillatorFrequency(oscillator, targetFrequency);
 
-			thisDTC_->SetNewOscillatorFrequency(oscillator, targetFrequency);
+		// 	//--- end code snippet pulled from: mu2eUtil program_clock -C 2 -F
+		// 	// 200000000
 
-			//--- end code snippet pulled from: mu2eUtil program_clock -C 2 -F
-			// 200000000
-
-			//usleep(500000 /*500ms*/); 
-			sleep(5);
-		}
-		else
-		{
-			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-			                       << " do NOT reset clock..." << __E__);
-		}
+		// 	//usleep(500000 /*500ms*/); 
+		// 	sleep(5);
+		// }
+		// else
+		// {
+		// 	__MCOUT_INFO__("Step " << config_step << ": " << device_name_
+		// 	                       << " do NOT reset clock..." << __E__);
+		// }
 	}
 	else if((config_step % number_of_dtc_config_steps) == 2)
 	{
@@ -997,8 +1000,8 @@ void DTCFrontEndInterface::configure(void) try
 
 			configureJitterAttenuator();
 
-			//usleep(500000 /*500ms*/); 
-			sleep(5);
+			usleep(500000 /*500ms*/); 
+			//sleep(5);
 		}
 		else
 		{
@@ -1034,13 +1037,14 @@ void DTCFrontEndInterface::configure(void) try
 			registerWrite(0x9100, dataToWrite);
 		}
 
+		// removed RESET OF CFO LINK - SHOULD NOT BE NECESSARY with firmware version 20181024.
 	}
 	else if((config_step % number_of_dtc_config_steps) == 4)
 	{
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 		                       << " wait for links..." << __E__);
 
-	// this step no longer necessary. Just return.
+		// removed UNRESET OF CFO LINK - SHOULD NOT BE NECESSARY with firmware version 20181024. Just return.
 
 		indicateSubIterationWork();  // tell state machine to stay in configure state
 		                             // ("come back to me")
@@ -1090,7 +1094,8 @@ void DTCFrontEndInterface::configure(void) try
 			for(auto& roc : rocs_)
 				roc.second->configure();
 
-		sleep(1);
+		usleep(500000 /*500ms*/); 
+		//sleep(1);
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
@@ -1118,7 +1123,8 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex
 			                            << registerRead(0x9140) << std::dec << __E__);
 
-			sleep(1);
+			usleep(500000 /*500ms*/); 
+			//sleep(1);
 			turnOffLED();
 
 			if(number_of_system_configs < 0)
@@ -2028,7 +2034,8 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 {
 	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
-	bool useDTCCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
+	bool useSWCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
+        unsigned int rocMask        = __GET_ARG_IN__("rocMask", unsigned int);
 
 	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 
@@ -2040,10 +2047,11 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 	__FE_COUTV__(number);
 	__FE_COUTV__(timestampStart);
-	__FE_COUTV__(useDTCCFOEmulator);
+	__FE_COUTV__(useSWCFOEmulator);
+        __FE_COUTV__(rocMask);
 
 	if(thisDTC_) delete thisDTC_;
-	thisDTC_ = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO, dtc_, 0x3F,"" );
+	thisDTC_ = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO, dtc_, rocMask,"" );
 	auto device = thisDTC_->GetDevice();
 
 	auto initTime = device->GetDeviceTime();
@@ -2083,7 +2091,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
 		    new DTCLib::DTCSoftwareCFO(thisDTC_,
-		                               useDTCCFOEmulator,
+		                               useSWCFOEmulator,
 		                               debugPacketCount,
 		                               debugType,
 		                               stickyDebugType,
@@ -2091,7 +2099,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		                               asyncRR,
 		                               forceNoDebugMode);
 
-		EmulatedCFO_->SendRequestsForRange(
+		EmulatedCFO_->SendRequestsForRange(  
 		    number,
 		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
@@ -2220,10 +2228,27 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	bool isUpstreamLocked = (readData >> 6)&1;
 	//__SET_ARG_OUT__("Upstream Rx CDR Lock Status",isUpstreamLocked?"LOCKED":"Not Locked");
 
-	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr +
-		std::string(isUpstreamLocked?" LOCKED":" Not Locked"));
+	//0x9128 bit-6 is RX PLL
+	readData = registerRead(0x9128); 
+	bool isUpstreamPLLLocked = (readData >> 6)&1;
+
+	//Jitter attenuator has configurable "Free Running" mode
+	//LOL == Loss of Lock, LOS == Loss of Signal (4-inputs to jitter attenuator)
+	//0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
+	readData = registerRead(0x9308); 
+	uint32_t val = (readData >> 4)&3;
+	std::string JAsrc = val==0?
+		"Control Link":
+		(val == 1?"RJ45":"FMC/SFP+");
 
 
+	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",
+		std::string(readDataStr) +
+		"... CDR = " +
+		std::string(isUpstreamLocked?" LOCKED":" Not Locked") +
+		"... PLL = " +
+		std::string(isUpstreamPLLLocked?" LOCKED":" Not Locked") +
+		"... JA = " + JAsrc);
 
 } //end ReadLossOfLockCounter()
 

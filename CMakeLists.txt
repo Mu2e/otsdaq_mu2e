@@ -83,7 +83,7 @@ add_subdirectory(tools)
 # Test Programs
 #add_subdirectory(test)
 
-# Documentation directory
+# Documentation (to comment out if not needed DOXYGEN locally)
 if( $ENV{OTS_DOXY} MATCHES "DOIT" )
 	add_subdirectory(doc)
 endif()
