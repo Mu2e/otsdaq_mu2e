@@ -1503,7 +1503,7 @@ bool DTCFrontEndInterface::running(void)
 
   // first setup DTC and CFO.  This is stolen from "getheartbeatanddatarequest"
 
-	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
+	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 
 
         std::time_t current_time;	
@@ -1563,7 +1563,7 @@ bool DTCFrontEndInterface::running(void)
 
 		EmulatedCFO_->SendRequestsForRange(
 		    number,
-		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
 		    requestsAhead);
@@ -1615,7 +1615,7 @@ bool DTCFrontEndInterface::running(void)
 
 		EmulatedCFO_->SendRequestsForRange(
 		    number,
-		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
 		    requestsAhead);
@@ -2030,7 +2030,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
 	bool useDTCCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
 
-	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
+	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 
 	bool     incrementTimestamp = true;
 	uint32_t cfodelay = 20000;  // have no idea what this is, but 1000 didn't work (don't
@@ -2093,7 +2093,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 		EmulatedCFO_->SendRequestsForRange(
 		    number,
-		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
 		    requestsAhead, heartbeatPackets);
