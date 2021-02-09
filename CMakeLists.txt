@@ -64,7 +64,10 @@ find_ups_boost( v1_50_0 filesystem
                         program_options
                         unit_test_framework
  )
-
+ 
+find_ups_product( offline trig_0_4_2 )
+find_ups_product( BTrk v1_02_02 )
+find_ups_product( heppdt v3_04_01f )
 
 find_package(MPI QUIET)
 
