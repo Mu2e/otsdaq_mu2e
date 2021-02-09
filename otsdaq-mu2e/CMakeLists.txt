@@ -4,7 +4,7 @@ add_subdirectory(CFOandDTCCore)
 add_subdirectory(ROCCore)
 add_subdirectory(TablePlugins)
 
-#add_subdirectory(DataProcessorPlugins)
+add_subdirectory(DataProcessorPlugins)
 #add_subdirectory(DemoRootUtilities)
 #add_subdirectory(InterfaceTest)
 #add_subdirectory(ArtModules)
