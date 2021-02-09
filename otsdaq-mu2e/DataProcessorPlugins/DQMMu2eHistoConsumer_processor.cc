@@ -117,8 +117,7 @@ bool DQMMu2eHistoConsumer::workLoopThread(toolbox::task::WorkLoop *workLoop) {
 //========================================================================================================================
 void DQMMu2eHistoConsumer::fastRead(void) {
 
-  if (DataConsumer::read(dataP_, headerP_) <
-      0) // is there something in the buffer?
+  if (DataConsumer::read(dataP_, headerP_) < 0 || dataP_ == nullptr  || headerP_ == nullptr) // is there something in the buffer?
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(10)); // 10
     //	__CFG_COUT__ << "There is nothing in the buffer" << std::endl;
