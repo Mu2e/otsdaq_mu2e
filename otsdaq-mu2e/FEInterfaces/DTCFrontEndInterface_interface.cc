@@ -283,14 +283,14 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 //==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering FE Macros..." << __E__;	
+	__FE_COUT__ << "Registering DTC FE Macros..." << __E__;	
 
 	mapOfFEMacroFunctions_.clear();
 
 	// clang-format off
 
 	registerFEMacroFunction(
-			"ROC_WriteBlock",  // feMacroName
+		"ROC_WriteBlock",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteROCBlock),  // feMacroFunction
 					std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
@@ -313,8 +313,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions					
 
-	// registration of FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by
-	// 'admin' using MacroMaker.
 	registerFEMacroFunction(
 		"ROC_Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -658,7 +656,18 @@ dtc_data_t DTCFrontEndInterface::registerWrite(
 					__FE_COUT__ << "I2C waited " << i+1 << " times..." << __E__;				
 			}
 			break;
-
+		
+		case 0x93c8: //clears 32-bit CDR unlock counter, but can read back errors immediately
+			return readbackValue;
+		case 0x9308:  //0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
+			if((dataToWrite & (3<<4)) != (readbackValue & (3<<4)))
+			{
+				__FE_SS__ 	<< "BIT 5-4 write value 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite
+						<< " to register 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << address << 
+						"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue << __E__;
+				__FE_SS_THROW__;
+			}
+			break;
 		default: //leverage base class for all other addresses
 			CFOandDTCCoreVInterface::readbackVerify(address,dataToWrite,readbackValue);
 	} //end readback verification address case handling
@@ -667,37 +676,40 @@ dtc_data_t DTCFrontEndInterface::registerWrite(
 }  // end registerWrite()
 
 //==================================================================================================
-void DTCFrontEndInterface::readStatus(void)
+std::string DTCFrontEndInterface::readStatus(void)
 {
-	__FE_COUT__ << device_name_ << " firmware version (0x9004) = 0x" << std::hex
+	std::stringstream ss;
+	
+	ss << device_name_ << " firmware version (0x9004) = 0x" << std::hex
 	            << registerRead(0x9004) << __E__;
 
-	printVoltages();
+	ss << printVoltages() << __E__;
 
-	__FE_COUT__ << device_name_ << " temperature = " << readTemperature() << " degC"
+	ss << device_name_ << " temperature = " << readTemperature() << " degC"
 	            << __E__;
 
-	__FE_COUT__ << device_name_ << " SERDES reset........ (0x9118) = 0x" << std::hex
+	ss << device_name_ << " SERDES reset........ (0x9118) = 0x" << std::hex
 	            << registerRead(0x9118) << __E__;
-	__FE_COUT__ << device_name_ << " SERDES disparity err (0x911c) = 0x" << std::hex
+	ss << device_name_ << " SERDES disparity err (0x911c) = 0x" << std::hex
 	            << registerRead(0x9118) << __E__;
-	__FE_COUT__ << device_name_ << " SERDES unlock error. (0x9124) = 0x" << std::hex
+	ss << device_name_ << " SERDES unlock error. (0x9124) = 0x" << std::hex
 	            << registerRead(0x9124) << __E__;
-	__FE_COUT__ << device_name_ << " PLL locked.......... (0x9128) = 0x" << std::hex
+	ss << device_name_ << " PLL locked.......... (0x9128) = 0x" << std::hex
 	            << registerRead(0x9128) << __E__;
-	__FE_COUT__ << device_name_ << " SERDES Rx status.... (0x9134) = 0x" << std::hex
+	ss << device_name_ << " SERDES Rx status.... (0x9134) = 0x" << std::hex
 	            << registerRead(0x9134) << __E__;
-	__FE_COUT__ << device_name_ << " SERDES reset done... (0x9138) = 0x" << std::hex
+	ss << device_name_ << " SERDES reset done... (0x9138) = 0x" << std::hex
 	            << registerRead(0x9138) << __E__;
-	__FE_COUT__ << device_name_ << " link status......... (0x9140) = 0x" << std::hex
+	ss << device_name_ << " link status......... (0x9140) = 0x" << std::hex
 	            << registerRead(0x9140) << __E__;
-	__FE_COUT__ << device_name_ << " SERDES ref clk freq. (0x915c) = 0x" << std::hex
+	ss << device_name_ << " SERDES ref clk freq. (0x915c) = 0x" << std::hex
 	            << registerRead(0x915c) << " = " << std::dec << registerRead(0x915c)
 	            << __E__;
-	__FE_COUT__ << device_name_ << " control............. (0x9100) = 0x" << std::hex
+	ss << device_name_ << " control............. (0x9100) = 0x" << std::hex
 	            << registerRead(0x9100) << __E__;
-	__FE_COUT__ << __E__;
+	__FE_COUT__ << ss.str();
 
+	return ss.str();
 } //end readStatus()
 
 //==================================================================================================
@@ -1503,7 +1515,7 @@ bool DTCFrontEndInterface::running(void)
 
   // first setup DTC and CFO.  This is stolen from "getheartbeatanddatarequest"
 
-	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
+	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
 
         std::time_t current_time;	
@@ -1563,7 +1575,7 @@ bool DTCFrontEndInterface::running(void)
 
 		EmulatedCFO_->SendRequestsForRange(
 		    number,
-		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
+		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
 		    requestsAhead);
@@ -1615,7 +1627,7 @@ bool DTCFrontEndInterface::running(void)
 
 		EmulatedCFO_->SendRequestsForRange(
 		    number,
-		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
+		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
 		    requestsAhead);
@@ -2031,7 +2043,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	bool useSWCFOEmulator 		= __GET_ARG_IN__("useSWCFOEmulator", bool);
         unsigned int rocMask        = __GET_ARG_IN__("rocMask", unsigned int);
 
-	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
+	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
 
 	bool     incrementTimestamp = true;
 	uint32_t cfodelay = 20000;  // have no idea what this is, but 1000 didn't work (don't
@@ -2095,7 +2107,7 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 
 		EmulatedCFO_->SendRequestsForRange(  
 		    number,
-		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
+		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
 		    incrementTimestamp,
 		    cfodelay,
 		    requestsAhead, heartbeatPackets);
@@ -2515,18 +2527,7 @@ void DTCFrontEndInterface::DTCReset()
 
 	usleep(500000 /*500ms*/); 
 	//sleep(3);
-	
-	unsigned int tryCount = 0;
-	while(registerRead(0x9138) != (dtc_data_t)-1)
-	{
-		if(++tryCount > 100) 
-		{
-			__FE_SS__ << "Not all DTC serdes resets were completed?! Check the DTC configuration." << __E__;
-			__FE_SS_THROW__;
-		}
-		usleep(500000 /*500ms*/); 
-	}
-	
+		
 	__FE_COUT__ << "Done with DTC Reset." << __E__;
 } //end DTCReset()
 

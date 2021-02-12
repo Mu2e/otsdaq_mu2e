@@ -18,57 +18,55 @@ CFOFrontEndInterface::CFOFrontEndInterface(
     : CFOandDTCCoreVInterface(
           interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
 {
-	__FE_COUT__ << "Constructing..." << __E__;
+	__FE_COUT__ << "instantiate CFO... " << interfaceUID << " "
+	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-	// theFrontEndHardware_ = new FrontEndHardwareTemplate();
-	////	// theFrontEndFirmware_ = new FrontEndFirmwareTemplate();
-	////	universalAddressSize_ = 4;
-	////	universalDataSize_    = 4;
-	////
-	////	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<unsigned
-	///int>();
-	//
-	//	dtc_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
-	//	snprintf(devfile_, 11, "/dev/" MU2E_DEV_FILE, dtc_);
-	//	fd_ = open(devfile_, O_RDONLY);
-	//
-	//	__FE_COUT__ << "Device file descriptor opened!" << __E__;
+
 
 	unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
 	//Note: if we do not skip init, then the CFO::SetSimMode writes registers!
-	thisCFO_ = new CFOLib::CFO_Registers(mode, dtc_, expectedDesignVersion, true /*skipInit*/);
+	thisCFO_ = new CFOLib::CFO_Registers(mode, device_, expectedDesignVersion, true /*skipInit*/);
 
-	__FE_COUT__ << "CFOFrontEndInterface instantiated with name: " << interfaceUID
-	            << " talking to /dev/mu2e" << dtc_ << __E__;
+	registerFEMacros();
+
+	__FE_COUT_INFO__ << "CFO instantiated with name: " << device_name_
+	            << " talking to /dev/mu2e" << device_ << __E__;
 }  // end constructor()
 
 //===========================================================================================
 CFOFrontEndInterface::~CFOFrontEndInterface(void)
 {
 	delete thisCFO_;
-	// delete theFrontEndHardware_;
-	// delete theFrontEndFirmware_;
-}
-
+	__FE_COUT__ << "Destructed." << __E__;
+}  // end destructor()
 
 //==============================================================================
 void CFOFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering FE Macros..." << __E__;	
+	__FE_COUT__ << "Registering CFO FE Macros..." << __E__;	
 
 	mapOfFEMacroFunctions_.clear();
 
 	// clang-format off
-	// registerFEMacroFunction(
-	// 		"ROC_WriteBlock",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOFrontEndInterface::WriteROCBlock),  // feMacroFunction
-	// 				std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1);                          // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"CFO Write",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::WriteCFO),  // feMacroFunction
+					std::vector<std::string>{"address", "writeData"},
+					std::vector<std::string>{},  // namesOfOutput
+					1);                          // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"CFO Read",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::ReadCFO),                  // feMacroFunction
+					std::vector<std::string>{"address"},  // namesOfInputArgs
+					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
 
 
 	// clang-format on
@@ -78,193 +76,40 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 } //end registerFEMacros()
 
-//
-////==========================================================================================
-//// universalRead
-////	Must implement this function for Macro Maker to work with this
-//// interface. 	When Macro Maker calls:
-////		- address will be a [universalAddressSize_] byte long char array
-////		- returnValue will be a [universalDataSize_] byte long char
-//// array
-////		- expects exception thrown on failure/timeout
-// void DTCFrontEndInterface::universalRead(char* address, char* returnValue)
-//{
-//	// __FE_COUT__ << "DTC READ" << __E__;
-//
-//	if(emulatorMode_)
-//	{
-//		__FE_COUT__ << "Emulator read " << __E__;
-//		for(unsigned int i = 0; i < universalDataSize_; ++i)
-//			returnValue[i] = 0xF0 | i;
-//		return;
-//	}
-//
-//	(*((dtc_address_t*)returnValue)) = registerRead(*((dtc_address_t*)address));
-//
-//	// __COUTV__(reg_access_.val);
-//
-//} //end universalRead()
-//
-////===========================================================================================
-//// registerRead: return = value read from register at address "address"
-////
-// dtc_data_t DTCFrontEndInterface::registerRead(const dtc_address_t address)
-//{
-//	reg_access_.access_type = 0;  // 0 = read, 1 = write
-//	reg_access_.reg_offset = address;
-//	// __COUTV__(reg_access.reg_offset);
-//
-//	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
-//	{
-//		__SS__ << "ERROR: DTC register read - Does file exist? -> /dev/mu2e" << dtc_
-//		       << __E__;
-//		__SS_THROW__;
-//	}
-//
-//	return reg_access_.val;
-//
-//} // end registerRead()
-//
-////======================================================================================
-//// universalWrite
-////	Must implement this function for Macro Maker to work with this
-//// interface. 	When Macro Maker calls:
-////		- address will be a [universalAddressSize_] byte long char array
-////		- writeValue will be a [universalDataSize_] byte long char array
-// void CFOFrontEndInterface::universalWrite(char* address, char* writeValue)
-//{
-//	// __FE_COUT__ << "CFO WRITE" << __E__;
-//
-//	reg_access_.access_type = 1;  // 0 = read, 1 = write
-//
-//	reg_access_.reg_offset = *((int*)address);
-//	// __COUTV__(reg_access.reg_offset);
-//
-//	reg_access_.val = *((int*)writeValue);
-//	// __COUTV__(reg_access.val);
-//
-//	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
-//		__FE_COUT_ERR__ << "ERROR: CFO universal write - Does file exist? /dev/mu2e"
-//		                << dtc_ << __E__;
-//
-//	return;
-//}
-//
-////===============================================================================================
-//// registerWrite: return = value readback from register at address "address"
-////
-// int CFOFrontEndInterface::registerWrite(int address, int dataToWrite)
-//{
-//	uint8_t* addrs = new uint8_t[universalAddressSize_];  // create address buffer
-//	                                                      // of interface size
-//	uint8_t* data =
-//	    new uint8_t[universalDataSize_];  // create data buffer of interface size
-//
-//	uint8_t macroAddrs[20] = {};  // assume we'll never have 20 bytes in an address
-//	uint8_t macroData[20] =
-//	    {};  // assume we'll never have 20 bytes read out from a register
-//
-//	// fill byte-by-byte
-//	for(unsigned int i = 0; i < universalAddressSize_; i++)
-//		macroAddrs[i] = 0xff & (address >> i * 8);
-//
-//	// 0-pad
-//	for(unsigned int i = 0; i < universalAddressSize_; ++i)
-//		addrs[i] = (i < 2) ? macroAddrs[i] : 0;
-//
-//	// fill byte-by-byte
-//	for(unsigned int i = 0; i < universalDataSize_; i++)
-//		macroData[i] = 0xff & (dataToWrite >> i * 8);
-//
-//	// 0-pad
-//	for(unsigned int i = 0; i < universalDataSize_; ++i)
-//		data[i] = (i < 4) ? macroData[i] : 0;
-//
-//	universalWrite((char*)addrs, (char*)data);
-//
-//	// usleep(100);
-//
-//	int readbackValue = registerRead(address);
-//
-//	int i = 0;
-//
-//	////this is a I2C register, it clears bit0 when transaction finishes
-//	if((address == 0x916c) && ((dataToWrite & 0x1) == 1))
-//	{
-//		// wait for I2C to clear...
-//		while((readbackValue & 0x1) != 0)
-//		{
-//			i++;
-//			readbackValue = registerRead(address);
-//			usleep(100);
-//			if((i % 10) == 0)
-//				__FE_COUT__ << "CFO I2C waited " << i << " times..." << __E__;
-//		}
-//		// 	if (i > 0) __FE_COUT__ << "CFO I2C waited " << i << " times..." <<
-//		// __E__;
-//	}
-//
-//	// lowest 8-bits are the I2C read value. But we aren't reading anything back
-//	// for the moment...
-//	if(address == 0x9168)
-//	{
-//		if((readbackValue & 0xffffff00) != (dataToWrite & 0xffffff00))
-//		{
-//			__FE_COUT_ERR__ << "CFO: write value 0x" << std::hex << dataToWrite
-//			                << " to register 0x" << std::hex << address
-//			                << "... read back 0x" << std::hex << readbackValue << __E__;
-//		}
-//	}
-//
-//	// lowest order bit clears itself
-//	if((address == 0x9380) && ((dataToWrite & 0x1) == 1))
-//	{
-//		if((readbackValue & 0xfffffffe) != (dataToWrite & 0xfffffffe))
-//		{
-//			__FE_COUT_ERR__ << "CFO: write value 0x" << std::hex << dataToWrite
-//			                << " to register 0x" << std::hex << address
-//			                << "... read back 0x" << std::hex << readbackValue << __E__;
-//		}
-//	}
-//
-//	if(readbackValue != dataToWrite && address != 0x9168 && address != 0x916c &&
-//	   address != 0x9380)
-//	{
-//		__FE_COUT_ERR__ << "CFO: write value 0x" << std::hex << dataToWrite
-//		                << " to register 0x" << std::hex << address << "... read back 0x"
-//		                << std::hex << readbackValue << __E__;
-//	}
-//
-//	delete[] addrs;  // free the memory
-//	delete[] data;   // free the memory
-//
-//	return readbackValue;
-//}
+//===============================================================================================
+// registerWrite: return = value readback from register at address "address"
+//	Use base class CFOandDTCCoreVInterface::, and do readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
+dtc_data_t CFOFrontEndInterface::registerWrite(
+	dtc_address_t address, dtc_data_t dataToWrite)
+{
+	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
+
+	//do CFO-specific readback verification here...
+
+
+	return readbackValue;
+}  // end registerWrite()
 
 //=====================================================================================
-void CFOFrontEndInterface::readStatus(void)
+std::string CFOFrontEndInterface::readStatus(void)
 {
-	__FE_COUT__ << "firmware version    (0x9004) = 0x" << std::hex << registerRead(0x9004)
-	            << __E__;
-	__FE_COUT__ << "link enable         (0x9114) = 0x" << std::hex << registerRead(0x9114)
-	            << __E__;
-	__FE_COUT__ << "SERDES reset        (0x9118) = 0x" << std::hex << registerRead(0x9118)
-	            << __E__;
-	__FE_COUT__ << "SERDES unlock error (0x9124) = 0x" << std::hex << registerRead(0x9124)
-	            << __E__;
-	__FE_COUT__ << "PLL locked          (0x9128) = 0x" << std::hex << registerRead(0x9128)
-	            << __E__;
-	__FE_COUT__ << "SERDES Rx status....(0x9134) = 0x" << std::hex << registerRead(0x9134)
-	            << __E__;
-	__FE_COUT__ << "SERDES reset done...(0x9138) = 0x" << std::hex << registerRead(0x9138)
-	            << __E__;
-	__FE_COUT__ << "SERDES Rx CDR lock..(0x9140) = 0x" << std::hex << registerRead(0x9140)
-	            << __E__;
-	__FE_COUT__ << "SERDES ref clk freq.(0x9160) = 0x" << std::hex << registerRead(0x9160)
-	            << " = " << std::dec << registerRead(0x9160) << __E__;
+	std::stringstream ss;
+	ss << "firmware version    (0x9004) = 0x" << GetFirmwareVersion() << __E__;
+	ss << printVoltages();
+	ss << "link enable         (0x9114) = 0x" << std::hex << registerRead(0x9114) << __E__;
+	ss << "SERDES reset        (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
+	ss << "SERDES unlock error (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;
+	ss << "PLL locked          (0x9128) = 0x" << std::hex << registerRead(0x9128) << __E__;
+	ss << "SERDES Rx status....(0x9134) = 0x" << std::hex << registerRead(0x9134) << __E__;
+	ss << "SERDES reset done...(0x9138) = 0x" << std::hex << registerRead(0x9138) << __E__;
+	ss << "SERDES Rx CDR lock..(0x9140) = 0x" << std::hex << registerRead(0x9140) << __E__;
+	ss << "SERDES ref clk freq.(0x9160) = 0x" << std::hex << registerRead(0x9160) << " = " <<
+		 std::dec << registerRead(0x9160) << __E__;
 
-	__FE_COUT__ << __E__;
-}
+	__FE_COUT__ << ss.str() << __E__;
+
+	return ss.str();
+} //end readStatus()
 
 //=====================================================================================
 //
@@ -985,5 +830,28 @@ bool CFOFrontEndInterface::running(void)
 
 	return false;
 }
+
+//========================================================================
+void CFOFrontEndInterface::WriteCFO(__ARGS__)
+{	
+	uint32_t address = __GET_ARG_IN__("address", uint32_t);
+	uint32_t writeData = __GET_ARG_IN__("writeData", uint32_t);
+	__FE_COUTV__((unsigned int)address);
+	__FE_COUTV__((unsigned int)writeData);
+	registerWrite(address, writeData);  
+} //end WriteCFO()
+
+//========================================================================
+void CFOFrontEndInterface::ReadCFO(__ARGS__)
+{	
+	uint32_t address = __GET_ARG_IN__("address", uint32_t);
+	__FE_COUTV__((unsigned int)address);
+	uint32_t readData = registerRead(address);  
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"0x%X",readData);
+	__SET_ARG_OUT__("readData",readDataStr);
+} //end ReadCFO()
+
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)

@@ -54,20 +54,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// hardware access
 	//----------------
-//	void 								universalRead				(char* address, char* readValue) override;
+//	void 								universalRead				(char* address, char* readValue) override; //defined in 
 //	void 								universalWrite				(char* address, char* writeValue) override;
-//	dtc_data_t							registerRead				(const dtc_address_t address);
-//	dtc_data_t  						registerWrite				(const dtc_address_t address, dtc_data_t dataToWrite);  // return read value after having written dataToWrite
+//	dtc_data_t							registerRead				(dtc_address_t address);
+	virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
 
 	// DTC specific items
 	//----------------
-	//void  								configureJitterAttenuator	(void);
-	virtual void  						readStatus					(void) override;
-	//float 								readTemperature				(void);  // return temperature of FPGA in degC
-	//void  								printVoltages				(void);
-
-	//void 								turnOnLED					(void);   // turn on LED on visible side of timing card
-	//void 								turnOffLED					(void);  // turn off LED on visible side of timing card
+	virtual std::string					readStatus					(void) override;
 
 	bool 								ROCActive					(unsigned int ROC_link);
 	int  								getROCLinkStatus			(int ROC_link);
@@ -80,14 +74,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								createROCs					(void);
 	void 								registerFEMacros			(void);
 
-//	char        									devfile_[11];
-//	int         									fd_;
-//	int         									dtc_                   = -1;
 	int         									dtc_location_in_chain_ = -1;
-	//bool        									configure_clock_       = 0;
-	unsigned    									roc_mask_              = 0;
-	//std::string 									device_name_;
-	//bool      										emulatorMode_;
+	unsigned int   									roc_mask_              = 0;
 	int         									emulate_cfo_           = 0;
 	DTCLib::DTCSoftwareCFO* 						EmulatedCFO_;
 
@@ -105,13 +93,12 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	m_ioc_reg_access_t 								reg_access_;
 
-	unsigned 										initial_9100_ = 0;
-	unsigned 										initial_9114_ = 0;
+	dtc_data_t 										initial_9100_ = 0;
+	dtc_data_t 										initial_9114_ = 0;
 
 	std::ofstream 									outputStream;
 
   public:
-	void 								FlashLEDs						(__ARGS__);
 	void 								ReadROC							(__ARGS__);
 	void 								WriteROC						(__ARGS__);
 	void 								WriteROCBlock					(__ARGS__);
