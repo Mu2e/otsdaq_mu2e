@@ -64,9 +64,25 @@ find_ups_boost( v1_50_0 filesystem
                         program_options
                         unit_test_framework
  )
-
+ 
+find_ups_product( offline trig_0_4_2 )
+find_ups_product( BTrk v1_02_02 )
+find_ups_product( heppdt v3_04_01f )
 
 find_package(MPI QUIET)
+
+string(REGEX MATCHALL "[0-9][0-9]?[0-9]?" ART_VERSION_LIST "$ENV{ART_VERSION}")
+list(GET ART_VERSION_LIST 0 ART_MAJOR_VERSION)
+list(GET ART_VERSION_LIST 1 ART_MINOR_VERSION)
+list(GET ART_VERSION_LIST 2 ART_PATCH_VERSION)
+
+message("-DART_HEX_VERSION=0x${ART_MAJOR_VERSION}${ART_MINOR_VERSION}${ART_PATCH_VERSION}")
+set(ART_HEX_VERSION 0x${ART_MAJOR_VERSION}${ART_MINOR_VERSION}${ART_PATCH_VERSION})
+add_definitions(-DART_HEX_VERSION=0x${ART_MAJOR_VERSION}${ART_MINOR_VERSION}${ART_PATCH_VERSION})
+
+if( ${ART_HEX_VERSION} GREATER 0x30200 )
+        find_ups_product( art_root_io v1_00_00 )
+endif()
 
 # macros for art_dictionary and simple_plugin
 
