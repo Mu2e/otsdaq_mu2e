@@ -146,16 +146,18 @@ void ROCPolarFireCoreInterface::configure(void) try
 		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
 		return;
 	}
-	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
+	 __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
 	// this->writeRegister(0,1);
-	// this->writeRegister(0,0);
+	//this->writeRegister(0,0);  // MT: in DracMonitor, write ANY to addr 0 to issue TOP_SERDES reset. Self-clearing.  
 
 	// setup needToResetAlignment using rising edge of register 22
 	// (i.e., force synchronization of ROC clock with 40MHz system clock)
 	__MCOUT_INFO__("......... setup to synchronize ROC clock with 40 MHz clock edge"
 	               << __E__);
-	this->writeRegister(22, 0);
-	this->writeRegister(22, 1);
+	//this->writeRegister(22, 0);
+	//this->writeRegister(22, 1);
+	//this->writeRegister(4, 1); // MT: in DracMonitor, DCS_ALIGNMENT is addr 4.  Self-clearing
+
 
 	this->writeDelay(delay_);
 

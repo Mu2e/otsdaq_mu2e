@@ -6,7 +6,7 @@ build_*
 cetpkg_variable_report
 checkinAll.log
 core.*
-Data*
+Data_*
 databases
 databases*
 diag_report

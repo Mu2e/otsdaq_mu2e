@@ -1,16 +1,23 @@
-simple_plugin(DemoDQMHistosConsumer "processor"
+  simple_plugin(DQMMu2eHistoConsumer "processor"
     Configurable
-	DemoRootUtilities
-    RootUtilities
     DataManager
+    RootUtilities
     WorkLoopManager
-#	MessageFacility
-	Macros
-    ConfigurationInterface
     TableCore
-	${ROOT_BASIC_LIB_LIST}
-	${MF_MESSAGELOGGER}
-  )
-  
+    Macros
+    ConfigurationInterface
+    ${ROOT_CORE}
+    ${ROOT_RIO}
+    ${ROOT_HIST}
+    ${CETLIB}
+    ${ROOT_TREE}
+    MF_MessageLogger
+    art_Utilities
+    art_root_io
+    art_root_io_tfile_support
+    art_root_io_TFileService_service
+ 
+)
+
 install_headers()
 install_source()
