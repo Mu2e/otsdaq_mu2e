@@ -45,6 +45,11 @@ cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
 #find_ups_product( epics v3_15_2 )
+
+if( $ENV{OTSDAQ_COMPILE_RUNINFO} MATCHES "1" )
+	find_ups_product( postgresql v9_6_11b )
+endif()
+
 find_ups_product( cetbuildtools v3_03_00 )
 find_ups_product( artdaq v0_04_02 )
 find_ups_product( artdaq_core v1_00_00 )

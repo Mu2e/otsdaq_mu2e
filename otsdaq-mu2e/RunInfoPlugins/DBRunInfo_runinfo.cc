@@ -1,105 +1,136 @@
-#include "otsdaq-demo/DataProcessorPlugins/DemoDQMHistosConsumer.h"
-#include "otsdaq-demo/DemoRootUtilities/DemoDQMHistos.h"
+#include "otsdaq-mu2e/RunInfoPlugins/DBRunInfo.h"
 #include "otsdaq/Macros/CoutMacros.h"
-#include "otsdaq/Macros/ProcessorPluginMacros.h"
+#include "otsdaq/Macros/RunInfoPluginMacros.h"
 #include "otsdaq/MessageFacility/MessageFacility.h"
+
+#include <libpq-fe.h> /* for PGconn */
 
 using namespace ots;
 
 //==============================================================================
-DemoDQMHistosConsumer::DemoDQMHistosConsumer(
-    std::string              supervisorApplicationUID,
-    std::string              bufferUID,
-    std::string              processorUID,
-    const ConfigurationTree& theXDAQContextConfigTree,
-    const std::string&       configurationPath)
-    : WorkLoop(processorUID)
-    , DQMHistosConsumerBase(
-          supervisorApplicationUID, bufferUID, processorUID, LowConsumerPriority)
-    , Configurable(theXDAQContextConfigTree, configurationPath)
-    , saveDQMFile_(theXDAQContextConfigTree.getNode(configurationPath)
-                       .getNode("SaveDQMFile")
-                       .getValue<bool>())
-    , DQMFilePath_(theXDAQContextConfigTree.getNode(configurationPath)
-                       .getNode("DQMFilePath")
-                       .getValue<std::string>())
-    , DQMFilePrefix_(theXDAQContextConfigTree.getNode(configurationPath)
-                         .getNode("DQMFileNamePrefix")
-                         .getValue<std::string>())
-    , dqmHistos_(new DemoDQMHistos())
-
+DBRunInfo::DBRunInfo(
+    std::string              interfaceUID)
+	// ,
+    // const ConfigurationTree& theXDAQContextConfigTree,
+    // const std::string&       configurationPath)
+    : RunInfoVInterface(interfaceUID)//, theXDAQContextConfigTree, configurationPath)  
 {
 }
 
 //==============================================================================
-DemoDQMHistosConsumer::~DemoDQMHistosConsumer(void) { closeFile(); }
+DBRunInfo::~DBRunInfo(void) { ; }
 
 //==============================================================================
-void DemoDQMHistosConsumer::startProcessingData(std::string runNumber)
+unsigned int DBRunInfo::claimNextRunNumber(void)
 {
-	// IMPORTANT
-	// The file must be always opened because even the LIVE DQM uses the pointer
-	// to it
-	DQMHistosBase::openFile(DQMFilePath_ + "/" + DQMFilePrefix_ + "_Run" + runNumber +
-	                        ".root");
+	unsigned int runNumber = (unsigned int)-1;
+	__COUT__ << "claiming next Run Number" << __E__;
 
-	dqmHistos_->book(DQMHistosBase::theFile_);
-	DataConsumer::startProcessingData(runNumber);
-}
+	int runInfoDbConnStatus_ = 0;
+	char* dbname_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE")? getenv("OTSDAQ_RUNINFO_DATABASE") : "prototype_run_info");
+	char* dbhost_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_HOST")? getenv("OTSDAQ_RUNINFO_DATABASE_HOST") : "");
+	char* dbport_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PORT")? getenv("OTSDAQ_RUNINFO_DATABASE_PORT") : "");
+	char* dbuser_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_USER")? getenv("OTSDAQ_RUNINFO_DATABASE_USER") : "");
+	char* dbpwd_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PWD")? getenv("OTSDAQ_RUNINFO_DATABASE_PWD") : "");
 
-//==============================================================================
-void DemoDQMHistosConsumer::stopProcessingData(void)
-{
-	DataConsumer::stopProcessingData();
-	if(saveDQMFile_)
+	//open db connection
+	char runInfoDbConnInfo [1024];
+	sprintf(runInfoDbConnInfo, "dbname=%s host=%s port=%s  \
+		user=%s password=%s", dbname_, dbhost_, dbport_, dbuser_, dbpwd_);
+	PGconn* runInfoDbConn = PQconnectdb(runInfoDbConnInfo);
+
+	if(PQstatus(runInfoDbConn) == CONNECTION_BAD)
 	{
-		save();
+		__COUT__ << "Unable to connect to prototype_run_info database!\n" << __E__;
+		PQfinish(runInfoDbConn);
 	}
-	closeFile();
-}
-
-//==============================================================================
-bool DemoDQMHistosConsumer::workLoopThread(toolbox::task::WorkLoop* workLoop)
-{
-	//__COUT__ << DataProcessor::processorUID_ << " running, because workloop: "
-	//<< 	WorkLoop::continueWorkLoop_ << std::endl;
-	fastRead();
-	return WorkLoop::continueWorkLoop_;
-}
-
-//==============================================================================
-void DemoDQMHistosConsumer::fastRead(void)
-{
-	//__COUT__ << processorUID_ << " running!" << std::endl;
-	// This is making a copy!!!
-	if(DataConsumer::read(dataP_, headerP_) < 0)
+	else
 	{
-		usleep(100);
-		return;
+		__COUT__ << "Connected to prototype_run_info database!\n" << __E__;
+		runInfoDbConnStatus_ = 1;
 	}
-	//__COUT__ << DataProcessor::processorUID_ << " UID: " <<
-	// supervisorApplicationUID_ << std::endl;
 
-	// HW emulator
-	//	 Burst Type | Sequence | 8B data
-	//__COUT__ << "Size fill: " << dataP_->length() << std::endl;
-	dqmHistos_->fill(*dataP_, *headerP_);
+	// write run info into db
+	if(runInfoDbConnStatus_ == 1)
+	{
+		PGresult* res;
+		char      buffer[1024];
+		__COUT__ << "Insert new run info in the run_info Database table" << __E__;
+		snprintf(buffer,
+				sizeof(buffer),
+				"INSERT INTO public.run_info(				\
+											run_type		\
+											, user_name		\
+											, host_name		\
+											, start_time	\
+											, note)			\
+											VALUES ('%s','%s','%s',TO_TIMESTAMP(%ld),'%s');",
+				"T",
+				__ENV__("MU2E_OWNER"),
+				__ENV__("HOSTNAME"),
+				time(NULL),
+				"note");
 
-	DataConsumer::setReadSubBuffer<std::string, std::map<std::string, std::string>>();
-}
+		res = PQexec(runInfoDbConn, buffer);
+
+		if(PQresultStatus(res) != PGRES_COMMAND_OK)
+		{
+			__SS__ << "RUN INFO INSERT INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
+				<< __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+		PQclear(res);
+
+		res = PQexec(runInfoDbConn, "select max(run_number) from public.run_info;");
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "RUN INFO SELECT FROM DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		if(PQntuples(res) == 1)
+		{
+			runNumber = atoi(PQgetvalue(res, 0, 0));
+			__COUTV__(runNumber);
+		}
+		else
+		{
+			__SS__ << "RETRIVE RUN NUMBER FROM DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		PQclear(res);
+	}
+
+	//close db connection
+	if(PQstatus(runInfoDbConn) == CONNECTION_OK)
+	{
+		PQfinish(runInfoDbConn);
+		__COUT__ << "prototype_run_info DB CONNECTION CLOSED\n" << __E__;
+	}
+
+	if(runNumber == (unsigned int)-1)
+	{
+		__SS__ << "Impossible run number not defined by run info plugin!" << __E__;
+		__SS_THROW__;
+	}
+
+	return runNumber;
+} //end claimNextRunNumber()
 
 //==============================================================================
-void DemoDQMHistosConsumer::slowRead(void)
+void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStopType runStopType)
 {
-	//__COUT__ << DataProcessor::processorUID_ << " running!" << std::endl;
-	// This is making a copy!!!
-	if(DataConsumer::read(data_, header_) < 0)
-	{
-		usleep(1000);
-		return;
-	}
-	//__COUT__ << DataProcessor::processorUID_ << " UID: " <<
-	// supervisorApplicationUID_ << std::endl;  DQMHistos::fill(data_,header_);
-}
+	__COUT__ << "Updating run info for run number " << runNumber << " " <<
+		(runStopType == RunInfoVInterface::RunStopType::HALT?"HALT":
+		(runStopType == RunInfoVInterface::RunStopType::STOP?"STOP":"ERROR")
+		) << __E__;
 
-DEFINE_OTS_PROCESSOR(DemoDQMHistosConsumer)
+} //end updateRunInfo()
+
+
+DEFINE_OTS_PROCESSOR(DBRunInfo)
