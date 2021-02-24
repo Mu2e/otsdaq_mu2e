@@ -12,7 +12,7 @@ endif()
 
 #add_subdirectory(DemoRootUtilities)
 #add_subdirectory(InterfaceTest)
-#add_subdirectory(ArtModules)
+add_subdirectory(ArtModules)
 #add_subdirectory(Generators)
 #add_subdirectory(Overlays)
 #add_subdirectory(ControlsInterfacePlugins)
