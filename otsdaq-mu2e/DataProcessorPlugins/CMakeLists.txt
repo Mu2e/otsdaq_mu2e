@@ -1,4 +1,5 @@
   simple_plugin(DQMMu2eHistoConsumer "processor"
+    otsdaq-mu2e_ArtModules
     Configurable
     DataManager
     RootUtilities
