@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent otsdaq_mu2e v1_00_04
+parent otsdaq_mu2e v1_00_05_indev
 defaultqual	e20:s105
 
 # These optional lines define the installed directories where
