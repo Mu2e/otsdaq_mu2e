@@ -2643,7 +2643,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //	unsigned int number         = __GET_ARG_IN__("numberOfRequests", unsigned int);
 //	unsigned int timestampStart = __GET_ARG_IN__("timestampStart", unsigned int);
 //
-//	//	auto start = DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart));
+//	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 //
 //	bool     incrementTimestamp = true;
 //	uint32_t cfodelay = 10000;  // have no idea what this is, but 1000 didn't work (don't
@@ -2716,7 +2716,7 @@ void CFOandDTCCoreVInterface::configureJitterAttenuator(void)
 //
 //		EmulatedCFO_->SendRequestsForRange(
 //		    number,
-//		    DTCLib::DTC_Timestamp(static_cast<uint64_t>(timestampStart)),
+//		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
 //		    incrementTimestamp,
 //		    cfodelay,
 //		    requestsAhead);
