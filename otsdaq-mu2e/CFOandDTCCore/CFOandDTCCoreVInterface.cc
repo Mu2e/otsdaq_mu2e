@@ -1740,4 +1740,4 @@ void CFOandDTCCoreVInterface::GetStatus(__ARGS__)
 {	
 	//call virtual readStatus
 	__SET_ARG_OUT__("Status",readStatus());
-} //end WriteCFO()
+} //end GetStatus()
