@@ -95,7 +95,12 @@ std::string CFOFrontEndInterface::readStatus(void)
 {
 	std::stringstream ss;
 	ss << "firmware version    (0x9004) = 0x" << GetFirmwareVersion() << __E__;
-	ss << printVoltages();
+
+	ss << printVoltages() << __E__;
+
+	ss << device_name_ << " temperature = " << readTemperature() << " degC"
+	            << __E__ << __E__;
+
 	ss << "link enable         (0x9114) = 0x" << std::hex << registerRead(0x9114) << __E__;
 	ss << "SERDES reset        (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
 	ss << "SERDES unlock error (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;

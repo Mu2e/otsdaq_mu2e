@@ -637,8 +637,7 @@ void DTCFrontEndInterface::createROCs(void)
 //===============================================================================================
 // registerWrite: return = value readback from register at address "address"
 //	Use base class CFOandDTCCoreVInterface::registerWrite(), and do readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
-dtc_data_t DTCFrontEndInterface::registerWrite(
-	const dtc_address_t address, const dtc_data_t dataToWrite)
+dtc_data_t DTCFrontEndInterface::registerWrite(dtc_address_t address, dtc_data_t dataToWrite)
 {
 	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
 
@@ -655,22 +654,34 @@ dtc_data_t DTCFrontEndInterface::registerWrite(
 				if((++i % 10) == 9)
 					__FE_COUT__ << "I2C waited " << i+1 << " times..." << __E__;				
 			}
+			dataToWrite		&= ~1; 
+			readbackValue 	&= ~1;
 			break;
-		
+		case 0x91f8: //CFO emulator marker enables: 5:0 enables clock marker, 13:8 is event marker per ROC link 
+				//for some reason, now event marker is not returned (FIXME?)
+			dataToWrite		&= 0x03f; 
+			readbackValue 	&= 0x03f;
+			break;
 		case 0x93c8: //clears 32-bit CDR unlock counter, but can read back errors immediately
 			return readbackValue;
 		case 0x9308:  //0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
-			if((dataToWrite & (3<<4)) != (readbackValue & (3<<4)))
-			{
-				__FE_SS__ 	<< "BIT 5-4 write value 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite
-						<< " to register 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << address << 
-						"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue << __E__;
-				__FE_SS_THROW__;
-			}
+			dataToWrite		&= (3<<4); 
+			readbackValue 	&= (3<<4);
 			break;
 		default: //leverage base class for all other addresses
 			CFOandDTCCoreVInterface::readbackVerify(address,dataToWrite,readbackValue);
+			return readbackValue;
 	} //end readback verification address case handling
+
+	if(readbackValue != dataToWrite)
+	{
+		__FE_SS__ 	<< "write value 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite
+				<< " to register 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << address << 
+				"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue <<
+				"\n\n" << StringMacros::stackTrace() << __E__;
+		__FE_SS_THROW__;
+		// __FE_COUT_ERR__ << ss.str(); 
+	}
 
 	return readbackValue;
 }  // end registerWrite()
@@ -686,7 +697,7 @@ std::string DTCFrontEndInterface::readStatus(void)
 	ss << printVoltages() << __E__;
 
 	ss << device_name_ << " temperature = " << readTemperature() << " degC"
-	            << __E__;
+	            << __E__ << __E__;
 
 	ss << device_name_ << " SERDES reset........ (0x9118) = 0x" << std::hex
 	            << registerRead(0x9118) << __E__;
@@ -865,8 +876,8 @@ void DTCFrontEndInterface::configure(void) try
 				__FE_COUT__ << device_name_ << " CFO Link Status is bad = 0x" << std::hex
 				            << registerRead(0x9140) << std::dec << __E__;
 
-				usleep(500000 /*500ms*/); 
-				//sleep(1);
+				// usleep(500000 /*500ms*/); 
+				sleep(1);
 
 				indicateIterationWork();
 				turnOffLED();
@@ -878,8 +889,8 @@ void DTCFrontEndInterface::configure(void) try
 
 				__FE_COUT__ << "Waiting for DTC Link Status = 0x" << std::hex
 				            << registerRead(0x9140) << std::dec << __E__;
-				usleep(500000 /*500ms*/); 							
-				//sleep(1);
+				// usleep(500000 /*500ms*/); 							
+				sleep(1);
 			}
 		}
 
@@ -901,12 +912,12 @@ void DTCFrontEndInterface::configure(void) try
 
 	if((config_step % number_of_dtc_config_steps) == 0)
 	{
+		__FE_COUTV__(GetFirmwareVersion());
 		if(reset_fpga == 1 && config_step < number_of_dtc_config_steps)
 		{
 			// only reset the FPGA the first time through
 			__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
-			                       << " RESET FPGA... "
-			                       << " firmware version: " << GetFirmwareVersion() << __E__;
+			                       << " RESET FPGA... " << __E__;
 
 			DTCReset();
 		}
@@ -1006,8 +1017,8 @@ void DTCFrontEndInterface::configure(void) try
 
 			configureJitterAttenuator();
 
-			usleep(500000 /*500ms*/); 
-			//sleep(5);
+			// usleep(500000 /*500ms*/); 
+			sleep(5);
 		}
 		else
 		{
@@ -1100,8 +1111,8 @@ void DTCFrontEndInterface::configure(void) try
 			for(auto& roc : rocs_)
 				roc.second->configure();
 
-		usleep(500000 /*500ms*/); 
-		//sleep(1);
+		// usleep(500000 /*500ms*/); 
+		sleep(1);
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
@@ -1129,8 +1140,8 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex
 			                            << registerRead(0x9140) << std::dec << __E__);
 
-			usleep(500000 /*500ms*/); 
-			//sleep(1);
+			// usleep(500000 /*500ms*/); 
+			sleep(1);
 			turnOffLED();
 
 			if(number_of_system_configs < 0)
@@ -2406,11 +2417,24 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 } //end SelectJitterAttenuatorSource()
 
 //========================================================================
+// first arg must be link index or '*'
 void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
 {	
-	uint32_t link = __GET_ARG_IN__("Link to Shutdown (0-7, 6 is Control)", uint32_t);
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
 	link %= 8;
-	__FE_COUTV__((unsigned int)link);
+
+	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
+	if(linkStr == "*")
+	{
+		//do all links!
+		__FE_COUT__ << "* found, so doing all links!" << __E__;
+		link = (0xFF<<24);
+	}
+	else
+	{
+		__FE_COUTV__((unsigned int)link);
+		link = (1<<(24+link));
+	}
 	
 	//0x9118 controls link resets
 	//	bit-7:0 SERDES reset
@@ -2418,7 +2442,7 @@ void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
 	//	bit-23:16 RX reset
 	//	bit-31:24 TX reset
 	
-	registerWrite(0x9118, 1<<(24+link));  
+	registerWrite(0x9118,link);  
 	
 	uint32_t val = registerRead(0x9118); 
 	
@@ -2437,11 +2461,24 @@ void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
 } //end ShutdownLinkTx()
 
 //========================================================================
+// first arg must be link index or '*'
 void DTCFrontEndInterface::StartupLinkTx(__ARGS__)
 {	
-	uint32_t link = __GET_ARG_IN__("Link to Startup (0-7, 6 is Control)", uint32_t);
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
 	link %= 8;
-	__FE_COUTV__((unsigned int)link);
+
+	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
+	if(linkStr == "*")
+	{
+		//do all links!
+		__FE_COUT__ << "* found, so doing all links!" << __E__;
+		link = (0xFF<<24);
+	}
+	else
+	{
+		__FE_COUTV__((unsigned int)link);
+		link = (1<<(24+link));
+	}
 	
 	//0x9118 controls link resets
 	//	bit-7:0 SERDES reset
@@ -2450,7 +2487,7 @@ void DTCFrontEndInterface::StartupLinkTx(__ARGS__)
 	//	bit-31:24 TX reset
 	
 	uint32_t val = registerRead(0x9118); 
-	uint32_t mask = ~(1<<(24+link));
+	uint32_t mask = ~link;
 	
 	registerWrite(0x9118, val&mask);  
 	
@@ -2518,15 +2555,15 @@ void DTCFrontEndInterface::DTCReset()
 	//reset DTC serdes osc
 	registerWrite(0x9100, registerRead(0x9100) | (1<<31)); // bit 31 = DTC Reset FPGA
 	
-	usleep(500000 /*500ms*/); 
-	//sleep(3);
+	// usleep(500000 /*500ms*/); 
+	sleep(3);
 	
 	registerWrite(0x9100, 0x00008000); //Turn on CFO Emulation Mode for Serdes Reset
 	registerWrite(0x9118, 0xffff00ff); //SERDES resets
 	registerWrite(0x9118, 0x00000000); //clear SERDES resets
 
-	usleep(500000 /*500ms*/); 
-	//sleep(3);
+	// usleep(500000 /*500ms*/); 
+	sleep(3);
 		
 	__FE_COUT__ << "Done with DTC Reset." << __E__;
 } //end DTCReset()

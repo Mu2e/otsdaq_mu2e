@@ -196,13 +196,15 @@ void CFOandDTCCoreVInterface::readbackVerify(dtc_address_t address, dtc_data_t d
 	{
 		__FE_SS__ 	<< "write value 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite
 				<< " to register 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << address << 
-				"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue << __E__;
+				"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue <<
+				"\n\n" << StringMacros::stackTrace() << __E__;
 		__FE_SS_THROW__;
 		// __FE_COUT_ERR__ << ss.str(); 
 	}
 } //end readbackVerify()
 
 //==================================================================================================
+//returns degrees C
 float CFOandDTCCoreVInterface::readTemperature()
 {
 	float temperature = ((registerRead(0x9010) * 503.975) / 4096.) - 273.15;
