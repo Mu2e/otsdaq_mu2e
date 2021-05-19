@@ -23,7 +23,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 
 
 
-	unsigned    roc_mask              = 0x1;
+	//unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
@@ -374,7 +374,7 @@ void CFOFrontEndInterface::configure(void)
 
 			int targetFrequency = 200000000;
 
-			auto oscillator = DTCLib::DTC_OscillatorType_SERDES;  //-C 0 = CFO (main
+			//auto oscillator = DTCLib::DTC_OscillatorType_SERDES;  //-C 0 = CFO (main
 			                                                      // board SERDES clock)
 			// auto oscillator = DTCLib::DTC_OscillatorType_DDR; //-C 1 (DDR clock)
 			// auto oscillator = DTCLib::DTC_OscillatorType_Timing; //-C 2 = DTC (with
@@ -497,8 +497,8 @@ void CFOFrontEndInterface::resume(void)
 //==============================================================================
 void CFOFrontEndInterface::start(std::string)  // runNumber)
 {
-	bool LoopbackLock = true;
-	int  loopbackROC  = 0;
+	//bool LoopbackLock = true;
+	//int  loopbackROC  = 0;
 
 	const int numberOfChains       = 1;
 	int       link[numberOfChains] = {0};

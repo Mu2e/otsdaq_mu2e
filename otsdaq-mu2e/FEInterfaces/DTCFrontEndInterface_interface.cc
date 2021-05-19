@@ -829,9 +829,9 @@ void DTCFrontEndInterface::configure(void) try
 	         // If > 0, go through configuration steps this many times
 
 	const int  reset_fpga               = 1;                 // 1 = yes, 0 = no
-	const bool config_clock             = configure_clock_;  // 1 = yes, 0 = no
+	//const bool config_clock             = configure_clock_;  // 1 = yes, 0 = no
 	const bool config_jitter_attenuator = configure_clock_;  // 1 = yes, 0 = no
-	const int  reset_rx                 = 0;                 // 1 = yes, 0 = no
+	//const int  reset_rx                 = 0;                 // 1 = yes, 0 = no
 
 	const int number_of_dtc_config_steps = 7; 
 
@@ -855,7 +855,7 @@ void DTCFrontEndInterface::configure(void) try
 
 		const int number_of_link_checks = 10;
 
-		int link_ok = 0;
+		//int link_ok = 0;
 
 		for(int i = 0; i < number_of_link_checks; i++)
 		{
@@ -1035,7 +1035,7 @@ void DTCFrontEndInterface::configure(void) try
 		{
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " enable CFO emulation and internal clock");
-			int dataInReg = registerRead(0x9100);
+			//int dataInReg = registerRead(0x9100);
 			int dataToWrite = 0x40808404;  // new incantation from Rick K.(disable retransmission) 12/18/2019m
 			registerWrite(0x9100, dataToWrite);
 
@@ -1274,7 +1274,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 	__FE_COUTV__(numberOfLoopbacks);
 
-	int stopIndex = getIterationIndex();
+	//int stopIndex = getIterationIndex();
 
 	if(numberOfLoopbacks == 0)
 	{
@@ -1286,7 +1286,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	}
 
 	const int numberOfChains       = 1;
-	int       link[numberOfChains] = {0};
+	//int       link[numberOfChains] = {0};
 
 	const int numberOfDTCsPerChain = 1;
 
@@ -1529,7 +1529,7 @@ bool DTCFrontEndInterface::running(void)
 	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 
 
-        std::time_t current_time;	
+    //    std::time_t current_time;	
 
 	bool     incrementTimestamp = true;
 
@@ -1540,9 +1540,9 @@ bool DTCFrontEndInterface::running(void)
 	unsigned int timestampStart = 0;
 
 	auto device = thisDTC_->GetDevice();
-	auto initTime = device->GetDeviceTime();
+	//auto initTime = device->GetDeviceTime();
 	device->ResetDeviceTime();
-	auto afterInit = std::chrono::steady_clock::now();
+	//auto afterInit = std::chrono::steady_clock::now();
 
 	
 	if(emulate_cfo_ == 1)
@@ -1591,9 +1591,9 @@ bool DTCFrontEndInterface::running(void)
 		    cfodelay,
 		    requestsAhead);
 
-		auto readoutRequestTime = device->GetDeviceTime();
+		//auto readoutRequestTime = device->GetDeviceTime();
 		device->ResetDeviceTime();
-		auto afterRequests = std::chrono::steady_clock::now();
+		//auto afterRequests = std::chrono::steady_clock::now();
 
 	}
 
@@ -1643,9 +1643,9 @@ bool DTCFrontEndInterface::running(void)
 		    cfodelay,
 		    requestsAhead);
 
-		auto readoutRequestTime = device->GetDeviceTime();
+		//auto readoutRequestTime = device->GetDeviceTime();
 		device->ResetDeviceTime();
-		auto afterRequests = std::chrono::steady_clock::now();
+		//auto afterRequests = std::chrono::steady_clock::now();
 
 	}
 
@@ -1889,7 +1889,7 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
 	            << __E__;
 
-	bool acknowledge_request = false;
+	//bool acknowledge_request = false;
 
 	for(auto& roc : rocs_)
 	{
@@ -2071,9 +2071,9 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 	thisDTC_ = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO, device_, rocMask,"" );
 	auto device = thisDTC_->GetDevice();
 
-	auto initTime = device->GetDeviceTime();
+	//auto initTime = device->GetDeviceTime();
 	device->ResetDeviceTime();
-	auto afterInit = std::chrono::steady_clock::now();
+	//auto afterInit = std::chrono::steady_clock::now();
 
 	if(emulate_cfo_ == 1)
 	{
@@ -2124,9 +2124,9 @@ void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
 		    requestsAhead, heartbeatPackets);
 
 
-		auto readoutRequestTime = device->GetDeviceTime();
+		//auto readoutRequestTime = device->GetDeviceTime();
 		device->ResetDeviceTime();
-		auto afterRequests = std::chrono::steady_clock::now();
+		//auto afterRequests = std::chrono::steady_clock::now();
 
 		// print out stuff
 		unsigned quietCount = 20;

@@ -383,7 +383,7 @@ void CAPTANSignalGenerator::varTest(__ARGS__)
 		char* data = new char[universalDataSize_]{
 		    0};                 //create data buffer of interface size and init to all 0
 		uint64_t macroAddress;  // create macro address buffer (size 8 bytes)
-		uint64_t macroData;     // create macro address buffer (size 8 bytes)
+		//uint64_t macroData;     // create macro address buffer (size 8 bytes)
 		std::map<std::string /*arg name*/, uint64_t /*arg val*/>
 		    macroArgs;  // create map from arg name to 64-bit number
 
@@ -453,7 +453,7 @@ void CAPTANSignalGenerator::varTest2(__ARGS__)
 		char* data = new char[universalDataSize_]{
 		    0};                 //create data buffer of interface size and init to all 0
 		uint64_t macroAddress;  // create macro address buffer (size 8 bytes)
-		uint64_t macroData;     // create macro address buffer (size 8 bytes)
+		//uint64_t macroData;     // create macro address buffer (size 8 bytes)
 		std::map<std::string /*arg name*/, uint64_t /*arg val*/>
 		    macroArgs;  // create map from arg name to 64-bit number
 

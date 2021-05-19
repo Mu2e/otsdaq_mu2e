@@ -40,13 +40,13 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
   public:
 	// state machine
 	//----------------
-	void 								configure					(void);
-	void 								halt						(void);
-	void 								pause						(void);
-	void 								resume						(void);
-	void 								start						(std::string runNumber);
-	void 								stop						(void);
-	bool 								running						(void);
+	void 								configure					(void) override;
+	void 								halt						(void) override;
+	void 								pause						(void) override;
+	void 								resume						(void) override;
+	void 								start						(std::string runNumber) override;
+	void 								stop						(void) override;
+	bool 								running						(void) override;
 
 	// emulator handlers
 	//----------------

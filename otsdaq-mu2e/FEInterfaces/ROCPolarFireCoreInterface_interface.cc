@@ -61,7 +61,7 @@ DTCLib::roc_data_t ROCPolarFireCoreInterface::readROCRegister(
 	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
 	            << ", address = 0x" << std::hex << address << __E__;
 
-	DTCLib::roc_data_t read_data = 0;
+	//DTCLib::roc_data_t read_data = 0;
 	return thisDTC_->ReadROCRegister(linkID_, address, 100 /* retries */);
 	//	try
 	//	{

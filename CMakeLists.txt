@@ -11,7 +11,7 @@
 cmake_minimum_required (VERSION 3.17)
 
 
-project(otsdaq-mu2e)
+project(otsdaq_mu2e VERSION 1.01.00)
 # cetbuildtools contains our cmake modules
 SET ( CETBUILDTOOLS_VERSION $ENV{CETBUILDTOOLS_VERSION} )
 IF (NOT CETBUILDTOOLS_VERSION)
@@ -28,12 +28,11 @@ message(STATUS "CMAKE_MODULE_PATH is ${CMAKE_MODULE_PATH}")
 
 include(CetCMakeEnv)
 cet_cmake_env()
-include(FindUpsXdaq)
 
 cet_set_compiler_flags(DIAGS VIGILANT
  WERROR
  NO_UNDEFINED
- EXTRA_FLAGS -pedantic -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-maybe-uninitialized -Wno-ignored-qualifiers -Wno-unused-variable
+ EXTRA_FLAGS -pedantic -Wno-unused-parameter
  )
 
 #string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC )
@@ -50,31 +49,39 @@ if( $ENV{OTSDAQ_COMPILE_RUNINFO} MATCHES "1" )
 	find_ups_product( postgresql v9_6_11b )
 endif()
 
-find_ups_product( cetbuildtools v3_03_00 )
-find_ups_product( artdaq v0_04_02 )
+#find_ups_product( cetbuildtools v3_03_00 )
+#find_ups_product( artdaq v0_04_02 )
 find_ups_product( artdaq_core v1_00_00 )
-find_ups_product( artdaq_utilities v1_00_00 )
-find_ups_product( art v1_06_00 )
-find_ups_product( fhiclcpp v2_16_00 )
-find_ups_product( messagefacility v1_10_00 )
-find_ups_product( cetlib v1_03_00 )
+#find_ups_product( artdaq_utilities v1_00_00 )
+#find_ups_product( art v1_06_00 )
+#find_ups_product( fhiclcpp v2_16_00 )
+#find_ups_product( messagefacility v1_10_00 )
+#find_ups_product( cetlib v1_03_00 )
 find_ups_product( otsdaq v1_00_00 )
-find_ups_product( otsdaq_utilities v1_00_00 )
+#find_ups_product( otsdaq_utilities v1_00_00 )
 find_ups_product( otsdaq_components v1_00_00 )
 find_ups_product(pcie_linux_kernel_module v2_03_00) 
-find_ups_product( TRACE v3_03_00 )
-find_ups_xdaq( v11_2_7 )
+#find_ups_product( TRACE v3_03_00 )
+find_ups_product( artdaq_database v1_03_07 )
+link_directories($ENV{ARTDAQ_DATABASE_LIB})
+find_ups_product( xdaq v16_7_0_1)
 find_ups_root( v5_34_00 )
-find_ups_boost( v1_50_0 filesystem
-                        program_options
-                        unit_test_framework
- )
+#find_ups_boost( v1_50_0 filesystem
+#                        program_options
+#                        unit_test_framework
+ #)
  
-find_ups_product( offline trig_0_4_2 )
-find_ups_product( BTrk v1_02_02 )
-find_ups_product( heppdt v3_04_01f )
-
-find_package(MPI QUIET)
+ # XDAQ Extra setup
+ include_directories($ENV{XDAQ_INC}/linux)
+ set(XDAQ_BASIC_LIB_LIST 
+   $ENV{XDAQ_LIB}/libxcept.so
+   $ENV{XDAQ_LIB}/libxoap.so
+   $ENV{XDAQ_LIB}/libxdaq.so
+   $ENV{XDAQ_LIB}/libtoolbox.so
+   $ENV{XDAQ_LIB}/libxerces-c.so
+   cgicc
+ )
+ set(XDAQ_XERCES-C $ENV{XDAQ_LIB}/libxerces-c.so)
 
 string(REGEX MATCHALL "[0-9][0-9]?[0-9]?" ART_VERSION_LIST "$ENV{ART_VERSION}")
 list(GET ART_VERSION_LIST 0 ART_MAJOR_VERSION)

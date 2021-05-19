@@ -1,16 +1,8 @@
-#cet_make(LIBRARY_NAME TablePluginDataFormat
-#		 LIBRARIES
-#		 TableCore
-#         ${CETLIB}
-#)
   
 simple_plugin(DTCInterfaceTable "table"
-  TableCore
-  ConfigurationInterface
-  SlowControlsTableBase
-  Macros
-  ${CETLIB}
-  ${MF_MESSAGELOGGER}
+  otsdaq::TableCore
+  otsdaq::ConfigurationInterface
+  otsdaq::SlowControlsTableBase
   )
     
 

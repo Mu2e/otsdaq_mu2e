@@ -26,10 +26,10 @@ namespace ots {
     void stopProcessingData(void) override;
     void pauseProcessingData(void) override;
     void resumeProcessingData(void) override;
-    void load(std::string fileName) { ; }
+    void load(std::string fileName) override { ; }
 
   private:
-    bool workLoopThread(toolbox::task::WorkLoop *workLoop);
+    bool workLoopThread(toolbox::task::WorkLoop *workLoop) override;
     void fastRead(void);
     void slowRead(void);
 

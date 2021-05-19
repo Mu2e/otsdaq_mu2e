@@ -1,6 +1,6 @@
 # The parent line must be the first non-comment line in the file
 # This line defines the product name and version
-parent otsdaq_mu2e v1_00_05_indev
+parent otsdaq_mu2e
 defaultqual	e20:s105
 
 # These optional lines define the installed directories where
@@ -18,19 +18,30 @@ fcldir      fq_dir      fcl
 
 #
 product		 		version		optional
-otsdaq              v2_05_07
-otsdaq_utilities    v2_05_07
-otsdaq_components   v2_05_07
-otsdaq_epics        v2_05_07
-mu2e_artdaq         v1_03_05
-cetbuildtools       v7_17_01	-        only_for_build
+otsdaq              v2_06_00
+otsdaq_utilities    v2_06_00
+otsdaq_components   v2_06_00
+otsdaq_epics        v2_06_00
+mu2e_artdaq         v1_04_00
+cetbuildtools       v8_08_02	-        only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		otsdaq			otsdaq_utilities	otsdaq_components	otsdaq_epics	mu2e_artdaq		notes
-e20:s105:prof	e20:s105:prof	e20:s105:prof		e20:s105:prof		e20:s105:prof	e20:s105:prof	-std=c++17
-e20:s105:debug	e20:s105:debug	e20:s105:debug		e20:s105:debug		e20:s105:debug	e20:s105:debug	-std=c++17
+e20:s108:prof	e20:s108:prof	e20:s108:prof		e20:s108:prof		e20:s108:prof	e20:s108:prof	-std=c++17
+e20:s108:debug	e20:s108:debug	e20:s108:debug		e20:s108:debug		e20:s108:debug	e20:s108:debug	-std=c++17
+e19:s108:prof	e19:s108:prof	e19:s108:prof		e19:s108:prof		e19:s108:prof	e19:s108:prof	-std=c++17
+e19:s108:debug	e19:s108:debug	e19:s108:debug		e19:s108:debug		e19:s108:debug	e19:s108:debug	-std=c++17
+c7:s108:prof	c7:s108:prof	c7:s108:prof		c7:s108:prof		c7:s108:prof	c7:s108:prof	-std=c++17
+c7:s108:debug	c7:s108:debug	c7:s108:debug		c7:s108:debug		c7:s108:debug	c7:s108:debug	-std=c++17
+
+e20:s107:prof	e20:s107:prof	e20:s107:prof		e20:s107:prof		e20:s107:prof	e20:s107:prof	-std=c++17
+e20:s107:debug	e20:s107:debug	e20:s107:debug		e20:s107:debug		e20:s107:debug	e20:s107:debug	-std=c++17
+e19:s107:prof	e19:s107:prof	e19:s107:prof		e19:s107:prof		e19:s107:prof	e19:s107:prof	-std=c++17
+e19:s107:debug	e19:s107:debug	e19:s107:debug		e19:s107:debug		e19:s107:debug	e19:s107:debug	-std=c++17
+c7:s107:prof	c7:s107:prof	c7:s107:prof		c7:s107:prof		c7:s107:prof	c7:s107:prof	-std=c++17
+c7:s107:debug	c7:s107:debug	c7:s107:debug		c7:s107:debug		c7:s107:debug	c7:s107:debug	-std=c++17
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:

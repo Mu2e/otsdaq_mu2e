@@ -22,13 +22,13 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// state machine
 	//----------------
-	void 								configure					(void);
-	void 								halt						(void);
-	void 								pause						(void);
-	void 								resume						(void);
-	void 								start						(std::string runNumber);
-	void 								stop						(void);
-	bool 								running						(void);
+	void 								configure					(void) override;
+	void 								halt						(void) override;
+	void 								pause						(void) override;
+	void 								resume						(void) override;
+	void 								start						(std::string runNumber) override;
+	void 								stop						(void) override;
+	bool 								running						(void) override;
 
 	// CFO specific items
 	//----------------
@@ -60,7 +60,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	CFOLib::CFO_Registers* 				thisCFO_;
 	//int                    configure_clock_ = 0;
 
-	m_ioc_reg_access_t 					reg_access_;
+	//m_ioc_reg_access_t 					reg_access_;
 
 	int          						loopback_distribution_[10000];
 	unsigned int 						min_distribution_;
