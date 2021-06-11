@@ -19,25 +19,15 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	// clang-format off
   public:
 	CFOandDTCCoreVInterface(const std::string&       interfaceUID,
-	                     const ConfigurationTree& theXDAQContextConfigTree,
-	                     const std::string&       interfaceConfigurationPath);
+							const ConfigurationTree& theXDAQContextConfigTree,
+							const std::string&       interfaceConfigurationPath);
 
 	virtual ~CFOandDTCCoreVInterface(void);
 
 	// specialized handling of slow controls
 	//----------------		
-	void 			outputEpicsPVFile	(ConfigurationManager* configManager);
+	void 								outputEpicsPVFile			(ConfigurationManager* configManager);
 	
-	
-//	virtual void 						configureSlowControls		(void) override;
-//	virtual void						resetSlowControlsChannelIterator (void) override;
-//	virtual FESlowControlsChannel*		getNextSlowControlsChannel	(void) override;
-//	virtual unsigned int				getSlowControlsChannelCount	(void) override;
-//	virtual void						getSlowControlsValue		(FESlowControlsChannel& channel, std::string& readValue) override;
-//  protected:
-//	bool											currentChannelIsInROC_;
-//	std::string										currentChannelROCUID_;
-
   
   public:
 	// state machine
@@ -52,79 +42,48 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	// emulator handlers
 	//----------------
-	//void 								emulatorConfigure			(void);
+//	void 								emulatorConfigure			(void);
 
 	// hardware access
 	//----------------
 	void 								universalRead				(char* address, char* readValue) override;
 	void 								universalWrite				(char* address, char* writeValue) override;
-	dtc_data_t							registerRead				(const dtc_address_t address);
-	dtc_data_t  						registerWrite				(const dtc_address_t address, dtc_data_t dataToWrite);  // return read value after having written dataToWrite
+	dtc_data_t							registerRead				(dtc_address_t address);
+	virtual dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite);  // return read value after having written dataToWrite
+	void								readbackVerify				(dtc_address_t address, dtc_data_t dataToWrite, dtc_data_t readbackValue);
 
 	// DTC specific items
 	//----------------
 	void  								configureJitterAttenuator	(void);
-	virtual void  						readStatus					(void) = 0;
+	virtual std::string					readStatus					(void) = 0;
 	float 								readTemperature				(void);  // return temperature of FPGA in degC
-	void  								printVoltages				(void);
+	std::string							printVoltages				(void);
 
 	void 								turnOnLED					(void);  // turn on LED on visible side of timing card
 	void 								turnOffLED					(void);  // turn off LED on visible side of timing card
 
-	//bool 								ROCActive					(unsigned int ROC_link);
-	//int  								getROCLinkStatus			(int ROC_link);
-	//int  								getCFOLinkStatus			(void);
-	//int  								checkLinkStatus				(void);
-
-	//DTCLib::DTC* 									thisDTC_;
-
   protected:
-	//void 								createROCs					(void);
-	//void 								registerFEMacros			(void);
 	
 	void 								registerCFOandDTCFEMacros	(void);
 
-	char        									devfile_[11];
-	int         									fd_;
-	int         									dtc_                   = -1;
-	//int         									dtc_location_in_chain_ = -1;
-	bool        									configure_clock_       = 0;
-	//unsigned    									roc_mask_              = 0;
-	std::string 									device_name_;
-	bool      										emulatorMode_;
-	//int         									emulate_cfo_           = 0;
-	//DTCLib::DTCSoftwareCFO* 						EmulatedCFO_;
+	char        						devfile_[11];
+	int         						fd_;
+	int         						device_                   	= -1;
+	bool        						configure_clock_       = 0;
+	std::string 						device_name_;
+	bool      							emulatorMode_;
 
-	//std::ofstream datafile_[8];
 
-//	std::map<std::string /*ROC UID*/,
-//		std::unique_ptr<ROCCoreVInterface>> 		rocs_;
-//
-//	std::map<std::string /*DTC's FEMacro name*/,
-//		std::pair<std::string /*ROC UID*/,
-//			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
-//
-//	std::map<std::string /* ROC UID*/,
-//		FESlowControlsChannel> 						mapOfROCSlowControlsChannels_;
-
-	m_ioc_reg_access_t 								reg_access_;
-
-	unsigned 										initial_9100_ = 0;
-	unsigned 										initial_9114_ = 0;
-
-	std::ofstream 									outputStream;
+	m_ioc_reg_access_t 					reg_access_;
+	unsigned 							initial_9100_ 				= 0;
+	unsigned 							initial_9114_ 				= 0;
+	std::ofstream 						outputStream;
 
   public:
+	void 								FlashLEDs					(__ARGS__);	
 	void 								GetFirmwareVersion			(__ARGS__);
-//	void 								WriteROC					(__ARGS__);
-//	void 								WriteROCBlock				(__ARGS__);
-//	void 								ReadROCBlock				(__ARGS__);
-//	void 								DTCHighRateBlockCheck		(__ARGS__);
-//	void 								DTCReset					(__ARGS__);
-//	void 								DTCReset					(void);
-//	void 								DTCHighRateDCSCheck			(__ARGS__);
-//	void 								RunROCFEMacro				(__ARGS__);
-//	void 								DTCSendHeartbeatAndDataRequest(__ARGS__);
+	std::string							GetFirmwareVersion			(void);
+	void 								GetStatus					(__ARGS__);
 
 	// clang-format on
 };

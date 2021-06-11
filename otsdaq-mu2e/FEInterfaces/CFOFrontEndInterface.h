@@ -33,22 +33,20 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	// CFO specific items
 	//----------------
 	float 								MeasureLoopback				(int linkToLoopback);
-	virtual void  						readStatus					(void) override;
+	virtual std::string					readStatus					(void) override;
 	int  								getLinkStatus				(void);
 
 	// hardware access
 	//----------------
 //	void universalRead(char* address, char* readValue) override;
 //	void universalWrite(char* address, char* writeValue) override;
-//	int  registerRead(int address);
-//	int  registerWrite(
-//	     int address,
-//	     int dataToWrite);  // return read value after having written dataToWrite
+//	dtc_data_t							registerRead				(dtc_address_t address);
+	virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
 
 
-	float delay[8][6][8];
-	float delay_rms[8][6][8];
-	float delay_failed[8][6][8];
+	float 								delay[8][6][8];
+	float 								delay_rms[8][6][8];
+	float 								delay_failed[8][6][8];
 
   protected: 
   	
@@ -59,21 +57,25 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 //	char                   devfile_[11];
 //	int                    fd_;
 //	int                    dtc_ = -1;
-	CFOLib::CFO_Registers* thisCFO_;
+	CFOLib::CFO_Registers* 				thisCFO_;
 	//int                    configure_clock_ = 0;
 
-	m_ioc_reg_access_t reg_access_;
+	m_ioc_reg_access_t 					reg_access_;
 
-	int          loopback_distribution_[10000];
-	unsigned int min_distribution_;
-	unsigned int max_distribution_;
-	float        average_loopback_;
-	float        rms_loopback_;
-	float        failed_loopback_;
-	unsigned int initial_9100_;
-	unsigned int initial_9114_;
-	unsigned int initial_91a0_;
-	unsigned int initial_9154_;
+	int          						loopback_distribution_[10000];
+	unsigned int 						min_distribution_;
+	unsigned int 						max_distribution_;
+	float        						average_loopback_;
+	float        						rms_loopback_;
+	float        						failed_loopback_;
+	unsigned int 						initial_9100_;
+	unsigned int 						initial_9114_;
+	unsigned int 						initial_91a0_;
+	unsigned int 						initial_9154_;
+
+  public:
+	void 								WriteCFO						(__ARGS__);
+	void 								ReadCFO							(__ARGS__);
 };
 
 // clang-format on
