@@ -5,7 +5,7 @@ include_directories(${CMAKE_BINARY_DIR}/artdaq)
 cet_make(LIBRARY_NAME ROCCore
 		 LIBRARIES
 		  	FECore		
-		  	DTCInterface
+		  	pcie_linux_kernel_module::DTCInterface
 			Configurable
 			ConfigurationInterface
 			TableCore

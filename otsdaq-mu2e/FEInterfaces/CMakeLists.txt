@@ -32,7 +32,7 @@ simple_plugin(ROCPolarFireCoreInterface "interface"
 simple_plugin(DTCFrontEndInterface "interface"
   	FECore
   	CFOandDTCCore
-	DTCInterface  
+	pcie_linux_kernel_module::DTCInterface  
 	ROCCore
 	PluginMakers
 	${CETLIB_EXCEPT}
@@ -42,7 +42,7 @@ simple_plugin(DTCFrontEndInterface "interface"
 simple_plugin(CFOFrontEndInterface "interface"
   	FECore
   	CFOandDTCCore
-	CFOInterface
+	pcie_linux_kernel_module::CFOInterface
  )
    
    
