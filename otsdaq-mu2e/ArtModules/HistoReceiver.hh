@@ -7,6 +7,7 @@ namespace ots {
 
   class HistoReceiver {
   public:
+    void addHistogram(TObject*readObject, TDirectory*subdir);
     void readPacket(TDirectory *dir, std::string* buf);
 
   };
