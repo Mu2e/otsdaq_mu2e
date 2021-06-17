@@ -1866,7 +1866,7 @@ void DTCFrontEndInterface::WriteROCBlock(__ARGS__)
 	bool acknowledge_request = false;
 
 	thisDTC_->WriteExtROCRegister(
-	    rocLinkIndex, block, address, writeData, acknowledge_request);
+				      rocLinkIndex, block, address, writeData, acknowledge_request, 0);
 
 	for(auto& argOut : argsOut)
 		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;

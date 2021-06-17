@@ -65,7 +65,7 @@ void ROCDTCHardwareEmulated::writeROCRegister(uint16_t address, uint16_t data_to
 
 	bool acknowledge_request = false;
 
-	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request);
+	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request, 0);
 
 }  // end writeROCRegister()
 

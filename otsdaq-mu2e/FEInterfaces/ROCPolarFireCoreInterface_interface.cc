@@ -50,7 +50,7 @@ void ROCPolarFireCoreInterface::writeROCRegister(DTCLib::roc_address_t address,
 
 	bool acknowledge_request = false;
 
-	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request);
+	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request, 0);
 
 }  // end writeROCRegister()
 
@@ -90,7 +90,7 @@ void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
 
 	//	try
 	//	{
-	thisDTC_->ReadROCBlock(data, linkID_, address, numberOfReads, incrementAddress);
+	thisDTC_->ReadROCBlock(data, linkID_, address, numberOfReads, incrementAddress, 0);
 
 	//	}
 	//	catch(...)
