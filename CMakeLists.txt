@@ -46,7 +46,7 @@ cet_report_compiler_flags()
 #find_ups_product( epics v3_15_2 )
 
 if( $ENV{OTSDAQ_COMPILE_RUNINFO} MATCHES "1" )
-	find_ups_product( postgresql v9_6_11b )
+	find_ups_product( postgresql v9_6_11 )
 endif()
 
 #find_ups_product( cetbuildtools v3_03_00 )
