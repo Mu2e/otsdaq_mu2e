@@ -11,7 +11,7 @@
 cmake_minimum_required (VERSION 3.17)
 
 
-project(otsdaq_mu2e VERSION 1.01.01)
+project(otsdaq_mu2e VERSION 1.01.02)
 # cetbuildtools contains our cmake modules
 SET ( CETBUILDTOOLS_VERSION $ENV{CETBUILDTOOLS_VERSION} )
 IF (NOT CETBUILDTOOLS_VERSION)

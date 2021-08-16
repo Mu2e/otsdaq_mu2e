@@ -18,17 +18,31 @@ fcldir      fq_dir      fcl
 
 #
 product		 		version		optional
-otsdaq              v2_06_01
-otsdaq_utilities    v2_06_01
-otsdaq_components   v2_06_01
-otsdaq_epics        v2_06_01
-mu2e_artdaq         v1_04_01
-cetbuildtools       v8_08_02	-        only_for_build
+otsdaq              v2_06_02
+otsdaq_utilities    v2_06_02
+otsdaq_components   v2_06_02
+otsdaq_epics        v2_06_02
+mu2e_artdaq         v1_04_03
+cetbuildtools       v8_13_04	-        only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		otsdaq			otsdaq_utilities	otsdaq_components	otsdaq_epics	mu2e_artdaq		notes
+e20:s112:prof	e20:s112:prof	e20:s112:prof		e20:s112:prof		e20:s112:prof	e20:s112:prof	-std=c++17
+e20:s112:debug	e20:s112:debug	e20:s112:debug		e20:s112:debug		e20:s112:debug	e20:s112:debug	-std=c++17
+e19:s112:prof	e19:s112:prof	e19:s112:prof		e19:s112:prof		e19:s112:prof	e19:s112:prof	-std=c++17
+e19:s112:debug	e19:s112:debug	e19:s112:debug		e19:s112:debug		e19:s112:debug	e19:s112:debug	-std=c++17
+c7:s112:prof	c7:s112:prof	c7:s112:prof		c7:s112:prof		c7:s112:prof	c7:s112:prof	-std=c++17
+c7:s112:debug	c7:s112:debug	c7:s112:debug		c7:s112:debug		c7:s112:debug	c7:s112:debug	-std=c++17
+
+e20:s111:prof	e20:s111:prof	e20:s111:prof		e20:s111:prof		e20:s111:prof	e20:s111:prof	-std=c++17
+e20:s111:debug	e20:s111:debug	e20:s111:debug		e20:s111:debug		e20:s111:debug	e20:s111:debug	-std=c++17
+e19:s111:prof	e19:s111:prof	e19:s111:prof		e19:s111:prof		e19:s111:prof	e19:s111:prof	-std=c++17
+e19:s111:debug	e19:s111:debug	e19:s111:debug		e19:s111:debug		e19:s111:debug	e19:s111:debug	-std=c++17
+c7:s111:prof	c7:s111:prof	c7:s111:prof		c7:s111:prof		c7:s111:prof	c7:s111:prof	-std=c++17
+c7:s111:debug	c7:s111:debug	c7:s111:debug		c7:s111:debug		c7:s111:debug	c7:s111:debug	-std=c++17
+
 e20:s109:prof	e20:s109:prof	e20:s109:prof		e20:s109:prof		e20:s109:prof	e20:s109:prof	-std=c++17
 e20:s109:debug	e20:s109:debug	e20:s109:debug		e20:s109:debug		e20:s109:debug	e20:s109:debug	-std=c++17
 e19:s109:prof	e19:s109:prof	e19:s109:prof		e19:s109:prof		e19:s109:prof	e19:s109:prof	-std=c++17
