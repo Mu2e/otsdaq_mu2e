@@ -1,22 +1,22 @@
 
-simple_plugin(ROCPolarFireCoreInterface "interface"
+basic_plugin(ROCPolarFireCoreInterface "interface"
   	ROCCore
  )
- simple_plugin(ROCDTCHardwareEmulated "interface"
+ basic_plugin(ROCDTCHardwareEmulated "interface"
   	ROCCore
  )
     
-simple_plugin(DTCFrontEndInterface "interface"
+basic_plugin(DTCFrontEndInterface "interface"
       CFOandDTCCore
  )
  
-simple_plugin(CFOFrontEndInterface "interface"
+basic_plugin(CFOFrontEndInterface "interface"
       CFOandDTCCore
       pcie_linux_kernel_module::CFOInterface
  )
    
    
-simple_plugin(CAPTANSignalGenerator "interface"
+basic_plugin(CAPTANSignalGenerator "interface"
   otsdaq::FECore
   otsdaq_components::DAQHardware
 )

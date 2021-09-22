@@ -1,5 +1,5 @@
   
-simple_plugin(DTCInterfaceTable "table"
+basic_plugin(DTCInterfaceTable "table"
   otsdaq::TableCore
   otsdaq::ConfigurationInterface
   otsdaq::SlowControlsTableBase

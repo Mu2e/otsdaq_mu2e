@@ -1,5 +1,5 @@
 
-#simple_plugin(STIBReceiver "generator"
+#basic_plugin(STIBReceiver "generator"
 #  artdaq-ots_Overlays
 #  otsdaq-demo_Overlays
 #  artdaq-ots_Generators_UDPReceiver_generator
@@ -12,7 +12,7 @@
 #  ${CETLIB}
 #  )
 
-simple_plugin(DataGenReceiver "generator"
+basic_plugin(DataGenReceiver "generator"
   DataManager
   WorkLoopManager
   artdaq-ots_Overlays

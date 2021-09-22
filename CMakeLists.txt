@@ -58,7 +58,7 @@ find_ups_product( otsdaq v1_00_00 )
 #find_ups_product( otsdaq_utilities v1_00_00 )
 find_ups_product( otsdaq_components v1_00_00 )
 find_ups_product(pcie_linux_kernel_module v2_03_00) 
-#find_ups_product( TRACE v3_03_00 )
+find_ups_product( TRACE v3_03_00 )
 find_ups_root( v5_34_00 )
 find_ups_boost( v1_50_0 )
 #filesystem

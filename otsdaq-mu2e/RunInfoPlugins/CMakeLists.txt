@@ -1,4 +1,4 @@
-simple_plugin(DBRunInfo "runinfo"
+basic_plugin(DBRunInfo "runinfo"
     Configurable	
 	Macros
 	$ENV{POSTGRESQL_LIBRARIES}/libpq.so
