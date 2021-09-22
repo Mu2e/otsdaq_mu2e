@@ -42,7 +42,7 @@ true && test $?shell = 1 && set _cetpkg_shell_flavor=csh || _cetpkg_shell_flavor
 
 # If we're C-flavored, set up the commands using alias.
 test "$_cetpkg_shell_flavor" = csh && \
-  set _cetpkg_nobuild="" && \
+  set _cetpkg_nobuild="nobuild" && \
   set _cetpkg_shell_var_set=set\\1 && \
   alias vecho_ 'if ($?vv == 1) echo \>\> \!*' && \
   alias unsetenv_ unsetenv && \
@@ -53,7 +53,7 @@ test "$_cetpkg_shell_flavor" = csh && \
 
 # For Bourne-flavored shells, use functions.
 test "$_cetpkg_shell_flavor" = sh && \
-  _cetpkg_nobuild="" && \
+  _cetpkg_nobuild="nobuild" && \
   _cetpkg_shell_var_set= && \
   eval 'vecho_() { test -n "${vv-}" && echo ">> $*"; return 0; }' && \
   eval 'setenv() { eval "$1=\"\${2-}\"; export $1"; }' && \
