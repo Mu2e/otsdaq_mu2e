@@ -7,8 +7,10 @@ namespace ots {
   void HistoReceiver::addHistogram(TObject*readObject, TDirectory*subdir){
     //    __MOUT__ << "[HistoReceiver::addHistogram] searching hist: "<< readObject->GetName() << std::endl;
     TH1 *object = (TH1 *)subdir->FindObjectAny(readObject->GetName()); // find in memory
-    TLOG(TLVL_DEBUG) << "object = " << object;
-    if (object == NULL){
+    TLOG(TLVL_DEBUG) << "subdir = "  << subdir->GetName();
+    TLOG(TLVL_DEBUG) << "hname  = "  << readObject->GetName();
+    TLOG(TLVL_DEBUG) << "object = "  << object;
+    if (object == nullptr){
       // __MOUT__ << "[HistoReceiver::addHistogram] saving new hist: "<< readObject->GetName() << std::endl;
       subdir->WriteTObject(readObject);
     }else{
@@ -25,7 +27,7 @@ namespace ots {
     message.SetBufferOffset(0); // move pointer
 
     std::string directoryNameStdString;
-    __MOUT__ << "[HistoReceiver::readPacket] starts..  = " << std::endl;
+    __MOUT__ << "[HistoReceiver::readPacket] starts..." << std::endl;
 
     do {
       message.ReadStdString(directoryNameStdString);
@@ -33,7 +35,13 @@ namespace ots {
       
       __MOUT__ << "[HistoReceiver::readPacket] Moving in dir: "<< directoryNameStdString << std::endl;
 
-      auto subdir = dir->mkdir(directoryName, "", kTRUE );
+      TDirectory* subdir = dir;
+      TString     dirStr;
+      Ssiz_t      from   = 0;
+      while(directoryName.Tokenize(dirStr, from, "/")){
+	subdir = subdir->mkdir(dirStr.Data(), "",kTRUE);
+      }
+
       //now let's add the histograms
       TObject *readObject = nullptr;
       do {
