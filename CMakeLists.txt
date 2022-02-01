@@ -66,6 +66,7 @@ find_ups_boost( v1_50_0 )
 #                        unit_test_framework
  #)
  
+
  # XDAQ Extra setup
 find_ups_product( artdaq_database v1_03_07 )
 find_ups_product( xdaq v16_7_0_1)
@@ -104,11 +105,15 @@ include(CetTest)
 # Code
 add_subdirectory(otsdaq-mu2e)
 
-# Useful scripts
+# Useful script tools
 add_subdirectory(tools)
+FILE(COPY tools DESTINATION .)
+INSTALL(DIRECTORY tools DESTINATION ${product}/${version})
 
 # Test Programs
 #add_subdirectory(test)
+#FILE(COPY test DESTINATION .)
+#INSTALL(DIRECTORY test DESTINATION ${product}/${version})
 
 # Documentation (to comment out if not needed DOXYGEN locally)
 if( $ENV{OTS_DOXY} MATCHES "DOIT" )
