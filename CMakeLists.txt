@@ -108,7 +108,7 @@ add_subdirectory(otsdaq-mu2e)
 # Useful script tools
 add_subdirectory(tools)
 FILE(COPY tools DESTINATION .)
-INSTALL(DIRECTORY tools DESTINATION ${product}/${version})
+INSTALL(DIRECTORY tools DESTINATION . FILE_PERMISSIONS USE_SOURCE_PERMISSIONS)
 
 # Test Programs
 #add_subdirectory(test)
