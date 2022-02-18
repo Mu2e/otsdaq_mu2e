@@ -12,24 +12,24 @@ fi
 build_bundle otsdaq-2.06.04 ${basequal}
 
 build_cet pcie_linux_kernel_module v2_05_13 ${basequal}:${version_set}
-build_cet mu2e_artdaq_core         v1_06_09 ${basequal}:${version_set}
+build_cet -p mu2e_artdaq-core mu2e_artdaq_core         v1_06_09 ${basequal}:${version_set}
 
 build_cet mu2e_artdaq              v1_04_06 ${basequal}:${version_set}
 
-build_cet otsdaq_mu2e              v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq otsdaq_mu2e              v1_01_05 ${basequal}:${version_set}
 
-build_cet otsdaq_mu2e_calorimeter  v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_crv          v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_extmon       v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_stm          v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_tracker      v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-calorimeter otsdaq_mu2e_calorimeter  v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-crv otsdaq_mu2e_crv          v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-extmon otsdaq_mu2e_extmon       v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-stm otsdaq_mu2e_stm          v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-tracker otsdaq_mu2e_tracker      v1_01_05 ${basequal}:${version_set}
 
 source /cvmfs/mu2e.opensciencegrid.org/artexternals/setup
 setup offline d10_10_01 trig:${basequal}:${build_type}:${version_set}
 
-build_cet otsdaq_mu2e_dqm_calorimeter v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_dqm_tracker     v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_dqm_trigger     v1_01_05 ${basequal}:${version_set}
-build_cet otsdaq_mu2e_trigger         v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-dqm-calorimeter otsdaq_mu2e_dqm_calorimeter v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-dqm-tracker otsdaq_mu2e_dqm_tracker     v1_01_05 ${basequal}:${version_set}
+#build_cet -p mu2e-otsdaq-dqm-trigger otsdaq_mu2e_dqm_trigger     v1_01_05 ${basequal}:${version_set}
+build_cet -p mu2e-otsdaq-trigger otsdaq_mu2e_trigger         v1_01_05 ${basequal}:${version_set}
 
 return 0
