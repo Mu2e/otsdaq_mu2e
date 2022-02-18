@@ -96,6 +96,7 @@ cd ${blddir} || exit 1
 echo
 echo "begin build"
 echo
+cp ${WORKSPACE}/mu2e-otsdaq/tools/mu2e_tdaq_software-cfg-* .
 ./buildFW -t -b ${basequal} -s ${squal} ${blddir} ${build_type} mu2e_tdaq_software-1.00.00 || \
  { mv ${blddir}/*.log  $WORKSPACE/copyBack/
    exit 1 
