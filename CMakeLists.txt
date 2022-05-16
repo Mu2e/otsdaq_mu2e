@@ -15,7 +15,7 @@ set(CET_CETBUILDTOOLS_COMPAT TRUE)
 include(Compatibility)
 set(CET_WARN_DEPRECATED)
 
-project(otsdaq_mu2e VERSION 1.01.05)
+project(otsdaq_mu2e VERSION 1.01.06)
 
 set(CMAKE_MODULE_PATH
         $ENV{XDAQ_DIR}/Modules
