@@ -25,7 +25,7 @@ build_cet -p mu2e-otsdaq-stm otsdaq_mu2e_stm          v1_01_06 ${basequal}:${ver
 build_cet -p mu2e-otsdaq-tracker otsdaq_mu2e_tracker      v1_01_06 ${basequal}:${version_set}
 
 source /cvmfs/mu2e.opensciencegrid.org/artexternals/setup
-setup offline d10_10_01 trig:${basequal}:${build_type}:${version_set}
+setup offline d10_10_02 trig:${basequal}:${build_type}:${version_set}
 
 build_cet -p mu2e-otsdaq-dqm-calorimeter otsdaq_mu2e_dqm_calorimeter v1_01_06 ${basequal}:${version_set}
 build_cet -p mu2e-otsdaq-dqm-tracker otsdaq_mu2e_dqm_tracker     v1_01_06 ${basequal}:${version_set}
