@@ -1,8 +1,7 @@
   
-basic_plugin(DTCInterfaceTable "table"
-  otsdaq::TableCore
-  otsdaq::ConfigurationInterface
-  otsdaq::SlowControlsTableBase
+include(otsdaq::table)
+
+cet_build_plugin(DTCInterfaceTable otsdaq::table LIBRARIES REG otsdaq::SlowControlsTableBase
   )
     
 

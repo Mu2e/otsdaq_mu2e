@@ -1,7 +1,7 @@
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/Macros/BinaryStringMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
-#include "otsdaq/PluginMakers/MakeInterface.h"
+#include "otsdaq/FECore/MakeInterface.h"
 
 using namespace ots;
 

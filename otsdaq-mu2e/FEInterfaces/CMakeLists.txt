@@ -1,24 +1,19 @@
 
-basic_plugin(ROCPolarFireCoreInterface "interface"
-  	ROCCore
+include(otsdaq::FEInterface)
+
+cet_build_plugin(ROCPolarFireCoreInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::ROCCore
  )
- basic_plugin(ROCDTCHardwareEmulated "interface"
-  	ROCCore
+ cet_build_plugin(ROCDTCHardwareEmulated otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::ROCCore
  )
     
-basic_plugin(DTCFrontEndInterface "interface"
-      CFOandDTCCore
+cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore
  )
  
-basic_plugin(CFOFrontEndInterface "interface"
-      CFOandDTCCore
-      pcie_linux_kernel_module::CFOInterface
+cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore pcie_linux_kernel_module::CFOInterface
  )
    
    
-basic_plugin(CAPTANSignalGenerator "interface"
-  otsdaq::FECore
-  otsdaq_components::DAQHardware
+cet_build_plugin(CAPTANSignalGenerator otsdaq::FEInterface LIBRARIES REG otsdaq_components::DAQHardware
 )
 
 install_headers()
