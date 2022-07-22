@@ -1,8 +1,8 @@
 
 include(otsdaq::FEInterface)
 
-cet_build_plugin(ROCPolarFireCoreInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::ROCCore
- )
+cet_make_library(LIBRARY_NAME ROCPolarFireCoreInterface SOURCE ROCPolarFireCoreInterfaceImpl.cc LIBRARIES PUBLIC otsdaq_mu2e::ROCCore )
+cet_build_plugin(ROCPolarFireCoreInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::ROCPolarFireCoreInterface )
  cet_build_plugin(ROCDTCHardwareEmulated otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::ROCCore
  )
     
