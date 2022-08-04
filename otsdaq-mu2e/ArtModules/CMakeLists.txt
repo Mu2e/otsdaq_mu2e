@@ -1,4 +1,4 @@
-cet_make_library(  LIBRARY_NAME ArtModules
+cet_make_library( 
 SOURCE HistoReceiver.cc HistoSender.cc
 LIBRARIES PUBLIC
 otsdaq::NetworkUtilities
