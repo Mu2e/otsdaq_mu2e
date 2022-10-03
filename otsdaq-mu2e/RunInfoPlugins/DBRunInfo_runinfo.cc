@@ -4,6 +4,7 @@
 #include "otsdaq/MessageFacility/MessageFacility.h"
 
 #include <libpq-fe.h> /* for PGconn */
+#include <boost/algorithm/string.hpp>
 
 using namespace ots;
 
@@ -21,10 +22,11 @@ DBRunInfo::DBRunInfo(
 DBRunInfo::~DBRunInfo(void) { ; }
 
 //==============================================================================
-unsigned int DBRunInfo::claimNextRunNumber(void)
+unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 {
 	unsigned int runNumber = (unsigned int)-1;
 	__COUT__ << "claiming next Run Number" << __E__;
+	__COUTV__(runInfoConditions);
 
 	int runInfoDbConnStatus_ = 0;
 	char* dbname_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE")? getenv("OTSDAQ_RUNINFO_DATABASE") : "prototype_run_info");
@@ -55,7 +57,13 @@ unsigned int DBRunInfo::claimNextRunNumber(void)
 	{
 		PGresult* res;
 		char      buffer[1024];
-		__COUT__ << "Insert new run info in the run_info Database table" << __E__;
+		std::string runtype = runInfoConditions.substr(runInfoConditions.find("Configuration Alias: ") + sizeof("Configuration Alias: ") - 1);
+		runtype = runtype.substr(0, runtype.find('\n'));
+		boost::trim_right(runtype);
+		__COUT__ << "Insert new run info in the run_info Database table, runtype is: " << runtype << __E__;
+		std::string note = runInfoConditions.substr(runInfoConditions.find("Run note: ") + sizeof("Run note: ") - 1);
+		note = note.substr(0,note.find("\n*****"));
+
 		snprintf(buffer,
 				sizeof(buffer),
 				"INSERT INTO public.run_info(				\
@@ -65,11 +73,11 @@ unsigned int DBRunInfo::claimNextRunNumber(void)
 											, start_time	\
 											, note)			\
 											VALUES ('%s','%s','%s',TO_TIMESTAMP(%ld),'%s');",
-				"T",
+				runtype.c_str(),
 				__ENV__("MU2E_OWNER"),
 				__ENV__("HOSTNAME"),
 				time(NULL),
-				"some note");
+				note.c_str());
 
 		res = PQexec(runInfoDbConn, buffer);
 
@@ -103,6 +111,30 @@ unsigned int DBRunInfo::claimNextRunNumber(void)
 			__SS_THROW__;
 		}
 
+		PQclear(res);
+		
+		// write run configurations in run_info_conditions table
+		__COUT__ << "Insert new run configurations in the run_info_conditions database table" << __E__;
+		char      buffer2[4194304];
+		snprintf(buffer2,
+				sizeof(buffer2),
+				"INSERT INTO public.run_conditions(			\
+											run_number		\
+											, conditions)	\
+											VALUES (%ld,'%s');",
+				boost::numeric_cast<long int>(runNumber),
+				runInfoConditions.c_str());
+
+		res = PQexec(runInfoDbConn, buffer2);
+
+		if(PQresultStatus(res) != PGRES_COMMAND_OK)
+		{
+			__SS__ << "RUN CONDITIONS INSERT INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
+				<< __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+		memset(buffer2, 0, sizeof buffer2);
 		PQclear(res);
 	}
 
@@ -154,7 +186,7 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 		runInfoDbConnStatus_ = 1;
 	}
 
-	// Update run info pause into db
+	// Update run info pause time into db
 	if(runInfoDbConnStatus_ == 1 && runStopType == RunInfoVInterface::RunStopType::PAUSE)
 	{
 		PGresult* res;
@@ -207,6 +239,59 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 		PQclear(res);
 	}
 
+	// Update run info resume time into db
+	if(runInfoDbConnStatus_ == 1 && runStopType == RunInfoVInterface::RunStopType::RESUME)
+	{
+		PGresult* res;
+		char      buffer[1024];
+		std::string resume = "";
+
+		snprintf(buffer, sizeof(buffer),  "select resume_time from public.run_info where run_number=%d ;", runNumber);
+		res = PQexec(runInfoDbConn, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "RUN INFO RESUME SELECT FROM DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		if(PQntuples(res) == 1)
+		{
+			resume = PQgetvalue(res, 0, 0);
+			if (resume=="")
+				resume.append(std::to_string(time(NULL)));
+			else
+				resume.append(";" + std::to_string(time(NULL)));
+
+			__COUTV__(resume);
+		}
+		else
+		{
+			__SS__ << "RETRIVE RESUME FROM RUN_INFO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		PQclear(res);
+
+		__COUT__ << "Update run info resume in the run_info Database table" << __E__;
+		snprintf(buffer,
+				sizeof(buffer),
+				"UPDATE public.run_info SET resume_time='%s' WHERE run_number=%d;", resume.c_str(), runNumber);
+
+		res = PQexec(runInfoDbConn, buffer);
+
+		if(PQresultStatus(res) != PGRES_COMMAND_OK)
+		{
+			__SS__ << "RUN INFO RESUME UPDATE INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
+				<< __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+		PQclear(res);
+	}
+
 	// Update run info stop into db
 	if(runInfoDbConnStatus_ == 1
 		&& (runStopType == RunInfoVInterface::RunStopType::HALT
@@ -230,8 +315,8 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 		{
 			note = PQgetvalue(res, 0, 0);
 			note.append(
-				(runStopType == RunInfoVInterface::RunStopType::HALT?"\nRUN end from RUNNING to HALT":
-				(runStopType == RunInfoVInterface::RunStopType::STOP?"\nRUN end from RUNNING to STOP":"\nRUN end for an ERROR"))
+				(runStopType == RunInfoVInterface::RunStopType::HALT?"\nRUN ended from RUNNING to HALT":
+				(runStopType == RunInfoVInterface::RunStopType::STOP?"\nRUN ended from RUNNING to STOP":"\nRUN ended for an ERROR"))
 			);
 			__COUTV__(note);
 		}
