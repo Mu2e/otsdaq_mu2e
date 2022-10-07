@@ -5,8 +5,6 @@
 
 namespace ots
 {
-class ConfigurationManager;
-class DemoDQMHistos;
 
 class DBRunInfo : public RunInfoVInterface
 {

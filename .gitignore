@@ -22,3 +22,4 @@ setupARTDAQOTS
 *.tmp
 *.bk
 *.tmp
+CMakePresets.json

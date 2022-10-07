@@ -1,7 +1,7 @@
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/Macros/BinaryStringMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
-#include "otsdaq/PluginMakers/MakeInterface.h"
+#include "otsdaq/FECore/MakeInterface.h"
 
 using namespace ots;
 
@@ -117,7 +117,8 @@ void CFOandDTCCoreVInterface::universalRead(char* address, char* returnValue)
 // registerRead: return = value read from register at address "address"
 //
 dtc_data_t CFOandDTCCoreVInterface::registerRead(dtc_address_t address)
-{
+{ 	// lock mutex scope
+	std::lock_guard<std::mutex> lock(readWriteOperationMutex_);
 	reg_access_.access_type = 0;  // 0 = read, 1 = write
 	reg_access_.reg_offset  = address;
 	// __COUTV__(reg_access.reg_offset);
@@ -135,7 +136,8 @@ dtc_data_t CFOandDTCCoreVInterface::registerRead(dtc_address_t address)
 	// if(reg_access_.val == 0xbf80c0c0)
 	// 	__FE_COUT__ << StringMacros::stackTrace() << __E__;
 	return reg_access_.val;
-}  // end registerRead()
+}  // end registerRead() and unlock mutex scope
+
 
 //=====================================================================================
 // universalWrite
@@ -159,13 +161,17 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 // registerWrite: return = value readback from register at address "address"
 dtc_data_t CFOandDTCCoreVInterface::registerWrite(dtc_address_t address, dtc_data_t dataToWrite)
 {
-	reg_access_.access_type = 1;  // 0 = read, 1 = write
-	reg_access_.reg_offset  = address;
-	reg_access_.val = dataToWrite;
+	{// lock mutex scope
+		std::lock_guard<std::mutex> lock(readWriteOperationMutex_);
+		reg_access_.access_type = 1;  // 0 = read, 1 = write
+		reg_access_.reg_offset  = address;
+		reg_access_.val = dataToWrite;
 
-	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
-		__FE_COUT_ERR__ << "ERROR with register write - Does file exist? /dev/mu2e"
-		                << device_ << __E__;
+		if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
+			__FE_COUT_ERR__ << "ERROR with register write - Does file exist? /dev/mu2e"
+							<< device_ << __E__;
+	} // unlock mutex scope
+
 	
 	//do DTC- and CFO-specific readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
 	//	which should leverage common readback verification defined in CFOandDTCCoreVInterface::readbackVerify()
@@ -183,11 +189,13 @@ void CFOandDTCCoreVInterface::readbackVerify(dtc_address_t address, dtc_data_t d
 	switch(address)
 	{
 		case 0x9168: // lowest 8-bits are the I2C read value. So ignore in write validation
-			dataToWrite		&= 0xffffff00; 
-			readbackValue 	&= 0xffffff00; 
+			// FIXME (Iris): bits 8-16 are sometimes different than expected. Avoid comparing those too
+			dataToWrite		&= 0xffff0000; 
+			readbackValue 	&= 0xffff0000; 
 			break;
 		case 0x9100: //bit 31 is reset bit, which is write only 
-			dataToWrite		&= 0x7fffffff; 
+			dataToWrite		&= 0x7fffffff;
+			readbackValue   &= 0x7fffffff; 
 			break;
 		default:; // do direct comparison
 	} //end readback verification address case handling

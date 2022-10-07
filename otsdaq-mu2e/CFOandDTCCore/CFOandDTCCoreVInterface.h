@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <mutex>
 //#include "dtcInterfaceLib/DTC.h"
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
@@ -72,7 +73,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	bool        						configure_clock_       = 0;
 	std::string 						device_name_;
 	bool      							emulatorMode_;
-
+	std::mutex 							readWriteOperationMutex_;
 
 	m_ioc_reg_access_t 					reg_access_;
 	unsigned 							initial_9100_ 				= 0;
@@ -84,6 +85,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void 								GetFirmwareVersion			(__ARGS__);
 	std::string							GetFirmwareVersion			(void);
 	void 								GetStatus					(__ARGS__);
+
 
 	// clang-format on
 };

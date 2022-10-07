@@ -110,7 +110,7 @@ if [ $copyback_deps == "false" ]; then
     filebase=`basename $file`
     if [[ "${filebase}" =~ "otsdaq_mu2e" ]]; then
         echo "Not deleting ${filebase}"
-    elif [[ "${filebase}" =~ "mu2e_artdaq" ]]; then
+    elif [[ "${filebase}" =~ "artdaq_mu2e" ]]; then
         echo "Not deleting ${filebase}"
     elif [[ "${filebase}" =~ "pcie_linux" ]]; then
         echo "Not deleting ${filebase}"

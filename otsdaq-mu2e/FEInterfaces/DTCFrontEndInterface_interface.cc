@@ -1,7 +1,7 @@
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
 #include "otsdaq/Macros/BinaryStringMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
-#include "otsdaq/PluginMakers/MakeInterface.h"
+#include "otsdaq/FECore/MakeInterface.h"
 
 using namespace ots;
 
@@ -843,6 +843,8 @@ void DTCFrontEndInterface::configure(void) try
 	int config_step    = getIterationIndex();
 	int config_substep = getSubIterationIndex();
 
+	bool isLastTimeThroughConfigure = false;
+
 	if(number_of_system_configs > 0)
 	{
 		if(config_step >= number_of_total_config_steps)  // done, exit system config
@@ -1135,6 +1137,10 @@ void DTCFrontEndInterface::configure(void) try
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"
 		                       << __E__);
 
+
+		__FE_COUTV__(getIterationIndex());
+		__FE_COUTV__(getSubIterationIndex());
+
 		if(checkLinkStatus() == 1)
 		{
 			__MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex
@@ -1146,23 +1152,40 @@ void DTCFrontEndInterface::configure(void) try
 
 			if(number_of_system_configs < 0)
 			{
+				isLastTimeThroughConfigure = true;
 				// do a final DTC Reset
 	  			__MCOUT_INFO__("Last step in configuration; doing DTCReset" << __E__);
 	  			DTCReset();
-				return;  // links OK, kick out of configure
 			}
 		}
 		else if(config_step > max_number_of_tries)
 		{
-			__MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex
-			                            << registerRead(0x9140) << std::dec << __E__);
-			return;
+			isLastTimeThroughConfigure = true;
+			__MCOUT_INFO__(device_name_ << " after " << max_number_of_tries <<
+				" tries, links not OK 0x" << std::hex
+				<< registerRead(0x9140) << std::dec << __E__);						
 		}
 		else
 		{
 			__MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex
 			                            << registerRead(0x9140) << std::dec << __E__);
 		}
+
+		
+		__FE_COUTV__(isLastTimeThroughConfigure);
+		if(isLastTimeThroughConfigure)
+		{
+			sleep(5);
+			//write anything to reset
+			//0x93c8 is RX CDR Unlock counter (32-bit)
+			__MCOUT_INFO__("LAST STEP!! Reset Loss-of-Lock Counter() on DTC");
+
+			registerWrite(0x93c8, 0); 
+				
+			return;  // links OK, kick out of configure OR link tries complete
+		}
+
+
 	}
 
 	readStatus();  // spit out link status at every step
@@ -1170,7 +1193,10 @@ void DTCFrontEndInterface::configure(void) try
 	indicateIterationWork();  // otherwise, tell state machine to stay in configure
 	                          // state ("come back to me")
 
+	
 	turnOffLED();
+
+
 	return;
 }  // end configure()
 catch(const std::runtime_error& e)
