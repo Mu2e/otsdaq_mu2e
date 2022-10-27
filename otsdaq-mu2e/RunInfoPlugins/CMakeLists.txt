@@ -1,11 +1,7 @@
-basic_plugin(DBRunInfo "runinfo"
-    Configurable	
-	Macros
-	$ENV{POSTGRESQL_LIBRARIES}/libpq.so
-    ConfigurationInterface
-    TableCore
-	${ROOT_BASIC_LIB_LIST}
-	${MF_MESSAGELOGGER}
+include(otsdaq::runInfo)
+
+include_directories(${PostgreSQL_INCLUDE_DIRS})
+cet_build_plugin(DBRunInfo otsdaq::runInfo LIBRARIES REG ${PostgreSQL_LIBRARIES}
   )
   
 install_headers()

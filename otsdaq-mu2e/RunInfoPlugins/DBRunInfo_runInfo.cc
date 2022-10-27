@@ -154,8 +154,63 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 		runInfoDbConnStatus_ = 1;
 	}
 
-	// Update run info into db
-	if(runInfoDbConnStatus_ == 1)
+	// Update run info pause into db
+	if(runInfoDbConnStatus_ == 1 && runStopType == RunInfoVInterface::RunStopType::PAUSE)
+	{
+		PGresult* res;
+		char      buffer[1024];
+		std::string pause = "";
+
+		snprintf(buffer, sizeof(buffer),  "select pause_time from public.run_info where run_number=%d ;", runNumber);
+		res = PQexec(runInfoDbConn, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "RUN INFO PAUSE SELECT FROM DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		if(PQntuples(res) == 1)
+		{
+			pause = PQgetvalue(res, 0, 0);
+			if (pause=="")
+				pause.append(std::to_string(time(NULL)));
+			else
+				pause.append(";" + std::to_string(time(NULL)));
+
+			__COUTV__(pause);
+		}
+		else
+		{
+			__SS__ << "RETRIVE PAUSE FROM RUN_INFO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		PQclear(res);
+
+		__COUT__ << "Update run info pause in the run_info Database table" << __E__;
+		snprintf(buffer,
+				sizeof(buffer),
+				"UPDATE public.run_info SET pause_time='%s' WHERE run_number=%d;", pause.c_str(), runNumber);
+
+		res = PQexec(runInfoDbConn, buffer);
+
+		if(PQresultStatus(res) != PGRES_COMMAND_OK)
+		{
+			__SS__ << "RUN INFO PAUSE UPDATE INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
+				<< __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+		PQclear(res);
+	}
+
+	// Update run info stop into db
+	if(runInfoDbConnStatus_ == 1
+		&& (runStopType == RunInfoVInterface::RunStopType::HALT
+		|| runStopType == RunInfoVInterface::RunStopType::STOP))
 	{
 		PGresult* res;
 		char      buffer[1024];
@@ -198,7 +253,7 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 
 		if(PQresultStatus(res) != PGRES_COMMAND_OK)
 		{
-			__SS__ << "RUN INFO UPDATE INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
+			__SS__ << "RUN INFO STOP UPDATE INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
 				<< __E__;
 			PQclear(res);
 			__SS_THROW__;
