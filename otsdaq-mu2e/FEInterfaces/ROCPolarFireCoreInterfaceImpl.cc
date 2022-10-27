@@ -1,6 +1,7 @@
 #include "otsdaq-mu2e/FEInterfaces/ROCPolarFireCoreInterface.h"
 
 using namespace ots;
+
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "FE-ROCPolarFireCoreInterface"
 
@@ -188,6 +189,8 @@ void ROCPolarFireCoreInterface::configure(void) try
 		}
 	}
 
+	__MCOUT_INFO__("......... reset DTC link loss counter ... ");
+	resetDTCLinkLossCounter();
 }  // end configure()
 catch(const std::runtime_error& e)
 {
@@ -227,3 +230,4 @@ void ROCPolarFireCoreInterface::stop(void) {}
 
 //==============================================================================
 bool ROCPolarFireCoreInterface::running(void) { return false; }
+
