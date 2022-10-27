@@ -3,6 +3,9 @@
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq/PluginMakers/MakeInterface.h"
 
+#include <fstream>
+
+
 using namespace ots;
 
 #undef __MF_SUBJECT__
@@ -10,6 +13,13 @@ using namespace ots;
 // some global variables, probably a bad idea. But temporary
 std::string RunDataFN = "";
 std::fstream DataFile;
+
+
+//new code by Marco
+std::ofstream DTC_write;
+
+//end of new code 
+
 
 
 
@@ -643,6 +653,16 @@ dtc_data_t DTCFrontEndInterface::registerWrite(dtc_address_t address, dtc_data_t
 
 	//do DTC-specific readback verification here...
 
+
+	//new code by Marco (TO BE DELETED)
+	std::stringstream fnss;
+	fnss << device_name_ << ".txt";
+	
+	DTC_write.open(fnss.str().c_str(), std::ios::app);
+	DTC_write << "Timestamp:" << time(0) << "," << "address:" << address << "," << "dataToWrite:" << dataToWrite << "\n";
+	DTC_write.close();
+	//end of new code by Marco
+
 	dtc_data_t i = -1; //use for counters or mask (default mask to all 1s with -1)
 	switch(address)
 	{
@@ -800,7 +820,32 @@ void DTCFrontEndInterface::configure(void) try
 {
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
-	
+
+
+
+	// From Rick new code
+	uint32_t dtcEventBuilderReg_DTCID = 0;
+    uint32_t dtcEventBuilderReg_Configuration = 0;
+        try
+          {
+            dtcEventBuilderReg_DTCID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+            dtcEventBuilderReg_Configuration = getSelfNode().getNode("EventBuilderConfiguration").getValue<uint32_t>(
+			);
+            __FE_COUTV__(dtcEventBuilderReg_DTCID);
+            __FE_COUTV__(dtcEventBuilderReg_Configuration);
+            registerWrite(0x9154, dtcEventBuilderReg_DTCID);
+            registerWrite(0x9158, dtcEventBuilderReg_Configuration);
+
+			
+          }
+        catch(...)
+          {
+            __FE_COUT_INFO__ << "Ignoring missing event building configuration values." << __E__;
+          }
+	// end of the new code
+
+
+
 	if(getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
 	        .getValue<bool>())
@@ -844,6 +889,15 @@ void DTCFrontEndInterface::configure(void) try
 	int config_substep = getSubIterationIndex();
 
 	bool isLastTimeThroughConfigure = false;
+
+	//new code by Marco (TO BE DELETED)
+	std::stringstream fnss;
+	fnss << device_name_ << ".txt";
+
+	DTC_write.open(fnss.str().c_str(), std::ios::app);
+	DTC_write << "start configure step" << config_step << "\n";
+	DTC_write.close();
+	//end of new code by Marco
 
 	if(number_of_system_configs > 0)
 	{
@@ -901,7 +955,7 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if(config_substep > max_number_of_tries)
 	{
-		// wait a maximum of 30 seconds, then stop waiting for them
+		//wait a maximum of 30 seconds, then stop waiting for them
 
 		__FE_COUT__ << "Links still bad = 0x" << std::hex << registerRead(0x9140)
 		            << std::dec << "... continue" << __E__;
@@ -914,7 +968,8 @@ void DTCFrontEndInterface::configure(void) try
 
 	if((config_step % number_of_dtc_config_steps) == 0)
 	{
-		__FE_COUTV__(GetFirmwareVersion());
+		
+				__FE_COUTV__(GetFirmwareVersion());
 		if(reset_fpga == 1 && config_step < number_of_dtc_config_steps)
 		{
 			// only reset the FPGA the first time through
@@ -923,11 +978,14 @@ void DTCFrontEndInterface::configure(void) try
 
 			DTCReset();
 		}
+		
+		
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
-		__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
-				<< " select/setup clock..." << __E__;
+		
+		__FE_COUT_INFO__ << "Step" << config_step << ": " << device_name_
+				<< "select/setup clock..." << __E__;
 
 		//choose jitter attenuator input select (reg 0x9308, bits 5:4)
 		// 0 is Upstream Control Link Rx Recovered Clock
@@ -1010,16 +1068,16 @@ void DTCFrontEndInterface::configure(void) try
 	else if((config_step % number_of_dtc_config_steps) == 2)
 	{
 		// configure Jitter Attenuator to recover clock
-
 		if((config_jitter_attenuator == 1 || emulate_cfo_ == 1) &&
 		   config_step < number_of_dtc_config_steps)
 		{
 			__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 			                       << " configure Jitter Attenuator..." << __E__);
 
+			//It's needed only after a powercycle
 			configureJitterAttenuator();
 
-			// usleep(500000 /*500ms*/); 
+			usleep(500000 /*500ms*/); 
 			sleep(5);
 		}
 		else
@@ -1030,6 +1088,7 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 3)
 	{
+		//if we skip this step the DTC doesn't lock
 		// reset CFO links, first what is received from upstream, then what is
 		// transmitted downstream
 
@@ -1041,10 +1100,10 @@ void DTCFrontEndInterface::configure(void) try
 			int dataToWrite = 0x40808404;  // new incantation from Rick K.(disable retransmission) 12/18/2019m
 			registerWrite(0x9100, dataToWrite);
 
-			__FE_COUT__ << ".......  CFO emulation: set time between Event Windows" << __E__;
-			registerWrite(0x91f0, 0x4e20);
+		//	__FE_COUT__ << ".......  CFO emulation: set time between Event Windows" << __E__;
+		//	registerWrite(0x91f0, 0x4e20);
 
-			__FE_COUT__ << ".......  CFO emulation: time between data requests" << __E__;
+			__FE_COUT__ << ".......CFO emulation: time between data requests" << __E__;
 			registerWrite(0x91a8, 0x4e20);
 		}
 		else
@@ -1057,9 +1116,11 @@ void DTCFrontEndInterface::configure(void) try
 		}
 
 		// removed RESET OF CFO LINK - SHOULD NOT BE NECESSARY with firmware version 20181024.
+		
 	}
 	else if((config_step % number_of_dtc_config_steps) == 4)
 	{
+		/*
 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
 		                       << " wait for links..." << __E__);
 
@@ -1069,6 +1130,7 @@ void DTCFrontEndInterface::configure(void) try
 		                             // ("come back to me")
 
 		return;
+		*/
 	}
 	else if((config_step % number_of_dtc_config_steps) == 5)
 	{
@@ -1118,6 +1180,7 @@ void DTCFrontEndInterface::configure(void) try
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
+		
 		if(emulate_cfo_ == 1)
 		{
 			__MCOUT_INFO__("Step " << config_step
@@ -1141,12 +1204,13 @@ void DTCFrontEndInterface::configure(void) try
 		__FE_COUTV__(getIterationIndex());
 		__FE_COUTV__(getSubIterationIndex());
 
+		
 		if(checkLinkStatus() == 1)
 		{
 			__MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex
 			                            << registerRead(0x9140) << std::dec << __E__);
 
-			// usleep(500000 /*500ms*/); 
+			// usleep(500000 ); //500ms/
 			sleep(1);
 			turnOffLED();
 
@@ -1184,8 +1248,8 @@ void DTCFrontEndInterface::configure(void) try
 				
 			return;  // links OK, kick out of configure OR link tries complete
 		}
-
-
+		
+		
 	}
 
 	readStatus();  // spit out link status at every step
@@ -1269,7 +1333,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
 
 	__FE_COUT__ << "Run data FN is: "<< RunDataFN;
-	if (!DataFile.is_open()) {
+	if (!DataFile.is_open()){
 	  DataFile.open (RunDataFN, std::ios::out | std::ios::app);
 	  
 	  if (DataFile.fail()) {

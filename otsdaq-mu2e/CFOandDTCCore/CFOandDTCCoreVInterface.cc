@@ -130,7 +130,7 @@ dtc_data_t CFOandDTCCoreVInterface::registerRead(dtc_address_t address)
 		__SS_THROW__;
 	}
 
-	__FE_COUT__	<< "READ  address: 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << reg_access_.reg_offset 
+	__FE_COUT__	<< time(0) << " READ  address: 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << reg_access_.reg_offset 
 				<< " \t read-value:  0x" << std::setw(8) << std::setprecision(8) << std::hex << reg_access_.val << __E__;
 
 	// if(reg_access_.val == 0xbf80c0c0)

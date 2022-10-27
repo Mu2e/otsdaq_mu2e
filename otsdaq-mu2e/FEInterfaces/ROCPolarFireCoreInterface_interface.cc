@@ -190,8 +190,6 @@ void ROCPolarFireCoreInterface::configure(void) try
 		}
 	}
 
-	__MCOUT_INFO__("......... reset DTC link loss counter ... ");
-	resetDTCLinkLossCounter();
 }  // end configure()
 catch(const std::runtime_error& e)
 {
