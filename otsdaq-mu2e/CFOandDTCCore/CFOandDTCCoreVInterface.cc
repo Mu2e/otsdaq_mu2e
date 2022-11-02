@@ -83,7 +83,18 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
 					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Check Link Loss-of-Light",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetLinkLossOfLight),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Status"},
+					1);  // requiredUserPermissions
+
 	// clang-format on
+
+	
 } //end registerCFOandDTCFEMacros()
 
 //==========================================================================================
@@ -188,10 +199,14 @@ void CFOandDTCCoreVInterface::readbackVerify(dtc_address_t address, dtc_data_t d
 {
 	switch(address)
 	{
-		case 0x9168: // lowest 8-bits are the I2C read value. So ignore in write validation
-			// FIXME (Iris): bits 8-16 are sometimes different than expected. Avoid comparing those too
+		case 0x9168: // lowest 16-bits are the I2C read value. So ignore in write validation			
+		case 0x9298:
 			dataToWrite		&= 0xffff0000; 
 			readbackValue 	&= 0xffff0000; 
+			break;
+		case 0x93a0: // upper 16-bits are part of I2C operation. So ignore in write validation			
+			dataToWrite		&= 0x0000ffff; 
+			readbackValue 	&= 0x0000ffff; 
 			break;
 		case 0x9100: //bit 31 is reset bit, which is write only 
 			dataToWrite		&= 0x7fffffff;
@@ -1749,3 +1764,77 @@ void CFOandDTCCoreVInterface::GetStatus(__ARGS__)
 	//call virtual readStatus
 	__SET_ARG_OUT__("Status",readStatus());
 } //end GetStatus()
+
+//========================================================================
+void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)
+{	
+	std::stringstream rd;
+
+	// #Read Firefly RX LOS registers
+	// #enable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// #Device address, register address, null, null
+	// my_cntl write 0x9298 0x54080000
+	registerWrite(0x9298,0x54080000);
+	// #read enable
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// #disable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// #read data: Device address, register address, null, value
+	// my_cntl read 0x9298
+
+	usleep(1000*100);
+	//repeat set of writes, do the live read of loss-of-light status (because it is latched value from last read)
+	registerWrite(0x93a0,0x00000200);
+	registerWrite(0x9298,0x54080000);
+	registerWrite(0x929c,0x00000002);
+	registerWrite(0x93a0,0x00000000);
+	dtc_data_t val = registerRead(0x9298);
+
+
+	// Link 1 #ROC1 bit 5
+	rd << "Link 1 (" << (((val>>(0+5))&1)?"No Light":"Light");
+	// #ROC4 bit 6
+	rd << "Link 4 (" << (((val>>(0+6))&1)?"No Light":"Light");
+	// #ROC5 bit 1
+	rd << "Link 5 (" << (((val>>(0+1))&1)?"No Light":"Light");
+	// #EVB bit 7  Are EVB and CFO reversed?
+	rd << "Link 7 (" << (((val>>(0+7))&1)?"No Light":"Light");
+	// #CFO bit 4
+	rd << "Link 6 (" << (((val>>(0+4))&1)?"No Light":"Light");
+
+	// #{EVB, ROC4, ROC1, CFO, unused, ROC5, unused, unused}
+
+	// #Read Firefly RX LOS registers
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// my_cntl write 0x9298 0x54070000
+	registerWrite(0x9298,0x54070000);
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// my_cntl read 0x9298
+	
+	usleep(1000*100);
+	//repeat set of writes, do the live read of loss-of-light status (because it is latched value from last read)
+	registerWrite(0x93a0,0x00000200);
+	registerWrite(0x9298,0x54070000);
+	registerWrite(0x929c,0x00000002);
+	registerWrite(0x93a0,0x00000000);
+	val = registerRead(0x9298);
+
+	// #ROC0 bit 3
+	rd << "Link 0 (" << (((val>>(0+3))&1)?"No Light":"Light");
+	// #ROC2 bit 2
+	rd << "Link 2 (" << (((val>>(0+2))&1)?"No Light":"Light");
+	// #ROC3 bit 0
+	rd << "Link 3 (" << (((val>>(0+0))&1)?"No Light":"Light");
+
+
+
+	__SET_ARG_OUT__("Status",rd.str());
+} //end GetLinkLossOfLight()
