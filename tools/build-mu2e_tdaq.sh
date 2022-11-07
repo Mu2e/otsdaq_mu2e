@@ -112,6 +112,8 @@ if [ $copyback_deps == "false" ]; then
         echo "Not deleting ${filebase}"
     elif [[ "${filebase}" =~ "artdaq_mu2e" ]]; then
         echo "Not deleting ${filebase}"
+    elif [[ "${filebase}" =~ "artdaq_core_mu2e" ]]; then
+        echo "Not deleting ${filebase}"
     elif [[ "${filebase}" =~ "pcie_linux" ]]; then
         echo "Not deleting ${filebase}"
     else
