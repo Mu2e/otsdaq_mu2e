@@ -432,32 +432,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
 	
-	registerFEMacroFunction(
-		"Reset Link Rx",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::ResetLinkRx),
-				        std::vector<std::string>{"Link to Reset (0-7, 6 is Control)"},
-						std::vector<std::string>{"Register Write Results"},
-					1);  // requiredUserPermissions
-					
-	registerFEMacroFunction(
-		"Shutdown Link Tx",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::ShutdownLinkTx),
-				        std::vector<std::string>{"Link to Shutdown (0-7, 6 is Control)"},
-					std::vector<std::string>{						
-						"Reset Status",
-						"Link Reset Register"},
-					1);  // requiredUserPermissions
-	registerFEMacroFunction(
-		"Startup Link Tx",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::StartupLinkTx),
-					std::vector<std::string>{"Link to Startup (0-7, 6 is Control)"},
-					std::vector<std::string>{						
-						"Reset Status",
-						"Link Reset Register"},
-					1);  // requiredUserPermissions
 					
 	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
 		
@@ -2331,8 +2305,13 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	sprintf(readDataStr,"%d",readData);
 
 	//0x9140 bit-6 is RX CDR is locked
-	readData = registerRead(0x9140); 
-	bool isUpstreamLocked = (readData >> 6)&1;
+	
+	bool isUpstreamLocked = 1;
+	for(int i=0;i<5;++i)
+	{
+		readData = registerRead(0x9140); 
+	 	isUpstreamLocked &= (readData >> 6)&1; //& to force unlocked for any unlocked reading
+	}
 	//__SET_ARG_OUT__("Upstream Rx CDR Lock Status",isUpstreamLocked?"LOCKED":"Not Locked");
 
 	//0x9128 bit-6 is RX PLL
@@ -2371,8 +2350,12 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",readDataStr);
 	
 	//0x9140 bit-6 is RX CDR is locked
-	readData = registerRead(0x9140); 
-	bool isUpstreamLocked = (readData >> 6)&1;
+	bool isUpstreamLocked = 1;
+	for(int i=0;i<5;++i)
+	{
+		readData = registerRead(0x9140); 
+	 	isUpstreamLocked &= (readData >> 6)&1; //& to force unlocked for any unlocked reading
+	}
 	__SET_ARG_OUT__("Upstream Rx CDR Lock Status",isUpstreamLocked?"LOCKED":"Not Locked");
 	
 	//0x9128 bit-6 is RX PLL
@@ -2385,7 +2368,7 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 	//0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
 	readData = registerRead(0x9308); 
 	uint32_t val = (readData >> 0)&1;
-	__SET_ARG_OUT__("Jitter Attenuator Reset",val?"RESET":"Not Reset");
+	__SET_ARG_OUT__("Jitter Attenuator Reset",val?"Held in RESET":"OK"); //OK = not in reset
 	val = (readData >> 4)&3;
 	__SET_ARG_OUT__("Jitter Attenuator Input Select",val==0?
 		"Upstream Control Link Rx Recovered Clock":
@@ -2418,56 +2401,6 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 	
 } //end GetUpstreamControlLinkStatus()
 
-//========================================================================
-void DTCFrontEndInterface::ResetLinkRx(__ARGS__)
-{	
-	uint32_t link = __GET_ARG_IN__("Link to Reset (0-7, 6 is Control)", uint32_t);
-	link %= 8;
-	__FE_COUTV__((unsigned int)link);
-
-	// 0x9118 controls link resets
-	//	bit-7:0 SERDES reset
-	//	bit-15:8 PLL reset
-	//	bit-23:16 RX reset
-	//	bit-31:24 TX reset
-
-	char reg_0x9118[100];
-	uint32_t val = registerRead(0x9118);
-	std::stringstream results;
-
-	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
-	results << "reg_0x9118 Starting Value: " << reg_0x9118 << __E__;
-
-	val |= 1 << (16 + link);
-	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
-	results << "Link " << link << " RX reset: " << reg_0x9118 << __E__;
-	registerWrite(0x9118, val);  // RX reset
-
-	sleep(1);
-
-	val &= ~(1 << (16 + link));
-	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
-	results << "Link " << link << " RX unreset: " << reg_0x9118 << __E__;
-	registerWrite(0x9118, val);  // RX unreset
-
-	sleep(1);
-
-	val |= 1 << (8 + link);
-	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
-	results << "Link " << link << " PLL reset: " << reg_0x9118 << __E__;
-	registerWrite(0x9118, val);  // PLL reset
-
-	sleep(1);
-
-	val &= ~(1 << (8 + link));
-	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
-	results << "Link " << link << " PLL unreset: " << reg_0x9118 << __E__;
-	registerWrite(0x9118, val);  // PLL unreset
-
-	__SET_ARG_OUT__("Register Write Results",results.str());
-	__FE_COUT__ << "Done with reset link Rx: " << link << __E__;
-
-} //end ResetLinkRx()
 
 //========================================================================
 void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
@@ -2506,96 +2439,6 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 
 } //end SelectJitterAttenuatorSource()
 
-//========================================================================
-// first arg must be link index or '*'
-void DTCFrontEndInterface::ShutdownLinkTx(__ARGS__)
-{	
-	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
-	link %= 8;
-
-	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
-	if(linkStr == "*")
-	{
-		//do all links!
-		__FE_COUT__ << "* found, so doing all links!" << __E__;
-		link = (0xFF<<24);
-	}
-	else
-	{
-		__FE_COUTV__((unsigned int)link);
-		link = (1<<(24+link));
-	}
-	
-	//0x9118 controls link resets
-	//	bit-7:0 SERDES reset
-	//	bit-15:8 PLL reset
-	//	bit-23:16 RX reset
-	//	bit-31:24 TX reset
-	
-	registerWrite(0x9118,link);  
-	
-	uint32_t val = registerRead(0x9118); 
-	
-	std::stringstream rd;
-	rd << "Link " << link << " SERDES reset (" << (((val>>(0+link))&1)?"RESET":"Not Reset");
-	rd << "), \nLink " << link << "PLL reset (" << (((val>>(8+link))&1)?"RESET":"Not Reset");
-	rd << "), \nLink " << link << "RX reset (" << (((val>>(16+link))&1)?"RESET":"Not Reset");
-	rd << "), \nLink " << link << "TX reset (" << (((val>>(24+link))&1)?"RESET":"Not Reset");	
-	rd << ")";
-	__SET_ARG_OUT__("Reset Status",rd.str());
-	
-	char readDataStr[100];
-	sprintf(readDataStr,"0x%8.8X",val);
-	__SET_ARG_OUT__("Link Reset Register",readDataStr);
-	
-} //end ShutdownLinkTx()
-
-//========================================================================
-// first arg must be link index or '*'
-void DTCFrontEndInterface::StartupLinkTx(__ARGS__)
-{	
-	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
-	link %= 8;
-
-	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
-	if(linkStr == "*")
-	{
-		//do all links!
-		__FE_COUT__ << "* found, so doing all links!" << __E__;
-		link = (0xFF<<24);
-	}
-	else
-	{
-		__FE_COUTV__((unsigned int)link);
-		link = (1<<(24+link));
-	}
-	
-	//0x9118 controls link resets
-	//	bit-7:0 SERDES reset
-	//	bit-15:8 PLL reset
-	//	bit-23:16 RX reset
-	//	bit-31:24 TX reset
-	
-	uint32_t val = registerRead(0x9118); 
-	uint32_t mask = ~link;
-	
-	registerWrite(0x9118, val&mask);  
-	
-	val = registerRead(0x9118); 
-	
-	std::stringstream rd;
-	rd << "Control Link SERDES reset (" << (((val>>(0+6))&1)?"RESET":"Not Reset");
-	rd << "), \nControl Link PLL reset (" << (((val>>(8+6))&1)?"RESET":"Not Reset");
-	rd << "), \nControl Link RX reset (" << (((val>>(16+6))&1)?"RESET":"Not Reset");
-	rd << "), \nControl Link TX reset (" << (((val>>(24+6))&1)?"RESET":"Not Reset");
-	rd << ")";
-	__SET_ARG_OUT__("Reset Status",rd.str());
-	
-	char readDataStr[100];
-	sprintf(readDataStr,"0x%8.8X",val);
-	__SET_ARG_OUT__("Link Reset Register",readDataStr);
-	
-} //end StartupDownstreaControlLink()
 
 //========================================================================
 void DTCFrontEndInterface::WriteDTC(__ARGS__)

@@ -89,7 +89,59 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOandDTCCoreVInterface::GetLinkLossOfLight),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Status"},
+					std::vector<std::string>{"Link Status"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Check Firefly Temperature",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetFireflyTemperature),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Temperature"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Reset Link Rx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::ResetLinkRx),
+				        std::vector<std::string>{"Link to Reset (0-7, 6/CFO, 7/EVB)"},
+						std::vector<std::string>{"Register Write Results"},
+					1);  // requiredUserPermissions
+					
+	registerFEMacroFunction(
+		"Shutdown Link Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::ShutdownLinkTx),
+				        std::vector<std::string>{"Link to Shutdown (0-7, 6/CFO, 7/EVB)"},
+					std::vector<std::string>{						
+						"Reset Status",
+						"Link Reset Register"},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Startup Link Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::StartupLinkTx),
+					std::vector<std::string>{"Link to Startup (0-7, 6/CFO, 7/EVB)"},
+					std::vector<std::string>{						
+						"Reset Status",
+						"Link Reset Register"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Shutdown Firefly Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::ShutdownFireflyTx),
+					std::vector<std::string>{"Link to Shutdown (0-7, 6/CFO, 7/EVB)"},
+					std::vector<std::string>{						
+						"Shutdown Status"},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Startup Firefly Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::StartupFireflyTx),
+					std::vector<std::string>{"Link to Startup (0-7, 6/CFO, 7/EVB)"},
+					std::vector<std::string>{						
+						"Startup Status"},
 					1);  // requiredUserPermissions
 
 	// clang-format on
@@ -1770,6 +1822,9 @@ void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)
 {	
 	std::stringstream rd;
 
+
+	//do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
+
 	// #Read Firefly RX LOS registers
 	// #enable IIC on Firefly
 	// my_cntl write 0x93a0 0x00000200
@@ -1786,27 +1841,8 @@ void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)
 	// #read data: Device address, register address, null, value
 	// my_cntl read 0x9298
 
-	usleep(1000*100);
-	//repeat set of writes, do the live read of loss-of-light status (because it is latched value from last read)
-	registerWrite(0x93a0,0x00000200);
-	registerWrite(0x9298,0x54080000);
-	registerWrite(0x929c,0x00000002);
-	registerWrite(0x93a0,0x00000000);
-	dtc_data_t val = registerRead(0x9298);
-
-
-	// Link 1 #ROC1 bit 5
-	rd << "Link 1 (" << (((val>>(0+5))&1)?"No Light":"Light");
-	// #ROC4 bit 6
-	rd << "Link 4 (" << (((val>>(0+6))&1)?"No Light":"Light");
-	// #ROC5 bit 1
-	rd << "Link 5 (" << (((val>>(0+1))&1)?"No Light":"Light");
-	// #EVB bit 7  Are EVB and CFO reversed?
-	rd << "Link 7 (" << (((val>>(0+7))&1)?"No Light":"Light");
-	// #CFO bit 4
-	rd << "Link 6 (" << (((val>>(0+4))&1)?"No Light":"Light");
-
 	// #{EVB, ROC4, ROC1, CFO, unused, ROC5, unused, unused}
+	usleep(1000*100);
 
 	// #Read Firefly RX LOS registers
 	// my_cntl write 0x93a0 0x00000200
@@ -1818,23 +1854,327 @@ void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)
 	// my_cntl write 0x93a0 0x00000000
 	registerWrite(0x93a0,0x00000000);
 	// my_cntl read 0x9298
+
+	//END do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
+
+	dtc_data_t val=0, val2=0;
+	for(int i=0;i<5;++i)
+	{
+		usleep(1000*100 /* 100 ms */);
+		registerWrite(0x93a0,0x00000200);
+		registerWrite(0x9298,0x54080000);
+		registerWrite(0x929c,0x00000002);
+		registerWrite(0x93a0,0x00000000);
+		val |= registerRead(0x9298); //OR := if ever 1, mark dead
+
 	
-	usleep(1000*100);
-	//repeat set of writes, do the live read of loss-of-light status (because it is latched value from last read)
-	registerWrite(0x93a0,0x00000200);
-	registerWrite(0x9298,0x54070000);
-	registerWrite(0x929c,0x00000002);
-	registerWrite(0x93a0,0x00000000);
-	val = registerRead(0x9298);
+		
+		usleep(1000*100 /* 100 ms */);
+		//repeat set of writes, do the live read of loss-of-light status (because it is latched value from last read)
+		registerWrite(0x93a0,0x00000200);
+		registerWrite(0x9298,0x54070000);
+		registerWrite(0x929c,0x00000002);
+		registerWrite(0x93a0,0x00000000);
+	 	val2 |= registerRead(0x9298); //OR := if ever 1, mark dead
+	} //end multi-read to check for strange value changing
 
 	// #ROC0 bit 3
-	rd << "Link 0 (" << (((val>>(0+3))&1)?"No Light":"Light");
+	rd << "{0:" << (((val2>>(0+3))&1)?"DEAD":"OK");
+	// Link 1 #ROC1 bit 5
+	rd << ", 1: " << (((val>>(0+5))&1)?"DEAD":"OK");
 	// #ROC2 bit 2
-	rd << "Link 2 (" << (((val>>(0+2))&1)?"No Light":"Light");
+	rd << ", 2:" << (((val2>>(0+2))&1)?"DEAD":"OK");
 	// #ROC3 bit 0
-	rd << "Link 3 (" << (((val>>(0+0))&1)?"No Light":"Light");
+	rd << ", 3:" << (((val2>>(0+0))&1)?"DEAD":"OK");
+	// #ROC4 bit 6
+	rd << ", 4: " << (((val>>(0+6))&1)?"DEAD":"OK");
+	// #ROC5 bit 1
+	rd << ", 5: " << (((val>>(0+1))&1)?"DEAD":"OK");
+	// #CFO bit 4
+	rd << ", 6/CFO: " << (((val>>(0+4))&1)?"DEAD":"OK");
+	// #EVB bit 7  Are EVB and CFO reversed?
+	rd << ", 7/EVB: " << (((val>>(0+7))&1)?"DEAD":"OK") << "}";
 
 
 
-	__SET_ARG_OUT__("Status",rd.str());
+
+
+	__SET_ARG_OUT__("Link Status",rd.str());
 } //end GetLinkLossOfLight()
+
+//========================================================================
+void CFOandDTCCoreVInterface::GetFireflyTemperature(__ARGS__)
+{	
+	std::stringstream rd;
+
+	// #Read Firefly RX temp registers
+	// #enable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// #Device address, register address, null, null
+	// my_cntl write 0x9298 0x54160000
+	registerWrite(0x9298,0x54160000);
+	// #read enable
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// #disable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// #read data: Device address, register address, null, temp in 2's compl.
+	// my_cntl read 0x9298
+	dtc_data_t val = registerRead(0x9298) & 0x0FF;
+	rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
+
+	__SET_ARG_OUT__("Temperature",rd.str());
+} //end GetFireflyTemperature()
+
+
+//========================================================================
+void CFOandDTCCoreVInterface::ResetLinkRx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
+	link %= 8;
+	__FE_COUTV__((unsigned int)link);
+
+	// 0x9118 controls link resets
+	//	bit-7:0 SERDES reset
+	//	bit-15:8 PLL reset
+	//	bit-23:16 RX reset
+	//	bit-31:24 TX reset
+
+	char reg_0x9118[100];
+	uint32_t val = registerRead(0x9118);
+	std::stringstream results;
+
+	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
+	results << "reg_0x9118 Starting Value: " << reg_0x9118 << __E__;
+
+	val |= 1 << (16 + link);
+	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
+	results << "Link " << link << " RX reset: " << reg_0x9118 << __E__;
+	registerWrite(0x9118, val);  // RX reset
+
+	sleep(1);
+
+	val &= ~(1 << (16 + link));
+	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
+	results << "Link " << link << " RX unreset: " << reg_0x9118 << __E__;
+	registerWrite(0x9118, val);  // RX unreset
+
+	sleep(1);
+
+	val |= 1 << (8 + link);
+	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
+	results << "Link " << link << " PLL reset: " << reg_0x9118 << __E__;
+	registerWrite(0x9118, val);  // PLL reset
+
+	sleep(1);
+
+	val &= ~(1 << (8 + link));
+	sprintf(reg_0x9118,"0x%8.8X",val); __FE_COUTV__(reg_0x9118);
+	results << "Link " << link << " PLL unreset: " << reg_0x9118 << __E__;
+	registerWrite(0x9118, val);  // PLL unreset
+
+	__SET_ARG_OUT__("Register Write Results",results.str());
+	__FE_COUT__ << "Done with reset link Rx: " << link << __E__;
+
+} //end ResetLinkRx()
+
+//========================================================================
+// first arg must be link index or '*'
+void CFOandDTCCoreVInterface::ShutdownLinkTx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
+	link %= 8;
+
+	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
+	if(linkStr == "*")
+	{
+		//do all links!
+		__FE_COUT__ << "* found, so doing all links!" << __E__;
+		link = (0xFF<<24);
+	}
+	else
+	{
+		__FE_COUTV__((unsigned int)link);
+		link = (1<<(24+link));
+	}
+	
+	//0x9118 controls link resets
+	//	bit-7:0 SERDES reset
+	//	bit-15:8 PLL reset
+	//	bit-23:16 RX reset
+	//	bit-31:24 TX reset
+	
+	registerWrite(0x9118,link);  
+	
+	uint32_t val = registerRead(0x9118); 
+	
+	std::stringstream rd;
+	rd << "Link " << link << " SERDES reset (" << (((val>>(0+link))&1)?"RESET":"Not Reset");
+	rd << "), \nLink " << link << "PLL reset (" << (((val>>(8+link))&1)?"RESET":"Not Reset");
+	rd << "), \nLink " << link << "RX reset (" << (((val>>(16+link))&1)?"RESET":"Not Reset");
+	rd << "), \nLink " << link << "TX reset (" << (((val>>(24+link))&1)?"RESET":"Not Reset");	
+	rd << ")";
+	__SET_ARG_OUT__("Reset Status",rd.str());
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"0x%8.8X",val);
+	__SET_ARG_OUT__("Link Reset Register",readDataStr);
+	
+} //end ShutdownLinkTx()
+
+//========================================================================
+// first arg must be link index or '*'
+void CFOandDTCCoreVInterface::StartupLinkTx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
+	link %= 8;
+
+	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
+	if(linkStr == "*")
+	{
+		//do all links!
+		__FE_COUT__ << "* found, so doing all links!" << __E__;
+		link = (0xFF<<24);
+	}
+	else
+	{
+		__FE_COUTV__((unsigned int)link);
+		link = (1<<(24+link));
+	}
+	
+	//0x9118 controls link resets
+	//	bit-7:0 SERDES reset
+	//	bit-15:8 PLL reset
+	//	bit-23:16 RX reset
+	//	bit-31:24 TX reset
+	
+	uint32_t val = registerRead(0x9118); 
+	uint32_t mask = ~link;
+	
+	registerWrite(0x9118, val&mask);  
+	
+	val = registerRead(0x9118); 
+	
+	std::stringstream rd;
+	rd << "Control Link SERDES reset (" << (((val>>(0+6))&1)?"RESET":"Not Reset");
+	rd << "), \nControl Link PLL reset (" << (((val>>(8+6))&1)?"RESET":"Not Reset");
+	rd << "), \nControl Link RX reset (" << (((val>>(16+6))&1)?"RESET":"Not Reset");
+	rd << "), \nControl Link TX reset (" << (((val>>(24+6))&1)?"RESET":"Not Reset");
+	rd << ")";
+	__SET_ARG_OUT__("Reset Status",rd.str());
+	
+	char readDataStr[100];
+	sprintf(readDataStr,"0x%8.8X",val);
+	__SET_ARG_OUT__("Link Reset Register",readDataStr);
+	
+} //end StartupLinkTx()
+
+//========================================================================
+// first arg must be link index or '*'
+void CFOandDTCCoreVInterface::ShutdownFireflyTx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
+	link %= 8;
+
+	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
+	if(linkStr == "*")
+	{
+		//do all links!
+		__FE_COUT__ << "* found, so doing all links!" << __E__;
+		link = (0xFF<<8);
+	}
+	else
+	{
+		__FE_COUTV__((unsigned int)link);
+		link = (1<<(8+link));
+	}
+	
+	// #turn off Firefly TX
+	// my_cntl write 0x93a0 0x00000100
+	// my_cntl write 0x9288 0x5052ff00
+	// my_cntl write 0x928c 0x00000001
+	// my_cntl write 0x93a0 0x00000000
+	// #my_cntl read 0x9288
+	registerWrite(0x93a0,0x00000100);
+	registerWrite(0x9288,0x50530000 | link);
+	registerWrite(0x928c,0x00000001);
+	registerWrite(0x93a0,0x00000000);
+
+	// my_cntl write 0x93a0 0x00000100
+	// my_cntl write 0x9288 0x5053ff00
+	// my_cntl write 0x928c 0x00000001
+	// my_cntl write 0x93a0 0x00000000
+	// #my_cntl read 0x9288
+	usleep(1000*100 /* 100 ms */);
+	registerWrite(0x93a0,0x00000100);
+	registerWrite(0x9288,0x50530000 | link);
+	registerWrite(0x928c,0x00000001);
+	registerWrite(0x93a0,0x00000000);
+	
+	usleep(1000*100 /* 100 ms */);
+	uint32_t val = registerRead(0x9288); 
+	
+	std::stringstream rd;
+	rd << "Link shutdown 0x" << std::hex << link << 
+		" result 0x" << (val & 0x0FF) << std::dec; 
+	__SET_ARG_OUT__("Shutdown Status",rd.str());
+	
+} //end ShutdownFireflyTx()
+
+//========================================================================
+// first arg must be link index or '*'
+void CFOandDTCCoreVInterface::StartupFireflyTx(__ARGS__)
+{	
+	uint32_t link = __GET_ARG_IN__(argsIn[0].first /* first arg name */, uint32_t);
+	link %= 8;
+
+	std::string linkStr = __GET_ARG_IN__(argsIn[0].first /* first arg name */, std::string);
+	if(linkStr == "*")
+	{
+		//do all links!
+		__FE_COUT__ << "* found, so doing all links!" << __E__;
+		link = (0xFF<<8);
+	}
+	else
+	{
+		__FE_COUTV__((unsigned int)link);
+		link = (1<<(8+link));
+	}
+	
+
+	uint32_t val = registerRead(0x9288); 
+	uint32_t mask = ~link;	
+
+	// #turn on Firefly TX
+	// my_cntl write 0x93a0 0x00000100
+	// my_cntl write 0x9288 0x50520000
+	// my_cntl write 0x928c 0x00000001
+	// my_cntl write 0x93a0 0x00000000
+	// #my_cntl read 0x9288
+	registerWrite(0x93a0,0x00000100);
+	registerWrite(0x9288,0x50520000 | (val&mask));
+	registerWrite(0x928c,0x00000001);
+	registerWrite(0x93a0,0x00000000);
+
+	// my_cntl write 0x93a0 0x00000100
+	// my_cntl write 0x9288 0x50530000
+	// my_cntl write 0x928c 0x00000001
+	// my_cntl write 0x93a0 0x00000000
+	// #my_cntl read 0x9288
+	usleep(1000*100 /* 100 ms */);
+	registerWrite(0x93a0,0x00000100);
+	registerWrite(0x9288,0x50530000 | (val&mask));
+	registerWrite(0x928c,0x00000001);
+	registerWrite(0x93a0,0x00000000);
+	
+	usleep(1000*100 /* 100 ms */);
+	val = registerRead(0x9288); 
+	
+	std::stringstream rd;
+	rd << "Link startup 0x" << std::hex << link << 
+		" result 0x" << (val & 0x0FF) << std::dec; 
+	__SET_ARG_OUT__("Startup Status",rd.str());
+	
+} //end StartupFireflyTx()
