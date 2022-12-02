@@ -85,6 +85,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void 								GetFirmwareVersion			(__ARGS__);
 	std::string							GetFirmwareVersion			(void);
 	void 								GetStatus					(__ARGS__);
+	void 								GetLinkLossOfLight			(__ARGS__);
 
 
 	// clang-format on

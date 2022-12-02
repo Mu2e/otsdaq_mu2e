@@ -23,3 +23,4 @@ setupARTDAQOTS
 *.bk
 *.tmp
 CMakePresets.json
+.vscode
