@@ -1262,6 +1262,12 @@ void DTCFrontEndInterface::halt(void)
 
 	__FE_COUT__ << "Halted." << __E__;
 
+	// if(device_name_ == "DTC8")
+	// {
+	// 	__FE_COUT__ << "Forcing abort" << __E__;
+	// 	abort();
+	// }
+
 	//	__FE_COUT__ << "HALT: DTC status" << __E__;
 	//	readStatus();
 }  // end halt()
