@@ -84,8 +84,11 @@ dtc_data_t CFOFrontEndInterface::registerWrite(
 {
 	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
 
+	//--------------------------------------------------------
 	//do CFO-specific readback verification here...
 
+	//end CFO-specific readback verification here...
+	//--------------------------------------------------------
 
 	return readbackValue;
 }  // end registerWrite()
@@ -299,6 +302,14 @@ void CFOFrontEndInterface::configure(void)
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Start configure step " << 
+			getIterationIndex() << ":" << getSubIterationIndex() << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	if(getConfigurationManager()
 	   ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
 	   .getValue<bool>())
@@ -477,6 +488,13 @@ void CFOFrontEndInterface::configure(void)
 void CFOFrontEndInterface::halt(void)
 {
 	__FE_COUT__ << "HALT: CFO status" << __E__;
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Halting..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	readStatus();
 }
 
@@ -484,6 +502,13 @@ void CFOFrontEndInterface::halt(void)
 void CFOFrontEndInterface::pause(void)
 {
 	__FE_COUT__ << "PAUSE: CFO status" << __E__;
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Pausing..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	readStatus();
 }
 
@@ -491,12 +516,25 @@ void CFOFrontEndInterface::pause(void)
 void CFOFrontEndInterface::resume(void)
 {
 	__FE_COUT__ << "RESUME: CFO status" << __E__;
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Resuming..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	readStatus();
 }
 
 //==============================================================================
 void CFOFrontEndInterface::start(std::string)  // runNumber)
 {
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Starting..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
 	//bool LoopbackLock = true;
 	//int  loopbackROC  = 0;
 
@@ -654,6 +692,13 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 //==============================================================================
 void CFOFrontEndInterface::stop(void)
 {
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Stopping..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")

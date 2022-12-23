@@ -26,6 +26,45 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 
 	device_name_ = interfaceUID;
 
+	//--------------------------------------------------------
+	//Monitor register writes (for debugging)
+	{
+		std::stringstream fnss;
+		fnss << device_name_ << ".txt";
+		if(regWriteMonitorStream_.is_open())
+		{
+			regWriteMonitorStream_.flush();
+			regWriteMonitorStream_.close();
+		}
+		regWriteMonitorStream_.open(fnss.str().c_str(), std::ios::app); // appending, but not appending forever
+
+		if(!regWriteMonitorStream_.is_open())
+		{
+			__SS__ << "Failed to open register monitoring file! " << fnss.str() << __E__;
+			__SS_THROW__;
+		}
+		//force size to not grow forever
+		std::stringstream existingFileSs;
+		existingFileSs << regWriteMonitorStream_.rdbuf();
+		if(existingFileSs.str().size() > 10000)
+		{
+			regWriteMonitorStream_.close();
+			regWriteMonitorStream_.open(fnss.str().c_str(), std::ios::trunc /* clear file */); //not appending forever, std::ios::app
+			if(!regWriteMonitorStream_.is_open())
+			{
+				__SS__ << "Failed to open register monitoring file! " << fnss.str() << __E__;
+				__SS_THROW__;
+			}
+			regWriteMonitorStream_ << existingFileSs.str().substr(existingFileSs.str().size()-10000);
+		}
+
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Instantiated: " << device_name_ << "\n";
+		regWriteMonitorStream_.flush();
+	}
+	//end of Monitor register writes
+	//--------------------------------------------------------
+
 	// linux file to communicate with
 	device_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
 
@@ -52,6 +91,13 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 //==========================================================================================
 CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 {
+	if(regWriteMonitorStream_.is_open()) 
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Destructed: " << device_name_ << "\n";
+		regWriteMonitorStream_.close();
+	}
+	if(runDataFile_.is_open()) runDataFile_.close();
 	if(fd_) close(fd_);	
 	__FE_COUT__ << "Destructed." << __E__;
 }  // end destructor()
@@ -66,7 +112,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					&CFOandDTCCoreVInterface::GetFirmwareVersion),  // feMacroFunction
 					std::vector<std::string>{},
 					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-					1);
+					1);//"allUsers:0 | TDAQ:255");
 					
 	registerFEMacroFunction(
 		"Flash_LEDs",  // feMacroName
@@ -241,6 +287,19 @@ dtc_data_t CFOandDTCCoreVInterface::registerWrite(dtc_address_t address, dtc_dat
 
 	__FE_COUT__	<< "WRITE address: 0x" 		<< std::setw(4) << std::setprecision(4) << std::hex << address 
 				<< " \t write-value: 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite << __E__;
+
+
+
+
+	//--------------------------------------------------------
+	//Monitor register writes (for debugging)
+	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << ", \t " << "address: 0x" << 
+		std::setw(4) << std::setprecision(4) << std::hex << address <<
+		"," << " \t dataToWrite: 0x" << 
+		std::setw(8) << std::setprecision(8) << std::hex << dataToWrite << "\n";
+	regWriteMonitorStream_.flush();
+	//end of Monitor register writes
+	//--------------------------------------------------------
 
 	return registerRead(address);
 }  // end registerWrite()

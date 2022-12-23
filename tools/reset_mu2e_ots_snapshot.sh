@@ -56,28 +56,30 @@ echo
 ots --killall
 killall -9 ots_udp_hw_emulator
 
-echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Redmine login required to gain access to tutorial downloads, please enter credentials." 
-source "${OTSDAQ_DIR}"/tools/redmine_login.sh
+# echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Redmine login required to gain access to tutorial downloads, please enter credentials." 
+# source "${OTSDAQ_DIR}"/tools/redmine_login.sh
 
 #download and run get_snapshot_data script
-wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh \
-		--no-check-certificate \
-		--load-cookies=${REDMINE_LOGIN_COOKIEF} \
-		--save-cookies=${REDMINE_LOGIN_COOKIEF} \
-		--keep-session-cookies \
-		-O get_snapshot_data.sh
+# wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh \
+# 		--no-check-certificate \
+# 		--load-cookies=${REDMINE_LOGIN_COOKIEF} \
+# 		--save-cookies=${REDMINE_LOGIN_COOKIEF} \
+# 		--keep-session-cookies \
+# 		-O get_snapshot_data.sh
 # wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
+wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
 chmod 755 get_snapshot_data.sh
 ./get_snapshot_data.sh --name ${SNAPSHOT}
 	
 #download and run get_snapshot_database script
-wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh \
-		--no-check-certificate \
-		--load-cookies=${REDMINE_LOGIN_COOKIEF} \
-		--save-cookies=${REDMINE_LOGIN_COOKIEF} \
-		--keep-session-cookies \
-		-O get_snapshot_database.sh
+# wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh \
+# 		--no-check-certificate \
+# 		--load-cookies=${REDMINE_LOGIN_COOKIEF} \
+# 		--save-cookies=${REDMINE_LOGIN_COOKIEF} \
+# 		--keep-session-cookies \
+# 		-O get_snapshot_database.sh
 # wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate	
+wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_database.sh  -O get_snapshot_database.sh --no-check-certificate	
 chmod 755 get_snapshot_database.sh
 ./get_snapshot_database.sh --name ${SNAPSHOT}
 

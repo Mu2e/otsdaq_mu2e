@@ -10,21 +10,13 @@ using namespace ots;
 
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "DTCFrontEndInterface"
-// some global variables, probably a bad idea. But temporary
-std::string RunDataFN = "";
-std::fstream DataFile;
 
 
-//new code by Marco
-std::ofstream DTC_write;
-
-//end of new code 
-
-
-
-
-int FEWriteFile = 0;
-bool artdaqMode_ = true;
+// // some global variables, probably a bad idea. But temporary
+// std::string RunDataFN = "";
+// std::fstream runDataFile_;
+// int FEWriteFile = 0;
+// bool artdaqMode_ = true;
 
 //=========================================================================================
 DTCFrontEndInterface::DTCFrontEndInterface(
@@ -49,6 +41,13 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 		return;
 	}
 	// else not emulator mode
+
+	
+
+	{
+		uint32_t lossOfLockReadData = registerRead(0x93c8); //read loss-of-lock counter
+		__FE_COUTV__(lossOfLockReadData);
+	}
 
 
 	unsigned dtc_class_roc_mask = 0;
@@ -83,25 +82,50 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 
 	// instantiate DTC with the appropriate ROCs enabled
 	std::string expectedDesignVersion = "";
-	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
+	DTCLib::DTC_SimMode        mode   = emulate_cfo_?DTCLib::DTC_SimMode_NoCFO:DTCLib::DTC_SimMode_Disabled;
+	bool 		skipInit			  = getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
+	        .getValue<bool>();
 
 	__COUT__ << "DTC arguments..." << std::endl;
+	__COUTV__(mode);
 	__COUTV__(device_);
 	__COUTV__(dtc_class_roc_mask);
 	__COUTV__(expectedDesignVersion);
+	__COUTV__(skipInit);
 	__COUT__ << "END END DTC arguments..." << std::endl;
 
-	thisDTC_ = new DTCLib::DTC(mode, device_, dtc_class_roc_mask, expectedDesignVersion);
+	{
+		uint32_t lossOfLockReadData = registerRead(0x93c8); //read loss-of-lock counter
+		__FE_COUTV__(lossOfLockReadData);
+	}
+
+	thisDTC_ = new DTCLib::DTC(mode, device_, dtc_class_roc_mask, expectedDesignVersion, skipInit);
+
+	{
+		uint32_t lossOfLockReadData = registerRead(0x93c8); //read loss-of-lock counter
+		__FE_COUTV__(lossOfLockReadData);
+	}
 
 
 	createROCs();
 	registerFEMacros();
+
+	{
+		uint32_t lossOfLockReadData = registerRead(0x93c8); //read loss-of-lock counter
+		__FE_COUTV__(lossOfLockReadData);
+	}
 
 	// DTC-specific info
 	dtc_location_in_chain_ =
 	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
 
 	// check if any ROCs should be DTC-hardware emulated ROCs
+	if(skipInit)
+	{
+		__FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
+	}
+	else
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
 		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
@@ -134,8 +158,18 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
 {
+	{
+		uint32_t lossOfLockReadData = registerRead(0x93c8); //read loss-of-lock counter
+		__FE_COUTV__(lossOfLockReadData);
+	}
+
 	// destroy ROCs before DTC destruction
 	rocs_.clear();
+
+	{
+		uint32_t lossOfLockReadData = registerRead(0x93c8); //read loss-of-lock counter
+		__FE_COUTV__(lossOfLockReadData);
+	}
 
 	if(thisDTC_)
 		delete thisDTC_;
@@ -625,17 +659,9 @@ dtc_data_t DTCFrontEndInterface::registerWrite(dtc_address_t address, dtc_data_t
 {
 	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
 
+	//--------------------------------------------------------
 	//do DTC-specific readback verification here...
 
-
-	//new code by Marco (TO BE DELETED)
-	std::stringstream fnss;
-	fnss << device_name_ << ".txt";
-	
-	DTC_write.open(fnss.str().c_str(), std::ios::app);
-	DTC_write << "Timestamp:" << time(0) << "," << "address:" << address << "," << "dataToWrite:" << dataToWrite << "\n";
-	DTC_write.close();
-	//end of new code by Marco
 
 	dtc_data_t i = -1; //use for counters or mask (default mask to all 1s with -1)
 	switch(address)
@@ -674,8 +700,10 @@ dtc_data_t DTCFrontEndInterface::registerWrite(dtc_address_t address, dtc_data_t
 				"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue <<
 				"\n\n" << StringMacros::stackTrace() << __E__;
 		__FE_SS_THROW__;
-		// __FE_COUT_ERR__ << ss.str(); 
 	}
+	//end DTC-specific readback verification here...
+	//--------------------------------------------------------
+	
 
 	return readbackValue;
 }  // end registerWrite()
@@ -795,6 +823,13 @@ void DTCFrontEndInterface::configure(void) try
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Configure step " << 
+			getIterationIndex() << ":" << getSubIterationIndex() << "\n";
+		regWriteMonitorStream_.flush();
+	}
 
 
 	// From Rick new code
@@ -863,15 +898,7 @@ void DTCFrontEndInterface::configure(void) try
 	int config_substep = getSubIterationIndex();
 
 	bool isLastTimeThroughConfigure = false;
-
-	//new code by Marco (TO BE DELETED)
-	std::stringstream fnss;
-	fnss << device_name_ << ".txt";
-
-	DTC_write.open(fnss.str().c_str(), std::ios::app);
-	DTC_write << "start configure step" << config_step << "\n";
-	DTC_write.close();
-	//end of new code by Marco
+	
 
 	if(number_of_system_configs > 0)
 	{
@@ -1251,6 +1278,13 @@ catch(...)
 //==============================================================================
 void DTCFrontEndInterface::halt(void)
 {
+	if(regWriteMonitorStream_.is_open())
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Halting..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	__FE_COUT__ << "Halting..." << __E__;
 
 	for(auto& roc : rocs_)  // halt "as usual"
@@ -1264,11 +1298,20 @@ void DTCFrontEndInterface::halt(void)
 
 	//	__FE_COUT__ << "HALT: DTC status" << __E__;
 	//	readStatus();
+
+	if(runDataFile_.is_open()) runDataFile_.close();
 }  // end halt()
 
 //==============================================================================
 void DTCFrontEndInterface::pause(void)
 {
+	if(regWriteMonitorStream_.is_open()) 
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Pausing..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	__FE_COUT__ << "Pausing..." << __E__;
 	for(auto& roc : rocs_)  // pause "as usual"
 	{
@@ -1284,6 +1327,13 @@ void DTCFrontEndInterface::pause(void)
 //==============================================================================
 void DTCFrontEndInterface::resume(void)
 {
+	if(regWriteMonitorStream_.is_open()) 
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Resuming..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
+
 	__FE_COUT__ << "Resuming..." << __E__;
 	for(auto& roc : rocs_)  // resume "as usual"
 	{
@@ -1299,25 +1349,36 @@ void DTCFrontEndInterface::resume(void)
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
-
-  // open a file for this run number to write data to, if it hasn't been opened yet
-  // define a data file 
-
-  	char* dataPath(std::getenv("OTSDAQ_DATA"));
-	RunDataFN = std::string(dataPath) + "/RunData_" + runNumber + ".dat";
-
-	__FE_COUT__ << "Run data FN is: "<< RunDataFN;
-	if (!DataFile.is_open()){
-	  DataFile.open (RunDataFN, std::ios::out | std::ios::app);
-	  
-	  if (DataFile.fail()) {
-	  __FE_COUT__ << "FAILED to open data file RunData" << RunDataFN;
-
-	    }
-	  else {
-	  __FE_COUT__ << "opened data file RunData" << RunDataFN;
+	if(regWriteMonitorStream_.is_open()) 
+	{
+		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+			", \t ---------- Starting..." << "\n";
+		regWriteMonitorStream_.flush();
 	}
-	}
+
+	// open a file for this run number to write data to, if it hasn't been opened yet
+	// define a data file 
+	if(!artdaqMode_)
+	{
+		std::string runDataFilename = std::string(__ENV__("OTSDAQ_DATA")) + "/RunData_" + runNumber + 
+			"_" + device_name_ + ".dat";
+
+		__FE_COUTV__(runDataFilename);		
+		if(runDataFile_.is_open())
+		{
+			__SS__ << "File was left open! How was this possible -  open data file RunData: " << runDataFilename << __E__;
+			__SS_THROW__;
+		}
+
+		runDataFile_.open (runDataFilename, std::ios::out | std::ios::app);
+
+		if (runDataFile_.fail())
+		{
+			__SS__ << "FAILED to open data file RunData: " << runDataFilename << __E__;
+			__SS_THROW__;
+		}
+		
+	} //end local run file creation
 
 	if(emulatorMode_)
 	{
@@ -1477,25 +1538,23 @@ void DTCFrontEndInterface::start(std::string runNumber)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+	if(regWriteMonitorStream_.is_open()) 
+	{
+		regWriteMonitorStream_ << "---------- Stopping..." << "\n";
+		regWriteMonitorStream_.flush();
+	}
 
-  // If using artdaq, all data goes through the BoardReader, not here!
-  if(artdaqMode_){
-    __FE_COUT__ << "Stopping in artdaqmode" << __E__;
-    return;
-  }
+	//must close data file on each possible return with call 'if(runDataFile_.is_open()) runDataFile_.close();'
 
-  if (DataFile.is_open()) {
-    DataFile.close();
-	__FE_COUT__ << "closed data file";
-  }
-  
-  if(emulatorMode_)
+	if(emulatorMode_)
     {
-      __FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size()
-		  << __E__;
-      for(auto& roc : rocs_)
-	roc.second->stop();
-      return;
+		__FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size()
+			<< __E__;
+		for(auto& roc : rocs_)
+			roc.second->stop();
+
+		if(runDataFile_.is_open()) runDataFile_.close();
+		return;
     }
 
 
@@ -1516,6 +1575,7 @@ void DTCFrontEndInterface::stop(void)
 		{
 			roc.second->stop();
 		}
+		if(runDataFile_.is_open()) runDataFile_.close();
 		return;
 	}
 
@@ -1548,6 +1608,7 @@ void DTCFrontEndInterface::stop(void)
 			datafile_[i].close();
 			i++;
 		}
+		if(runDataFile_.is_open()) runDataFile_.close();
 		return;
 	}
 
@@ -1573,10 +1634,10 @@ void DTCFrontEndInterface::stop(void)
 bool DTCFrontEndInterface::running(void)
 {
 
-  if(artdaqMode_) {
-    __FE_COUT__ << "Running in artdaqmode" << __E__;
-    return true;
-  }
+//   if(artdaqMode_) {
+//     __FE_COUT__ << "Running in artdaqmode" << __E__;
+//     return true;
+//   }
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator DTC running... # of ROCs = " << rocs_.size()
@@ -1770,15 +1831,6 @@ bool DTCFrontEndInterface::running(void)
 
 			//     __SET_ARG_OUT__("readData", ostr.str());  // write to data file
 
-
-			if (FEWriteFile) { // overkill. If the file isn't open, won't try to write.
-			  __FE_COUT__ << "writing to DataFile";
-			  if (DataFile.bad())
-			    __FE_COUT__ << " something bad happened when writing to datafile? \n";
-			  if (!DataFile.is_open())
-			    __FE_COUT__ << "trying to write to the data file but it isnt open. \n";
-			  DataFile << ostr.str();
-			}
 			// don't write data to the log file, only the data file
 			// __FE_COUT__ << ostr.str();  
 	    
@@ -1794,9 +1846,10 @@ bool DTCFrontEndInterface::running(void)
 		ostr << std::endl; 
     
 
-		if (FEWriteFile) {
-		  DataFile << ostr.str();
-		  DataFile.flush(); // flush to disk
+		if (runDataFile_.is_open())
+		{
+			runDataFile_ << ostr.str();
+			runDataFile_.flush(); // flush to disk
 		}
 		//__FE_COUT__ << ostr.str(); 
 
