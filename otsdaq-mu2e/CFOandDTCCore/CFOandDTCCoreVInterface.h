@@ -78,7 +78,16 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	m_ioc_reg_access_t 					reg_access_;
 	unsigned 							initial_9100_ 				= 0;
 	unsigned 							initial_9114_ 				= 0;
-	std::ofstream 						outputStream;
+
+
+	//--------------------------------------------------------
+	//output file streams:
+	//	monitor register stream and also provide alternative run datastream if not using artdaq
+	std::ofstream 						regWriteMonitorStream_;
+	std::fstream 						runDataFile_;
+	bool 								artdaqMode_ = true; // true to prevent run data file generation
+	//end output file streams
+	//--------------------------------------------------------
 
   public:
 	void 								FlashLEDs					(__ARGS__);	
