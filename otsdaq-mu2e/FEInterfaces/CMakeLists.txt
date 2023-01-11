@@ -9,7 +9,7 @@ cet_build_plugin(ROCPolarFireCoreInterface otsdaq::FEInterface LIBRARIES REG ots
 cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore
  )
  
-cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore pcie_linux_kernel_module::CFOInterface
+cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore mu2e_pcie_utils::CFOInterface
  )
    
    

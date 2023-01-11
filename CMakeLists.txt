@@ -10,7 +10,7 @@ cmake_minimum_required (VERSION 3.19 FATAL_ERROR)
 
 find_package(cetmodules 3.19.02 REQUIRED)
 
-project(otsdaq_mu2e VERSION 1.02.01)
+project(otsdaq_mu2e VERSION 1.02.02)
 
 include(CetCMakeEnv)
 cet_cmake_env()
@@ -28,9 +28,9 @@ cet_set_compiler_flags(DIAGS VIGILANT
 
 #cet_report_compiler_flags()
 
-find_package(otsdaq 2.06.07 REQUIRED EXPORT) 
-find_package(otsdaq_components 2.06.07 REQUIRED EXPORT)
-find_package(artdaq_mu2e 1.05.01 REQUIRED EXPORT)
+find_package(otsdaq 2.06.08 REQUIRED EXPORT) 
+find_package(otsdaq_components 2.06.08 REQUIRED EXPORT)
+find_package(artdaq_mu2e 1.05.02 REQUIRED EXPORT)
 find_package(PostgreSQL 13.2 REQUIRED)
 
  # XDAQ Extra setup

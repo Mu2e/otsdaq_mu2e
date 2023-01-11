@@ -1,7 +1,7 @@
 
 starting_dir=`pwd`
 echo "----------------------------------"
-cd pcie_linux_kernel_module
+cd mu2e_pcie_utils
 echo `pwd`
 git fetch
 git status
