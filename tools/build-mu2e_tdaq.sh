@@ -116,6 +116,8 @@ if [ $copyback_deps == "false" ]; then
         echo "Not deleting ${filebase}"
     elif [[ "${filebase}" =~ "pcie_linux" ]]; then
         echo "Not deleting ${filebase}"
+    elif [[ "${filebase}" =~ "mu2e_pcie_utils" ]]; then
+        echo "Not deleting ${filebase}"
     else
         echo "Deleting ${filebase}"
 	    rm -f $file
