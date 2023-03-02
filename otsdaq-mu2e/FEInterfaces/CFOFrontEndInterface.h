@@ -76,6 +76,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
   public:
 	void 								WriteCFO						(__ARGS__);
 	void 								ReadCFO							(__ARGS__);
+	void 								ResetRunplan					(__ARGS__);
 };
 
 // clang-format on
