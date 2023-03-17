@@ -1,0 +1,118 @@
+#+startup:fold
+* ------------------------------------------------------------------------------
+* OTSDAQ build instructions   <2023-01-04 Wed> by Giani                      
+#+begin_quote 
+# Hello everybody! Below you can find the instructions to install and run the latest stable snapshot 
+# @Eric Flumerfelt and I delivered. 
+# IMPORTANT: before starting the procedure, please let us know on which node you intend to run your tests.
+# INSTALL THE FOLLOWING PACKAGES
+git clone https://github.com/art-daq/artdaq.git
+git clone https://github.com/art-framework-suite/art-root-io.git art_root_io
+git clone https://github.com/Mu2e/otsdaq_mu2e_config.git 
+git clone https://github.com/art-daq/artdaq_daqinterface.git
+git clone https://github.com/art-daq/otsdaq.git
+git clone https://github.com/Mu2e/otsdaq_mu2e_dqm_tracker
+git clone https://github.com/Mu2e/otsdaq_mu2e.git
+git clone https://github.com/Mu2e/artdaq_mu2e.git
+git clone https://github.com/Mu2e/otsdaq_mu2e_trigger
+
+# edit one hack in art_root_io
+# 1. open the file: art_root_io/detail/RootErrorClassifier.cc
+# 2. add the following code at line 25:    if(parser.has_message("rdict")) { return true; }
+
+# reset the config
+reset_mu2e_ots_snapshot.sh --name full_trig_reco_chain_20230110_demo
+
+mrb newDev -f -q e20:s118:prof -v v1_00_00
+
+# compile
+source setup_ots.sh
+cd srcs
+mrb uc
+cd ..
+mz
+
+# launch OTS in wiz mode
+ots -w
+
+# set up the nodes where to run the event builder, datalogger, dispatcher, etc
+1. click on "Configure"
+2. click on "tree view" next to "HorizontalSliceTest"
+3. change the following parameter to load properly the setup script from your working area: 
+   ARTDAQSupervisorTable -> artDaqSupervsior0 -> DAQSetupScript
+4. change the following ExecutionHostNames:
+ *** ARTDAQBoardReaderTable
+a. crvReader0
+b. EventDataGenerator0
+c. EventDataGenerator1 (not used, so you can ignore this)
+ *** ARTDAQDataLogger
+a. logger0
+b. logger1
+ *** ARTDAQDispatcherTable
+a. dispatcher0
+ *** ARTDAQEventBuilderTable
+a. EventBuilder00
+b. CRVBuilder0
+c. EventBuilder01 (it's turned off, so this can be ignored)
+*** ARTDAQOnlineMonitorTable
+a. trackerDQMSupervisor 
+
+ *NOTE*: if you are using the trackerDQM, than you need to change also the following parameter and set it to the same node as the "trackerDQMSupervisor":
+ ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
+#+end_quote
+
+* DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
+
+#+begin_src 
+mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
+crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
+crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
+#+end_src
+                                                              
+- the card number is controled by the env var DTCLIB_DTC
+  if undefined, = 0
+  export DTCLIB_DTC=1 # use the first card (/dev/
+* TRACE                                                                      
+
+ TLOG(TLVL_DEBUG) << "TrackerVST_generator CONSTRUCTOR";
+
+ export TRACE_FILE=/tmp/trace_buffer_pasha.txt
+ 
+ tshow : see messages that are sent to memory. 
+ tonM  : will turn on additional messages to memory, 
+ tonS  : will send those messages to the log files
+
+ TRACE user guide: https://github.com/art-daq/trace/wiki/TRACE-Users-Guide
+
+mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
+mode:                          M=1                S=1
+ TID       NAME              maskM              maskS              maskT
+---- ---------- ------------------ ------------------ ------------------
+ 268      TRACE 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+ 772 trace_cntl 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+1021    _TRACE_ 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+
+from Andy:
+ 
+ #+begin_src
+tonM -N DTC.cpp 0-1000
+to set the debug level for DTC.cpp and then looking at the output with
+tshow | less
+#+end_src 
+
+DTC.cpp is the source file name ... 
+
+* general info                                                               
+
+ 'ots' starts 3 xdaq processes 
+
+  for user = 'tracker': 
+
+  'Gateway'             output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-gateway-mu2edaq09.fnal.gov-3065.txt
+  'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
+  'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
+
+*
+
+* ------------------------------------------------------------------------------
+
