@@ -1,11 +1,10 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
 * OTSDAQ build instructions   <2023-01-04 Wed> by Giani                      
-#+begin_quote 
-# Hello everybody! Below you can find the instructions to install and run the latest stable snapshot 
-# @Eric Flumerfelt and I delivered. 
-# IMPORTANT: before starting the procedure, please let us know on which node you intend to run your tests.
-# INSTALL THE FOLLOWING PACKAGES
+
+1) INSTALL THE FOLLOWING PACKAGES 
+
+#+begin_src
 git clone https://github.com/art-daq/artdaq.git
 git clone https://github.com/art-framework-suite/art-root-io.git art_root_io
 git clone https://github.com/Mu2e/otsdaq_mu2e_config.git 
@@ -15,12 +14,14 @@ git clone https://github.com/Mu2e/otsdaq_mu2e_dqm_tracker
 git clone https://github.com/Mu2e/otsdaq_mu2e.git
 git clone https://github.com/Mu2e/artdaq_mu2e.git
 git clone https://github.com/Mu2e/otsdaq_mu2e_trigger
+#+end_src
 
 # edit one hack in art_root_io
 # 1. open the file: art_root_io/detail/RootErrorClassifier.cc
 # 2. add the following code at line 25:    if(parser.has_message("rdict")) { return true; }
 
 # reset the config
+#+begin_src
 reset_mu2e_ots_snapshot.sh --name full_trig_reco_chain_20230110_demo
 
 mrb newDev -f -q e20:s118:prof -v v1_00_00
@@ -31,11 +32,16 @@ cd srcs
 mrb uc
 cd ..
 mz
+#+end_src 
 
-# launch OTS in wiz mode
+   launch OTS in wiz mode
+#+begin_src
 ots -w
+#+end_src
 
-# set up the nodes where to run the event builder, datalogger, dispatcher, etc
+set up the nodes where to run the event builder, datalogger, dispatcher, etc
+
+#+begin_quote
 1. click on "Configure"
 2. click on "tree view" next to "HorizontalSliceTest"
 3. change the following parameter to load properly the setup script from your working area: 
@@ -54,12 +60,15 @@ a. dispatcher0
 a. EventBuilder00
 b. CRVBuilder0
 c. EventBuilder01 (it's turned off, so this can be ignored)
-*** ARTDAQOnlineMonitorTable
-a. trackerDQMSupervisor 
-
- *NOTE*: if you are using the trackerDQM, than you need to change also the following parameter and set it to the same node as the "trackerDQMSupervisor":
- ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
 #+end_quote
+
+  *ARTDAQOnlineMonitorTable*
+
+ a. trackerDQMSupervisor 
+
+  *NOTE*: if you are using the trackerDQM, than you need to change also the following parameter and set it to the same node as the "trackerDQMSupervisor":
+
+  ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
 
 * DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
 
@@ -115,4 +124,3 @@ DTC.cpp is the source file name ...
 *
 
 * ------------------------------------------------------------------------------
-
