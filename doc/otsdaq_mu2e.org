@@ -93,6 +93,7 @@ crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
 
  TRACE user guide: https://github.com/art-daq/trace/wiki/TRACE-Users-Guide
 
+#+begin_src
 mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
 mode:                          M=1                S=1
  TID       NAME              maskM              maskS              maskT
@@ -100,6 +101,7 @@ mode:                          M=1                S=1
  268      TRACE 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
  772 trace_cntl 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
 1021    _TRACE_ 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+#+end_src
 
 from Andy:
  
