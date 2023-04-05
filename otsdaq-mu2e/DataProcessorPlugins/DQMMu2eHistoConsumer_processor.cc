@@ -32,7 +32,7 @@ DQMMu2eHistoConsumer::DQMMu2eHistoConsumer(
                          .getValue<std::string>())
 
 {
-  std::cout << "[In DQMMu2eHistoConsumer () ] Initiating ..." << std::endl;
+  // std::cout << "[In DQMMu2eHistoConsumer () ] Initiating ..." << std::endl;
 }
 
 //========================================================================================================================
@@ -41,9 +41,9 @@ DQMMu2eHistoConsumer::~DQMMu2eHistoConsumer(void) {
 }
 //========================================================================================================================
 void DQMMu2eHistoConsumer::startProcessingData(std::string runNumber) {
-  std::cout << __PRETTY_FUNCTION__
-            << filePath_ + "/" + radixFileName_ + "_Run" + runNumber + ".root"
-            << std::endl;
+  // std::cout << __PRETTY_FUNCTION__
+  //           << filePath_ + "/" + radixFileName_ + "_Run" + runNumber + ".root"
+  //           << std::endl;
   DQMHistosBase::openFile(filePath_ + "/" + radixFileName_ + "_Run" +
                           runNumber + ".root");
   DQMHistosBase::myDirectory_ =
@@ -78,18 +78,18 @@ void DQMMu2eHistoConsumer::startProcessingData(std::string runNumber) {
 
   // testHistos_.BookHistos(DQMHistosBase::myDirectory_, "Pedestal");
   // testHistos_.BookHistos(DQMHistosBase::myDirectory_, "deltaTT");
-  std::cout << __PRETTY_FUNCTION__ << "Starting!" << std::endl;
+  // std::cout << __PRETTY_FUNCTION__ << "Starting!" << std::endl;
   DataConsumer::startProcessingData(runNumber);
-  std::cout << __PRETTY_FUNCTION__ << "Started!" << std::endl;
+  // std::cout << __PRETTY_FUNCTION__ << "Started!" << std::endl;
 }
 
 //========================================================================================================================
 void DQMMu2eHistoConsumer::stopProcessingData(void) {
-  std::cout << "[In DQMMu2eHistoConsumer () ] Stopping ..." << std::endl;
+  // std::cout << "[In DQMMu2eHistoConsumer () ] Stopping ..." << std::endl;
 
   DataConsumer::stopProcessingData();
   if (saveFile_) {
-    std::cout << "[In DQMMu2eHistoConsumer () ] Saving ..." << std::endl;
+    // std::cout << "[In DQMMu2eHistoConsumer () ] Saving ..." << std::endl;
     DQMHistosBase::save();
   }
   closeFile();
@@ -97,13 +97,13 @@ void DQMMu2eHistoConsumer::stopProcessingData(void) {
 
 //========================================================================================================================
 void DQMMu2eHistoConsumer::pauseProcessingData(void) {
-  std::cout << "[In DQMMu2eHistoConsumer () ] Pausing ..." << std::endl;
+  // std::cout << "[In DQMMu2eHistoConsumer () ] Pausing ..." << std::endl;
   DataConsumer::stopProcessingData();
 }
 
 //========================================================================================================================
 void DQMMu2eHistoConsumer::resumeProcessingData(void) {
-  std::cout << "[DQMMu2eHistoConsumer::resumeProcessingData] Resuming ..." << std::endl;
+  // std::cout << "[DQMMu2eHistoConsumer::resumeProcessingData] Resuming ..." << std::endl;
   DataConsumer::startProcessingData("");
 }
 
@@ -123,7 +123,7 @@ void DQMMu2eHistoConsumer::fastRead(void) {
     //__CFG_COUT__ << "There is nothing in the buffer" << std::endl;
     return;
   }
-  std::cout << "[DQMMu2eHistoConsumer::fastRead] reading BUFFER..." << std::endl;
+  // std::cout << "[DQMMu2eHistoConsumer::fastRead] reading BUFFER..." << std::endl;
   histReceiver_.readPacket(DQMHistosBase::myDirectory_, dataP_);
   
 }
