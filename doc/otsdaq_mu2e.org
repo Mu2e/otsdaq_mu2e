@@ -1,5 +1,11 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
+* [0/2] OTSDAQ primer                                                        
+  https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html
+
+Questions:                    
+** TODO what makes a group a 'configuration' group ?
+** TODO what makes a group a 'context' group ?
 * OTSDAQ build instructions   <2023-01-04 Wed> by Giani                      
 
 1) INSTALL THE FOLLOWING PACKAGES 
@@ -93,6 +99,8 @@ crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
 
  TRACE user guide: https://github.com/art-daq/trace/wiki/TRACE-Users-Guide
 
+ set format of TRACE printouts: TRACE_PRINT="%m-%d %H:%M:%S.%%06d %T %*n %*L %F: %M"
+
 #+begin_src
 mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
 mode:                          M=1                S=1
@@ -116,7 +124,7 @@ is at source file level ?
 
 * general info                                                               
 
- 'ots' starts 3 xdaq processes 
+ 'ots' starts 3 xdaq processes, each listening on a certain port
 
   for user = 'tracker': 
 
@@ -157,4 +165,20 @@ is at source file level ?
 
   note that ARTDAQConfigurations is a *symlink*
 
+* XDAQ documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/CMSOS
+* ------------------------------------------------------------------------------
+* <2023-04-05 Wed>                                                           
+  XDAQContextTable - has IP's of different contexts
+
+  how does one define two nodes ? 
+
+  a group and a configuration (config = group and version) 
+
+  - how to get list of configurations with comments ? 
+
+  - create a context - IP
+  - superisors: main and FESupervisot
+
+   - Micol: mu2edaq07 : DIRACConfig
+     
 * ------------------------------------------------------------------------------
