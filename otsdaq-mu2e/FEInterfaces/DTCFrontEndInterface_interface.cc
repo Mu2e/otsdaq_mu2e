@@ -1913,9 +1913,6 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__((unsigned int)address);
 
-	// DTCLib::DTC* tmpDTC = new
-	// DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO,device_,roc_mask_,"");
-
 	uint16_t readData = -999;
 
 	for(auto& roc : rocs_)
@@ -1925,11 +1922,10 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 		if(rocLinkIndex == roc.second->getLinkID())
 		{
-			readData = roc.second->readRegister(address);
+		  // readData = roc.second->readRegister(address);
 
-			// uint16_t readData = thisDTC_->ReadROCRegister(rocLinkIndex, address);
-			// delete tmpDTC;
-
+		  readData = thisDTC_->ReadROCRegister(rocLinkIndex, address,100);
+			
 			  char readDataStr[100];
 			  sprintf(readDataStr,"0x%X",readData);
 			  __SET_ARG_OUT__("readData",readDataStr);
