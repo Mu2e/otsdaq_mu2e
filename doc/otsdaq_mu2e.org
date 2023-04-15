@@ -1,99 +1,12 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
-* OTSDAQ primer                                                              
-  https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html
-* OTSDAQ intro by Ryan                                                       
-  https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p
-* [[file:build_instructions.org][build instructions]]
+* OTSDAQ primer: https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html
+* OTSDAQ intro by Ryan : https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p
+* [[file:build_instructions.org][build instructions]]  : not working yet ! 
 * [[file:xdaq.org][XDAQ]]
-* DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
-#+begin_src 
-mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
-crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
-crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
-#+end_src
-                                                              
-- the card number is controled by the env var DTCLIB_DTC
-  if undefined, = 0
-  export DTCLIB_DTC=1 # use the first card (/dev/
-* TRACE                                                                      
-
- TLOG(TLVL_DEBUG) << "TrackerVST_generator CONSTRUCTOR";
-
- export TRACE_FILE=/tmp/trace_buffer_pasha.txt
- 
- tshow : see messages that are sent to memory. 
- tonM  : will turn on additional messages to memory, 
- tonS  : will send those messages to the log files
-
- TRACE user guide: https://github.com/art-daq/trace/wiki/TRACE-Users-Guide
-
- set format of TRACE printouts: TRACE_PRINT="%m-%d %H:%M:%S.%%06d %T %*n %*L %F: %M"
-
-#+begin_src
-mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
-mode:                          M=1                S=1
- TID       NAME              maskM              maskS              maskT
----- ---------- ------------------ ------------------ ------------------
- 268      TRACE 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
- 772 trace_cntl 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
-1021    _TRACE_ 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
-#+end_src
-
-from Andy:
- 
- #+begin_src
-tonM -N DTC.cpp 0-1000
-to set the debug level for DTC.cpp and then looking at the output with
-tshow | less
-#+end_src 
-
-According to Andy, DTC.cpp is the source file name. Does this mean that the control 
-is at source file level ?
-
-* general info                                                               
-
- 'ots' starts a number (1-4) xdaq processes, each listening on a certain port
-
-  for user = 'tracker': 
-
-  - 'Gateway'             output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-gateway-mu2edaq09.fnal.gov-3065.txt
-  - 'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
-  - 'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
-
-* configuration                                                              
-
-  assume user (partition) = tracker
-
- file:../../otsdaq_mu2e_config/Data_tracker/TableInfo: contains definitions of the configuration tables, in XML
-
- file:../../otsdaq_mu2e_config/databases_tracker/filesystemdb/test_db 
-
- For each table, there is a directory where multiple versions of the table are stored in .json format. 
- For example:
-
- ARTDAQBoardReaderTable: file:../../otsdaq_mu2e_config/databases_tracker/filesystemdb/test_db/ARTDAQBoardReaderTable
-
- 
- in principle, different versions could have different format (number of columns)
-
- $USER_DATA/ARTDAQConfigurations/daqinterface_settings file is created by file:../../otsdaq/otsdaq/ARTDAQSupervisor/ARTDAQSupervisor.cc
-
- and then read by python script called from somewhere else: https://github.com/art-daq/artdaq_daqinterface/blob/develop/rc/control/daqinterface.py
-
-
-  boot.txt : created by file:../../otsdaq/otsdaq/ARTDAQSupervisor/ARTDAQSupervisor.cc::/boot.txt/
-
- XDAQApplicationPropertyTable : advanced_memory_usage
- XDAQApplicationPropertyTable:
-
-* environment variables used                                                 
-
-             USER_DATA=$MRB_TOP/srcs/otsdaq_mu2e_config/Data_tracker
- DAQINTERFACE_SETTINGS=$USER_DATA/ARTDAQConfigurations/daqinterface_setting
-
-  note that ARTDAQConfigurations is a *symlink*
-
+* [[file:hardware.org][Mu2e DAQ hardware]]
+* [[file:trace.org][TRACE]] 
+* [[file:configure_and_run.org][how to configure and run OTSDAQ]]
 * [[file:code_repositories.org][OTS code repositories]]                                                      
 * [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
 * [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
