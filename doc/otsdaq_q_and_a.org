@@ -55,7 +55,7 @@ what is achieved by passing the same file twice, but under different souce ?
    - can we use only buttons and get rid of icons ?
    [[file:./images/buttons_vs_icons.png]]
 ** TODO configure table view - whats does the ALIAS_DEFAULT do ?             
-   - what does the ALIAS_Default do ? 
+   - what does the ALIAS:Default link do ? - (doesn't seem to do anything)
    - inefficient view: can we have one line per table instead of three ?
    [[file:./images/configure_table_view_001.png]]
 * ------------------------------------------------------------------------------
