@@ -1,0 +1,34 @@
+#+startup:fold
+* ------------------------------------------------------------------------------
+* system configuration                                                       
+                                                 
+- system configuration is defined by two groups of tables : 
+  - a "context" group 
+  - and another, the second, group (showing up as the "Editor configuration")
+
+- groups are versioned, an alias could be assigned to a given version
+
+- by default, when a version of a group gets updated, the alias "moves" 
+  to the updated version. *Watch the editor window!* 
+
+- the whole configuration doesn't have an alias
+
+- the *Context group* is defined as follows:
+
+#+begin_src  
+To be a Context group, the members must exactly match the following members:
+1. DesktopIconTable
+2. DesktopWindowParameterTable
+3. GatewaySupervisorTable
+4. MessageFacilityTable
+5. SlowControlsDashboardSupervisorTable
+6. StateMachineTable
+7. XDAQApplicationPropertyTable
+8. XDAQApplicationTable
+9. XDAQContextTable
+#+end_src 
+
+- the rest tables define the "non-context" group
+* ------------------------------------------------------------------------------
+* back to file:otsdaq_mu2e.org
+* ------------------------------------------------------------------------------

@@ -1,12 +1,8 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
-* [0/2] OTSDAQ primer                                                        
+* [0/2] Ryan's OTSDAQ primer                                                 
   https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html
-
-Questions:                    
-** TODO what makes a group a 'configuration' group ?
-** TODO what makes a group a 'context' group ?
-* OTSDAQ build instructions   <2023-01-04 Wed> by Giani                      
+* OTSDAQ build instructions  <2023-01-04 Wed> by Giani                       
 
 1) INSTALL THE FOLLOWING PACKAGES 
 
@@ -76,6 +72,9 @@ c. EventBuilder01 (it's turned off, so this can be ignored)
 
   ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
 
+* OTSDAQ intro by Ryan                                                       
+  https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p
+* [[file:xdaq.org][XDAQ]]
 * DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
 
 #+begin_src 
@@ -165,7 +164,11 @@ is at source file level ?
 
   note that ARTDAQConfigurations is a *symlink*
 
-* XDAQ documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/CMSOS
+* OTS repositories                                                           
+  otsdaq_mu2e         : https://github.com/mu2e/otsdaq_mu2e
+  otsdaq_mu2e_config  : https://github.com/mu2e/otsdaq_mu2e_config
+* [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
+* [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
 * ------------------------------------------------------------------------------
 * <2023-04-05 Wed>                                                           
   XDAQContextTable - has IP's of different contexts
