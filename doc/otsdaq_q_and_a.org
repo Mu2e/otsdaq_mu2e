@@ -1,26 +1,26 @@
 # ------------------------------------------------------------------------------
-# Questions
 # those marked with *TODO* are not answered yet                   
 * ------------------------------------------------------------------------------
-* TODO what makes a group a 'configuration' group ?
-* what makes a group a 'context' group ?                                     
-  see [[file:otsdaq_terminology.org::/Context/]]
-* TODO why the configuration is defined by two groups and not one ?          
-* TODO I broke my configuration - how could I get back to a working one ?    
+* [1/12] Questions and answers      [TAB expands]                                               
+** TODO what makes a group a 'configuration' group ?
+** DONE what makes a group a 'context' group ?                                    
+  [A]: see [[file:otsdaq_terminology.org::/Context/]]
+** TODO why the configuration is defined by two groups and not one ?          
+** TODO I broke my configuration - how could I get back to a working one ?   
 
   trying to learn how to make a new configuration, I made a configuration mistake
   OTSDAQ picked my changes, automatically updated its defaults, and since then fails 
   on startup even in wizard (ots -w) mode.
 
   How do I get back to a working one? - it is sure stored somewhere in the DB
-* TODO is there a way to tell OTS not to use its defaults at all,            
+** TODO is there a way to tell OTS not to use its defaults at all,           
   but let a user choose among the available configurationxs first
-* TODO what is the "Editor Configuration" or why would a user need to configure an editor ?
-* TODO what is the "Last Activated Iterate Group", or why would a group need to iterate ? 
+** TODO what is the "Editor Configuration" or why would a user need to configure an editor ?
+** TODO what is the "Last Activated Iterate Group", or why would a group need to iterate ? 
   and why it is set to "None" ?
-* TODO what is the "Currently active BackBone" and why it is not possible to open a link to it in a new tab ? 
+** TODO what is the "Currently active BackBone" and why it is not possible to open a link to it in a new tab ? 
   could the latter be a Firefox configuration issue?
-* TODO upon startup, OTS launches one or several xdaq.exe processes, like this:
+** TODO upon startup, OTS launches one or several xdaq.exe processes, like this: 
 
 #+begin_src  
 xdaq.exe -h mu2edaq09.fnal.gov -p 3065 -e /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/otsConfiguration_CMake.xml \
@@ -33,6 +33,27 @@ and -c flag defines the configuration file.
 In my case, both files , ots.xml and otsConfiguration_CMake.xml, are identical.
 
 what is achieved by passing the same file twice, but under different souce ?
+** TODO $USER_WEB_PATH vs UserWebPath - why both are needed ?                
+
+ /home/mu2etrk/test_stand/pasha_013/srcs/otsdaq_utilities/WebGUI:
+  total used in directory 12 available 3249558536
+  drwxr-xr-x  9 mu2etrk mu2e  152 Apr 13 22:18 .
+  drwxr-xr-x 10 mu2etrk mu2e  251 Mar 29 12:07 ..
+  drwxr-xr-x  3 mu2etrk mu2e 4096 Mar 29 12:07 css
+  drwxr-xr-x  7 mu2etrk mu2e  154 Mar 29 12:07 fonts
+  drwxr-xr-x  3 mu2etrk mu2e 4096 Apr 14 19:57 html
+  drwxr-xr-x  6 mu2etrk mu2e  185 Mar 29 12:07 images
+  drwxr-xr-x  5 mu2etrk mu2e 4096 Apr 14 22:48 js
+  drwxr-xr-x  2 mu2etrk mu2e   36 Mar 29 12:07 JSONFiles
+  drwxr-xr-x  2 mu2etrk mu2e  130 Mar 29 12:07 sounds
+  lrwxrwxrwx  1 mu2etrk mu2e   70 Apr 13 22:18 UserWebPath -> /home/mu2etrk/test_stand/pasha_013/srcs/otsdaq_mu2e_tracker/UserWebGUI
+
+** TODO could Mu2e use a single USER_WEB_PATH instead of multiple ones ?     
+   currently, any otsdaq_mu2e_$subsystem package has such - do we need them to be separate ?
+** TODO buttons vs icons ?                                                   
+   - only "configure" icon open multiple windows
+   - can we use only buttons and get rid of icons ?
+   [[file:./images/buttons_vs_icons.png]]
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------
