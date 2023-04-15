@@ -34,6 +34,6 @@ In my case, both files , ots.xml and otsConfiguration_CMake.xml, are identical.
 
 what is achieved by passing the same file twice, but under different souce ?
 * ------------------------------------------------------------------------------
-* back to file:otsdaq_mu2e.org
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------
 

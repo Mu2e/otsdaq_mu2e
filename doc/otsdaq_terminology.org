@@ -30,5 +30,5 @@ To be a Context group, the members must exactly match the following members:
 
 - the rest tables define the "non-context" group
 * ------------------------------------------------------------------------------
-* back to file:otsdaq_mu2e.org
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------
