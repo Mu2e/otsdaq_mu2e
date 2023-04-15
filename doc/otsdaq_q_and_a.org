@@ -1,9 +1,9 @@
 # ------------------------------------------------------------------------------
 # those marked with *TODO* (in Emacs) are not answered yet                   
 * ------------------------------------------------------------------------------
-* [1/12] Questions and answers      [TAB expands]                                               
+* [1/14] Questions and answers      [TAB expands]                                               
 ** TODO what makes a group a 'configuration' group ?
-** DONE what makes a group a 'context' group ?                                    
+** DONE what makes a group a 'context' group ?                               
   [A]: see [[file:otsdaq_terminology.org::/Context/]]
 ** TODO why the configuration is defined by two groups and not one ?          
 ** TODO I broke my configuration - how could I get back to a working one ?   
@@ -58,6 +58,17 @@ what is achieved by passing the same file twice, but under different souce ?
    - what does the ALIAS:Default link do ? - (doesn't seem to do anything)
    - inefficient view: can we have one line per table instead of three ?
    [[file:./images/configure_table_view_001.png]]
+** TODO why a GroupAliases table gets activated when I click on its version number just to see what it is ?        
+
+   - when I browse versions of the GroupAliases table, and click on a particular version, 
+   226 in the example below, just to see what it is, the version gets activated. 
+
+   - Why there is no prior warnings? - By the time the new version get activated, 
+   a newbie forgets which version they were using before...
+
+   - How to browse a version of this table w/o activating it ?
+
+   [[file:images/configure_group_aliases_table_001.png]] 
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------
