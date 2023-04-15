@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# those marked with *TODO* are not answered yet                   
+# those marked with *TODO* (in Emacs) are not answered yet                   
 * ------------------------------------------------------------------------------
 * [1/12] Questions and answers      [TAB expands]                                               
 ** TODO what makes a group a 'configuration' group ?
@@ -54,6 +54,10 @@ what is achieved by passing the same file twice, but under different souce ?
    - only "configure" icon open multiple windows
    - can we use only buttons and get rid of icons ?
    [[file:./images/buttons_vs_icons.png]]
+** TODO configure table view - whats does the ALIAS_DEFAULT do ?             
+   - what does the ALIAS_Default do ? 
+   - inefficient view: can we have one line per table instead of three ?
+   [[file:./images/configure_table_view_001.png]]
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------
