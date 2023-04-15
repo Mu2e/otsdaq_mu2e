@@ -1,0 +1,48 @@
+#------------------------------------------------------------------------------
+# this file explains internals of how to configure and tun OTSDAQ
+#------------------------------------------------------------------------------
+* general info                                                               
+
+ 'ots' starts a number (1-4) xdaq processes, each listening on a certain port
+
+  for user = 'tracker': 
+
+  - 'Gateway'             output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-gateway-mu2edaq09.fnal.gov-3065.txt
+  - 'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
+  - 'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
+
+* configuration                                                              
+
+  assume user (partition) = tracker
+
+ file:../../otsdaq_mu2e_config/Data_tracker/TableInfo: contains definitions of the configuration tables, in XML
+
+ file:../../otsdaq_mu2e_config/databases_tracker/filesystemdb/test_db 
+
+ For each table, there is a directory where multiple versions of the table are stored in .json format. 
+ For example:
+
+ ARTDAQBoardReaderTable: file:../../otsdaq_mu2e_config/databases_tracker/filesystemdb/test_db/ARTDAQBoardReaderTable
+
+ 
+ in principle, different versions could have different format (number of columns)
+
+ $USER_DATA/ARTDAQConfigurations/daqinterface_settings file is created by file:../../otsdaq/otsdaq/ARTDAQSupervisor/ARTDAQSupervisor.cc
+
+ and then read by python script called from somewhere else: https://github.com/art-daq/artdaq_daqinterface/blob/develop/rc/control/daqinterface.py
+
+
+  boot.txt : created by file:../../otsdaq/otsdaq/ARTDAQSupervisor/ARTDAQSupervisor.cc::/boot.txt/
+
+ XDAQApplicationPropertyTable : advanced_memory_usage
+ XDAQApplicationPropertyTable:
+
+* environment variables used                                                 
+
+             USER_DATA=$MRB_TOP/srcs/otsdaq_mu2e_config/Data_tracker
+ DAQINTERFACE_SETTINGS=$USER_DATA/ARTDAQConfigurations/daqinterface_setting
+
+  note that ARTDAQConfigurations is a *symlink*
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
+* ------------------------------------------------------------------------------
