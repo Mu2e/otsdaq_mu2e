@@ -1,0 +1,39 @@
+# ------------------------------------------------------------------------------
+# Questions
+# those marked with *TODO* are not answered yet                   
+* ------------------------------------------------------------------------------
+* TODO what makes a group a 'configuration' group ?
+* what makes a group a 'context' group ?                                     
+  see [[file:otsdaq_terminology.org::/Context/]]
+* TODO why the configuration is defined by two groups and not one ?          
+* TODO I broke my configuration - how could I get back to a working one ?    
+
+  trying to learn how to make a new configuration, I made a configuration mistake
+  OTSDAQ picked my changes, automatically updated its defaults, and since then fails 
+  on startup even in wizard (ots -w) mode.
+
+  How do I get back to a working one? - it is sure stored somewhere in the DB
+* TODO is there a way to tell OTS not to use its defaults at all,            
+  but let a user choose among the available configurationxs first
+* TODO what is the "Editor Configuration" or why would a user need to configure an editor ?
+* TODO what is the "Last Activated Iterate Group", or why would a group need to iterate ? 
+  and why it is set to "None" ?
+* TODO what is the "Currently active BackBone" and why it is not possible to open a link to it in a new tab ? 
+  could the latter be a Firefox configuration issue?
+* TODO upon startup, OTS launches one or several xdaq.exe processes, like this:
+
+#+begin_src  
+xdaq.exe -h mu2edaq09.fnal.gov -p 3065 -e /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/otsConfiguration_CMake.xml \
+                                       -c /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/ots.xml
+#+end_src 
+
+according to the XDAQ documentation, -e flag defines the startup profile configuration file, 
+and -c flag defines the configuration file.
+
+In my case, both files , ots.xml and otsConfiguration_CMake.xml, are identical.
+
+what is achieved by passing the same file twice, but under different souce ?
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
+* ------------------------------------------------------------------------------
+

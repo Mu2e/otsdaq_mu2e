@@ -1,0 +1,32 @@
+#+startup:fold
+# ------------------------------------------------------------------------------
+# everything we know about XDAQ
+# ------------------------------------------------------------------------------
+* CMS XDAQ documentation                                                     
+  https://twiki.cern.ch/twiki/bin/view/CMSPublic/CMSOS
+
+* startup                                                                    
+- when ots (a script) is launched, it starts one or several xdaq processes, in this example, three:
+#+begin_src
+mu2etrk@mu2edaq09:~/test_stand/pasha_011>ps -eflwww | grep xdaq
+
+xdaq.exe -h mu2edaq09.fnal.gov -p 3065 -e /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/otsConfiguration_CMake.xml \
+                                       -c /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/ots.xml
+
+xdaq.exe -h mu2edaq09.fnal.gov -p 3066 -e /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/otsConfiguration_CMake.xml \ 
+                                       -c /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/ots.xml
+
+xdaq.exe -h mu2edaq09.fnal.gov -p 3068 -e /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/otsConfiguration_CMake.xml \
+                                       -c /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/XDAQConfigurations/ots.xml
+
+
+#+end_src
+*** i.e. , how otsdaq configures and starts artdaq 
+*** interface with the slow controls
+*** interface with the DQM 
+*** otsdaq interface to the DB - how are the DB query structured in OTSDAQ ?
+    parsing values is dangerous
+*** the database schema - how to query it? 
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
+* ------------------------------------------------------------------------------
