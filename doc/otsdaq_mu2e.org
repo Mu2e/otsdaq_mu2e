@@ -1,13 +1,12 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
-* [0/2] Ryan's OTSDAQ primer                                                 
+* OTSDAQ primer                                                              
   https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html
-* [[file:build_instructions.org][OTSDAQ build instructions]]
 * OTSDAQ intro by Ryan                                                       
   https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p
+* [[file:build_instructions.org][build instructions]]
 * [[file:xdaq.org][XDAQ]]
 * DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
-
 #+begin_src 
 mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
 crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
