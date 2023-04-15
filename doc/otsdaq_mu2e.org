@@ -11,18 +11,3 @@
 * [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
 * [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
 * ------------------------------------------------------------------------------
-* <2023-04-05 Wed>                                                           
-  XDAQContextTable - has IP's of different contexts
-
-  how does one define two nodes ? 
-
-  a group and a configuration (config = group and version) 
-
-  - how to get list of configurations with comments ? 
-
-  - create a context - IP
-  - superisors: main and FESupervisot
-
-   - Micol: mu2edaq07 : DIRACConfig
-     
-* ------------------------------------------------------------------------------
