@@ -94,9 +94,7 @@ is at source file level ?
 
   note that ARTDAQConfigurations is a *symlink*
 
-* OTS repositories                                                           
-  otsdaq_mu2e         : https://github.com/mu2e/otsdaq_mu2e
-  otsdaq_mu2e_config  : https://github.com/mu2e/otsdaq_mu2e_config
+* [[file:code_repositories.org][OTS code repositories]]                                                      
 * [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
 * [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
 * ------------------------------------------------------------------------------
