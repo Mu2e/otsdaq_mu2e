@@ -53,13 +53,13 @@ is at source file level ?
 
 * general info                                                               
 
- 'ots' starts 3 xdaq processes, each listening on a certain port
+ 'ots' starts a number (1-4) xdaq processes, each listening on a certain port
 
   for user = 'tracker': 
 
-  'Gateway'             output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-gateway-mu2edaq09.fnal.gov-3065.txt
-  'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
-  'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
+  - 'Gateway'             output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-gateway-mu2edaq09.fnal.gov-3065.txt
+  - 'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
+  - 'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
 
 * configuration                                                              
 
