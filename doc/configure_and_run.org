@@ -4,9 +4,15 @@
 # ------------------------------------------------------------------------------
 * OTSDAQ configurations                                                      
 
-- to run OTSDAQ, need to define its configuration - hardware and software used, and their settings
+- to run OTSDAQ, need to define its configuration first 
 
-- configurations of individual pieces are described in different tables
+- configuration describes the hardware (including networking) and the software used, 
+  and their settings
+
+- configurations of individual pieces are described in so-called tables
+  - tables are not exactly SQL tables, if you know SQL don't get confused 
+    - tables are arrays of JSON structures
+    - Mu2e is goind to switch to using MongoDB soon
 
 - tables could be combined in groups, a group has a name and a version
 
