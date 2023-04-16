@@ -1,0 +1,92 @@
+* installation and build instructions                                        
+
+  OTSDAQ bundle to use 
+   - version   : v2_06_08   
+   - qualifiers: e20_s118_prof
+
+  build procedure:
+
+#+begin_src 
+  wget https://github.com/Mu2e/otsdaq_mu2e_config/mu2e_ots_install_v2.sh
+  source mu2e_ots_install_v2.sh <working_area> partition otsdaq_bundle qualifiers
+#+end_src 
+
+  - working_area : name of the OTSDAQ working area, to be created in the current directory 
+  - partition    : see https://github.com/mu2e/otsdaq_mu2e/blob/develop/doc/otsdaq_mu2e.org#partitions
+  - otsdaq_bundle: version of the OTSDAQ bundle, see above 
+  - qualifiers   : build qualifiers, see above
+
+* <2023-01-04 Wed> build configuration with two loggers (by Giani)           
+
+  instructions below are not working, will be fixed soon    
+ 
+1) INSTALL THE FOLLOWING PACKAGES 
+
+#+begin_src
+git clone https://github.com/art-daq/artdaq.git
+git clone https://github.com/art-framework-suite/art-root-io.git art_root_io
+git clone https://github.com/Mu2e/otsdaq_mu2e_config.git 
+git clone https://github.com/art-daq/artdaq_daqinterface.git
+git clone https://github.com/art-daq/otsdaq.git
+git clone https://github.com/Mu2e/otsdaq_mu2e_dqm_tracker
+git clone https://github.com/Mu2e/otsdaq_mu2e.git
+git clone https://github.com/Mu2e/artdaq_mu2e.git
+git clone https://github.com/Mu2e/otsdaq_mu2e_trigger
+#+end_src
+
+# edit one hack in art_root_io
+# 1. open the file: art_root_io/detail/RootErrorClassifier.cc
+# 2. add the following code at line 25:    if(parser.has_message("rdict")) { return true; }
+
+# reset the config
+#+begin_src
+reset_mu2e_ots_snapshot.sh --name full_trig_reco_chain_20230110_demo
+
+mrb newDev -f -q e20:s118:prof -v v1_00_00
+
+# compile
+source setup_ots.sh
+cd srcs
+mrb uc
+cd ..
+mz
+#+end_src 
+
+   launch OTS in wiz mode
+#+begin_src
+ots -w
+#+end_src
+
+set up the nodes where to run the event builder, datalogger, dispatcher, etc
+
+#+begin_quote
+1. click on "Configure"
+2. click on "tree view" next to "HorizontalSliceTest"
+3. change the following parameter to load properly the setup script from your working area: 
+   ARTDAQSupervisorTable -> artDaqSupervsior0 -> DAQSetupScript
+4. change the following ExecutionHostNames:
+ *** ARTDAQBoardReaderTable
+a. crvReader0
+b. EventDataGenerator0
+c. EventDataGenerator1 (not used, so you can ignore this)
+ *** ARTDAQDataLogger
+a. logger0
+b. logger1
+ *** ARTDAQDispatcherTable
+a. dispatcher0
+ *** ARTDAQEventBuilderTable
+a. EventBuilder00
+b. CRVBuilder0
+c. EventBuilder01 (it's turned off, so this can be ignored)
+#+end_quote
+
+  *ARTDAQOnlineMonitorTable*
+
+ a. trackerDQMSupervisor 
+
+  *NOTE*: if you are using the trackerDQM, than you need to change also the following parameter and set it to the same node as the "trackerDQMSupervisor":
+
+  ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
+* ------------------------------------------------------------------------------
