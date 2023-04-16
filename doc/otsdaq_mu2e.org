@@ -19,9 +19,9 @@
    - what is the meaning of ARTDAQ_PARTITION ?
    - what is the meaning of CONSOLE_SUPERVISOR_IP ?
    - why the subsystem=dqmcalo uses repo=otsdaq_mu2e_trigger ? 
-   - to allocate resources with a single user, can use ARTDAQ_PARTITION as a key 
-     partition would specify a host, a port range and whatever else needed
-     partition numbers could be static
+   - to allocate resources in a configuration with a single OTSDAQ user, can use ARTDAQ_PARTITION as a key
+     - partition would specify a host, a port range and whatever else needed
+     - partition numbers could be static
    - as all nodes below are on a local network, the port numbers dont disclose much
 |------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
 | ARTDAQ_PARTITION | old subsystem | CONSOLE_SUPERVISOR_IP | first OTS port | first OTS port WIZ | repo                    |
