@@ -1,7 +1,74 @@
+#+startup:fold
 #------------------------------------------------------------------------------
 # this file explains internals of how to configure and tun OTSDAQ
-#------------------------------------------------------------------------------
-* general info                                                               
+# ------------------------------------------------------------------------------
+* OTSDAQ configurations                                                      
+
+- to run OTSDAQ, need to define its configuration - hardware and software used, and their settings
+
+- configurations of individual pieces are described in different tables
+
+- tables could be combined in groups, a group has a name and a version
+
+- system configuration is defined by two groups of tables : 
+
+  - "context" group - includes 9 tables, see below
+
+  - "non-context" group, contains the rest tables, shows up as the "Editor configuration"
+    - The number of tables in a non-context group could be any
+
+  - groups are versioned, an alias could be assigned to a given version
+
+  - by default, when a version of a group gets updated, the alias "moves" 
+    to the updated version. *Watch the editor window!* 
+
+- the whole configuration doesn't have a name (or an alias), this is something to be added
+
+- therefore, to define a configuration to use need to specify two groups, 
+  a context one and a non-context one, and their aliases
+
+  *if an alias is not defined, the current configure display won't show the group!*
+* proposed naming conventions for configutations (for now):
+
+|------------+------------------+-----------------+-----------------------|
+|            | context          | non-context     | comment               |
+|------------+------------------+-----------------+-----------------------|
+| group name | XxxNameContext   | XxxNameConfig   | example 'Xxx' = 'Trk' |
+| alias name | xxx_name_context | xxx_name_config | then, 'xxx'='trk'     |
+|------------+------------------+-----------------+-----------------------|
+
+ - Xxx defines susbsystem, can we stay with TLA's ?
+   - Trk, Cal, Crv, Exm, Stm, Mag for cryo, what else ?
+
+ - example: test tracker configuration in the Lab 3 annex
+
+   - context group    : TrkVstAnnexContext, OTS alias : trk_vst_annex_context
+   - non context group: TrkVstAnnexConfig , OTS alias : trk_vst_annex_config
+
+ - example: tracker VST configuration for reading a plane
+
+   - context group    : TrkVstPlaneContext, OTS alias : trk_vst_plane_context
+   - non context group: TrkVstPlaneConfig , OTS alias : trk_vst_plane_config
+
+ - note, that currently underscores in the group names are not allowed, but are allowed 
+   in the context names
+
+* context group                                                              
+
+#+begin_src  (from error diagnostics)                                         
+To be a Context group, the members must exactly match the following members:
+1. DesktopIconTable
+2. DesktopWindowParameterTable
+3. GatewaySupervisorTable
+4. MessageFacilityTable
+5. SlowControlsDashboardSupervisorTable
+6. StateMachineTable
+7. XDAQApplicationPropertyTable
+8. XDAQApplicationTable
+9. XDAQContextTable
+#+end_src                           
+
+* XDAQ processes                                                             
 
  'ots' starts a number (1-4) xdaq processes, each listening on a certain port
 
@@ -11,7 +78,13 @@
   - 'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
   - 'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
 
-* configuration                                                              
+* environment variables used                                                 
+
+             USER_DATA=$MRB_TOP/srcs/otsdaq_mu2e_config/Data_tracker
+ DAQINTERFACE_SETTINGS=$USER_DATA/ARTDAQConfigurations/daqinterface_setting
+
+  note that ARTDAQConfigurations is a *symlink*
+* where the congiguration data are stored                                    
 
   assume user (partition) = tracker
 
@@ -37,12 +110,6 @@
  XDAQApplicationPropertyTable : advanced_memory_usage
  XDAQApplicationPropertyTable:
 
-* environment variables used                                                 
-
-             USER_DATA=$MRB_TOP/srcs/otsdaq_mu2e_config/Data_tracker
- DAQINTERFACE_SETTINGS=$USER_DATA/ARTDAQConfigurations/daqinterface_setting
-
-  note that ARTDAQConfigurations is a *symlink*
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
 * ------------------------------------------------------------------------------
