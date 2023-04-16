@@ -68,6 +68,14 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 
+	registerFEMacroFunction(
+		"Reset Runplan",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::ResetRunplan),                  // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions					
+
 
 	// clang-format on
 
@@ -310,13 +318,22 @@ void CFOFrontEndInterface::configure(void)
 		regWriteMonitorStream_.flush();
 	}
 
-	if(getConfigurationManager()
-	   ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
-	   .getValue<bool>())
-	  {
-	    __FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
-	    return;
-	  }
+	try
+	{
+		if(getConfigurationManager()
+		->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
+		.getValue<bool>())
+		{
+			__FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
+			return;
+		}
+	}
+	catch(const std::runtime_error& e)
+	{
+		__FE_SS__ << "The Mu2eGlobalsTable is missing the record named 'SyncDemoConfig.' This record is required (representing Mu2e global parameters) for the configuration of the CFO." <<
+			 __E__ << e.what() << __E__;
+		__SS_THROW__;
+	}
 
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
 	// Therefore, break up configuration into several steps so as to reply before
@@ -903,5 +920,14 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	__SET_ARG_OUT__("readData",readDataStr);
 } //end ReadCFO()
 
+//========================================================================
+void CFOFrontEndInterface::ResetRunplan(__ARGS__)
+{	
+	registerWrite(0x9100, 0x08000005); 
+	registerWrite(0x9100, 0x00000005); 
+
+
+	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
+} //end ResetRunplan()
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
