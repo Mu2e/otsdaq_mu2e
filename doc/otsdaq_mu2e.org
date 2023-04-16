@@ -12,7 +12,6 @@
 ** [[file:hardware.org][Mu2e DAQ hardware]]
 ** [[file:trace.org][TRACE]] 
 ** [[file:configure_and_run.org][how to configure and run OTSDAQ]]
-** [[file:code_repositories.org][OTS code repositories]]                                                      
 ** partitions                                                                
    need to make sure that the term _partition_ can be used here
 
@@ -47,4 +46,5 @@
 |------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
 ** [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
 ** [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
+** [[file:code_repositories.org][code repositories]]                                                         
 * ------------------------------------------------------------------------------
