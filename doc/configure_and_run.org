@@ -28,7 +28,7 @@
   a context one and a non-context one, and their aliases
 
   *if an alias is not defined, the current configure display won't show the group!*
-* proposed naming conventions for configutations (for now):
+* proposed naming conventions for Mu2e configurations (for now):
 
 |------------+------------------+-----------------+-----------------------|
 |            | context          | non-context     | comment               |
@@ -50,8 +50,8 @@
    - context group    : TrkVstPlaneContext, OTS alias : trk_vst_plane_context
    - non context group: TrkVstPlaneConfig , OTS alias : trk_vst_plane_config
 
- - note, that currently underscores in the group names are not allowed, but are allowed 
-   in the context names
+ - note, that currently underscores in the group names are not allowed, 
+   however they are allowed in the context names
 
 * context group                                                              
 
@@ -78,7 +78,7 @@ To be a Context group, the members must exactly match the following members:
   - 'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
   - 'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
 
-* environment variables used                                                 
+* _environment variables used_                                               
 
              USER_DATA=$MRB_TOP/srcs/otsdaq_mu2e_config/Data_tracker
  DAQINTERFACE_SETTINGS=$USER_DATA/ARTDAQConfigurations/daqinterface_setting
