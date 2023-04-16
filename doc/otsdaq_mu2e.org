@@ -7,7 +7,7 @@
 * ------------------------------------------------------------------------------
 ** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
 ** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
-** [[file:build_instructions.org][build instructions]]  : not working yet ! 
+** [[file:mu2e_build_instructions.org][build instructions]] 
 ** [[file:xdaq.org][XDAQ]]
 ** [[file:hardware.org][Mu2e DAQ hardware]]
 ** [[file:trace.org][TRACE]] 
@@ -21,7 +21,8 @@
    - why the subsystem=dqmcalo uses repo=otsdaq_mu2e_trigger ? 
    - to allocate resources with a single user, can use ARTDAQ_PARTITION as a key 
      partition would specify a host, a port range and whatever else needed
-     partition numebers could be static
+     partition numbers could be static
+   - as all nodes below are on a local network, the port numbers dont disclose much
 |------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
 | ARTDAQ_PARTITION | old subsystem | CONSOLE_SUPERVISOR_IP | first OTS port | first OTS port WIZ | repo                    |
 |------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
