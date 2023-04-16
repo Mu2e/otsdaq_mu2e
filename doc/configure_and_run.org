@@ -53,6 +53,13 @@
  - note, that currently underscores in the group names are not allowed, 
    however they are allowed in the context names
 
+* a workflow proposal           
+
+- create a new configuration by copying and renaming an existing one 
+- do it to both the context and non-context tables
+- dont forget to create aliases for both new groups and name them consistently 
+- start doing what you need
+
 * context group                                                              
 
 #+begin_src  (from error diagnostics)                                         
