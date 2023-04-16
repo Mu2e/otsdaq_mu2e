@@ -1,11 +1,18 @@
 # ------------------------------------------------------------------------------
-# those marked with *TODO* (in Emacs) are not answered yet                   
+# questions marked with *TODO* (in Emacs) are not answered yet                   
+* ------------------------------------------------------------------------------
+* (1) how to create a new Question:                                          
+  - edit this file below, use previous question as a template
+  - <Ctrl-C><Ctrl-T> switches the TODO status
+  - if needed, make a screenshot, store it in doc/images, and link it to the 
+  question
 * ------------------------------------------------------------------------------
 * [1/14] Questions and answers      [TAB expands]                                               
 ** TODO what makes a group a 'configuration' group ?
 ** DONE what makes a group a 'context' group ?                               
-  [A]: see [[file:otsdaq_terminology.org::/Context/]]
-** TODO why the configuration is defined by two groups and not one ?          
+[Answer]: see [[file:otsdaq_terminology.org::/Context/]]
+** TODO why the configuration is defined by two groups and not one ?         
+   - both define the same configuration 
 ** TODO I broke my configuration - how could I get back to a working one ?   
 
   trying to learn how to make a new configuration, I made a configuration mistake
@@ -58,7 +65,7 @@ what is achieved by passing the same file twice, but under different souce ?
    - what does the ALIAS:Default link do ? - (doesn't seem to do anything)
    - inefficient view: can we have one line per table instead of three ?
    [[file:./images/configure_table_view_001.png]]
-** TODO why a GroupAliases table gets activated when I click on its version number just to see what it is ?        
+** TODO why an GroupAliases table gets activated when I click on its version number just to see what it is ?        
 
    - when I browse versions of the GroupAliases table, and click on a particular version, 
    226 in the example below, just to see what it is, the version gets activated. 
