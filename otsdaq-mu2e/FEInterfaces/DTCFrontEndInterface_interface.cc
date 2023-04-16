@@ -832,29 +832,6 @@ void DTCFrontEndInterface::configure(void) try
 	}
 
 
-	// From Rick new code
-	uint32_t dtcEventBuilderReg_DTCID = 0;
-    uint32_t dtcEventBuilderReg_Configuration = 0;
-        try
-          {
-            dtcEventBuilderReg_DTCID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
-            dtcEventBuilderReg_Configuration = getSelfNode().getNode("EventBuilderConfiguration").getValue<uint32_t>(
-			);
-            __FE_COUTV__(dtcEventBuilderReg_DTCID);
-            __FE_COUTV__(dtcEventBuilderReg_Configuration);
-            registerWrite(0x9154, dtcEventBuilderReg_DTCID);
-            registerWrite(0x9158, dtcEventBuilderReg_Configuration);
-
-			
-          }
-        catch(...)
-          {
-            __FE_COUT_INFO__ << "Ignoring missing event building configuration values." << __E__;
-          }
-	// end of the new code
-
-
-
 	if(getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
 	        .getValue<bool>())
@@ -871,6 +848,60 @@ void DTCFrontEndInterface::configure(void) try
 			roc.second->configure();
 		return;
 	}
+	
+	// From Rick new code
+	uint32_t dtcEventBuilderReg_DTCID = 0;
+	uint32_t dtcEventBuilderReg_Mode = 0;
+	uint32_t dtcEventBuilderReg_PartitionID = 0;
+	uint32_t dtcEventBuilderReg_MACIndex = 0;
+	uint32_t dtcEventBuilderReg_DTCInfo = 0;
+
+	uint32_t dtcEventBuilderReg_NumBuff = 0;
+	uint32_t dtcEventBuilderReg_StartNode = 0;
+	uint32_t dtcEventBuilderReg_NumNodes = 0;
+    uint32_t dtcEventBuilderReg_Configuration = 0;
+
+        try
+          {
+            dtcEventBuilderReg_DTCID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+			dtcEventBuilderReg_Mode = getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
+            dtcEventBuilderReg_PartitionID = getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
+			dtcEventBuilderReg_MACIndex = getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
+            
+			dtcEventBuilderReg_NumBuff = getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
+			dtcEventBuilderReg_StartNode = getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
+			dtcEventBuilderReg_NumNodes = getSelfNode().getNode("EventBuilderNumNodes").getValue<uint32_t>();
+
+
+            __FE_COUTV__(dtcEventBuilderReg_DTCID);  // Doesn't work is I use uint8_t
+			__FE_COUTV__(dtcEventBuilderReg_Mode);
+			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
+			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
+			__FE_COUTV__(dtcEventBuilderReg_NumBuff);
+			__FE_COUTV__(dtcEventBuilderReg_StartNode);
+			__FE_COUTV__(dtcEventBuilderReg_NumNodes);
+
+
+
+			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/ EVB Local MAC Index [7-0]
+			dtcEventBuilderReg_DTCInfo = dtcEventBuilderReg_DTCID << 24 | dtcEventBuilderReg_Mode << 16 | 
+											dtcEventBuilderReg_PartitionID << 8 | dtcEventBuilderReg_MACIndex;
+			__FE_COUTV__(dtcEventBuilderReg_DTCInfo);
+			registerWrite(0x9154, dtcEventBuilderReg_DTCInfo);
+
+			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes [6-0]
+            dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 | dtcEventBuilderReg_StartNode << 8 
+												| dtcEventBuilderReg_NumNodes; 
+			__FE_COUTV__(dtcEventBuilderReg_Configuration);    
+            registerWrite(0x9158, dtcEventBuilderReg_Configuration);
+		
+          }
+        catch(...)
+          {
+            __FE_COUT_INFO__ << "Ignoring missing event building configuration values." << __E__;
+          }
+	// end of the new code
+
 	__FE_COUT__ << "DTC configuring... # of ROCs = " << rocs_.size() << __E__;
 
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
