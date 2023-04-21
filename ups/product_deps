@@ -18,17 +18,22 @@ fcldir      fq_dir      fcl
 
 #
 product		 		version		optional
-otsdaq				v2_06_08
-otsdaq_utilities	v2_06_08
-otsdaq_components	v2_06_08
-otsdaq_epics		v2_06_08
-artdaq_mu2e			v1_05_02
-cetmodules			v3_19_02	-	only_for_build
+otsdaq				v2_06_09
+otsdaq_utilities	v2_06_09
+otsdaq_components	v2_06_09
+otsdaq_epics		v2_06_09
+artdaq_mu2e			v1_05_03
+cetmodules			v3_21_01	-	only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		otsdaq			otsdaq_utilities	otsdaq_components	otsdaq_epics	artdaq_mu2e		notes
+e26:s122:prof	e26:s122:prof	e26:s122:prof		e26:s122:prof		e26:s122:prof	e26:s122:prof	-std=c++17
+e26:s122:debug	e26:s122:debug	e26:s122:debug		e26:s122:debug		e26:s122:debug	e26:s122:debug	-std=c++17
+e20:s122:prof	e20:s122:prof	e20:s122:prof		e20:s122:prof		e20:s122:prof	e20:s122:prof	-std=c++17
+e20:s122:debug	e20:s122:debug	e20:s122:debug		e20:s122:debug		e20:s122:debug	e20:s122:debug	-std=c++17
+
 e26:s118:prof	e26:s118:prof	e26:s118:prof		e26:s118:prof		e26:s118:prof	e26:s118:prof	-std=c++17
 e26:s118:debug	e26:s118:debug	e26:s118:debug		e26:s118:debug		e26:s118:debug	e26:s118:debug	-std=c++17
 e20:s118:prof	e20:s118:prof	e20:s118:prof		e20:s118:prof		e20:s118:prof	e20:s118:prof	-std=c++17
