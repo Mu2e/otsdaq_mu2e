@@ -68,7 +68,7 @@ what is achieved by passing the same file twice, but under different souce ?
    [[file:./images/configure_table_view_001.png]]
 ** TODO configuration editor                                                 
   - how to make the whole table, not 10% of it, visible ?
-  file:./images/configure_editor.png
+     [[file:./images/configure_editor.png]]
 ** TODO why the GroupAliases table gets activated when I click on its version number just to see what it is ?        
 
    - when I browse versions of the GroupAliases table, and click on a particular version, 
