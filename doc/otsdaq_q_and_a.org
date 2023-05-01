@@ -66,9 +66,10 @@ what is achieved by passing the same file twice, but under different souce ?
    - what does the ALIAS:Default link do ? - (doesn't seem to do anything)
    - inefficient view: can we have one line per table instead of three ?
    [[file:./images/configure_table_view_001.png]]
-** TODO configuration editor: how to make the whole table, not 10% of it, visible ?
-file:./images/configure_editor.png
-** TODO why an GroupAliases table gets activated when I click on its version number just to see what it is ?        
+** TODO configuration editor                                                 
+  - how to make the whole table, not 10% of it, visible ?
+  file:./images/configure_editor.png
+** TODO why the GroupAliases table gets activated when I click on its version number just to see what it is ?        
 
    - when I browse versions of the GroupAliases table, and click on a particular version, 
    226 in the example below, just to see what it is, the version gets activated. 
