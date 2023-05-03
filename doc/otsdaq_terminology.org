@@ -15,7 +15,7 @@
 
 - the *Context group* is defined as follows:
 
-#+begin_src  
+#+begin_src  (from error diagnostics)                                         
 To be a Context group, the members must exactly match the following members:
 1. DesktopIconTable
 2. DesktopWindowParameterTable
@@ -26,7 +26,7 @@ To be a Context group, the members must exactly match the following members:
 7. XDAQApplicationPropertyTable
 8. XDAQApplicationTable
 9. XDAQContextTable
-#+end_src 
+#+end_src                           
 
 - the rest tables define the "non-context" group
 * ------------------------------------------------------------------------------
