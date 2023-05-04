@@ -35,6 +35,11 @@ mrb uc
 mrb b
 #+end_src
 
+  - finally, setup the ssh tunnel for accessing the MongoDB (running on mu2edaq13)
+#+begin_src
+ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
+#+end_src
+
 * <2023-01-04 Wed> build configuration with two loggers (by Giani)           
 
   instructions below are not working, will be fixed soon    
