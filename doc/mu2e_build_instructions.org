@@ -1,8 +1,8 @@
-* installation and build instructions                                        
+* installation and build instructions  (validated 2023-05-03)                                      
 
   OTSDAQ bundle to use 
-   - version   : v2_06_08   
-   - qualifiers: e20_s118_prof
+   - version   : v2_06_09   
+   - qualifiers: e20_s122_prof
 
   - all available OTSDAQ bundles: https://scisoft.fnal.gov/scisoft/packages/otsdaq/
 
@@ -10,13 +10,19 @@
 
 #+begin_src 
   wget https://github.com/Mu2e/otsdaq_mu2e_config/mu2e_ots_install_v2.sh
-  source mu2e_ots_install_v2.sh working_area partition otsdaq_bundle qualifiers
+  source mu2e_ots_install_v2.sh working_area partition [otsdaq_bundle] [qualifiers]
 #+end_src 
 
   - working_area : name of the OTSDAQ working area, to be created in the current directory 
   - partition    : see https://github.com/mu2e/otsdaq_mu2e/blob/develop/doc/otsdaq_mu2e.org#partitions
   - otsdaq_bundle: version of the OTSDAQ bundle, see above 
   - qualifiers   : build qualifiers, see above
+
+example:
+#+begin_src 
+  wget https://github.com/Mu2e/otsdaq_mu2e_config/mu2e_ots_install_v2.sh
+  source mu2e_ots_install_v2.sh pasha_001 8 v2_06_09 e20_s122_prof
+#+end_src
 
 * <2023-01-04 Wed> build configuration with two loggers (by Giani)           
 
