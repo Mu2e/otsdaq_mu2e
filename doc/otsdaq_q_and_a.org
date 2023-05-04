@@ -8,7 +8,7 @@
   - if needed, make a screenshot, store it in doc/images, and link it to the 
   question
 * ------------------------------------------------------------------------------
-* [1/18] Questions and answers      [TAB expands]                                               
+* [1/19] Questions and answers      [TAB expands]                                               
 ** TODO what makes a group a 'configuration' group ?
 ** DONE what makes a group a 'context' group ?                               
 [Answer]: see [[file:otsdaq_terminology.org::/Context/]]
@@ -75,6 +75,10 @@ what is achieved by passing the same file twice, but under different souce ?
   - I presume, 'SUpervisor0' is used for search ...
   - what is the convention for assigning 0's ? Capitalization convention?
   [[file:./images/configure_naming_SUpervisor0.png]]
+** TODO configuration editor and Mongo DB                                    
+  - how does the GUI interface interact with the Mongo DB ?
+  - in particular, what happens when one clicks REFRESH? - does everything get updated from the DB ?
+  file:./images/configure_refresh.png
 ** TODO slow controls ROC vs DTC                                             
   - why does the table defining ROC have links to slow control things, while the table defining the DTC does not ?
 ** TODO why the GroupAliases table gets activated when I click on its version number just to see what it is ?   
