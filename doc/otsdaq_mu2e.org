@@ -1,184 +1,50 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
-* [0/2] OTSDAQ primer                                                        
-  https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html
-
-Questions:                    
-** TODO what makes a group a 'configuration' group ?
-** TODO what makes a group a 'context' group ?
-* OTSDAQ build instructions   <2023-01-04 Wed> by Giani                      
-
-1) INSTALL THE FOLLOWING PACKAGES 
-
-#+begin_src
-git clone https://github.com/art-daq/artdaq.git
-git clone https://github.com/art-framework-suite/art-root-io.git art_root_io
-git clone https://github.com/Mu2e/otsdaq_mu2e_config.git 
-git clone https://github.com/art-daq/artdaq_daqinterface.git
-git clone https://github.com/art-daq/otsdaq.git
-git clone https://github.com/Mu2e/otsdaq_mu2e_dqm_tracker
-git clone https://github.com/Mu2e/otsdaq_mu2e.git
-git clone https://github.com/Mu2e/artdaq_mu2e.git
-git clone https://github.com/Mu2e/otsdaq_mu2e_trigger
-#+end_src
-
-# edit one hack in art_root_io
-# 1. open the file: art_root_io/detail/RootErrorClassifier.cc
-# 2. add the following code at line 25:    if(parser.has_message("rdict")) { return true; }
-
-# reset the config
-#+begin_src
-reset_mu2e_ots_snapshot.sh --name full_trig_reco_chain_20230110_demo
-
-mrb newDev -f -q e20:s118:prof -v v1_00_00
-
-# compile
-source setup_ots.sh
-cd srcs
-mrb uc
-cd ..
-mz
-#+end_src 
-
-   launch OTS in wiz mode
-#+begin_src
-ots -w
-#+end_src
-
-set up the nodes where to run the event builder, datalogger, dispatcher, etc
-
-#+begin_quote
-1. click on "Configure"
-2. click on "tree view" next to "HorizontalSliceTest"
-3. change the following parameter to load properly the setup script from your working area: 
-   ARTDAQSupervisorTable -> artDaqSupervsior0 -> DAQSetupScript
-4. change the following ExecutionHostNames:
- *** ARTDAQBoardReaderTable
-a. crvReader0
-b. EventDataGenerator0
-c. EventDataGenerator1 (not used, so you can ignore this)
- *** ARTDAQDataLogger
-a. logger0
-b. logger1
- *** ARTDAQDispatcherTable
-a. dispatcher0
- *** ARTDAQEventBuilderTable
-a. EventBuilder00
-b. CRVBuilder0
-c. EventBuilder01 (it's turned off, so this can be ignored)
-#+end_quote
-
-  *ARTDAQOnlineMonitorTable*
-
- a. trackerDQMSupervisor 
-
-  *NOTE*: if you are using the trackerDQM, than you need to change also the following parameter and set it to the same node as the "trackerDQMSupervisor":
-
-  ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
-
-* DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
-
-#+begin_src 
-mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
-crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
-crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
-#+end_src
-                                                              
-- the card number is controled by the env var DTCLIB_DTC
-  if undefined, = 0
-  export DTCLIB_DTC=1 # use the first card (/dev/
-* TRACE                                                                      
-
- TLOG(TLVL_DEBUG) << "TrackerVST_generator CONSTRUCTOR";
-
- export TRACE_FILE=/tmp/trace_buffer_pasha.txt
- 
- tshow : see messages that are sent to memory. 
- tonM  : will turn on additional messages to memory, 
- tonS  : will send those messages to the log files
-
- TRACE user guide: https://github.com/art-daq/trace/wiki/TRACE-Users-Guide
-
- set format of TRACE printouts: TRACE_PRINT="%m-%d %H:%M:%S.%%06d %T %*n %*L %F: %M"
-
-#+begin_src
-mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
-mode:                          M=1                S=1
- TID       NAME              maskM              maskS              maskT
----- ---------- ------------------ ------------------ ------------------
- 268      TRACE 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
- 772 trace_cntl 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
-1021    _TRACE_ 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
-#+end_src
-
-from Andy:
- 
- #+begin_src
-tonM -N DTC.cpp 0-1000
-to set the debug level for DTC.cpp and then looking at the output with
-tshow | less
-#+end_src 
-
-According to Andy, DTC.cpp is the source file name. Does this mean that the control 
-is at source file level ?
-
-* general info                                                               
-
- 'ots' starts 3 xdaq processes, each listening on a certain port
-
-  for user = 'tracker': 
-
-  'Gateway'             output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-gateway-mu2edaq09.fnal.gov-3065.txt
-  'ARTDAQSupervisor'    output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3066.txt
-  'SlowControlsContext' output into /home/mu2etrk/test_stand/pasha_011/srcs/otsdaq_mu2e_config/Data_tracker/Logs/otsdaq_quiet_run-mu2edaq09.fnal.gov-3068.txt
-
-* configuration                                                              
-
-  assume user (partition) = tracker
-
- file:../../otsdaq_mu2e_config/Data_tracker/TableInfo: contains definitions of the configuration tables, in XML
-
- file:../../otsdaq_mu2e_config/databases_tracker/filesystemdb/test_db 
-
- For each table, there is a directory where multiple versions of the table are stored in .json format. 
- For example:
-
- ARTDAQBoardReaderTable: file:../../otsdaq_mu2e_config/databases_tracker/filesystemdb/test_db/ARTDAQBoardReaderTable
-
- 
- in principle, different versions could have different format (number of columns)
-
- $USER_DATA/ARTDAQConfigurations/daqinterface_settings file is created by file:../../otsdaq/otsdaq/ARTDAQSupervisor/ARTDAQSupervisor.cc
-
- and then read by python script called from somewhere else: https://github.com/art-daq/artdaq_daqinterface/blob/develop/rc/control/daqinterface.py
-
-
-  boot.txt : created by file:../../otsdaq/otsdaq/ARTDAQSupervisor/ARTDAQSupervisor.cc::/boot.txt/
-
- XDAQApplicationPropertyTable : advanced_memory_usage
- XDAQApplicationPropertyTable:
-
-* environment variables used                                                 
-
-             USER_DATA=$MRB_TOP/srcs/otsdaq_mu2e_config/Data_tracker
- DAQINTERFACE_SETTINGS=$USER_DATA/ARTDAQConfigurations/daqinterface_setting
-
-  note that ARTDAQConfigurations is a *symlink*
-
-* XDAQ documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/CMSOS
+* Mu2e OTSDAQ docs - top page                                                
 * ------------------------------------------------------------------------------
-* <2023-04-05 Wed>                                                           
-  XDAQContextTable - has IP's of different contexts
+* News:
+** <2023-04-12 Wed> [[https://docs.google.com/document/d/1HcwRGdVoRhv8FstQncY7KOxvNlP6nf_gGtHEcNmc2Bc/edit][kick-off meeting, preparations for a workshop]]
+* ------------------------------------------------------------------------------
+** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
+** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
+** [[file:mu2e_build_instructions.org][build instructions]] 
+** [[file:xdaq.org][XDAQ]]
+** [[file:hardware.org][Mu2e DAQ hardware]]
+** [[file:trace.org][TRACE]] 
+** [[file:configure_and_run.org][how to configure and run OTSDAQ]]
+** partitions                                                                
+   need to make sure that the term _partition_ can be used here
 
-  how does one define two nodes ? 
-
-  a group and a configuration (config = group and version) 
-
-  - how to get list of configurations with comments ? 
-
-  - create a context - IP
-  - superisors: main and FESupervisot
-
-   - Micol: mu2edaq07 : DIRACConfig
-     
+   - what is the meaning of ARTDAQ_PARTITION ?
+   - what is the meaning of CONSOLE_SUPERVISOR_IP ?
+   - why the subsystem=dqmcalo uses repo=otsdaq_mu2e_trigger ? 
+   - to allocate resources in a configuration with a single OTSDAQ user, can use ARTDAQ_PARTITION as a key
+     - partition would specify a host, a port range and whatever else needed
+     - partition numbers could be static
+   - as all nodes below are on a local network, the port numbers dont disclose much
+|------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
+| ARTDAQ_PARTITION | old subsystem | CONSOLE_SUPERVISOR_IP | first OTS port | first OTS port WIZ | repo                    |
+|------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
+|                2 | sync          |        192.168.157.06 |           2015 |               2015 | otsdaq_mu2e             |
+|                3 | dqmcalo       |        192.168.157.11 |           3095 |               3095 | otsdaq_mu2e_trigger     |
+|                4 | calo          |        192.168.157.11 |           3025 |               3025 | otsdaq_mu2e_calorimeter |
+|                5 | stm           |        192.168.157.11 |           3035 |               3035 | otsdaq_mu2e_stm         |
+|                6 | trigger       |        192.168.157.14 |           3045 |               3045 | otsdaq_mu2e_trigger     |
+|                7 | HWDev2        |        192.168.157.05 |           3055 |               3055 | otsdaq_mu2e             |
+|                8 | tracker       |        192.168.157.11 |           3065 |               3065 | otsdaq_mu2e_tracker     |
+|                9 | crv           |        192.168.157.12 |           3085 |               3085 | otsdaq_mu2e_crv         |
+|               11 | stmdbtest     |        192.168.157.11 |           3040 |               3040 | otsdaq_mu2e_stm         |
+|               12 | shift         |        192.168.157.12 |           3075 |               3075 | otsdaq_mu2e             |
+|                - | shift1        |        192.168.157.12 |           3080 |               3080 | otsdaq_mu2e             |
+|                - | shift2        |        192.168.157.12 |           3085 |               3085 | otsdaq_mu2e             |
+|                - | 02            |             127.0.0.1 |           2015 |                  - | otsdaq_mu2e             |
+|                - | tem           |        192.168.157.11 |           4045 |               4045 | otsdaq_mu2e_extmon      |
+|                - | dcs           |             127.0.0.1 |           5019 |                  - | otsdaq_mu2e             |
+|               13 | aggregator    |        192.168.157.14 |           3040 |               3040 | otsdaq_mu2e_dqm         |
+|               14 | dqmtrk        |        192.168.157.12 |           3070 |               3070 | otsdaq_mu2e_tracker     |
+|               15 | mergetrk      |        192.168.157.09 |           3090 |               3090 | otsdaq_mu2e_tracker     |
+|------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
+** [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
+** [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
+** [[file:code_repositories.org][code repositories]]                                                         
 * ------------------------------------------------------------------------------

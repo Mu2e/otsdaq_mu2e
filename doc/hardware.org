@@ -1,0 +1,20 @@
+#------------------------------------------------------------------------------
+# this section describes the hardware configuration
+# of the Mu2e DAQ. at this point - just beginning
+#------------------------------------------------------------------------------
+* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=19095][mu2e-19095]] : Mu2e beam timing
+* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/RetrieveFile?docid=37376&filename=20220922_DAQNodes.pdf][mu2e-37376]] : DAQ node configuration in the DAQ room 
+* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097  :]] DTC user manual 
+* DTC        : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
+#+begin_src 
+mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
+crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
+crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
+#+end_src
+                                                              
+- the card number is controled by the env var DTCLIB_DTC
+  if undefined, = 0
+  export DTCLIB_DTC=1 # use the first card (/dev/
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
+* ------------------------------------------------------------------------------
