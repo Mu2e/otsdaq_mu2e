@@ -8,7 +8,7 @@
   - if needed, make a screenshot, store it in doc/images, and link it to the 
   question
 * ------------------------------------------------------------------------------
-* [1/15] Questions and answers      [TAB expands]                                               
+* [1/18] Questions and answers      [TAB expands]                                               
 ** TODO what makes a group a 'configuration' group ?
 ** DONE what makes a group a 'context' group ?                               
 [Answer]: see [[file:otsdaq_terminology.org::/Context/]]
@@ -69,7 +69,15 @@ what is achieved by passing the same file twice, but under different souce ?
 ** TODO configuration editor                                                 
   - how to make the whole table, not 10% of it, visible ?
      [[file:./images/configure_editor.png]]
-** TODO why the GroupAliases table gets activated when I click on its version number just to see what it is ?        
+** TODO configuration editor                                                 
+  - why 'SUpervisor0' ?
+  - is it a typo? if so, why a typo is being propagated through?
+  - I presume, 'SUpervisor0' is used for search ...
+  - what is the convention for assigning 0's ? Capitalization convention?
+  [[file:./images/configure_naming_SUpervisor0.png]]
+** TODO slow controls ROC vs DTC                                             
+  - why does the table defining ROC have links to slow control things, while the table defining the DTC does not ?
+** TODO why the GroupAliases table gets activated when I click on its version number just to see what it is ?   
 
    - when I browse versions of the GroupAliases table, and click on a particular version, 
    226 in the example below, just to see what it is, the version gets activated. 
@@ -79,7 +87,12 @@ what is achieved by passing the same file twice, but under different souce ?
 
    - How to browse a version of this table w/o activating it ?
 
-   [[file:images/configure_group_aliases_table_001.png]] 
+   [[file:images/configure_group_aliases_table_001.png]]
+** TODO why TopLevelTriggerTable is called more
+#+begin_src 
+Debug:TopLevelTriggerTable_table.cc:otsdaq_mu2e_trigger/otsdaq-mu2e-trigger/TablePluginDataFormats/TopLevelTriggerTable_table.cc [32]	hi
+#+end_src 
+  'hi ' : 918, 1501, 1557 , 2111, 2441, 2498, 
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------
