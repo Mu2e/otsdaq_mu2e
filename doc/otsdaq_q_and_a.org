@@ -92,7 +92,7 @@ what is achieved by passing the same file twice, but under different souce ?
    - How to browse a version of this table w/o activating it ?
 
    [[file:images/configure_group_aliases_table_001.png]]
-** TODO why TopLevelTriggerTable is called more
+** TODO why is the TopLevelTriggerTable initializatin called more than once ? 
 #+begin_src 
 Debug:TopLevelTriggerTable_table.cc:otsdaq_mu2e_trigger/otsdaq-mu2e-trigger/TablePluginDataFormats/TopLevelTriggerTable_table.cc [32]	hi
 #+end_src 
