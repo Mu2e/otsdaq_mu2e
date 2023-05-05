@@ -1,0 +1,37 @@
+# info on what is TRACE and how to use it
+
+ TRACE user guide: https://github.com/art-daq/trace/wiki/TRACE-Users-Guide
+
+TLOG(TLVL_DEBUG) << "TrackerVST_generator CONSTRUCTOR";
+
+ export TRACE_FILE=/tmp/trace_buffer_pasha.txt
+ 
+ tshow : see messages that are sent to memory. 
+ tonM  : will turn on additional messages to memory, 
+ tonS  : will send those messages to the log files
+
+ set format of TRACE printouts: TRACE_PRINT="%m-%d %H:%M:%S.%%06d %T %*n %*L %F: %M"
+
+#+begin_src
+mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
+mode:                          M=1                S=1
+ TID       NAME              maskM              maskS              maskT
+---- ---------- ------------------ ------------------ ------------------
+ 268      TRACE 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+ 772 trace_cntl 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+1021    _TRACE_ 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
+#+end_src
+
+from Andy:
+ 
+ #+begin_src
+tonM -N DTC.cpp 0-1000
+to set the debug level for DTC.cpp and then looking at the output with
+tshow | less
+#+end_src 
+
+According to Andy, DTC.cpp is the source file name. Does this mean that the control 
+is at source file level ?
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
+* ------------------------------------------------------------------------------

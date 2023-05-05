@@ -1,0 +1,50 @@
+#+startup:fold
+* ------------------------------------------------------------------------------
+* Mu2e OTSDAQ docs - top page                                                
+* ------------------------------------------------------------------------------
+* News:
+** <2023-04-12 Wed> [[https://docs.google.com/document/d/1HcwRGdVoRhv8FstQncY7KOxvNlP6nf_gGtHEcNmc2Bc/edit][kick-off meeting, preparations for a workshop]]
+* ------------------------------------------------------------------------------
+** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
+** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
+** [[file:mu2e_build_instructions.org][build instructions]] 
+** [[file:xdaq.org][XDAQ]]
+** [[file:hardware.org][Mu2e DAQ hardware]]
+** [[file:trace.org][TRACE]] 
+** [[file:configure_and_run.org][how to configure and run OTSDAQ]]
+** partitions                                                                
+   need to make sure that the term _partition_ can be used here
+
+   - what is the meaning of ARTDAQ_PARTITION ?
+   - what is the meaning of CONSOLE_SUPERVISOR_IP ?
+   - why the subsystem=dqmcalo uses repo=otsdaq_mu2e_trigger ? 
+   - to allocate resources in a configuration with a single OTSDAQ user, can use ARTDAQ_PARTITION as a key
+     - partition would specify a host, a port range and whatever else needed
+     - partition numbers could be static
+   - as all nodes below are on a local network, the port numbers dont disclose much
+|------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
+| ARTDAQ_PARTITION | old subsystem | CONSOLE_SUPERVISOR_IP | first OTS port | first OTS port WIZ | repo                    |
+|------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
+|                2 | sync          |        192.168.157.06 |           2015 |               2015 | otsdaq_mu2e             |
+|                3 | dqmcalo       |        192.168.157.11 |           3095 |               3095 | otsdaq_mu2e_trigger     |
+|                4 | calo          |        192.168.157.11 |           3025 |               3025 | otsdaq_mu2e_calorimeter |
+|                5 | stm           |        192.168.157.11 |           3035 |               3035 | otsdaq_mu2e_stm         |
+|                6 | trigger       |        192.168.157.14 |           3045 |               3045 | otsdaq_mu2e_trigger     |
+|                7 | HWDev2        |        192.168.157.05 |           3055 |               3055 | otsdaq_mu2e             |
+|                8 | tracker       |        192.168.157.11 |           3065 |               3065 | otsdaq_mu2e_tracker     |
+|                9 | crv           |        192.168.157.12 |           3085 |               3085 | otsdaq_mu2e_crv         |
+|               11 | stmdbtest     |        192.168.157.11 |           3040 |               3040 | otsdaq_mu2e_stm         |
+|               12 | shift         |        192.168.157.12 |           3075 |               3075 | otsdaq_mu2e             |
+|                - | shift1        |        192.168.157.12 |           3080 |               3080 | otsdaq_mu2e             |
+|                - | shift2        |        192.168.157.12 |           3085 |               3085 | otsdaq_mu2e             |
+|                - | 02            |             127.0.0.1 |           2015 |                  - | otsdaq_mu2e             |
+|                - | tem           |        192.168.157.11 |           4045 |               4045 | otsdaq_mu2e_extmon      |
+|                - | dcs           |             127.0.0.1 |           5019 |                  - | otsdaq_mu2e             |
+|               13 | aggregator    |        192.168.157.14 |           3040 |               3040 | otsdaq_mu2e_dqm         |
+|               14 | dqmtrk        |        192.168.157.12 |           3070 |               3070 | otsdaq_mu2e_tracker     |
+|               15 | mergetrk      |        192.168.157.09 |           3090 |               3090 | otsdaq_mu2e_tracker     |
+|------------------+---------------+-----------------------+----------------+--------------------+-------------------------|
+** [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
+** [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
+** [[file:code_repositories.org][code repositories]]                                                         
+* ------------------------------------------------------------------------------

@@ -1,0 +1,31 @@
+# OTS code repositories                                                       
+
+|-------------------------+-------------------------------------------------+----------|
+| package                 | repo                                            | comments |
+|-------------------------+-------------------------------------------------+----------|
+| artdaq                  | https://github.com/art-daq/artdaq               |          |
+| artdaq_core             | https://github.com/art-daq/artdaq_core          |          |
+| otsdaq                  | https://github.com/art-daq/otsdaq               |          |
+| otsdaq_utilities        | https://github.com/art-daq/otsdaq_utilities     |          |
+| otsdaq_components       | https://github.com/art-daq/otsdaq_components    |          |
+|-------------------------+-------------------------------------------------+----------|
+|                         | Mu2e repositories                               |          |
+|-------------------------+-------------------------------------------------+----------|
+| artdaq_core_mu2e        | https://github.com/mu2e/artdaq_core_mu2e        |          |
+| artdaq_mu2e             | https://github.com/mu2e/artdaq_mu2e             |          |
+| mu2e_pcie_utils         | https://github.com/mu2e/mu2e_pcie_utils         |          |
+| otsdaq_mu2e             | https://github.com/mu2e/otsdaq_mu2e             |          |
+| otsdaq_mu2e_calorimeter | https://github.com/mu2e/otsdaq_mu2e_calorimeter |          |
+| otsdaq_mu2e_config      | https://github.com/mu2e/otsdaq_mu2e_config      | private  |
+| otsdaq_mu2e_crv         | https://github.com/mu2e/otsdaq_mu2e_crv         |          |
+| otsdaq_mu2e_dqm         | https://github.com/mu2e/otsdaq_mu2e_dqm         |          |
+| otsdaq_mu2e_extmon      | https://github.com/mu2e/otsdaq_mu2e_extmon      |          |
+| otsdaq_mu2e_stm         | https://github.com/mu2e/otsdaq_mu2e_stm         |          |
+| otsdaq_mu2e_tracker     | https://github.com/mu2e/otsdaq_mu2e_tracker     |          |
+| otsdaq_mu2e_trigger     | https://github.com/mu2e/otsdaq_mu2e_trigger     |          |
+|-------------------------+-------------------------------------------------+----------|
+
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
+* ------------------------------------------------------------------------------
+

@@ -9,20 +9,20 @@ if (( ${version_set:-0} )); then
    return 1
 fi
 
-build_bundle otsdaq-2.06.08 ${basequal}
+build_bundle otsdaq-2.06.09 ${basequal}
 
-build_cet -G Mu2e mu2e_pcie_utils             v2_08_00 ${basequal}:${version_set}
-build_cet -G Mu2e artdaq_core_mu2e            v1_08_04 ${basequal}:${version_set}
+build_cet -G Mu2e mu2e_pcie_utils             v2_08_03 ${basequal}:${version_set}
+build_cet -G Mu2e artdaq_core_mu2e            v1_08_07 ${basequal}:${version_set}
 
-build_cet -G Mu2e artdaq_mu2e                 v1_05_02 ${basequal}:${version_set}
+build_cet -G Mu2e artdaq_mu2e                 v1_05_03 ${basequal}:${version_set}
 
-build_cet -G Mu2e otsdaq_mu2e                 v1_02_02 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e                 v1_02_03 ${basequal}:${version_set}
 
-build_cet -G Mu2e otsdaq_mu2e_calorimeter     v1_02_02 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_crv             v1_02_02 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_extmon          v1_02_02 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_stm             v1_02_02 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_tracker         v1_02_02 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_calorimeter     v1_02_03 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_crv             v1_02_03 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_extmon          v1_02_03 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_stm             v1_02_03 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_tracker         v1_02_03 ${basequal}:${version_set}
 
 return 0
 
