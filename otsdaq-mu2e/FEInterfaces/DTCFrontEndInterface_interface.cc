@@ -873,7 +873,7 @@ void DTCFrontEndInterface::configure(void) try
 			dtcEventBuilderReg_NumNodes = getSelfNode().getNode("EventBuilderNumNodes").getValue<uint32_t>();
 
 
-            __FE_COUTV__(dtcEventBuilderReg_DTCID);  // Doesn't work is I use uint8_t
+            __FE_COUTV__(dtcEventBuilderReg_DTCID);  // Doesn't work if I use uint8_t
 			__FE_COUTV__(dtcEventBuilderReg_Mode);
 			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
 			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
@@ -1673,7 +1673,7 @@ bool DTCFrontEndInterface::running(void)
 
 //   if(artdaqMode_) {
 //     __FE_COUT__ << "Running in artdaqmode" << __E__;
-//     return true;
+     return true;
 //   }
 	if(emulatorMode_)
 	{
