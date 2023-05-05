@@ -1673,7 +1673,7 @@ bool DTCFrontEndInterface::running(void)
 
 //   if(artdaqMode_) {
 //     __FE_COUT__ << "Running in artdaqmode" << __E__;
-//     return true;
+     return true;
 //   }
 	if(emulatorMode_)
 	{
