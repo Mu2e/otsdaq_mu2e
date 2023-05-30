@@ -116,6 +116,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								SelectJitterAttenuatorSource	(__ARGS__);
 	void								WriteDTC						(__ARGS__);
 	void								ReadDTC							(__ARGS__);
+	void								SetEmulatedROCEventFragmentSize	(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots

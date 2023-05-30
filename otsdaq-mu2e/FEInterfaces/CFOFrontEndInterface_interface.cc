@@ -76,6 +76,30 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions					
 
+	registerFEMacroFunction(
+		"Compile Runplan",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::CompileRunplan),                  // feMacroFunction
+					std::vector<std::string>{},//"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions	
+
+	registerFEMacroFunction(
+		"Set Runplan",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::SetRunplan),                  // feMacroFunction
+					std::vector<std::string>{},//"Binary Run File"},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions	
+
+	registerFEMacroFunction(
+		"Launch Runplan",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::LaunchRunplan),                  // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions	
+	
 
 	// clang-format on
 
@@ -929,5 +953,104 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 
 	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
 } //end ResetRunplan()
+
+//========================================================================
+void CFOFrontEndInterface::CompileRunplan(__ARGS__)
+{	
+	// to view output file with 8-byte rows
+	// hexdump -e '"%08_ax " 1/8 "%016x "' -e '"\n"' srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin
+
+	__FE_COUT__ << "Compile CFO Run Plan"  << __E__;
+
+	CFOLib::CFO_Compiler compiler( 40000000 /* 40MHz FPGAClock for calculating delays */);
+
+	std::ifstream inFile;
+	std::ofstream outFile;
+
+	std::string inFileName;// = __GET_ARG_IN__("Input Text Run Plan", std::string);
+	std::string outFileName;// = __GET_ARG_IN__("Output Binary Run File", std::string);
+	inFileName = 
+		"/home/mu2ehwdev/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.txt";
+	outFileName = 
+		"/home/mu2ehwdev/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
+
+	inFile.open(inFileName.c_str(), std::ios::in);
+	if (!(inFile.is_open()))
+	{
+		__SS__ << ("Input File (" + inFileName + ") didn't open. Does it exist?") << __E__;
+		__SS_THROW__;
+	}
+
+	outFile.open(outFileName.c_str(), std::ios::out | std::ios::binary);
+
+	if (!(outFile.is_open()))
+	{
+		__SS__ << ("Output File (" + outFileName + ") didn't open. Does it exist?") << __E__;
+		__SS_THROW__;
+	}
+
+	std::vector<std::string> lines;
+	while (!inFile.eof())
+	{
+		std::string line;
+		getline(inFile, line);
+		lines.push_back(line);
+	}
+	inFile.close();
+
+	std::deque<char> output = compiler.processFile(lines);
+	for (auto c : output)
+	{
+		outFile << c;
+	}
+	outFile.close();
+} //end CompileRunplan()
+
+
+//========================================================================
+void CFOFrontEndInterface::SetRunplan(__ARGS__)
+{	
+	//copying functionality of..
+	//	cfoUtil write_program -p /home/kwar/cfo/RunplanFiveDTCs1.bin --cfo 0
+
+	__FE_COUT__ << "Set CFO Run Plan"  << __E__;
+
+	std::string setFileName;// = __GET_ARG_IN__("Binary Run File", std::string);
+	setFileName =
+		"/home/mu2ehwdev/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
+
+	
+	std::ifstream file(setFileName, std::ios::binary | std::ios::ate);
+	if (file.eof())
+	{
+		__SS__ << ("Output File (" + setFileName + ") didn't open. Does it exist?") << __E__;
+		__SS_THROW__;
+		
+	}
+	mu2e_databuff_t inputData;
+	auto inputSize = file.tellg();
+	uint64_t dmaSize = static_cast<uint64_t>(inputSize) + 8;
+	file.seekg(0, std::ios::beg);
+	//*reinterpret_cast<uint64_t*>(inputData) = input.size();
+	memcpy(&inputData[0], &dmaSize, sizeof(uint64_t));
+	file.read(reinterpret_cast<char*>(&inputData[8]), inputSize);
+	file.close();
+	
+
+	//set the file in hardware:
+	thisCFO_->GetDevice()->write_data(DTC_DMA_Engine_DAQ, inputData, sizeof(inputData));
+
+} //end SetRunplan()
+
+//========================================================================
+void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
+{
+	__FE_COUT__ << "Launch CFO Run Plan"  << __E__;
+
+	registerWrite(0x914c, 0x0); 
+	registerWrite(0x914c, 0x0000ffff); 
+
+} //end LaunchRunplan()
+
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
