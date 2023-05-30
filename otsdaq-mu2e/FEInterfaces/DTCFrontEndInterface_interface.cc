@@ -465,7 +465,20 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)"},
 						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
+
+
 	
+	registerFEMacroFunction(
+		"Set Emulated ROC Event Fragment Size",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetEmulatedROCEventFragmentSize),
+				        std::vector<std::string>{"ROC Fragment Size (11-bits)"},
+						std::vector<std::string>{"Size Written"},
+					1);  // requiredUserPermissions
+	
+
+
+
 					
 	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
 		
@@ -2566,9 +2579,10 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	uint32_t readData = registerRead(address);  
 	
-	char readDataStr[100];
-	sprintf(readDataStr,"0x%X",readData);
-	__SET_ARG_OUT__("readData",readDataStr);
+	// char readDataStr[100];
+	// sprintf(readDataStr,"0x%X",readData);
+	//converted to dec and hex display in FEVInterfacesManager handling of FE Macros
+	__SET_ARG_OUT__("readData",readData); //readDataStr);
 } //end ReadDTC()
 
 //========================================================================
@@ -2644,5 +2658,28 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 	rocIt->second->runSelfFrontEndMacro(rocFEMacroName, argsIn, argsOut);
 
 }  // end RunROCFEMacro()
+
+//========================================================================
+void DTCFrontEndInterface::SetEmulatedROCEventFragmentSize(__ARGS__)
+{
+	// To change the size of the event, need to write to each ROC emulator
+	// 0x91B0 (b0-10 roc0, b16-26 roc1), 0x91B4 (b0-10 roc2, b16-26 roc3), 0x91B8 (b0-10 roc4, b16-26 roc5) 
+
+	uint32_t size = __GET_ARG_IN__("size", uint32_t);
+	uint32_t wsize = size & 0x03FF; // only allow 11 bits
+
+	__FE_COUTV__((unsigned int)size);
+	__FE_COUTV__((unsigned int)wsize);
+
+	uint32_t wword = (wsize << 16) | wsize; // create word for both ROC bit positions
+
+
+	registerWrite(0x91B0, wword);
+	registerWrite(0x91B4, wword);
+	registerWrite(0x91B8, wword);
+
+	__SET_ARG_OUT__("Size Written",wsize);
+	
+}  // end SetEmulatedROCEventFragmentSize()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)

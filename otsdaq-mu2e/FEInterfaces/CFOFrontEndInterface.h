@@ -6,6 +6,7 @@
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 
 #include "cfoInterfaceLib/CFO_Registers.h"
+#include "cfoInterfaceLib/CFO_Compiler.hh"
 
 namespace ots
 {
@@ -77,6 +78,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								WriteCFO						(__ARGS__);
 	void 								ReadCFO							(__ARGS__);
 	void 								ResetRunplan					(__ARGS__);
+	void 								CompileRunplan					(__ARGS__);
+	void 								SetRunplan						(__ARGS__);
+	void 								LaunchRunplan					(__ARGS__);
 };
 
 // clang-format on
