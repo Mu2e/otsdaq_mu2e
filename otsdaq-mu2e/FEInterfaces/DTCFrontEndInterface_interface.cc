@@ -1429,6 +1429,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		regWriteMonitorStream_.flush();
 	}
 
+
 	// open a file for this run number to write data to, if it hasn't been opened yet
 	// define a data file 
 	if(!artdaqMode_)
@@ -1482,6 +1483,10 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		}
 		return;
 	}
+
+	__MCOUT_INFO__(device_name_ << " Ignoring loopback for now..." << __E__);
+	return; //for now ignore loopback mode
+
 
 	const int numberOfChains       = 1;
 	//int       link[numberOfChains] = {0};
