@@ -576,6 +576,10 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 			", \t ---------- Starting..." << "\n";
 		regWriteMonitorStream_.flush();
 	}
+
+	__MCOUT_INFO__("CFO Ignoring loopback for now..." << __E__);
+	return;
+
 	//bool LoopbackLock = true;
 	//int  loopbackROC  = 0;
 
