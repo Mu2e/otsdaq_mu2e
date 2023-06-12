@@ -3,7 +3,7 @@
 # of the Mu2e DAQ. at this point - just beginning
 #------------------------------------------------------------------------------
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097 :]] DTC user manual 
-* DTC   : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0           
+* DTCs      : two cards per node, with file descriptors /dev/mu2e0 and /dev/mu2e1           
 #+begin_src 
 mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
 crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
@@ -11,8 +11,36 @@ crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
 #+end_src
                                                               
 - the card number is controled by the env var DTCLIB_DTC
-  if undefined, = 0
-  export DTCLIB_DTC=1 # use the first card (/dev/
+  - if undefined, DTCLIB_DTC = 0
+  - export DTCLIB_DTC=1 # use the /dev/mu2e1
+* DTC registers of relevance                  
+* 0x9100 : DTC control register                                              
+  - 0x40808404 : successfull 'mu2e_util  -q 5 -N -D 200 -n 3 test2'
+* 0x91a8 : CFO emulation heartbeat interval timer preset                     
+
+  time interval between two event window markers in units of 25ns
+** example                                                                   
+#+begin_src  
+echo "Enabling EWM with 25.6 us internal"
+my_cntl write 0x91a8 0x400
+echo "0x91a8 set to "`my_cntl read 0x91a8`
+#+end_src 
+* 0x91c4 : 
+#+begin_src 
+mu2etrk@mu2edaq09:~/test_stand/pasha_015>my_cntl read 0x91c4
+0x000001ff
+sts=0
+mu2etrk@mu2edaq09:~/test_stand/pasha_015>my_cntl write 0x91c4 0xffffffff
+sts=0
+mu2etrk@mu2edaq09:~/test_stand/pasha_015>my_cntl read 0x91c4
+0x0000ffff
+sts=0
+#+end_src
+* 0x91c8 : DebugPacketType                                                   
+  why diabling it affects the rest ? 
+  enable/disable debug mode in readout requests 
+  bit 16: 0:disable, 1:enable 
+  for buffer_test : 0x00000000
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
 * ------------------------------------------------------------------------------
