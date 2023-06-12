@@ -465,7 +465,20 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)"},
 						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
+
+
 	
+	registerFEMacroFunction(
+		"Set Emulated ROC Event Fragment Size",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetEmulatedROCEventFragmentSize),
+				        std::vector<std::string>{"ROC Fragment Size (11-bits)"},
+						std::vector<std::string>{"Size Written"},
+					1);  // requiredUserPermissions
+	
+
+
+
 					
 	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
 		
@@ -849,58 +862,7 @@ void DTCFrontEndInterface::configure(void) try
 		return;
 	}
 	
-	// From Rick new code
-	uint32_t dtcEventBuilderReg_DTCID = 0;
-	uint32_t dtcEventBuilderReg_Mode = 0;
-	uint32_t dtcEventBuilderReg_PartitionID = 0;
-	uint32_t dtcEventBuilderReg_MACIndex = 0;
-	uint32_t dtcEventBuilderReg_DTCInfo = 0;
 
-	uint32_t dtcEventBuilderReg_NumBuff = 0;
-	uint32_t dtcEventBuilderReg_StartNode = 0;
-	uint32_t dtcEventBuilderReg_NumNodes = 0;
-    uint32_t dtcEventBuilderReg_Configuration = 0;
-
-        try
-          {
-            dtcEventBuilderReg_DTCID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
-			dtcEventBuilderReg_Mode = getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
-            dtcEventBuilderReg_PartitionID = getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
-			dtcEventBuilderReg_MACIndex = getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
-            
-			dtcEventBuilderReg_NumBuff = getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
-			dtcEventBuilderReg_StartNode = getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
-			dtcEventBuilderReg_NumNodes = getSelfNode().getNode("EventBuilderNumNodes").getValue<uint32_t>();
-
-
-            __FE_COUTV__(dtcEventBuilderReg_DTCID);  // Doesn't work is I use uint8_t
-			__FE_COUTV__(dtcEventBuilderReg_Mode);
-			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
-			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
-			__FE_COUTV__(dtcEventBuilderReg_NumBuff);
-			__FE_COUTV__(dtcEventBuilderReg_StartNode);
-			__FE_COUTV__(dtcEventBuilderReg_NumNodes);
-
-
-
-			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/ EVB Local MAC Index [7-0]
-			dtcEventBuilderReg_DTCInfo = dtcEventBuilderReg_DTCID << 24 | dtcEventBuilderReg_Mode << 16 | 
-											dtcEventBuilderReg_PartitionID << 8 | dtcEventBuilderReg_MACIndex;
-			__FE_COUTV__(dtcEventBuilderReg_DTCInfo);
-			registerWrite(0x9154, dtcEventBuilderReg_DTCInfo);
-
-			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes [6-0]
-            dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 | dtcEventBuilderReg_StartNode << 8 
-												| dtcEventBuilderReg_NumNodes; 
-			__FE_COUTV__(dtcEventBuilderReg_Configuration);    
-            registerWrite(0x9158, dtcEventBuilderReg_Configuration);
-		
-          }
-        catch(...)
-          {
-            __FE_COUT_INFO__ << "Ignoring missing event building configuration values." << __E__;
-          }
-	// end of the new code
 
 	__FE_COUT__ << "DTC configuring... # of ROCs = " << rocs_.size() << __E__;
 
@@ -1011,7 +973,60 @@ void DTCFrontEndInterface::configure(void) try
 			DTCReset();
 		}
 		
-		
+			// From Rick new code
+	uint32_t dtcEventBuilderReg_DTCID = 0;
+	uint32_t dtcEventBuilderReg_Mode = 0;
+	uint32_t dtcEventBuilderReg_PartitionID = 0;
+	uint32_t dtcEventBuilderReg_MACIndex = 0;
+	uint32_t dtcEventBuilderReg_DTCInfo = 0;
+
+	uint32_t dtcEventBuilderReg_NumBuff = 0;
+	uint32_t dtcEventBuilderReg_StartNode = 0;
+	uint32_t dtcEventBuilderReg_NumNodes = 0;
+    uint32_t dtcEventBuilderReg_Configuration = 0;
+
+        try
+          {
+			__FE_COUT__ << "Configuring DTC registers for the EVB" << rocs_.size() << __E__;
+
+            dtcEventBuilderReg_DTCID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+			dtcEventBuilderReg_Mode = getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
+            dtcEventBuilderReg_PartitionID = getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
+			dtcEventBuilderReg_MACIndex = getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
+            
+			dtcEventBuilderReg_NumBuff = getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
+			dtcEventBuilderReg_StartNode = getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
+			dtcEventBuilderReg_NumNodes = getSelfNode().getNode("EventBuilderNumNodes").getValue<uint32_t>();
+
+
+            __FE_COUTV__(dtcEventBuilderReg_DTCID);  // Doesn't work if I use uint8_t
+			__FE_COUTV__(dtcEventBuilderReg_Mode);
+			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
+			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
+			__FE_COUTV__(dtcEventBuilderReg_NumBuff);
+			__FE_COUTV__(dtcEventBuilderReg_StartNode);
+			__FE_COUTV__(dtcEventBuilderReg_NumNodes);
+
+
+
+			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/ EVB Local MAC Index [7-0]
+			dtcEventBuilderReg_DTCInfo = dtcEventBuilderReg_DTCID << 24 | dtcEventBuilderReg_Mode << 16 | 
+											dtcEventBuilderReg_PartitionID << 8 | dtcEventBuilderReg_MACIndex;
+			__FE_COUTV__(dtcEventBuilderReg_DTCInfo);
+			registerWrite(0x9154, dtcEventBuilderReg_DTCInfo);
+
+			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes [6-0]
+            dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 | dtcEventBuilderReg_StartNode << 8 
+												| dtcEventBuilderReg_NumNodes; 
+			__FE_COUTV__(dtcEventBuilderReg_Configuration);    
+            registerWrite(0x9158, dtcEventBuilderReg_Configuration);
+
+          }
+        catch(...)
+          {
+            __FE_COUT_INFO__ << "Ignoring missing event building configuration values." << __E__;
+          }
+	// end of the new code
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
@@ -1277,6 +1292,27 @@ void DTCFrontEndInterface::configure(void) try
 			__MCOUT_INFO__("LAST STEP!! Reset Loss-of-Lock Counter() on DTC");
 
 			registerWrite(0x93c8, 0); 
+
+
+			// Registers to set the EVB 
+			        try
+          {
+			__FE_COUT__ << "Configuring DTC registers for the EVB" << rocs_.size() << __E__;
+			// These registers are needed for the EVB, but I need to check their meaning 
+            registerWrite(0x9100, 0x800404);
+            registerWrite(0x92c0, 0x0);
+            registerWrite(0x9114, 0xc1c1);
+			registerWrite(0x96C8, 0x555555D5);
+            registerWrite(0x96CC, 0x78555555);
+
+          }
+        catch(...)
+          {
+            __FE_COUT_INFO__ << "Ignoring missing event building DTC registers values." << __E__;
+          }
+	// end of the new code
+
+
 				
 			return;  // links OK, kick out of configure OR link tries complete
 		}
@@ -1393,6 +1429,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		regWriteMonitorStream_.flush();
 	}
 
+
 	// open a file for this run number to write data to, if it hasn't been opened yet
 	// define a data file 
 	if(!artdaqMode_)
@@ -1446,6 +1483,10 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		}
 		return;
 	}
+
+	__MCOUT_INFO__(device_name_ << " Ignoring loopback for now..." << __E__);
+	return; //for now ignore loopback mode
+
 
 	const int numberOfChains       = 1;
 	//int       link[numberOfChains] = {0};
@@ -1673,7 +1714,7 @@ bool DTCFrontEndInterface::running(void)
 
 //   if(artdaqMode_) {
 //     __FE_COUT__ << "Running in artdaqmode" << __E__;
-//     return true;
+     return true;
 //   }
 	if(emulatorMode_)
 	{
@@ -2543,9 +2584,10 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	uint32_t readData = registerRead(address);  
 	
-	char readDataStr[100];
-	sprintf(readDataStr,"0x%X",readData);
-	__SET_ARG_OUT__("readData",readDataStr);
+	// char readDataStr[100];
+	// sprintf(readDataStr,"0x%X",readData);
+	//converted to dec and hex display in FEVInterfacesManager handling of FE Macros
+	__SET_ARG_OUT__("readData",readData); //readDataStr);
 } //end ReadDTC()
 
 //========================================================================
@@ -2621,5 +2663,28 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 	rocIt->second->runSelfFrontEndMacro(rocFEMacroName, argsIn, argsOut);
 
 }  // end RunROCFEMacro()
+
+//========================================================================
+void DTCFrontEndInterface::SetEmulatedROCEventFragmentSize(__ARGS__)
+{
+	// To change the size of the event, need to write to each ROC emulator
+	// 0x91B0 (b0-10 roc0, b16-26 roc1), 0x91B4 (b0-10 roc2, b16-26 roc3), 0x91B8 (b0-10 roc4, b16-26 roc5) 
+
+	uint32_t size = __GET_ARG_IN__("size", uint32_t);
+	uint32_t wsize = size & 0x03FF; // only allow 11 bits
+
+	__FE_COUTV__((unsigned int)size);
+	__FE_COUTV__((unsigned int)wsize);
+
+	uint32_t wword = (wsize << 16) | wsize; // create word for both ROC bit positions
+
+
+	registerWrite(0x91B0, wword);
+	registerWrite(0x91B4, wword);
+	registerWrite(0x91B8, wword);
+
+	__SET_ARG_OUT__("Size Written",wsize);
+	
+}  // end SetEmulatedROCEventFragmentSize()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)
