@@ -9,7 +9,7 @@ HOSTNAME="$(hostname -f)"
 
 
 
-echo "Programming both bitfiles on ${HOSTNAME}..."
+echo "Programming one FPGA on ${HOSTNAME}..."
 echo "Number of arguments: $#"
 
 if [ $# == 2 ]; then

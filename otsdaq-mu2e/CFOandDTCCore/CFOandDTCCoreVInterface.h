@@ -10,7 +10,6 @@
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
-#include "otsdaq-mu2e/ROCCore/ROCCoreVInterface.h"
 #include "otsdaq/FECore/FEVInterface.h"
 
 namespace ots

@@ -73,6 +73,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
   private:
 	void 								createROCs					(void);
 	void 								registerFEMacros			(void);
+	void 								configureHardwareDevMode	(void);
 
 	int         									dtc_location_in_chain_ = -1;
 	unsigned int   									roc_mask_              = 0;
@@ -98,6 +99,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	std::ofstream 									outputStream;
 
+	std::string										operatingMode_ = "";
+
   public:
 	void 								ReadROC							(__ARGS__);
 	void 								WriteROC						(__ARGS__);
@@ -117,6 +120,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								WriteDTC						(__ARGS__);
 	void								ReadDTC							(__ARGS__);
 	void								SetEmulatedROCEventFragmentSize	(__ARGS__);
+	void								configureHardwareDevMode		(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots
