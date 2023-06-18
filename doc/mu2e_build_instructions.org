@@ -41,8 +41,9 @@ mrb b
 ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
 #+end_src
 
-* building ROOT interface to mu2e_pcie_utils                                 
-If you got here, you already have build OTS libraries
+* ROOT interface to mu2e_pcie_utils                                 
+- If you got here, you already have built the OTS libraries
+- ROOT interface library is not available by default, you have to build it
 #+begin_src
 cd srcs
 git clone https://github.com/mu2e/mu2e_pcie_utils
