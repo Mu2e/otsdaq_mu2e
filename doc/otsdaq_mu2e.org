@@ -7,7 +7,7 @@
 ** -----------------------------------------------------------------------------
 ** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
 ** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
-** [[file:mu2e_build_instructions.org][build instructions]] 
+** [[file:mu2e_build_instructions.org][build instructions]]
 ** [[file:xdaq.org][XDAQ]]
 ** [[file:hardware.org][Mu2e DAQ hardware]]
 ** [[file:trace.org][TRACE]] 
