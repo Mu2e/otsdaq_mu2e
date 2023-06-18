@@ -26,6 +26,8 @@ example:
   source mu2e_ots_install.sh pasha_001 8 v2_06_09 e20_s122_prof
 #+end_src
 
+  edit 
+
   here 'pasha_001' is the name of created work area
 
   - if you need to pull locally more repos, cd to 'pasha_001/srcs',  pull needed repos, cd back to 'pasha_001'
