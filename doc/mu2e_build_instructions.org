@@ -36,11 +36,12 @@ mrb uc
 mrb b
 #+end_src
 
-  - finally, setup the ssh tunnel for accessing the MongoDB (running on mu2edaq13)
+- finally, setup the ARTDAQ_DATABASE_URI and the ssh tunnel for accessing the MongoDB (the server is running on mu2edaq13) 
+
 #+begin_src
+export ARTDAQ_DATABASE_URI=XXX   # ask Giani/Pasha for what XXX is 
 ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
 #+end_src
-
 * ROOT interface to mu2e_pcie_utils                                 
 - If you got here, you already have built the OTS libraries
 - ROOT interface library is not available by default, you have to build it
