@@ -27,8 +27,6 @@ An example follows. In the middle of the installation you will be asked for a pa
   source mu2e_ots_install.sh pasha_001 8 v2_06_09 e20_s122_prof
 #+end_src
 
-  edit 
-
   here 'pasha_001' is the name of created work area
 
   - if you need to pull locally more repos, cd to 'pasha_001/srcs',  pull needed repos, cd back to 'pasha_001'
@@ -42,6 +40,43 @@ mrb b
 #+begin_src
 ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
 #+end_src
+
+* building ROOT interface to mu2e_pcie_utils                                 
+If you got here, you already have build OTS libraries
+#+begin_src
+cd srcs
+git clone https://github.com/mu2e/mu2e_pcie_utils
+cd mu2e_pcie_utils
+git checkout pasha
+cd ../..
+export BUILD_ROOT_INTERFACE=1
+mrb b
+#+end_src
+after that, you can do the following:
+#+begin_src
+root.exe
+root [0] DTCLib::DTC dtc(DTCLib::DTC_SimMode_NoCFO,-1,0x1,"");
+06-18 17:41:07.271940                      DTC_Registers     INFO DTC_Registers(...): Sim Mode is NoCFO
+06-18 17:41:07.271997                      DTC_Registers     INFO DTC_Registers(...): DTC ID is 1
+06-18 17:41:07.272011                      DTC_Registers     INFO SetSimMode(...): Initializing device, sim mode is NoCFO
+06-18 17:41:07.278490                      DTC_Registers     INFO SetSimMode(...): SKIPPING Initializing device
+06-18 17:41:07.283713                            DTC.cpp     INFO DTC(...): CONSTRUCTOR
+root [1] mu2edev* dev = dtc.GetDevice();
+root [2]   uint32_t res; 
+root [3]   int      rc;
+root [4]   rc = dev->read_register(0x9100,100,&res); printf("0x9100: DTC status       : 0x%08x\n",res); // expect: 0x40808404
+0x9100: DTC status       : 0x40808404
+#+end_src
+
+*Comments*
+
+- for examples, see https://github.com/Mu2e/otsdaq_mu2e_tracker/blob/pasha/scripts/test_buffer_async.C , 
+  or any other .C script in that area
+- every script should have the following line on top"
+#+begin_src
+#define __CLING__ 1
+#+end_src
+- because of the complexity of the C++ code, ROOT needs to be restarted every time you reload your script
 
 * <2023-01-04 Wed> build configuration with two loggers (by Giani)           
 
