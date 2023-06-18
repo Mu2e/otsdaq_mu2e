@@ -1,22 +1,44 @@
-* installation and build instructions                                        
+* installation and build instructions  (validated 2023-05-03)                                      
 
   OTSDAQ bundle to use 
-   - version   : v2_06_08   
-   - qualifiers: e20_s118_prof
+   - version   : v2_06_09   
+   - qualifiers: e20_s122_prof
 
   - all available OTSDAQ bundles: https://scisoft.fnal.gov/scisoft/packages/otsdaq/
 
   - the build procedure itself:
+    1) got to https://github.com/pavel1murat/otsdaq_mu2e_config/blob/main/mu2e_ots_install.sh
+    2) convert to raw (click on "raw" button), wget the resulting raw URL (that will have an odd ending)
 
 #+begin_src 
-  wget https://github.com/Mu2e/otsdaq_mu2e_config/mu2e_ots_install_v2.sh
-  source mu2e_ots_install_v2.sh working_area partition otsdaq_bundle qualifiers
+  wget -O mu2e_ots_install.sh  <raw-URL>      # see example below
+  source mu2e_ots_install.sh work_area partition [otsdaq_bundle] [qualifiers]
 #+end_src 
 
-  - working_area : name of the OTSDAQ working area, to be created in the current directory 
+  - work_area    : name of the OTSDAQ work area, to be created in the current directory 
   - partition    : see https://github.com/mu2e/otsdaq_mu2e/blob/develop/doc/otsdaq_mu2e.org#partitions
   - otsdaq_bundle: version of the OTSDAQ bundle, see above 
   - qualifiers   : build qualifiers, see above
+
+example:
+#+begin_src 
+  wget -O mu2e_ots_install.sh https://raw.githubusercontent.com/pavel1murat/otsdaq_mu2e_config/main/mu2e_ots_install.sh?token=GHSAT0AAAAAAB5R6WEE6WSNUG76CU6GX2QIZCTHH6A --
+  source mu2e_ots_install.sh pasha_001 8 v2_06_09 e20_s122_prof
+#+end_src
+
+  here 'pasha_001' is the name of created work area
+
+  - if you need to pull locally more repos, cd to 'pasha_001/srcs',  pull needed repos, cd back to 'pasha_001'
+  - recompile:
+#+begin_src
+mrb uc
+mrb b
+#+end_src
+
+  - finally, setup the ssh tunnel for accessing the MongoDB (running on mu2edaq13)
+#+begin_src
+ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
+#+end_src
 
 * <2023-01-04 Wed> build configuration with two loggers (by Giani)           
 
