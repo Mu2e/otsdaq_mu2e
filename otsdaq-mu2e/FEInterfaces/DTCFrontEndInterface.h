@@ -54,26 +54,26 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// hardware access
 	//----------------
+	virtual mu2edev* 					getDevice					(void) {return thisDTC_->GetDevice();};
 //	void 								universalRead				(char* address, char* readValue) override; //defined in 
 //	void 								universalWrite				(char* address, char* writeValue) override;
-//	dtc_data_t							registerRead				(dtc_address_t address);
-	virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
+	// dtc_data_t							registerRead				(dtc_address_t address);
+	// virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
 
 	// DTC specific items
 	//----------------
 	virtual std::string					readStatus					(void) override;
 
-	bool 								ROCActive					(unsigned int ROC_link);
-	int  								getROCLinkStatus			(int ROC_link);
-	int  								getCFOLinkStatus			(void);
-	int  								checkLinkStatus				(void);
+	// bool 								ROCActive					(unsigned int ROC_link);
+	// int  								getROCLinkStatus			(int ROC_link);
+	// int  								getCFOLinkStatus			(void);
+	// int  								checkLinkStatus				(void);
 
 	DTCLib::DTC* 									thisDTC_;
 
   private:
 	void 								createROCs					(void);
 	void 								registerFEMacros			(void);
-	void 								configureHardwareDevMode	(void);
 
 	int         									dtc_location_in_chain_ = -1;
 	unsigned int   									roc_mask_              = 0;
@@ -92,16 +92,29 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	std::map<std::string /* ROC UID*/, 
 		FESlowControlsChannel> 						mapOfROCSlowControlsChannels_;
 
-	m_ioc_reg_access_t 								reg_access_;
+	// m_ioc_reg_access_t 								reg_access_;
 
-	dtc_data_t 										initial_9100_ = 0;
-	dtc_data_t 										initial_9114_ = 0;
+	// dtc_data_t 										initial_9100_ = 0;
+	// dtc_data_t 										initial_9114_ = 0;
 
 	std::ofstream 									outputStream;
 
 	std::string										operatingMode_ = "";
 
   public:
+	void 								FlashLEDs						(__ARGS__);	
+	void 								GetFirmwareVersion				(__ARGS__);
+	void 								GetStatus						(__ARGS__);
+
+	// FIXME -- copy from CFOandDTC and implement using DTC.h
+	// void 								GetLinkLossOfLight				(__ARGS__);
+	// void 								GetFireflyTemperature			(__ARGS__);
+	// void								ResetLinkRx						(__ARGS__);
+	// void								ShutdownLinkTx					(__ARGS__);
+	// void								StartupLinkTx					(__ARGS__);
+	// void								ShutdownFireflyTx				(__ARGS__);
+	// void								StartupFireflyTx				(__ARGS__);
+
 	void 								ReadROC							(__ARGS__);
 	void 								WriteROC						(__ARGS__);
 	void 								WriteROCBlock					(__ARGS__);
@@ -121,6 +134,12 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								ReadDTC							(__ARGS__);
 	void								SetEmulatedROCEventFragmentSize	(__ARGS__);
 	void								configureHardwareDevMode		(__ARGS__);
+	void 								configureHardwareDevMode		(void);
+	void 								BufferTestROC					(__ARGS__);
+	void 								DTCCounters						(__ARGS__);
+	void								DTCCounters						(std::ostream& out = std::cout);
+	void 								readRxDiagFIFO					(__ARGS__);
+	void 								readTxDiagFIFO					(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots

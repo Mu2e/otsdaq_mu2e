@@ -35,14 +35,15 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	//----------------
 	float 								MeasureLoopback				(int linkToLoopback);
 	virtual std::string					readStatus					(void) override;
-	int  								getLinkStatus				(void);
+	// int  								getLinkStatus				(void);
 
 	// hardware access
 	//----------------
+	virtual mu2edev* 					getDevice					(void) {return thisCFO_->GetDevice();};
 //	void universalRead(char* address, char* readValue) override;
 //	void universalWrite(char* address, char* writeValue) override;
-//	dtc_data_t							registerRead				(dtc_address_t address);
-	virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
+	// dtc_data_t							registerRead				(dtc_address_t address);
+	// virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
 
 
 	float 								delay[8][6][8];
@@ -69,12 +70,16 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	float        						average_loopback_;
 	float        						rms_loopback_;
 	float        						failed_loopback_;
-	unsigned int 						initial_9100_;
-	unsigned int 						initial_9114_;
-	unsigned int 						initial_91a0_;
-	unsigned int 						initial_9154_;
+	// unsigned int 						initial_9100_;
+	// unsigned int 						initial_9114_;
+	// unsigned int 						initial_91a0_;
+	// unsigned int 						initial_9154_;
 
   public:
+	// void 								FlashLEDs						(__ARGS__);	
+	void 								GetFirmwareVersion				(__ARGS__);
+	void 								GetStatus						(__ARGS__);
+	
 	void 								WriteCFO						(__ARGS__);
 	void 								ReadCFO							(__ARGS__);
 	void 								ResetRunplan					(__ARGS__);
