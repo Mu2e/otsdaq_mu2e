@@ -1,0 +1,324 @@
+#
+* Mongo DB and the DB tables                                                 
+  - examples of scripts to use to query the Mongo DB:
+** test_001.js : print list of tables                                        
+#+begin_src       test_001.js : print list of tables in the DB               
+//-----------------------------------------------------------------------------
+// on the command line: mongo test_001.js
+//-----------------------------------------------------------------------------
+conn = new Mongo()
+db = conn.getDB("teststand_db")
+printjson(db.getCollectionNames())
+#+end_src
+** test_002.js : print a document                                            
+#+begin_src       test_002.js : print a document                             
+//-----------------------------------------------------------------------------
+// extract a document from mongo db and print it. Example: 
+// mongo --eval 'Name="TriggerPathTable";' test_002.js >| TriggerPathTable.txt
+//-----------------------------------------------------------------------------
+conn = new Mongo()
+db = conn.getDB("teststand_db")
+print(Name)
+coll = db.getCollection(Name)
+e    = coll.find()
+while (e.hasNext()) {
+    printjson(e.next())
+}
+#+end_src
+* tables in the 'teststand_db'                                               
+  running 'mongo test_001.js' gives a list
+** ARTDAQAggregatorDaqParameterTable",
+** ARTDAQAggregatorDaqTable",
+** ARTDAQAggregatorServicesTable",
+** ARTDAQAggregatorSourceTable",
+** ARTDAQAggregatorTable",
+** ARTDAQArtTable",
+** ARTDAQBoardReaderDaqParameterTable",
+** ARTDAQBoardReaderTable",
+** ARTDAQBuilderDaqParameterTable",
+** ARTDAQBuilderDaqTable",
+** ARTDAQBuilderServicesDestinationTable",
+** ARTDAQBuilderServicesTable",
+** ARTDAQBuilderSourceTable",
+** ARTDAQConsumerTable",
+** ARTDAQDaqParameterTable",
+** ARTDAQDaqTable",
+** ARTDAQDataLoggerTable",
+** ARTDAQDestinationTable",
+** ARTDAQDispatcherTable",
+** ARTDAQEventBuilderTable",
+** ARTDAQGlobalTable",
+** ARTDAQMetricAlarmThresholdsTable",
+** ARTDAQMetricParameterTable",
+** ARTDAQMetricTable",
+** ARTDAQOnlineMonitorFilterPathTable",
+** ARTDAQOnlineMonitorTable",
+** ARTDAQOutputModuleParameterTable",
+** ARTDAQOutputTable",
+** ARTDAQPhysicsAnalyzerParameterTable                                         
+   the latest version: looks like a bunch of DQM-related parameters stored there
+   "data" : {
+   "NAME"          : "ARTDAQ_PHYSICS_ANALYZER_PARAMETER_TABLE",
+   "COMMENT"       : "Uploaded table version",
+   "AUTHOR"        : "admin",
+   "CREATION_TIME" : 1683065830,
+   "COL_TYPES" : {
+   "ANALYZER_PARAMETER_GROUP_ID" : "STRING",
+   "ANALYZER_PARAMETER_UID"      : "STRING",
+   "STATUS"                      : "STRING",
+   "ANALYZER_PARAMETER_KEY"      : "STRING",
+   "ANALYZER_PARAMETER_VALUE"    : "STRING",
+   "COMMENT_DESCRIPTION"         : "STRING",
+   "AUTHOR"                      : "STRING",
+   "RECORD_INSERTION_TIME"       : "TIMESTAMP WITH TIMEZONE"
+   },
+
+** ARTDAQPhysicsAnalyzerTable",
+** ARTDAQPhysicsFilterParameterTable: the same as analyzer, why duplicate?     
+   "data" : {
+   "NAME"          : "ARTDAQ_PHYSICS_FILTER_PARAMETER_TABLE",
+   "COMMENT"       : "Uploaded table version",
+   "AUTHOR"        : "admin",
+   "CREATION_TIME" : 1683065830,
+   "COL_TYPES" : {
+   "FILTER_PARAMETER_GROUP_ID" : "STRING",
+   "FILTER_PARAMETER_UID"      : "STRING",
+   "STATUS"                    : "STRING",
+   "FILTER_PARAMETER_KEY"      : "STRING",
+   "FILTER_PARAMETER_VALUE"    : "STRING",
+   "COMMENT_DESCRIPTION"       : "STRING",
+   "AUTHOR"                    : "STRING",
+   "RECORD_INSERTION_TIME"     : "TIMESTAMP WITH TIMEZONE"
+   },
+   
+** ARTDAQPhysicsFilterTable" :       
+** ARTDAQPhysicsParameterTable",
+** ARTDAQPhysicsProducerParameterTable",
+** ARTDAQPhysicsProducerTable",
+** ARTDAQPhysicsTable",
+** ARTDAQRoutingManagerTable",
+** ARTDAQRoutingMasterTable",
+** ARTDAQServicesTable",
+** ARTDAQSourceTable",
+** ARTDAQSubsystemTable",
+** ARTDAQSupervisorTable",
+** CFOInterfaceTable",
+** CaloMVAFilterTable",
+** ControlsSupervisorTable",
+** DQMHistosConsumerTable",
+** DQMMu2eHistoConsumerTable",
+** DTCInterfaceTable",
+** DataBufferTable",
+** DataManagerSupervisorTable",
+** DataManagerTable",
+** DataProcessorTable",
+** DesktopIconTable",
+** DesktopWindowParameterTable",
+** DigiFilterTable",
+** ECLSupervisorTable",
+** FEControlsTable",
+** FEDataManagerSupervisorTable",
+** FEHistoMakerInterfaceTable",
+** FEInterfaceTable",
+** FEOtsUDPTemplateInterfaceTable",
+** FESlowControlsTable",
+** FESupervisorTable",
+** FEWOtsUDPHardwareTable",
+** GatewaySupervisorTable",
+** GroupAliasesTable",
+** HelixFilterTable"  contains links only - why ?                            
+  - why links, not the data ?
+#+begin_src javascript
+data" : {
+   "NAME" : "HELIX_FILTER_TABLE",
+   "COMMENT" : "Auto-generated from mock-up.",
+   "AUTHOR" : "admin",
+   "CREATION_TIME" : 1553025073,
+   "COL_TYPES" : {
+      "UID" : "STRING",
+      "HIGH_LEVEL_PRESCALE_FACTOR" : "NUMBER",
+      "LOW_LEVEL_PRESCALE_FACTOR" : "NUMBER",
+      "LINK_TO_DIGI_FILTER_PARAMETER_TABLE" : "STRING",
+      "LINK_TO_DIGI_FILTER_PARAMETER_GROUP_ID" : "STRING",
+      "LINK_TO_TIME_CLUSTER_FILTER_PARAMETER_TABLE" : "STRING",
+      "LINK_TO_TIME_CLUSTER_FILTER_PARAMETER_GROUP_ID" : "STRING",
+      "LINK_TO_HELIX_FILTER_PARAMETER_TABLE" : "STRING",
+      "LINK_TO_HELIX_FILTER_PARAMETER_GROUP_ID" : "STRING",
+      "COMMENT_DESCRIPTION" : "STRING",
+      "AUTHOR" : "STRING",
+      "RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+   },
+#+end_src
+** IterateTable",
+** IterationCommandBeginLabelTable",
+** IterationCommandChooseFSMTable",
+** IterationCommandConfigureAliasTable",
+** IterationCommandConfigureGroupTable",
+** IterationCommandExecuteFEMacroTable",
+** IterationCommandExecuteMacroTable",
+** IterationCommandMacroDimensionalLoopParameterTable",
+** IterationCommandMacroDimensionalLoopTable",
+** IterationCommandModifyGroupTable",
+** IterationCommandRepeatLabelTable",
+** IterationCommandRunTable",
+** IterationPlanTable",
+** IterationTargetTable",
+** MessageFacilityTable",
+** Mu2eGlobalsTable",
+** ParameterTable"       seems to be empty, why is it thre ar all ?          
+#+begin_quote
+   "data" : {
+   "NAME" : "PARAMETER_TABLE",
+   "COMMENT" : "Auto-generated from mock-up.",
+   "AUTHOR" : "admin",
+   "CREATION_TIME" : 1554911532,
+   "COL_TYPES" : {
+   "PARAMETER_GROUP_ID" : "STRING",
+   "PARAMETER_UID" : "STRING",
+   "STATUS" : "STRING",
+   "PARAMETER_KEY" : "STRING",
+   "PARAMETER_VALUE" : "STRING",
+   "COMMENT_DESCRIPTION" : "STRING",
+   "AUTHOR" : "STRING",
+   "RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+   },
+   "DATA_SET" : [ ]
+   },
+#+end_quote
+** ROCInterfaceTable",
+** RawDataSaverConsumerTable",
+** SlowControlsAlarmNotificationsTable",
+** SlowControlsAlarmsToMonitorTable",
+** SlowControlsDashboardSupervisorTable",
+** StateMachineTable",
+** SubsystemCRVParametersTable",
+** SubsystemCalorimeterParametersTable",
+** SubsystemExtinctionMonitorParametersTable",
+** SubsystemSTMParametersTable",
+** SubsystemTrackerParametersTable",
+** SystemMetadata",
+** TCPDataListenerProducerTable",
+** TableGroupMetadata",
+** TopLevelTriggerTable"                                                     
+   what is the role of this table? 
+|----------------------------------+--------------------------------|
+| name                             | type                           |
+|----------------------------------+--------------------------------|
+| "NAME"                           | "TOP_LEVEL_TRIGGER_TABLE"      |
+| "COMMENT"                        | "Auto-generated from mock-up." |
+| "AUTHOR"                         | "admin"                        |
+| "CREATION_TIME"                  | 1548180011                     |
+| "COL_TYPES"                      | {                              |
+| "UID"                            | "STRING"                       |
+| "LINK_TO_TRIGGER_PATHS_TABLE"    | "STRING"                       |
+| "LINK_TO_TRIGGER_PATHS_GROUP_ID" | "STRING"                       |
+| "COMMENT_DESCRIPTION"            | "STRING"                       |
+| "AUTHOR"                         | "STRING"                       |
+| "RECORD_INSERTION_TIME"          | "TIMESTAMP WITH TIMEZONE"      |
+|----------------------------------+--------------------------------|
+** TrackSeedFilterTable"                                                     
+why ????
+#+begin_quote 
+   "data" : {
+   "NAME" :  "TRACK_SEED_FILTER_TABLE",
+   "COMMENT" : "Auto-generated from mock-up.",
+   "AUTHOR" : "admin",
+   "CREATION_TIME" : 1553025210,
+   "COL_TYPES" : {
+   "UID" : "STRING",
+   "HIGH_LEVEL_PRESCALE_FACTOR" : "NUMBER",
+   "LOW_LEVEL_PRESCALE_FACTOR" : "NUMBER",
+   "LINK_TO_DIGI_FILTER_PARAMETER_TABLE" : "STRING",
+   "LINK_TO_DIGI_FILTER_PARAMETER_GROUP_ID" : "STRING",
+   "LINK_TO_TIME_CLUSTER_FILTER_PARAMETER_TABLE" : "STRING",
+   "LINK_TO_TIME_CLUSTER_FILTER_PARAMETER_GROUP_ID" : "STRING",
+   "LINK_TO_HELIX_FILTER_PARAMETER_TABLE" : "STRING",
+   "LINK_TO_HELIX_FILTER_PARAMETER_GROUP_ID" : "STRING",
+   "LINK_TO_TRACK_SEED_FILTER_PARAMETER_TABLE" : "STRING",
+   "LINK_TO_TRACK_SEED_FILTER_PARAMETER_GROUP_ID" : "STRING",
+   "COMMENT_DESCRIPTION" : "STRING",
+   "AUTHOR" : "STRING",
+   "RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+   },
+#+end_quote 
+** TriggerParameterTable"                                                    
+- a record with an internal structure , why ???
+|-------------------------+---------------------------+------------------------------------------|
+| name                    | type                      | comment                                  |
+|-------------------------+---------------------------+------------------------------------------|
+| "NAME"                  | "TRIGGER_PARAMETER_TABLE" |                                          |
+| "COMMENT"               | "No comment."             |                                          |
+| "AUTHOR"                | "admin"                   |                                          |
+| "CREATION_TIME"         | 1578676790                |                                          |
+| "COL_TYPES"             |                           |                                          |
+| "UID"                   | "STRING"                  | i.e. "tprSeedDeM_HSFilter_minNSh", why ? |
+| "GROUP_ID"              | "STRING"                  |                                          |
+| "NAME"                  | "STRING"                  |                                          |
+| "VALUE"                 | "STRING"                  |                                          |
+| "COMMENT_DESCRIPTION"   | "STRING"                  |                                          |
+| "AUTHOR"                | "STRING"                  |                                          |
+| "RECORD_INSERTION_TIME" | "TIMESTAMP WITH TIMEZONE" |                                          |
+|-------------------------+---------------------------+------------------------------------------|
+** TriggerPathTable"                                                         
+   seems to be containing prescales for different trigger paths
+|-----------------------------+---------------------------+---------------------------|
+| name                        | type                      | comments                  |
+|-----------------------------+---------------------------+---------------------------|
+| "UID"                       | "STRING"                  | why ?                     |
+| "PATH_GROUP"                | "STRING"                  | why ?                     |
+| "TRIGGER_NAME"              | "STRING"                  |                           |
+| "TRIGGER_TYPE"              | "STRING"                  | ????                      |
+| "PATH_ID"                   | "NUMBER"                  |                           |
+| "PRESCALE_FACTOR"           | "NUMBER"                  |                           |
+| "STATUS"                    | "STRING"                  | can use negative prescale |
+| "LINK_TO_TRIGGER_TABLE"     | "STRING"                  | why ?                     |
+| "LINK_TO_TRIGGER_TABLE_UID" | "STRING"                  | why ?                     |
+| "COMMENT_DESCRIPTION"       | "STRING"                  |                           |
+| "AUTHOR"                    | "STRING"                  |                           |
+| "RECORD_INSERTION_TIME"     | "TIMESTAMP WITH TIMEZONE" |                           |
+|-----------------------------+---------------------------+---------------------------|
+** UDPDataListenerProducerTable",
+** UDPDataStreamerConsumerTable",
+** UnbiasedFilterTable              why do we have it ?                      
+   "data" : {
+   "NAME" : "UNBIASED_FILTER_TABLE",
+   "COMMENT" : "Auto-generated from mock-up.",
+   "AUTHOR" : "admin",
+   "CREATION_TIME" : 1638291780,
+   "COL_TYPES" : {
+   "UID" : "STRING",
+   "COMMENT_DESCRIPTION" : "STRING",
+   "AUTHOR" : "STRING",
+   "RECORD_INSERTION_TIME" : "TIMESTAMP WITH TIMEZONE"
+   },
+   "DATA_SET" : [
+** VersionAliasesTable",
+** XDAQApplicationPropertyTable",
+** XDAQApplicationTable",
+** XDAQContextTable"
+* ------------------------------------------------------------------------------
+* mongo db help                                                              
+** db.help()                    help on db methods
+** db.mycoll.help()             help on collection methods
+** sh.help()                    sharding helpers
+** rs.help()                    replica set helpers
+** help admin                   administrative help
+** help connect                 connecting to a db help
+** help keys                    key shortcuts
+** help misc                    misc things to know
+** help mr                      mapreduce
+*
+** show dbs                     show database names
+** show collections             show collections in current database
+** show users                   show users in current database
+** show profile                 show most recent system.profile entries with time >= 1ms
+** show logs                    show the accessible logger names
+** show log [name]              prints out the last segment of log in memory, 'global' is default
+** use <db_name>                set current database
+** db.mycoll.find()             list objects in collection mycoll
+
+** db.mycoll.find( { a : 1 } )  list objects in mycoll where a == 1
+** it                           result of the last line evaluated; use to further iterate
+** DBQuery.shellBatchSize = x   set default number of items to display on shell
+** exit                         quit the mongo shell
+* ------------------------------------------------------------------------------
