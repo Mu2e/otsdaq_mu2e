@@ -2,12 +2,12 @@
 * ------------------------------------------------------------------------------
 * Mu2e OTSDAQ docs - top page                                                
 * ------------------------------------------------------------------------------
-* News:
-** <2023-04-12 Wed> [[https://docs.google.com/document/d/1HcwRGdVoRhv8FstQncY7KOxvNlP6nf_gGtHEcNmc2Bc/edit][kick-off meeting, preparations for a workshop]]
-* ------------------------------------------------------------------------------
+** News                                                                      
+*** <2023-04-12 Wed> [[https://docs.google.com/document/d/1HcwRGdVoRhv8FstQncY7KOxvNlP6nf_gGtHEcNmc2Bc/edit][kick-off meeting, preparations for a workshop]]
+** -----------------------------------------------------------------------------
 ** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
 ** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
-** [[file:mu2e_build_instructions.org][build instructions]] 
+** [[file:build_instructions.org][build instructions]]
 ** [[file:xdaq.org][XDAQ]]
 ** [[file:hardware.org][Mu2e DAQ hardware]]
 ** [[file:trace.org][TRACE]] 
@@ -47,4 +47,5 @@
 ** [[file:otsdaq_terminology.org][OTSDAQ terminology]]                                                         
 ** [[file:otsdaq_q_and_a.org][OTSDAQ Q&A]]           
 ** [[file:code_repositories.org][code repositories]]                                                         
+** [[file:db_tables.org][Mongo DB and the DB tables]] 
 * ------------------------------------------------------------------------------
