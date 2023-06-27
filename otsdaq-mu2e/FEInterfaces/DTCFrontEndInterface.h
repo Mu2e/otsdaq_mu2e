@@ -140,6 +140,13 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								DTCCounters						(std::ostream& out = std::cout);
 	void 								readRxDiagFIFO					(__ARGS__);
 	void 								readTxDiagFIFO					(__ARGS__);
+
+	void 								ROCDestroy						(__ARGS__);
+	void 								ROCInstantiate					(__ARGS__);
+	void 								DMABufferRelease				(__ARGS__);
+	void 								DTCInstantiate					(__ARGS__);
+	void 								ResetDTCLinks					(__ARGS__);
+	
 	// clang-format on
 };
 }  // namespace ots

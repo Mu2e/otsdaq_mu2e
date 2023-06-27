@@ -5,6 +5,7 @@
 
 #include <fstream>
 
+
 using namespace ots;
 
 #undef __MF_SUBJECT__
@@ -47,6 +48,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
 		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
 
+		__FE_COUTV__(rocChildren.size());
 		roc_mask_ = 0;
 
 		for(auto& roc : rocChildren)
@@ -75,10 +77,19 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	std::string         expectedDesignVersion = "";
 	DTCLib::DTC_SimMode mode =
 	    emulate_cfo_ ? DTCLib::DTC_SimMode_NoCFO : DTCLib::DTC_SimMode_Disabled;
-	bool skipInit =
-	    getConfigurationManager()
+	bool skipInit = true;
+
+	try
+	{
+		skipInit = getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
 	        .getValue<bool>();
+	}
+	catch(...)
+	{
+		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting skipInit = " << (skipInit?"true":"false") << __E__;
+	}
+	    
 
 	__COUT__ << "DTC arguments..." << std::endl;
 	__COUTV__(mode);
@@ -232,7 +243,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC_BufferTest",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTestROC),                  // feMacroFunction
-					std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
+					std::vector<std::string>{"numberOfEvents"}, // "rocLinkIndex", "address",  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 
@@ -354,7 +365,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::readRxDiagFIFO),
 				        std::vector<std::string>{"LinkIndex"},
-						std::vector<std::string>{},
+						std::vector<std::string>{"Diagnostic RX FIFO"},
 					1);  // requiredUserPermissions
 
 	registerFEMacroFunction(
@@ -362,9 +373,47 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::readTxDiagFIFO),
 				        std::vector<std::string>{"LinkIndex"},
-						std::vector<std::string>{},
+						std::vector<std::string>{"Diagnostic TX FIFO"},
 					1);  // requiredUserPermissions
 					
+
+	registerFEMacroFunction(
+		"ROCDestroy",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ROCDestroy),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"ROCInstantiate",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ROCInstantiate),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"DTCInstantiate",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DTCInstantiate),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"DMABufferRelease",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::DMABufferRelease),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"ResetDTCLinks",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetDTCLinks),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+
+	
 	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
 		
 	std::make_pair("Link to Shutdown (0-7, 6 is Control)","0")},
@@ -911,12 +960,19 @@ try
 
 	operatingMode_ = "HardwareDevMode";  // choose default
 
-	auto mu2eGlobalRecords =
-	    getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
-	if(mu2eGlobalRecords.size())  // take first record
-		operatingMode_ = mu2eGlobalRecords[0]
-		                     .second.getNode("GlobalOperatingMode")
-		                     .getValue<std::string>();
+	try
+	{
+		auto mu2eGlobalRecords =
+			getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
+		if(mu2eGlobalRecords.size())  // take first record
+			operatingMode_ = mu2eGlobalRecords[0]
+									.second.getNode("GlobalOperatingMode")
+									.getValue<std::string>();
+	}
+	catch(...)
+	{
+		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting operating mode = " << operatingMode_ << __E__;
+	}
 
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
@@ -2881,9 +2937,9 @@ void DTCFrontEndInterface::DTCReset()
 	// registerWrite(0x9118, 0x00000000);      // clear SERDES resets
 	
 	//Rick says he never resets links unless there is a problem:
-	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	// thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 	//there is also bit-8 of the control register, that resets all the links
 
 
@@ -2977,7 +3033,7 @@ void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 	uint32_t cfodelay = 400;  // same as Luca's Calorimeter test June-2023
 
 	int          requestsAhead  = 0;
-	unsigned int number         = -1;  // largest number of events?
+	unsigned int numberOfEvents         = __GET_ARG_IN__("numberOfEvents", uint32_t); //-1;  // largest number of events?
 	unsigned int timestampStart = 0;
 	auto device = thisDTC_->GetDevice();
 
@@ -2999,8 +3055,10 @@ void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 									asyncRR,
 									forceNoDebugMode);
 
+	__FE_COUTV__(numberOfEvents);
+
 	EmulatedCFO_->SendRequestsForRange(
-		number,
+		numberOfEvents,
 		DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
 		incrementTimestamp,
 		cfodelay,
@@ -3021,13 +3079,18 @@ void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 	__FE_COUT__ << "util - after read for DAQ in running "
 				<< " sts=" << sts << ", buffer=" << (void*)buffer;
 
-	if(sts > 0)
+	unsigned numOfReads = 0;
+	while(sts > 0)
 	{
+		++numOfReads;
 		void* readPtr = &buffer[0];
 		auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
 		readPtr       = static_cast<uint8_t*>(readPtr) + 8;
 
 		__FE_COUT__ << "Buffer reports DMA size of " << std::dec << bufSize
+					<< " bytes. Device driver reports read of " << sts << " bytes,"
+					<< std::endl;
+		ostr << "Buffer reports DMA size of " << std::dec << bufSize
 					<< " bytes. Device driver reports read of " << sts << " bytes,"
 					<< std::endl;
 
@@ -3063,13 +3126,19 @@ void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 					static_cast<unsigned>(ceil((sts - 8) / 16.0)) - (1 + quietCount);
 			}
 		}
+		device->read_release(DTC_DMA_Engine_DAQ, 1);
+		sts = device->read_data(
+		DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
+		__FE_COUT__ << "util - after read for DAQ in running "
+					<< " sts=" << sts << ", buffer=" << (void*)buffer;
 	}
 	device->read_release(DTC_DMA_Engine_DAQ, 1);
 
 	ostr << std::endl;
 
 	std::string runDataFilename = std::string(__ENV__("OTSDAQ_DATA")) + "/RunData_" +
-		                              "FEMacro" + "_" + getInterfaceUID() + ".dat";
+		                              "FEMacro" + "_" + __FUNCTION__ + "_" + getInterfaceUID() + "_" + 
+									  std::to_string(time(0)) + ".dat";
 
 	__FE_COUTV__(runDataFilename);
 	std::fstream runDataFile;
@@ -3089,6 +3158,12 @@ void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 		runDataFile.close();
 	}
 	//__FE_COUT__ << ostr.str();
+
+	std::string outStr = "Number of reads: " + std::to_string(numOfReads) + "\n" + ostr.str().substr(0,3000);
+	if(ostr.str().size() > 1000)
+		outStr += "<truncated>...";
+
+	__SET_ARG_OUT__("readData", outStr);
 
 	delete EmulatedCFO_;
 }  // end ROC_BufferTest()
@@ -3132,7 +3207,8 @@ void DTCFrontEndInterface::readRxDiagFIFO(__ARGS__)
 {	
 	DTCLib::DTC_Link_ID LinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("LinkIndex", uint8_t));
-	__SET_ARG_OUT__("Diagnostic RX FIFO:", thisDTC_->FormatRXDiagFifo(DTCLib::DTC_Links[LinkIndex]));
+
+	__SET_ARG_OUT__("Diagnostic RX FIFO", thisDTC_->FormatRXDiagFifo(DTCLib::DTC_Links[LinkIndex]));
 
 	
 } //end readRxDiagFIFO()
@@ -3142,12 +3218,145 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 {	
 	DTCLib::DTC_Link_ID LinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("LinkIndex", uint8_t));
-	__SET_ARG_OUT__("Diagnostic TX FIFO:", thisDTC_->FormatTXDiagFifo(DTCLib::DTC_Links[LinkIndex]));
+
+	__SET_ARG_OUT__("Diagnostic TX FIFO", thisDTC_->FormatTXDiagFifo(DTCLib::DTC_Links[LinkIndex]));
 
 	
 } //end readTxDiagFIFO()
 
+//========================================================================
+void DTCFrontEndInterface::ROCDestroy(__ARGS__)
+{	
+	
+	rocs_.clear();
+
+} //end ROCDestroy()
+//========================================================================
+void DTCFrontEndInterface::ROCInstantiate(__ARGS__)
+{	
+	createROCs();
+	
+} //end ROCInstantiate()
+//========================================================================
+void DTCFrontEndInterface::DTCInstantiate(__ARGS__)
+{	
+	if(thisDTC_)
+		delete thisDTC_;
+	thisDTC_ = nullptr;
+
+	DTCLib::DTC_SimMode mode =
+	    emulate_cfo_ ? DTCLib::DTC_SimMode_NoCFO : DTCLib::DTC_SimMode_Disabled;
+	
+	unsigned dtc_class_roc_mask = 0;
+	// create roc mask for DTC
+	{
+		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+
+		__FE_COUTV__(rocChildren.size());
+		roc_mask_ = 0;
+
+		for(auto& roc : rocChildren)
+		{
+			__FE_COUT__ << "roc uid " << roc.first << __E__;
+			bool enabled = roc.second.getNode("Status").getValue<bool>();
+			__FE_COUT__ << "roc enable " << enabled << __E__;
+
+			if(enabled)
+			{
+				int linkID = roc.second.getNode("linkID").getValue<int>();
+				roc_mask_ |= (0x1 << linkID);
+				dtc_class_roc_mask |=
+				    (0x1 << (linkID * 4));  // the DTC class instantiation expects each
+				                            // ROC has its own hex nibble
+			}
+		}
+
+		__FE_COUT__ << "DTC roc_mask_ = 0x" << std::hex << roc_mask_ << std::dec << __E__;
+		__FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex
+		            << dtc_class_roc_mask << std::dec << __E__;
+
+	}  // end create roc mask
+
+	std::string         expectedDesignVersion = "";
+	bool skipInit = true;
+
+	try
+	{
+		skipInit = getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
+	        .getValue<bool>();
+	}
+	catch(...)
+	{
+		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting skipInit = " << (skipInit?"true":"false") << __E__;
+	}
+
+	__COUT__ << "DTC arguments..." << std::endl;
+	__COUTV__(mode);
+	__COUTV__(deviceIndex_);
+	__COUTV__(dtc_class_roc_mask);
+	__COUTV__(expectedDesignVersion);
+	__COUTV__(skipInit);
+	__COUT__ << "END DTC arguments..." << std::endl;
+
+	thisDTC_ = new DTCLib::DTC(
+	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
+		skipInit, getInterfaceUID());
+	
+} //end DTCInstantiate()
 
 
+//========================================================================
+void DTCFrontEndInterface::DMABufferRelease(__ARGS__)
+{	
+	
+	{
+		//MU2E_NUM_RECV_BUFFS = 100 in mu2e_pcie_utils/mu2e_driver/mu2e_proto_globals.h
+		auto stsDCS = getDevice()->read_release(DTC_DMA_Engine_DCS, 100);
+		auto stsDAQ = getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
+		TLOG(TLVL_DEBUG + 7) << "DMABufferRelease - stsDCS=" << stsDCS << ", stsDAQ=" << stsDAQ;
+		/*
+		for (unsigned ii = 0; ii < 100; ++ii)
+			{
+				void* buffer;
+				uto tmo_ms = 0;
+				auto stsRD = getDevice()->read_data(DTC_DMA_Engine_DCS, &buffer, tmo_ms);			auto stsDCS = getDevice()->read_release(DTC_DMA_Engine_DCS, 100);
+				auto stsRL = getDevice()->read_release(DTC_DMA_Engine_DCS, 1);
+				TLOG(TLVL_DEBUG + 7) << "Reset - release/read for DCS ii=" << ii 
+				<< ", stsRD=" << stsRD << ", stsRL=" << stsRL << ", buffer=" << buffer;
+				//if (delay > 0) usleep(delay);
+			}
+		for (unsigned ii = 0; ii < 100; ++ii)
+		{
+			void* buffer;
+			auto tmo_ms = 0;
+			// auto stsRD = getDevice()->read_data(DTC_DMA_Engine_DAQ, &buffer, tmo_ms);
+			auto stsRL = getDevice()->read_release(DTC_DMA_Engine_DAQ, 1);
+			TLOG(TLVL_DEBUG + 7) << "Reset - release/read for DAQ ii=" << ii 
+			//<< ", stsRD=" << stsRD 
+			<< ", stsRL=" << stsRL << ", buffer=" << buffer;
+			//if (delay > 0) usleep(delay);
+		}*/
+	}
+
+	
+} //end DMABufferRelease()
+
+//========================================================================
+void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
+{	
+	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+} //end ResetDTCLinks()
+
+//========================================================================
+void DTCFrontEndInterface::ResetROCLinkFSMs(__ARGS__)
+{	
+	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+} //end ResetROCLinkFSMs()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)
