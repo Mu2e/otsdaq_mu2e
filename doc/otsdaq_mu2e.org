@@ -1,8 +1,9 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
 * Mu2e OTSDAQ docs - top page                                                
-* ------------------------------------------------------------------------------
 ** News                                                                      
+*** <2023-06-29 Thu> ROOT interface to DC available
+*** <2023-06-29 Thu> v2_06_10 OTS bundle released
 *** <2023-04-12 Wed> [[https://docs.google.com/document/d/1HcwRGdVoRhv8FstQncY7KOxvNlP6nf_gGtHEcNmc2Bc/edit][kick-off meeting, preparations for a workshop]]
 ** -----------------------------------------------------------------------------
 ** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]

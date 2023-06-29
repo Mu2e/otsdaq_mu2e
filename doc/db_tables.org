@@ -1,4 +1,4 @@
-#
+#+startup:fold
 * Mongo DB and the DB tables                                                 
   - examples of scripts to use to query the Mongo DB:
 ** test_001.js : print list of tables                                        
@@ -297,6 +297,8 @@ why ????
 ** XDAQApplicationTable",
 ** XDAQContextTable"
 * ------------------------------------------------------------------------------
+* technical notes
+* ------------------------------------------------------------------------------
 * mongo db help                                                              
 ** db.help()                    help on db methods
 ** db.mycoll.help()             help on collection methods
@@ -321,4 +323,35 @@ why ????
 ** it                           result of the last line evaluated; use to further iterate
 ** DBQuery.shellBatchSize = x   set default number of items to display on shell
 ** exit                         quit the mongo shell
+* using pymongo to read the DB                                               
+#+begin_src  python       
+import pymongo, pprint 
+c1 = pymongo.MongoClient("mongodb://localhost:27017/")
+c1.list_database_names()
+# ['admin', 'config', 'db_001', 'local', 'ots', 'test']
+db = c1.test
+db.list_collection_names()
+# ['movies', 'inventory', 'configurations', 'test', 'customers']
+col = db.movies
+cur = col.find()
+for doc in cur: pprint.pprint(doc)
+#+end_src
+
+#+RESULTS:
+: None
+* read .json file with the trigger table                                     
+#+begin_src python
+  import json
+  f = open('trigger_table.json')
+  data = json.load(f)
+  print(data)
+#+end_src
+* upload it to the DB                                                        
+#+begin_src 
+import pymongo
+client = pymongo.MongoClient("mongodb://localhost:27017/")
+db  = client["test"]
+col = db["trigger_table"]
+x   = col.insert_one(data)   # from the previous example
+#+end_src
 * ------------------------------------------------------------------------------
