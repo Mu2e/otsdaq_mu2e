@@ -24,7 +24,7 @@ build_cet -G Mu2e otsdaq_mu2e_extmon          v1_02_03 ${basequal}:${version_set
 build_cet -G Mu2e otsdaq_mu2e_stm             v1_02_03 ${basequal}:${version_set}
 build_cet -G Mu2e otsdaq_mu2e_tracker         v1_02_03 ${basequal}:${version_set}
 
-return 0
+# return 0
 
 source /cvmfs/mu2e.opensciencegrid.org/artexternals/setup
 setup offline d10_22_01 trig:${basequal}:${build_type}:${version_set}
