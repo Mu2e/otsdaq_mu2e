@@ -2,7 +2,7 @@
 basequal=${1}
 
 # specify version to bootstrap and setup ups
-check_ups v6_1_0
+check_ups v6_1_1
 
 if (( ${version_set:-0} )); then
    echo "ERROR: version set must be specified for mu2e TDAQ build"
