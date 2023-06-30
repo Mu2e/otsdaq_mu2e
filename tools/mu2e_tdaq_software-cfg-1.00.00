@@ -16,13 +16,13 @@ build_cet -G Mu2e artdaq_core_mu2e            v1_09_01 ${basequal}:${version_set
 
 build_cet -G Mu2e artdaq_mu2e                 v1_06_01 ${basequal}:${version_set}
 
-build_cet -G Mu2e otsdaq_mu2e                 v1_02_03 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e                 v1_03_01 ${basequal}:${version_set}
 
-build_cet -G Mu2e otsdaq_mu2e_calorimeter     v1_02_03 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_crv             v1_02_03 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_extmon          v1_02_03 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_stm             v1_02_03 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_tracker         v1_02_03 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_calorimeter     v1_03_01 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_crv             v1_03_01 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_extmon          v1_03_01 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_stm             v1_03_01 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_tracker         v1_03_01 ${basequal}:${version_set}
 
 # return 0
 
@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
    return 0
 fi
 
-build_cet -G Mu2e otsdaq_mu2e_dqm             v1_02_02 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_trigger         v1_02_02 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_dqm             v1_03_01 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_trigger         v1_03_01 ${basequal}:${version_set}
 
 return 0
