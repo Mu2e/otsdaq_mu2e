@@ -14,7 +14,7 @@ build_bundle otsdaq-2.06.10 ${basequal}
 build_cet -G Mu2e mu2e_pcie_utils             v2_08_05 ${basequal}:${version_set}
 build_cet -G Mu2e artdaq_core_mu2e            v1_09_01 ${basequal}:${version_set}
 
-build_cet -G Mu2e artdaq_mu2e                 v1_05_01 ${basequal}:${version_set}
+build_cet -G Mu2e artdaq_mu2e                 v1_06_01 ${basequal}:${version_set}
 
 build_cet -G Mu2e otsdaq_mu2e                 v1_02_03 ${basequal}:${version_set}
 
