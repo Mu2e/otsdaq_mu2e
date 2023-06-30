@@ -34,9 +34,7 @@ if [ $? -ne 0 ]; then
    return 0
 fi
 
-build_cet -G Mu2e otsdaq_mu2e_dqm_calorimeter v1_02_02 ${basequal}:${version_set}
-build_cet -G Mu2e otsdaq_mu2e_dqm_tracker     v1_02_02 ${basequal}:${version_set}
-#build_cet -G Mu2e otsdaq_mu2e_dqm_trigger     v1_02_02 ${basequal}:${version_set}
+build_cet -G Mu2e otsdaq_mu2e_dqm             v1_02_02 ${basequal}:${version_set}
 build_cet -G Mu2e otsdaq_mu2e_trigger         v1_02_02 ${basequal}:${version_set}
 
 return 0
