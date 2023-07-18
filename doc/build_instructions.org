@@ -1,0 +1,158 @@
+#+startup:fold
+* ------------------------------------------------------------------------------
+* installation and build instructions  (validated 2023-05-03)                
+
+  OTSDAQ bundle to use 
+   - version   : v2_06_09   
+   - qualifiers: e20_s122_prof
+
+  - all available OTSDAQ bundles: https://scisoft.fnal.gov/scisoft/packages/otsdaq/
+
+  - the build procedure itself:
+    0) make sure you have access to *otsdaq_mu2e_config* repo - it is a private Mu2e repository. Ask Rob Kutschke for permissions.
+    1) go to https://github.com/mu2e/otsdaq_mu2e_config/blob/pasha/mu2e_ots_install.sh
+    2) convert the page to raw format (click on the "raw" button), wget the resulting raw URL (that will have an odd ending)
+
+#+begin_src 
+  wget -O mu2e_ots_install.sh  <raw-URL>      # see example below
+  source mu2e_ots_install.sh work_area partition [otsdaq_bundle] [qualifiers]
+#+end_src 
+
+  - work_area    : name of the OTSDAQ work area, to be created in the current directory 
+  - partition    : see https://github.com/mu2e/otsdaq_mu2e/blob/develop/doc/otsdaq_mu2e.org#partitions
+  - otsdaq_bundle: version of the OTSDAQ bundle, see above 
+  - qualifiers   : build qualifiers, see above
+
+An example follows. In the middle of the installation you will be asked for a password to access the *otsdaq_mu2e_config* repo. 
+#+begin_src 
+  wget -O mu2e_ots_install.sh https://raw.githubusercontent.com/pavel1murat/otsdaq_mu2e_config/main/mu2e_ots_install.sh?token=GHSAT0AAAAAAB5R6WEE6WSNUG76CU6GX2QIZCTHH6A --
+  source mu2e_ots_install.sh pasha_001 8 v2_06_09 e20_s122_prof
+#+end_src
+
+  here 'pasha_001' is the name of created work area
+
+  - if you need to pull locally more repos, cd to 'pasha_001/srcs',  pull needed repos, cd back to 'pasha_001'
+  - recompile:
+#+begin_src
+mrb uc
+mrb b
+#+end_src
+
+- finally, setup the ARTDAQ_DATABASE_URI and the ssh tunnel for accessing the MongoDB (the server is running on mu2edaq13) 
+
+#+begin_src
+export ARTDAQ_DATABASE_URI=XXX   # ask Giani/Pasha for what XXX is 
+ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
+#+end_src
+* ROOT interface to mu2e_pcie_utils                                          
+- If you got here, you already have built the OTS libraries
+- ROOT interface library is not available by default, you have to build it
+#+begin_src
+cd srcs
+git clone https://github.com/mu2e/mu2e_pcie_utils
+cd mu2e_pcie_utils
+git checkout pasha
+cd ../..
+export BUILD_ROOT_INTERFACE=1
+mrb b
+#+end_src
+after that, you can do the following:
+#+begin_src
+root.exe
+root [0] DTCLib::DTC dtc(DTCLib::DTC_SimMode_NoCFO,-1,0x1,"");
+06-18 17:41:07.271940                      DTC_Registers     INFO DTC_Registers(...): Sim Mode is NoCFO
+06-18 17:41:07.271997                      DTC_Registers     INFO DTC_Registers(...): DTC ID is 1
+06-18 17:41:07.272011                      DTC_Registers     INFO SetSimMode(...): Initializing device, sim mode is NoCFO
+06-18 17:41:07.278490                      DTC_Registers     INFO SetSimMode(...): SKIPPING Initializing device
+06-18 17:41:07.283713                            DTC.cpp     INFO DTC(...): CONSTRUCTOR
+root [1] mu2edev* dev = dtc.GetDevice();
+root [2]   uint32_t res; 
+root [3]   int      rc;
+root [4]   rc = dev->read_register(0x9100,100,&res); printf("0x9100: DTC status       : 0x%08x\n",res); // expect: 0x40808404
+0x9100: DTC status       : 0x40808404
+#+end_src
+
+*Comments*
+
+- for examples, see https://github.com/Mu2e/otsdaq_mu2e_tracker/blob/pasha/scripts/test_buffer_async.C , 
+  or any other .C script in that area
+- every script should have the following line on top"
+#+begin_src
+#define __CLING__ 1
+#+end_src
+- because of the complexity of the C++ code, ROOT needs to be restarted every time you reload your script
+
+* <2023-01-04 Wed> build configuration with two loggers (by Giani)           
+
+  instructions below are not working, will be fixed soon    
+ 
+1) INSTALL THE FOLLOWING PACKAGES 
+
+#+begin_src
+git clone https://github.com/art-daq/artdaq.git
+git clone https://github.com/art-framework-suite/art-root-io.git art_root_io
+git clone https://github.com/Mu2e/otsdaq_mu2e_config.git 
+git clone https://github.com/art-daq/artdaq_daqinterface.git
+git clone https://github.com/art-daq/otsdaq.git
+git clone https://github.com/Mu2e/otsdaq_mu2e_dqm_tracker
+git clone https://github.com/Mu2e/otsdaq_mu2e.git
+git clone https://github.com/Mu2e/artdaq_mu2e.git
+git clone https://github.com/Mu2e/otsdaq_mu2e_trigger
+#+end_src
+
+# edit one hack in art_root_io
+# 1. open the file: art_root_io/detail/RootErrorClassifier.cc
+# 2. add the following code at line 25:    if(parser.has_message("rdict")) { return true; }
+
+# reset the config
+#+begin_src
+reset_mu2e_ots_snapshot.sh --name full_trig_reco_chain_20230110_demo
+
+mrb newDev -f -q e20:s118:prof -v v1_00_00
+
+# compile
+source setup_ots.sh
+cd srcs
+mrb uc
+cd ..
+mz
+#+end_src 
+
+   launch OTS in wiz mode
+#+begin_src
+ots -w
+#+end_src
+
+set up the nodes where to run the event builder, datalogger, dispatcher, etc
+
+#+begin_quote
+1. click on "Configure"
+2. click on "tree view" next to "HorizontalSliceTest"
+3. change the following parameter to load properly the setup script from your working area: 
+   ARTDAQSupervisorTable -> artDaqSupervsior0 -> DAQSetupScript
+4. change the following ExecutionHostNames:
+ *** ARTDAQBoardReaderTable
+a. crvReader0
+b. EventDataGenerator0
+c. EventDataGenerator1 (not used, so you can ignore this)
+ *** ARTDAQDataLogger
+a. logger0
+b. logger1
+ *** ARTDAQDispatcherTable
+a. dispatcher0
+ *** ARTDAQEventBuilderTable
+a. EventBuilder00
+b. CRVBuilder0
+c. EventBuilder01 (it's turned off, so this can be ignored)
+#+end_quote
+
+  *ARTDAQOnlineMonitorTable*
+
+ a. trackerDQMSupervisor 
+
+  *NOTE*: if you are using the trackerDQM, than you need to change also the following parameter and set it to the same node as the "trackerDQMSupervisor":
+
+  ARTDAQOnlineMonitorTable->trackerDQMSupervisor->artLink->physicsLink->analyzersLink->trackerDQM->analyzerModuleParameterLink->trackerDQM_ip->analyzerParameterValue
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
+* ------------------------------------------------------------------------------
