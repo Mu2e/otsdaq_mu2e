@@ -2,12 +2,16 @@
 #include "otsdaq/Macros/BinaryStringMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq/FECore/MakeInterface.h"
+#include "otsdaq/TablePlugins/ARTDAQTableBase/ARTDAQTableBase.h"
 
 using namespace ots;
 
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "CFOandDTCCoreVInterface"
 
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV 	= "HardwareDevMode";
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING = "EventBuildingMode";
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK 		= "LoopbackMode";
 //=========================================================================================
 CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
     const std::string&       interfaceUID,
@@ -22,50 +26,48 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 	universalDataSize_    = sizeof(dtc_data_t);
 
 	configure_clock_ = getSelfNode().getNode("ConfigureClock").getValue<bool>();
-	__COUTV__(configure_clock_);
+	__FE_COUTV__(configure_clock_);
 
-	// //--------------------------------------------------------
-	// //Monitor register writes (for debugging)
-	// {
-	// 	std::stringstream fnss;
-	// 	fnss << device_name_ << ".txt";
-	// 	if(regWriteMonitorStream_.is_open())
-	// 	{
-	// 		regWriteMonitorStream_.flush();
-	// 		regWriteMonitorStream_.close();
-	// 	}
-	// 	regWriteMonitorStream_.open(fnss.str().c_str(), std::ios::app); // appending, but not appending forever
+	artdaqMode_ = ARTDAQTableBase::isARTDAQEnabled(getConfigurationManager());
+	__FE_COUTV__(artdaqMode_);
 
-	// 	if(!regWriteMonitorStream_.is_open())
-	// 	{
-	// 		__SS__ << "Failed to open register monitoring file! " << fnss.str() << __E__;
-	// 		__SS_THROW__;
-	// 	}
-	// 	//force size to not grow forever
-	// 	std::stringstream existingFileSs;
-	// 	existingFileSs << regWriteMonitorStream_.rdbuf();
-	// 	if(existingFileSs.str().size() > 10000)
-	// 	{
-	// 		regWriteMonitorStream_.close();
-	// 		regWriteMonitorStream_.open(fnss.str().c_str(), std::ios::trunc /* clear file */); //not appending forever, std::ios::app
-	// 		if(!regWriteMonitorStream_.is_open())
-	// 		{
-	// 			__SS__ << "Failed to open register monitoring file! " << fnss.str() << __E__;
-	// 			__SS_THROW__;
-	// 		}
-	// 		regWriteMonitorStream_ << existingFileSs.str().substr(existingFileSs.str().size()-10000);
-	// 	}
+	operatingMode_ = "HardwareDevMode";  // choose default
+	try
+	{
+		auto mu2eGlobalRecords =
+			getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
+		if(mu2eGlobalRecords.size())  // take first record
+			operatingMode_ = mu2eGlobalRecords[0]
+									.second.getNode("GlobalOperatingMode")
+									.getValue<std::string>();
+	}
+	catch(...)
+	{
+		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting operating mode = " << operatingMode_ << __E__;
+	}
+	__FE_COUTV__(operatingMode_);
 
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-	// 		", \t ---------- Instantiated: " << device_name_ << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
-	// //end of Monitor register writes
-	// //--------------------------------------------------------
+	skipInit_ = true; //default to skipping configure unless Mu2e Globals is set. This way MacroMaker mode will skip configure when the global table is missing.
+	try
+	{
+		auto mu2eGlobalRecords =
+			getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
+		if(mu2eGlobalRecords.size())  // take first record
+			skipInit_ = mu2eGlobalRecords[0]
+									.second.getNode("SkipCFOandDTCConfigureSteps")
+									.getValue<bool>();
+		
+	}
+	catch(const std::runtime_error& e)
+	{
+		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting skipInit_ = " << skipInit_ << __E__;
+	}
+	__FE_COUTV__(skipInit_);
 
+	
 	// PCIe index to communicate with
 	deviceIndex_ = getSelfNode().getNode("DeviceIndex").getValue<unsigned int>();
-	__COUTV__(deviceIndex_);
+	__FE_COUTV__(deviceIndex_);
 
 	try
 	{

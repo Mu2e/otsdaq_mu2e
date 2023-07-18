@@ -100,6 +100,14 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					1);  // requiredUserPermissions
 
 	registerFEMacroFunction(
+		"Select Jitter Attenuator Source",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
+				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)"},
+						std::vector<std::string>{"Register Write Results"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
 		"Reset Runplan",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::ResetRunplan),                  // feMacroFunction
@@ -128,6 +136,15 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LaunchRunplan),                  // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions	
+
+	
+	registerFEMacroFunction(
+		"Configure for Timing Chain",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::ConfigureForTimingChain),                  // feMacroFunction
+					std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions	
 	
@@ -375,22 +392,35 @@ void CFOFrontEndInterface::configure(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	try
+	if(skipInit_) return;
+
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
-		if(getConfigurationManager()
-		->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
-		.getValue<bool>())
-		{
-			__FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
-			return;
-		}
+		__FE_COUT_INFO__ << "Not configuring CFO for hardware development mode!" << __E__;
+		return;
 	}
-	catch(const std::runtime_error& e)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
-		__FE_SS__ << "The Mu2eGlobalsTable is missing the record named 'SyncDemoConfig.' This record is required (representing Mu2e global parameters) for the configuration of the CFO." <<
-			 __E__ << e.what() << __E__;
-		__SS_THROW__;
+		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
+		configureEventBuildingMode();
 	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
+		configureLoopbackMode();
+	}
+	else
+	{
+		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
+	return;
+
+
+
 
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
 	// Therefore, break up configuration into several steps so as to reply before
@@ -571,7 +601,207 @@ void CFOFrontEndInterface::configure(void)
 	readStatus();             // spit out link status at every step
 	indicateIterationWork();  // I still need to be touched
 	return;
-}
+} //end configure()
+
+
+//==============================================================================
+void CFOFrontEndInterface::configureEventBuildingMode(void)
+{
+	__FE_COUT_INFO__ << "configureEventBuildingMode() " << getIterationIndex() << "." << getSubIterationIndex() << __E__;
+	
+	switch(getIterationIndex())
+	{
+		case 0:		//CFO timing gets iteration index 0
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
+			configureForTimingChain();
+			indicateIterationWork();
+			break;
+		case 1:		//wait for DTCs
+		case 2:		//wait for DTCs
+			__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+			indicateIterationWork();
+			break;
+		case 3:
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+
+}  // end configureEventBuildingMode()
+
+//==============================================================================
+void CFOFrontEndInterface::configureLoopbackMode(void)
+{
+	__FE_COUT_INFO__ << "configureLoopbackMode() " << getIterationIndex() << "." << getSubIterationIndex() << __E__;
+
+	switch(getIterationIndex())
+	{
+		case 0:		//CFO timing gets iteration index 0
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
+			configureForTimingChain();
+			indicateIterationWork();
+			break;
+		case 1:		//wait for DTCs
+		case 2:		//wait for DTCs
+			__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+			indicateIterationWork();
+			break;
+		case 3:
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+}  // end configureLoopbackMode()
+
+//==============================================================================
+void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
+{
+	//use sub-iteration index (but not the value of the index)
+	//	sub-iterations focus allow one entity to finish an iteration index, while others wait,
+	//	but can not be sure of starting sub-iteration index from entity to entity.
+	if(step == -1) step = getSubIterationIndex() - timing_chain_first_substep_;
+
+	__FE_COUT_INFO__ << "configureForTimingChain() " << step << __E__;
+	
+	std::string designVersion = thisCFO_->ReadDesignDate();
+	__FE_COUTV__(designVersion);
+	//Jun/13/2023 16:00 raw-data: 0x23061316
+	//DTC-style: Jun/13/2023 17:00 raw-data: 0x23061317
+
+	std::string matchDesignVersion = "Jun/13/2023 16:00   raw-data: 0x23061316";
+	switch(step)
+	{
+		case 0:
+			// thisCFO_->DisableAllOutputs();
+
+			__FE_COUTV__(configure_clock_);
+
+			//NOTE on Jun/13/2023 16:00 raw-data: 0x23061316
+			//	need to configure crystal!
+
+			__FE_COUT__ << " =? " << (thisCFO_->ReadDesignDate() == 
+				"Jun/13/2023 16:00   raw-data: 0x23061316"?"yes":"no") << " ? " <<
+				(designVersion == 
+				"Jun/13/2023 16:00   raw-data: 0x23061316"?"yes":"no") << __E__;
+
+			{
+				for(size_t i=0;i<designVersion.size();++i)
+					__FE_COUT__ << designVersion[i] << " ? " << matchDesignVersion[i] << " = " 
+						<< (designVersion[i] == matchDesignVersion[i]?"y":"n") << __E__;
+			}
+			if(configure_clock_ && thisCFO_->ReadDesignDate() == 
+				"Jun/13/2023 16:00   raw-data: 0x23061316")
+			{
+				// only configure the clock/crystal the first loop through...
+
+				__FE_COUT_INFO__ << "CFO reset clock..." << __E__;
+
+				if(1)
+				{
+					__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
+					thisCFO_->SetSERDESOscillatorFrequency(0x09502F90);
+					// registerWrite(0x9160, 0x09502F90);
+
+					// set RST_REG bit
+					thisCFO_->WriteSERDESIICInterface(
+						DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */, 
+						0x87 /* address */, 0x01 /* data */);
+				}
+
+				// registerWrite(0x9168, 0x55870100);
+				// registerWrite(0x916c, 0x00000001);
+
+				// sleep(5);
+
+				//-----begin code snippet pulled from: mu2eUtil program_clock -C 0 -F
+				// 200000000 ---
+				// C=0 = main board SERDES clock
+				// C=1 = DDR clock
+				// C=2 = Timing board SERDES clock
+
+				int targetFrequency = 200000000;
+
+				//auto oscillator = DTCLib::DTC_OscillatorType_SERDES;  //-C 0 = CFO (main
+																	// board SERDES clock)
+				// auto oscillator = DTCLib::DTC_OscillatorType_DDR; //-C 1 (DDR clock)
+				// auto oscillator = DTCLib::DTC_OscillatorType_Timing; //-C 2 = DTC (with
+				// timing card)
+
+				__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
+							<< targetFrequency << " MHz" << __E__;
+
+				thisCFO_->SetNewOscillatorFrequency(targetFrequency);
+
+				//-----end code snippet pulled from: mu2eUtil program_clock -C 0 -F
+				// 200000000
+
+				sleep(5);
+			} //end special behavior for "original" CFO version 0x23061316
+
+			indicateSubIterationWork();
+			break;
+		case 1:
+			{
+				if(configure_clock_)
+				{
+					uint32_t select      = 0;
+					try
+					{
+						select = getSelfNode()
+									.getNode("JitterAttenuatorInputSource")
+									.getValue<uint32_t>();
+					}
+					catch(...)
+					{
+						__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to select = "
+									<< select << __E__;
+					}
+					__FE_COUTV__(select);
+					//For CFO - 0 ==> Local oscillator
+					//For CFO - 1 ==> RTF copper clock
+					thisCFO_->SetJitterAttenuatorSelect(select);					
+				}
+				else
+					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+			}
+			// indicateSubIterationWork();
+			break;
+		case 2:
+		
+			// __FE_COUT__ << "CFO reset serdes PLLs " << __E__;
+			// thisCFO_->ResetAllSERDESPlls();
+
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+				
+			// __FE_COUT__ << "CFO reset serdes RX " << __E__;
+			// thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+			// __FE_COUT__ << "CFO enable markers on link " << __E__;
+			// thisCFO_->EnableTiming();
+		
+			// __FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
+			// thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+
+
+	
+	
+	
+	
+	
+
+}  // end configureForTimingChain()
 
 //==============================================================================
 void CFOFrontEndInterface::halt(void)
@@ -584,7 +814,7 @@ void CFOFrontEndInterface::halt(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	readStatus();
+	// readStatus();
 }
 
 //==============================================================================
@@ -598,7 +828,7 @@ void CFOFrontEndInterface::pause(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	readStatus();
+	// readStatus();
 }
 
 //==============================================================================
@@ -612,7 +842,7 @@ void CFOFrontEndInterface::resume(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	readStatus();
+	// readStatus();
 }
 
 //==============================================================================
@@ -1013,6 +1243,23 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 } //end ReadCFO()
 
 //========================================================================
+void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
+{
+	uint32_t select = __GET_ARG_IN__(
+	    "Source (0 is Local oscillator, 1 is RTF Copper Clock)", uint32_t);
+	select %= 4;
+	__FE_COUTV__((unsigned int)select);
+
+	thisCFO_->SetJitterAttenuatorSelect(select);
+
+	// __SET_ARG_OUT__("Register Write Results", results.str());
+	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
+
+	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
+
+}  // end SelectJitterAttenuatorSource()
+
+//========================================================================
 void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 {	
 	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
@@ -1143,6 +1390,20 @@ void CFOFrontEndInterface::GetStatus(__ARGS__)
 	//call virtual readStatus
 	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20));
 } //end GetStatus()
+
+//========================================================================
+void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
+{	
+
+	//call virtual readStatus
+
+	int stepIndex = __GET_ARG_IN__("StepIndex", int);
+
+	// do 0, then 1
+	configureForTimingChain(stepIndex);
+	// configureForTimingChain(1);
+
+} //end ConfigureForTimingChain()
 
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)

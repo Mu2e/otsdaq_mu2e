@@ -30,7 +30,14 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	__FE_COUT__ << "instantiate DTC... " << getInterfaceUID() << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-	emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << "Hardware Dev Mode identified, so forcing CFO emulation mode for DTC" << __E__;
+		emulate_cfo_ = true;
+	}
+	else
+		emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
+	__FE_COUTV__(emulate_cfo_);
 
 	if(emulatorMode_)
 	{
@@ -77,31 +84,20 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	std::string         expectedDesignVersion = "";
 	DTCLib::DTC_SimMode mode =
 	    emulate_cfo_ ? DTCLib::DTC_SimMode_NoCFO : DTCLib::DTC_SimMode_Disabled;
-	bool skipInit = true;
+		    
 
-	try
-	{
-		skipInit = getConfigurationManager()
-	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
-	        .getValue<bool>();
-	}
-	catch(...)
-	{
-		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting skipInit = " << (skipInit?"true":"false") << __E__;
-	}
-	    
-
-	__COUT__ << "DTC arguments..." << std::endl;
-	__COUTV__(mode);
-	__COUTV__(deviceIndex_);
-	__COUTV__(dtc_class_roc_mask);
-	__COUTV__(expectedDesignVersion);
-	__COUTV__(skipInit);
-	__COUT__ << "END DTC arguments..." << std::endl;
+	__FE_COUT__ << "DTC arguments..." << std::endl;
+	__FE_COUTV__(mode);
+	__FE_COUTV__(deviceIndex_);
+	__FE_COUTV__(dtc_class_roc_mask);
+	__FE_COUTV__(expectedDesignVersion);
+	__FE_COUTV__(skipInit_);
+	__FE_COUT__ << "END DTC arguments..." << std::endl;
 
 	thisDTC_ = new DTCLib::DTC(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
-		skipInit, getInterfaceUID());
+		true /* skipInit */, //always skip init and lots ots configure setup
+		getInterfaceUID()); 
 
 	createROCs();
 	registerFEMacros();
@@ -111,7 +107,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
 
 	// check if any ROCs should be DTC-hardware emulated ROCs
-	if(skipInit)
+	if(skipInit_)
 	{
 		__FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
 	}
@@ -324,7 +320,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Upstream Rx Lock Loss Count",
 						"Upstream Rx CDR Lock Status",
 						"Upstream Rx PLL Lock Status",
-						"Jitter Attenuator Reset",
+						// "Jitter Attenuator Reset",
 						"Jitter Attenuator Status",	//"Jitter Attenuator Input Select",
 						// "Jitter Attenuator Loss-of-Signal",
 						"Reset Done"},
@@ -410,6 +406,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetDTCLinks),
 					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Configure for Timing Chain",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ConfigureForTimingChain),
+					std::vector<std::string>{"StepIndex"},
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 
@@ -958,24 +962,7 @@ try
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
-	operatingMode_ = "HardwareDevMode";  // choose default
-
-	try
-	{
-		auto mu2eGlobalRecords =
-			getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
-		if(mu2eGlobalRecords.size())  // take first record
-			operatingMode_ = mu2eGlobalRecords[0]
-									.second.getNode("GlobalOperatingMode")
-									.getValue<std::string>();
-	}
-	catch(...)
-	{
-		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting operating mode = " << operatingMode_ << __E__;
-	}
-
-	__FE_COUTV__(operatingMode_);
-	__FE_COUTV__(emulatorMode_);
+	if(skipInit_) return;
 
 	if(operatingMode_ == "HardwareDevMode")
 	{
@@ -985,10 +972,12 @@ try
 	else if(operatingMode_ == "EventBuildingMode")
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
+		configureEventBuildingMode();
 	}
 	else if(operatingMode_ == "LoopbackMode")
 	{
 		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
+		configureLoopbackMode();
 	}
 	else
 	{
@@ -1517,7 +1506,7 @@ catch(...)
 //==============================================================================
 void DTCFrontEndInterface::configureHardwareDevMode(void)
 {
-	__FE_COUT_INFO__ << "configureHardwareDevMode() in CFO emulation mode" << __E__;
+	__FE_COUT_INFO__ << "configureHardwareDevMode()" << __E__;
 
 	// 0x9100 is the DTC Control Register
 	// registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO emulation mode
@@ -1557,6 +1546,122 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	// registerWrite(0x91AC, 0); // Set number of heartbeats packets
 
 }  // end configureHardwareDevMode()
+
+//==============================================================================
+void DTCFrontEndInterface::configureEventBuildingMode(void)
+{
+	__FE_COUT_INFO__ << "configureEventBuildingMode() " << getIterationIndex() << __E__;
+	
+	if(emulate_cfo_) //when no CFO, what is event building mode?
+	{
+		__FE_SS__ << "There is no CFO! Event Building Mode is invalid." << __E__;
+		__SS_THROW__;
+	}
+
+	switch(getIterationIndex())
+	{
+		case 0:		//CFO timing gets iteration index 0
+			__FE_COUT__ << "Do nothing while CFO configures for timing chain." << __E__;
+			indicateIterationWork();
+			break;
+		case 1:	
+		case 2:
+		// case 3:
+			configureForTimingChain(getIterationIndex() - 1 /* start case index!! */);
+			break;
+		case 3:		//CFO resets Tx to reset DTC chain
+			__FE_COUT__ << "Do nothing while CFO reset its Tx..." << __E__;
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+
+}  // end configureEventBuildingMode()
+
+//==============================================================================
+void DTCFrontEndInterface::configureLoopbackMode(void)
+{
+	__FE_COUT_INFO__ << "configureLoopbackMode() " << getIterationIndex() << __E__;
+
+	if(emulate_cfo_) //when no CFO, what is loopback mode?
+	{
+		__FE_SS__ << "There is no CFO! Loopback Mode is invalid." << __E__;
+		__SS_THROW__;
+	}
+
+	switch(getIterationIndex())
+	{
+		case 0:		//CFO timing gets iteration index 0
+			__FE_COUT__ << "Do nothing while CFO configures for timing chain." << __E__;
+			indicateIterationWork();
+			break;
+		case 1:	
+		case 2:
+		// case 3:
+			configureForTimingChain(getIterationIndex() - 1 /* start case index!! */);
+			break;
+		case 3:		//CFO resets Tx to reset DTC chain
+			__FE_COUT__ << "Do nothing while CFO reset its Tx..." << __E__;
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+}  // end configureLoopbackMode()
+
+//==============================================================================
+void DTCFrontEndInterface::configureForTimingChain(int step)
+{
+	__FE_COUT_INFO__ << "configureForTimingChain() " << step << __E__;
+	
+	//Jun/18/2023 14:00 raw-data: 0x23061814
+	switch(step)
+	{
+		case 0:
+			thisDTC_->ResetDTC();
+			indicateIterationWork();
+			break;
+		case 1:
+			{
+	
+				if(configure_clock_)
+				{
+					uint32_t select      = 0;
+					try
+					{
+						select = getSelfNode()
+									.getNode("JitterAttenuatorInputSource")
+									.getValue<uint32_t>();
+					}
+					catch(...)
+					{
+						__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to select = "
+									<< select << __E__;
+					}
+
+					__FE_COUTV__(select);
+					//For DTC - 0 ==> CFO Control Link
+					//For DTC - 1 ==> RTF copper clock
+					//For DTC - 2 ==> FPGA FMC
+					thisDTC_->SetJitterAttenuatorSelect(select);
+				}
+				else
+					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+			}
+			// indicateIterationWork();
+			break;
+		case 2:
+			// __FE_COUT__ << "DTC reset links" << __E__;
+			// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			// thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+
+
+}  // end configureForTimingChain()
 
 //==============================================================================
 void DTCFrontEndInterface::halt(void)
@@ -2860,15 +2965,11 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 
 	thisDTC_->SetJitterAttenuatorSelect(select);
 
-	sleep(1);
-
-	// configureJitterAttenuator();
-	thisDTC_->ConfigureJitterAttenuator();
 
 	// __SET_ARG_OUT__("Register Write Results", results.str());
 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
 
-	
+	__SET_ARG_OUT__("Register Write Results", thisDTC_->FormatJitterAttenuatorCSR());	
 
 }  // end SelectJitterAttenuatorSource()
 
@@ -3279,30 +3380,20 @@ void DTCFrontEndInterface::DTCInstantiate(__ARGS__)
 	}  // end create roc mask
 
 	std::string         expectedDesignVersion = "";
-	bool skipInit = true;
-
-	try
-	{
-		skipInit = getConfigurationManager()
-	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
-	        .getValue<bool>();
-	}
-	catch(...)
-	{
-		__FE_COUT_WARN__ << "Ignoring missing Mu2eGlobalsTable definition, defaulting skipInit = " << (skipInit?"true":"false") << __E__;
-	}
 
 	__COUT__ << "DTC arguments..." << std::endl;
 	__COUTV__(mode);
 	__COUTV__(deviceIndex_);
 	__COUTV__(dtc_class_roc_mask);
 	__COUTV__(expectedDesignVersion);
-	__COUTV__(skipInit);
+	__COUTV__(skipInit_);
 	__COUT__ << "END DTC arguments..." << std::endl;
 
 	thisDTC_ = new DTCLib::DTC(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
-		skipInit, getInterfaceUID());
+		true /* skipInit */, //always skip init and lots ots configure setup
+		"" /* simMemoryFile */,
+		getInterfaceUID());
 	
 } //end DTCInstantiate()
 
@@ -3352,11 +3443,16 @@ void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
 } //end ResetDTCLinks()
 
 //========================================================================
-void DTCFrontEndInterface::ResetROCLinkFSMs(__ARGS__)
+void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 {	
-	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-} //end ResetROCLinkFSMs()
+	//call virtual readStatus
+
+	int stepIndex = __GET_ARG_IN__("StepIndex", int);
+
+	// do 0, then 1
+	configureForTimingChain(stepIndex);
+	// configureForTimingChain(1);
+
+} //end ConfigureForTimingChain()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)

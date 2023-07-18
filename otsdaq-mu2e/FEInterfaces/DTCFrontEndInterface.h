@@ -63,6 +63,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// DTC specific items
 	//----------------
 	virtual std::string					readStatus					(void) override;
+	void 								configureEventBuildingMode	(void);
+	void 								configureLoopbackMode		(void);
+	void 								configureForTimingChain		(int step);
 
 	// bool 								ROCActive					(unsigned int ROC_link);
 	// int  								getROCLinkStatus			(int ROC_link);
@@ -99,7 +102,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	std::ofstream 									outputStream;
 
-	std::string										operatingMode_ = "";
 
   public:
 	void 								FlashLEDs						(__ARGS__);	
@@ -135,6 +137,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								SetEmulatedROCEventFragmentSize	(__ARGS__);
 	void								configureHardwareDevMode		(__ARGS__);
 	void 								configureHardwareDevMode		(void);
+	void								ConfigureForTimingChain			(__ARGS__);
 	void 								BufferTestROC					(__ARGS__);
 	void 								DTCCounters						(__ARGS__);
 	void								DTCCounters						(std::ostream& out = std::cout);

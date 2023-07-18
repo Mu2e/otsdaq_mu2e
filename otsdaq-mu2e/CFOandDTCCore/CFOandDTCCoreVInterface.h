@@ -31,6 +31,11 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	
   
   public:
+
+	static std::string					CONFIG_MODE_HARDWARE_DEV;
+	static std::string					CONFIG_MODE_EVENT_BUILDING;
+	static std::string					CONFIG_MODE_LOOPBACK;
+
 	// state machine
 	//----------------
 //	void 								configure					(void);
@@ -74,6 +79,8 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	bool        						configure_clock_    			= false;
 	// std::string 						device_name_;
 	bool      							emulatorMode_					= false;
+	bool 								skipInit_						= true;
+	std::string							operatingMode_ 					= "";
 	// std::mutex 							readWriteOperationMutex_;
 
 	// m_ioc_reg_access_t 					reg_access_;
@@ -86,7 +93,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	// //	monitor register stream and also provide alternative run datastream if not using artdaq
 	// std::ofstream 						regWriteMonitorStream_;
 	// std::fstream 						runDataFile_;
-	// bool 								artdaqMode_ = true; // true to prevent run data file generation
+	bool 								artdaqMode_ = false; // true to prevent run data file generation
 	// //end output file streams
 	// //--------------------------------------------------------
 

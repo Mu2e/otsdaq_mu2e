@@ -36,6 +36,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	float 								MeasureLoopback				(int linkToLoopback);
 	virtual std::string					readStatus					(void) override;
 	// int  								getLinkStatus				(void);
+	void 								configureEventBuildingMode	(void);
+	void 								configureLoopbackMode		(void);
+	void 								configureForTimingChain		(int step = -1);
 
 	// hardware access
 	//----------------
@@ -60,6 +63,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 //	int                    fd_;
 //	int                    dtc_ = -1;
 	CFOLib::CFO_Registers* 				thisCFO_;
+	int								timing_chain_first_substep_	   = -1;
 	//int                    configure_clock_ = 0;
 
 	//m_ioc_reg_access_t 					reg_access_;
@@ -79,6 +83,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	// void 								FlashLEDs						(__ARGS__);	
 	void 								GetFirmwareVersion				(__ARGS__);
 	void 								GetStatus						(__ARGS__);
+	void								SelectJitterAttenuatorSource	(__ARGS__);
 	
 	void 								WriteCFO						(__ARGS__);
 	void 								ReadCFO							(__ARGS__);
@@ -86,6 +91,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								CompileRunplan					(__ARGS__);
 	void 								SetRunplan						(__ARGS__);
 	void 								LaunchRunplan					(__ARGS__);
+	void 								ConfigureForTimingChain			(__ARGS__);
 };
 
 // clang-format on
