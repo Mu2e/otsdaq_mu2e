@@ -5,8 +5,7 @@
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097  :]] DTC user manual 
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=19095][mu2e-19095]] : Mu2e beam timing
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/RetrieveFile?docid=37376&filename=20220922_DAQNodes.pdf][mu2e-37376]] : DAQ node configuration in the DAQ room 
-* DTCs       : two cards per node, with file descriptors /dev/mu2e0 and /dev/mu2e1           
-* DTC        : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0      
+* DTCs       : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0      
 #+begin_src 
 mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
 crw-rw-rw- 1 root root 244, 0 Mar 16 18:29 /dev/mu2e0
@@ -17,7 +16,16 @@ crw-rw-rw- 1 root root 244, 1 Mar 16 18:29 /dev/mu2e1
   - if undefined, DTCLIB_DTC = 0
   - export DTCLIB_DTC=1 # use the /dev/mu2e1
 * DTC registers of relevance                  
-*      0x9100 : DTC control register                                         
+*      0x9004 : FPGA firmware date  
+*      0x9010 : FPGA temperature                                             
+       T(C) = (ADC code)*503.975/4096 - 273.15
+*      0x9014 : FPGA VCCINT voltage                                          
+       V(V) = (ADC code)/4095*3. , nominal : 1V
+*      0x9018 : FPGA VCCAUX voltage                                          
+       V(V) = (ADC code)/4095*3. , nominal : 1V
+*      0x901C : FPGA VCCBRAM voltage                                         
+       V(V) = (ADC code)/4095*3. , nominal : 1V       
+*      0x9100 : DTC status                                                   
   - 0x40808404 : successfull 'mu2e_util  -q 5 -N -D 200 -n 3 test2'
 *      0x9140 : SERDES lock status register                                  
 |------+------+----------+-------------|
@@ -40,6 +48,17 @@ mu2etrk@mu2edaq09:~/test_stand/pasha_015>my_cntl read 0x9140
 0x00000011
 sts=0
 #+end_quote 
+*      0x9158 : EVB configuration register                                   
+|-------+------+---------+---------------------------------------|
+|   bit | Mode | default | description                           |
+|-------+------+---------+---------------------------------------|
+| 00-06 | rw   |       0 | total number of destination EVB nodes |
+|    07 | ro   |       0 | reserved                              |
+| 08-14 | rw   |       0 | EVB start node                        |
+|    15 | ro   |       0 | reserved                              |
+| 16-22 | rw   |       0 | number of EVB input buffers           |
+| 23-31 | ro   |       0 | reserved                              |
+|-------+------+---------+---------------------------------------|
 *      0x91a8 : CFO emulation heartbeat interval timer preset                
 
   time interval between two event window markers in units of 25ns
