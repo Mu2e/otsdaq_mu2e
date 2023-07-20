@@ -310,6 +310,15 @@ void CFOandDTCCoreVInterface::readbackVerify(dtc_address_t address, dtc_data_t d
 {
 	switch(address)
 	{
+	case 0x9158:
+//-----------------------------------------------------------------------------
+// 2023-04-22 P.Murat: having written 0x1, get 0x10001 back.
+//                     to make progress, leave lowest 16 bits
+// comment in mu2e-4097: "Added Number of EVB input buffers to Event Builder Configuration Register (0x9158)."
+//-----------------------------------------------------------------------------
+	  dataToWrite   &= 0x0000ffff;
+	  readbackValue &= 0x0000ffff;
+	  break;
 		case 0x9168: // lowest 16-bits are the I2C read value. So ignore in write validation			
 		case 0x9298:
 			dataToWrite		&= 0xffff0000; 
