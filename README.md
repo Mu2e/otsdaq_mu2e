@@ -1,1 +1,1 @@
-Documentation: https://github.com/pavel1murat/otsdaq_mu2e/blob/develop/doc/otsdaq_mu2e.org
+Documentation: https://github.com/mu2e/otsdaq_mu2e/blob/develop/doc/otsdaq_mu2e.org
