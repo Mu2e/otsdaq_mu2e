@@ -18,7 +18,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
     : CFOandDTCCoreVInterface(
           interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
 {
-	__FE_COUT__ << "instantiate CFO... " << interfaceUID << " "
+	__FE_COUT__ << "instantiate CFO... " << getInterfaceUID() << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
 
@@ -27,13 +27,20 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
+	__COUT__ << "CFO arguments..." << std::endl;
+	__COUTV__(mode);
+	__COUTV__(deviceIndex_);
+	__COUTV__(expectedDesignVersion);
+	__COUT__ << "END CFO arguments..." << std::endl;
 	//Note: if we do not skip init, then the CFO::SetSimMode writes registers!
-	thisCFO_ = new CFOLib::CFO_Registers(mode, device_, expectedDesignVersion, true /*skipInit*/);
+	thisCFO_ = new CFOLib::CFO_Registers(
+		mode, deviceIndex_, expectedDesignVersion, 
+		true /*skipInit*/, getInterfaceUID());
 
 	registerFEMacros();
 
-	__FE_COUT_INFO__ << "CFO instantiated with name: " << device_name_
-	            << " talking to /dev/mu2e" << device_ << __E__;
+	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
+	            << " talking to /dev/mu2e" << deviceIndex_ << __E__;
 }  // end constructor()
 
 //===========================================================================================
@@ -53,6 +60,30 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	// clang-format off
 
 	registerFEMacroFunction(
+		"Get Firmware Version",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
+					1);//"allUsers:0 | TDAQ:255");
+					
+	// registerFEMacroFunction(
+	// 	"Flash_LEDs",  // feMacroName
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOFrontEndInterface::FlashLEDs),  // feMacroFunction
+	// 				std::vector<std::string>{},
+	// 				std::vector<std::string>{},  // namesOfOutputArgs
+	// 				1);                          // requiredUserPermissions
+    
+	registerFEMacroFunction(
+		"Get Status",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::GetStatus),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Status"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
 		"CFO Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::WriteCFO),  // feMacroFunction
@@ -66,6 +97,14 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::ReadCFO),                  // feMacroFunction
 					std::vector<std::string>{"address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Select Jitter Attenuator Source",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
+				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)"},
+						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
 
 	registerFEMacroFunction(
@@ -99,6 +138,15 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions	
+
+	
+	registerFEMacroFunction(
+		"Configure for Timing Chain",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::ConfigureForTimingChain),                  // feMacroFunction
+					std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions	
 	
 
 	// clang-format on
@@ -108,64 +156,66 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 } //end registerFEMacros()
 
-//===============================================================================================
-// registerWrite: return = value readback from register at address "address"
-//	Use base class CFOandDTCCoreVInterface::, and do readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
-dtc_data_t CFOFrontEndInterface::registerWrite(
-	dtc_address_t address, dtc_data_t dataToWrite)
-{
-	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
+// //===============================================================================================
+// // registerWrite: return = value readback from register at address "address"
+// //	Use base class CFOandDTCCoreVInterface::, and do readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
+// dtc_data_t CFOFrontEndInterface::registerWrite(
+// 	dtc_address_t address, dtc_data_t dataToWrite)
+// {
+// 	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
 
-	//--------------------------------------------------------
-	//do CFO-specific readback verification here...
+// 	//--------------------------------------------------------
+// 	//do CFO-specific readback verification here...
 
-	//end CFO-specific readback verification here...
-	//--------------------------------------------------------
+// 	//end CFO-specific readback verification here...
+// 	//--------------------------------------------------------
 
-	return readbackValue;
-}  // end registerWrite()
+// 	return readbackValue;
+// }  // end registerWrite()
 
 //=====================================================================================
 std::string CFOFrontEndInterface::readStatus(void)
 {
-	std::stringstream ss;
-	ss << "firmware version    (0x9004) = 0x" << GetFirmwareVersion() << __E__;
+	return thisCFO_->FormattedRegDump(20);
+	// std::stringstream ss;
+	// ss << "firmware version    (0x9004) = 0x" << GetFirmwareVersion() << __E__;
 
-	ss << printVoltages() << __E__;
+	// ss << printVoltages() << __E__;
 
-	ss << device_name_ << " temperature = " << readTemperature() << " degC"
-	            << __E__ << __E__;
+	// ss << device_name_ << " temperature = " << readTemperature() << " degC"
+	//             << __E__ << __E__;
 
-	ss << "link enable         (0x9114) = 0x" << std::hex << registerRead(0x9114) << __E__;
-	ss << "SERDES reset        (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
-	ss << "SERDES unlock error (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;
-	ss << "PLL locked          (0x9128) = 0x" << std::hex << registerRead(0x9128) << __E__;
-	ss << "SERDES Rx status....(0x9134) = 0x" << std::hex << registerRead(0x9134) << __E__;
-	ss << "SERDES reset done...(0x9138) = 0x" << std::hex << registerRead(0x9138) << __E__;
-	ss << "SERDES Rx CDR lock..(0x9140) = 0x" << std::hex << registerRead(0x9140) << __E__;
-	ss << "SERDES ref clk freq.(0x9160) = 0x" << std::hex << registerRead(0x9160) << " = " <<
-		 std::dec << registerRead(0x9160) << __E__;
+	// ss << "link enable         (0x9114) = 0x" << std::hex << registerRead(0x9114) << __E__;
+	// ss << "SERDES reset        (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
+	// ss << "SERDES unlock error (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;
+	// ss << "PLL locked          (0x9128) = 0x" << std::hex << registerRead(0x9128) << __E__;
+	// ss << "SERDES Rx status....(0x9134) = 0x" << std::hex << registerRead(0x9134) << __E__;
+	// ss << "SERDES reset done...(0x9138) = 0x" << std::hex << registerRead(0x9138) << __E__;
+	// ss << "SERDES Rx CDR lock..(0x9140) = 0x" << std::hex << registerRead(0x9140) << __E__;
+	// ss << "SERDES ref clk freq.(0x9160) = 0x" << std::hex << registerRead(0x9160) << " = " <<
+	// 	 std::dec << registerRead(0x9160) << __E__;
 
-	__FE_COUT__ << ss.str() << __E__;
+	// __FE_COUT__ << ss.str() << __E__;
 
-	return ss.str();
+	// return ss.str();
 } //end readStatus()
 
-//=====================================================================================
-//
-int CFOFrontEndInterface::getLinkStatus()
-{
-	int overall_link_status = registerRead(0x9140);
+// //=====================================================================================
+// //
+// int CFOFrontEndInterface::getLinkStatus()
+// {
+// 	int overall_link_status = registerRead(0x9140);
 
-	int link_status = (overall_link_status >> 0) & 0x1;
+// 	int link_status = (overall_link_status >> 0) & 0x1;
 
-	return link_status;
-}
+// 	return link_status;
+// }
 
 //=====================================================================================
 //
 float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 {
+/* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
 	const int maxNumberOfLoopbacks = 10000;
 	int       numberOfLoopbacks =
 	    getConfigurationManager()
@@ -323,7 +373,7 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 
 	__FE_COUT__ << "LOOPBACK: number of failed loopbacks = " << std::dec
 	            << failed_loopback_ << __E__;
-
+*/
 	return average_loopback_;
 
 }  // end MeasureLoopback()
@@ -334,30 +384,43 @@ void CFOFrontEndInterface::configure(void)
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
-	if(regWriteMonitorStream_.is_open())
+	// if(regWriteMonitorStream_.is_open())
+	// {
+	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+	// 		", \t ---------- Start configure step " << 
+	// 		getIterationIndex() << ":" << getSubIterationIndex() << "\n";
+	// 	regWriteMonitorStream_.flush();
+	// }
+
+	if(skipInit_) return;
+
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
-		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-			", \t ---------- Start configure step " << 
-			getIterationIndex() << ":" << getSubIterationIndex() << "\n";
-		regWriteMonitorStream_.flush();
+		__FE_COUT_INFO__ << "Not configuring CFO for hardware development mode!" << __E__;
+		return;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	{
+		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
+		configureEventBuildingMode();
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
+		configureLoopbackMode();
+	}
+	else
+	{
+		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
+		__FE_SS_THROW__;
 	}
 
-	try
-	{
-		if(getConfigurationManager()
-		->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
-		.getValue<bool>())
-		{
-			__FE_COUT_INFO__ << "Skipping configure steps!" << __E__;
-			return;
-		}
-	}
-	catch(const std::runtime_error& e)
-	{
-		__FE_SS__ << "The Mu2eGlobalsTable is missing the record named 'SyncDemoConfig.' This record is required (representing Mu2e global parameters) for the configuration of the CFO." <<
-			 __E__ << e.what() << __E__;
-		__SS_THROW__;
-	}
+	return;
+
+
+
 
 	// NOTE: otsdaq/xdaq has a soap reply timeout for state transitions.
 	// Therefore, break up configuration into several steps so as to reply before
@@ -386,18 +449,19 @@ void CFOFrontEndInterface::configure(void)
 	if((config_step % number_of_dtc_config_steps) == 0)
 	{
 		// disable outputs
+		thisCFO_->DisableAllOutputs();
 
-		__FE_COUT__ << "CFO disable Event Start character output " << __E__;
-		registerWrite(0x9100, 0x0);
+		// __FE_COUT__ << "CFO disable Event Start character output " << __E__;
+		// registerWrite(0x9100, 0x0);		
 
-		__FE_COUT__ << "CFO disable serdes transmit and receive " << __E__;
-		registerWrite(0x9114, 0x00000000);
+		// __FE_COUT__ << "CFO disable serdes transmit and receive " << __E__;
+		// registerWrite(0x9114, 0x00000000);
 
-		__FE_COUT__ << "CFO turn off Event Windows" << __E__;
-		registerWrite(0x91a0, 0x00000000);
+		// __FE_COUT__ << "CFO turn off Event Windows" << __E__;
+		// registerWrite(0x91a0, 0x00000000);
 
-		__FE_COUT__ << "CFO turn off 40MHz marker interval" << __E__;
-		registerWrite(0x9154, 0x00000000);
+		// __FE_COUT__ << "CFO turn off 40MHz marker interval" << __E__;
+		// registerWrite(0x9154, 0x00000000);
 	}
 	else if((config_step % number_of_dtc_config_steps) == 1)
 	{
@@ -408,15 +472,19 @@ void CFOFrontEndInterface::configure(void)
 			// only configure the clock/crystal the first loop through...
 
 			__MCOUT_INFO__("Step " << config_step << ": CFO reset clock..." << __E__);
-			__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
 
-			registerWrite(0x9160, 0x09502F90);
+			__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
+			thisCFO_->SetSERDESOscillatorFrequency(0x09502F90);
+			// registerWrite(0x9160, 0x09502F90);
 
 			// set RST_REG bit
-			registerWrite(0x9168, 0x55870100);
-			registerWrite(0x916c, 0x00000001);
+			thisCFO_->WriteSERDESIICInterface(
+				DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */, 
+				0x87 /* address */, 0x01 /* data */);
+			// registerWrite(0x9168, 0x55870100);
+			// registerWrite(0x916c, 0x00000001);
 
-			sleep(5);
+			// sleep(5);
 
 			//-----begin code snippet pulled from: mu2eUtil program_clock -C 0 -F
 			// 200000000 ---
@@ -456,14 +524,16 @@ void CFOFrontEndInterface::configure(void)
 			__MCOUT_INFO__("Step " << config_step << ": CFO reset TX..." << __E__);
 
 			__FE_COUT__ << "CFO reset serdes PLLs " << __E__;
-			registerWrite(0x9118, 0x0000ff00);
-			registerWrite(0x9118, 0x0);
-			sleep(3);
+			thisCFO_->ResetAllSERDESPlls();
+			// registerWrite(0x9118, 0x0000ff00);
+			// registerWrite(0x9118, 0x0);
+			// sleep(3);
 
 			__FE_COUT__ << "CFO reset serdes TX " << __E__;
-			registerWrite(0x9118, 0x00ff0000);
-			registerWrite(0x9118, 0x0);
-			sleep(3);
+			thisCFO_->ResetAllSERDESTx();
+			// registerWrite(0x9118, 0x00ff0000);
+			// registerWrite(0x9118, 0x0);
+			// sleep(3);
 		}
 		else
 		{
@@ -478,34 +548,41 @@ void CFOFrontEndInterface::configure(void)
 		                       << __E__);
 
 		__FE_COUT__ << "CFO reset serdes RX " << __E__;
-		registerWrite(0x9118, 0x000000ff);
-		registerWrite(0x9118, 0x0);
-		sleep(3);
+		thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		// registerWrite(0x9118, 0x000000ff);
+		// registerWrite(0x9118, 0x0);
+		// sleep(3);
 
 		__FE_COUT__ << "CFO enable Event Start character output " << __E__;
-		registerWrite(0x9100, 0x5); //bit-0 is clock enable, bit-2 enables accelerator RF-0 input
+		thisCFO_->EnableTiming();
+		thisCFO_->EnableEventWindowInput();
+		// registerWrite(0x9100, 0x5); //bit-0 is clock enable, bit-2 enables accelerator RF-0 input
 
 		__FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
-		registerWrite(0x9114, 0x0000ffff);
+		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		// registerWrite(0x9114, 0x0000ffff);
 
 		__FE_COUT__ << "CFO set Event Window interval time" << __E__;
+		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */); //0x154 = 1.7us, 0x1f40 = 40us, 0 = NO markers
 		//    registerWrite(0x91a0,0x154);   //1.7us
-		registerWrite(0x91a0, 0x1f40);  // 40us
+		// registerWrite(0x91a0, 0x1f40);  // 40us
 		// 	registerWrite(0x91a0,0x00000000); 	// for NO markers, write these
 		// values
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		registerWrite(0x9154, 0x0800);
+		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+		// registerWrite(0x9154, 0x0800);
 		// 	registerWrite(0x9154,0x00000000); 	// for NO markers, write these
 		// values
 
-		__MCOUT_INFO__("--------------" << __E__);
-		__MCOUT_INFO__("CFO configured" << __E__);
+		__FE_COUT_INFO__ << "--------------" << __E__;
+		__FE_COUT_INFO__ << "CFO configured" << __E__;
 
-		if(getLinkStatus() == 1)
+		if(thisCFO_->ReadSERDESRXCDRLock(CFOLib::CFO_Link_ID::CFO_Link_0))
 		{
-			__MCOUT_INFO__("CFO links OK = 0x" << std::hex << registerRead(0x9140)
-			                                   << std::dec << __E__);
+			__FE_COUT_INFO__ << "CFO links OK \n" << thisCFO_->FormatSERDESRXCDRLock() << __E__;
+			// __MCOUT_INFO__("CFO links OK = 0x" << std::hex << registerRead(0x9140)
+			//                                    << std::dec << __E__);
 
 			if(number_of_system_configs < 0)
 			{
@@ -514,8 +591,9 @@ void CFOFrontEndInterface::configure(void)
 		}
 		else
 		{
-			__MCOUT_INFO__("CFO links not OK = 0x" << std::hex << registerRead(0x9140)
-			                                       << std::dec << __E__);
+			__FE_COUT_INFO__ << "CFO links not OK \n" << thisCFO_->FormatSERDESRXCDRLock() << __E__;
+			// __MCOUT_INFO__("CFO links not OK = 0x" << std::hex << registerRead(0x9140)
+			//                                        << std::dec << __E__);
 		}
 		__FE_COUT__ << __E__;
 	}
@@ -523,62 +601,263 @@ void CFOFrontEndInterface::configure(void)
 	readStatus();             // spit out link status at every step
 	indicateIterationWork();  // I still need to be touched
 	return;
-}
+} //end configure()
+
+
+//==============================================================================
+void CFOFrontEndInterface::configureEventBuildingMode(void)
+{
+	__FE_COUT_INFO__ << "configureEventBuildingMode() " << getIterationIndex() << "." << getSubIterationIndex() << __E__;
+	
+	switch(getIterationIndex())
+	{
+		case 0:		//CFO timing gets iteration index 0
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
+			configureForTimingChain();
+			indicateIterationWork();
+			break;
+		case 1:		//wait for DTCs
+		case 2:		//wait for DTCs
+			__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+			indicateIterationWork();
+			break;
+		case 3:
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+
+}  // end configureEventBuildingMode()
+
+//==============================================================================
+void CFOFrontEndInterface::configureLoopbackMode(void)
+{
+	__FE_COUT_INFO__ << "configureLoopbackMode() " << getIterationIndex() << "." << getSubIterationIndex() << __E__;
+
+	switch(getIterationIndex())
+	{
+		case 0:		//CFO timing gets iteration index 0
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
+			configureForTimingChain();
+			indicateIterationWork();
+			break;
+		case 1:		//wait for DTCs
+		case 2:		//wait for DTCs
+			__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+			indicateIterationWork();
+			break;
+		case 3:
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+}  // end configureLoopbackMode()
+
+//==============================================================================
+void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
+{
+	//use sub-iteration index (but not the value of the index)
+	//	sub-iterations focus allow one entity to finish an iteration index, while others wait,
+	//	but can not be sure of starting sub-iteration index from entity to entity.
+	if(step == -1) step = getSubIterationIndex() - timing_chain_first_substep_;
+
+	__FE_COUT_INFO__ << "configureForTimingChain() " << step << __E__;
+	
+	std::string designVersion = thisCFO_->ReadDesignDate();
+	__FE_COUTV__(designVersion);
+	//Jun/13/2023 16:00 raw-data: 0x23061316
+	//DTC-style: Jun/13/2023 17:00 raw-data: 0x23061317
+
+	std::string matchDesignVersion = "Jun/13/2023 16:00   raw-data: 0x23061316";
+	switch(step)
+	{
+		case 0:
+			// thisCFO_->DisableAllOutputs();
+
+			__FE_COUTV__(configure_clock_);
+
+			//NOTE on Jun/13/2023 16:00 raw-data: 0x23061316
+			//	need to configure crystal!
+
+			__FE_COUT__ << " =? " << (thisCFO_->ReadDesignDate() == 
+				"Jun/13/2023 16:00   raw-data: 0x23061316"?"yes":"no") << " ? " <<
+				(designVersion == 
+				"Jun/13/2023 16:00   raw-data: 0x23061316"?"yes":"no") << __E__;
+
+			{
+				for(size_t i=0;i<designVersion.size();++i)
+					__FE_COUT__ << designVersion[i] << " ? " << matchDesignVersion[i] << " = " 
+						<< (designVersion[i] == matchDesignVersion[i]?"y":"n") << __E__;
+			}
+			if(configure_clock_ && thisCFO_->ReadDesignDate() == 
+				"Jun/13/2023 16:00   raw-data: 0x23061316")
+			{
+				// only configure the clock/crystal the first loop through...
+
+				__FE_COUT_INFO__ << "CFO reset clock..." << __E__;
+
+				if(1)
+				{
+					__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
+					thisCFO_->SetSERDESOscillatorFrequency(0x09502F90);
+					// registerWrite(0x9160, 0x09502F90);
+
+					// set RST_REG bit
+					thisCFO_->WriteSERDESIICInterface(
+						DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */, 
+						0x87 /* address */, 0x01 /* data */);
+				}
+
+				// registerWrite(0x9168, 0x55870100);
+				// registerWrite(0x916c, 0x00000001);
+
+				// sleep(5);
+
+				//-----begin code snippet pulled from: mu2eUtil program_clock -C 0 -F
+				// 200000000 ---
+				// C=0 = main board SERDES clock
+				// C=1 = DDR clock
+				// C=2 = Timing board SERDES clock
+
+				int targetFrequency = 200000000;
+
+				//auto oscillator = DTCLib::DTC_OscillatorType_SERDES;  //-C 0 = CFO (main
+																	// board SERDES clock)
+				// auto oscillator = DTCLib::DTC_OscillatorType_DDR; //-C 1 (DDR clock)
+				// auto oscillator = DTCLib::DTC_OscillatorType_Timing; //-C 2 = DTC (with
+				// timing card)
+
+				__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
+							<< targetFrequency << " MHz" << __E__;
+
+				thisCFO_->SetNewOscillatorFrequency(targetFrequency);
+
+				//-----end code snippet pulled from: mu2eUtil program_clock -C 0 -F
+				// 200000000
+
+				sleep(5);
+			} //end special behavior for "original" CFO version 0x23061316
+
+			indicateSubIterationWork();
+			break;
+		case 1:
+			{
+				if(configure_clock_)
+				{
+					uint32_t select      = 0;
+					try
+					{
+						select = getSelfNode()
+									.getNode("JitterAttenuatorInputSource")
+									.getValue<uint32_t>();
+					}
+					catch(...)
+					{
+						__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to select = "
+									<< select << __E__;
+					}
+					__FE_COUTV__(select);
+					//For CFO - 0 ==> Local oscillator
+					//For CFO - 1 ==> RTF copper clock
+					thisCFO_->SetJitterAttenuatorSelect(select);					
+				}
+				else
+					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+			}
+			// indicateSubIterationWork();
+			break;
+		case 2:
+		
+			// __FE_COUT__ << "CFO reset serdes PLLs " << __E__;
+			// thisCFO_->ResetAllSERDESPlls();
+
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+				
+			// __FE_COUT__ << "CFO reset serdes RX " << __E__;
+			// thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+			// __FE_COUT__ << "CFO enable markers on link " << __E__;
+			// thisCFO_->EnableTiming();
+		
+			// __FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
+			// thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	}	
+
+
+	
+	
+	
+	
+	
+
+}  // end configureForTimingChain()
 
 //==============================================================================
 void CFOFrontEndInterface::halt(void)
 {
 	__FE_COUT__ << "HALT: CFO status" << __E__;
-	if(regWriteMonitorStream_.is_open())
-	{
-		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-			", \t ---------- Halting..." << "\n";
-		regWriteMonitorStream_.flush();
-	}
+	// if(regWriteMonitorStream_.is_open())
+	// {
+	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+	// 		", \t ---------- Halting..." << "\n";
+	// 	regWriteMonitorStream_.flush();
+	// }
 
-	readStatus();
+	// readStatus();
 }
 
 //==============================================================================
 void CFOFrontEndInterface::pause(void)
 {
 	__FE_COUT__ << "PAUSE: CFO status" << __E__;
-	if(regWriteMonitorStream_.is_open())
-	{
-		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-			", \t ---------- Pausing..." << "\n";
-		regWriteMonitorStream_.flush();
-	}
+	// if(regWriteMonitorStream_.is_open())
+	// {
+	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+	// 		", \t ---------- Pausing..." << "\n";
+	// 	regWriteMonitorStream_.flush();
+	// }
 
-	readStatus();
+	// readStatus();
 }
 
 //==============================================================================
 void CFOFrontEndInterface::resume(void)
 {
 	__FE_COUT__ << "RESUME: CFO status" << __E__;
-	if(regWriteMonitorStream_.is_open())
-	{
-		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-			", \t ---------- Resuming..." << "\n";
-		regWriteMonitorStream_.flush();
-	}
+	// if(regWriteMonitorStream_.is_open())
+	// {
+	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+	// 		", \t ---------- Resuming..." << "\n";
+	// 	regWriteMonitorStream_.flush();
+	// }
 
-	readStatus();
+	// readStatus();
 }
 
 //==============================================================================
 void CFOFrontEndInterface::start(std::string)  // runNumber)
 {
-	if(regWriteMonitorStream_.is_open())
-	{
-		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-			", \t ---------- Starting..." << "\n";
-		regWriteMonitorStream_.flush();
-	}
+	// if(regWriteMonitorStream_.is_open())
+	// {
+	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+	// 		", \t ---------- Starting..." << "\n";
+	// 	regWriteMonitorStream_.flush();
+	// }
 
 	__MCOUT_INFO__("CFO Ignoring loopback for now..." << __E__);
 	return;
+/* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
 
 	//bool LoopbackLock = true;
 	//int  loopbackROC  = 0;
@@ -732,17 +1011,18 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 
 	indicateIterationWork();  // I still need to be touched
 	return;
+*/
 }
 
 //==============================================================================
 void CFOFrontEndInterface::stop(void)
 {
-	if(regWriteMonitorStream_.is_open())
-	{
-		regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-			", \t ---------- Stopping..." << "\n";
-		regWriteMonitorStream_.flush();
-	}
+	// if(regWriteMonitorStream_.is_open())
+	// {
+	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
+	// 		", \t ---------- Stopping..." << "\n";
+	// 	regWriteMonitorStream_.flush();
+	// }
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
@@ -929,19 +1209,33 @@ bool CFOFrontEndInterface::running(void)
 //========================================================================
 void CFOFrontEndInterface::WriteCFO(__ARGS__)
 {	
-	uint32_t address = __GET_ARG_IN__("address", uint32_t);
-	uint32_t writeData = __GET_ARG_IN__("writeData", uint32_t);
+	dtc_address_t address = __GET_ARG_IN__("address", dtc_address_t);
+	dtc_data_t writeData = __GET_ARG_IN__("writeData", dtc_data_t);
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__((unsigned int)writeData);
-	registerWrite(address, writeData);  
+
+	int errorCode = getDevice()->write_register( address, 100, writeData);
+	if (errorCode != 0)
+	{
+		__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+		__SS_THROW__;
+	}
+	// registerWrite(address, writeData);  
 } //end WriteCFO()
 
 //========================================================================
 void CFOFrontEndInterface::ReadCFO(__ARGS__)
 {	
-	uint32_t address = __GET_ARG_IN__("address", uint32_t);
+	dtc_address_t address = __GET_ARG_IN__("address", dtc_address_t);
 	__FE_COUTV__((unsigned int)address);
-	uint32_t readData = registerRead(address);  
+	dtc_data_t readData;// = registerRead(address);  
+
+	int errorCode = getDevice()->read_register(address, 100, &readData);
+	if (errorCode != 0)
+	{
+		__FE_SS__ << "Error reading register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+		__SS_THROW__;
+	}
 	
 	char readDataStr[100];
 	sprintf(readDataStr,"0x%X",readData);
@@ -949,13 +1243,32 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 } //end ReadCFO()
 
 //========================================================================
+void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
+{
+	uint32_t select = __GET_ARG_IN__(
+	    "Source (0 is Local oscillator, 1 is RTF Copper Clock)", uint32_t);
+	select %= 4;
+	__FE_COUTV__((unsigned int)select);
+
+	thisCFO_->SetJitterAttenuatorSelect(select);
+
+	// __SET_ARG_OUT__("Register Write Results", results.str());
+	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
+
+	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
+
+}  // end SelectJitterAttenuatorSource()
+
+//========================================================================
 void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 {	
-	registerWrite(0x9100, 0x08000005); 
-	registerWrite(0x9100, 0x00000005); 
-
-
 	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
+
+	thisCFO_->ResetCFORunPlan();
+	// registerWrite(0x9100, 0x08000005); 
+	// registerWrite(0x9100, 0x00000005); 
+
+
 } //end ResetRunplan()
 
 //========================================================================
@@ -1051,10 +1364,46 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 {
 	__FE_COUT__ << "Launch CFO Run Plan"  << __E__;
 
-	registerWrite(0x914c, 0x0); 
-	registerWrite(0x914c, 0x0000ffff); 
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	// registerWrite(0x914c, 0x0); 
+	// registerWrite(0x914c, 0x0000ffff); 
 
 } //end LaunchRunplan()
+
+// //========================================================================
+// void CFOFrontEndInterface::FlashLEDs(__ARGS__)
+// {	
+// 	thisCFO_->FlashLEDs();
+// } //end FlashLEDs()
+
+//==============================================================================
+// GetFirmwareVersion
+ void CFOFrontEndInterface::GetFirmwareVersion(__ARGS__)
+{	
+	__SET_ARG_OUT__("Firmware Version Date", thisCFO_->ReadDesignDate());
+}  // end GetFirmwareVersion()
+
+//========================================================================
+void CFOFrontEndInterface::GetStatus(__ARGS__)
+{	
+	//call virtual readStatus
+	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20));
+} //end GetStatus()
+
+//========================================================================
+void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
+{	
+
+	//call virtual readStatus
+
+	int stepIndex = __GET_ARG_IN__("StepIndex", int);
+
+	// do 0, then 1
+	configureForTimingChain(stepIndex);
+	// configureForTimingChain(1);
+
+} //end ConfigureForTimingChain()
 
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)

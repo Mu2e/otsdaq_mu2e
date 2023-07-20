@@ -35,14 +35,18 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	//----------------
 	float 								MeasureLoopback				(int linkToLoopback);
 	virtual std::string					readStatus					(void) override;
-	int  								getLinkStatus				(void);
+	// int  								getLinkStatus				(void);
+	void 								configureEventBuildingMode	(void);
+	void 								configureLoopbackMode		(void);
+	void 								configureForTimingChain		(int step = -1);
 
 	// hardware access
 	//----------------
+	virtual mu2edev* 					getDevice					(void) {return thisCFO_->GetDevice();};
 //	void universalRead(char* address, char* readValue) override;
 //	void universalWrite(char* address, char* writeValue) override;
-//	dtc_data_t							registerRead				(dtc_address_t address);
-	virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
+	// dtc_data_t							registerRead				(dtc_address_t address);
+	// virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
 
 
 	float 								delay[8][6][8];
@@ -59,6 +63,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 //	int                    fd_;
 //	int                    dtc_ = -1;
 	CFOLib::CFO_Registers* 				thisCFO_;
+	int								timing_chain_first_substep_	   = -1;
 	//int                    configure_clock_ = 0;
 
 	//m_ioc_reg_access_t 					reg_access_;
@@ -69,18 +74,24 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	float        						average_loopback_;
 	float        						rms_loopback_;
 	float        						failed_loopback_;
-	unsigned int 						initial_9100_;
-	unsigned int 						initial_9114_;
-	unsigned int 						initial_91a0_;
-	unsigned int 						initial_9154_;
+	// unsigned int 						initial_9100_;
+	// unsigned int 						initial_9114_;
+	// unsigned int 						initial_91a0_;
+	// unsigned int 						initial_9154_;
 
   public:
+	// void 								FlashLEDs						(__ARGS__);	
+	void 								GetFirmwareVersion				(__ARGS__);
+	void 								GetStatus						(__ARGS__);
+	void								SelectJitterAttenuatorSource	(__ARGS__);
+	
 	void 								WriteCFO						(__ARGS__);
 	void 								ReadCFO							(__ARGS__);
 	void 								ResetRunplan					(__ARGS__);
 	void 								CompileRunplan					(__ARGS__);
 	void 								SetRunplan						(__ARGS__);
 	void 								LaunchRunplan					(__ARGS__);
+	void 								ConfigureForTimingChain			(__ARGS__);
 };
 
 // clang-format on
