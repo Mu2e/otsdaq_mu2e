@@ -27,7 +27,7 @@ build_cet -G Mu2e otsdaq_mu2e_tracker         v1_03_02 ${basequal}:${version_set
 # return 0
 
 source /cvmfs/mu2e.opensciencegrid.org/artexternals/setup
-setup offline d10_22_02 trig:${basequal}:${build_type}:${version_set}
+setup offline d10_22_02 -q trig:${basequal}:${build_type}:${version_set}
 
 if [ $? -ne 0 ]; then
    echo "WARNING: Offline is unavailable, not building products which depend on it!"
