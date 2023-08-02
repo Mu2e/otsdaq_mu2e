@@ -104,9 +104,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 
   public:
-	void 								FlashLEDs						(__ARGS__);	
+	// void 								FlashLEDs						(__ARGS__);	
 	void 								GetFirmwareVersion				(__ARGS__);
 	void 								GetStatus						(__ARGS__);
+	void 								GetSimpleStatus					(__ARGS__);
 
 	// FIXME -- copy from CFOandDTC and implement using DTC.h
 	// void 								GetLinkLossOfLight				(__ARGS__);
@@ -119,10 +120,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								ReadROC							(__ARGS__);
 	void 								WriteROC						(__ARGS__);
-	void 								WriteROCBlock					(__ARGS__);
-	void 								ReadROCBlock					(__ARGS__);
-    void                              	BlockReadROC                	(__ARGS__);
-	void 								DTCHighRateBlockCheck			(__ARGS__);
+	// void 								WriteROCBlock					(__ARGS__);
+	// void 								ReadROCBlock					(__ARGS__);
+    // void                              	BlockReadROC                	(__ARGS__);
+	// void 								DTCHighRateBlockCheck			(__ARGS__);
 	void 								DTCReset						(__ARGS__);
 	void 								DTCReset						(void);
 	void 								DTCHighRateDCSCheck				(__ARGS__);
@@ -140,12 +141,12 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								ConfigureForTimingChain			(__ARGS__);
 	void 								BufferTestROC					(__ARGS__);
 	void 								DTCCounters						(__ARGS__);
-	void								DTCCounters						(std::ostream& out = std::cout);
 	void 								readRxDiagFIFO					(__ARGS__);
 	void 								readTxDiagFIFO					(__ARGS__);
+	void 								GetLinkErrors					(__ARGS__);
 
-	void 								ROCDestroy						(__ARGS__);
-	void 								ROCInstantiate					(__ARGS__);
+	// void 								ROCDestroy						(__ARGS__);
+	// void 								ROCInstantiate					(__ARGS__);
 	void 								DMABufferRelease				(__ARGS__);
 	void 								DTCInstantiate					(__ARGS__);
 	void 								ResetDTCLinks					(__ARGS__);
