@@ -3,6 +3,7 @@
 #include "otsdaq/Macros/BinaryStringMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 
+
 #include <fstream>
 
 
@@ -246,7 +247,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC_BufferTest",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTestROC),                  // feMacroFunction
-					std::vector<std::string>{"numberOfEvents"}, // "rocLinkIndex", "address",  // namesOfInputArgs
+					std::vector<std::string>{"numberOfEvents","doNotDoRequests"}, // "rocLinkIndex", "address",  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 
@@ -428,11 +429,27 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					1);  // requiredUserPermissions
 
 	registerFEMacroFunction(
+		"Headers Format test",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+				&DTCFrontEndInterface::HeaderFormatTest),
+				std::vector<std::string>{},
+				std::vector<std::string>{"setRegister"},
+				1);
+
+	registerFEMacroFunction(
 		"Configure for Timing Chain",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ConfigureForTimingChain),
 					std::vector<std::string>{"StepIndex"},
 					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Reset ROC link",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ROCResetLink),
+				    std::vector<std::string>{"Link", "Lane"},
+					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
 
 	
@@ -3156,123 +3173,104 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 } // end configureHardwareDevMode()
 
 //========================================================================
+// TODO: dicover the header structure and why the lenght of the packet is not equal to the print
 void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 {
-	// bool readSuccess = false;
-	// bool timeout = false;
-	// size_t sts = 0;
-	// mu2e_databuff_t* buffer = DTCLib::Mu2eUtil::readDTCBuffer(thisDTC_->GetDevice(), readSuccess, timeout, sts, false);
-	
-	bool incrementTimestamp = true;
-	uint32_t cfodelay = 400;  // same as Luca's Calorimeter test June-2023
+	__FE_COUT__ << "Operation \"buffer_test\"" << std::endl;
 
-	int          requestsAhead  = 0;
-	unsigned int numberOfEvents         = __GET_ARG_IN__("numberOfEvents", uint32_t); //-1;  // largest number of events?
+	// arguments
+	unsigned int numberOfEvents = __GET_ARG_IN__("numberOfEvents", uint32_t);
+	__FE_COUTV__(numberOfEvents);
+	// parameters
+	uint16_t debugPacketCount = 0;
+	uint32_t cfoDelay = 400;	// delay in the frequency of the emulated CFO
+	uint32_t requestDelay = 0;
+	bool incrementTimestamp = true;
+	bool useSWCFOEmulator = true;
+	bool stickyDebugType = true;
+	bool quiet = false;
+	bool asyncRR = false;
+	bool forceNoDebugMode = true;
+	int requestsAhead = 0;
 	unsigned int timestampStart = 0;
+	// unsigned quietCount = 20;
+	auto debugType = DTCLib::DTC_DebugType_SpecialSequence;	// enum (0)
 	auto device = thisDTC_->GetDevice();
 
-	bool     useSWCFOEmulator = true;
-	uint16_t debugPacketCount = 0;
-	auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
-	bool     stickyDebugType  = true;
-	bool     quiet            = false;
-	bool     asyncRR          = false;
-	bool     forceNoDebugMode = true;
-
-	DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
-		new DTCLib::DTCSoftwareCFO(thisDTC_,
-									useSWCFOEmulator,
-									debugPacketCount,
-									debugType,
-									stickyDebugType,
-									quiet,
-									asyncRR,
-									forceNoDebugMode);
-
-	__FE_COUTV__(numberOfEvents);
-
-	EmulatedCFO_->SendRequestsForRange(
-		numberOfEvents,
-		DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
-		incrementTimestamp,
-		cfodelay,
-		requestsAhead);
-
-	// print out stuff
-	unsigned quietCount = 20;
-
+	// stream to print the output
 	std::stringstream ostr;
 	ostr << std::endl;
 
-	//		std::cout << "Buffer Read " << std::dec << ii << std::endl;
-	mu2e_databuff_t* buffer;
-	auto             tmo_ms = 1500;
-	__FE_COUT__ << "util - before read for DAQ in running";
-	auto sts = device->read_data(
-		DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
-	__FE_COUT__ << "util - after read for DAQ in running "
-				<< " sts=" << sts << ", buffer=" << (void*)buffer;
+	// create the emulated CFO instance (useCFODRP must be investigate)
+	DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(thisDTC_,
+																useSWCFOEmulator,
+																debugPacketCount,
+																debugType,
+																stickyDebugType,
+																quiet,
+																asyncRR,
+																forceNoDebugMode);
 
-	unsigned numOfReads = 0;
-	while(sts > 0)
-	{
-		++numOfReads;
-		void* readPtr = &buffer[0];
-		auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
-		readPtr       = static_cast<uint8_t*>(readPtr) + 8;
+	if(__GET_ARG_IN__("doNotDoRequests", uint32_t) != 1)
+		cfo -> SendRequestsForRange(numberOfEvents,
+									DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
+									incrementTimestamp,
+									cfoDelay,
+									requestsAhead);
 
+	unsigned numberOfReads = 0;
+	for (numberOfReads = 0; numberOfReads < numberOfEvents; numberOfReads++) {
+		mu2e_databuff_t* buffer;
+		auto tmo_ms = 1500;
+		size_t sts = device->read_data(DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
+		// error in the reading phase
+		if (sts <= 0) {
+			// ostr << "Error: Not able to read (sts < 0)" << std::endl;
+			device->read_release(DTC_DMA_Engine_DAQ, 1);
+			break;
+		}
+		// read the buffer
+		void* readPtr = &buffer[0];	// pointer at the begging of the buffer
+		auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));	// get the buffer size from the first 16 bit
+		readPtr = static_cast<uint8_t*>(readPtr) + 16; // shift the pointer
+
+		// print the info of the current read operation
 		__FE_COUT__ << "Buffer reports DMA size of " << std::dec << bufSize
-					<< " bytes. Device driver reports read of " << sts << " bytes,"
+					<< " bytes." << std::endl << "Device driver reports read of " << sts << " bytes,"
 					<< std::endl;
 		ostr << "Buffer reports DMA size of " << std::dec << bufSize
-					<< " bytes. Device driver reports read of " << sts << " bytes,"
+					<< " bytes." << std::endl << "Device driver reports read of " << sts << " bytes,"
 					<< std::endl;
 
+		// print data
 		__FE_COUT__ << "util - bufSize is " << bufSize;
-		outputStream.write(static_cast<char*>(readPtr), sts - 8);
-		auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
-		__FE_COUT__ << "maxLine " << maxLine;
+		auto maxLine = static_cast<unsigned>(ceil(sts / 2.0));
 		for(unsigned line = 0; line < maxLine; ++line)
 		{
-			ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line
-					<< "0: ";
-			for(unsigned byte = 0; byte < 8; ++byte)
+			if (line < 8) 
 			{
-				if(line * 16 + 2 * byte < sts - 8u)
-				{
-					auto thisWord =
-						reinterpret_cast<uint16_t*>(buffer)[4 + line * 8 + byte];
-					ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
-				}
+				ostr << "header 0x";
 			}
+			else 
+			{
+				ostr << "payload 0x";
+			}
+			ostr << std::hex << std::setw(5) << std::setfill('0') << line << ": ";
 
+			auto thisWord = reinterpret_cast<uint16_t*>(buffer)[line];
+			ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
 			ostr << std::endl;
 			//	std::cout << ostr.str();
-
-			//     __SET_ARG_OUT__("readData", ostr.str());  // write to data file
-
-			// don't write data to the log file, only the data file
-			// __FE_COUT__ << ostr.str();
-
-			if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
-			{
-				line =
-					static_cast<unsigned>(ceil((sts - 8) / 16.0)) - (1 + quietCount);
-			}
 		}
 		device->read_release(DTC_DMA_Engine_DAQ, 1);
-		sts = device->read_data(
-		DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
-		__FE_COUT__ << "util - after read for DAQ in running "
-					<< " sts=" << sts << ", buffer=" << (void*)buffer;
+		if (requestDelay > 0) usleep(requestDelay);
 	}
-	device->read_release(DTC_DMA_Engine_DAQ, 1);
 
-	ostr << std::endl;
+	ostr << "Number of reads: " << std::dec << numberOfReads << std::endl;
 
 	std::string runDataFilename = std::string(__ENV__("OTSDAQ_DATA")) + "/RunData_" +
-		                              "FEMacro" + "_" + __FUNCTION__ + "_" + getInterfaceUID() + "_" + 
-									  std::to_string(time(0)) + ".dat";
+	 	                              "FEMacro" + "_" + __FUNCTION__ + "_" + getInterfaceUID() + "_" + 
+	 								  std::to_string(time(0)) + ".dat";
 
 	__FE_COUTV__(runDataFilename);
 	std::fstream runDataFile;
@@ -3293,15 +3291,139 @@ void DTCFrontEndInterface::BufferTestROC(__ARGS__)
 	}
 	//__FE_COUT__ << ostr.str();
 
-	std::string outStr = "Number of reads: " + std::to_string(numOfReads) + "\n" + ostr.str().substr(0,3000);
+	std::string outStr = "Number of reads: " + std::to_string(numberOfReads) + "\n" + ostr.str().substr(0,3000);
 	if(ostr.str().size() > 1000)
 		outStr += "<truncated>...";
 
 	__SET_ARG_OUT__("readData", outStr);
 
-	delete EmulatedCFO_;
+	delete cfo;
+	
 }  // end ROC_BufferTest()
 
+//========================================================================
+// TODO: test to reset the link config
+void DTCFrontEndInterface::ROCResetLink(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"link_config\"" << std::endl;
+
+	// default values
+	unsigned int link = 0;
+	uint16_t lane = 0;
+
+	std::string str_link = __GET_ARG_IN__("Link", std::string);
+	std::string str_lane = __GET_ARG_IN__("Lane", std::string);
+
+	std::stringstream ostr;
+	ostr << std::endl;
+	
+	if (str_link.compare("Default") != 0)
+	{
+		// check if the input is a digit
+		for (char const &ch: str_link) 
+		{
+			if (std::isdigit(ch) == 0)
+			{
+				ostr << "Error: not valid link! " << std::endl;
+				return;
+			}	
+		}
+		// cast to int
+		link = std::stoi(str_link);
+	}
+	if (str_lane.compare("Default") != 0)
+	{
+		// check if the input is a digit
+		for (char const &ch: str_lane) 
+		{
+			if (std::isdigit(ch) == 0)
+			{
+				ostr << "Error: not valid lane! " << std::endl;
+				return;
+			}	
+		}
+		// cast to int
+		lane = std::stoi(str_lane);
+	}
+	__FE_COUTV__(link);
+	__FE_COUTV__(lane);
+
+	auto dtc_link = static_cast<DTCLib::DTC_Link_ID>(link);
+
+	// parameter
+	unsigned tmo_ms = 10;
+
+	try
+	{
+		__FE_COUT__ << "Resetting and configuring link " << dtc_link;
+
+		// reset the link and reconfigure
+		thisDTC_->WriteROCRegister(dtc_link, 14, 1, false, tmo_ms);
+		usleep(1000000);
+		thisDTC_->WriteROCRegister(dtc_link, 13, 1, false, tmo_ms);
+		usleep(1000000);
+		thisDTC_->WriteROCRegister(dtc_link, 13, 0, false, tmo_ms);
+		usleep(1000000);
+
+		if (lane == 1) 
+		{
+			__FE_COUT__ << " to receive data only from CAL lane 0" << std::endl;
+			ostr << " to receive data only from CAL lane 0" << std::endl;
+		}
+		else if (lane == 5) 
+		{
+			__FE_COUT__ << " to receive data from both CAL lanes" << std::endl;
+			ostr << " to receive data from both CAL lanes" << std::endl;
+		}
+		else if (lane == 15)
+		{
+			__FE_COUT__ << " to receive data from all 4 lanes" << std::endl;
+			ostr << " to receive data from all 4 lanes" << std::endl;
+		}
+
+		// after adding external clock and evmarker control to the ROC,
+		// one needs to write bit(8)=1 and bit(9)=1 on register 8, ie 0x300 (0r 768)
+		uint16_t set_lane = lane + 768;
+		__FE_COUTV__(lane);
+		thisDTC_->WriteROCRegister(dtc_link, 8, set_lane, false, tmo_ms);
+
+	}
+	catch (std::runtime_error& err)
+	{
+		TLOG(TLVL_ERROR) << "Error writing to ROC: " << err.what();
+		ostr << "Error writing to ROC: " << err.what();
+	}
+
+	std::string outStr = "Resetting the ROC \nlink: " + std::to_string(link) + "\n" 
+							+ "lane: " + std::to_string(lane) + "\n" 
+							+ ostr.str();
+	__SET_ARG_OUT__("readData", outStr);
+}
+//========================================================================
+void DTCFrontEndInterface::HeaderFormatTest(__ARGS__) 
+{
+	__FE_COUT__ << "Operation \"heder_format\"" << std::endl;
+
+	std::stringstream ostr;
+	ostr << std::endl;
+
+	auto device = thisDTC_->GetDevice();
+
+	device->write_register(37316, 100, 170);	// 0x91c4 <- 0xAA
+	TLOG(TLVL_ERROR) << "Write " << std::hex << 170 << " in 0x91C4" << std::endl;
+	ostr << "Write " << std::hex << 170 << " in 0x91C4" << std::endl;
+
+	device->write_register(37312, 100, 47802);	// 0x91c0 <- 0xBABA
+	TLOG(TLVL_ERROR) << "Write " << std::hex << 47802 << " in 0x91C0" << std::endl;
+	ostr << "Write " << std::hex << 47802 << " in 0x91C0" << std::endl;
+
+	device->write_register(37204, 100, 205);	// 0x9154 <- 0xCD
+	TLOG(TLVL_ERROR) << "Write " << std::hex << 205 << " in 0x9154" << std::endl;
+	ostr << "Write " << std::hex << 205 << " in 0x9154" << std::endl;
+
+	std::string outStr = "Test packet headers \n" + ostr.str();
+	__SET_ARG_OUT__("setRegister", outStr);
+}
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {	
