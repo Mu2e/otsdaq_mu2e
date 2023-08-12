@@ -20,8 +20,11 @@
 
   - "context" group - includes 9 tables, see below
 
-  - "non-context" group, contains the rest tables, shows up as the "Editor configuration"
-    - The number of tables in a non-context group could be any
+  - "non-context", or "config", group, contains the rest tables, 
+	  shows up as the "Editor configuration"
+  - The number of tables in a non-context group could be any
+  - according to Ryan, any change in the "context" group tables requires restarting the ots,
+    changes in the "config" tables do not require that, halting and reconfiguring should be enough
 
   - groups are versioned, an alias could be assigned to a given version
 
