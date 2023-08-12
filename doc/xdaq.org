@@ -27,6 +27,47 @@ xdaq.exe -h mu2edaq09.fnal.gov -p 3068 -e /home/mu2etrk/test_stand/pasha_011/src
 *** otsdaq interface to the DB - how are the DB query structured in OTSDAQ ?
     parsing values is dangerous
 *** the database schema - how to query it? 
+* XDAQ service on mu2edaq09 = disabled                                               
+
+#+begin_src   /usr/systemd/system/xdaq-proxy.service                        
+[Unit]
+Description=XDAQ HTTPS Proxy
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=mu2etrk
+Group=mu2e
+Sockets=xdaq-proxy.socket
+WorkingDirectory=/home/mu2etrk/artdaq-utilities-node-server
+ExecStart=/home/mu2etrk/artdaq-utilities-node-server/run_proxy.sh
+Restart=always
+NonBlocking=true
+
+[Install]
+WantedBy=multi-user.target
+#+end_src
+#+begin_src   /usr/systemd/system/xdaq-proxy.socket                           
+[Unit]
+Description=XDAQ HTTPS Proxy
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=mu2etrk
+Group=mu2e
+Sockets=xdaq-proxy.socket
+WorkingDirectory=/home/mu2etrk/artdaq-utilities-node-server
+ExecStart=/home/mu2etrk/artdaq-utilities-node-server/run_proxy.sh
+Restart=always
+NonBlocking=true
+
+[Install]
+WantedBy=multi-user.target
+
+#+end_src
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
 * ------------------------------------------------------------------------------

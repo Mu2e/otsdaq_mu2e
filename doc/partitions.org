@@ -1,0 +1,38 @@
+#+startup:fold 
+* ------------------------------------------------------------------------------
+* partitions used by the Mu2e DAQ                                            
+- what is the meaning of ARTDAQ_PARTITION ?
+  - partition specifies a host, a port range, and whatever else needed
+  - assume that different partitions use different subsystem configurations
+  - partition numbers are static , for now, assigned to different people
+
+- why the subsystem=dqmcalo uses repo=otsdaq_mu2e_trigger ? - probably, because of Giani
+
+|-----------+---------------+---------------+----------------+----------+-------------------------+-------------|
+| PARTITION | subsystem     | configuration |           node | OTS port | repo (used in webpath)  | people      |
+|           |               |               |                |          | to be fixed             |             |
+|-----------+---------------+---------------+----------------+----------+-------------------------+-------------|
+|         2 | sync          |               | 192.168.157.06 |     2015 | otsdaq_mu2e             |             |
+|         3 | dqmcalo       |               | 192.168.157.11 |     3095 | otsdaq_mu2e_trigger     |             |
+|         4 | calo          | cal_vst_sidet |      mu2edaq07 |     3025 | otsdaq_mu2e_calorimeter | Luca        |
+|         5 | stm           |               | 192.168.157.11 |     3035 | otsdaq_mu2e_stm         | Andy, Pawel |
+|         6 | trigger       |               | 192.168.157.14 |     3045 | otsdaq_mu2e_trigger     | Giani       |
+|         7 | hwdev2        |               | 192.168.157.05 |     3055 | otsdaq_mu2e             | Micol       |
+|         8 | tracker       | trk_vst_annex |      mu2edaq09 |     3065 | otsdaq_mu2e_tracker     | Pasha       |
+|         9 | crv           |               | 192.168.157.12 |     3085 | otsdaq_mu2e_crv         | Simon       |
+|        10 | dqm           |               |      mu2edaq09 |     3090 | otsdaq_mu2e_tracker     | Kamal       |
+|        11 | stmdbtest     |               | 192.168.157.11 |     3040 | otsdaq_mu2e_stm         |             |
+|        12 | shift         |               | 192.168.157.12 |     3075 | otsdaq_mu2e             |             |
+|         - | shift1        |               | 192.168.157.12 |     3080 | otsdaq_mu2e             |             |
+|         - | shift2        |               | 192.168.157.12 |     3085 | otsdaq_mu2e             |             |
+|         - | 02            |               |      127.0.0.1 |     2015 | otsdaq_mu2e             |             |
+|         - | tem           |               | 192.168.157.11 |     4045 | otsdaq_mu2e_extmon      |             |
+|         - | dcs           |               |      127.0.0.1 |     5019 | otsdaq_mu2e             |             |
+|        13 | aggregator    |               | 192.168.157.14 |     3040 | otsdaq_mu2e_dqm         |             |
+|        14 | slow controls |               |      mu2edaq09 |     3070 | otsdaq_mu2e_tracker     | Antonio     |
+|        15 | tracker       |               |      mu2edaq09 |     3075 | otsdaq_mu2e_tracker     | Sara        |
+|        16 | OTS general   |               |      mu2edaq09 |     3080 | otsdaq_mu2e_tracker     | Gennadiy    |
+|-----------+---------------+---------------+----------------+----------+-------------------------+-------------|
+* ------------------------------------------------------------------------------
+*  back to [[file:otsdaq_mu2e.org][otsdaq_mu2e.org]]
+* ------------------------------------------------------------------------------
