@@ -139,11 +139,15 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								configureHardwareDevMode		(__ARGS__);
 	void 								configureHardwareDevMode		(void);
 	void								ConfigureForTimingChain			(__ARGS__);
-	void 								BufferTestROC					(__ARGS__);
+	void 								BufferTest						(__ARGS__);
+
 	void 								DTCCounters						(__ARGS__);
 	void 								readRxDiagFIFO					(__ARGS__);
 	void 								readTxDiagFIFO					(__ARGS__);
 	void 								GetLinkErrors					(__ARGS__);
+	void 								ROCResetLink					(__ARGS__);
+	void								HeaderFormatTest				(__ARGS__);
+
 
 	// void 								ROCDestroy						(__ARGS__);
 	// void 								ROCInstantiate					(__ARGS__);
