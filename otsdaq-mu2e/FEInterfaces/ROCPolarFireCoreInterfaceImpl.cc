@@ -85,18 +85,7 @@ void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
 	            << ", address = " << address << ", numberOfReads = " << numberOfReads
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
-	// int read_data = 0;
-
-	//	try
-	//	{
 	thisDTC_->ReadROCBlock(data, linkID_, address, numberOfReads, incrementAddress, 0);
-
-	//	}
-	//	catch(...)
-	//	{
-	//		__FE_COUT_ERR__ << "DTC failed DCS read" << __E__;
-	//		read_data = -999;
-	//	}
 
 }  // end readROCBlock()
 

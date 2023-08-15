@@ -63,8 +63,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// DTC specific items
 	//----------------
 	virtual std::string					readStatus					(void) override;
-	void 								configureEventBuildingMode	(void);
-	void 								configureLoopbackMode		(void);
+	void 								configureHardwareDevMode	(void);
+	void 								configureEventBuildingMode	(int step = -1);
+	void 								configureLoopbackMode		(int step = -1);
 	void 								configureForTimingChain		(int step);
 
 	// bool 								ROCActive					(unsigned int ROC_link);
@@ -120,12 +121,12 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								ReadROC							(__ARGS__);
 	void 								WriteROC						(__ARGS__);
-	// void 								WriteROCBlock					(__ARGS__);
-	// void 								ReadROCBlock					(__ARGS__);
-    // void                              	BlockReadROC                	(__ARGS__);
+	void 								ROCBlockRead					(__ARGS__);
+    void 								WriteExternalROCRegister					(__ARGS__);
+	void                              	ReadExternalROCRegister        	(__ARGS__);
 	// void 								DTCHighRateBlockCheck			(__ARGS__);
 	void 								DTCReset						(__ARGS__);
-	void 								DTCReset						(void);
+	// void 								DTCReset						(void);
 	void 								DTCHighRateDCSCheck				(__ARGS__);
 	void 								RunROCFEMacro					(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest	(__ARGS__);
@@ -137,7 +138,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								ReadDTC							(__ARGS__);
 	void								SetEmulatedROCEventFragmentSize	(__ARGS__);
 	void								configureHardwareDevMode		(__ARGS__);
-	void 								configureHardwareDevMode		(void);
 	void								ConfigureForTimingChain			(__ARGS__);
 	void 								BufferTest						(__ARGS__);
 

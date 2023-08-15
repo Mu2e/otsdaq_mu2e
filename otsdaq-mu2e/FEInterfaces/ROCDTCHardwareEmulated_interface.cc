@@ -91,6 +91,22 @@ uint16_t ROCDTCHardwareEmulated::readROCRegister(uint16_t address)
 }  // end readROCRegister()
 
 //==================================================================================================
+void ROCDTCHardwareEmulated::readROCBlock(std::vector<uint16_t>& data,
+                                             uint16_t               address,
+                                             uint16_t               numberOfReads,
+                                             bool                   incrementAddress)
+{
+	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
+	            << ", address = " << address << ", numberOfReads = " << numberOfReads
+	            << ", incrementAddress = " << incrementAddress << __E__;
+
+	__FE_COUTV__(data.size());
+	thisDTC_->ReadROCBlock(data, linkID_, address, numberOfReads, incrementAddress, 0);
+	__FE_COUTV__(data.size());
+	
+}  // end readROCBlock()
+
+//==================================================================================================
 int ROCDTCHardwareEmulated::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================

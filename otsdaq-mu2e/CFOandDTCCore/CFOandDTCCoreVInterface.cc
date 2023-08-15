@@ -9,9 +9,10 @@ using namespace ots;
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "CFOandDTCCoreVInterface"
 
-std::string	CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV 	= "HardwareDevMode";
-std::string	CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING = "EventBuildingMode";
-std::string	CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK 		= "LoopbackMode";
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV 				= "HardwareDevMode";
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING 			= "EventBuildingMode";
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK 					= "LoopbackMode";
+
 //=========================================================================================
 CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
     const std::string&       interfaceUID,

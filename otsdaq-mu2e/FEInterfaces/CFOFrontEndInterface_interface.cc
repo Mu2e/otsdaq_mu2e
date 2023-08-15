@@ -75,12 +75,22 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	// 				std::vector<std::string>{},  // namesOfOutputArgs
 	// 				1);                          // requiredUserPermissions
     
+	
+
 	registerFEMacroFunction(
 		"Get Status",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::GetStatus),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"CFO Reset",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::CFOReset),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 
 	registerFEMacroFunction(
@@ -605,58 +615,100 @@ void CFOFrontEndInterface::configure(void)
 
 
 //==============================================================================
-void CFOFrontEndInterface::configureEventBuildingMode(void)
+void CFOFrontEndInterface::configureEventBuildingMode(int step)
 {
-	__FE_COUT_INFO__ << "configureEventBuildingMode() " << getIterationIndex() << "." << getSubIterationIndex() << __E__;
+	if(step == -1)
+		step = getIterationIndex();
+
+	__FE_COUT_INFO__ << "configureEventBuildingMode() " << step << "." << getSubIterationIndex() << __E__;
 	
-	switch(getIterationIndex())
+	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
 	{
-		case 0:		//CFO timing gets iteration index 0
-			if(timing_chain_first_substep_ == -1)
+		if(timing_chain_first_substep_ == -1)
 				timing_chain_first_substep_ = getSubIterationIndex();
-			configureForTimingChain();
-			indicateIterationWork();
-			break;
-		case 1:		//wait for DTCs
-		case 2:		//wait for DTCs
-			__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
-			indicateIterationWork();
-			break;
-		case 3:
-			__FE_COUT__ << "CFO reset serdes TX " << __E__;
-			thisCFO_->ResetAllSERDESTx();
-			break;
-		default:
-			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
-	}	
+		configureForTimingChain();
+		indicateIterationWork();
+	}
+	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		__FE_COUT__ << "CFO reset serdes TX " << __E__;
+		thisCFO_->ResetAllSERDESTx();
+		indicateIterationWork();
+	}
+	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{ 
+		__FE_COUT__ << "Enable communication over links" << __E__;
+		thisCFO_->EnableTiming();
+		thisCFO_->EnableEventWindowInput();
+
+		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+		__FE_COUT__ << "CFO set beam off Event Window interval time" << __E__;
+		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
+
+		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
+		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+	}
+	else
+		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	
 
 }  // end configureEventBuildingMode()
 
 //==============================================================================
-void CFOFrontEndInterface::configureLoopbackMode(void)
+void CFOFrontEndInterface::configureLoopbackMode(int step)
 {
-	__FE_COUT_INFO__ << "configureLoopbackMode() " << getIterationIndex() << "." << getSubIterationIndex() << __E__;
+	if(step == -1)
+		step = getIterationIndex();
 
-	switch(getIterationIndex())
+	__FE_COUT_INFO__ << "configureLoopbackMode() " << step << "." << getSubIterationIndex() << __E__;
+	
+	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
 	{
-		case 0:		//CFO timing gets iteration index 0
-			if(timing_chain_first_substep_ == -1)
+		if(timing_chain_first_substep_ == -1)
 				timing_chain_first_substep_ = getSubIterationIndex();
-			configureForTimingChain();
-			indicateIterationWork();
-			break;
-		case 1:		//wait for DTCs
-		case 2:		//wait for DTCs
-			__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
-			indicateIterationWork();
-			break;
-		case 3:
-			__FE_COUT__ << "CFO reset serdes TX " << __E__;
-			thisCFO_->ResetAllSERDESTx();
-			break;
-		default:
-			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
-	}	
+		configureForTimingChain();
+		indicateIterationWork();
+	}
+	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		__FE_COUT__ << "CFO reset serdes TX " << __E__;
+		thisCFO_->ResetAllSERDESTx();
+		indicateIterationWork();
+	}
+	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{ 
+		__FE_COUT__ << "Enable communication over links" << __E__;
+		thisCFO_->EnableTiming();
+		thisCFO_->EnableEventWindowInput();
+
+		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+		__FE_COUT__ << "CFO set beam off Event Window interval time" << __E__;
+		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
+
+		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
+		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+	}
+	else
+		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	
 }  // end configureLoopbackMode()
 
 //==============================================================================
@@ -678,7 +730,10 @@ void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
 	switch(step)
 	{
 		case 0:
-			// thisCFO_->DisableAllOutputs();
+			thisCFO_->ResetCFO();
+			thisCFO_->ClearCFOControlRegister();
+			thisCFO_->DisableAllOutputs();
+
 
 			__FE_COUTV__(configure_clock_);
 
@@ -770,9 +825,9 @@ void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
 				else
 					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
 			}
-			// indicateSubIterationWork();
+			// indicateSubIterationWork(); //for now, not running case 2, saving ResetAllSERDESTx for after DTCs are configured
 			break;
-		case 2:
+		case 2: //for now, not running case 2
 		
 			// __FE_COUT__ << "CFO reset serdes PLLs " << __E__;
 			// thisCFO_->ResetAllSERDESPlls();
@@ -1376,6 +1431,10 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 // {	
 // 	thisCFO_->FlashLEDs();
 // } //end FlashLEDs()
+
+
+//========================================================================
+void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->ResetCFO(); }
 
 //==============================================================================
 // GetFirmwareVersion
