@@ -55,9 +55,6 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void 								universalRead				(char* address, char* readValue) override;
 	void 								universalWrite				(char* address, char* writeValue) override;
 	virtual mu2edev* 					getDevice					(void) = 0;
-	// dtc_data_t							registerRead				(dtc_address_t address) = 0;
-	// void								registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) = 0;  // return read value after having written dataToWrite
-	// void								readbackVerify				(dtc_address_t address, dtc_data_t dataToWrite, dtc_data_t readbackValue);
 
 	// DTC specific items
 	//----------------
@@ -73,29 +70,17 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	
 	void 								registerCFOandDTCFEMacros	(void);
 
-	// char        						devfile_[11];
-	// int         						fd_;
 	int         						deviceIndex_		         	= -1; //PCIe index
 	bool        						configure_clock_    			= false;
-	// std::string 						device_name_;
 	bool      							emulatorMode_					= false;
 	bool 								skipInit_						= true;
 	std::string							operatingMode_ 					= "";
-	// std::mutex 							readWriteOperationMutex_;
 
-	// m_ioc_reg_access_t 					reg_access_;
-	// unsigned 							initial_9100_ 				= 0;
-	// unsigned 							initial_9114_ 				= 0;
+	static const int					CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
+	static const int					CONFIG_DTC_TIMING_CHAIN_STEPS = 3;
 
-
-	// //--------------------------------------------------------
-	// //output file streams:
-	// //	monitor register stream and also provide alternative run datastream if not using artdaq
-	// std::ofstream 						regWriteMonitorStream_;
-	// std::fstream 						runDataFile_;
 	bool 								artdaqMode_ = false; // true to prevent run data file generation
-	// //end output file streams
-	// //--------------------------------------------------------
+
 
   public: 
 	// std::string							GetFirmwareVersion			(void);
