@@ -99,6 +99,9 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
 		true /* skipInit */, //always skip init and lots ots configure setup
 		getInterfaceUID()); 
+	
+	std::string designVersion = thisDTC_->ReadDesignDate();
+	__FE_COUTV__(designVersion);
 
 	createROCs();
 	registerFEMacros();
@@ -221,7 +224,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Buffer Test",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTest),                  // feMacroFunction
-					std::vector<std::string>{"numberOfEvents", "match (default: true)"}, 
+					std::vector<std::string>{"numberOfEvents", "match (default: true)", "eventDuration", "doNotReadBack"}, 
 					std::vector<std::string>{"response"},
 					1);  // requiredUserPermissions
 					
@@ -3261,7 +3264,8 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 
 	// parameters
 	uint16_t debugPacketCount = 0;
-	uint32_t cfoDelay = 400;	// delay in the frequency of the emulated CFO
+	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration", uint32_t);	//400 -- delay in the frequency of the emulated CFO
+	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack", bool);
 	// uint32_t requestDelay = 0;
 	bool incrementTimestamp = true;		// this parameter is not working with emulated CFO
 	bool useSWCFOEmulator = true;
@@ -3293,7 +3297,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 								requestsAhead);
 
 	// get the data requested
-	for(unsigned int ii = 0; ii < numberOfEvents; ++ii)
+	for(unsigned int ii = 0; ii < !doNotReadBack &&  numberOfEvents; ++ii)
 	{ 
 		// get the data
 		std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = thisDTC_->GetData(eventTag + ii, activeMatch);
