@@ -420,13 +420,19 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				std::vector<std::string>{"setRegister"},
 				1);
 
+	std::stringstream feMacroTooltip;
+	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS <<
+		" steps. So choose 1 step at a time, 0-" << CONFIG_DTC_TIMING_CHAIN_STEPS << 
+		" or use -1 to run all steps sequentially." << __E__;
+		
 	registerFEMacroFunction(
 		"Configure for Timing Chain",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ConfigureForTimingChain),
 					std::vector<std::string>{"StepIndex"},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,"*" /*allowedCallingFEs*/,
+					feMacroTooltip.str());  // requiredUserPermissions
 
 	registerFEMacroFunction(
 		"Reset ROC link",
@@ -3701,8 +3707,17 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 	int stepIndex = __GET_ARG_IN__("StepIndex", int);
 
 	// do 0, then 1
-	configureForTimingChain(stepIndex);
-	// configureForTimingChain(1);
+	if(stepIndex == -1)
+	{
+		for(int i=0;i<CONFIG_DTC_TIMING_CHAIN_STEPS;++i)
+		{
+			configureForTimingChain(i);
+			usleep(1000);
+		}
+	}
+	else
+		configureForTimingChain(stepIndex);
+	
 
 } //end ConfigureForTimingChain()
 
