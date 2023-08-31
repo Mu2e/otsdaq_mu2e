@@ -332,7 +332,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)"},
+				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", "DoNotSet"},
 						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
 
@@ -2903,7 +2903,7 @@ void DTCFrontEndInterface::ResetLossOfLockCounter(__ARGS__)
 {
 	// write anything to reset
 	// 0x93c8 is RX CDR Unlock counter (32-bit)
-	thisDTC_->ClearJitterAttenuatorUnlockCount();
+	thisDTC_->ClearRXCDRUnlockCount(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 	// registerWrite(0x93c8, 0);
 
 	// now check
@@ -3069,8 +3069,12 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 
 	// registerWrite(0x9308, val);  // write select value
 
-
-	thisDTC_->SetJitterAttenuatorSelect(select);
+	if(!__GET_ARG_IN__(
+	    "DoNotSet", bool))
+	{
+		thisDTC_->SetJitterAttenuatorSelect(select);
+		sleep(1);
+	}
 
 
 	// __SET_ARG_OUT__("Register Write Results", results.str());
@@ -3269,7 +3273,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 	}
 
 	// parameters
-	uint16_t debugPacketCount = 0;
+	uint16_t debugPacketCount = 0; 
 	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration", uint32_t);	//400 -- delay in the frequency of the emulated CFO
 	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack", bool);
 	// uint32_t requestDelay = 0;
@@ -3303,7 +3307,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 								requestsAhead);
 
 	// get the data requested
-	for(unsigned int ii = 0; ii < !doNotReadBack &&  numberOfEvents; ++ii)
+	for(unsigned int ii = 0; !doNotReadBack &&  ii < numberOfEvents; ++ii)
 	{ 
 		// get the data
 		std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = thisDTC_->GetData(eventTag + ii, activeMatch);
