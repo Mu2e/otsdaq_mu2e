@@ -8,6 +8,11 @@
 ** -----------------------------------------------------------------------------
 ** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
 ** [[file:build_instructions.org][build instructions]]
+** event format                                                              
+** artdaq::Fragment
+   - fragment type: tells the type of the data stored in the fragment
+   - fragment ID  : in essense, the fragment generator type
+     - a single generator can write out fragments of different types
 ** ARTDAQ                                                                    
    boardreader, eventbuilder, and datalogger are started by ARTDAQManager 
    during the *configure* transition. At this point the run number is not defined,
@@ -20,7 +25,6 @@ mu2etrk  15635  0.0  0.0 17184952 14160 pts/3  Sl   19:43   0:00 eventbuilder -c
 mu2etrk@mu2edaq09:~/test_stand/pasha_018>ps aux | grep datalogger | grep -v grep
 mu2etrk  15636  0.0  0.0 16546880 13112 pts/3  Sl   19:43   0:00 datalogger -c id: 18102 commanderPluginType: xmlrpc rank: 2 application_name: logger0 partition_number: 8
 #+end_src 
-
 ** [[file:xdaq.org][XDAQ]]
 ** [[file:hardware.org][Mu2e DAQ hardware]]
 ** [[file:trace.org][TRACE]] 

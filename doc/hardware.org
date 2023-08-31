@@ -5,6 +5,23 @@
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097  :]] DTC user manual 
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=19095][mu2e-19095]] : Mu2e beam timing
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/RetrieveFile?docid=37376&filename=20220922_DAQNodes.pdf][mu2e-37376]] : DAQ node configuration in the DAQ room 
+* How to powercycle a DTC card w/o rebooting the whole computer              
+#+begin_src 
+mu2etrk@mu2edaq09:~/test_stand/pasha_018>ksu
+Authenticated murat@FNAL.GOV
+Account root: authorization for murat@FNAL.GOV successful
+Changing uid to root (0)
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>echo 1 > /sys/bus/pci/devices/0000:05:00.0/remove
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>echo 1 > /sys/bus/pci/rescan
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>lspci | grep Xilinx
+04:00.0 Communication controller: Xilinx Corporation Device 7042
+05:00.0 Communication controller: Xilinx Corporation Device 7042
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>ls -al /dev/mu2e*
+crw-rw-rw- 1 root root 244, 0 Aug 25 15:33 /dev/mu2e0
+crw-rw-rw- 1 root root 244, 1 Aug 27 19:51 /dev/mu2e1
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>exit
+exit
+#+end_src 
 * DTCs       : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0      
 #+begin_src 
 mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
