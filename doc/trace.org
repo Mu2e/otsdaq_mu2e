@@ -12,15 +12,117 @@ TLOG(TLVL_DEBUG) << "TrackerVST_generator CONSTRUCTOR";
 
  set format of TRACE printouts: TRACE_PRINT="%m-%d %H:%M:%S.%%06d %T %*n %*L %F: %M"
 
-#+begin_src
-mu2etrk@mu2edaq09:~/test_stand/pasha_011>tlvls
-mode:                          M=1                S=1
- TID       NAME              maskM              maskS              maskT
----- ---------- ------------------ ------------------ ------------------
- 268      TRACE 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
- 772 trace_cntl 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
-1021    _TRACE_ 0x00000000000001ff 0x00000000000000ff 0x0000000000000000
-#+end_src
+** trace_cntl tids                                                          
+#+begin_src 
+#mu2etrk@mu2edaq09:~/test_stand/pasha_018>tlvls
+mode:                                                    M=1                S=1
+ TID                                 NAME              maskM              maskS              maskT
+---- ------------------------------------ ------------------ ------------------ ------------------
+  24                 ConfigurationManager 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+  69           TopLevelTriggerTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+  72   dtcInterfaceLib/DTCSoftwareCFO.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+  82      ARTDAQRoutingManagerTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 135                      WorkLoopManager 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 139                 MacroMakerSupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 156                 AllSupervisorInfo.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 159                       ReceiverSocket 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 175                              DTC.cpp 0x0000000000000fff 0x0000000000000000 0x0000000000000000
+ 191         SupervisorDescriptorInfoBase 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 200         ARTDAQBoardReaderTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 209                              my_cntl 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 211 options_operation_managedocument.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 226                          DTC_Packets 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 238                  ARTDAQSupervisor.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 239                    MessageFacility.h 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 240                        CONF:LdStrD_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 244                     ARTDAQSupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 259                        DTC_Registers 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 263                 dispatch_mongodb.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 268                                TRACE 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 280                       FileDB:RDWRT_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 282                              Console 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 289                          _TCPConnect 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 303                              MU2EDEV 0x00000000ffffffff 0x00000000000001ff 0x0000000000000000
+ 311             configureMessageFacility 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 317                        CONF:CrtCfD_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 328                     XDAQContextTable 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 352        MessageFacilityTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 353       ARTDAQDataLoggerTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 354                    ConsoleSupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 357                             Iterator 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 374                            Socket.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 376                   FiniteStateMachine 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 386                               Socket 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 389                 CodeEditorSupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 403                         UDP_mfPlugin 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 416           options_operation_base.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 417                    ReceiverSocket.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 420                               CfgGUI 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 433                              rocUtil 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 447          ARTDAQDataLoggerTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 456                        MetricManager 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 469               JSONDocument_utils.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 486                      json_writer.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 501                     VisualSupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 510                            DTC_Types 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 511                           mu2e_event 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 526              provider_connection.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 544            detail_managedocument.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 558     ARTDAQEventBuilderTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 561                   CoreSupervisorBase 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 567                     JSONDocument.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 573                         COFS:DpFle_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 574                               KERNEL 0x00000000000fffef 0x00000000000001ff 0x0000000000000000
+ 584                            mu2e_main 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 612           ConfigurationGUISupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 620                 provider_mongodb.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 641                                  FSM 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 642                     PRVDR:FileDBIX_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 645                    GatewaySupervisor 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 652        ARTDAQEventBuilderTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 653                      JSNU:DocUtils_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 656      ARTDAQBoardReaderTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 664          ARTDAQDispatcherTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 678   ARTDAQRoutingManagerTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 686           CorePropertySupervisorBase 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 688                    AllSupervisorInfo 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 690            FESlowControlsTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 700           MessageFacilityTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 706             detail_manageconfigs.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 728              DTCInterfaceTable_table 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 731               ConfigurationManagerRW 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 772                           trace_cntl 0x00000000ffffffff 0x00000000000001ff 0x0000000000000000
+ 776                             mu2eUtil 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 783                      ARTDAQTableBase 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 796                      JSNU:Document_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 800                            TableBase 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 804       provider_mongodb_readwrite.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 820           DTCInterfaceTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 824                             mu2e_mem 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 827                           Visualizer 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 863        TopLevelTriggerTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 893                CoreSupervisorBase.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 900                      json_reader.cpp 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 909      SupervisorDescriptorInfoBase.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 912        CorePropertySupervisorBase.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 917                    ConfigurationTree 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 942         FESlowControlsTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 949                       CONF:OpLdStr_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 955                             mu2e_pci 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 956               RunControlStateMachine 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 957                   WorkLoopManager.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 961                               trace_ 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 969                           MacroMaker 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 973                              mu2edev 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 979              CodeEditorSupervisor.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+ 985                       PRVDR:FileDB_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+ 995                             Fragment 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+1003                             WebUsers 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+1008       ARTDAQDispatcherTable_table.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+1017                        CONF:OpBase_C 0x00000000000001ff 0x0000000000000001 0x0000000000000000
+1018                  XDAQContextTable.cc 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
+1021                              _TRACE_ 0x0000000000000fff 0x00000000000001ff 0x0000000000000000
++end_src
 
 from Andy:
  
@@ -32,6 +134,12 @@ tshow | less
 
 According to Andy, DTC.cpp is the source file name. Does this mean that the control 
 is at source file level ?
+** trace_cntl lvlclr                               
+#+begin_src trace_cntl lvlclr                                               
+mu2etrk@mu2edaq09:~/test_stand/pasha_018>trace_cntl lvlclr 0xfffff 0xfffff 0xfffff -NDTC_Registers
+mu2etrk@mu2edaq09:~/test_stand/pasha_018>tlvls | grep DTC_R
+ 259                        DTC_Registers 0x0000000000000000 0x0000000000000000 0x0000000000000000
+#+end_src 
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
 * ------------------------------------------------------------------------------
