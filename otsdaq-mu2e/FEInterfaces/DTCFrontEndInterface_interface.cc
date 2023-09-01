@@ -98,6 +98,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	thisDTC_ = new DTCLib::DTC(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
 		true /* skipInit */, //always skip init and lots ots configure setup
+		"" /* simMemoryFile */,
 		getInterfaceUID()); 
 	
 	std::string designVersion = thisDTC_->ReadDesignDate();
@@ -444,6 +445,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				    std::vector<std::string>{"Link", "Lane"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
+	
+	registerFEMacroFunction(
+		"Check Link Loss-of-Light",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::GetLinkLossOfLight),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Link Status"},
+					1);  // requiredUserPermissions
 
 	
 	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
@@ -613,15 +622,14 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
                                                 std::string&           readValue)
 {
 	__FE_COUTV__(currentChannelIsInROC_);
-	__FE_COUTV__(currentChannelROCUID_);
 	__FE_COUTV__(universalDataSize_);
 	if(!currentChannelIsInROC_)
 	{
-		readValue.resize(universalDataSize_);
-		universalRead(channel.getUniversalAddress(), &readValue[0]);
+		FEVInterface::getSlowControlsValue(channel, readValue);
 	}
 	else
 	{
+		__FE_COUTV__(currentChannelROCUID_);
 		auto rocIt = rocs_.find(currentChannelROCUID_);
 		if(rocIt == rocs_.end())
 		{
@@ -642,7 +650,7 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 		}
 		readValue.resize(universalDataSize_);
 		*((uint16_t*)(&readValue[0])) =
-		    rocIt->second->readRegister(*((uint16_t*)channel.getUniversalAddress()));
+		    rocIt->second->readRegister(*((uint16_t*)(&channel.universalAddress_[0])));
 	}
 
 	__FE_COUTV__(readValue.size());
@@ -3728,5 +3736,94 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 	
 
 } //end ConfigureForTimingChain()
+
+//========================================================================
+void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
+{	
+	std::stringstream rd;
+
+
+	//do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
+/*
+	// #Read Firefly RX LOS registers
+	// #enable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// #Device address, register address, null, null
+	// my_cntl write 0x9298 0x54080000
+	registerWrite(0x9298,0x54080000);
+	// #read enable
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// #disable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// #read data: Device address, register address, null, value
+	// my_cntl read 0x9298
+*/
+	thisDTC_->SetTXRXFireflySelect(true);
+	thisDTC_->WriteFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/, 0 /*data*/);
+	thisDTC_->SetTXRXFireflySelect(false);
+
+	// #{EVB, ROC4, ROC1, CFO, unused, ROC5, unused, unused}
+	usleep(1000*100);
+
+/*
+	// #Read Firefly RX LOS registers
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// my_cntl write 0x9298 0x54070000
+	registerWrite(0x9298,0x54070000);
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// my_cntl read 0x9298
+*/
+
+	thisDTC_->SetTXRXFireflySelect(true);
+	thisDTC_->WriteFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/, 0 /*data*/);
+	thisDTC_->SetTXRXFireflySelect(false);
+
+	//END do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
+
+	dtc_data_t val=0, val2=0;
+	for(int i=0;i<5;++i)
+	{
+		usleep(1000*100 /* 100 ms */);
+		thisDTC_->SetTXRXFireflySelect(true);
+		//OR := if ever 1, mark dead
+		val |= thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/);
+		thisDTC_->SetTXRXFireflySelect(false);
+			
+		
+		usleep(1000*100 /* 100 ms */);
+		thisDTC_->SetTXRXFireflySelect(true);
+		//OR := if ever 1, mark dead
+		val2 |= thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/);
+		thisDTC_->SetTXRXFireflySelect(false);
+	} //end multi-read to check for strange value changing
+
+	// #ROC0 bit 3
+	rd << "{0:" << (((val2>>(0+3))&1)?"DEAD":"OK");
+	// #ROC1 bit 5
+	rd << ", 1: " << (((val>>(0+5))&1)?"DEAD":"OK");
+	// #ROC2 bit 2
+	rd << ", 2:" << (((val2>>(0+2))&1)?"DEAD":"OK");
+	// #ROC3 bit 0
+	rd << ", 3:" << (((val2>>(0+0))&1)?"DEAD":"OK");
+	// #ROC4 bit 6
+	rd << ", 4: " << (((val>>(0+6))&1)?"DEAD":"OK");
+	// #ROC5 bit 1
+	rd << ", 5: " << (((val>>(0+1))&1)?"DEAD":"OK");
+	// #CFO bit 4
+	rd << ", 6/CFO: " << (((val>>(0+4))&1)?"DEAD":"OK");
+	// #EVB bit 7  Are EVB and CFO reversed?
+	rd << ", 7/EVB: " << (((val>>(0+7))&1)?"DEAD":"OK") << "}";
+
+
+
+	__SET_ARG_OUT__("Link Status",rd.str());
+} //end GetLinkLossOfLight()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)

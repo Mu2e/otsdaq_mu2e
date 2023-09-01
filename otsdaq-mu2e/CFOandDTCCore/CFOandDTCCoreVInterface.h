@@ -84,7 +84,6 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
   public: 
 	// std::string							GetFirmwareVersion			(void);
-	// void 								GetLinkLossOfLight			(__ARGS__);
 	// void 								GetFireflyTemperature		(__ARGS__);
 	// void								ResetLinkRx					(__ARGS__);
 	// void								ShutdownLinkTx				(__ARGS__);
