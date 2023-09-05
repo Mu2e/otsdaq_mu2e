@@ -2,6 +2,7 @@
 #define _ots_DBRunInfo_h_
 
 #include "otsdaq/FiniteStateMachine/RunInfoVInterface.h" // for Run Info plugins
+#include <libpq-fe.h> /* for PGconn */
 
 namespace ots
 {
@@ -17,6 +18,9 @@ class DBRunInfo : public RunInfoVInterface
 	
 	virtual unsigned int 	claimNextRunNumber	(const std::string& runInfoConditions = "");
 	virtual void 			updateRunInfo		(unsigned int runNumber, RunInfoVInterface::RunStopType runStopType);
+
+  private:
+	PGconn* runInfoDbConn_;	
 };
 }  // namespace ots
 
