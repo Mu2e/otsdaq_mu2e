@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>DQM GUI</title>
+
+		<link rel="stylesheet" type="text/css" href="/WebPath/css/DqmGUI.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+
+		<script>
+
+			//functions:
+			//	init()
+			//	manageMenu()
+			//	openPage()
+			//
+			/////////////////////////////////////////////////////////////////////////////////////////
+			/////////////////////////////////////////////////////////////////////////////////////////
+
+
+			//=====================================================================================
+			//init called once body has loaded
+			function init() 
+			{
+				Debug.log("init() was called");
+				manageMenu();
+				openPage('/WebPath/html/DqmPages/DqmHome.html');
+			} //end init()
+
+
+			//=====================================================================================
+			function manageMenu(obj)
+			{
+				//* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+				var dropdown = document.getElementsByClassName("dropdown-btn");
+				var i;
+
+				for (i = 0; i < dropdown.length; i++) {
+					dropdown[i].addEventListener("click", function() {
+						this.classList.toggle("active");
+						var dropdownContent = this.nextElementSibling;
+						if (dropdownContent.style.display === "block") {
+							dropdownContent.style.display = "none";
+						} else {
+							dropdownContent.style.display = "block";
+						}
+					});
+				}
+			} //end manageMenu()
+
+
+			//=====================================================================================
+			function openPage(url)
+			{
+				var frame = document.getElementById('mainFrame');
+				frame.src = url;
+			}// end openPage()
+
+		</script>
+	</head>
+
+	<body onload='//init() called by DesktopContent.js'>
+
+		<div class="navbar">
+			<a href="#">Link</a>
+			<a href="#">Link</a>
+			<a href="#">Link</a>
+			<a href="#" class="right">Link</a>
+		</div>
+
+		<div class="row">
+			<!-- The sidenav -->
+			<div class="side">
+				<div class="sidenav">
+					<div class="logo">
+						Online monitoring
+						<img src="/WebPath/images/iconImages/mu2e_logo_oval_small.png" alt="" 	width="50%">
+						<img src="/WebPath/images/otsdaqIcons/logo.png" alt="" 	width="46%">
+					</div>
+					<button class="open-page-btn" onmousedown="openPage('/WebPath/html/DqmPages/DqmHome.html')"><i class="fa fa-fw fa-home"></i> HOME</button>
+					<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+					<a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+					<button class="dropdown-btn">DAQ
+						<i class="fa fa-caret-down"></i>
+					</button>
+					<div class="dropdown-container">
+						<button class="open-page-btn" onmousedown="openPage('/WebPath/html/DqmPages/DaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> Daq room health</button>
+						<a href="#">Link 2</a>
+						<a href="#">Link 3</a>
+					</div>
+					<button class="dropdown-btn">DCS
+						<i class="fa fa-caret-down"></i>
+					</button>
+					<div class="dropdown-container">
+						<button class="open-page-btn" onmousedown="openPage('/WebPath/html/SlowControlsDashboard.html')"><i class="fa fa-fw fa-gear"></i> Dashboard</button>
+						<a href="#">Link 4</a>
+						<a href="#">Link 5</a>
+						<a href="#">Link 6</a>
+					</div>
+					<button class="dropdown-btn">STM
+						<i class="fa fa-caret-down"></i>
+					</button>
+					<div class="dropdown-container">
+						<a href="#">Link 7</a>
+						<a href="#">Link 8</a>
+						<a href="#">Link 9</a>
+					</div>
+					<button class="dropdown-btn">CRV
+						<i class="fa fa-caret-down"></i>
+					</button>
+					<div class="dropdown-container">
+						<a href="#">Link 10</a>
+						<a href="#">Link 11</a>
+						<a href="#">Link 12</a>
+					</div>
+					<button class="dropdown-btn">ECAL
+						<i class="fa fa-caret-down"></i>
+					</button>
+					<div class="dropdown-container">
+						<a href="#">Link 13</a>
+						<a href="#">Link 14</a>
+						<a href="#">Link 15</a>
+					</div>
+					<button class="dropdown-btn">TRK
+						<i class="fa fa-caret-down"></i>
+					</button>
+					<div class="dropdown-container">
+						<a href="#">Link 16</a>
+						<a href="#">Link 17</a>
+						<a href="#">Link 18</a>
+					</div>
+				</div> <!-- end sidenav -->
+			</div> <!-- end side block -->
+			<div class="main">
+				<iframe class="mainFrame" id="mainFrame" src="">
+				</iframe>
+			</div> <!-- end main frame block -->
+		</div> <!-- end row block container -->
+
+		<div class="footer">
+			<h2>Footer</h2>
+		</div>
+	</body>
+</html>

@@ -32,7 +32,7 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 	artdaqMode_ = ARTDAQTableBase::isARTDAQEnabled(getConfigurationManager());
 	__FE_COUTV__(artdaqMode_);
 
-	operatingMode_ = "HardwareDevMode";  // choose default
+	operatingMode_ = CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV;  // choose default
 	try
 	{
 		auto mu2eGlobalRecords =
