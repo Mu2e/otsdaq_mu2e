@@ -1,0 +1,33 @@
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: 			white;
+	overflow: 					hidden;
+	transition: 				background-color .25s;
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+/* Column containers */
+.mainBlockContainer {
+
+	display: flex;
+	flex-direction: column;
+	margin: 20px;
+  }
+  
+  /* Main column */
+  .plotContainer {
+	width: 100%;
+	height: 100%;
+	background-color: white;
+  }
+
+   /* TIME button */
+   .timeButton {
+	margin-left: 3px;
+	margin-bottom: 6px;
+  }
