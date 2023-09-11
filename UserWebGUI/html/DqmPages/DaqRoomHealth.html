@@ -5,7 +5,7 @@
 
 
 
-		<link rel="stylesheet" type="text/css" href="/WebPath/css/DqmPagesCss/DaqRoomHealth.css">
+		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DqmPagesCss/DaqRoomHealth.css">
 
 		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
 		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
@@ -101,199 +101,339 @@
 			}
 
 			var pvLedE_ = [
-				 {"Mu2e:RackProt:1E:state": 1}
-				,{"Mu2e:RackTemp:1E:0:T_hyst": 1}
-				// ,{"Mu2e:RackTemp:1E:0:T_trip": 1}
-				// ,{"Mu2e:RackTemp:1E:0:configbyte": 1}
-				,{"Mu2e:RackTemp:1E:1:T_hyst": 1}
-				// ,{"Mu2e:RackTemp:1E:1:T_trip": 1}
-				// ,{"Mu2e:RackTemp:1E:1:configbyte": 1}
-				,{"Mu2e:RackTemp:1E:2:T_hyst": 1}
-				// ,{"Mu2e:RackTemp:1E:2:T_trip": 1}
-				// ,{"Mu2e:RackTemp:1E:2:configbyte": 1}
-				,{"Mu2e:RackProt:2E:state": 2}
-				// ,{"Mu2e:RackTemp:3E:0:T_trip": 2}
-				// ,{"Mu2e:RackTemp:3E:0:configbyte": 2}
-				,{"Mu2e:RackTemp:2E:0:T_hyst": 2}
-				// ,{"Mu2e:RackTemp:2E:0:T_trip": 2}
-				// ,{"Mu2e:RackTemp:2E:0:configbyte": 2}
-				,{"Mu2e:RackTemp:2E:1:T_hyst": 2}
-				// ,{"Mu2e:RackTemp:2E:1:T_trip": 2}
-				// ,{"Mu2e:RackTemp:2E:1:configbyte": 2}
-				,{"Mu2e:RackTemp:2E:2:T_hyst": 2}
-				// ,{"Mu2e:RackTemp:2E:2:T_trip": 2}
-				// ,{"Mu2e:RackTemp:2E:2:configbyte": 2}
-				,{"Mu2e:RackProt:3E:state": 3}
-				,{"Mu2e:RackTemp:3E:0:T_hyst": 3}
-				// ,{"Mu2e:RackTemp:3E:0:T_trip": 3}
-				// ,{"Mu2e:RackTemp:3E:0:configbyte": 3}
-				,{"Mu2e:RackTemp:3E:1:T_hyst": 3}
-				// ,{"Mu2e:RackTemp:3E:1:T_trip": 3}
-				// ,{"Mu2e:RackTemp:3E:1:configbyte": 3}
-				,{"Mu2e:RackTemp:3E:2:T_hyst": 3}
-				// ,{"Mu2e:RackTemp:3E:2:T_trip": 3}
-				// ,{"Mu2e:RackTemp:3E:2:configbyte": 3}
-				,{"Mu2e:RackProt:4E:state": 4}
-				,{"Mu2e:RackTemp:4E:0:T_hyst": 4}
-				// ,{"Mu2e:RackTemp:4E:0:T_trip": 4}
-				// ,{"Mu2e:RackTemp:4E:0:configbyte": 4}
-				,{"Mu2e:RackTemp:4E:1:T_hyst": 4}
-				// ,{"Mu2e:RackTemp:4E:1:T_trip": 4}
-				// ,{"Mu2e:RackTemp:4E:1:configbyte": 4}
-				// ,{"Mu2e:RackTemp:4E:2:T_hyst": 4}
-				,{"Mu2e:RackTemp:4E:2:T_trip": 4}
-				// ,{"Mu2e:RackTemp:4E:2:configbyte": 4}
-				,{"Mu2e:RackProt:5E:state": 5}
-				,{"Mu2e:RackTemp:5E:0:T_hyst": 5}
-				// ,{"Mu2e:RackTemp:5E:0:T_trip": 5}
-				// ,{"Mu2e:RackTemp:5E:0:configbyte": 5}
-				,{"Mu2e:RackTemp:5E:1:T_hyst": 5}
-				// ,{"Mu2e:RackTemp:5E:1:T_trip": 5}
-				// ,{"Mu2e:RackTemp:5E:1:configbyte": 5}
-				,{"Mu2e:RackTemp:5E:2:T_hyst": 5}
-				// ,{"Mu2e:RackTemp:5E:2:T_trip": 5}
-				// ,{"Mu2e:RackTemp:5E:2:configbyte": 5}
-				,{"Mu2e:RackProt:6E:state": 6}
-				,{"Mu2e:RackTemp:6E:0:T_hyst": 6}
-				// ,{"Mu2e:RackTemp:6E:0:T_trip": 6}
-				// ,{"Mu2e:RackTemp:6E:0:configbyte": 6}
-				,{"Mu2e:RackTemp:6E:1:T_hyst": 6}
-				// ,{"Mu2e:RackTemp:6E:1:T_trip": 6}
-				// ,{"Mu2e:RackTemp:6E:1:configbyte": 6}
-				,{"Mu2e:RackTemp:6E:2:T_hyst": 6}
-				// ,{"Mu2e:RackTemp:6E:2:T_trip": 6}
-				// ,{"Mu2e:RackTemp:6E:2:configbyte": 6}
-				,{"Mu2e:RackProt:7E:state": 7}
-				,{"Mu2e:RackTemp:7E:0:T_hyst": 7}
-				// ,{"Mu2e:RackTemp:7E:0:T_trip": 7}
-				// ,{"Mu2e:RackTemp:7E:0:configbyte": 7}
-				,{"Mu2e:RackTemp:7E:1:T_hyst": 7}
-				// ,{"Mu2e:RackTemp:7E:1:T_trip": 7}
-				// ,{"Mu2e:RackTemp:7E:1:configbyte": 7}
-				,{"Mu2e:RackTemp:7E:2:T_hyst": 7}
-				// ,{"Mu2e:RackTemp:7E:2:T_trip": 7}
-				// ,{"Mu2e:RackTemp:7E:2:configbyte": 7}
-				];
+ 				  {"Mu2e:RackProt:1E:state": 1}
+				, {"Mu2e:RackProt:2E:state": 2}
+				, {"Mu2e:RackProt:3E:state": 3}
+				, {"Mu2e:RackProt:4E:state": 4}
+				, {"Mu2e:RackProt:5E:state": 5}
+				, {"Mu2e:RackProt:6E:state": 6}
+				, {"Mu2e:RackProt:7E:state": 7}
+
+				// , {"Mu2e:RackTemp:1E:0:T_hyst": 1}
+				// , {"Mu2e:RackTemp:1E:1:T_hyst": 1}
+				// , {"Mu2e:RackTemp:1E:2:T_hyst": 1}
+				// , {"Mu2e:RackTemp:2E:0:T_hyst": 2}
+				// , {"Mu2e:RackTemp:2E:1:T_hyst": 2}
+				// , {"Mu2e:RackTemp:2E:2:T_hyst": 2}
+				// , {"Mu2e:RackTemp:3E:0:T_hyst": 3}
+				// , {"Mu2e:RackTemp:3E:1:T_hyst": 3}
+				// , {"Mu2e:RackTemp:3E:2:T_hyst": 3}
+				// , {"Mu2e:RackTemp:4E:0:T_hyst": 4}
+				// , {"Mu2e:RackTemp:4E:1:T_hyst": 4}
+				// , {"Mu2e:RackTemp:4E:2:T_hyst": 4}
+				// , {"Mu2e:RackTemp:5E:0:T_hyst": 5}
+				// , {"Mu2e:RackTemp:5E:1:T_hyst": 5}
+				// , {"Mu2e:RackTemp:5E:2:T_hyst": 5}
+				// , {"Mu2e:RackTemp:6E:0:T_trip": 6}
+				// , {"Mu2e:RackTemp:6E:1:T_hyst": 6}
+				// , {"Mu2e:RackTemp:6E:2:T_hyst": 6}
+				// , {"Mu2e:RackTemp:7E:0:T_hyst": 7}
+				// , {"Mu2e:RackTemp:7E:1:T_hyst": 7}
+				// , {"Mu2e:RackTemp:7E:2:T_hyst": 7}
+ 
+				// , {"Mu2e:RackTemp:1E:0:T_trip": 1}
+				// , {"Mu2e:RackTemp:1E:1:T_trip": 1}
+				// , {"Mu2e:RackTemp:1E:2:T_trip": 1}
+				// , {"Mu2e:RackTemp:2E:0:T_trip": 2}
+				// , {"Mu2e:RackTemp:2E:1:T_trip": 2}
+				// , {"Mu2e:RackTemp:2E:2:T_trip": 2}
+				// , {"Mu2e:RackTemp:3E:0:T_trip": 3}
+				// , {"Mu2e:RackTemp:3E:1:T_trip": 3}
+				// , {"Mu2e:RackTemp:3E:2:T_trip": 3}
+				// , {"Mu2e:RackTemp:4E:0:T_trip": 4}
+				// , {"Mu2e:RackTemp:4E:1:T_trip": 4}
+				// , {"Mu2e:RackTemp:4E:2:T_trip": 4}
+				// , {"Mu2e:RackTemp:5E:0:T_trip": 5}
+				// , {"Mu2e:RackTemp:5E:1:T_trip": 5}
+				// , {"Mu2e:RackTemp:5E:2:T_trip": 5}
+				// , {"Mu2e:RackTemp:6E:0:T_trip": 6}
+				// , {"Mu2e:RackTemp:6E:1:T_trip": 6}
+				// , {"Mu2e:RackTemp:6E:2:T_trip": 6}
+				// , {"Mu2e:RackTemp:7E:0:T_trip": 7}
+				// , {"Mu2e:RackTemp:7E:1:T_trip": 7}
+				// , {"Mu2e:RackTemp:7E:2:T_trip": 7}
+ 
+				// , {"Mu2e:RackTemp:1E:0:configbyte": 1}
+				// , {"Mu2e:RackTemp:1E:1:configbyte": 1}
+				// , {"Mu2e:RackTemp:1E:2:configbyte": 1}
+				// , {"Mu2e:RackTemp:3E:0:configbyte": 2}
+				// , {"Mu2e:RackTemp:2E:0:configbyte": 2}
+				// , {"Mu2e:RackTemp:2E:1:configbyte": 2}
+				// , {"Mu2e:RackTemp:2E:2:configbyte": 2}
+				// , {"Mu2e:RackTemp:3E:0:configbyte": 3}
+				// , {"Mu2e:RackTemp:3E:1:configbyte": 3}
+				// , {"Mu2e:RackTemp:3E:2:configbyte": 3}
+				// , {"Mu2e:RackTemp:4E:0:configbyte": 4}
+				// , {"Mu2e:RackTemp:4E:1:configbyte": 4}
+				// , {"Mu2e:RackTemp:4E:2:configbyte": 4}
+				// , {"Mu2e:RackTemp:5E:0:configbyte": 5}
+				// , {"Mu2e:RackTemp:5E:1:configbyte": 5}
+				// , {"Mu2e:RackTemp:5E:2:configbyte": 5}
+				// , {"Mu2e:RackTemp:6E:0:configbyte": 6}
+				// , {"Mu2e:RackTemp:6E:1:configbyte": 6}
+				// , {"Mu2e:RackTemp:6E:2:configbyte": 6}
+				// , {"Mu2e:RackTemp:7E:0:configbyte": 7}
+				// , {"Mu2e:RackTemp:7E:1:configbyte": 7}
+				// , {"Mu2e:RackTemp:7E:2:configbyte": 7}
+				]; 
 
 			var pvLedW_ = [
-				 {"Mu2e:RackProt:1W:state": 1}
-				,{"Mu2e:RackTemp:1W:0:T_hyst": 1}
-				// ,{"Mu2e:RackTemp:1W:0:T_trip": 1}
-				// ,{"Mu2e:RackTemp:1W:0:configbyte": 1}
-				,{"Mu2e:RackTemp:1W:1:T_hyst": 1}
-				// ,{"Mu2e:RackTemp:1W:1:T_trip": 1}
-				// ,{"Mu2e:RackTemp:1W:1:configbyte": 1}
-				,{"Mu2e:RackTemp:1W:2:T_hyst": 1}
-				// ,{"Mu2e:RackTemp:1W:2:T_trip": 1}
-				// ,{"Mu2e:RackTemp:1W:2:configbyte": 1}
-				,{"Mu2e:RackProt:2W:state": 2}
-				,{"Mu2e:RackTemp:2W:0:T_hyst": 2}
-				// ,{"Mu2e:RackTemp:2W:0:T_trip": 2}
-				// ,{"Mu2e:RackTemp:2W:0:configbyte": 2}
-				,{"Mu2e:RackTemp:2W:1:T_hyst": 2}
-				// ,{"Mu2e:RackTemp:2W:1:T_trip": 2}
-				// ,{"Mu2e:RackTemp:2W:1:configbyte": 2}
-				,{"Mu2e:RackTemp:2W:2:T_hyst": 2}
-				// ,{"Mu2e:RackTemp:2W:2:T_trip": 2}
-				// ,{"Mu2e:RackTemp:2W:2:configbyte": 2}
-				,{"Mu2e:RackProt:3W:state": 3}
-				,{"Mu2e:RackTemp:3W:0:T_hyst": 3}
-				// ,{"Mu2e:RackTemp:3W:0:T_trip": 3}
-				// ,{"Mu2e:RackTemp:3W:0:configbyte": 3}
-				,{"Mu2e:RackTemp:3W:1:T_hyst": 3}
-				// ,{"Mu2e:RackTemp:3W:1:T_trip": 3}
-				// ,{"Mu2e:RackTemp:3W:1:configbyte": 3}
-				,{"Mu2e:RackTemp:3W:2:T_hyst": 3}
-				// ,{"Mu2e:RackTemp:3W:2:T_trip": 3}
-				// ,{"Mu2e:RackTemp:3W:2:configbyte": 3}
-				,{"Mu2e:RackProt:4W:state": 4}
-				,{"Mu2e:RackTemp:4W:0:T_hyst": 4}
-				// ,{"Mu2e:RackTemp:4W:0:T_trip": 4}
-				// ,{"Mu2e:RackTemp:4W:0:configbyte": 4}
-				,{"Mu2e:RackTemp:4W:1:T_hyst": 4}
-				// ,{"Mu2e:RackTemp:4W:1:T_trip": 4}
-				// ,{"Mu2e:RackTemp:4W:1:configbyte": 4}
-				,{"Mu2e:RackTemp:4W:2:T_hyst": 4}
-				// ,{"Mu2e:RackTemp:4W:2:T_trip": 4}
-				// ,{"Mu2e:RackTemp:4W:2:configbyte": 4}
-				,{"Mu2e:RackProt:5W:state": 5}
-				,{"Mu2e:RackTemp:5W:0:T_hyst": 5}
-				// ,{"Mu2e:RackTemp:5W:0:T_trip": 5}
-				// ,{"Mu2e:RackTemp:5W:0:configbyte": 5}
-				,{"Mu2e:RackTemp:5W:1:T_hyst": 5}
-				// ,{"Mu2e:RackTemp:5W:1:T_trip": 5}
-				// ,{"Mu2e:RackTemp:5W:1:configbyte": 5}
-				,{"Mu2e:RackTemp:5W:2:T_hyst": 5}
-				// ,{"Mu2e:RackTemp:5W:2:T_trip": 5}
-				// ,{"Mu2e:RackTemp:5W:2:configbyte": 5}
-				,{"Mu2e:RackProt:6W:state": 6}
-				,{"Mu2e:RackTemp:6W:0:T_hyst": 6}
-				// ,{"Mu2e:RackTemp:6W:0:T_trip": 6}
-				// ,{"Mu2e:RackTemp:6W:0:configbyte": 6}
-				,{"Mu2e:RackTemp:6W:1:T_hyst": 6}
-				// ,{"Mu2e:RackTemp:6W:1:T_trip": 6}
-				// ,{"Mu2e:RackTemp:6W:1:configbyte": 6}
-				,{"Mu2e:RackTemp:6W:2:T_hyst": 6}
-				// ,{"Mu2e:RackTemp:6W:2:T_trip": 6}
-				// ,{"Mu2e:RackTemp:6W:2:configbyte": 6}
-				,{"Mu2e:RackProt:7W:state": 7}
-				,{"Mu2e:RackTemp:7W:0:T_hyst": 7}
-				// ,{"Mu2e:RackTemp:7W:0:T_trip": 7}
-				// ,{"Mu2e:RackTemp:7W:0:configbyte": 7}
-				,{"Mu2e:RackTemp:7W:1:T_hyst": 7}
-				// ,{"Mu2e:RackTemp:7W:1:T_trip": 7}
-				// ,{"Mu2e:RackTemp:7W:1:configbyte": 7}
-				,{"Mu2e:RackTemp:7W:2:T_hyst": 7}
-				// ,{"Mu2e:RackTemp:7W:2:T_trip": 7}
-				// ,{"Mu2e:RackTemp:7W:2:configbyte": 7}
-			];
+				   {"Mu2e:RackProt:1W:state": 1}
+				 , {"Mu2e:RackProt:2W:state": 2}
+				 , {"Mu2e:RackProt:3W:state": 3}
+				 , {"Mu2e:RackProt:4W:state": 4}
+				 , {"Mu2e:RackProt:5W:state": 5}
+				 , {"Mu2e:RackProt:6W:state": 6}
+				 , {"Mu2e:RackProt:7W:state": 7}
+
+				//  , {"Mu2e:RackTemp:1W:0:T_hyst": 1}
+				//  , {"Mu2e:RackTemp:1W:1:T_hyst": 1}
+				//  , {"Mu2e:RackTemp:1W:2:T_hyst": 1}
+				//  , {"Mu2e:RackTemp:2W:0:T_hyst": 2}
+				//  , {"Mu2e:RackTemp:2W:1:T_hyst": 2}
+				//  , {"Mu2e:RackTemp:2W:2:T_hyst": 2}
+				//  , {"Mu2e:RackTemp:3W:0:T_hyst": 3}
+				//  , {"Mu2e:RackTemp:3W:2:T_hyst": 3}
+				//  , {"Mu2e:RackTemp:3W:1:T_hyst": 3}
+				//  , {"Mu2e:RackTemp:4W:0:T_hyst": 4}
+				//  , {"Mu2e:RackTemp:4W:1:T_hyst": 4}
+				//  , {"Mu2e:RackTemp:4W:2:T_hyst": 4}
+				//  , {"Mu2e:RackTemp:5W:0:T_hyst": 5}
+				//  , {"Mu2e:RackTemp:5W:1:T_hyst": 5}
+				//  , {"Mu2e:RackTemp:5W:2:T_hyst": 5}
+				//  , {"Mu2e:RackTemp:6W:0:T_hyst": 6}
+				//  , {"Mu2e:RackTemp:6W:1:T_hyst": 6}
+				//  , {"Mu2e:RackTemp:6W:2:T_hyst": 6}
+				//  , {"Mu2e:RackTemp:7W:0:T_hyst": 7}
+				//  , {"Mu2e:RackTemp:7W:1:T_hyst": 7}
+				//  , {"Mu2e:RackTemp:7W:2:T_hyst": 7}
+ 
+				//  , {"Mu2e:RackTemp:1W:0:T_trip": 1}
+				//  , {"Mu2e:RackTemp:1W:1:T_trip": 1}
+				//  , {"Mu2e:RackTemp:1W:2:T_trip": 1}
+				//  , {"Mu2e:RackTemp:2W:0:T_trip": 2}
+				//  , {"Mu2e:RackTemp:2W:1:T_trip": 2}
+				//  , {"Mu2e:RackTemp:2W:2:T_trip": 2}
+				//  , {"Mu2e:RackTemp:3W:0:T_trip": 3}
+				//  , {"Mu2e:RackTemp:3W:1:T_trip": 3}
+				//  , {"Mu2e:RackTemp:3W:2:T_trip": 3}
+				//  , {"Mu2e:RackTemp:4W:0:T_trip": 4}
+				//  , {"Mu2e:RackTemp:4W:1:T_trip": 4}
+				//  , {"Mu2e:RackTemp:4W:2:T_trip": 4}
+				//  , {"Mu2e:RackTemp:5W:0:T_trip": 5}
+				//  , {"Mu2e:RackTemp:5W:1:T_trip": 5}
+				//  , {"Mu2e:RackTemp:5W:2:T_trip": 5}
+				//  , {"Mu2e:RackTemp:6W:0:T_trip": 6}
+				//  , {"Mu2e:RackTemp:6W:1:T_trip": 6}
+				//  , {"Mu2e:RackTemp:6W:2:T_trip": 6}
+				//  , {"Mu2e:RackTemp:7W:0:T_trip": 7}
+				//  , {"Mu2e:RackTemp:7W:1:T_trip": 7}
+				//  , {"Mu2e:RackTemp:7W:2:T_trip": 7}
+
+				//  , {"Mu2e:RackTemp:1W:0:configbyte": 1}
+				//  , {"Mu2e:RackTemp:1W:1:configbyte": 1}
+				//  , {"Mu2e:RackTemp:1W:2:configbyte": 1}
+				//  , {"Mu2e:RackTemp:2W:0:configbyte": 2}
+				//  , {"Mu2e:RackTemp:2W:1:configbyte": 2}
+				//  , {"Mu2e:RackTemp:2W:2:configbyte": 2}
+				//  , {"Mu2e:RackTemp:3W:0:configbyte": 3}
+				//  , {"Mu2e:RackTemp:3W:1:configbyte": 3}
+				//  , {"Mu2e:RackTemp:3W:2:configbyte": 3}
+				//  , {"Mu2e:RackTemp:4W:0:configbyte": 4}
+				//  , {"Mu2e:RackTemp:4W:1:configbyte": 4}
+				//  , {"Mu2e:RackTemp:4W:2:configbyte": 4}
+				//  , {"Mu2e:RackTemp:5W:0:configbyte": 5}
+				//  , {"Mu2e:RackTemp:5W:1:configbyte": 5}
+				//  , {"Mu2e:RackTemp:5W:2:configbyte": 5}
+				//  , {"Mu2e:RackTemp:6W:0:configbyte": 6}
+				//  , {"Mu2e:RackTemp:6W:1:configbyte": 6}
+				//  , {"Mu2e:RackTemp:6W:2:configbyte": 6}
+				//  , {"Mu2e:RackTemp:7W:0:configbyte": 7}
+				//  , {"Mu2e:RackTemp:7W:1:configbyte": 7}
+				//  , {"Mu2e:RackTemp:7W:2:configbyte": 7}
+			]; 
 
 			var pvTemperE_ = [
-				 {"Mu2e:RackTemp:1E:0:temperature": 1}
-				,{"Mu2e:RackTemp:1E:1:temperature": 1}
-				,{"Mu2e:RackTemp:1E:2:temperature": 1}
-				,{"Mu2e:RackTemp:2E:0:temperature": 2}
-				,{"Mu2e:RackTemp:2E:1:temperature": 2}
-				,{"Mu2e:RackTemp:2E:2:temperature": 2}
-				,{"Mu2e:RackTemp:3E:0:temperature": 3}
-				,{"Mu2e:RackTemp:3E:1:temperature": 3}
-				,{"Mu2e:RackTemp:3E:2:temperature": 3}
-				,{"Mu2e:RackTemp:4E:0:temperature": 4}
-				,{"Mu2e:RackTemp:4E:1:temperature": 4}
-				,{"Mu2e:RackTemp:4E:2:temperature": 4}
-				,{"Mu2e:RackTemp:5E:0:temperature": 5}
-				,{"Mu2e:RackTemp:5E:1:temperature": 5}
-				,{"Mu2e:RackTemp:5E:2:temperature": 5}
-				,{"Mu2e:RackTemp:6E:0:temperature": 6}
-				,{"Mu2e:RackTemp:6E:1:temperature": 6}
-				,{"Mu2e:RackTemp:6E:2:temperature": 6}
-				,{"Mu2e:RackTemp:7E:0:temperature": 7}
-				,{"Mu2e:RackTemp:7E:1:temperature": 7}
-				,{"Mu2e:RackTemp:7E:2:temperature": 7}
+				  {"Mu2e:RackTemp:1E:0:temperature": 1}
+				, {"Mu2e:RackTemp:1E:1:temperature": 1}
+				, {"Mu2e:RackTemp:1E:2:temperature": 1}
+				, {"Mu2e:RackTemp:2E:0:temperature": 2}
+				, {"Mu2e:RackTemp:2E:1:temperature": 2}
+				, {"Mu2e:RackTemp:2E:2:temperature": 2}
+				, {"Mu2e:RackTemp:3E:0:temperature": 3}
+				, {"Mu2e:RackTemp:3E:1:temperature": 3}
+				, {"Mu2e:RackTemp:3E:2:temperature": 3}
+				, {"Mu2e:RackTemp:4E:0:temperature": 4}
+				, {"Mu2e:RackTemp:4E:1:temperature": 4}
+				, {"Mu2e:RackTemp:4E:2:temperature": 4}
+				, {"Mu2e:RackTemp:5E:0:temperature": 5}
+				, {"Mu2e:RackTemp:5E:1:temperature": 5}
+				, {"Mu2e:RackTemp:5E:2:temperature": 5}
+				, {"Mu2e:RackTemp:6E:0:temperature": 6}
+				, {"Mu2e:RackTemp:6E:1:temperature": 6}
+				, {"Mu2e:RackTemp:6E:2:temperature": 6}
+				, {"Mu2e:RackTemp:7E:0:temperature": 7}
+				, {"Mu2e:RackTemp:7E:1:temperature": 7}
+				, {"Mu2e:RackTemp:7E:2:temperature": 7}
 			];
 
 			var pvTemperW_ = [
-				 {"Mu2e:RackTemp:1W:0:temperature": 1}
-				,{"Mu2e:RackTemp:1W:1:temperature": 1}
-				,{"Mu2e:RackTemp:1W:2:temperature": 1}
-				,{"Mu2e:RackTemp:2W:0:temperature": 2}
-				,{"Mu2e:RackTemp:2W:1:temperature": 2}
-				,{"Mu2e:RackTemp:2W:2:temperature": 2}
-				,{"Mu2e:RackTemp:3W:0:temperature": 3}
-				,{"Mu2e:RackTemp:3W:1:temperature": 3}
-				,{"Mu2e:RackTemp:3W:2:temperature": 3}
-				,{"Mu2e:RackTemp:4W:0:temperature": 4}
-				,{"Mu2e:RackTemp:4W:1:temperature": 4}
-				,{"Mu2e:RackTemp:4W:2:temperature": 4}
-				,{"Mu2e:RackTemp:5W:0:temperature": 5}
-				,{"Mu2e:RackTemp:5W:1:temperature": 5}
-				,{"Mu2e:RackTemp:5W:2:temperature": 5}
-				,{"Mu2e:RackTemp:6W:0:temperature": 6}
-				,{"Mu2e:RackTemp:6W:1:temperature": 6}
-				,{"Mu2e:RackTemp:6W:2:temperature": 6}
-				,{"Mu2e:RackTemp:7W:0:temperature": 7}
-				,{"Mu2e:RackTemp:7W:1:temperature": 7}
-				,{"Mu2e:RackTemp:7W:2:temperature": 7}
+				  {"Mu2e:RackTemp:1W:0:temperature": 1}
+				, {"Mu2e:RackTemp:1W:1:temperature": 1}
+				, {"Mu2e:RackTemp:1W:2:temperature": 1}
+				, {"Mu2e:RackTemp:2W:0:temperature": 2}
+				, {"Mu2e:RackTemp:2W:1:temperature": 2}
+				, {"Mu2e:RackTemp:2W:2:temperature": 2}
+				, {"Mu2e:RackTemp:3W:0:temperature": 3}
+				, {"Mu2e:RackTemp:3W:1:temperature": 3}
+				, {"Mu2e:RackTemp:3W:2:temperature": 3}
+				, {"Mu2e:RackTemp:4W:0:temperature": 4}
+				, {"Mu2e:RackTemp:4W:1:temperature": 4}
+				, {"Mu2e:RackTemp:4W:2:temperature": 4}
+				, {"Mu2e:RackTemp:5W:0:temperature": 5}
+				, {"Mu2e:RackTemp:5W:1:temperature": 5}
+				, {"Mu2e:RackTemp:5W:2:temperature": 5}
+				, {"Mu2e:RackTemp:6W:0:temperature": 6}
+				, {"Mu2e:RackTemp:6W:1:temperature": 6}
+				, {"Mu2e:RackTemp:6W:2:temperature": 6}
+				, {"Mu2e:RackTemp:7W:0:temperature": 7}
+				, {"Mu2e:RackTemp:7W:1:temperature": 7}
+				, {"Mu2e:RackTemp:7W:2:temperature": 7}
+			];
+
+			var pvNodeLedE_ = [
+				//1E
+				  {"Mu2e:PDU:1E_L:P1": [1, 1, 1]}
+				, {"Mu2e:PDU:1E_L:P2": [1, 1, 2]}
+				, {"Mu2e:PDU:1E_L:P3": [1, 1, 3]}
+				, {"Mu2e:PDU:1E_R:P1": [1, 1, 4]}
+				, {"Mu2e:PDU:1E_R:P2": [1, 1, 5]}
+				, {"Mu2e:PDU:1E_R:P3": [1, 1, 6]}
+				//2E
+				// , {"Mu2e:PDU:2E_L:P1": [2, 4, 1]}
+				// , {"Mu2e:PDU:2E_L:P2": [2, 4, 2]}
+				// , {"Mu2e:PDU:2E_L:P3": [2, 4, 3]}
+				, {"Mu2e:PDU:2E_R:P1": [2, 1, 4]}
+				, {"Mu2e:PDU:2E_R:P2": [2, 1, 5]}
+				, {"Mu2e:PDU:2E_R:P3": [2, 1, 6]}
+				//3E
+				, {"Mu2e:PDU:3E_L:P1": [3, 1, 1]}
+				, {"Mu2e:PDU:3E_L:P2": [3, 1, 2]}
+				, {"Mu2e:PDU:3E_L:P3": [3, 1, 3]}
+				, {"Mu2e:PDU:3E_R:P1": [3, 1, 4]}
+				, {"Mu2e:PDU:3E_R:P2": [3, 1, 5]}
+				, {"Mu2e:PDU:3E_R:P3": [3, 1, 6]}
+				//4E
+				// , {"Mu2e:PDU:4E_L:P1": [4, 4, 1]}
+				// , {"Mu2e:PDU:4E_L:P2": [4, 4, 2]}
+				// , {"Mu2e:PDU:4E_L:P3": [4, 4, 3]}
+				, {"Mu2e:PDU:4E_R:P1": [4, 1, 4]}
+				, {"Mu2e:PDU:4E_R:P2": [4, 1, 5]}
+				, {"Mu2e:PDU:4E_R:P3": [4, 1, 6]}
+				//5E
+				, {"Mu2e:PDU:5E_L:P1": [5, 1, 1]}
+				, {"Mu2e:PDU:5E_L:P2": [5, 1, 2]}
+				, {"Mu2e:PDU:5E_L:P3": [5, 1, 3]}
+				, {"Mu2e:PDU:5E_R:P1": [5, 1, 4]}
+				, {"Mu2e:PDU:5E_R:P2": [5, 1, 5]}
+				, {"Mu2e:PDU:5E_R:P3": [5, 1, 6]}
+				//6E
+				// , {"Mu2e:PDU:6E_L:P1": [6, 4, 1]}
+				// , {"Mu2e:PDU:6E_L:P2": [6, 4, 2]}
+				// , {"Mu2e:PDU:6E_L:P3": [6, 4, 3]}
+				, {"Mu2e:PDU:6E_R:P1": [6, 1, 4]}
+				, {"Mu2e:PDU:6E_R:P2": [6, 1, 5]}
+				, {"Mu2e:PDU:6E_R:P3": [6, 1, 6]}
+				//7E
+				// , {"Mu2e:PDU:7E_L:P1": [7, 4, 1]}
+				// , {"Mu2e:PDU:7E_L:P2": [7, 4, 2]}
+				// , {"Mu2e:PDU:7E_L:P3": [7, 4, 3]}
+				, {"Mu2e:PDU:7E_R:P1": [7, 1, 4]}
+				, {"Mu2e:PDU:7E_R:P2": [7, 1, 5]}
+				, {"Mu2e:PDU:7E_R:P3": [7, 1, 6]}
+			];
+
+			var pvNodeTemperE_ = [
+				//2E
+				  {"Mu2e:CompStatus:cfo-01:DTC0:dtctemp": [2, 11, 1]}
+				, {"Mu2e:CompStatus:cfo-01:DTC1:dtctemp": [2, 11, 2]}
+			];
+
+			var pvNodeLedW_ = [
+				//1W
+				  {"Mu2e:PDU:1W_L:P1": [1, 1, 1]}
+				, {"Mu2e:PDU:1W_L:P2": [1, 1, 2]}
+				, {"Mu2e:PDU:1W_L:P3": [1, 1, 3]}
+				, {"Mu2e:PDU:1W_R:P1": [1, 1, 4]}
+				, {"Mu2e:PDU:1W_R:P2": [1, 1, 5]}
+				, {"Mu2e:PDU:1W_R:P3": [1, 1, 6]}
+				//2W
+				, {"Mu2e:PDU:2W_L:P1": [2, 1, 1]}
+				, {"Mu2e:PDU:2W_L:P2": [2, 1, 2]}
+				, {"Mu2e:PDU:2W_L:P3": [2, 1, 3]}
+				, {"Mu2e:PDU:2W_R:P1": [2, 1, 4]}
+				, {"Mu2e:PDU:2W_R:P2": [2, 1, 5]}
+				, {"Mu2e:PDU:2W_R:P3": [2, 1, 6]}
+				//3W
+				, {"Mu2e:PDU:3W_L:P1": [3, 1, 1]}
+				, {"Mu2e:PDU:3W_L:P2": [3, 1, 2]}
+				, {"Mu2e:PDU:3W_L:P3": [3, 1, 3]}
+				, {"Mu2e:PDU:3W_R:P1": [3, 1, 4]}
+				, {"Mu2e:PDU:3W_R:P2": [3, 1, 5]}
+				, {"Mu2e:PDU:3W_R:P3": [3, 1, 6]}
+				//4W
+				, {"Mu2e:PDU:4W_L:P1": [4, 1, 1]}
+				, {"Mu2e:PDU:4W_L:P2": [4, 1, 2]}
+				, {"Mu2e:PDU:4W_L:P3": [4, 1, 3]}
+				, {"Mu2e:PDU:4W_R:P1": [4, 1, 4]}
+				, {"Mu2e:PDU:4W_R:P2": [4, 1, 5]}
+				, {"Mu2e:PDU:4W_R:P3": [4, 1, 6]}
+				//5W
+				, {"Mu2e:PDU:5W_L:P1": [5, 1, 1]}
+				, {"Mu2e:PDU:5W_L:P2": [5, 1, 2]}
+				, {"Mu2e:PDU:5W_L:P3": [5, 1, 3]}
+				, {"Mu2e:PDU:5W_R:P1": [5, 1, 4]}
+				, {"Mu2e:PDU:5W_R:P2": [5, 1, 5]}
+				, {"Mu2e:PDU:5W_R:P3": [5, 1, 6]}
+				//6W
+				// , {"Mu2e:PDU:6W_L:P1": [6, 4, 1]}
+				// , {"Mu2e:PDU:6W_L:P2": [6, 4, 2]}
+				// , {"Mu2e:PDU:6W_L:P3": [6, 4, 3]}
+				, {"Mu2e:PDU:6W_R:P1": [6, 1, 4]}
+				, {"Mu2e:PDU:6W_R:P2": [6, 1, 5]}
+				, {"Mu2e:PDU:6W_R:P3": [6, 1, 6]}
+				//7W
+				// , {"Mu2e:PDU:7W_L:P1": [7, 4, 1]}
+				// , {"Mu2e:PDU:7W_L:P2": [7, 4, 2]}
+				// , {"Mu2e:PDU:7W_L:P3": [7, 4, 3]}
+				, {"Mu2e:PDU:7W_R:P1": [7, 1, 4]}
+				, {"Mu2e:PDU:7W_R:P2": [7, 1, 5]}
+				, {"Mu2e:PDU:7W_R:P3": [7, 1, 6]}
+			];
+
+			var pvNodeTemperW_ = [
+				//1W
+				  {"Mu2e:CompStatus:calo-01:DTC0:dtctemp": [1, 11, 1]}
+				, {"Mu2e:CompStatus:calo-01:DTC1:dtctemp": [1, 11, 2]}
+				, {"Mu2e:CompStatus:calo-02:DTC0:dtctemp": [1, 10, 1]}
+				, {"Mu2e:CompStatus:calo-02:DTC1:dtctemp": [1, 10, 2]}
+				, {"Mu2e:CompStatus:calo-03:DTC0:dtctemp": [1, 9, 1]}
+				, {"Mu2e:CompStatus:calo-03:DTC1:dtctemp": [1, 9, 2]}
+				, {"Mu2e:CompStatus:calo-04:DTC0:dtctemp": [1, 8, 1]}
+				, {"Mu2e:CompStatus:calo-04:DTC1:dtctemp": [1, 8, 2]}
+				, {"Mu2e:CompStatus:calo-05:DTC0:dtctemp": [1, 7, 1]}
+				, {"Mu2e:CompStatus:calo-05:DTC1:dtctemp": [1, 7, 2]}
+				//5W
+				, {"Mu2e:CompStatus:trk-01:DTC0:dtctemp": [5, 11, 1]}
+				, {"Mu2e:CompStatus:trk-01:DTC1:dtctemp": [5, 11, 2]}
+				, {"Mu2e:CompStatus:trk-02:DTC0:dtctemp": [5, 10, 1]}
+				, {"Mu2e:CompStatus:trk-02:DTC1:dtctemp": [5, 10, 2]}
+				, {"Mu2e:CompStatus:trk-03:DTC0:dtctemp": [5, 9, 1]}
+				, {"Mu2e:CompStatus:trk-03:DTC1:dtctemp": [5, 9, 2]}
+				, {"Mu2e:CompStatus:trk-04:DTC0:dtctemp": [5, 8, 1]}
+				, {"Mu2e:CompStatus:trk-04:DTC1:dtctemp": [5, 8, 2]}
+				, {"Mu2e:CompStatus:trk-05:DTC0:dtctemp": [5, 7, 1]}
+				, {"Mu2e:CompStatus:trk-05:DTC1:dtctemp": [5, 7, 2]}
 			];
 
 			/////////////////////////////////////////////////////////////////////////////////////////
@@ -335,54 +475,7 @@
 				generateUID();
 				pollServer();
 
-				var plotPanel = document.getElementById('plotPanel');
-				dragElement(plotPanel);
-
-
 			} //end init()
-
-			//=====================================================================================
-			//Drag plotPanel function
-			function dragElement(elmnt) {
-				var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-				if (document.getElementById(elmnt.id + "header")) {
-					// if present, the header is where you move the DIV from:
-					document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-				} else {
-					// otherwise, move the DIV from anywhere inside the DIV:
-					elmnt.onmousedown = dragMouseDown;
-				}
-
-				function dragMouseDown(e) {
-					e = e || window.event;
-					e.preventDefault();
-					// get the mouse cursor position at startup:
-					pos3 = e.clientX;
-					pos4 = e.clientY;
-					document.onmouseup = closeDragElement;
-					// call a function whenever the cursor moves:
-					document.onmousemove = elementDrag;
-				}
-
-				function elementDrag(e) {
-					e = e || window.event;
-					e.preventDefault();
-					// calculate the new cursor position:
-					pos1 = pos3 - e.clientX;
-					pos2 = pos4 - e.clientY;
-					pos3 = e.clientX;
-					pos4 = e.clientY;
-					// set the element's new position:
-					elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-					elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-				}
-
-				function closeDragElement() {
-					// stop moving when mouse button is released:
-					document.onmouseup = null;
-					document.onmousemove = null;
-				}
-			} //end dragElement()
 
 
 			//=====================================================================================
@@ -399,76 +492,209 @@
 					var rackE = document.getElementById("rack" + (i+1) + "E");
 					var topRackE = document.createElement('div');
 					var bottomRackE = document.createElement('div');
+					topRackE.classList.add("topRack");
+					bottomRackE.classList.add("bottomRack");
 					rackE.appendChild(topRackE);
 					rackE.appendChild(bottomRackE);
 
 					var rackW = document.getElementById("rack" + (i+1) + "W");
 					var topRackW = document.createElement('div');
 					var bottomRackW = document.createElement('div');
+					topRackW.classList.add("topRack");
+					bottomRackW.classList.add("bottomRack");
 					rackW.appendChild(topRackW);
 					rackW.appendChild(bottomRackW);
 
+					//FILLS THE TOP RACK CONTAINER
 					for (j = 0; j < Math.max(pvLedE_length, pvLedW_length, pvTemperE_length, pvTemperW_length); j++)
 					{
 						//EAST RACK LEDs
 						if (pvLedE_[i+j] != undefined && Object.entries(pvLedE_[i+j])[0][1] == i+1)
 						{
 							var led = document.createElement('div');
-							led.id = "led-" + Object.entries(pvLedE_[i])[0][0];
+							led.id = "led-" + Object.entries(pvLedE_[i+j])[0][0];
 							led.classList.add("led");
 							topRackE.appendChild(led);
 							var widgetObject 		= {};
-							widgetObject.pvList 	= pvLedE_[i+j];
 							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvLedE_[i+j];
 							widgetObject.el = led;
-							page_.widgets[i+j] = widgetObject;
-							setupPvParams(i+j);
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							setupPvParams(widgetsLength);
 						}
 
 						//EAST RACK Temperatures
 						if (pvTemperE_[i+j] != undefined && Object.entries(pvTemperE_[i+j])[0][1] == i+1)
 						{
 							var temper = document.createElement('div');
-							temper.id = "temper-" + Object.entries(pvTemperE_[i])[0][0];
+							temper.id = "temper-" + Object.entries(pvTemperE_[i+j])[0][0];
 							temper.classList.add("temper");
-							bottomRackE.appendChild(temper);
+							topRackE.appendChild(temper);
 							var widgetObject 		= {};
-							widgetObject.pvList 	= pvTemperE_[i+j];
 							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvTemperE_[i+j];
 							widgetObject.el = temper;
-							page_.widgets[i + j + pvLedE_length] = widgetObject;
-							setupPvParams(i + j + pvLedE_length);
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							setupPvParams(widgetsLength);
 						}
 
 						//WEST RACK LEDs
 						if (pvLedW_[i+j] != undefined && Object.entries(pvLedW_[i+j])[0][1] == i+1)
 						{
 							var led = document.createElement('div');
-							led.id = "led-" + Object.entries(pvLedW_[i])[0][0];
+							led.id = "led-" + Object.entries(pvLedW_[i+j])[0][0];
 							led.classList.add("led");
 							topRackW.appendChild(led);
 							var widgetObject 		= {};
-							widgetObject.pvList 	= pvLedW_[i+j];
 							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvLedW_[i+j];
 							widgetObject.el = led;
-							page_.widgets[i + j + pvLedE_length + pvTemperE_length] = widgetObject;
-							setupPvParams(i + j + pvLedE_length + pvTemperE_length);
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							setupPvParams(widgetsLength);
 						}
 
 						//WEST RACK Temperatures
 						if (pvTemperW_[i+j] != undefined && Object.entries(pvTemperW_[i+j])[0][1] == i+1)
 						{
 							var temper = document.createElement('div');
-							temper.id = "temper-" + Object.entries(pvTemperW_[i])[0][0];
+							temper.id = "temper-" + Object.entries(pvTemperW_[i+j])[0][0];
 							temper.classList.add("temper");
-							bottomRackW.appendChild(temper);
+							topRackW.appendChild(temper);
 							var widgetObject 		= {};
-							widgetObject.pvList 	= pvTemperW_[i+j];
 							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvTemperW_[i+j];
 							widgetObject.el = temper;
-							page_.widgets[i + j + pvLedE_length + pvTemperE_length + pvLedW_length] = widgetObject;
-							setupPvParams(i + j + pvLedE_length + pvTemperE_length + pvLedW_length);
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							setupPvParams(widgetsLength);
 						}
+					}
+
+					//FILL THE BOTTOM RACK CONTAINER FOR NODES
+					var rackShelfSize = 11;
+					for (k = 0; k < rackShelfSize; k++)
+					{
+						var temperColumnSize = 2;
+						var ledColumnSize = 6;
+
+						//Fill East
+						var shelfE = document.createElement('div');
+						shelfE.classList.add("rackShelf");
+
+						for (l = 0; l < Object.keys(pvNodeLedE_).length; l++)
+						{
+							for (c = 0; c < ledColumnSize; c++)
+							{
+								if(Object.entries(pvNodeLedE_[l]) != undefined 
+									&& Object.entries(pvNodeLedE_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeLedE_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeLedE_[l])[0][1][2] == c+1)
+								{
+									var ledE = document.createElement('div');
+									ledE.classList.add("nodeLed");
+									shelfE.appendChild(ledE);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeLedE_[l];
+									ledE.id = "led-" + Object.entries(pvNodeLedE_[l])[0][0];
+									widgetObject.el = ledE;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									setupPvParams(widgetsLength);
+								}
+							}
+						}
+
+						for (l = 0; l < Object.keys(pvNodeTemperE_).length; l++)
+						{
+							for (c = 0; c < temperColumnSize; c++)
+							{
+								if(Object.entries(pvNodeTemperE_[l]) != undefined 
+									&& Object.entries(pvNodeTemperE_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeTemperE_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeTemperE_[l])[0][1][2] == c+1)
+								{
+									var temperE = document.createElement('div');
+									temperE.classList.add("nodeTemper");
+									shelfE.appendChild(temperE);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeTemperE_[l];
+									temperE.id = "temper-" + Object.entries(pvNodeTemperE_[l])[0][0];
+									widgetObject.el = temperE;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									setupPvParams(widgetsLength);
+								}
+							}
+						}
+
+						bottomRackE.appendChild(shelfE);
+
+						//Fill West
+						var shelfW = document.createElement('div');
+						shelfW.classList.add("rackShelf");
+
+						for (l = 0; l < Object.keys(pvNodeLedW_).length; l++)
+						{
+							for (c = 0; c < ledColumnSize; c++)
+							{
+								if(Object.entries(pvNodeLedW_[l]) != undefined 
+									&& Object.entries(pvNodeLedW_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeLedW_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeLedW_[l])[0][1][2] == c+1)
+								{
+									var ledW = document.createElement('div');
+									ledW.classList.add("nodeLed");
+									shelfW.appendChild(ledW);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeLedW_[l];
+									ledW.id = "led-" + Object.entries(pvNodeLedW_[l])[0][0];
+									widgetObject.el = ledW;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									setupPvParams(widgetsLength);
+								}
+							}
+						}
+
+						for (l = 0; l < Object.keys(pvNodeTemperW_).length; l++)
+						{
+							for (c = 0; c < temperColumnSize; c++)
+							{
+								if(Object.entries(pvNodeTemperW_[l]) != undefined 
+									&& Object.entries(pvNodeTemperW_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeTemperW_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeTemperW_[l])[0][1][2] == c+1)
+								{
+									var temperW = document.createElement('div');
+									temperW.classList.add("nodeTemper");
+									shelfW.appendChild(temperW);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeTemperW_[l];
+									temperW.id = "temper-" + Object.entries(pvNodeTemperW_[l])[0][0];
+									widgetObject.el = temperW;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									setupPvParams(widgetsLength);
+								}
+							}
+						}
+
+						bottomRackW.appendChild(shelfW);
 					}
 				}
 			} //end makeMainPage()
@@ -477,7 +703,7 @@
 			//=====================================================================================
 			function drawGraph(widget, pvName)
 			{
-				var url = location.origin + "/WebPath/html/DqmPages/Plot.html?urn=" + DesktopContent._localUrnLid + "&pv_name=" + pvName;
+				var url = location.origin + "/WebPath/UserWebPath/html/DqmPages/Plot.html?urn=" + DesktopContent._localUrnLid + "&pv_name=" + pvName;
 				DesktopContent.openNewWindow("Plot",pvName,url,false);
 			} //end drawGraph()
 
@@ -568,9 +794,10 @@
 				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
 				
 				if(page_.widgets[widget].el.id.indexOf('temper-') != -1)
-					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'>" + pvValue + " " + units + "</button>";
+					//page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'>" + Number.parseFloat(pvValue).toFixed(1) + " " + units + "</button>";
+					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
 				else
-					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
+					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
 
 				page_.widgets[widget].el.title = setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
 
@@ -582,8 +809,9 @@
 								, pvStatus
 								, pvSeverity
 								, false
+								, false
 								, "DimGray"
-								, "LightGray"
+								, "gray"
 								, "1px solid green"
 								);
 			} //end drawNewValue()
@@ -595,7 +823,7 @@
 				var toolTip =
 				pvName
 				+ "\nLast value: "
-				+ pvValue
+				+ Number.parseFloat(pvValue).toFixed(2)
 				+ " "
 				+ pvSettings[pvName].Units
 				
@@ -605,14 +833,14 @@
 				+ pvStatus
 				+ "\nSeverity: "
 				+ pvSeverity
-				+ "\nLower Warning Limit:  " + Number.parseFloat(pvSettings[pvName].Lower_Warning_Limit).toExponential(2) + "\n"
-			  	+ "Upper Warning Limit:  "   + Number.parseFloat(pvSettings[pvName].Upper_Warning_Limit).toExponential(2) + "\n"
-			  	+ "Lower Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Lower_Alarm_Limit).toExponential(2)   + "\n"
-			  	+ "Upper Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Upper_Alarm_Limit).toExponential(2)   + "\n"
-			  	+ "Lower Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Control_Limit).toExponential(2) + "\n"
-			  	+ "Upper Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Control_Limit).toExponential(2) + "\n"
-			  	+ "Lower Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Display_Limit).toExponential(2) + "\n"
-			  	+ "Upper Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Display_Limit).toExponential(2) + "\n";
+				+ "\nLower Warning Limit:  " + Number.parseFloat(pvSettings[pvName].Lower_Warning_Limit) + "\n"
+			  	+ "Upper Warning Limit:  "   + Number.parseFloat(pvSettings[pvName].Upper_Warning_Limit) + "\n"
+			  	+ "Lower Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Lower_Alarm_Limit)   + "\n"
+			  	+ "Upper Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Upper_Alarm_Limit)   + "\n"
+			  	+ "Lower Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Control_Limit) + "\n"
+			  	+ "Upper Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Control_Limit) + "\n"
+			  	+ "Lower Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Display_Limit) + "\n"
+			  	+ "Upper Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Display_Limit) + "\n";
 			  	return toolTip;
 			} //end setWidgetToolTip()
 
@@ -639,7 +867,7 @@
 
 
 			//=====================================================================================
-			function setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, showLabel, foregroundColor, bkgColor, border)
+			function setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, timeCheck, showLabel, foregroundColor, bkgColor, border)
 			{
 				var widgetNameElement = page_.widgets[widget].el.parentElement.children[0];
 				var widgetValueElement = page_.widgets[widget].el;
@@ -664,7 +892,7 @@
 
 				if (widgetValueElement !== null && widgetValueElement !== undefined)
 				{
-					if (checkPvTime(widget, pvName, pvTime))
+					if (timeCheck && checkPvTime(widget, pvName, pvTime))
 					{
 						widgetValueElement.style.backgroundColor = 'green';
 						widgetValueElement.style.border = border;
@@ -675,7 +903,12 @@
 						widgetValueElement.style.border = bkgColor;
 					}
 
-					if(pvSeverity == "MINOR" )
+					if(pvSeverity == "NO_ALARM" )
+					{
+							widgetValueElement.style.border = "4px solid green";
+							widgetValueElement.style.backgroundColor = 'green';
+					}
+					else if(pvSeverity == "MINOR" )
 					{
 						widgetValueElement.style.border = "4px solid orange";
 						widgetValueElement.style.backgroundColor = 'orange';
@@ -684,6 +917,11 @@
 					{
 						widgetValueElement.style.border = "4px solid red";
 						widgetValueElement.style.backgroundColor = 'red';
+					}
+					else
+					{
+						widgetValueElement.style.border = "1px solid " + bkgColor;
+						widgetValueElement.style.backgroundColor = bkgColor;
 					}
 				}
 				else
@@ -896,7 +1134,16 @@
 
 	<body onload='//init() called by DesktopContent.js'>
 		<div class="mainBlockContainer">
-			<h2 align="center">DAQ room health</h2>
+			<div class="legend">
+				<div>Color legend:</div>
+				<div style="background-color: green">No alarm</div>
+				<div style="background-color: orange">Warning</div>
+				<div style="background-color: red">Alarm</div>
+				<div style="background-color: gray">Undefined state</div>
+				<div style="align:right">
+					<h2 align="center">DAQ room health</h2>
+				</div>
+			</div> 
 			<div class="topBlockContainer">
 				<div class="rack" id="rack7E"><center>7E</center></div>
 				<div class="rack" id="rack6E"><center>6E</center></div>
