@@ -1,0 +1,29 @@
+#+startup:fold
+
+ROC firmware is subdetector-specific
+* ------------------------------------------------------------------------------
+* tracker ROC registers 
+* ------------------------------------------------------------------------------
+* 0x0000 : 0x1234, if everything is OK                                       
+  - if not, powercycle the ROC 
+  - if that doesn't help, try resetting the DTC
+* 0x0008 : "lane enable" register                                            
+  after adding external clock and evmarker control to the ROC,
+  one needs to write bit(8)=1 and bit(9)=1 on register 8, ie 0x300 (0r 768)
+  0x300 + link enable 
+
+  0x1: CAL lane 0
+  0x2: CAL lane 1
+  0x4: HV  lane 0
+  0x8: HV  lane 1
+
+  0xf: all four lanes enabled, 0x30f to be written
+  
+* 0x0014 : ROC reset register                                                
+#+begin_src 
+rocUtil write_register -a 14 -w 1 -l $LINK 
+rocUtil simple_read    -a 14
+0 0xeffe
+#+end_src 
+
+* ------------------------------------------------------------------------------

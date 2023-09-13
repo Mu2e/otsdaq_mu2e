@@ -130,7 +130,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)"},
+				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)","DoNotSet"},
 						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
 
@@ -1466,7 +1466,12 @@ void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 	select %= 4;
 	__FE_COUTV__((unsigned int)select);
 
-	thisCFO_->SetJitterAttenuatorSelect(select);
+	if(!__GET_ARG_IN__(
+	    "DoNotSet", bool))
+	{
+		thisCFO_->SetJitterAttenuatorSelect(select);
+		sleep(1);
+	}
 
 	// __SET_ARG_OUT__("Register Write Results", results.str());
 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
@@ -1503,9 +1508,9 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 	std::string inFileName;// = __GET_ARG_IN__("Input Text Run Plan", std::string);
 	std::string outFileName;// = __GET_ARG_IN__("Output Binary Run File", std::string);
 	inFileName = 
-		"/home/mu2ehwdev/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.txt";
+		"/home/mu2estm/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.txt";
 	outFileName = 
-		"/home/mu2ehwdev/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
+		"/home/mu2estm/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
 
 	inFile.open(inFileName.c_str(), std::ios::in);
 	if (!(inFile.is_open()))
@@ -1550,7 +1555,7 @@ void CFOFrontEndInterface::SetRunplan(__ARGS__)
 
 	std::string setFileName;// = __GET_ARG_IN__("Binary Run File", std::string);
 	setFileName =
-		"/home/mu2ehwdev/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
+		"/home/mu2estm/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
 
 	
 	std::ifstream file(setFileName, std::ios::binary | std::ios::ate);

@@ -36,6 +36,12 @@
 - therefore, to define a configuration to use need to specify two groups, 
   a context one and a non-context one, and their aliases
 
+- when running OTSDAQ, *can activate only an alias*. A configuration [group], which doesn't 
+  have an alis, can't be activated. SO to use a configuration group, create an alias for it.
+
+- the same alias points to different versions of the same group for different users.. Why ??? 
+  Does the backbone group have to do with that? 
+
   *if an alias is not defined, the current configure display won't show the group!*
 * proposed naming conventions for Mu2e configurations (for now):             
 

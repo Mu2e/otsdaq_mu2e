@@ -32,7 +32,7 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 	artdaqMode_ = ARTDAQTableBase::isARTDAQEnabled(getConfigurationManager());
 	__FE_COUTV__(artdaqMode_);
 
-	operatingMode_ = "HardwareDevMode";  // choose default
+	operatingMode_ = CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV;  // choose default
 	try
 	{
 		auto mu2eGlobalRecords =
@@ -130,14 +130,6 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 				&CFOandDTCCoreVInterface::GetStatus),            // feMacroFunction
 	// 				std::vector<std::string>{},  // namesOfInputArgs
 	// 				std::vector<std::string>{"Status"},
-	// 				1);  // requiredUserPermissions
-
-	// registerFEMacroFunction(
-	// 	"Check Link Loss-of-Light",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOandDTCCoreVInterface::GetLinkLossOfLight),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Link Status"},
 	// 				1);  // requiredUserPermissions
 
 	// registerFEMacroFunction(
@@ -1865,90 +1857,6 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 // 	__SET_ARG_OUT__("Status",readStatus());
 // } //end GetStatus()
 
-// //========================================================================
-// void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)
-// {	
-// 	std::stringstream rd;
-
-
-// 	//do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
-
-// 	// #Read Firefly RX LOS registers
-// 	// #enable IIC on Firefly
-// 	// my_cntl write 0x93a0 0x00000200
-// 	registerWrite(0x93a0,0x00000200);
-// 	// #Device address, register address, null, null
-// 	// my_cntl write 0x9298 0x54080000
-// 	registerWrite(0x9298,0x54080000);
-// 	// #read enable
-// 	// my_cntl write 0x929c 0x00000002
-// 	registerWrite(0x929c,0x00000002);
-// 	// #disable IIC on Firefly
-// 	// my_cntl write 0x93a0 0x00000000
-// 	registerWrite(0x93a0,0x00000000);
-// 	// #read data: Device address, register address, null, value
-// 	// my_cntl read 0x9298
-
-// 	// #{EVB, ROC4, ROC1, CFO, unused, ROC5, unused, unused}
-// 	usleep(1000*100);
-
-// 	// #Read Firefly RX LOS registers
-// 	// my_cntl write 0x93a0 0x00000200
-// 	registerWrite(0x93a0,0x00000200);
-// 	// my_cntl write 0x9298 0x54070000
-// 	registerWrite(0x9298,0x54070000);
-// 	// my_cntl write 0x929c 0x00000002
-// 	registerWrite(0x929c,0x00000002);
-// 	// my_cntl write 0x93a0 0x00000000
-// 	registerWrite(0x93a0,0x00000000);
-// 	// my_cntl read 0x9298
-
-// 	//END do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
-
-// 	dtc_data_t val=0, val2=0;
-// 	for(int i=0;i<5;++i)
-// 	{
-// 		usleep(1000*100 /* 100 ms */);
-// 		registerWrite(0x93a0,0x00000200);
-// 		registerWrite(0x9298,0x54080000);
-// 		registerWrite(0x929c,0x00000002);
-// 		registerWrite(0x93a0,0x00000000);
-// 		val |= registerRead(0x9298); //OR := if ever 1, mark dead
-
-	
-		
-// 		usleep(1000*100 /* 100 ms */);
-// 		//repeat set of writes, do the live read of loss-of-light status (because it is latched value from last read)
-// 		registerWrite(0x93a0,0x00000200);
-// 		registerWrite(0x9298,0x54070000);
-// 		registerWrite(0x929c,0x00000002);
-// 		registerWrite(0x93a0,0x00000000);
-// 	 	val2 |= registerRead(0x9298); //OR := if ever 1, mark dead
-// 	} //end multi-read to check for strange value changing
-
-// 	// #ROC0 bit 3
-// 	rd << "{0:" << (((val2>>(0+3))&1)?"DEAD":"OK");
-// 	// Link 1 #ROC1 bit 5
-// 	rd << ", 1: " << (((val>>(0+5))&1)?"DEAD":"OK");
-// 	// #ROC2 bit 2
-// 	rd << ", 2:" << (((val2>>(0+2))&1)?"DEAD":"OK");
-// 	// #ROC3 bit 0
-// 	rd << ", 3:" << (((val2>>(0+0))&1)?"DEAD":"OK");
-// 	// #ROC4 bit 6
-// 	rd << ", 4: " << (((val>>(0+6))&1)?"DEAD":"OK");
-// 	// #ROC5 bit 1
-// 	rd << ", 5: " << (((val>>(0+1))&1)?"DEAD":"OK");
-// 	// #CFO bit 4
-// 	rd << ", 6/CFO: " << (((val>>(0+4))&1)?"DEAD":"OK");
-// 	// #EVB bit 7  Are EVB and CFO reversed?
-// 	rd << ", 7/EVB: " << (((val>>(0+7))&1)?"DEAD":"OK") << "}";
-
-
-
-
-
-// 	__SET_ARG_OUT__("Link Status",rd.str());
-// } //end GetLinkLossOfLight()
 
 // //========================================================================
 // void CFOandDTCCoreVInterface::GetFireflyTemperature(__ARGS__)

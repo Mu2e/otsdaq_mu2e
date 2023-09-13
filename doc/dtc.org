@@ -2,9 +2,24 @@
 # this section describes the hardware configuration
 # of the Mu2e DAQ. at this point - just beginning
 #------------------------------------------------------------------------------
-* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097  :]] DTC user manual 
-* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=19095][mu2e-19095]] : Mu2e beam timing
-* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/RetrieveFile?docid=37376&filename=20220922_DAQNodes.pdf][mu2e-37376]] : DAQ node configuration in the DAQ room 
+* [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097  :]] DTC user manual (primary source of information) 
+* How to powercycle a DTC card w/o rebooting the whole computer              
+#+begin_src 
+mu2etrk@mu2edaq09:~/test_stand/pasha_018>ksu
+Authenticated murat@FNAL.GOV
+Account root: authorization for murat@FNAL.GOV successful
+Changing uid to root (0)
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>echo 1 > /sys/bus/pci/devices/0000:05:00.0/remove
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>echo 1 > /sys/bus/pci/rescan
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>lspci | grep Xilinx
+04:00.0 Communication controller: Xilinx Corporation Device 7042
+05:00.0 Communication controller: Xilinx Corporation Device 7042
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>ls -al /dev/mu2e*
+crw-rw-rw- 1 root root 244, 0 Aug 25 15:33 /dev/mu2e0
+crw-rw-rw- 1 root root 244, 1 Aug 27 19:51 /dev/mu2e1
+root@mu2edaq09:/home/mu2etrk/test_stand/pasha_018>exit
+exit
+#+end_src 
 * DTCs       : two cards per node, mounted as /dev/mu2e0 and /dev/mu2e0      
 #+begin_src 
 mu2etrk@mu2edaq09:~/test_stand/pasha_005>ll -al /dev/mu2e
@@ -94,36 +109,26 @@ mu2etrk@mu2edaq09:~/test_stand/pasha_015>my_cntl read 0x91c4
 sts=0
 #+end_src 
 
+*      0x9374 : input buffer error flag                                      
+|-------+------+---------+---------------------------------|
+|   bit | Mode | default | description                     |
+|-------+------+---------+---------------------------------|
+| 31-11 | ro   |       0 | reserved                        |
+|    10 | ro   |       0 | Egress FIFO Programmable Full   |
+|     9 | r0   |       0 | Ingress FIFO Programmable Full  |
+|     8 | ro   |       0 | Event Byte Count Total Error    |
+|   7-3 | ro   |       0 | reserved                        |
+|     2 | ro   |       0 | Last Word Written Timeout Error |
+|     1 | ro   |       0 | Fragment Count Error            |
+|     0 | ro   |       0 | DDR Full Error                  |
+|       |      |         |                                 |
+|-------+------+---------+---------------------------------|
+
 * 0x91c8 : DebugPacketType                                                   
   why diabling it affects the rest ? 
   enable/disable debug mode in readout requests 
   bit 16: 0:disable, 1:enable 
   for buffer_test : 0x00000000
-* ------------------------------------------------------------------------------
-* tracker ROC registers 
-* ------------------------------------------------------------------------------
-* 0x0000 : 0x1234, if everything is OK                                       
-  - if not, powercycle the ROC 
-  - if that doesn't help, try resetting the DTC
-* 0x0008 : "lane enable" register                                            
-  after adding external clock and evmarker control to the ROC,
-  one needs to write bit(8)=1 and bit(9)=1 on register 8, ie 0x300 (0r 768)
-  0x300 + link enable 
-
-  0x1: CAL lane 0
-  0x2: CAL lane 1
-  0x4: HV  lane 0
-  0x8: HV  lane 1
-
-  0xf: all four lanes enabled, 0x30f to be written
-  
-* 0x0014 : ROC reset register                                                
-#+begin_src 
-rocUtil write_register -a 14 -w 1 -l $LINK 
-rocUtil simple_read    -a 14
-0 0xeffe
-#+end_src 
-
 * ------------------------------------------------------------------------------
 * back to [[file:otsdaq_mu2e.org][otsdaq_mu2e]]
 * ------------------------------------------------------------------------------

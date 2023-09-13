@@ -68,7 +68,7 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
 //==================================================================================================
 DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address) try
 {
-	__FE_COUT__ << "Calling read ROC register: link number " << std::dec << linkID_
+	__FE_COUT__ << "Calling read ROC register: link number = " << std::dec << linkID_
 	            << ", address = " << address << __E__;
 
 	if(emulatorMode_)
