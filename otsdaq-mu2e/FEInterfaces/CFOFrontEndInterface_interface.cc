@@ -1,5 +1,6 @@
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
+#include "otsdaq/CodeEditor/CodeEditor.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
 
@@ -100,6 +101,22 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"address", "writeData"},
 					std::vector<std::string>{},  // namesOfOutput
 					1);                          // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Loopback Test",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
+					std::vector<std::string>{"loopbacks", "link", "delay"},
+					std::vector<std::string>{"response"},  // namesOfOutput
+					1); 
+
+	registerFEMacroFunction(
+		"Test Loopback marker",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::TestMarker),  // feMacroFunction
+					std::vector<std::string>{"link"},
+					std::vector<std::string>{"response"},  // namesOfOutput
+					1); 
 
 	registerFEMacroFunction(
 		"CFO Read",
@@ -221,6 +238,143 @@ std::string CFOFrontEndInterface::readStatus(void)
 // 	return link_status;
 // }
 
+//=====================================================================================
+// TODO: function to do a loopback test on the specified link
+uint32_t CFOFrontEndInterface::measureDelay(CFOLib::CFO_Link_ID link)
+{
+	// TODO: how can I understand if the measure fails?
+	__FE_COUT__ << "Send loopback marker on link " << link << __E__;
+
+	thisCFO_->ResetDelayRegister();	// reset 0x9380
+	thisCFO_->DisableLinks();	// reset 0x9114
+	// configure the DTC (to configure the ROC in a loop)
+	thisCFO_->EnableLink(link, DTC_LinkEnableMode(true, true)); // enable Tx and Rx
+	thisCFO_->EnableDelayMeasureMode(link);
+	thisCFO_->EnableDelayMeasureNow(link);
+	u_int32_t delay = thisCFO_->ReadCableDelayValue(link);	// read delay
+	__FE_COUT__ << "Delay measured: " << delay << " (ns) on link: " <<  link << __E__;
+	// reset registers
+	thisCFO_->ResetDelayRegister();
+	thisCFO_->DisableLinks();
+
+	return delay;
+}
+//=====================================================================================
+// TODO: function to do a loopback test on the specified link, handle the boadcast
+void CFOFrontEndInterface::LoopbackTest(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"Loopback test\"" << std::endl;
+
+	// stream to print the output
+	std::stringstream ostr;
+	ostr << std::endl;
+	
+	// parameters (TODO: make the default)
+	int numberOfLoopback = __GET_ARG_IN__("loopbacks", uint32_t);
+	int input_link = __GET_ARG_IN__("link", uint8_t);
+	int delay = __GET_ARG_IN__("delay", uint32_t);
+
+	// config parameters (TODO: read from config)
+	unsigned alignament_marker = 10;
+	const int MAX_LOOPBACK = 10000;
+	const int MIN_LOOPBACK = 1;
+
+	if (numberOfLoopback > MAX_LOOPBACK)
+		numberOfLoopback = MAX_LOOPBACK;
+
+	if (numberOfLoopback < MIN_LOOPBACK)
+		numberOfLoopback = MIN_LOOPBACK;
+
+	// variable to compuet the average
+	float avg_delay = 0.0;
+	unsigned int comulative_delay = 0;
+	// int fail_measure = 0;
+
+	// log the input
+	__FE_COUTV__(numberOfLoopback);
+	__FE_COUTV__(input_link);
+	__FE_COUTV__(delay);
+
+	ostr << "Number of loopbacks: " << numberOfLoopback << std::endl;
+
+	// TODO: read from config with special param
+	if (numberOfLoopback < 0)
+	{
+		return;
+	}
+	if (input_link < 0)
+	{
+		return;
+	}
+
+	CFOLib::CFO_Link_ID link = static_cast<CFOLib::CFO_Link_ID>(input_link);
+
+	// save the status of the registers
+	uint32_t initial_9380 = thisCFO_->ReadCableDelayControlStatus();
+	uint32_t initial_9114 = thisCFO_->ReadLinkEnable();
+
+	// sending first marker to align the clock of the ROC
+	__FE_COUT__ << "Align the ROC's clock..." <<  __E__;
+	for (unsigned int n = 0; n < alignament_marker; ++n)
+	{
+		measureDelay(link);
+	}
+
+	// send marker
+	for (int n = 0; n < numberOfLoopback; ++n)
+	{
+		// TODO: check if it fail
+		uint32_t link_delay = measureDelay(link);
+		comulative_delay += link_delay;
+		__FE_COUT__ << "[" << (n+1) << "] Record: " << link_delay <<  __E__;
+		usleep(delay);	// maybe not defined
+	}
+
+	avg_delay = comulative_delay / numberOfLoopback;
+	ostr << "Average delay: " << avg_delay << std::endl;
+	__FE_COUT__ << "Average delay: " << avg_delay << __E__;
+
+
+	// restore the status of the register
+	thisCFO_->WriteCableDelayControlStatus(initial_9380);
+	thisCFO_->WriteLinkEnable(initial_9114);
+
+	ostr << std::endl << std::endl;
+
+	__SET_ARG_OUT__("response", ostr.str());
+
+}
+
+//=====================================================================================
+// TODO: function to do a loopback test on the specified link
+void CFOFrontEndInterface::TestMarker(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"Marker test\"" << std::endl;
+
+	// stream to print the output
+	std::stringstream ostr;
+	ostr << std::endl;
+	
+	// parameters (TODO: make the default)
+	int input_link = __GET_ARG_IN__("link", uint8_t);
+
+	if (input_link < 0)
+	{
+		return;
+	}
+
+	__FE_COUTV__(input_link);
+	CFOLib::CFO_Link_ID link = static_cast<CFOLib::CFO_Link_ID>(input_link);
+	uint32_t link_delay = measureDelay(link);
+
+	ostr << "Marker sent on link: " << link << std::endl
+		 << "\t Delay: " << link_delay << std::endl;
+	__FE_COUT__ << "Marker sent on link: " << link << std::endl
+	 			<< "\t Delay: " << link_delay << std::endl;
+
+	ostr << std::endl << std::endl;
+	__SET_ARG_OUT__("response", ostr.str());
+}
 //=====================================================================================
 //
 float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
@@ -666,48 +820,49 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 //==============================================================================
 void CFOFrontEndInterface::configureLoopbackMode(int step)
 {
-	if(step == -1)
-		step = getIterationIndex();
+	__FE_COUT__ << "The loopback is performed in the strat phase." << __E__;
+	// if(step == -1)
+	// 	step = getIterationIndex();
 
-	__FE_COUT_INFO__ << "configureLoopbackMode() " << step << "." << getSubIterationIndex() << __E__;
+	// __FE_COUT_INFO__ << "configureLoopbackMode() " << step << "." << getSubIterationIndex() << __E__;
 	
-	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
-	{
-		if(timing_chain_first_substep_ == -1)
-				timing_chain_first_substep_ = getSubIterationIndex();
-		configureForTimingChain();
-		indicateIterationWork();
-	}
-	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
-		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
-		indicateIterationWork();
-	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
-		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		__FE_COUT__ << "CFO reset serdes TX " << __E__;
-		thisCFO_->ResetAllSERDESTx();
-		indicateIterationWork();
-	}
-	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
-		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{ 
-		__FE_COUT__ << "Enable communication over links" << __E__;
-		thisCFO_->EnableTiming();
-		thisCFO_->EnableEventWindowInput();
+	// if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
+	// {
+	// 	if(timing_chain_first_substep_ == -1)
+	// 			timing_chain_first_substep_ = getSubIterationIndex();
+	// 	configureForTimingChain();
+	// 	indicateIterationWork();
+	// }
+	// else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+	// 	CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	// {
+	// 	__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+	// 	indicateIterationWork();
+	// }
+	// else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+	// 	CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	// {
+	// 	__FE_COUT__ << "CFO reset serdes TX " << __E__;
+	// 	thisCFO_->ResetAllSERDESTx();
+	// 	indicateIterationWork();
+	// }
+	// else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
+	// 	CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	// { 
+	// 	__FE_COUT__ << "Enable communication over links" << __E__;
+	// 	thisCFO_->EnableTiming();
+	// 	thisCFO_->EnableEventWindowInput();
 
-		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	// 	thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-		__FE_COUT__ << "CFO set beam off Event Window interval time" << __E__;
-		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
+	// 	__FE_COUT__ << "CFO set beam off Event Window interval time" << __E__;
+	// 	thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
-		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
-	}
-	else
-		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+	// 	__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
+	// 	thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+	// }
+	// else
+	// 	__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 	
 }  // end configureLoopbackMode()
 
@@ -901,8 +1056,16 @@ void CFOFrontEndInterface::resume(void)
 }
 
 //==============================================================================
-void CFOFrontEndInterface::start(std::string)  // runNumber)
+void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 {
+	__FE_COUTV__(getIterationIndex());
+	__FE_COUTV__(getSubIterationIndex());
+
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << "Start the loopback!" << __E__;
+		loopbackTest(runNumber);
+	}
 	// if(regWriteMonitorStream_.is_open())
 	// {
 	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
@@ -910,8 +1073,6 @@ void CFOFrontEndInterface::start(std::string)  // runNumber)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	__MCOUT_INFO__("CFO Ignoring loopback for now..." << __E__);
-	return;
 /* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
 
 	//bool LoopbackLock = true;
@@ -1284,7 +1445,7 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	dtc_address_t address = __GET_ARG_IN__("address", dtc_address_t);
 	__FE_COUTV__((unsigned int)address);
 	dtc_data_t readData;// = registerRead(address);  
-
+	
 	int errorCode = getDevice()->read_register(address, 100, &readData);
 	if (errorCode != 0)
 	{
@@ -1463,6 +1624,124 @@ void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 	// configureForTimingChain(1);
 
 } //end ConfigureForTimingChain()
+
+//========================================================================
+void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
+{	
+	// TODO: read from configuratione
+	const int DTCsPerChain = 10;
+	const int ROCsPerDTC = 6;
+	const int n_loopbacks = 1000;
+	const int alignment_marker = 10;
+	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;
+
+	if (step == 1)
+		step = getIterationIndex();
+
+	uint32_t initial_9380 = 0;
+	uint32_t initial_9114 = 0;
+	// start by saving the status of the registers
+	if (step == 0)	
+	{
+		// save the status of the registers
+		initial_9380 = thisCFO_->ReadCableDelayControlStatus();
+		initial_9114 = thisCFO_->ReadLinkEnable();
+		indicateIterationWork();
+		return;
+	}
+
+	// alternate with the DTCs
+	if ((step % 2) != 0)
+	{
+		indicateIterationWork();
+		return;
+	}
+
+	unsigned int loopback_step = (step / 2) - 1;
+	// end by restoring the status of the registers
+	if (loopback_step >= n_steps)	
+	{
+		// restore the status of the register
+		thisCFO_->WriteCableDelayControlStatus(initial_9380);
+		thisCFO_->WriteLinkEnable(initial_9114);
+		return;
+	}
+
+	// send the markers  and compute the average delay
+	int active_DTC = loopback_step / 6;
+	int active_ROC = loopback_step % 6;
+	FILE* fp = 0;
+	std::string filename = "/loopbackOutput_" + runNumber + ".txt";
+	for (auto link: CFOLib::CFO_Links)
+	{
+		__FE_COUT__ << "step " << loopback_step << ") CFO sending markers on link: " << link << __E__; 
+		unsigned int comulative_delay = 0;
+		float average_delay = 0.0;
+		bool timeout = false;
+
+		// sending first marker to align the clock of the ROC
+		for (unsigned int n = 0; n < alignment_marker; ++n)
+		{
+			measureDelay(link);
+		}
+
+		for (unsigned int n = 0; n < n_loopbacks; ++n)
+		{
+			std::bitset<32> delay (measureDelay(link));
+			// check if the marker return timeout
+			if (delay.all())
+			{
+				__FE_COUT__ << "Timeout link: " << link << __E__;
+				timeout = true;
+				break;
+			}
+			comulative_delay += delay.to_ulong();
+			__FE_COUT__ << "step " << loopback_step << ") Delay measured on link " 
+						<< link << ": " << delay.to_ulong() << __E__; 
+
+		}
+		// compute the average
+		average_delay = comulative_delay / n_loopbacks;
+		__FE_COUT__ << "step " << loopback_step << ") Average Delay on link " 
+						<< link << ": " << average_delay << __E__; 
+		// save the results on file
+		try
+		{
+			// open the file if it is the first time
+			if (!fp)
+			{
+				fp = fopen((CodeEditor::OTSDAQ_DATA_PATH + filename).c_str(), "a");
+				// if(!fp)
+				// {
+				// 	__SUP_SS__ << "Failed to open file to save loopback output '"
+				// 			   << CodeEditor::OTSDAQ_DATA_PATH << filename << "'..." << __E__;
+				// 	__SUP_SS_THROW__;
+				// }
+			}
+			// write the information
+			fprintf(fp, "############################\n");
+			fprintf(fp, "Chain:\t%d\n", link);
+			fprintf(fp, "DTC:\t%d\n", active_DTC);
+			fprintf(fp, "ROC:\t%d\n", active_ROC);
+			if (timeout)
+				fprintf(fp, "Delay:\tTIMEOUT\n");
+			else
+				fprintf(fp, "Delay:\t%f\n", average_delay);
+		}
+		catch(...)  // handle file close on error
+		{
+			if(fp)
+				fclose(fp);
+			throw;
+		}
+	}
+
+	// close the file
+	if(fp)
+		fclose(fp);
+
+	indicateIterationWork();
+} //end loopbackTest()
 
 
 DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
