@@ -308,9 +308,6 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 	CFOLib::CFO_Link_ID link = static_cast<CFOLib::CFO_Link_ID>(input_link);
 
-	// save the status of the registers
-	uint32_t initial_9380 = thisCFO_->ReadCableDelayControlStatus();
-	uint32_t initial_9114 = thisCFO_->ReadLinkEnable();
 
 	// sending first marker to align the clock of the ROC
 	__FE_COUT__ << "Align the ROC's clock..." <<  __E__;
@@ -332,11 +329,6 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	avg_delay = comulative_delay / numberOfLoopback;
 	ostr << "Average delay: " << avg_delay << std::endl;
 	__FE_COUT__ << "Average delay: " << avg_delay << __E__;
-
-
-	// restore the status of the register
-	thisCFO_->WriteCableDelayControlStatus(initial_9380);
-	thisCFO_->WriteLinkEnable(initial_9114);
 
 	ostr << std::endl << std::endl;
 
@@ -1675,7 +1667,7 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 	FILE* fp = 0;
 	std::string filename = "/loopbackOutput_" + runNumber + ".txt";
 	
-	__FE_COUT__ << "Sending " n_loopbacks << " markers on all the links..." << __E__; 
+	__FE_COUT__ << "Sending " << n_loopbacks << " markers on all the links..." << __E__; 
 	for (auto link: CFOLib::CFO_Links)
 	{
 		__FE_COUT__ << "step " << loopback_step << ") CFO sending markers on link: " << link << __E__; 
