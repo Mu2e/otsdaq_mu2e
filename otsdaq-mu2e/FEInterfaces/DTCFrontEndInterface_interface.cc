@@ -3818,69 +3818,54 @@ void DTCFrontEndInterface::loopbackTest(int step)
 {	
 	// TODO: read from configuration
 	const int ROCsPerDTC = 6;
-	const int DTCsPerChain = 10;
+	const unsigned int DTCsPerChain = getConfigurationManager()
+	        							->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
+	
+	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;	// 6 * 10 = 60
 
 	//call virtual readStatus
 	if (step == -1)
 		step = getIterationIndex();	// get the current index
 	
-	// TODO: take the parameter from the configuration
-	// discovery on all possible the links
-	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;	// 6 * 10 = 60
-
-	uint32_t initial_9100 = 0;
-	uint32_t initial_9114 = 0;
-
-	// start by saving the status of the registers
-	if (step == 0)	
-	{
-		initial_9100 = thisDTC_->ReadDTCControlRegister();
-		initial_9114 = thisDTC_->ReadLinkEnable();
-		indicateIterationWork();
-		return;
-	}
-
 	// alternate with the CFO
-	if ((step % 2) == 0)
+	if ((step % 2) != 0)
 	{
 		indicateIterationWork();
+		__FE_COUT__ << "Step " << step << " is odd, letting DTCs have a turn" << __E__;
 		return;
 	}
 	unsigned int loopback_step = step / 2;
 	// end by restoring the status of the registers
 	if (loopback_step >= n_steps)	
 	{
-		thisDTC_->WriteDTCControlRegister(initial_9100);
-		thisDTC_->WriteLinkEnable(initial_9114);
+		__FE_COUT__ << "Loopback over!" << __E__;
 		return;
 	}
 
-	// configure the DTC to target the ROC
-	
 	// select the active DTC AND ROC
-	int activeDTC = loopback_step / 6;	// each DTC can have up to 6 ROCs
-	int activeROC = loopback_step % ROCsPerDTC; // [0,5] possible link of the DTC
+	int active_DTC = loopback_step / ROCsPerDTC;	// each DTC can have up to 6 ROCs
+	int active_ROC = loopback_step % ROCsPerDTC; // [0,5] possible link of the DTC
 
-	__FE_COUT__ << "step " << loopback_step << ") active DTC: " << activeDTC 
-				<< " active ROC on link: " << activeROC << __E__;
+	__FE_COUT__ << "step " << loopback_step << ") active DTC: " << active_DTC 
+				<< " active ROC on link: " << active_ROC << __E__;
 
 	// set up the DTC based on its position in the chain
-	if (activeDTC == dtc_location_in_chain_)
+	if (active_DTC == dtc_location_in_chain_)
 	{	
 		// 0x9100 set bit 28 = 1
-		__FE_COUT__ << "DTC" << activeDTC << "loopback mode ENABLE" << __E__;
+		__FE_COUT__ << "DTC" << active_DTC << "loopback mode ENABLE" << __E__;
 		thisDTC_->EnableCFOLoopback();
 	}
 	else 
 	{
 		// 0x9100 set bit 28 = 0
-		__FE_COUT__ << "active DTC = " << activeDTC
+		__FE_COUT__ << "active DTC = " << active_DTC
 	 	            << " is NOT this DTC = " << dtc_location_in_chain_
 	 	        	<< "... pass signal through" << __E__;
 		thisDTC_->DisableCFOLoopback();
 	}
 	// enable the links of the DTC
-	DTCLib::DTC_Link_ID link = static_cast<DTCLib::DTC_Link_ID>(activeROC);
+	DTCLib::DTC_Link_ID link = static_cast<DTCLib::DTC_Link_ID>(active_ROC);
 	thisDTC_->EnableReceiveCFOLink();
 	thisDTC_->EnableTransmitCFOLink();
 	thisDTC_->EnableLink(link, DTCLib::DTC_LinkEnableMode(true, true)); // enable Tx and Rx

@@ -1,6 +1,5 @@
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
-#include "otsdaq/CodeEditor/CodeEditor.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
 
@@ -1065,6 +1064,7 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	{
 		__FE_COUT_INFO__ << "Start the loopback!" << __E__;
 		loopbackTest(runNumber);
+		__FE_COUT_INFO__ << "End the loopback!" << __E__;
 	}
 	// if(regWriteMonitorStream_.is_open())
 	// {
@@ -1633,50 +1633,49 @@ void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 //========================================================================
 void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 {	
+	__FE_COUT__ << "Starting loopback test for run " << runNumber << ", step " << step << __E__;
 	// TODO: read from configuratione
-	const int DTCsPerChain = 10;
+	
 	const int ROCsPerDTC = 6;
-	const int n_loopbacks = 1000;
-	const int alignment_marker = 10;
+	const unsigned int n_loopbacks = getConfigurationManager()
+	        							->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks").getValue<unsigned int>();
+	const unsigned int DTCsPerChain = getConfigurationManager()
+	        							->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
+	
+	const int alignment_marker = 10;	// TODO: check with the firmware
 	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;
 
-	if (step == 1)
-		step = getIterationIndex();
-
-	uint32_t initial_9380 = 0;
-	uint32_t initial_9114 = 0;
-	// start by saving the status of the registers
-	if (step == 0)	
-	{
-		// save the status of the registers
-		initial_9380 = thisCFO_->ReadCableDelayControlStatus();
-		initial_9114 = thisCFO_->ReadLinkEnable();
-		indicateIterationWork();
-		return;
-	}
+	if (step == -1)
+		step = getIterationIndex();	// get the current index
 
 	// alternate with the DTCs
-	if ((step % 2) != 0)
+	if ((step % 2) == 0)
 	{
 		indicateIterationWork();
+		__FE_COUT__ << "Step " << step << " is even, letting DTCs have a turn" << __E__;
 		return;
 	}
 
-	unsigned int loopback_step = (step / 2) - 1;
+	unsigned int loopback_step = step / 2;
 	// end by restoring the status of the registers
 	if (loopback_step >= n_steps)	
 	{
-		// restore the status of the register
-		thisCFO_->WriteCableDelayControlStatus(initial_9380);
-		thisCFO_->WriteLinkEnable(initial_9114);
+		__FE_COUT__ << "Loopback over!" << __E__;
 		return;
 	}
 
 	// send the markers  and compute the average delay
-	int active_DTC = loopback_step / 6;
-	int active_ROC = loopback_step % 6;
+	int active_DTC = loopback_step / ROCsPerDTC;
+	int active_ROC = loopback_step % ROCsPerDTC;
+
+	__FE_COUT__ << "step " << loopback_step << ") active DTC: " << active_DTC 
+				<< " active ROC on link: " << active_ROC << __E__;
+	
+	// TODO: put it in a directory
 	FILE* fp = 0;
 	std::string filename = "/loopbackOutput_" + runNumber + ".txt";
+	
+	__FE_COUT__ << "Sending " n_loopbacks << " markers on all the links..." << __E__; 
 	for (auto link: CFOLib::CFO_Links)
 	{
 		__FE_COUT__ << "step " << loopback_step << ") CFO sending markers on link: " << link << __E__; 
@@ -1708,20 +1707,16 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 		// compute the average
 		average_delay = comulative_delay / n_loopbacks;
 		__FE_COUT__ << "step " << loopback_step << ") Average Delay on link " 
-						<< link << ": " << average_delay << __E__; 
+					<< link << ": " << average_delay << __E__; 
+
 		// save the results on file
 		try
 		{
 			// open the file if it is the first time
 			if (!fp)
 			{
-				fp = fopen((CodeEditor::OTSDAQ_DATA_PATH + filename).c_str(), "a");
-				// if(!fp)
-				// {
-				// 	__SUP_SS__ << "Failed to open file to save loopback output '"
-				// 			   << CodeEditor::OTSDAQ_DATA_PATH << filename << "'..." << __E__;
-				// 	__SUP_SS_THROW__;
-				// }
+				__FE_COUT__ << "File " << filename << " open." << __E__; 
+				fp = fopen((std::string(__ENV__("OTSDAQ_DATA")) + filename).c_str(), "a");
 			}
 			// write the information
 			fprintf(fp, "############################\n");
@@ -1736,15 +1731,21 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 		catch(...)  // handle file close on error
 		{
 			if(fp)
+			{
+				__FE_COUT__ << "Error occurs: File close." << __E__; 
 				fclose(fp);
+			}
 			throw;
 		}
 	}
 
 	// close the file
 	if(fp)
+	{
+		__FE_COUT__ << "File close." << __E__; 
 		fclose(fp);
-
+	}
+		
 	indicateIterationWork();
 } //end loopbackTest()
 
