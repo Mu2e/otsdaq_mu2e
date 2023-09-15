@@ -9,6 +9,8 @@
 ** [[https://docs.google.com/presentation/d/1wzSJMK3fCoW2aZ_sdO1jg0n8WoykJR7MJ1ILqp3kEAI/edit#slide=id.p][OTSDAQ intro by Ryan]]
 ** [[file:build_instructions.org][build instructions]]
 ** ARTDAQ                                                                    
+   intro by Eric: https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=45544
+
    boardreader, eventbuilder, and datalogger are started by ARTDAQManager 
    during the *configure* transition. At this point the run number is not defined,
    so one can't encode the run number into their log file names
@@ -26,7 +28,7 @@ mu2etrk  15636  0.0  0.0 16546880 13112 pts/3  Sl   19:43   0:00 datalogger -c i
 ** [[file:trace.org][TRACE]] 
 ** [[file:configure_and_run.org][how to configure and run OTSDAQ]]
 ** [[file:partitions.org][partitions]]                                                           
-** existing DAQ configurations
+** existing DAQ configurations                                               
 - at present, each system configuration combines two groups of OTS tables.
 
 |---------------------------+-------------------------------+-------------------------------+---------------------------------------|
@@ -50,15 +52,26 @@ mu2etrk  15636  0.0  0.0 16546880 13112 pts/3  Sl   19:43   0:00 datalogger -c i
 ** DCS : slow controls (Detector Control System)                             
   - add DqmGUI application - icon on the desktop                     
   - configure the port number to be consistent with the XDAQ - why the duplication is needed at all?
-  - pull otsdaq_utilities from https://github.com/art-daq/otsdaq_utilities.git
+  - pull otsdaq_utilities from development https://github.com/art-daq/otsdaq_utilities.git
   - the DqmGUI top page is located at build.../otsdaq_utilities/WebGUI/html/DqmGUI.html
 
   - shall we run the slow controls instance 
-  - need otsdaq_epics from development
 
 - ots need to write dbg file in the mu2edcs@mu2e-dsc-01 epics ioc folder 
 - so ask Eric to configure it in otsdaq configuration
 - after that, if dbg flies is writing correctly ots is writing the new PVs and/or new configuration also in the dcs_archiver
+*** Restarting the PDU EPICS IOC server 
+- could solve the wrong starting of it after a rebooting or switching on the mu2-dcs-01 node. 
+  Steps to follow (https://dbweb9.fnal.gov:8443/ECL/mu2e/E/show?e=1806)
+#+begin_src 
+ ssh mu2edcs@mu2e-dcs-01.fnal.gov 
+ screen -ls               # shows if the PDUIoc screen is up
+ screen -r PDUIoc         # then write the command 'exit' (it closes the screen) 
+                          #  wait for 2 minutes 
+ screen -ls               # to check if the PDUIoc is up again 
+ screen -r PDUIoc         # again to check if there are still starting errors 
+                          # then press the keys 'ctrl' and 'A' and then 'D' to detach the screen without closing it
+#+end_src 
 ** [[file:db_tables.org][Mongo DB and the DB tables]] 
 * ------------------------------------------------------------------------------
 * ATTIC
