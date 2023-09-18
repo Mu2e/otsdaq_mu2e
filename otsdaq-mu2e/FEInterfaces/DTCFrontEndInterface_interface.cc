@@ -877,16 +877,17 @@ try
 		__FE_COUT_INFO__ << "Configuring for hardware development mode!" << __E__;
 		configureHardwareDevMode();
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == "EventBuildingMode" ||
+			operatingMode_ == "LoopbackMode")
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
 		configureEventBuildingMode();
 	}
-	else if(operatingMode_ == "LoopbackMode")
-	{
-		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
-		configureLoopbackMode();
-	}
+	// else if(operatingMode_ == "LoopbackMode")
+	// {
+	// 	__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
+	// 	configureLoopbackMode();
+	// }
 	else
 	{
 		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__

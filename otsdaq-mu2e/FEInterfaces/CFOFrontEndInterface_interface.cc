@@ -562,7 +562,7 @@ void CFOFrontEndInterface::configure(void)
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
-		configureLoopbackMode();
+		configureForTimingChain(-1);
 	}
 	else
 	{
@@ -770,7 +770,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
 	{
 		if(timing_chain_first_substep_ == -1)
-				timing_chain_first_substep_ = getSubIterationIndex();
+			timing_chain_first_substep_ = getSubIterationIndex();
 		configureForTimingChain();
 		indicateIterationWork();
 	}
