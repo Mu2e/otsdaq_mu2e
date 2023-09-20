@@ -38,6 +38,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 	char* runType_  = const_cast < char *> (getenv("OTSDAQ_DATABASE_RUNTYPE")? getenv("OTSDAQ_DATABASE_RUNTYPE") : "1");
 
 	char* mu2eOwner = __ENV__("MU2E_OWNER");
+	char* artadqPartition = __ENV__("ARTDAQ_PARTITION");
 	char* hostName = __ENV__("HOSTNAME");
 
 	//open db connection
@@ -78,11 +79,15 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 				sizeof(buffer),
 				"INSERT INTO public.run_configuration(				\
 											run_type				\
+											, host_name				\
+											, artdaq_partition		\
 											, configuration_name	\
 											, configuration_version	\
 											, commit_time)			\
-											VALUES ('%s','%s','%s',TO_TIMESTAMP(%ld));",
+											VALUES ('%s','%s','%d','%s','%s',TO_TIMESTAMP(%ld));",
 				runType_,
+				hostName,
+				std::stoi(artadqPartition),
 				runConfiguration.c_str(),
 				runConfigurationVersion.c_str(),
 				time(NULL));
