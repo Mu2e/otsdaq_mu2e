@@ -20,7 +20,14 @@ class DBRunInfo : public RunInfoVInterface
 	virtual void 			updateRunInfo		(unsigned int runNumber, RunInfoVInterface::RunStopType runStopType);
 
   private:
-	PGconn* runInfoDbConn_;	
+  	const char* dbname_;
+	const char* dbhost_;
+	const char* dbport_;
+	const char* dbuser_;
+	const char* dbpwd_;
+	PGconn* runInfoDbConn_;
+
+	void openDbConnection ();
 };
 }  // namespace ots
 
