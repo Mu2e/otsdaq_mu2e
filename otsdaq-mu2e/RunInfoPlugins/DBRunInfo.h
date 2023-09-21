@@ -25,6 +25,7 @@ class DBRunInfo : public RunInfoVInterface
 	const char* dbport_;
 	const char* dbuser_;
 	const char* dbpwd_;
+	const char* dbSchema_;
 	PGconn* runInfoDbConn_;
 
 	void openDbConnection ();

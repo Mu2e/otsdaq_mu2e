@@ -16,11 +16,12 @@ DBRunInfo::DBRunInfo(
     // const std::string&       configurationPath)
     : RunInfoVInterface(interfaceUID)//, theXDAQContextConfigTree, configurationPath)  
 {
-	dbname_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE")? getenv("OTSDAQ_RUNINFO_DATABASE") : "prototype_run_info");
+	dbname_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE")? getenv("OTSDAQ_RUNINFO_DATABASE") : "run_info");
 	dbhost_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_HOST")? getenv("OTSDAQ_RUNINFO_DATABASE_HOST") : "");
 	dbport_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PORT")? getenv("OTSDAQ_RUNINFO_DATABASE_PORT") : "");
 	dbuser_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_USER")? getenv("OTSDAQ_RUNINFO_DATABASE_USER") : "");
 	dbpwd_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PWD")? getenv("OTSDAQ_RUNINFO_DATABASE_PWD") : "");
+	dbSchema_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA") : "public");
 
 	//open db connection
 	openDbConnection();
@@ -82,7 +83,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 		PGresult* res;
 		char      buffer[1024];
 
-		char* runType  = const_cast < char *> (getenv("OTSDAQ_DATABASE_RUNTYPE")? getenv("OTSDAQ_DATABASE_RUNTYPE") : "1");
+		char* runType  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE") : "1");
 
 		std::string runConfiguration = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find(')'));
@@ -96,7 +97,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 
 		snprintf(buffer,
 				sizeof(buffer),
-				"INSERT INTO public.run_configuration(				\
+				"INSERT INTO %s.run_configuration(					\
 											  run_type				\
 											, host_name				\
 											, artdaq_partition		\
@@ -104,6 +105,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 											, configuration_version	\
 											, commit_time)			\
 											VALUES ('%s','%s','%d','%s','%s',TO_TIMESTAMP(%ld));",
+				dbSchema_,
 				runType,
 				hostName,
 				std::stoi(artadqPartition),
@@ -123,7 +125,12 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 
 		PQclear(res);
 
-		res = PQexec(runInfoDbConn_, "select max(run_number) from public.run_configuration;");
+		snprintf(buffer,
+				sizeof(buffer),
+				"select max(run_number) from %s.run_configuration;",
+				dbSchema_);
+
+		res = PQexec(runInfoDbConn_, buffer);
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
@@ -153,11 +160,12 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 
 		snprintf(buffer,
 				sizeof(buffer),
-				"INSERT INTO public.run_transition(				\
+				"INSERT INTO %s.run_transition(					\
 											  run_number		\
 											, transition_type	\
 											, transition_time)	\
 											VALUES (%ld,'%d',TO_TIMESTAMP(%ld));",
+				dbSchema_,
 				boost::numeric_cast<long int>(runNumber),
 				boost::numeric_cast<int>(transitionType),
 				time(NULL));
@@ -268,11 +276,12 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 
 		snprintf(buffer,
 				sizeof(buffer),
-				"INSERT INTO public.run_transition(				\
+				"INSERT INTO %s.run_transition(					\
 											  run_number		\
 											, transition_type	\
 											, transition_time)	\
 											VALUES (%ld,'%d',TO_TIMESTAMP(%ld));",
+				dbSchema_,
 				boost::numeric_cast<long int>(runNumber),
 				boost::numeric_cast<int>(runTransitionType),
 				time(NULL));
