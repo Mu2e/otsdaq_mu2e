@@ -877,8 +877,8 @@ try
 		__FE_COUT_INFO__ << "Configuring for hardware development mode!" << __E__;
 		configureHardwareDevMode();
 	}
-	else if(operatingMode_ == "EventBuildingMode" ||
-			operatingMode_ == "LoopbackMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+			operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
 		configureEventBuildingMode();
@@ -1645,7 +1645,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 	
 
-}  // end configureEventBuildingMode()P
+}  // end configureEventBuildingMode()
 
 //==============================================================================
 void DTCFrontEndInterface::configureLoopbackMode(int step)
@@ -1675,10 +1675,9 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			break;
 		case 1:
 			{
-	
 				if(configure_clock_)
 				{
-					uint32_t select      = 0;
+					uint32_t select = 0;
 					try
 					{
 						select = getSelfNode()
@@ -1738,12 +1737,14 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
 			thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
 			thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
-			for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
+			for(size_t i = 0; i < DTCLib::DTC_Links.size(); ++i)
+			{
 				if((roc_mask_ >> i) & 1)
 					thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
 				else
 					thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
-
+			}
+				
 			thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 			thisDTC_->EnableDCSReception();
 			break;

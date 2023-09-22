@@ -554,16 +554,17 @@ void CFOFrontEndInterface::configure(void)
 		__FE_COUT_INFO__ << "Not configuring CFO for hardware development mode!" << __E__;
 		return;
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+			operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
 		configureEventBuildingMode();
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
-	{
-		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
-		configureForTimingChain(-1);
-	}
+	// else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	// {
+	// 	__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
+	// 	configureEventBuildingMode();
+	// }
 	else
 	{
 		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
@@ -765,12 +766,14 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	if(step == -1)
 		step = getIterationIndex();
 
-	__FE_COUT_INFO__ << "configureEventBuildingMode() " << step << "." << getSubIterationIndex() << __E__;
+	__FE_COUT_INFO__ << "configureEventBuildingMode() " << step << __E__;
 	
 	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
 	{
+		// in order to start from zero
 		if(timing_chain_first_substep_ == -1)
 			timing_chain_first_substep_ = getSubIterationIndex();
+
 		configureForTimingChain();
 		indicateIterationWork();
 	}
@@ -858,7 +861,7 @@ void CFOFrontEndInterface::configureLoopbackMode(int step)
 }  // end configureLoopbackMode()
 
 //==============================================================================
-void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
+void CFOFrontEndInterface::configureForTimingChain(int step)
 {
 	//use sub-iteration index (but not the value of the index)
 	//	sub-iterations focus allow one entity to finish an iteration index, while others wait,
@@ -881,23 +884,16 @@ void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
 			thisCFO_->DisableAllOutputs();
 
 
-			__FE_COUTV__(configure_clock_);
+			__FE_COUTV__(configure_clock_);	//1
 
 			//NOTE on Jun/13/2023 16:00 raw-data: 0x23061316
 			//	need to configure crystal!
 
-			__FE_COUT__ << " =? " << (thisCFO_->ReadDesignDate() == 
-				"Jun/13/2023 16:00   raw-data: 0x23061316"?"yes":"no") << " ? " <<
-				(designVersion == 
-				"Jun/13/2023 16:00   raw-data: 0x23061316"?"yes":"no") << __E__;
-
-			{
-				for(size_t i=0;i<designVersion.size();++i)
-					__FE_COUT__ << designVersion[i] << " ? " << matchDesignVersion[i] << " = " 
-						<< (designVersion[i] == matchDesignVersion[i]?"y":"n") << __E__;
-			}
-			if(configure_clock_ && thisCFO_->ReadDesignDate() == 
-				"Jun/13/2023 16:00   raw-data: 0x23061316")
+			__FE_COUT__ << "CFO Design Version:\t" << designVersion << __E__	
+						<< "Expected version:\t" << matchDesignVersion << __E__
+						<< "Match:\t" << (designVersion.compare(matchDesignVersion) == 0) << __E__;
+			
+			if(configure_clock_ && thisCFO_->ReadDesignDate() == "Jun/13/2023 16:00   raw-data: 0x23061316")
 			{
 				// only configure the clock/crystal the first loop through...
 
@@ -910,9 +906,9 @@ void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
 					// registerWrite(0x9160, 0x09502F90);
 
 					// set RST_REG bit
-					thisCFO_->WriteSERDESIICInterface(
-						DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */, 
-						0x87 /* address */, 0x01 /* data */);
+					thisCFO_->WriteSERDESIICInterface(DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */, 
+													  0x87 /* address */, 
+													  0x01 /* data */);
 				}
 
 				// registerWrite(0x9168, 0x55870100);
@@ -949,9 +945,10 @@ void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
 			break;
 		case 1:
 			{
+				__FE_COUT__ << "CFO go to next sub-iteration! step: " << step << __E__;
 				if(configure_clock_)
 				{
-					uint32_t select      = 0;
+					uint32_t select = 0;
 					try
 					{
 						select = getSelfNode()
@@ -994,13 +991,6 @@ void CFOFrontEndInterface::configureForTimingChain(int step /* = -1 */)
 		default:
 			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 	}	
-
-
-	
-	
-	
-	
-	
 
 }  // end configureForTimingChain()
 
@@ -1670,7 +1660,10 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 	__FE_COUT__ << "Sending " << n_loopbacks << " markers on all the links..." << __E__; 
 	for (auto link: CFOLib::CFO_Links)
 	{
-		__FE_COUT__ << "step " << loopback_step << ") CFO sending markers on link: " << link << __E__; 
+		__FE_COUT__ << "step " << loopback_step << ") CFO sending markers on" << __E__ 
+							   << "CFO link:\t" << link << __E__
+							   << "target DTC:\t" << active_DTC << __E__
+							   << "target ROC:\t" << active_ROC << __E__; 
 		unsigned int comulative_delay = 0;
 		float average_delay = 0.0;
 		bool timeout = false;
