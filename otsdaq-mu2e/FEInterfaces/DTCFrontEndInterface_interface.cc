@@ -3856,7 +3856,8 @@ void DTCFrontEndInterface::loopbackTest(int step)
 	{	
 		// 0x9100 set bit 28 = 1
 		__FE_COUT__ << "DTC" << active_DTC << "loopback mode ENABLE" << __E__;
-		thisDTC_->EnableCFOLoopback();
+		thisDTC_->DisableCFOLoopback();
+		// thisDTC_->EnableCFOLoopback();
 	}
 	else 
 	{
@@ -3864,7 +3865,8 @@ void DTCFrontEndInterface::loopbackTest(int step)
 		__FE_COUT__ << "active DTC = " << active_DTC
 	 	            << " is NOT this DTC = " << dtc_location_in_chain_
 	 	        	<< "... pass signal through" << __E__;
-		thisDTC_->DisableCFOLoopback();
+		thisDTC_->EnableCFOLoopback();
+		// thisDTC_->DisableCFOLoopback();
 	}
 	// enable the links of the DTC
 	DTCLib::DTC_Link_ID link = static_cast<DTCLib::DTC_Link_ID>(active_ROC);
