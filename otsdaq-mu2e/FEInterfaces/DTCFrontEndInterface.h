@@ -32,10 +32,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	virtual void						resetSlowControlsChannelIterator (void) override;
 	virtual FESlowControlsChannel*		getNextSlowControlsChannel	(void) override;
 	virtual unsigned int				getSlowControlsChannelCount	(void) override;
-	virtual void						getSlowControlsValue		(FESlowControlsChannel& channel, std::string& readValue) override;
+	// virtual void						getSlowControlsValue		(FESlowControlsChannel& channel, std::string& readValue) override;
   private:
-	bool											currentChannelIsInROC_;
-	std::string										currentChannelROCUID_;
+	// bool											currentChannelIsInROC_;
+	// std::string										currentChannelROCUID_;
 
   public:
 	// state machine
@@ -93,8 +93,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::pair<std::string /*ROC UID*/,
 			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
 
-	std::map<std::string /* ROC UID*/, 
-		FESlowControlsChannel> 						mapOfROCSlowControlsChannels_;
+	// std::map<std::string /* ROC UID*/, 
+	// 	FESlowControlsChannel> 						mapOfROCSlowControlsChannels_;
 
 	// m_ioc_reg_access_t 								reg_access_;
 
@@ -126,7 +126,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void                              	ReadExternalROCRegister        	(__ARGS__);
 	// void 								DTCHighRateBlockCheck			(__ARGS__);
 	void 								DTCReset						(__ARGS__);
-	// void 								DTCReset						(void);
 	void 								DTCHighRateDCSCheck				(__ARGS__);
 	void 								RunROCFEMacro					(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest	(__ARGS__);
@@ -148,10 +147,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ROCResetLink					(__ARGS__);
 	void								HeaderFormatTest				(__ARGS__);
 
-
-	// void 								ROCDestroy						(__ARGS__);
-	// void 								ROCInstantiate					(__ARGS__);
-	void 								DMABufferRelease				(__ARGS__);
 	void 								DTCInstantiate					(__ARGS__);
 	void 								ResetDTCLinks					(__ARGS__);
 

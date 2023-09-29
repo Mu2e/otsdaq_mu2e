@@ -36,6 +36,10 @@ class ROCDTCHardwareEmulated : public ROCCoreVInterface
 
 	virtual void 							readROCBlock			(std::vector<uint16_t>& data, uint16_t address, uint16_t numberOfReads, bool incrementAddress) override;
 	virtual void 							readEmulatorBlock		(std::vector<uint16_t>& data, uint16_t address, uint16_t numberOfReads, bool incrementAddress) override; 
+	virtual void 							writeROCBlock			(const std::vector<uint16_t>& writeData, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
+
+	virtual void 							universalBlockRead		(char* address, char* returnValue, unsigned int numberOfBytes) override;
+	
 
 	// specific ROC functions
 	virtual int  							readTimestamp			(void) override;

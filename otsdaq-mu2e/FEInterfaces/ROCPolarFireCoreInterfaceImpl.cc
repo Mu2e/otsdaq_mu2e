@@ -104,6 +104,22 @@ void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<uint16_t>& data,
 }  // end readEmulatorBlock()
 
 //==================================================================================================
+void ROCPolarFireCoreInterface::writeROCBlock(const std::vector<uint16_t>& writeData,
+                                             uint16_t               address,
+                                             uint16_t               numberOfWrites,
+                                             bool                   incrementAddress)
+{
+	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
+	            << ", address = " << address << ", numberOfWrites = " << numberOfWrites
+	            << ", incrementAddress = " << incrementAddress << __E__;
+
+	thisDTC_->WriteROCBlock(linkID_, address, writeData, 
+		false /* requestAck */, 
+		incrementAddress, 0);
+
+}  // end writeROCBlock()
+
+//==================================================================================================
 int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================

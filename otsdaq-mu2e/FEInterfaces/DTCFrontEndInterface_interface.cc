@@ -380,34 +380,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Link Errors"},
 					1);  // requiredUserPermissions
 
-	// registerFEMacroFunction(
-	// 	"ROCDestroy",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::ROCDestroy),
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},
-	// 				1);  // requiredUserPermissions
-	// registerFEMacroFunction(
-	// 	"ROCInstantiate",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::ROCInstantiate),
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},
-	// 				1);  // requiredUserPermissions
 	registerFEMacroFunction(
 		"DTCInstantiate",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCInstantiate),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
-	registerFEMacroFunction(
-		"DMABufferRelease",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::DMABufferRelease),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1);  // requiredUserPermissions	
+					
 	registerFEMacroFunction(
 		"DTC_Reset_Links",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -516,52 +496,57 @@ void DTCFrontEndInterface::configureSlowControls(void)
 	__FE_COUT__ << "Configuring slow controls..." << __E__;
 
 	// parent configure adds DTC slow controls channels
-	FEVInterface::configureSlowControls();  // also resets DTC-proper channels
+	FEVInterface::configureSlowControls();  // also resets mapOfSlowControlsChannels_
 
 	__FE_COUT__ << "DTC '" << getInterfaceUID()
 	            << "' slow controls channel count (BEFORE considering ROCs): "
-	            << mapOfSlowControlsChannels_.size() << __E__;
+	            << getSlowControlsChannelCount() << __E__;
 
-	mapOfROCSlowControlsChannels_.clear();  // reset ROC channels
-
-	// now add ROC slow controls channels
-	ConfigurationTree ROCLink =
-	    Configurable::getSelfNode().getNode("LinkToROCGroupTable");
-	if(!ROCLink.isDisconnected())
+	for(auto& roc:rocs_)
 	{
-		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-		    ROCLink.getChildren();
+		__FE_COUT__ << "Configuring DTC '" << getInterfaceUID()
+					<< "' ROC '" << roc.second->getInterfaceUID()
+					<< "' slow controls..." << __E__;
+		roc.second->configureSlowControls();
+	}
 
-		unsigned int initialChannelCount;
+	// mapOfROCSlowControlsChannels_.clear();  // reset ROC channels
 
-		for(auto& rocChildPair : rocChildren)
-		{
-			initialChannelCount = mapOfROCSlowControlsChannels_.size();
+	// // now add ROC slow controls channels
+	// ConfigurationTree ROCLink =
+	//     Configurable::getSelfNode().getNode("LinkToROCGroupTable");
+	// if(!ROCLink.isDisconnected())
+	// {
+	// 	std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+	// 	    ROCLink.getChildren();
 
-			FEVInterface::addSlowControlsChannels(
-			    rocChildPair.second.getNode("LinkToSlowControlsChannelTable"),
-			    "/" + rocChildPair.first /*subInterfaceID*/,
-			    &mapOfROCSlowControlsChannels_);
+	// 	unsigned int initialChannelCount;
 
-			__FE_COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
-			            << "' slow controls channel count: "
-			            << mapOfROCSlowControlsChannels_.size() - initialChannelCount
-			            << __E__;
+	// 	for(auto& rocChildPair : rocChildren)
+	// 	{
+	// 		initialChannelCount = mapOfROCSlowControlsChannels_.size();
 
-		}  // end ROC children loop
+	// 		FEVInterface::addSlowControlsChannels(
+	// 		    rocChildPair.second.getNode("LinkToSlowControlsChannelTable"),
+	// 		    "/" + rocChildPair.first /*subInterfaceID*/,
+	// 		    &mapOfROCSlowControlsChannels_);
 
-	}      // end ROC channel handling
-	else
-		__FE_COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
+	// 		__FE_COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
+	// 		            << "' slow controls channel count: "
+	// 		            << mapOfROCSlowControlsChannels_.size() - initialChannelCount
+	// 		            << __E__;
+
+	// 	}  // end ROC children loop
+
+	// }      // end ROC channel handling
+	// else
+	// 	__FE_COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
 
 	__FE_COUT__ << "DTC '" << getInterfaceUID()
 	            << "' slow controls channel count (AFTER considering ROCs): "
-	            << mapOfSlowControlsChannels_.size() +
-	                   mapOfROCSlowControlsChannels_.size()
-	            << __E__;
+	            << getSlowControlsChannelCount() << __E__;
 
-	__FE_COUT__ << "Done configuring slow controls." << __E__;
-
+	__FE_COUT__ << "Done configuring DTC+ROC slow controls." << __E__;
 }  // end configureSlowControls()
 
 //==============================================================================
@@ -570,91 +555,115 @@ void DTCFrontEndInterface::resetSlowControlsChannelIterator(void)
 {
 	// call parent
 	FEVInterface::resetSlowControlsChannelIterator();
+	for(auto& roc:rocs_)
+		roc.second->resetSlowControlsChannelIterator();
 
-	currentChannelIsInROC_ = false;
+	// currentChannelIsInROC_ = false;
 }  // end resetSlowControlsChannelIterator()
 
 //==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 FESlowControlsChannel* DTCFrontEndInterface::getNextSlowControlsChannel(void)
 {
-	// if finished with DTC slow controls channels, move on to ROC list
-	if(slowControlsChannelsIterator_ == mapOfSlowControlsChannels_.end())
+	// if not finished with DTC slow controls channels, return next DTC channel
+	FESlowControlsChannel* nextSlowControlsChannel = FEVInterface::getNextSlowControlsChannel();
+	if(nextSlowControlsChannel != nullptr) return nextSlowControlsChannel;
+
+	// else if finished with DTC slow controls channels, move on to ROC list
+	
+	for(auto& roc:rocs_)
 	{
-		slowControlsChannelsIterator_ = mapOfROCSlowControlsChannels_.begin();
-		currentChannelIsInROC_        = true;  // switch to ROC mode
+		nextSlowControlsChannel = roc.second->getNextSlowControlsChannel();
+		if(nextSlowControlsChannel != nullptr) return nextSlowControlsChannel;		
 	}
 
-	// if finished with ROC list, then done
-	if(slowControlsChannelsIterator_ == mapOfROCSlowControlsChannels_.end())
-		return nullptr;
+	// else no more channels
+	__FE_COUT__ << "Done with DTC+ROC slow control channel handling." << __E__;
+	return nullptr;
 
-	if(currentChannelIsInROC_)
-	{
-		std::vector<std::string> uidParts;
-		StringMacros::getVectorFromString(
-		    slowControlsChannelsIterator_->second.interfaceUID_,
-		    uidParts,
-		    {'/'} /*delimiters*/);
-		if(uidParts.size() != 2)
-		{
-			__FE_SS__ << "Illegal ROC slow controls channel name '"
-			          << slowControlsChannelsIterator_->second.interfaceUID_
-			          << ".' Format should be DTC/ROC." << __E__;
-		}
-		currentChannelROCUID_ =
-		    uidParts[1];  // format DTC/ROC names, take 2nd part as ROC UID
-	}
-	return &(
-	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
+
+	// // if finished with DTC slow controls channels, move on to ROC list
+	// if(slowControlsChannelsIterator_ == mapOfSlowControlsChannels_.end())
+	// {
+	// 	slowControlsChannelsIterator_ = mapOfROCSlowControlsChannels_.begin();
+	// 	currentChannelIsInROC_        = true;  // switch to ROC mode
+	// }
+
+	// // if finished with ROC list, then done
+	// if(slowControlsChannelsIterator_ == mapOfROCSlowControlsChannels_.end())
+	// 	return nullptr;
+
+	// if(currentChannelIsInROC_)
+	// {
+	// 	std::vector<std::string> uidParts;
+	// 	StringMacros::getVectorFromString(
+	// 	    slowControlsChannelsIterator_->second.interfaceUID_,
+	// 	    uidParts,
+	// 	    {'/'} /*delimiters*/);
+	// 	if(uidParts.size() != 2)
+	// 	{
+	// 		__FE_SS__ << "Illegal ROC slow controls channel name '"
+	// 		          << slowControlsChannelsIterator_->second.interfaceUID_
+	// 		          << ".' Format should be DTC/ROC." << __E__;
+	// 	}
+	// 	currentChannelROCUID_ =
+	// 	    uidParts[1];  // format DTC/ROC names, take 2nd part as ROC UID
+	// }
+	// return &(
+	//     (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
 }  // end getNextSlowControlsChannel()
 
 //==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 unsigned int DTCFrontEndInterface::getSlowControlsChannelCount(void)
 {
-	return mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size();
+	unsigned int rocChannelCount = 0;
+	for(auto& roc : rocs_)
+		rocChannelCount += roc.second->getSlowControlsChannelCount();
+	return mapOfSlowControlsChannels_.size() + rocChannelCount;
 }  // end getSlowControlsChannelCount()
 
-//==============================================================================
-// virtual in case read should be different than universalread
-void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
-                                                std::string&           readValue)
-{
-	__FE_COUTV__(currentChannelIsInROC_);
-	__FE_COUTV__(universalDataSize_);
-	if(!currentChannelIsInROC_)
-	{
-		FEVInterface::getSlowControlsValue(channel, readValue);
-	}
-	else
-	{
-		__FE_COUTV__(currentChannelROCUID_);
-		auto rocIt = rocs_.find(currentChannelROCUID_);
-		if(rocIt == rocs_.end())
-		{
-			__FE_SS__ << "ROC UID '" << currentChannelROCUID_
-			          << "' was not found in ROC map." << __E__;
-			ss << "Here are the existing ROCs: ";
-			bool first = true;
-			for(auto& rocPair : rocs_)
-				if(!first)
-					ss << ", " << rocPair.first;
-				else
-				{
-					ss << rocPair.first;
-					first = false;
-				}
-			ss << __E__;
-			__FE_SS_THROW__;
-		}
-		readValue.resize(universalDataSize_);
-		*((uint16_t*)(&readValue[0])) =
-		    rocIt->second->readRegister(*((uint16_t*)(&channel.universalAddress_[0])));
-	}
+// //==============================================================================
+// // virtual in case read should be different than universalread
+// void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
+//                                                 std::string&           readValue)
+// {
+// 	__FE_COUTV__(currentChannelIsInROC_);
+// 	__FE_COUTV__(universalDataSize_);
+// 	if(!currentChannelIsInROC_)
+// 	{
+// 		__FE_COUT__ << "Handling as DTC DCS value" << __E__;
+// 		FEVInterface::getSlowControlsValue(channel, readValue);
+// 	}
+// 	else
+// 	{
+// 		__FE_COUT__ << "Handling as ROC DCS value" << __E__;
+// 		__FE_COUTV__(currentChannelROCUID_);
+// 		auto rocIt = rocs_.find(currentChannelROCUID_);
+// 		if(rocIt == rocs_.end())
+// 		{
+// 			__FE_SS__ << "ROC UID '" << currentChannelROCUID_
+// 			          << "' was not found in ROC map." << __E__;
+// 			ss << "Here are the existing ROCs: ";
+// 			bool first = true;
+// 			for(auto& rocPair : rocs_)
+// 				if(!first)
+// 					ss << ", " << rocPair.first;
+// 				else
+// 				{
+// 					ss << rocPair.first;
+// 					first = false;
+// 				}
+// 			ss << __E__;
+// 			__FE_SS_THROW__;
+// 		}
+// 		readValue.resize(universalDataSize_);
+// 		*((uint16_t*)(&readValue[0])) =
+// 		    rocIt->second->readRegister(*((uint16_t*)(&channel.universalAddress_[0])));
+// 	}
 
-	__FE_COUTV__(readValue.size());
-}  // end getNextSlowControlsChannel()
+// 	__FE_COUTV__(readValue.size());
+// }  // end getNextSlowControlsChannel()
 
 //==============================================================================
 void DTCFrontEndInterface::createROCs(void)
@@ -3680,43 +3689,6 @@ void DTCFrontEndInterface::DTCInstantiate(__ARGS__)
 		getInterfaceUID());
 	
 } //end DTCInstantiate()
-
-
-//========================================================================
-void DTCFrontEndInterface::DMABufferRelease(__ARGS__)
-{	
-	
-	{
-		//MU2E_NUM_RECV_BUFFS = 100 in mu2e_pcie_utils/mu2e_driver/mu2e_proto_globals.h
-		auto stsDCS = getDevice()->read_release(DTC_DMA_Engine_DCS, 100);
-		auto stsDAQ = getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
-		TLOG(TLVL_DEBUG + 7) << "DMABufferRelease - stsDCS=" << stsDCS << ", stsDAQ=" << stsDAQ;
-		/*
-		for (unsigned ii = 0; ii < 100; ++ii)
-			{
-				void* buffer;
-				uto tmo_ms = 0;
-				auto stsRD = getDevice()->read_data(DTC_DMA_Engine_DCS, &buffer, tmo_ms);			auto stsDCS = getDevice()->read_release(DTC_DMA_Engine_DCS, 100);
-				auto stsRL = getDevice()->read_release(DTC_DMA_Engine_DCS, 1);
-				TLOG(TLVL_DEBUG + 7) << "Reset - release/read for DCS ii=" << ii 
-				<< ", stsRD=" << stsRD << ", stsRL=" << stsRL << ", buffer=" << buffer;
-				//if (delay > 0) usleep(delay);
-			}
-		for (unsigned ii = 0; ii < 100; ++ii)
-		{
-			void* buffer;
-			auto tmo_ms = 0;
-			// auto stsRD = getDevice()->read_data(DTC_DMA_Engine_DAQ, &buffer, tmo_ms);
-			auto stsRL = getDevice()->read_release(DTC_DMA_Engine_DAQ, 1);
-			TLOG(TLVL_DEBUG + 7) << "Reset - release/read for DAQ ii=" << ii 
-			//<< ", stsRD=" << stsRD 
-			<< ", stsRL=" << stsRL << ", buffer=" << buffer;
-			//if (delay > 0) usleep(delay);
-		}*/
-	}
-
-	
-} //end DMABufferRelease()
 
 //========================================================================
 void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
