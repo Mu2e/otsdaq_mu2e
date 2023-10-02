@@ -365,7 +365,8 @@ void CFOFrontEndInterface::TestMarker(__ARGS__)
 
 	ostr << std::endl << std::endl;
 	__SET_ARG_OUT__("response", ostr.str());
-}
+} // end TestMarker()
+
 //=====================================================================================
 //
 float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
@@ -1621,8 +1622,8 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 	const int ROCsPerDTC = 6;
 	const unsigned int n_loopbacks = getConfigurationManager()
 	        							->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks").getValue<unsigned int>();
-	const unsigned int DTCsPerChain = getConfigurationManager()
-	        							->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
+	const unsigned int DTCsPerChain = 8;//getConfigurationManager()
+	        							//->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
 	
 	const int alignment_marker = 10;	// TODO: check with the firmware
 	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;

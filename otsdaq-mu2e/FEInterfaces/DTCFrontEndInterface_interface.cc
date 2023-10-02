@@ -444,6 +444,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				    std::vector<std::string>{"Link", "Lane"},
 					std::vector<std::string>{"readData"},
 					1);  // requiredUserPermissions
+
+	
+	registerFEMacroFunction(
+		"Manual Loopback Setup",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ManualLoopbackSetup),
+				    std::vector<std::string>{"setAsPassthrough", "ROC_Link"},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
 	
 	registerFEMacroFunction(
 		"Check Link Loss-of-Light",
@@ -3816,12 +3825,37 @@ void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
 } //end GetLinkLossOfLight()
 
 //========================================================================
+void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
+{	
+	bool setAsPassthrough = __GET_ARG_IN__("setAsPassthrough",bool);
+	const int ROC_Link = __GET_ARG_IN__("ROC_Link",int);
+
+	__COUTV__(setAsPassthrough);
+	__COUTV__(ROC_Link);
+	
+	thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
+	thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
+	for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
+		thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
+
+	if(setAsPassthrough)
+	{
+		thisDTC_->DisableCFOLoopback();
+		return;
+	}
+
+	thisDTC_->EnableLink(DTCLib::DTC_Links[ROC_Link]);
+	
+
+} //end ManualLoopbackSetup()
+
+//========================================================================
 void DTCFrontEndInterface::loopbackTest(int step)
 {	
 	// TODO: read from configuration
 	const int ROCsPerDTC = 6;
-	const unsigned int DTCsPerChain = getConfigurationManager()
-	        							->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
+	const unsigned int DTCsPerChain = 8; //getConfigurationManager()
+	        							//->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
 	
 	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;	// 6 * 10 = 60
 
