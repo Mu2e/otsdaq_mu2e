@@ -3,7 +3,7 @@
 * Online Postgres DB 
 * ------------------------------------------------------------------------------
 * PG schemas (think database instances)                                      
-#+begin_src  
+#+begin_src                                                                  
 >psql -h localhost -p 5434 run_info -U run_user -W
 Password: 
 psql (15.3, server 14.4)
@@ -19,7 +19,7 @@ run_info=> \dn
  test        | run_user
 (4 rows)
 #+end_src
-* tables in test                                                             
+* tables in schema=test                                                      
 #+begin_src 
 run_info=> \dt test.*
                  List of relations
