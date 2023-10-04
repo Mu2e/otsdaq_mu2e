@@ -60,7 +60,7 @@ mu2etrk  15636  0.0  0.0 16546880 13112 pts/3  Sl   19:43   0:00 datalogger -c i
 - ots need to write dbg file in the mu2edcs@mu2e-dsc-01 epics ioc folder 
 - so ask Eric to configure it in otsdaq configuration
 - after that, if dbg flies is writing correctly ots is writing the new PVs and/or new configuration also in the dcs_archiver
-*** Restarting the PDU EPICS IOC server 
+*** Restarting the PDU EPICS IOC server                                      
 - could solve the wrong starting of it after a rebooting or switching on the mu2-dcs-01 node. 
   Steps to follow (https://dbweb9.fnal.gov:8443/ECL/mu2e/E/show?e=1806)
 #+begin_src 
@@ -72,9 +72,11 @@ mu2etrk  15636  0.0  0.0 16546880 13112 pts/3  Sl   19:43   0:00 datalogger -c i
  screen -r PDUIoc         # again to check if there are still starting errors 
                           # then press the keys 'ctrl' and 'A' and then 'D' to detach the screen without closing it
 #+end_src 
-** [[file:db_tables.org][Mongo DB and the DB tables]] 
+*** Glenn in mu2ewiki: [[https://mu2einternalwiki.fnal.gov/wiki/Detector_Control_System]]
+** [[file:mongo_db.org][Mongo DB and the DB tables]]
+** [[file:postgres_db.org][online postgres DB]]
 * ------------------------------------------------------------------------------
 * ATTIC
 * ------------------------------------------------------------------------------
-** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
+* [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
 * ------------------------------------------------------------------------------

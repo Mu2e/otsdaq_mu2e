@@ -1,0 +1,72 @@
+#+startup:fold
+* ------------------------------------------------------------------------------
+* Online Postgres DB 
+* ------------------------------------------------------------------------------
+* PG schemas (think database instances)                                      
+#+begin_src  
+>psql -h localhost -p 5434 run_info -U run_user -W
+Password: 
+psql (15.3, server 14.4)
+Type "help" for help.
+
+run_info=> \dn
+    List of schemas
+    Name     |  Owner   
+-------------+----------
+ integration | run_user
+ production  | run_user
+ public      | postgres
+ test        | run_user
+(4 rows)
+#+end_src
+* tables in test                                                             
+#+begin_src 
+run_info=> \dt test.*
+                 List of relations
+ Schema |          Name          | Type  |  Owner   
+--------+------------------------+-------+----------
+ test   | cause_type             | table | run_user
+ test   | run_conditions         | table | run_user
+ test   | run_configuration      | table | run_user
+ test   | run_configuration_type | table | run_user
+ test   | run_info               | table | run_user
+ test   | run_transition         | table | run_user
+ test   | run_type               | table | run_user
+ test   | transition_type        | table | run_user
+(8 rows)
+#+end_src  
+* sample queries                                                             
+** query run_configuration                                                   
+#+begin_src 
+run_info=> select * from test.run_configuration where run_number>105060;
+ run_number | run_type |     host_name      | artdaq_partition | configuration_name | configuration_version | trigger_table_name | trigger_table_version |      commit_time       
+------------+----------+--------------------+------------------+--------------------+-----------------------+--------------------+-----------------------+------------------------
+     105067 |        4 | mu2edaq09.fnal.gov |               14 | DqmTrkConfig       |                    10 |                    |                       | 2023-09-25 12:47:47-05
+     105061 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   154 |                    |                       | 2023-09-23 10:55:16-05
+     105062 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   154 |                    |                       | 2023-09-23 11:13:20-05
+     105063 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   154 |                    |                       | 2023-09-23 11:17:13-05
+     105064 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   154 |                    |                       | 2023-09-23 11:21:59-05
+     105065 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   154 |                    |                       | 2023-09-23 11:36:18-05
+     105066 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   154 |                    |                       | 2023-09-23 11:40:29-05
+     105068 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   155 |                    |                       | 2023-10-03 17:40:17-05
+     105069 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   156 |                    |                       | 2023-10-03 18:05:22-05
+     105070 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   156 |                    |                       | 2023-10-03 18:16:45-05
+     105071 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   157 |                    |                       | 2023-10-03 20:17:55-05
+     105072 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   157 |                    |                       | 2023-10-03 20:24:18-05
+     105073 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   157 |                    |                       | 2023-10-03 20:35:10-05
+     105074 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   157 |                    |                       | 2023-10-03 20:41:47-05
+     105075 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   158 |                    |                       | 2023-10-03 20:56:38-05
+     105076 |        1 | mu2edaq09.fnal.gov |                8 | TrkVstAnnexConfig  |                   158 |                    |                       | 2023-10-03 21:02:09-05
+(16 rows)
+#+end_src 
+** query run_transition                                                      
+#+begin_src 
+run_info=> select * from test.run_transition where run_number=105060;
+ run_number | transition_type | cause_type |    transition_time     
+------------+-----------------+------------+------------------------
+     105060 |               5 |            | 2023-09-23 10:25:42-05
+     105060 |               1 |            | 2023-09-23 10:34:04-05
+#+end_src 
+* ------------------------------------------------------------------------------
+* back to [[file:otsdaq_mu2e.org]]
+* ------------------------------------------------------------------------------
