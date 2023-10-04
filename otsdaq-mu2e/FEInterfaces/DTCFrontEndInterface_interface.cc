@@ -5,6 +5,7 @@
 
 
 #include <fstream>
+#include <thread>
 
 
 using namespace ots;
@@ -31,6 +32,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	__FE_COUT__ << "instantiate DTC... " << getInterfaceUID() << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
+	// SC: I believe that might cause confusion if we have an explicit setting for CFO emulation that gets overwritten depending on Mu2eGlobals?
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "Hardware Dev Mode identified, so forcing CFO emulation mode for DTC" << __E__;
@@ -649,8 +651,15 @@ void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
 			__FE_SS_THROW__;
 		}
 		readValue.resize(universalDataSize_);
+		try 
+		{
 		*((uint16_t*)(&readValue[0])) =
-		    rocIt->second->readRegister(*((uint16_t*)(&channel.universalAddress_[0])));
+		    rocIt->second->readROCRegister(*((uint16_t*)(&channel.universalAddress_[0])));
+		} 
+		catch(const std::exception &exc)
+		{
+			__GEN_COUT_ERR__  << "Ignoring ERROR in getSlowControlsValue:" << __E__ << exc.what() << __E__;
+		}
 	}
 
 	__FE_COUTV__(readValue.size());
@@ -871,19 +880,56 @@ try
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
-	if(skipInit_) return;
+	if(skipInit_)
+	{
+		__FE_COUT_INFO__ << "Skip DTC hardware configuration." << __E__;
+		return;
+	}
 
-	if(operatingMode_ == "HardwareDevMode")
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_DEFAULT)
+	{
+		__FE_COUT_INFO__ << "Configuring for default mode - using the configuration from the config tree." << __E__;
+		configureDefaultMode();
+		configureDump();
+	 	
+		bool doConfigureROCs = false;
+	 	try
+	 	{
+	 		doConfigureROCs = Configurable::getSelfNode()
+	 		                      .getNode("EnableROCConfigureStep")
+	 		                      .getValue<bool>();
+	 	}
+	 	catch(...)
+	 	{
+	 	}  // ignore missing field
+		if(doConfigureROCs) 
+		{
+			// SC: is configuring multiple ROCs in parallel safe?
+			//__FE_COUT_INFO__ << "Configure " <<  rocs_.size() << " ROC(s) in parallel. " << __E__;
+			//std::vector<std::thread> threads(rocs_.size());
+			for(auto& roc : rocs_) 
+			{   
+				 roc.second->configure();
+			//	//threads.emplace_back(&ROCCoreVInterface::configure, roc.second.get());
+			}
+			//for(auto& thread : threads)
+			//	 thread.join();
+			//__FE_COUT_INFO__ << "Joined " << threads.size() << " ROC(s) configuration threads." << __E__;
+		} else {
+			__FE_COUT_INFO__ << "Skip ROC(s) configuration." << __E__;
+		}
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "Configuring for hardware development mode!" << __E__;
 		configureHardwareDevMode();
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
 		configureEventBuildingMode();
 	}
-	else if(operatingMode_ == "LoopbackMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
 		configureLoopbackMode();
@@ -1413,23 +1459,8 @@ catch(...)
 }
 
 //==============================================================================
-void DTCFrontEndInterface::configureHardwareDevMode(void)
+void DTCFrontEndInterface::configureClock(void)
 {
-	__FE_COUT_INFO__ << "configureHardwareDevMode()" << __E__;
-
-	// 0x9100 is the DTC Control Register
-	// registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO emulation mode
-	                  // (set both to 1 to be use the CFO emulated)
-	                  // bit 2 = DCS enable
-	                  // bit 10 = Sequence Number Disable
-	                  // (set to 1 to turns off retrasmission DTC-ROC which isn't working
-	                  // right now)
-
-	thisDTC_->ResetDTC(); //put DTC in known state with DTC reset
-	thisDTC_->ClearDTCControlRegister();
-
-	if(configure_clock_)
-	{
 		uint32_t select      = 0;
 		try
 		{
@@ -1448,8 +1479,231 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		//For DTC - 1 ==> RTF copper clock
 		//For DTC - 2 ==> FPGA FMC
 		thisDTC_->SetJitterAttenuatorSelect(select); // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
+}
+
+//==============================================================================
+void DTCFrontEndInterface::configureCRV(void)
+{
+	// enable punched clock, only used by the CRV DTCs
+	thisDTC_->SetPunchEnable(); // bit 9
+	thisDTC_->EnableAutogenDRP(); // bit 23
+	// SetEVBInfo // we might need to set this to translate CRV events correctly into the Offline chain
+}
+
+void DTCFrontEndInterface::configureDump(void)
+{
+	std::ofstream outfile(std::string(getenv("USER_DATA"))+"/Logs/hardwareConfigDump.log");
+	getSelfNode().print(-1, outfile);
+	outfile.close();
+	std::ofstream outfile2(std::string(getenv("USER_DATA"))+"/Logs/hardwareConfigDump.json");
+	getSelfNode().json(-1, outfile2, true); // depth, ostream, addKey
+	outfile2.close();
+	std::ofstream outfile3(std::string(getenv("USER_DATA"))+"/Logs/hardwareConfigDumpAll.log");
+	auto configManager_ = getConfigurationManager();
+	configManager_->getNode("/").json(-1, outfile3, true);
+	//configManager_->getContextNode(getContextUID(), getApplicationUID()).json(-1, outfile3, true);
+	outfile3.close();
+
+}
+
+//==============================================================================
+void DTCFrontEndInterface::configureDefaultMode(void)
+{
+	__FE_COUT_INFO__ << "configureDefaultMode()" << __E__;
+
+	// 0x9100 is the DTC Control Register
+	// registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO emulation mode
+	                  // (set both to 1 to be use the CFO emulated)
+	                  // bit 2 = DCS enable
+	                  // bit 10 = Sequence Number Disable
+	                  // (set to 1 to turns off retrasmission DTC-ROC which isn't working
+	                  // right now)
+
+	thisDTC_->ResetDTC(); //put DTC in known state with DTC reset
+	thisDTC_->ClearDTCControlRegister();
+	__FE_COUT_INFO__ << "TDC SERDES reset ...";
+	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	__FE_COUT_INFO__ << " done." << __E__;
+	thisDTC_->ClearTXDataRequetsPacketCount(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	thisDTC_->ClearTXHeartbeatPacketCount(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+
+	if(configure_clock_) configureClock();
+	else 
+		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+
+	// thisDTC_->EnableCFOEmulation(); // this will enable sending requests, so do it later after configuring event 
+	if(emulate_cfo_) thisDTC_->SetCFOEmulationMode(); //turn on DTC emulation (ignores any real CFO) 
+	thisDTC_->EnableDCSReception();
+
+	// SequenceNumberDisable
+	bool sequence_number_disable = true;
+	try
+	{
+		sequence_number_disable = getSelfNode()
+					.getNode("SequenceNumberDisable")
+					.getValue<bool>();
 	}
-	else
+	catch(...)
+	{
+		__FE_COUT__ << "No 'SequenceNumberDisable' setting found. Default SequenceNumberDisable = "
+					<< sequence_number_disable << __E__;
+	}
+	if(sequence_number_disable) thisDTC_->SetSequenceNumberDisable();
+
+	// CFO Event Mode bytes (for the CFO Emulator): 0x91c0 and 0x91c4
+	// Data in these registers populates the Event Mode field in the Heartbeat packets the
+	// CFO Emulator will send. They are used to identify a Null vs. Non-null heartbeat: If
+	// the Event Mode bits are all zero, the DTC interprets it a null heartbeats. The DTC
+	// only generates Data Request Packets for non-null heartbeats.  So when these
+	// registers are set to zeros, the DTC generates only null heartbeats, and no Data
+	// Requests. For testing purposes, it's needed to set the Event Mode Bytes to some
+	// non-zero value.
+	// registerWrite(0x91c0, 0xffffffff);
+	// registerWrite(0x91c4, 0xffff);
+	if(emulate_cfo_) 
+	{
+		thisDTC_->SetCFOEmulationEventMode(-1);
+		__FE_COUTV__(thisDTC_->ReadCFOEmulationEventMode());
+	
+		// The DTC's CFO Emulator will generate a number of null packets after the number
+		// of requested non-null heartbeats has been output.
+		// The number of requests (non-nulls) is set in 0x91AC, and the number of nulls is set
+		// in 0x91BC.
+		// registerWrite(0x91BC, 0x10);  // Set number of null heartbeats packets
+		unsigned int emulate_cfo_num_null = 0x10;
+		try
+		{
+			emulate_cfo_num_null = getSelfNode()
+										.getNode("CFOEmulationNumNullHeartbeats")
+										.getValue<unsigned int>();
+		}
+		catch(...)
+		{
+			__FE_COUT__ << "No 'CFOEmulationNumNullHeartbeats' setting found. Default CFOEmulationNumNullHeartbeats = "
+						<< emulate_cfo_num_null << __E__;
+		}
+		thisDTC_->SetCFOEmulationNumNullHeartbeats(emulate_cfo_num_null);
+		// registerWrite(0x91AC, 0); // Set number of heartbeats packets
+	}
+
+
+	// check if any ROCs should be DTC-hardware emulated ROCs
+	{
+		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+
+		int dtcHwEmulateROCmask = 0;
+		for(auto& roc : rocChildren)
+		{
+			bool enabled = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
+
+			if(enabled)
+			{
+				int linkID = roc.second.getNode("linkID").getValue<int>();
+				__FE_COUT__ << "roc uid '" << roc.first << "' at link=" << linkID
+				            << " is DTC-hardware emulated!" << __E__;
+				dtcHwEmulateROCmask |= (1 << linkID);
+			}
+		}
+
+		__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
+		            << dtcHwEmulateROCmask << std::dec << __E__;
+		thisDTC_->SetROCEmulatorMask(dtcHwEmulateROCmask);
+		// registerWrite(0x9110, dtcHwEmulateROCmask);
+		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
+	}  // end check if any ROCs should be DTC-hardware emulated ROCs
+
+	//enable ROC links (do not forget CFO link is off in HW dev mode)
+	__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
+	if(emulate_cfo_) thisDTC_->DisableLink(DTCLib::DTC_Link_CFO);
+	thisDTC_->DisableLink(DTCLib::DTC_Link_EVB); //TODO: generalize 
+	for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
+		if((roc_mask_ >> i) & 1)
+			thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
+		else
+			thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
+
+	unsigned int roc_dcs_response_timer = 1000;
+	try
+	{
+		roc_dcs_response_timer = getSelfNode()
+									.getNode("ROCDCSResponseTimer")
+									.getValue<unsigned int>();
+		}
+		catch(...)
+		{
+			__FE_COUT__ << "No 'ROCDCSResponseTimer' setting found. Default ROCDCSResponseTimer = "
+						<< roc_dcs_response_timer << __E__;
+		}
+	thisDTC_->SetROCDCSResponseTimer(roc_dcs_response_timer); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+	
+	unsigned int dma_timeout_preset = 0x00014141;
+	try
+	{
+		dma_timeout_preset = getSelfNode()
+								.getNode("DMATimeoutPreset")
+								.getValue<unsigned int>();
+	}
+	catch(...)
+	{
+		__FE_COUT__ << "No 'DMATimeoutPreset' setting found. Default DMATimeoutPreset = "
+					<< dma_timeout_preset << __E__;
+	}
+	thisDTC_->SetDMATimeoutPreset(dma_timeout_preset);  // DMA timeout from chants (default is 0x800)
+
+	bool is_crv = false;
+	try
+	{
+		is_crv = getSelfNode()
+					.getNode("isCRV")
+					.getValue<bool>();
+	}
+	catch(...)
+	{ // ignore
+	}
+	if(is_crv) configureCRV();
+
+	unsigned int data_pending_timer = 0x00018000; // ~640us
+	bool set_data_pending_timer = is_crv; // use firmware default, for CRV use software default
+	try
+	{
+		data_pending_timer = getSelfNode()
+								.getNode("DataPendingTimer")
+								.getValue<unsigned int>();
+		set_data_pending_timer = true;
+	}
+	catch(...)
+	{
+		if(is_crv)
+		{
+			__FE_COUT__ << "No 'DataPendingTimer' setting found. Default DMATimeoutPreset = "
+						<< data_pending_timer << __E__;
+		} else {
+			__FE_COUT__ << "No 'DataPendingTimer' setting found. Nothing is set." << __E__;
+		}
+	}
+	if(set_data_pending_timer) thisDTC_->SetDataPendingTimer(data_pending_timer);
+
+}  // end configureDefaultMode()
+
+//==============================================================================
+void DTCFrontEndInterface::configureHardwareDevMode(void)
+{
+	__FE_COUT_INFO__ << "configureHardwareDevMode()" << __E__;
+
+	// 0x9100 is the DTC Control Register
+	// registerWrite(0x9100, 0x40008404);  // bit 30 = CFO emulation enable, bit 15 = CFO emulation mode
+	                  // (set both to 1 to be use the CFO emulated)
+	                  // bit 2 = DCS enable
+	                  // bit 10 = Sequence Number Disable
+	                  // (set to 1 to turns off retrasmission DTC-ROC which isn't working
+	                  // right now)
+
+	thisDTC_->ResetDTC(); //put DTC in known state with DTC reset
+	thisDTC_->ClearDTCControlRegister();
+
+	if(configure_clock_) configureClock();
+	else 
 		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
 
 
@@ -1865,15 +2119,28 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
-	if(operatingMode_ == "HardwareDevMode")
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_DEFAULT)
+	{
+		__FE_COUT_INFO__ << "Starting for default mode!" << __E__;
+		// dump config 
+		auto path = std::string(getenv("OTSDAQ_DATA"))+"/Configs/";
+		mkdir(path.c_str(), 0777);
+		auto fname = path+"hardwareConfig_"+getInterfaceUID()+"_run"+runNumber+".json";
+		__FE_COUT_INFO__ << "Dump " << getInterfaceUID() << " hardware config to '" << fname << "'" << __E__;
+		std::ofstream outfile(fname);
+		getSelfNode().json(-1, outfile, false); // depth, ostream, addKey
+		outfile.close();
+	}
+
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "Starting for hardware development mode!" << __E__;
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << "Starting for Event Building mode!" << __E__;
 	}
-	else if(operatingMode_ == "LoopbackMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Starting for Loopback mode!" << __E__;
 	}
@@ -1884,6 +2151,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		          << __E__;
 		__FE_SS_THROW__;
 	}
+
 
 	return;
 
@@ -2190,15 +2458,19 @@ bool DTCFrontEndInterface::running(void)
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
-	if(operatingMode_ == "HardwareDevMode")
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_DEFAULT)
+	{
+		__FE_COUT_INFO__ << "Running for default mode!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "Running for hardware development mode!" << __E__;
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << "Running for Event Building mode!" << __E__;
 	}
-	else if(operatingMode_ == "LoopbackMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Running for Loopback mode!" << __E__;
 	}
@@ -2466,9 +2738,8 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 		if(rocLinkIndex == roc.second->getLinkID())
 		{
-			// readData = roc.second->readRegister(address);
-
-			readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 100);
+			readData = roc.second->readRegister(address);
+			///readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 100);
 
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%X", readData);

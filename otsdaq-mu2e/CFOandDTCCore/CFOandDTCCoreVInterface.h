@@ -31,7 +31,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	
   
   public:
-
+	static std::string					CONFIG_MODE_DEFAULT;
 	static std::string					CONFIG_MODE_HARDWARE_DEV;
 	static std::string					CONFIG_MODE_EVENT_BUILDING;
 	static std::string					CONFIG_MODE_LOOPBACK;

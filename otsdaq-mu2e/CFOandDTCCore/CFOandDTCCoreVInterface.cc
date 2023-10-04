@@ -9,6 +9,7 @@ using namespace ots;
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "CFOandDTCCoreVInterface"
 
+std::string	CFOandDTCCoreVInterface::CONFIG_MODE_DEFAULT   					= "DefaultMode"; // use setting from config tree
 std::string	CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV 				= "HardwareDevMode";
 std::string	CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING 			= "EventBuildingMode";
 std::string	CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK 					= "LoopbackMode";
@@ -32,7 +33,8 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 	artdaqMode_ = ARTDAQTableBase::isARTDAQEnabled(getConfigurationManager());
 	__FE_COUTV__(artdaqMode_);
 
-	operatingMode_ = "HardwareDevMode";  // choose default
+	//operatingMode_ = "HardwareDevMode";  // choose default
+	operatingMode_ = CFOandDTCCoreVInterface::CONFIG_MODE_DEFAULT;
 	try
 	{
 		auto mu2eGlobalRecords =
@@ -49,6 +51,7 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 	__FE_COUTV__(operatingMode_);
 
 	skipInit_ = true; //default to skipping configure unless Mu2e Globals is set. This way MacroMaker mode will skip configure when the global table is missing.
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_DEFAULT) skipInit_ = false; // enable config for default (hardware) mode 
 	try
 	{
 		auto mu2eGlobalRecords =

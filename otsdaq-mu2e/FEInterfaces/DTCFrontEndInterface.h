@@ -63,10 +63,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// DTC specific items
 	//----------------
 	virtual std::string					readStatus					(void) override;
+	void 								configureDefaultMode		(void);
 	void 								configureHardwareDevMode	(void);
 	void 								configureEventBuildingMode	(int step = -1);
 	void 								configureLoopbackMode		(int step = -1);
 	void 								configureForTimingChain		(int step);
+	void								configureClock              (void);
+	void								configureCRV                (void);
+	void								configureDump				(void);
 
 	// bool 								ROCActive					(unsigned int ROC_link);
 	// int  								getROCLinkStatus			(int ROC_link);
@@ -79,9 +83,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								createROCs					(void);
 	void 								registerFEMacros			(void);
 
-	int         									dtc_location_in_chain_ = -1;
-	unsigned int   									roc_mask_              = 0;
-	int         									emulate_cfo_           = 0;
+	int         									dtc_location_in_chain_   = -1;
+	unsigned int   									roc_mask_                = 0;
+	int         									emulate_cfo_             = 0;
+	unsigned int 									emulate_cfo_num_null_    = 0x10;
 	DTCLib::DTCSoftwareCFO* 						EmulatedCFO_;
 
 	std::ofstream datafile_[8];

@@ -10,6 +10,7 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
     : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
+    , tmo_ms_(100)
     , emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
     , emulatorWorkLoopExit_(false)
     , emulatorWorkLoopRunning_(false)
@@ -305,7 +306,8 @@ catch(...)
 //==================================================================================================
 void ROCCoreVInterface::configure(void) try
 {
-	//	// __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
+	__FE_COUT__ << "ROCCoreVInterface::configure called " << __E__;
+	configureROCDCS(); // needs to be added to derived classes
 	//	// this->writeRegister(0,1);
 	//	// this->writeRegister(0,0);
 	//
@@ -367,6 +369,42 @@ catch(...)
 	__FE_MOUT__ << ss.str();
 	__FE_SS_THROW__;
 }
+
+//==================================================================================================
+void ROCCoreVInterface::configureROCDCS(void) 
+{
+	__FE_COUT__ << "configure ROC DCS timeout time " << __E__;
+
+	// check if setting "ROC_DCSTimeoutMs" is present in linked groups in ROCTypeLinkTable->LinkToSubsystemGroupedParametersTable
+    bool found = false;
+	auto ROCTypeConfig = getSelfNode().getNode("ROCTypeLinkTable");
+	if(!ROCTypeConfig.isDisconnected()) 
+	{
+		if(!ROCTypeConfig.getNode("LinkToSubsystemGroupedParametersTable").isDisconnected())
+		{
+			auto settingPairs = ROCTypeConfig.getNode("LinkToSubsystemGroupedParametersTable").getChildren();
+			for(auto& setting : settingPairs) 
+			{
+				if(setting.second.getNode("Name").getValue<std::string>() == "ROC_DCSTimeoutMs") 
+				{
+					if(setting.second.getNode("Status").getValue<bool>())
+					{
+						tmo_ms_ = setting.second.getNode("Value").getValue<unsigned int>();
+						__FE_COUT__ << "DEBUG FOUND 'ROC_DCSTimeoutMs' (" << setting.second.getNode("Name").getValue<std::string>() << ":" << setting.second.getNode("CommentDescription") << ") = " << tmo_ms_ << " " << setting.second.getNode("Value").getValue<unsigned int>() << __E__;
+						found = true;
+						break;
+					}
+				}
+			} 
+		}
+	}
+
+	if(found)
+		__FE_COUT__ << "configure ROC DCS timeout from settings tmo_ms = " << tmo_ms_ << __E__;
+	else
+		__FE_COUT__ << "Setting 'ROC_DCSTimeoutMs' not found,  configure ROC DCS timeout with default value tmo_ms = " << tmo_ms_ << __E__;
+}
+
 
 //==============================================================================
 void ROCCoreVInterface::halt(void)

@@ -103,6 +103,9 @@ class ROCCoreVInterface : public FEVInterface
   protected:
 	DTCLib::DTC_Link_ID 							linkID_;
 	const unsigned int  							delay_;
+    unsigned int   									tmo_ms_;     
+
+	void											configureROCDCS(void);                   
 
 	//----------------- Emulator members
 	// return false when done with workLoop
