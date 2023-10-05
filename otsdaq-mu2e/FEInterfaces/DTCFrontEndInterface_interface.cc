@@ -2725,7 +2725,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	DTCLib::DTC_Link_ID rocLinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
-	uint8_t address = __GET_ARG_IN__("address", uint8_t);
+	uint16_t address = __GET_ARG_IN__("address", uint16_t); // uint8_t for ROC reads, but uint16_t for FEB reads
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__((unsigned int)address);
 
