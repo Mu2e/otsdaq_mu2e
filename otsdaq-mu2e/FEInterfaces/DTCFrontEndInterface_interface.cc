@@ -227,7 +227,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Buffer Test",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTest),                  // feMacroFunction
-					std::vector<std::string>{"numberOfEvents", "match (default: true)", "eventDuration", "doNotReadBack"}, 
+					std::vector<std::string>{"numberOfEvents", "doNotMatch (bool)", "eventDuration", "doNotReadBack (bool)", "saveBinaryDataToFile (bool)"}, 
 					std::vector<std::string>{"response"},
 					1);  // requiredUserPermissions
 					
@@ -3531,30 +3531,16 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 
 	// arguments
 	unsigned int numberOfEvents = __GET_ARG_IN__("numberOfEvents", uint32_t);
-	std::string match = __GET_ARG_IN__("match (default: true)", std::string);
-	bool activeMatch = true;
+	bool activeMatch = !__GET_ARG_IN__("doNotMatch (bool)", bool);
+	bool saveBinaryDataToFile = __GET_ARG_IN__("saveBinaryDataToFile (bool)", bool);
 	__FE_COUTV__(numberOfEvents);
-	__FE_COUTV__(match);
-
-	// check the parameter false
-	if (match.compare("false") == 0) 
-	{
-		activeMatch = false;
-	} 
-	else if (match.compare("Default") == 0 || match.compare("true") == 0)
-	{
-		activeMatch = true;
-	}
-	else
-	{
-		__FE_COUT__ << "Error: not valid match value! " << std::endl;
-		return;
-	}
+	__FE_COUTV__(activeMatch);
+	__FE_COUTV__(saveBinaryDataToFile);
 
 	// parameters
 	uint16_t debugPacketCount = 0; 
 	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration", uint32_t);	//400 -- delay in the frequency of the emulated CFO
-	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack", bool);
+	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack (bool)", bool);
 	// uint32_t requestDelay = 0;
 	bool incrementTimestamp = true;		// this parameter is not working with emulated CFO
 	bool useSWCFOEmulator = true;
@@ -3585,6 +3571,23 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 								cfoDelay,
 								requestsAhead);
 
+
+	std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+			                       std::to_string(clock()) + ".bin";
+	FILE *fp = nullptr;
+	if(saveBinaryDataToFile)
+	{
+		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
+		__FE_COUTV__(filename);
+		fp = fopen(filename.c_str(), "wb");
+		if(!fp)
+		{
+			__FE_SS__ << "Failed to open file to save macro output '"
+						<< filename << "'..." << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+	
 	// get the data requested
 	for(unsigned int ii = 0; !doNotReadBack &&  ii < numberOfEvents; ++ii)
 	{ 
@@ -3667,6 +3670,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 						for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=2)
 						{
 							auto thisWord = reinterpret_cast<const uint16_t*>(dataPtr)[l];
+							if(fp) fwrite(&thisWord,sizeof(uint16_t), 1, fp);
 							ostr << "\t0x" << std::hex << std::setw(4) << std::setfill('0') << static_cast<int>(thisWord) << std::endl;
 						}
 
@@ -3678,11 +3682,18 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 	
 	}
 
-	// print the result
-	std::string outStr = "Number of events  requested: " + std::to_string(numberOfEvents) + "\n" 
-							+ ostr.str();
+	if(fp) fclose(fp); //close binary file
 
-	__SET_ARG_OUT__("response", outStr);
+	// print the result
+	std::stringstream outSs;
+	outSs << "Number of events  requested: " + std::to_string(numberOfEvents) << __E__;
+	outSs << "Active Event Match: " << (activeMatch?"true":"false") << __E__;
+	outSs << "Event Duration: " << cfoDelay << " = " << cfoDelay*25 << " ns" << __E__;
+	outSs << "Reading back: " << (doNotReadBack?"false":"true") << __E__;
+	if(fp) outSs << "Binary data file saved at: " << filename << __E__;
+	outSs << ostr.str();
+
+	__SET_ARG_OUT__("response", outSs.str());
 	delete cfo;
 }
 
