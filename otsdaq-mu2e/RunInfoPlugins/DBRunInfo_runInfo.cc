@@ -5,6 +5,7 @@
 
 #include <libpq-fe.h> /* for PGconn */
 #include <boost/algorithm/string.hpp>
+#include <chrono>     
 
 using namespace ots;
 
@@ -83,8 +84,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 		PGresult* res;
 		char      buffer[1024];
 
-		char* runType  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE") : "1");
-
+		//extract configuraiton name and version from runInfoConditions
 		std::string runConfiguration = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find(')'));
 
@@ -93,7 +93,25 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find('('));
 		boost::trim_right(runConfiguration);
-		__COUT__ << "Insert new run info in the run_configuration database table, run configuration is: " << runConfiguration << __E__;
+
+		//extract context name and version from runInfoConditions
+		std::string runContext = runInfoConditions.substr(runInfoConditions.find("Context := ") + sizeof("Context := ") - 1);
+		runContext = runContext.substr(0, runContext.find(')'));
+
+		std::string runContextVersion = runContext.substr(runContext.find('(') + 1);
+		boost::trim_right(runContextVersion);
+
+		runContext = runContext.substr(0, runContext.find('('));
+		boost::trim_right(runContext);
+
+		//insert a new row in the run_configuration table
+		__COUT__ << "Insert new run info in the run_configuration database table, run configuration is: "
+				 << runConfiguration
+				 << " , run context is: "
+				 << runContext
+				 << __E__;
+
+		char* runType  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE") : "1");
 
 		snprintf(buffer,
 				sizeof(buffer),
@@ -104,14 +122,13 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 											, configuration_name	\
 											, configuration_version	\
 											, commit_time)			\
-											VALUES ('%s','%s','%d','%s','%s',TO_TIMESTAMP(%ld));",
+											VALUES ('%s','%s','%d','%s','%s',CURRENT_TIMESTAMP);",
 				dbSchema_,
 				runType,
 				hostName,
 				std::stoi(artadqPartition),
 				runConfiguration.c_str(),
-				runConfigurationVersion.c_str(),
-				time(NULL));
+				runConfigurationVersion.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -153,7 +170,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 
 		PQclear(res);
 
-		// write run configurations in run_info_conditions table
+		// write run start transition into run_transition table
 		__COUT__ << "Insert new start run transition in the run_transition database table" << __E__;
 
 		int transitionType = 5; // START SAME TYPE IN THE DB
@@ -164,11 +181,10 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 											  run_number		\
 											, transition_type	\
 											, transition_time)	\
-											VALUES (%ld,'%d',TO_TIMESTAMP(%ld));",
+											VALUES (%ld,'%d',CURRENT_TIMESTAMP);",
 				dbSchema_,
 				boost::numeric_cast<long int>(runNumber),
-				boost::numeric_cast<int>(transitionType),
-				time(NULL));
+				boost::numeric_cast<int>(transitionType));
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -181,14 +197,91 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 		}
 
 		PQclear(res);
+
+		//insert a new row in the run_condition table if it pk(runConfiguration,runConfigurationVersion, runContext,runContextVersion) doesn't exist yet
+		snprintf(buffer,
+				sizeof(buffer),
+				"SELECT configuration_name, configuration_version, context_name, context_version \
+				 FROM %s.run_condition WHERE 		\
+				 configuration_name 	= '%s' 	AND \
+				 configuration_version	= '%s'	AND \
+				 context_name			= '%s'	AND \
+				 context_version		= '%s';",
+				dbSchema_,
+				runConfiguration.c_str(),
+				runConfigurationVersion.c_str(),
+				runContext.c_str(),
+				runContextVersion.c_str());
+
+		res = PQexec(runInfoDbConn_, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "SELECT FROM 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		//get primary key in the run_condiotion table
+		if(PQntuples(res) != 1)
+		{
+			std::string pk;
+		    int nFields = PQnfields(res);
+			for (int i = 0; i < PQntuples(res); i++)
+    		{
+        		for (int j = 0; j < nFields; j++)
+					pk += PQgetvalue(res, i, j);
+   			}
+
+			__COUTV__(pk);
+			std::string pkRun = runConfiguration + runConfigurationVersion + runContext + runContextVersion;
+			if (strcmp(pk.c_str(), pkRun.c_str()))
+			{
+				PQclear(res);
+				char buffer2[4194304];
+
+				snprintf(buffer2,
+				sizeof(buffer2),
+				"INSERT INTO %s.run_condition(						\
+											  configuration_name	\
+											, configuration_version	\
+											, context_name			\
+											, context_version		\
+											, condition				\
+											, commit_time)			\
+											VALUES ('%s','%s','%s','%s','%s',CURRENT_TIMESTAMP);",
+				dbSchema_,
+				runConfiguration.c_str(),
+				runConfigurationVersion.c_str(),
+				runContext.c_str(),
+				runContextVersion.c_str(),
+				runInfoConditions.c_str());
+
+				res = PQexec(runInfoDbConn_, buffer2);
+
+				if(PQresultStatus(res) != PGRES_COMMAND_OK)
+				{
+					__SS__ << "INSERT INTO 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
+						<< __E__;
+					PQclear(res);
+					__SS_THROW__;
+				}
+			}
+		}
+		else
+		{
+			__COUT__ << "PRIMARY KEY FROM 'run_condition' DATABASE TABLE EXIST. NOTHING TO DO. NEW CONFIGURATION KEY HAS NOT BEEN REGISTERD" << __E__;
+		}
+
+		PQclear(res);
 	}
 
 	//close db connection
-	if(PQstatus(runInfoDbConn_) == CONNECTION_OK)
-	{
-		PQfinish(runInfoDbConn_);
-		__COUT__ << "run_info DB CONNECTION CLOSED\n" << __E__;
-	}
+	// if(PQstatus(runInfoDbConn_) == CONNECTION_OK)
+	// {
+	// 	PQfinish(runInfoDbConn_);
+	// 	__COUT__ << "run_info DB CONNECTION CLOSED\n" << __E__;
+	// }
 
 	if(runNumber == (unsigned int)-1)
 	{
@@ -280,11 +373,10 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 											  run_number		\
 											, transition_type	\
 											, transition_time)	\
-											VALUES (%ld,'%d',TO_TIMESTAMP(%ld));",
+											VALUES (%ld,'%d',CURRENT_TIMESTAMP);",
 				dbSchema_,
 				boost::numeric_cast<long int>(runNumber),
-				boost::numeric_cast<int>(runTransitionType),
-				time(NULL));
+				boost::numeric_cast<int>(runTransitionType));
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -301,11 +393,11 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 	}
 
 	//close db connection
-	if(PQstatus(runInfoDbConn_) == CONNECTION_OK)
-	{
-		PQfinish(runInfoDbConn_);
-		__COUT__ << "run_info DB CONNECTION CLOSED\n" << __E__;
-	}
+	// if(PQstatus(runInfoDbConn_) == CONNECTION_OK)
+	// {
+	// 	PQfinish(runInfoDbConn_);
+	// 	__COUT__ << "run_info DB CONNECTION CLOSED\n" << __E__;
+	// }
 
 	if(runNumber == (unsigned int)-1)
 	{
