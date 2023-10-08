@@ -70,6 +70,12 @@ mu2etrk  15636  0.0  0.0 16546880 13112 pts/3  Sl   19:43   0:00 datalogger -c i
 ssh -f -KX -N -L 5434:mu2e-dcs-01:5434 -J mu2eshift@mu2egateway01.fnal.gov mu2eshift@mu2e-dcs-01.fnal.gov
 #+end_src 
 
+*** Writing DCS from OTS to EPICS
+The following settings are needed for the mu2e setup to match out epcis channel scheme. This generates the channel prefix "Mu2e:TDAQ_mu2e" that we are using.
+  - In the "SupervisorTable" the "SlowControlsMetricManagagerChannelNamePreamble" needs to be set to "TDAQ_mu2e" (or "TDAQ_{"USER"})
+  - The "daqMetricLink" is required with "metricPluginType" set to "epics", we use level 3 for epics
+  - The "metricParametersLink" in "daqMetricLink" needs an entry with the key-value pair "channel_name_prefix", "Mu2e"
+
 ** [[file:db_tables.org][Mongo DB and the DB tables]] 
 * ------------------------------------------------------------------------------
 * ATTIC
