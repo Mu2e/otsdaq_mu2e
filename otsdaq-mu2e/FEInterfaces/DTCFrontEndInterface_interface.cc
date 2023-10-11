@@ -1623,7 +1623,20 @@ void DTCFrontEndInterface::configureDefaultMode(void)
 		else
 			thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
 
-	unsigned int roc_dcs_response_timer = 1000;
+	bool is_crv = false;
+	try
+	{
+		is_crv = getSelfNode()
+					.getNode("isCRV")
+					.getValue<bool>();
+	}
+	catch(...)
+	{ // ignore
+	}
+	if(is_crv) configureCRV();
+
+	unsigned int roc_dcs_response_timer = 1000; // overwrite default for CRV (FEB responses take a long time)
+	if(is_crv) roc_dcs_response_timer   = 0x400000;
 	try
 	{
 		roc_dcs_response_timer = getSelfNode()
@@ -1650,18 +1663,6 @@ void DTCFrontEndInterface::configureDefaultMode(void)
 					<< dma_timeout_preset << __E__;
 	}
 	thisDTC_->SetDMATimeoutPreset(dma_timeout_preset);  // DMA timeout from chants (default is 0x800)
-
-	bool is_crv = false;
-	try
-	{
-		is_crv = getSelfNode()
-					.getNode("isCRV")
-					.getValue<bool>();
-	}
-	catch(...)
-	{ // ignore
-	}
-	if(is_crv) configureCRV();
 
 	unsigned int data_pending_timer = 0x00018000; // ~640us
 	bool set_data_pending_timer = is_crv; // use firmware default, for CRV use software default
@@ -2130,6 +2131,12 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		std::ofstream outfile(fname);
 		getSelfNode().json(-1, outfile, false); // depth, ostream, addKey
 		outfile.close();
+
+		for(auto& roc : rocs_)
+		{
+			 roc.second->start(runNumber);
+		}
+
 	}
 
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
