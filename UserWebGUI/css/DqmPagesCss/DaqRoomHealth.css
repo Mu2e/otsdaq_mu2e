@@ -111,7 +111,7 @@ body {
 	float: left;
   }
 
-    /* PV button */
+  /* Buttons */
   .pvButton {
 	height: 100%;
 	width: 100%;
@@ -127,7 +127,7 @@ body {
 	
   .pvLedButton {
 	position:relative;
-	top:-2px;
+	top:-3px;
 	border-radius: 50%;
 	height: 98%;
 	width: 98%;
@@ -140,8 +140,25 @@ body {
 	background-color: lightcoral;
 	transition: 0.7s;
   }
+
+  .pvNodeLedButton {
+	position:relative;
+	top: -4px;
+	left: -4px;
+	border-radius: 50%;
+	height: 14px;
+	width: 14px;
+	color: white;
+	border: none;
+	background-color: transparent;
+  }
 	
-	/*Button text */
+  .pvNodeLedButton:hover {
+	background-color: lightcoral;
+	transition: 0.7s;
+  }
+
+  /*Temperature text */
   .temperText {
 	position:relative;
 	top:-4px;

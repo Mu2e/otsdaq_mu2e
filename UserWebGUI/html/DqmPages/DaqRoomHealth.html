@@ -25,6 +25,7 @@
 			//	init()
 			//	getPvSet()
 			//	makeMainPage()
+			//  drawGraph()
 
 			//	getAllPvList()
 			//	pvListReqHandler(req)
@@ -43,9 +44,6 @@
 			//	pollServer()
 			//	updateRefreshInterval()
 			//	pollServerHandlerFunction(req)
-			//	setBackgroundColor(color)
-			//	evaluateJS(str)
-			//	isEmpty(obj)
 
 
 			//top-level scope (global) variables:
@@ -77,14 +75,10 @@
 			//
 			//====================== end high-level behavior description
 
-			var windowWidth_, windowHeight_;
-
-			var mainBlock_ = {name:"", isHidden:false, el:""}; // = ["mainBlock", false ];
 
 			var refreshRate_ = 15000; //set default to refresh every 15 seconds (ms)
 			var timerVariable_;
-			//var lastAlarmsTimerVariable_;
-			//var alarmsLogTimerVariable_;
+
 			var UID_ = 0;
 			var timeToPoll_ = false;
 
@@ -604,7 +598,7 @@
 									var widgetObject 		= {};
 									widgetObject.pvSettings = {};
 									widgetObject.pvList 	= pvNodeLedE_[l];
-									ledE.id = "led-" + Object.entries(pvNodeLedE_[l])[0][0];
+									ledE.id = "nodeLed-" + Object.entries(pvNodeLedE_[l])[0][0];
 									widgetObject.el = ledE;
 									var widgetsLength = Object.keys(page_.widgets).length;
 									page_.widgets[widgetsLength] = widgetObject;
@@ -660,7 +654,7 @@
 									var widgetObject 		= {};
 									widgetObject.pvSettings = {};
 									widgetObject.pvList 	= pvNodeLedW_[l];
-									ledW.id = "led-" + Object.entries(pvNodeLedW_[l])[0][0];
+									ledW.id = "nodeLed-" + Object.entries(pvNodeLedW_[l])[0][0];
 									widgetObject.el = ledW;
 									var widgetsLength = Object.keys(page_.widgets).length;
 									page_.widgets[widgetsLength] = widgetObject;
@@ -796,8 +790,10 @@
 				if(page_.widgets[widget].el.id.indexOf('temper-') != -1)
 					//page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'>" + Number.parseFloat(pvValue).toFixed(1) + " " + units + "</button>";
 					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
-				else
+				else if(page_.widgets[widget].el.id.indexOf('led-') != -1)
 					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
+				else if(page_.widgets[widget].el.id.indexOf('nodeLed-') != -1)
+					page_.widgets[widget].el.innerHTML = "<button class='pvNodeLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
 
 				page_.widgets[widget].el.title = setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
 
@@ -1106,28 +1102,6 @@
 				timerVariable_ = window.setTimeout(pollServer, refreshRate_);
 			} //end pollServerHandlerFunction()
 
-
-			//=====================================================================================
-			function setBackgroundColor(color)
-			{
-				mainBlock_.el.style["background-color"] = color;
-			} //end setBackgroundColor()
-
-
-			//=====================================================================================
-			//evaluateJS ~~
-			function evaluateJS(str)
-			{
-				Debug.log("evaluateJS = " + str);
-				eval(str);
-			} //end evaluateJS()
-
-
-			//=====================================================================================
-			function isEmpty(obj)
-			{
-				return (Object.getOwnPropertyNames(obj).length === 0);
-			} //end isEmpty()rackTable
 
 		</script>
 	</head>

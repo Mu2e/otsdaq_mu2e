@@ -82,9 +82,6 @@
 			//
 			//====================== end high-level behavior description
 
-			var windowWidth_, windowHeight_;
-
-			var mainBlock_ = {name:"", isHidden:false, el:""}; // = ["mainBlock", false ];
 
 			var refreshRate_ = 15000; //set default to refresh every 15 seconds (ms)
 			var timerVariable_;
@@ -745,26 +742,12 @@
 
 
 			//=====================================================================================
-			function setBackgroundColor(color)
+			function showGraphPeriod(period /*days*/)
 			{
-				mainBlock_.el.style["background-color"] = color;
-			} //end setBackgroundColor()
-
-
-			//=====================================================================================
-			//evaluateJS ~~
-			function evaluateJS(str)
-			{
-				Debug.log("evaluateJS = " + str);
-				eval(str);
-			} //end evaluateJS()
-
-
-			//=====================================================================================
-			function isEmpty(obj)
-			{
-				return (Object.getOwnPropertyNames(obj).length === 0);
-			} //end isEmpty()rackTable
+				var actualTime = Math.floor(Date.now())/1000;
+				var startTime = actualTime - period*24*3600;
+				drawGraph(0,startTime, actualTime);
+			} //end showGraphPeriod()
 
 
 			//=====================================================================================
@@ -777,14 +760,6 @@
 				//console.log("window.onresize Plotly.relayout");
 			};
 
-
-			//=====================================================================================
-			function showGraphPeriod(period /*days*/)
-			{
-				var actualTime = Math.floor(Date.now())/1000;
-				var startTime = actualTime - period*24*3600;
-				drawGraph(0,startTime, actualTime);
-			} //end isEmpty()rackTable
 
 		</script>
 	</head>
