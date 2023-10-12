@@ -6,3 +6,4 @@ core.*
 *.bk
 *.tmp
 .vscode
+otsdaq-mu2e/FEInterfaces/otsdaq_mu2e.code-workspace

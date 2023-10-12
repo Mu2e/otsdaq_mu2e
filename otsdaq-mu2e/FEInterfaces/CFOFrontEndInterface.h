@@ -34,11 +34,14 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	// CFO specific items
 	//----------------
 	float 								MeasureLoopback				(int linkToLoopback);
+	uint32_t							measureDelay				(CFOLib::CFO_Link_ID link);
 	virtual std::string					readStatus					(void) override;
 	// int  								getLinkStatus				(void);
 	void 								configureEventBuildingMode	(int step = -1);
 	void 								configureLoopbackMode		(int step = -1);
 	void 								configureForTimingChain		(int step = -1);
+	void								loopbackTest				(std::string runNumber, int step = -1);
+
 
 	// hardware access
 	//----------------
@@ -81,6 +84,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								SetRunplan						(__ARGS__);
 	void 								LaunchRunplan					(__ARGS__);
 	void 								ConfigureForTimingChain			(__ARGS__);
+	void								LoopbackTest					(__ARGS__);
+	void 								TestMarker						(__ARGS__);
 };
 
 // clang-format on

@@ -108,8 +108,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	registerFEMacros();
 
 	// DTC-specific info
-	dtc_location_in_chain_ =
-	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+	dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
 	
 
 	__FE_COUT_INFO__ << "DTC instantiated with name: " << getInterfaceUID()
@@ -406,7 +405,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS <<
-		" steps. So choose 1 step at a time, 0-" << CONFIG_DTC_TIMING_CHAIN_STEPS << 
+		" steps. So choose 1 step at a time, 0-" << CONFIG_DTC_TIMING_CHAIN_STEPS-1 << 
 		" or use -1 to run all steps sequentially." << __E__;
 		
 	registerFEMacroFunction(
@@ -424,6 +423,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ROCResetLink),
 				    std::vector<std::string>{"Link", "Lane"},
 					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
+
+	
+	registerFEMacroFunction(
+		"Manual Loopback Setup",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ManualLoopbackSetup),
+				    std::vector<std::string>{"setAsPassthrough", "ROC_Link"},
+					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 	
 	registerFEMacroFunction(
@@ -887,16 +895,17 @@ try
 		__FE_COUT_INFO__ << "Configuring for hardware development mode!" << __E__;
 		configureHardwareDevMode();
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+			operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
 		configureEventBuildingMode();
 	}
-	else if(operatingMode_ == "LoopbackMode")
-	{
-		__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
-		configureLoopbackMode();
-	}
+	// else if(operatingMode_ == "LoopbackMode")
+	// {
+	// 	__FE_COUT_INFO__ << "Configuring for Loopback mode!" << __E__;
+	// 	configureLoopbackMode();
+	// }
 	else
 	{
 		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
@@ -1659,9 +1668,6 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 //==============================================================================
 void DTCFrontEndInterface::configureLoopbackMode(int step)
 {
-	if(step == -1)
-		step = getIterationIndex();
-
 	__FE_COUT_INFO__ << "configureLoopbackMode() " << step << __E__;
 
 	if(emulate_cfo_) //when no CFO, what is loopback mode?
@@ -1669,27 +1675,6 @@ void DTCFrontEndInterface::configureLoopbackMode(int step)
 		__FE_SS__ << "There is no CFO! Loopback Mode is invalid." << __E__;
 		__SS_THROW__;
 	}
-
-	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
-	{
-		__FE_COUT__ << "Do nothing while CFO configures for timing chain." << __E__;
-		indicateIterationWork();
-	}
-	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
-		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		configureForTimingChain(getIterationIndex() - 
-			CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX /* start case index!! */);
-		indicateIterationWork();
-	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX + 
-		CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		__FE_COUT__ << "Do nothing while CFO reset its Tx..." << __E__;
-		// indicateIterationWork();
-	}
-	else
-		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 
 }  // end configureLoopbackMode()
 
@@ -1708,10 +1693,9 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			break;
 		case 1:
 			{
-	
 				if(configure_clock_)
 				{
-					uint32_t select      = 0;
+					uint32_t select = 0;
 					try
 					{
 						select = getSelfNode()
@@ -1771,12 +1755,14 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
 			thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
 			thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
-			for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
+			for(size_t i = 0; i < DTCLib::DTC_Links.size(); ++i)
+			{
 				if((roc_mask_ >> i) & 1)
 					thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
 				else
 					thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
-
+			}
+				
 			thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 			thisDTC_->EnableDCSReception();
 			break;
@@ -1885,6 +1871,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	else if(operatingMode_ == "LoopbackMode")
 	{
 		__FE_COUT_INFO__ << "Starting for Loopback mode!" << __E__;
+		loopbackTest();
 	}
 	else
 	{
@@ -3808,5 +3795,92 @@ void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
 
 	__SET_ARG_OUT__("Link Status",rd.str());
 } //end GetLinkLossOfLight()
+
+//========================================================================
+void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
+{	
+	bool setAsPassthrough = __GET_ARG_IN__("setAsPassthrough",bool);
+	const int ROC_Link = __GET_ARG_IN__("ROC_Link",int);
+
+	__COUTV__(setAsPassthrough);
+	__COUTV__(ROC_Link);
+	
+	thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
+	thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
+	for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
+		thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
+
+	if(setAsPassthrough)
+	{
+		thisDTC_->DisableCFOLoopback();
+		return;
+	}
+
+	thisDTC_->EnableLink(DTCLib::DTC_Links[ROC_Link]);
+	
+
+} //end ManualLoopbackSetup()
+
+//========================================================================
+void DTCFrontEndInterface::loopbackTest(int step)
+{	
+	// TODO: read from configuration
+	const int ROCsPerDTC = 6;
+	const unsigned int DTCsPerChain = 8; //getConfigurationManager()
+	        							//->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
+	
+	unsigned int n_steps = DTCsPerChain * ROCsPerDTC;	// 6 * 10 = 60
+
+	//call virtual readStatus
+	if (step == -1)
+		step = getIterationIndex();	// get the current index
+	
+	// alternate with the CFO
+	if ((step % 2) != 0)
+	{
+		indicateIterationWork();
+		__FE_COUT__ << "Step " << step << " is odd, letting DTCs have a turn" << __E__;
+		return;
+	}
+	unsigned int loopback_step = step / 2;
+	// end by restoring the status of the registers
+	if (loopback_step >= n_steps)	
+	{
+		__FE_COUT__ << "Loopback over!" << __E__;
+		return;
+	}
+
+	// select the active DTC AND ROC
+	int active_DTC = loopback_step / ROCsPerDTC;	// each DTC can have up to 6 ROCs
+	int active_ROC = loopback_step % ROCsPerDTC; // [0,5] possible link of the DTC
+
+	__FE_COUT__ << "step " << loopback_step << ") active DTC: " << active_DTC 
+				<< " active ROC on link: " << active_ROC << __E__;
+
+	// set up the DTC based on its position in the chain
+	if (active_DTC == dtc_location_in_chain_)
+	{	
+		// 0x9100 set bit 28 = 1
+		__FE_COUT__ << "DTC" << active_DTC << "loopback mode ENABLE" << __E__;
+		thisDTC_->DisableCFOLoopback();
+		// thisDTC_->EnableCFOLoopback();
+	}
+	else 
+	{
+		// 0x9100 set bit 28 = 0
+		__FE_COUT__ << "active DTC = " << active_DTC
+	 	            << " is NOT this DTC = " << dtc_location_in_chain_
+	 	        	<< "... pass signal through" << __E__;
+		thisDTC_->EnableCFOLoopback();
+		// thisDTC_->DisableCFOLoopback();
+	}
+	// enable the links of the DTC
+	DTCLib::DTC_Link_ID link = static_cast<DTCLib::DTC_Link_ID>(active_ROC);
+	thisDTC_->EnableReceiveCFOLink();
+	thisDTC_->EnableTransmitCFOLink();
+	thisDTC_->EnableLink(link, DTCLib::DTC_LinkEnableMode(true, true)); // enable Tx and Rx
+
+	indicateIterationWork();	
+} //end loopbackTest()
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)
