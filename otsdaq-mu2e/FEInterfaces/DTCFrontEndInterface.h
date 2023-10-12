@@ -68,6 +68,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								configureLoopbackMode		(int step = -1);
 	void 								configureForTimingChain		(int step);
 
+	void								loopbackTest				(int step = -1);
+
 	// bool 								ROCActive					(unsigned int ROC_link);
 	// int  								getROCLinkStatus			(int ROC_link);
 	// int  								getCFOLinkStatus			(void);
@@ -154,6 +156,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								DMABufferRelease				(__ARGS__);
 	void 								DTCInstantiate					(__ARGS__);
 	void 								ResetDTCLinks					(__ARGS__);
+	void 								ManualLoopbackSetup				(__ARGS__);
 
 	void 								GetLinkLossOfLight				(__ARGS__);
 	
