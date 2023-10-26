@@ -106,15 +106,15 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{"loopbacks", "link", "delay"},
-					std::vector<std::string>{"response"},  // namesOfOutput
+					std::vector<std::string>{"Response"},  // namesOfOutput
 					1); 
 
 	registerFEMacroFunction(
 		"Test Loopback marker",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::TestMarker),  // feMacroFunction
-					std::vector<std::string>{"link"},
-					std::vector<std::string>{"response"},  // namesOfOutput
+					std::vector<std::string>{"DTC-chain link index (0-7)"},
+					std::vector<std::string>{"Response"},  // namesOfOutput
 					1); 
 
 	registerFEMacroFunction(
@@ -332,9 +332,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 	ostr << std::endl << std::endl;
 
-	__SET_ARG_OUT__("response", ostr.str());
+	__SET_ARG_OUT__("Response", ostr.str());
 
-}
+} // end LoopbackTest()
 
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link
@@ -347,7 +347,7 @@ void CFOFrontEndInterface::TestMarker(__ARGS__)
 	ostr << std::endl;
 	
 	// parameters (TODO: make the default)
-	int input_link = __GET_ARG_IN__("link", uint8_t);
+	int input_link = __GET_ARG_IN__("DTC-chain link index (0-7)", uint8_t);
 
 	if (input_link < 0)
 	{
@@ -364,7 +364,7 @@ void CFOFrontEndInterface::TestMarker(__ARGS__)
 	 			<< "\t Delay: " << link_delay << std::endl;
 
 	ostr << std::endl << std::endl;
-	__SET_ARG_OUT__("response", ostr.str());
+	__SET_ARG_OUT__("Response", ostr.str());
 } // end TestMarker()
 
 //=====================================================================================

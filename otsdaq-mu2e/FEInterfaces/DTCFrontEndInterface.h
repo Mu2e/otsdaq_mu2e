@@ -134,6 +134,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void								ResetLossOfLockCounter			(__ARGS__);
 	void								ReadLossOfLockCounter			(__ARGS__);
 	void								GetUpstreamControlLinkStatus	(__ARGS__);
+	void								GetLinkLockStatus				(__ARGS__);	
 	void								SelectJitterAttenuatorSource	(__ARGS__);
 	void								WriteDTC						(__ARGS__);
 	void								ReadDTC							(__ARGS__);
@@ -154,7 +155,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ManualLoopbackSetup				(__ARGS__);
 
 	void 								GetLinkLossOfLight				(__ARGS__);
-	
+	void 								ResetPCIe						(__ARGS__);
+	void 								GetFireflyTemperature		(__ARGS__);
+	void 								GetFPGATemperature			(__ARGS__);
+	void 								ResetCFOLinkRx			(__ARGS__);
+	void 								ResetCFOLinkTx			(__ARGS__);
+	void 								ResetCFOLinkRxPLL			(__ARGS__);
+	void 								ResetCFOLinkTxPLL			(__ARGS__);
+
 	
 	// clang-format on
 };

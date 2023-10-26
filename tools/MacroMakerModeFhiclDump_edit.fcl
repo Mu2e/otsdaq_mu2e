@@ -1,0 +1,66 @@
+
+DTC0: {
+	FEInterfacePluginName: 	"DTCFrontEndInterface"
+	LinkToFETypeTable_DTCInterfaceTable: 	{
+		DTC0: 	{
+			EmulatorMode: 				"False"
+			LocationInChain: 				1
+			DeviceIndex: 				0
+			EmulateCFO: 				"No"
+			ConfigureClock: 				"Yes"
+			JitterAttenuatorInputSource: 				"RJ45 Upstream Clock"
+			EnableROCConfigureStep: 				"No"
+			LinkToROCGroupTable_ROCInterfaceTable: 	{
+				EMULATED0: 	{
+					Status: 						"On"
+					ROCGroupID: 						"DTC2ROCs | DTC9ROCs | DTC8ROCs | EMULATED"
+					ROCInterfacePluginName: 						"ROCDTCHardwareEmulated"
+					linkID: 						0
+					EventWindowDelayOffset: 						0
+					EmulateInDTCHardware: 						"True"
+				} //end EMULATED record
+			} //end ROCInterfaceTable group link record
+			EventBuilderDTCID: 				0
+			EventBuilderMode: 				0
+			EventBuilderPartitionID: 				0
+			EventBuilderMACIndex: 				0
+			EventBuilderNumBuff: 				0
+			EventBuilderStartNode: 				0
+			EventBuilderNumNodes: 				0
+		} //end DTC1 record
+	} //end DTCInterfaceTable link record
+} //end DTC1
+
+
+DTC1: {
+        FEInterfacePluginName:  "DTCFrontEndInterface"
+        LinkToFETypeTable_DTCInterfaceTable:    {
+                DTC1:   {
+                        EmulatorMode:                           "False"
+                        LocationInChain:                                1
+                        DeviceIndex:                            1
+                        EmulateCFO:                             "No"
+                        ConfigureClock:                                 "Yes"
+                        JitterAttenuatorInputSource:                            "RJ45 Upstream Clock"
+                        EnableROCConfigureStep:                                 "No"
+                        LinkToROCGroupTable_ROCInterfaceTable:  {
+                                EMULATED1:       {
+                                        Status:                                                 "On"
+                                        ROCGroupID:                                             "DTC2ROCs | DTC9ROCs | DTC8ROCs | EMULATED"
+                                        ROCInterfacePluginName:                                                 "ROCDTCHardwareEmulated"
+                                        linkID:                                                 0
+                                        EventWindowDelayOffset:                                                 0
+                                        EmulateInDTCHardware:                                           "True"
+                                } //end EMULATED record
+                        } //end ROCInterfaceTable group link record
+                        EventBuilderDTCID:                              0
+                        EventBuilderMode:                               0
+                        EventBuilderPartitionID:                                0
+                        EventBuilderMACIndex:                           0
+                        EventBuilderNumBuff:                            0
+                        EventBuilderStartNode:                          0
+                        EventBuilderNumNodes:                           0
+                } //end DTC1 record
+        } //end DTCInterfaceTable link record
+} //end DTC1
+
