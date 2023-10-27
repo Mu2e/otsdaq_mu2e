@@ -50,6 +50,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	// else not emulator mode
 
 
+
 	unsigned dtc_class_roc_mask = 0;
 	// create roc mask for DTC
 	{
@@ -103,6 +104,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	
 	std::string designVersion = thisDTC_->ReadDesignDate();
 	__FE_COUTV__(designVersion);
+	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
 
 	createROCs();
 	registerFEMacros();

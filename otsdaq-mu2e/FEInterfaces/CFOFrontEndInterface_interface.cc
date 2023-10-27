@@ -41,6 +41,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
 	            << " talking to /dev/mu2e" << deviceIndex_ << __E__;
+	__FE_COUT__ << "Linux Kernel Driver Version: " << thisCFO_->GetDevice()->get_driver_version() << __E__;
 }  // end constructor()
 
 //===========================================================================================
