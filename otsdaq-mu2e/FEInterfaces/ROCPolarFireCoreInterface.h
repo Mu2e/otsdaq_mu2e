@@ -35,6 +35,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 	virtual void 							readROCBlock			(std::vector<uint16_t>& data, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
 	virtual void 							readEmulatorBlock		(std::vector<uint16_t>& data, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
+	virtual void 							writeROCBlock			(const std::vector<uint16_t>& writeData, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
 
 
 	// specific ROC functions

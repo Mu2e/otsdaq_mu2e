@@ -141,6 +141,14 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 				1);  // requiredUserPermissions
 
 	// registerFEMacroFunction(
+	// 	"Check FPGA Temperature",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOandDTCCoreVInterface::GetFPGATemperature),            // feMacroFunction
+	// 				std::vector<std::string>{},  // namesOfInputArgs
+	// 				std::vector<std::string>{"Temperature"},
+	// 				1);  // requiredUserPermissions
+
+	// registerFEMacroFunction(
 	// 	"Reset Link Rx",
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
 	// 				&CFOandDTCCoreVInterface::ResetLinkRx),
@@ -1858,31 +1866,6 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 // } //end GetStatus()
 
 
-// //========================================================================
-// void CFOandDTCCoreVInterface::GetFireflyTemperature(__ARGS__)
-// {	
-// 	std::stringstream rd;
-
-// 	// #Read Firefly RX temp registers
-// 	// #enable IIC on Firefly
-// 	// my_cntl write 0x93a0 0x00000200
-// 	registerWrite(0x93a0,0x00000200);
-// 	// #Device address, register address, null, null
-// 	// my_cntl write 0x9298 0x54160000
-// 	registerWrite(0x9298,0x54160000);
-// 	// #read enable
-// 	// my_cntl write 0x929c 0x00000002
-// 	registerWrite(0x929c,0x00000002);
-// 	// #disable IIC on Firefly
-// 	// my_cntl write 0x93a0 0x00000000
-// 	registerWrite(0x93a0,0x00000000);
-// 	// #read data: Device address, register address, null, temp in 2's compl.
-// 	// my_cntl read 0x9298
-// 	dtc_data_t val = registerRead(0x9298) & 0x0FF;
-// 	rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
-
-// 	__SET_ARG_OUT__("Temperature",rd.str());
-// } //end GetFireflyTemperature()
 
 
 // //========================================================================

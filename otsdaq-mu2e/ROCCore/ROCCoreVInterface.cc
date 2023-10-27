@@ -7,7 +7,7 @@ using namespace ots;
 ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
                                      const ConfigurationTree& theXDAQContextConfigTree,
                                      const std::string&       theConfigurationPath)
-    : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
+    : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)	
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
     , emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
@@ -18,6 +18,8 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
+	FEVInterface::universalAddressSize_ = sizeof(uint16_t);
+	FEVInterface::universalDataSize_ = sizeof(uint16_t);
 	linkID_ =
 	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());
 
@@ -87,7 +89,8 @@ catch(...)
 	__FE_COUT_ERR__ << ss.str();
 	throw;
 }
-//
+
+//==================================================================================================
 void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
                                   DTCLib::roc_address_t            address,
                                   uint16_t                         wordCount,
@@ -99,12 +102,33 @@ void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
 
 	if(emulatorMode_)
 	{
-		__FE_COUT__ << "Emulator mode read." << __E__;
+		__FE_COUT__ << "Emulator mode read block." << __E__;
 		std::lock_guard<std::mutex> lock(workLoopMutex_);
 		return readEmulatorBlock(data, address, wordCount, incrementAddress);
 	}
 	else
 		return readROCBlock(data, address, wordCount, incrementAddress);
+
+}  // end readBlock()
+
+//==================================================================================================
+void ROCCoreVInterface::writeBlock(const std::vector<DTCLib::roc_data_t>& writeData,
+                                  DTCLib::roc_address_t            address,
+                                  uint16_t                         wordCount,
+                                  bool                             incrementAddress)
+{
+	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
+	            << ", address = " << address << ", wordCount = " << wordCount
+	            << ", incrementAddress = " << incrementAddress << __E__;
+
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator mode write block." << __E__;
+		std::lock_guard<std::mutex> lock(workLoopMutex_);
+		return writeEmulatorBlock(writeData, address, wordCount, incrementAddress);
+	}
+	else
+		return writeROCBlock(writeData, address, wordCount, incrementAddress);
 
 }  // end readBlock()
 

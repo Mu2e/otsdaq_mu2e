@@ -50,6 +50,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	// else not emulator mode
 
 
+
 	unsigned dtc_class_roc_mask = 0;
 	// create roc mask for DTC
 	{
@@ -103,6 +104,7 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	
 	std::string designVersion = thisDTC_->ReadDesignDate();
 	__FE_COUTV__(designVersion);
+	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
 
 	createROCs();
 	registerFEMacros();
@@ -224,7 +226,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Buffer Test",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTest),                  // feMacroFunction
-					std::vector<std::string>{"numberOfEvents", "doNotMatch (bool)", "eventDuration", "doNotReadBack (bool)", "saveBinaryDataToFile (bool)"}, 
+					std::vector<std::string>{"numberOfEvents", "doNotMatch (bool)", "eventDuration (Default=400)", 
+						"doNotReadBack (bool)", "saveBinaryDataToFile (bool)", "Software Generated Data Requests (bool)",
+						"Do Not Send Heartbeats (bool)"}, 
 					std::vector<std::string>{"response"},
 					1);  // requiredUserPermissions
 					
@@ -329,10 +333,20 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	);
 
 	registerFEMacroFunction(
+		"Get Link Lock Status",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::GetLinkLockStatus),
+				        std::vector<std::string>{},
+						std::vector<std::string>{"Lock Status"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", "DoNotSet"},
+				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", 
+												"DoNotSet",
+												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
 					1);  // requiredUserPermissions
 
@@ -379,34 +393,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Link Errors"},
 					1);  // requiredUserPermissions
 
-	// registerFEMacroFunction(
-	// 	"ROCDestroy",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::ROCDestroy),
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},
-	// 				1);  // requiredUserPermissions
-	// registerFEMacroFunction(
-	// 	"ROCInstantiate",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::ROCInstantiate),
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},
-	// 				1);  // requiredUserPermissions
 	registerFEMacroFunction(
 		"DTCInstantiate",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCInstantiate),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
-	registerFEMacroFunction(
-		"DMABufferRelease",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::DMABufferRelease),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1);  // requiredUserPermissions	
+					
 	registerFEMacroFunction(
 		"DTC_Reset_Links",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -455,13 +449,64 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					1);  // requiredUserPermissions
 	
 	registerFEMacroFunction(
-		"Check Link Loss-of-Light",
+		"Check Firefly Loss-of-Light",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::GetLinkLossOfLight),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Link Status"},
 					1);  // requiredUserPermissions
 
+	registerFEMacroFunction(
+		"Reset PCIe",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetPCIe),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Status"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Check Firefly Temperature",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::GetFireflyTemperature),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Temperature"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"Check FPGA Temperature",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::GetFPGATemperature),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Temperature"},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"ResetCFOLinkRx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetCFOLinkRx),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"ResetCFOLinkTx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetCFOLinkTx),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"ResetCFOLinkRxPLL",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetCFOLinkRxPLL),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"ResetCFOLinkTxPLL",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetCFOLinkTxPLL),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
 	
 	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
 		
@@ -524,52 +569,57 @@ void DTCFrontEndInterface::configureSlowControls(void)
 	__FE_COUT__ << "Configuring slow controls..." << __E__;
 
 	// parent configure adds DTC slow controls channels
-	FEVInterface::configureSlowControls();  // also resets DTC-proper channels
+	FEVInterface::configureSlowControls();  // also resets mapOfSlowControlsChannels_
 
 	__FE_COUT__ << "DTC '" << getInterfaceUID()
 	            << "' slow controls channel count (BEFORE considering ROCs): "
-	            << mapOfSlowControlsChannels_.size() << __E__;
+	            << getSlowControlsChannelCount() << __E__;
 
-	mapOfROCSlowControlsChannels_.clear();  // reset ROC channels
-
-	// now add ROC slow controls channels
-	ConfigurationTree ROCLink =
-	    Configurable::getSelfNode().getNode("LinkToROCGroupTable");
-	if(!ROCLink.isDisconnected())
+	for(auto& roc:rocs_)
 	{
-		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-		    ROCLink.getChildren();
+		__FE_COUT__ << "Configuring DTC '" << getInterfaceUID()
+					<< "' ROC '" << roc.second->getInterfaceUID()
+					<< "' slow controls..." << __E__;
+		roc.second->configureSlowControls();
+	}
 
-		unsigned int initialChannelCount;
+	// mapOfROCSlowControlsChannels_.clear();  // reset ROC channels
 
-		for(auto& rocChildPair : rocChildren)
-		{
-			initialChannelCount = mapOfROCSlowControlsChannels_.size();
+	// // now add ROC slow controls channels
+	// ConfigurationTree ROCLink =
+	//     Configurable::getSelfNode().getNode("LinkToROCGroupTable");
+	// if(!ROCLink.isDisconnected())
+	// {
+	// 	std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+	// 	    ROCLink.getChildren();
 
-			FEVInterface::addSlowControlsChannels(
-			    rocChildPair.second.getNode("LinkToSlowControlsChannelTable"),
-			    "/" + rocChildPair.first /*subInterfaceID*/,
-			    &mapOfROCSlowControlsChannels_);
+	// 	unsigned int initialChannelCount;
 
-			__FE_COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
-			            << "' slow controls channel count: "
-			            << mapOfROCSlowControlsChannels_.size() - initialChannelCount
-			            << __E__;
+	// 	for(auto& rocChildPair : rocChildren)
+	// 	{
+	// 		initialChannelCount = mapOfROCSlowControlsChannels_.size();
 
-		}  // end ROC children loop
+	// 		FEVInterface::addSlowControlsChannels(
+	// 		    rocChildPair.second.getNode("LinkToSlowControlsChannelTable"),
+	// 		    "/" + rocChildPair.first /*subInterfaceID*/,
+	// 		    &mapOfROCSlowControlsChannels_);
 
-	}      // end ROC channel handling
-	else
-		__FE_COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
+	// 		__FE_COUT__ << "ROC '" << getInterfaceUID() << "/" << rocChildPair.first
+	// 		            << "' slow controls channel count: "
+	// 		            << mapOfROCSlowControlsChannels_.size() - initialChannelCount
+	// 		            << __E__;
+
+	// 	}  // end ROC children loop
+
+	// }      // end ROC channel handling
+	// else
+	// 	__FE_COUT__ << "ROC link disconnected, assuming no ROCs" << __E__;
 
 	__FE_COUT__ << "DTC '" << getInterfaceUID()
 	            << "' slow controls channel count (AFTER considering ROCs): "
-	            << mapOfSlowControlsChannels_.size() +
-	                   mapOfROCSlowControlsChannels_.size()
-	            << __E__;
+	            << getSlowControlsChannelCount() << __E__;
 
-	__FE_COUT__ << "Done configuring slow controls." << __E__;
-
+	__FE_COUT__ << "Done configuring DTC+ROC slow controls." << __E__;
 }  // end configureSlowControls()
 
 //==============================================================================
@@ -578,91 +628,115 @@ void DTCFrontEndInterface::resetSlowControlsChannelIterator(void)
 {
 	// call parent
 	FEVInterface::resetSlowControlsChannelIterator();
+	for(auto& roc:rocs_)
+		roc.second->resetSlowControlsChannelIterator();
 
-	currentChannelIsInROC_ = false;
+	// currentChannelIsInROC_ = false;
 }  // end resetSlowControlsChannelIterator()
 
 //==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 FESlowControlsChannel* DTCFrontEndInterface::getNextSlowControlsChannel(void)
 {
-	// if finished with DTC slow controls channels, move on to ROC list
-	if(slowControlsChannelsIterator_ == mapOfSlowControlsChannels_.end())
+	// if not finished with DTC slow controls channels, return next DTC channel
+	FESlowControlsChannel* nextSlowControlsChannel = FEVInterface::getNextSlowControlsChannel();
+	if(nextSlowControlsChannel != nullptr) return nextSlowControlsChannel;
+
+	// else if finished with DTC slow controls channels, move on to ROC list
+	
+	for(auto& roc:rocs_)
 	{
-		slowControlsChannelsIterator_ = mapOfROCSlowControlsChannels_.begin();
-		currentChannelIsInROC_        = true;  // switch to ROC mode
+		nextSlowControlsChannel = roc.second->getNextSlowControlsChannel();
+		if(nextSlowControlsChannel != nullptr) return nextSlowControlsChannel;		
 	}
 
-	// if finished with ROC list, then done
-	if(slowControlsChannelsIterator_ == mapOfROCSlowControlsChannels_.end())
-		return nullptr;
+	// else no more channels
+	__FE_COUT__ << "Done with DTC+ROC slow control channel handling." << __E__;
+	return nullptr;
 
-	if(currentChannelIsInROC_)
-	{
-		std::vector<std::string> uidParts;
-		StringMacros::getVectorFromString(
-		    slowControlsChannelsIterator_->second.interfaceUID_,
-		    uidParts,
-		    {'/'} /*delimiters*/);
-		if(uidParts.size() != 2)
-		{
-			__FE_SS__ << "Illegal ROC slow controls channel name '"
-			          << slowControlsChannelsIterator_->second.interfaceUID_
-			          << ".' Format should be DTC/ROC." << __E__;
-		}
-		currentChannelROCUID_ =
-		    uidParts[1];  // format DTC/ROC names, take 2nd part as ROC UID
-	}
-	return &(
-	    (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
+
+	// // if finished with DTC slow controls channels, move on to ROC list
+	// if(slowControlsChannelsIterator_ == mapOfSlowControlsChannels_.end())
+	// {
+	// 	slowControlsChannelsIterator_ = mapOfROCSlowControlsChannels_.begin();
+	// 	currentChannelIsInROC_        = true;  // switch to ROC mode
+	// }
+
+	// // if finished with ROC list, then done
+	// if(slowControlsChannelsIterator_ == mapOfROCSlowControlsChannels_.end())
+	// 	return nullptr;
+
+	// if(currentChannelIsInROC_)
+	// {
+	// 	std::vector<std::string> uidParts;
+	// 	StringMacros::getVectorFromString(
+	// 	    slowControlsChannelsIterator_->second.interfaceUID_,
+	// 	    uidParts,
+	// 	    {'/'} /*delimiters*/);
+	// 	if(uidParts.size() != 2)
+	// 	{
+	// 		__FE_SS__ << "Illegal ROC slow controls channel name '"
+	// 		          << slowControlsChannelsIterator_->second.interfaceUID_
+	// 		          << ".' Format should be DTC/ROC." << __E__;
+	// 	}
+	// 	currentChannelROCUID_ =
+	// 	    uidParts[1];  // format DTC/ROC names, take 2nd part as ROC UID
+	// }
+	// return &(
+	//     (slowControlsChannelsIterator_++)->second);  // return iterator, then increment
 }  // end getNextSlowControlsChannel()
 
 //==============================================================================
 // virtual in case channels are handled in multiple maps, for example
 unsigned int DTCFrontEndInterface::getSlowControlsChannelCount(void)
 {
-	return mapOfSlowControlsChannels_.size() + mapOfROCSlowControlsChannels_.size();
+	unsigned int rocChannelCount = 0;
+	for(auto& roc : rocs_)
+		rocChannelCount += roc.second->getSlowControlsChannelCount();
+	return mapOfSlowControlsChannels_.size() + rocChannelCount;
 }  // end getSlowControlsChannelCount()
 
-//==============================================================================
-// virtual in case read should be different than universalread
-void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
-                                                std::string&           readValue)
-{
-	__FE_COUTV__(currentChannelIsInROC_);
-	__FE_COUTV__(universalDataSize_);
-	if(!currentChannelIsInROC_)
-	{
-		FEVInterface::getSlowControlsValue(channel, readValue);
-	}
-	else
-	{
-		__FE_COUTV__(currentChannelROCUID_);
-		auto rocIt = rocs_.find(currentChannelROCUID_);
-		if(rocIt == rocs_.end())
-		{
-			__FE_SS__ << "ROC UID '" << currentChannelROCUID_
-			          << "' was not found in ROC map." << __E__;
-			ss << "Here are the existing ROCs: ";
-			bool first = true;
-			for(auto& rocPair : rocs_)
-				if(!first)
-					ss << ", " << rocPair.first;
-				else
-				{
-					ss << rocPair.first;
-					first = false;
-				}
-			ss << __E__;
-			__FE_SS_THROW__;
-		}
-		readValue.resize(universalDataSize_);
-		*((uint16_t*)(&readValue[0])) =
-		    rocIt->second->readRegister(*((uint16_t*)(&channel.universalAddress_[0])));
-	}
+// //==============================================================================
+// // virtual in case read should be different than universalread
+// void DTCFrontEndInterface::getSlowControlsValue(FESlowControlsChannel& channel,
+//                                                 std::string&           readValue)
+// {
+// 	__FE_COUTV__(currentChannelIsInROC_);
+// 	__FE_COUTV__(universalDataSize_);
+// 	if(!currentChannelIsInROC_)
+// 	{
+// 		__FE_COUT__ << "Handling as DTC DCS value" << __E__;
+// 		FEVInterface::getSlowControlsValue(channel, readValue);
+// 	}
+// 	else
+// 	{
+// 		__FE_COUT__ << "Handling as ROC DCS value" << __E__;
+// 		__FE_COUTV__(currentChannelROCUID_);
+// 		auto rocIt = rocs_.find(currentChannelROCUID_);
+// 		if(rocIt == rocs_.end())
+// 		{
+// 			__FE_SS__ << "ROC UID '" << currentChannelROCUID_
+// 			          << "' was not found in ROC map." << __E__;
+// 			ss << "Here are the existing ROCs: ";
+// 			bool first = true;
+// 			for(auto& rocPair : rocs_)
+// 				if(!first)
+// 					ss << ", " << rocPair.first;
+// 				else
+// 				{
+// 					ss << rocPair.first;
+// 					first = false;
+// 				}
+// 			ss << __E__;
+// 			__FE_SS_THROW__;
+// 		}
+// 		readValue.resize(universalDataSize_);
+// 		*((uint16_t*)(&readValue[0])) =
+// 		    rocIt->second->readRegister(*((uint16_t*)(&channel.universalAddress_[0])));
+// 	}
 
-	__FE_COUTV__(readValue.size());
-}  // end getNextSlowControlsChannel()
+// 	__FE_COUTV__(readValue.size());
+// }  // end getNextSlowControlsChannel()
 
 //==============================================================================
 void DTCFrontEndInterface::createROCs(void)
@@ -1456,7 +1530,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		//For DTC - 0 ==> CFO Control Link
 		//For DTC - 1 ==> RTF copper clock
 		//For DTC - 2 ==> FPGA FMC
-		thisDTC_->SetJitterAttenuatorSelect(select); // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
+		thisDTC_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */); // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
 	}
 	else
 		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
@@ -1529,6 +1603,12 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 	thisDTC_->SetDMATimeoutPreset(0x00014141);  // DMA timeout from chants (default is 0x800)
 
+	//in 13-Oct-2023 tests with Rick, reseting the serdes PLL brought the ROC tx back up
+	// for(size_t i=0;i<DTCLib::DTC_PLLs.size();++i)
+	// 	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLLs[i]);
+	
+	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 }  // end configureHardwareDevMode()
 
 //==============================================================================
@@ -1711,10 +1791,6 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			indicateIterationWork();
 			break;
 		case 2:
-			// __FE_COUT__ << "DTC reset links" << __E__;
-			// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			// thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 
 			// check if any ROCs should be DTC-hardware emulated ROCs
 			{
@@ -1756,6 +1832,12 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 				
 			thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 			thisDTC_->EnableDCSReception();
+
+			__FE_COUT__ << "DTC reset links" << __E__;		
+			// thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
+			// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);	
+			// thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 			break;
 		default:
 			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -2957,6 +3039,14 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 }  // end ReadLossOfLockCounter()
 
 //========================================================================
+void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__) 
+{ 
+	std::stringstream outss;
+	outss << thisDTC_->FormatRXCDRLockStatus() << "\n\n" << thisDTC_->FormatLinkEnable();
+	__SET_ARG_OUT__("Lock Status", outss.str()); 
+}  // end GetLinkLockStatus()
+
+//========================================================================
 void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 {
 	// 0x93c8 is RX CDR Unlock counter (32-bit)
@@ -3067,7 +3157,10 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 	if(!__GET_ARG_IN__(
 	    "DoNotSet", bool))
 	{
-		thisDTC_->SetJitterAttenuatorSelect(select);
+		bool alsoResetJA = __GET_ARG_IN__(
+	    		"AlsoResetJA", bool);
+		__FE_COUTV__(alsoResetJA);
+		thisDTC_->SetJitterAttenuatorSelect(select, alsoResetJA);
 		sleep(1);
 	}
 
@@ -3255,15 +3348,16 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 
 	// parameters
 	uint16_t debugPacketCount = 0; 
-	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration", uint32_t);	//400 -- delay in the frequency of the emulated CFO
+	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration (Default=400)", uint32_t, 400);	//400 -- delay in the frequency of the emulated CFO
 	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack (bool)", bool);
 	// uint32_t requestDelay = 0;
 	bool incrementTimestamp = true;		// this parameter is not working with emulated CFO
-	bool useSWCFOEmulator = true;
+	bool useCFOinDTCEmulator = !__GET_ARG_IN__("Software Generated Data Requests (bool)", bool);
 	bool stickyDebugType = true;
 	bool quiet = false;
 	bool asyncRR = false;
 	bool forceNoDebugMode = true;
+	bool doNotSendHeartbeats = __GET_ARG_IN__("Do Not Send Heartbeats (bool)", bool);
 	int requestsAhead = 0;
 	unsigned int timestampStart = 10;	// no 0, because it's a get all (special thing)
 	auto debugType = DTCLib::DTC_DebugType_SpecialSequence;	// enum (0)
@@ -3273,7 +3367,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 
 	// create the emulated CFO instance
 	DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(thisDTC_,
-																useSWCFOEmulator,
+																useCFOinDTCEmulator,
 																debugPacketCount,
 																debugType,
 																stickyDebugType,
@@ -3281,11 +3375,13 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 																asyncRR,
 																forceNoDebugMode);
 	// send the request for a range of events
-	cfo -> SendRequestsForRange(numberOfEvents,
+	cfo->SendRequestsForRange(numberOfEvents,
 								eventTag,
 								incrementTimestamp,
 								cfoDelay,
-								requestsAhead);
+								requestsAhead,
+								16 /* heartbeatsAfter */,
+								!doNotSendHeartbeats /* sendHeartbeats */);
 
 
 	std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
@@ -3668,43 +3764,6 @@ void DTCFrontEndInterface::DTCInstantiate(__ARGS__)
 	
 } //end DTCInstantiate()
 
-
-//========================================================================
-void DTCFrontEndInterface::DMABufferRelease(__ARGS__)
-{	
-	
-	{
-		//MU2E_NUM_RECV_BUFFS = 100 in mu2e_pcie_utils/mu2e_driver/mu2e_proto_globals.h
-		auto stsDCS = getDevice()->read_release(DTC_DMA_Engine_DCS, 100);
-		auto stsDAQ = getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
-		TLOG(TLVL_DEBUG + 7) << "DMABufferRelease - stsDCS=" << stsDCS << ", stsDAQ=" << stsDAQ;
-		/*
-		for (unsigned ii = 0; ii < 100; ++ii)
-			{
-				void* buffer;
-				uto tmo_ms = 0;
-				auto stsRD = getDevice()->read_data(DTC_DMA_Engine_DCS, &buffer, tmo_ms);			auto stsDCS = getDevice()->read_release(DTC_DMA_Engine_DCS, 100);
-				auto stsRL = getDevice()->read_release(DTC_DMA_Engine_DCS, 1);
-				TLOG(TLVL_DEBUG + 7) << "Reset - release/read for DCS ii=" << ii 
-				<< ", stsRD=" << stsRD << ", stsRL=" << stsRL << ", buffer=" << buffer;
-				//if (delay > 0) usleep(delay);
-			}
-		for (unsigned ii = 0; ii < 100; ++ii)
-		{
-			void* buffer;
-			auto tmo_ms = 0;
-			// auto stsRD = getDevice()->read_data(DTC_DMA_Engine_DAQ, &buffer, tmo_ms);
-			auto stsRL = getDevice()->read_release(DTC_DMA_Engine_DAQ, 1);
-			TLOG(TLVL_DEBUG + 7) << "Reset - release/read for DAQ ii=" << ii 
-			//<< ", stsRD=" << stsRD 
-			<< ", stsRL=" << stsRL << ", buffer=" << buffer;
-			//if (delay > 0) usleep(delay);
-		}*/
-	}
-
-	
-} //end DMABufferRelease()
-
 //========================================================================
 void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
 {	
@@ -3736,9 +3795,92 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 } //end ConfigureForTimingChain()
 
 //========================================================================
+void DTCFrontEndInterface::ResetPCIe(__ARGS__)
+{	
+	thisDTC_->ResetPCIe();
+
+	__SET_ARG_OUT__("Status", "Done");
+} //end ResetPCIe()
+
+
+
+// //========================================================================
+// void DTCFrontEndInterface::GetFireflyTemperature(__ARGS__)
+// {	
+// 	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
+
+// 	__SET_ARG_OUT__("Firefly Temperature",thisDTC_->FormatFireflyTemperature());
+// } //end GetFireflyTemperature()
+//========================================================================
+void DTCFrontEndInterface::GetFPGATemperature(__ARGS__)
+{	
+	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
+	std::stringstream ss;
+	ss << thisDTC_->FormatFPGATemperature() << "\n\n" << thisDTC_->FormatFPGAAlarms();
+	__SET_ARG_OUT__("Temperature", ss.str());
+} //end GetFPGATemperature()
+
+//========================================================================
+void DTCFrontEndInterface::GetFireflyTemperature(__ARGS__)
+{	
+	std::stringstream rd;
+
+	// // #Read Firefly RX temp registers
+	// // #enable IIC on Firefly
+	// // my_cntl write 0x93a0 0x00000200
+	// registerWrite(0x93a0,0x00000200);
+	// // #Device address, register address, null, null
+	// // my_cntl write 0x9298 0x54160000
+	// registerWrite(0x9298,0x54160000);
+	// // #read enable
+	// // my_cntl write 0x929c 0x00000002
+	// registerWrite(0x929c,0x00000002);
+	// // #disable IIC on Firefly
+	// // my_cntl write 0x93a0 0x00000000
+	// registerWrite(0x93a0,0x00000000);
+	// // #read data: Device address, register address, null, temp in 2's compl.
+	// // my_cntl read 0x9298
+
+
+	thisDTC_->SetTXRXFireflySelect(true);
+	auto val = thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x16 /*address*/);
+	thisDTC_->SetTXRXFireflySelect(false);	
+
+
+	// dtc_data_t val = registerRead(0x9298) & 0x0FF;
+	rd << std::fixed << std::setprecision(1) << uint16_t(val) << ".0 C, " << double(val)*9/5 + 32 << " F, <65C=" << (val < 65?"GOOD":"BAD") <<
+		"\n\n" << thisDTC_->FormatFPGAAlarms();
+
+	__SET_ARG_OUT__("Temperature",rd.str());
+} //end GetFireflyTemperature()
+
+//========================================================================
+void DTCFrontEndInterface::ResetCFOLinkRx(__ARGS__)
+{	
+	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+} //end ResetCFOLinkRx()
+//========================================================================
+void DTCFrontEndInterface::ResetCFOLinkTx(__ARGS__)
+{	
+	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+} //end ReseResetCFOLinkTxtCFORx()
+//========================================================================
+void DTCFrontEndInterface::ResetCFOLinkRxPLL(__ARGS__)
+{	
+	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
+} //end ResetCFOLinkRxPLL()
+//========================================================================
+void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
+{	
+	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
+} //end ResetCFOLinkTxPLL()
+
+
+//========================================================================
 void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
 {	
 	std::stringstream rd;
+
 
 
 	//do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
@@ -3785,20 +3927,24 @@ void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
 
 	//END do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
 
-	dtc_data_t val=0, val2=0;
+	dtc_data_t val=0, val2=0, tmpVal;
 	for(int i=0;i<5;++i)
 	{
 		usleep(1000*100 /* 100 ms */);
 		thisDTC_->SetTXRXFireflySelect(true);
 		//OR := if ever 1, mark dead
-		val |= thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/);
+		tmpVal = thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/); 
+		val |= tmpVal;//thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/);
+		__COUT__ << "0x08 ==> " << std::hex << " OrVal = 0x" << val << " readval = 0x" << tmpVal << __E__;
 		thisDTC_->SetTXRXFireflySelect(false);
 			
 		
 		usleep(1000*100 /* 100 ms */);
 		thisDTC_->SetTXRXFireflySelect(true);
 		//OR := if ever 1, mark dead
-		val2 |= thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/);
+		tmpVal = thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/);
+		val2 |= tmpVal;
+		__COUT__ << "0x07 ==> " << std::hex << " OrVal = 0x" << val2 << " readval = 0x" << tmpVal << __E__;
 		thisDTC_->SetTXRXFireflySelect(false);
 	} //end multi-read to check for strange value changing
 

@@ -41,6 +41,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
 	            << " talking to /dev/mu2e" << deviceIndex_ << __E__;
+	__FE_COUT__ << "Linux Kernel Driver Version: " << thisCFO_->GetDevice()->get_driver_version() << __E__;
 }  // end constructor()
 
 //===========================================================================================
@@ -106,15 +107,15 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{"loopbacks", "link", "delay"},
-					std::vector<std::string>{"response"},  // namesOfOutput
+					std::vector<std::string>{"Response"},  // namesOfOutput
 					1); 
 
 	registerFEMacroFunction(
 		"Test Loopback marker",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::TestMarker),  // feMacroFunction
-					std::vector<std::string>{"link"},
-					std::vector<std::string>{"response"},  // namesOfOutput
+					std::vector<std::string>{"DTC-chain link index (0-7)"},
+					std::vector<std::string>{"Response"},  // namesOfOutput
 					1); 
 
 	registerFEMacroFunction(
@@ -146,7 +147,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CompileRunplan),                  // feMacroFunction
 					std::vector<std::string>{},//"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
-					std::vector<std::string>{},
+					std::vector<std::string>{"Result"},
 					1);  // requiredUserPermissions	
 
 	registerFEMacroFunction(
@@ -154,7 +155,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SetRunplan),                  // feMacroFunction
 					std::vector<std::string>{},//"Binary Run File"},  // namesOfInputArgs
-					std::vector<std::string>{},
+					std::vector<std::string>{"Result"},
 					1);  // requiredUserPermissions	
 
 	registerFEMacroFunction(
@@ -332,9 +333,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 	ostr << std::endl << std::endl;
 
-	__SET_ARG_OUT__("response", ostr.str());
+	__SET_ARG_OUT__("Response", ostr.str());
 
-}
+} // end LoopbackTest()
 
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link
@@ -347,7 +348,7 @@ void CFOFrontEndInterface::TestMarker(__ARGS__)
 	ostr << std::endl;
 	
 	// parameters (TODO: make the default)
-	int input_link = __GET_ARG_IN__("link", uint8_t);
+	int input_link = __GET_ARG_IN__("DTC-chain link index (0-7)", uint8_t);
 
 	if (input_link < 0)
 	{
@@ -364,7 +365,7 @@ void CFOFrontEndInterface::TestMarker(__ARGS__)
 	 			<< "\t Delay: " << link_delay << std::endl;
 
 	ostr << std::endl << std::endl;
-	__SET_ARG_OUT__("response", ostr.str());
+	__SET_ARG_OUT__("Response", ostr.str());
 } // end TestMarker()
 
 //=====================================================================================
@@ -1488,12 +1489,13 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 	std::ifstream inFile;
 	std::ofstream outFile;
 
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
+		"/mu2e_pcie_utils/cfoInterfaceLib/";
+
 	std::string inFileName;// = __GET_ARG_IN__("Input Text Run Plan", std::string);
 	std::string outFileName;// = __GET_ARG_IN__("Output Binary Run File", std::string);
-	inFileName = 
-		"/home/mu2estm/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.txt";
-	outFileName = 
-		"/home/mu2estm/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
+	inFileName = SOURCE_BASE_PATH + "Commands.txt";
+	outFileName = SOURCE_BASE_PATH + "Commands.bin";
 
 	inFile.open(inFileName.c_str(), std::ios::in);
 	if (!(inFile.is_open()))
@@ -1525,6 +1527,11 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 		outFile << c;
 	}
 	outFile.close();
+
+	std::stringstream resultSs;
+	resultSs << "Run plan text file: " << inFileName << __E__ <<
+		"was compiled to binary: " << outFileName << __E__;
+	__SET_ARG_OUT__("Result", resultSs.str());
 } //end CompileRunplan()
 
 
@@ -1536,9 +1543,10 @@ void CFOFrontEndInterface::SetRunplan(__ARGS__)
 
 	__FE_COUT__ << "Set CFO Run Plan"  << __E__;
 
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
+		"/mu2e_pcie_utils/cfoInterfaceLib/";
 	std::string setFileName;// = __GET_ARG_IN__("Binary Run File", std::string);
-	setFileName =
-		"/home/mu2estm/ots/srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin";
+	setFileName = SOURCE_BASE_PATH + "Commands.bin";
 
 	
 	std::ifstream file(setFileName, std::ios::binary | std::ios::ate);
@@ -1561,6 +1569,9 @@ void CFOFrontEndInterface::SetRunplan(__ARGS__)
 	//set the file in hardware:
 	thisCFO_->GetDevice()->write_data(DTC_DMA_Engine_DAQ, inputData, sizeof(inputData));
 
+	std::stringstream resultSs;
+	resultSs << "Downloaded to CFO binary run plan file: " << setFileName << __E__;
+	__SET_ARG_OUT__("Result", resultSs.str());
 } //end SetRunplan()
 
 //========================================================================
