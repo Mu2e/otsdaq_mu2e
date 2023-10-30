@@ -1835,9 +1835,9 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 
 			__FE_COUT__ << "DTC reset links" << __E__;		
 			// thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
-			// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);	
-			// thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);	
+			thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 			break;
 		default:
 			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
