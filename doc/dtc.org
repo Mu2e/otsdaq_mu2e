@@ -1,10 +1,11 @@
-#------------------------------------------------------------------------------
+#+startup:fold
+# ------------------------------------------------------------------------------
 # this section describes the hardware configuration
 # of the Mu2e DAQ. at this point - just beginning
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 * [[https://mu2e-docdb.fnal.gov/cgi-bin/sso/ShowDocument?docid=4097][mu2e-4097  :]] DTC user manual (primary source of information) 
 * How to powercycle a DTC card w/o rebooting the whole computer              
-#+begin_src 
+#+begin_src                                                                  
 mu2etrk@mu2edaq09:~/test_stand/pasha_018>ksu
 Authenticated murat@FNAL.GOV
 Account root: authorization for murat@FNAL.GOV successful
