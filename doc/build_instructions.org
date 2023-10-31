@@ -1,10 +1,10 @@
 #+startup:fold
 * ------------------------------------------------------------------------------
-* installation and build instructions  validated <2023-07-19 Wed>            
+* installation and build instructions, validated <2023-10-30 Mon>            
 
   OTSDAQ bundle to use 
-  - version   : v2_06_10   
-  - qualifiers: e20_s124_prof
+  - version   : v2_06_11   
+  - qualifiers: e28_s124_prof
 
   - all available OTSDAQ bundles: https://scisoft.fnal.gov/scisoft/packages/otsdaq/
 
@@ -25,8 +25,8 @@
 
 An example follows. In the middle of the installation you will be asked for a password to access the *otsdaq_mu2e_config* repo. 
 #+begin_src 
-  wget -O mu2e_ots_install.sh https://raw.githubusercontent.com/pavel1murat/otsdaq_mu2e_config/main/mu2e_ots_install.sh?token=GHSAT0AAAAAAB5R6WEE6WSNUG76CU6GX2QIZCTHH6A --
-  source mu2e_ots_install.sh pasha_001 8 v2_06_10 e20_s124_prof
+  wget -O mu2e_ots_install.sh https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e_config/main/mu2e_ots_install.sh?token=GHSAT0AAAAAAB5R6WEFJZB7JMSKCUB3OHKMZKAOHMA
+  source mu2e_ots_install.sh pasha_001 8 v2_06_11 e28_s124_prof
 #+end_src
 
   here 'pasha_001' is the name of created work area
@@ -41,8 +41,8 @@ mrb b
 - finally, setup the ARTDAQ_DATABASE_URI and the ssh tunnel for accessing the MongoDB (the server is running on mu2edaq13) 
 
 #+begin_src
-export ARTDAQ_DATABASE_URI=XXX   # ask Giani/Pasha for what XXX is 
-ssh -v -f -KX -N -L 27017:localhost:27017 131.225.237.100
+export ARTDAQ_DATABASE_URI=XXX   # ask Giani/Pasha for what XXX is
+ssh -f -KX -N -L 27017:localhost:27017 -J mu2edaq-gateway.fnal.gov mu2edaq13.fnal.gov
 #+end_src
 * ROOT interface to mu2e_pcie_utils    validated <2023-07-19 Wed>            
 - If you got here, you already have built the OTS libraries

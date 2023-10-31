@@ -75,10 +75,17 @@ The following settings are needed for the mu2e setup to match out epcis channel 
   - In the "SupervisorTable" the "SlowControlsMetricManagagerChannelNamePreamble" needs to be set to "TDAQ_mu2e" (or "TDAQ_{"USER"})
   - The "daqMetricLink" is required with "metricPluginType" set to "epics", we use level 3 for epics
   - The "metricParametersLink" in "daqMetricLink" needs an entry with the key-value pair "channel_name_prefix", "Mu2e"
+** run number from the Postgres DB                                           
+  file:./images/configure_run_number_from_db.png
+  MainContext
+  -- LinkToApplicationTable
+  ---- GatewaySupervisor
+  ------ LinkToStateMachineTable
+  --------- OtherRuns0
+  ------------ RunInfoPluginType : DBRunInfo   (from the local storage: DEFAULT)
 
 ** [[file:db_tables.org][Mongo DB and the DB tables]] 
 * ------------------------------------------------------------------------------
 * ATTIC
-* ------------------------------------------------------------------------------
 ** [[https://otsdaq.fnal.gov/tutorials/first_demo/topics/configuration_primer.html][OTSDAQ primer]]
 * ------------------------------------------------------------------------------
