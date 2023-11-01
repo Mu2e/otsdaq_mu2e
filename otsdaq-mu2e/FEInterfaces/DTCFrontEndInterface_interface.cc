@@ -197,8 +197,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC_BlockRead",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ROCBlockRead),
-					std::vector<std::string>{"rocLinkIndex", "numberOfWords", "address", "incrementAddress"},
+					std::vector<std::string>{"rocLinkIndex", "address", "numberOfWords", "incrementAddress"},
 					std::vector<std::string>{"readData"},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
+		"ROC_BlockWrite",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ROCBlockWrite),
+					std::vector<std::string>{"rocLinkIndex", "address", "writeData (CSV-literal or CSV-filename)", 
+						"incrementAddress (Default = false)", "requestAck (Default = false)"},
+					std::vector<std::string>{"Status"},
 					1);  // requiredUserPermissions
 
 	// registerFEMacroFunction(
@@ -2748,6 +2757,100 @@ void DTCFrontEndInterface::ROCBlockRead(__ARGS__)
 	__FE_SS_THROW__;
 
 }  // end ROCBlockRead()
+
+//========================================================================
+void DTCFrontEndInterface::ROCBlockWrite(__ARGS__)
+{
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
+	for(auto& argIn : argsIn)
+		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
+
+	// macro commands section
+	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
+	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
+
+	for(auto& argIn : argsIn)
+		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	uint16_t address          = __GET_ARG_IN__("address", uint16_t);
+	std::string writeDataIn   = __GET_ARG_IN__("writeData (CSV-literal or CSV-filename)", std::string);
+	bool     incrementAddress = __GET_ARG_IN__("incrementAddress (Default = false)", bool);
+	bool     requestAck = __GET_ARG_IN__("requestAck (Default = false)", bool);
+	std::vector<uint16_t> writeData;
+
+	__FE_COUTV__(rocLinkIndex);
+	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
+	            << __E__;
+	__FE_COUTV__(incrementAddress);
+	__FE_COUTV__(requestAck);
+
+	if(writeDataIn.find(',') == std::string::npos)
+	{
+		__FE_COUT__ << "Assuming write data is a CSV filename (because no comma found): " << writeDataIn << __E__;
+		FILE* fp = fopen(writeDataIn.c_str(), "r");
+		if(fp)
+		{
+			fseek(fp, 0, SEEK_END);
+			const unsigned long fileSize = ftell(fp);
+			size_t readSize;
+			writeDataIn.resize(fileSize);
+			rewind(fp);
+			if((readSize = fread(&writeDataIn[0], 1, fileSize, fp)) != fileSize)
+			{
+				__FE_SS__ << "CSV filename (because no comma found) could not be read! Wrong byte count returned: readSize=" << 
+					readSize << " vs fileSize=" << fileSize << __E__;
+				__FE_SS_THROW__;
+			}
+
+			fclose(fp);
+		}
+		else
+		{
+				__FE_SS__ << "CSV filename (because no comma found) was not founnd: " << writeDataIn << __E__;
+				__FE_SS_THROW__;
+		}
+	} //end CSV file handling
+	
+	__FE_COUT__ << "CSV literal: " << writeDataIn << __E__;
+	std::vector<std::string> writeDataStrings = StringMacros::getVectorFromString(writeDataIn);
+	for(auto& writeDataString : writeDataStrings)
+	{
+		uint16_t number;
+		StringMacros::getNumber(writeDataString, number);
+		writeData.push_back(number);
+	}		
+
+	__FE_COUTV__(StringMacros::vectorToString(writeData));	
+	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)writeData.size() << __E__;
+
+
+	for(auto& roc : rocs_)
+	{
+		__FE_COUT__ << "At ROC link ID " << roc.second->getLinkID() << ", looking for "
+		            << rocLinkIndex << __E__;
+
+		if(rocLinkIndex == roc.second->getLinkID())
+		{
+			roc.second->writeBlock(writeData, address, incrementAddress, requestAck);
+
+			// for(auto &argOut:argsOut)
+			std::stringstream ss; ss << "Wrote " << writeData.size() << " words to address 0x" << std::hex << address <<
+				", incrementingAddress=" << (incrementAddress?"TRUE":"FALSE") <<
+				", requestAck=" << (requestAck?"TRUE":"FALSE") << __E__;
+			__FE_COUT__ << ss.str();
+			__SET_ARG_OUT__("Status", ss.str());
+
+			return;
+		}
+	}
+
+	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS_THROW__;
+
+}  // end ROCBlockWrite()
 
 // //========================================================================
 // void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)

@@ -76,10 +76,10 @@ DTCLib::roc_data_t ROCPolarFireCoreInterface::readROCRegister(
 }  // end readROCRegister()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
-                                             uint16_t               address,
-                                             uint16_t               numberOfReads,
-                                             bool                   incrementAddress)
+void ROCPolarFireCoreInterface::readROCBlock(std::vector<DTCLib::roc_data_t>& 	data,
+                                             DTCLib::roc_address_t  	   	address,
+                                             uint16_t               		numberOfReads,
+                                             bool                   		incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
 	            << ", address = " << address << ", numberOfReads = " << numberOfReads
@@ -90,28 +90,29 @@ void ROCPolarFireCoreInterface::readROCBlock(std::vector<uint16_t>& data,
 }  // end readROCBlock()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<uint16_t>& data,
-                                                  uint16_t               address,
-                                                  uint16_t               wordCount,
-                                                  bool                   incrementAddress)
+void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<DTCLib::roc_data_t>& 	data,
+                                             DTCLib::roc_address_t  	   	address,
+                                             uint16_t               		numberOfReads,
+                                             bool                   		incrementAddress)
 {
 	__FE_COUT__ << "Calling read emulator block: link number " << std::dec << linkID_
-	            << ", address = " << address << ", wordCount = " << wordCount
+	            << ", address = " << address << ", numberOfReads = " << numberOfReads
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
-	for(unsigned int i = 0; i < wordCount; ++i)
+	for(unsigned int i = 0; i < numberOfReads; ++i)
 		data.push_back(address + (incrementAddress ? i : 0));
 }  // end readEmulatorBlock()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::writeROCBlock(const std::vector<uint16_t>& writeData,
-                                             uint16_t               address,
-                                             uint16_t               numberOfWrites,
-                                             bool                   incrementAddress)
+void ROCPolarFireCoreInterface::writeROCBlock(const std::vector<DTCLib::roc_data_t>& 	writeData,
+											DTCLib::roc_address_t      				address,
+											bool                   					incrementAddress,
+											bool                             		requestAck /* = true */)
 {
 	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
-	            << ", address = " << address << ", numberOfWrites = " << numberOfWrites
-	            << ", incrementAddress = " << incrementAddress << __E__;
+	            << ", address = " << address << ", numberOfWrites = " << writeData.size()
+	            << ", incrementAddress = " << incrementAddress 
+	            << ", requestAck = " << requestAck << __E__;
 
 	thisDTC_->WriteROCBlock(linkID_, address, writeData, 
 		false /* requestAck */, 

@@ -67,17 +67,17 @@ class ROCCoreVInterface : public FEVInterface
 	void         							writeRegister				(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData);  // chooses ROC or Emulator version
 	DTCLib::roc_data_t 						readRegister				(DTCLib::roc_address_t address);     // chooses ROC or Emulator version
 	void 									readBlock					(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress);     // chooses ROC or Emulator version
-	void 									writeBlock					(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress);     // chooses ROC or Emulator version
+	void 									writeBlock					(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true);     // chooses ROC or Emulator version
 
 	virtual void 							writeROCRegister			(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData) = 0;  // pure virtual, must define in inheriting children
 	virtual DTCLib::roc_data_t				readROCRegister				(DTCLib::roc_address_t address) = 0;  // pure virtual, must define in inheriting children
 	virtual void 							readROCBlock				(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress) {throw std::runtime_error("UNDEFINED BLOCK ROC READ");}; // pure virtual, must define in inheriting children
-	virtual void 							writeROCBlock				(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress) {throw std::runtime_error("UNDEFINED BLOCK ROC WRITE");};     // pure virtual, must define in inheriting children
+	virtual void 							writeROCBlock				(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true) {throw std::runtime_error("UNDEFINED BLOCK ROC WRITE");};     // pure virtual, must define in inheriting children
 
 	virtual void 							writeEmulatorRegister		(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData) = 0;  // pure virtual, must define in inheriting children
 	virtual DTCLib::roc_data_t				readEmulatorRegister		(DTCLib::roc_address_t address) = 0;  // pure virtual, must define in inheriting children
 	virtual void 							readEmulatorBlock			(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress) {throw std::runtime_error("UNDEFINED BLOCK EMULATOR READ");}; // pure virtual, must define in inheriting children
-	virtual void 							writeEmulatorBlock			(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress) {throw std::runtime_error("UNDEFINED BLOCK EMULATOR WRITE");};     // pure virtual, must define in inheriting children
+	virtual void 							writeEmulatorBlock			(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true) {throw std::runtime_error("UNDEFINED BLOCK EMULATOR WRITE");};     // pure virtual, must define in inheriting children
 
 
 	// pure virtual specific ROC functions
