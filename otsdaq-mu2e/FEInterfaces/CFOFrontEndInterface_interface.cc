@@ -95,6 +95,14 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					1);  // requiredUserPermissions
 
 	registerFEMacroFunction(
+		"CFO Halt",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::CFOHalt),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1);  // requiredUserPermissions
+
+	registerFEMacroFunction(
 		"CFO Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::WriteCFO),  // feMacroFunction
@@ -1000,6 +1008,10 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 void CFOFrontEndInterface::halt(void)
 {
 	__FE_COUT__ << "HALT: CFO status" << __E__;
+
+
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
 	// if(regWriteMonitorStream_.is_open())
 	// {
 	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
@@ -1595,6 +1607,9 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 
 //========================================================================
 void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->ResetCFO(); }
+
+//========================================================================
+void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
 
 //==============================================================================
 // GetFirmwareVersion
