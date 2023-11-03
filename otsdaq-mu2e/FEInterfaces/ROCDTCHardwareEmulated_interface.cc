@@ -187,7 +187,12 @@ catch(const std::runtime_error& e)
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
-	__FE_MOUT__ << ss.str();
+	try	{ throw; } //one more try to printout extra info
+	catch(const std::exception &e)
+	{
+		ss << "Exception message: " << e.what();
+	}
+	catch(...){}
 	__FE_SS_THROW__;
 }  // end configure() catch
 

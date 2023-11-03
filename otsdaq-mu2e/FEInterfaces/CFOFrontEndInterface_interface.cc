@@ -208,33 +208,6 @@ void CFOFrontEndInterface::registerFEMacros(void)
 // 	return readbackValue;
 // }  // end registerWrite()
 
-//=====================================================================================
-std::string CFOFrontEndInterface::readStatus(void)
-{
-	return thisCFO_->FormattedRegDump(20);
-	// std::stringstream ss;
-	// ss << "firmware version    (0x9004) = 0x" << GetFirmwareVersion() << __E__;
-
-	// ss << printVoltages() << __E__;
-
-	// ss << device_name_ << " temperature = " << readTemperature() << " degC"
-	//             << __E__ << __E__;
-
-	// ss << "link enable         (0x9114) = 0x" << std::hex << registerRead(0x9114) << __E__;
-	// ss << "SERDES reset        (0x9118) = 0x" << std::hex << registerRead(0x9118) << __E__;
-	// ss << "SERDES unlock error (0x9124) = 0x" << std::hex << registerRead(0x9124) << __E__;
-	// ss << "PLL locked          (0x9128) = 0x" << std::hex << registerRead(0x9128) << __E__;
-	// ss << "SERDES Rx status....(0x9134) = 0x" << std::hex << registerRead(0x9134) << __E__;
-	// ss << "SERDES reset done...(0x9138) = 0x" << std::hex << registerRead(0x9138) << __E__;
-	// ss << "SERDES Rx CDR lock..(0x9140) = 0x" << std::hex << registerRead(0x9140) << __E__;
-	// ss << "SERDES ref clk freq.(0x9160) = 0x" << std::hex << registerRead(0x9160) << " = " <<
-	// 	 std::dec << registerRead(0x9160) << __E__;
-
-	// __FE_COUT__ << ss.str() << __E__;
-
-	// return ss.str();
-} //end readStatus()
-
 // //=====================================================================================
 // //
 // int CFOFrontEndInterface::getLinkStatus()
@@ -764,7 +737,7 @@ void CFOFrontEndInterface::configure(void)
 		__FE_COUT__ << __E__;
 	}
 
-	readStatus();             // spit out link status at every step
+	__FE_COUT__ << "\n" << thisCFO_->FormattedRegDump(120, thisCFO_->formattedDumpFunctions_);  // spit out link status at every step
 	indicateIterationWork();  // I still need to be touched
 	return;
 } //end configure()
@@ -1621,9 +1594,14 @@ void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
 //========================================================================
 void CFOFrontEndInterface::GetStatus(__ARGS__)
 {	
-	//call virtual readStatus
-	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20));
+	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20, thisCFO_->formattedDumpFunctions_));
 } //end GetStatus()
+
+//========================================================================
+void CFOFrontEndInterface::GetCounters(__ARGS__)
+{	
+	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20, thisCFO_->formattedCounterFunctions_));
+} //end GetCounters()
 
 //========================================================================
 void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
