@@ -28,14 +28,14 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	bool 									running					(void) override;
 
 	// write and read to registers
-	virtual void 							writeROCRegister		(uint16_t address, uint16_t data_to_write) override;
-	virtual uint16_t  						readROCRegister			(uint16_t address) override;
-	virtual void 							writeEmulatorRegister	(uint16_t address, uint16_t data_to_write) override { }
-	virtual uint16_t						readEmulatorRegister	(uint16_t address) override;
+	virtual void 							writeROCRegister		(DTCLib::roc_address_t address, DTCLib::roc_data_t data_to_write) override;
+	virtual uint16_t  						readROCRegister			(DTCLib::roc_address_t address) override;
+	virtual void 							writeEmulatorRegister	(DTCLib::roc_address_t address, DTCLib::roc_data_t data_to_write) override { }
+	virtual uint16_t						readEmulatorRegister	(DTCLib::roc_address_t address) override;
 
-	virtual void 							readROCBlock			(std::vector<uint16_t>& data, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
-	virtual void 							readEmulatorBlock		(std::vector<uint16_t>& data, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
-	virtual void 							writeROCBlock			(const std::vector<uint16_t>& writeData, uint16_t address, uint16_t wordCount, bool incrementAddress) override;
+	virtual void 							readROCBlock			(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t numberOfReads, bool incrementAddress) override;
+	virtual void 							readEmulatorBlock		(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t numberOfReads, bool incrementAddress) override; 
+	virtual void 							writeROCBlock			(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true) override;
 
 
 	// specific ROC functions

@@ -41,10 +41,10 @@ uint16_t ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 	return -1;
 }  // end readEmulatorRegister
 //==================================================================================================
-void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<uint16_t>& data,
-                                               uint16_t               address,
-                                               uint16_t               numberOfReads,
-                                               bool                   incrementAddress)
+void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<DTCLib::roc_data_t>& 	data,
+                                             DTCLib::roc_address_t  	   	address,
+                                             uint16_t               		numberOfReads,
+                                             bool                   		incrementAddress)
 {
 	__FE_COUT__ << "Calling read emulator BLOCK: link number " << std::dec << linkID_
 	            << ", address = " << address << ", numberOfReads = " << numberOfReads
@@ -96,8 +96,8 @@ void ROCDTCHardwareEmulated::universalBlockRead(char* address, char* returnValue
 {
 	uint16_t numberOfReads = numberOfBytes/sizeof(uint16_t);
 	bool incrementAddress = true;
-	std::vector<uint16_t> data;
-	readROCBlock(data,*((uint16_t*)address),numberOfReads,incrementAddress);
+	std::vector<DTCLib::roc_data_t> data;
+	readROCBlock(data,*((DTCLib::roc_address_t*)address),numberOfReads,incrementAddress);
 
 	std::memcpy(&data[0],returnValue,numberOfBytes);
 	__SS__;
@@ -105,13 +105,13 @@ void ROCDTCHardwareEmulated::universalBlockRead(char* address, char* returnValue
 		ss << std::hex << std::setfill('0') << std::setw(2) << data[i] << __E__;
 	__FE_COUT__ << ss.str();
 	
-}  // end readROCBlock()
+}  // end universalBlockRead()
 
 //==================================================================================================
-void ROCDTCHardwareEmulated::readROCBlock(std::vector<uint16_t>& data,
-                                             uint16_t               address,
-                                             uint16_t               numberOfReads,
-                                             bool                   incrementAddress)
+void ROCDTCHardwareEmulated::readROCBlock(std::vector<DTCLib::roc_data_t>& 	data,
+                                             DTCLib::roc_address_t  	   	address,
+                                             uint16_t               		numberOfReads,
+                                             bool                   		incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
 	            << ", address = " << address << ", numberOfReads = " << numberOfReads
@@ -131,13 +131,13 @@ void ROCDTCHardwareEmulated::readROCBlock(std::vector<uint16_t>& data,
 }  // end readROCBlock()
 
 //==================================================================================================
-void ROCDTCHardwareEmulated::writeROCBlock(const std::vector<uint16_t>& writeData,
-                                             uint16_t               address,
-                                             uint16_t               numberOfWrites,
-                                             bool                   incrementAddress)
+void ROCDTCHardwareEmulated::writeROCBlock(const std::vector<DTCLib::roc_data_t>& 	writeData,
+											DTCLib::roc_address_t      				address,
+											bool                   					incrementAddress,
+											bool                             		requestAck /* = true */)
 {
 	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
-	            << ", address = " << address << ", numberOfWrites = " << numberOfWrites
+	            << ", address = " << address << ", numberOfWrites = " << writeData.size()
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
 	thisDTC_->WriteROCBlock(linkID_, address, writeData, 

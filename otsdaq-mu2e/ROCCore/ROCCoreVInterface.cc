@@ -88,7 +88,7 @@ catch(...)
 	__SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
 	__FE_COUT_ERR__ << ss.str();
 	throw;
-}
+} // end readRegister() catch
 
 //==================================================================================================
 void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
@@ -114,21 +114,22 @@ void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
 //==================================================================================================
 void ROCCoreVInterface::writeBlock(const std::vector<DTCLib::roc_data_t>& writeData,
                                   DTCLib::roc_address_t            address,
-                                  uint16_t                         wordCount,
-                                  bool                             incrementAddress)
+                                  bool                             incrementAddress,
+                                  bool                             requestAck /* = true */)
 {
 	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
-	            << ", address = " << address << ", wordCount = " << wordCount
-	            << ", incrementAddress = " << incrementAddress << __E__;
+	            << ", address = " << address << ", wordCount = " << writeData.size()
+	            << ", incrementAddress = " << incrementAddress 
+	            << ", requestAck = " << requestAck << __E__;
 
 	if(emulatorMode_)
 	{
 		__FE_COUT__ << "Emulator mode write block." << __E__;
 		std::lock_guard<std::mutex> lock(workLoopMutex_);
-		return writeEmulatorBlock(writeData, address, wordCount, incrementAddress);
+		return writeEmulatorBlock(writeData, address, incrementAddress, requestAck);
 	}
 	else
-		return writeROCBlock(writeData, address, wordCount, incrementAddress);
+		return writeROCBlock(writeData, address, incrementAddress, requestAck);
 
 }  // end readBlock()
 
