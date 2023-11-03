@@ -1,0 +1,692 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>Plot</title>
+
+
+
+		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoringPages/StopLightsTable.css">
+
+		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/widgetLibrary.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+
+		<!-- MultiSelectBox: Must include .css style sheet and .js functionality -->
+		<link rel="stylesheet" type="text/css" href="/WebPath/css/MultiSelectBox.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script type="text/JavaScript" src="/WebPath/js/js_lib/MultiSelectBox.js"></script>
+		<script type="text/javascript" src="/WebPath/html/widgets/libraries/plotly-1.27.1.min.js"></script>
+
+		<script>
+
+			//functions:
+			//	init()
+			//	getPvSet()
+			//	makeMainPage()
+			//	makePVTable()
+
+			//	getAllPvList()
+			//	pvListReqHandler(req)
+			//	setupPvParams(id)
+			//	settingsReqHandler(req, passParams)
+
+			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+			//	refreshPVTableCell(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+			//	setWidgetToolTip(pvName, pvValue, pvTime, pvSettings)
+			//	checkPvTime(widget, pvName, pvTime)
+			//	setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, showLabel, foregroundColor, bkgColor, border)
+
+			//	indicateUserActivityToServer()
+			//	isUserAdminHandler(req)
+			//	generateUID()
+			//	generateUIDHandlerFunction(req)
+			//	pollServer()
+			//	updateRefreshInterval()
+			//	pollServerHandlerFunction(req)
+
+
+			//top-level scope (global) variables:
+
+			var page_ = page_ || {}; 	//define the page object if needed
+										//	page_.widgets = {
+										//		<widgetID> : <widget object := x, y, 
+										//			w, h, pvList{}, attributes{},
+										//			tableContainerName, loaded,
+										//			el /*iframe element*/
+										//	} 
+
+			//====================== start high-level behavior description
+			//
+			//	High-level description of page interactions:
+			//
+			//	- page init() is called by DesktopContent.js: 
+			//		* make Page_ to collect all objects to show PVs
+			//		* load PVs list
+			//		* makeMainPage()
+			//		* pollServer()
+			//		* generateUID()
+			//
+			//	- setupPvParams(settings)
+			//		* Pass alarm thresholds, etc associated with pvList to widget content
+			//
+			//	- drawNewValue()
+			//		* Update widget drawing based on new value (and append to history if needed)
+			//
+			//====================== end high-level behavior description
+
+			var refreshRate_ = 15000; //set default to refresh every 15 seconds (ms)
+			var timerVariable_;
+
+			var UID_ = 0;
+			var timeToPoll_ = false;
+
+			var isReadOnly_;
+			var pvList_ = {};
+
+			page_.createPage = function(){
+
+				this.name = "MyPage";
+				this.widgets = {};
+				this.addPV = function(pv){
+					console.log("Reached " + pv);
+				}
+			}
+
+			var tabledata_ = [];
+
+			var table_;
+			var tds_ = [];
+			var _xSize;
+			var _ySize;
+
+			var pv_settings_ = [];
+			var parameters_ = {"table_border": "1px", "table_border_color": "grey","link_to_page": ""};
+
+			/////////////////////////////////////////////////////////////////////////////////////////
+			/////////////////////////////////////////////////////////////////////////////////////////
+
+			var tableUploaded2Str_ =  "-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1\n";
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1\n"
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1\n"
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1\n"
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1\n"
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1\n"
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC17:ROC17_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC18:ROC18_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1\n"
+									+ "-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC13:ROC13_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC14:ROC14_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC15:ROC15_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;Mu2e:TDAQ_shift:DTC3_ROC16:ROC16_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC19:ROC19_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC20:ROC20_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC21:ROC21_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;Mu2e:TDAQ_shift:DTC4_ROC22:ROC22_dummyRegister0;-1;-1;-1;-1;-1;-1;-1;-1\n"
+
+									+ "";
+
+			//=====================================================================================
+			//init called once body has loaded
+			function init() 
+			{
+				Debug.log("init() was called");
+				var parameterCsvFile = DesktopContent.getParameter(0,"csv_file");				
+
+				page_.createPage();
+
+				isReadOnly_ = false;
+
+				DesktopContent.XMLHttpRequest(
+				                    "Request?RequestType=isUserAdmin",
+				                    "",
+				                    isUserAdminHandler);
+
+				//get command string if opening a new window
+				var cmdStr = DesktopContent.getParameter(2); //from  location.search
+				if (cmdStr && cmdStr != "") {
+					//do incoming commands!
+					Debug.log("cmdStr=" + cmdStr);
+					//replace %22 with "
+					cmdStr = cmdStr.replace(/%22/g, "\"");
+				}
+
+				//Make sure pv list is up-to-date
+				//getAllPvList();
+
+				UID_ = 0;
+
+				window.clearTimeout(timerVariable_);
+
+				makeMainPage(parameterCsvFile);
+				generateUID();
+				pollServer();
+			} //end init()
+
+
+			//=====================================================================================
+			//Make stop lights table here
+			function makeMainPage(csvFile)
+			{
+				console.log("StopLightsTable page: makeMainPage() reached");
+				//tableUploaded2Str_ = "Mu2e:RackTemp:1E:0:temperature, Mu2e:RackTemp:1E:1:temperature\n"; // here the file content
+
+				var colDel, rowDel = '\n'; //row/record and column/field delimeters
+
+				//auto find record delimeter (finding auto-row delimiter is more complicated if there are options.. to avoid confusion with data)
+				//	take last found, which must always be correct
+				//	because last fields are forced fields (author/time) and 
+				//	do not have special characters.
+
+				for (var row = tableUploaded2Str_.length-1;row >= 0; --row) 
+				{
+					if (tableUploaded2Str_[row] == ',')
+					{
+						colDel = ',';
+						break;
+					}
+					else if (tableUploaded2Str_[row] == ';')
+					{
+						colDel = ';';
+						break;
+					}
+				}
+
+				//find row and col size
+				var srcRows = tableUploaded2Str_.length? //if no data, make no rows
+				tableUploaded2Str_.replace(/"([^"]+(?="))"/g, '$1').split(rowDel):[]; 
+				var src = []; //src = [r][c]
+				for (var row = 0; row < srcRows.length; ++row)
+					src.push(srcRows[row].split(colDel));			
+				console.log("uploadTableFromCSV(): src matrix", src);
+
+				_ySize = src.length;
+				_xSize = src[0].length;
+
+
+				table_ = document.createElement('table');
+				table_.id = "table";
+				table_.style.height = window.innerHeight + "px";
+				table_.style.width = "100%";
+				table_.border = parameters_["table_border"];
+				table_.style.borderColor = parameters_["table_border_color"];
+
+				var i = 0;
+
+				// make widget tabledata
+				var counter = 0;
+				for (var row = 0; row < _ySize; row++)
+				{
+					var tr = document.createElement('tr');
+					tr.id = "tr-" + row;
+					for (var col = 0; col < _xSize; col++)
+					{
+						i= (row - 1)*_xSize + (col - 1);
+
+						var td = document.createElement('td');
+						tr.appendChild(td);
+
+						var pvName = src[row][col];
+
+						// fill each cell of table
+						if (pvName != "-1")
+						{
+							//td.innerHTML = "+";//tabledata[i].pvName;
+							td.style.backgroundColor = "rgba(0, 230, 64, 1)";
+							td.style.border = "2px solid grey";
+							td.style.borderColor = parameters_["table_border_color"];
+
+							var pvList ={};
+							pvList[pvName] = counter;
+							var widgetObject 		= {};
+							widgetObject.pvSettings = {};
+							widgetObject.pvName = pvName;
+							widgetObject.pvList 	= pvList;
+							widgetObject.el = td;
+							page_.widgets[i] = widgetObject;
+							setupPvParams(i);
+						}
+						
+						//remove right border if next cell has the same pvName
+						if (i > 0  && pvName != "-1" && page_.widgets[i-1] && page_.widgets[i-1].pvName == pvName)
+						{
+							td.style.borderLeft = "hidden";
+						}
+
+						//remove bottom border if bottom cell, in next row, has the same pvName
+						if (i > 0  && pvName != "-1" && page_.widgets[i-_xSize] && page_.widgets[i-_xSize].pvName == pvName)
+						{
+							td.style.borderTop = "hidden";
+						}
+
+						counter++;
+					}
+					table_.appendChild(tr);
+				}
+
+				console.log("StopLightsTable page: makePVTable() tabledata size" , i);
+				document.getElementById("tableContainer").appendChild(table_);
+			} //end makeMainPage()
+
+
+			//=====================================================================================
+			function drawGraph(pvName)
+			{
+				var url = location.origin + "/WebPath/UserWebPath/html/DCSMonitoringPages/Plot.html?urn=" + DesktopContent._localUrnLid + "&pv_name=" + pvName;
+				DesktopContent.openNewWindow("Plot",pvName,url,false);
+			} //end drawGraph()
+
+
+			//=====================================================================================
+			//	expecting id as 'widget-#' ..and this function extracts the 
+			//	widget UID as integer #
+			function setupPvParams(id)
+			{
+				console.log("setting up widget! " + id);
+
+				var pvListCSV = "";
+
+				for(var pv in page_.widgets[id].pvList)
+				{
+					pvListCSV += pv + ",";
+				}
+
+				DesktopContent.XMLHttpRequest("Request?RequestType=getPVSettings",
+							//post data 
+    						"pvList=" + pvListCSV + 
+							"&id=" + id,
+							settingsReqHandler /*handler*/,
+							id /*parameter*/);
+
+			} //end setupWidget()
+
+
+			//=====================================================================================
+			function settingsReqHandler(req, id)
+			{
+				page_.widgets[id].pvSettings = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));				
+
+				console.log(req);
+				console.log("pvSettings", page_.widgets[id].pvSettings);
+				console.log("id", id);
+
+			} //end settingsReqHandler()
+
+
+			//=====================================================================================
+			//write a new value of a PV
+			function drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+			{
+				console.log("StopLightsTable page: drawNewValue() reached");
+
+				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
+				
+				page_.widgets[widget].el.innerHTML= "<a href='#drawGraph(\"" + pvName + "\")'>+</a>";
+
+				page_.widgets[widget].el.title = setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
+
+				setWidgetPvInfo(
+								  widget
+								, pvName
+								, pvValue
+								, pvTime
+								, pvStatus
+								, pvSeverity
+								, false
+								, false
+								, "DimGray"
+								, "gray"
+								, "1px solid green"
+								);
+
+			} //end drawNewValue()
+
+
+			//=====================================================================================
+			//refresh a table cell
+			function refreshPVTableCell(cell)
+			{
+				if (tds_[cell] != undefined)
+				{
+					tds_[cell].firstElementChild.firstElementChild.innerHTML = "+";
+
+					if (pv_settings_[tabledata_[cell].pvName])
+						tds_[cell].firstElementChild.title = setWidgetToolTip(
+											  tabledata_[cell].pvName
+											, tabledata_[cell].pvValue
+											, tabledata_[cell].pvTime
+											, tabledata_[cell].pvStatus
+											, tabledata_[cell].pvSeverity
+											, page_.widgets[cell].pvSettings);
+
+					tds_[cell].firstElementChild.firstElementChild.onClick = drawGraph(pvName);
+
+					var valColor = 0;
+					var max = 0;
+					var min =0;
+					if (pv_settings_[tabledata_[cell].pvName].Upper_Warning_Limit) max = pv_settings_[tabledata_[cell].pvName].Upper_Warning_Limit;
+					if (pv_settings_[tabledata_[cell].pvName].Lower_Warning_Limit) min = pv_settings_[tabledata_[cell].pvName].Lower_Warning_Limit;
+					if (Math.abs(tabledata_[cell].pvValue)
+						&& Math.abs(max)
+						&& Math.abs(min))
+						valColor = (tabledata_[cell].pvValue - min)/(max - min);
+
+					valColor = valColor >= 0. ? valColor : 0.;
+					if (tabledata_[cell].pvStatus == "HIHI")
+						tds_[cell].style.backgroundColor = "red";
+					else if (tabledata_[cell].pvStatus == "HIGH")
+						tds_[cell].style.backgroundColor = "yellow";
+					else if (tabledata_[cell].pvStatus == "LOW")
+						tds_[cell].style.backgroundColor = "blue";
+					else if (tabledata_[cell].pvStatus == "LOLO")
+						tds_[cell].style.backgroundColor = "purple";					
+					else if (!window.parent.checkPVTime(window.frameElement.id, tabledata_[cell].pvName, tabledata_[cell].pvTime))
+						tds_[cell].style.backgroundColor = "lightgray";
+					else
+						tds_[cell].style.backgroundColor = "rgba(0, 230, 64, " + valColor + ")";
+				}
+			} //end refreshPVTableCell()
+
+
+			//=====================================================================================
+			function setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, pvSettings)
+			{
+				var toolTip =
+				pvName
+				+ "\nLast value: "
+				+ pvValue
+				+ " "
+				+ pvSettings[pvName].Units
+				
+				+ "\nTime: "
+				+ ConfigurationAPI.getDateString(new Date((pvTime | 0) * 1000))
+				+ "\nStatus: "
+				+ pvStatus
+				+ "\nSeverity: "
+				+ pvSeverity
+				+ "\nLower Warning Limit:  " + Number.parseFloat(pvSettings[pvName].Lower_Warning_Limit).toExponential(2) + "\n"
+			  	+ "Upper Warning Limit:  "   + Number.parseFloat(pvSettings[pvName].Upper_Warning_Limit).toExponential(2) + "\n"
+			  	+ "Lower Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Lower_Alarm_Limit).toExponential(2)   + "\n"
+			  	+ "Upper Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Upper_Alarm_Limit).toExponential(2)   + "\n"
+			  	+ "Lower Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Control_Limit).toExponential(2) + "\n"
+			  	+ "Upper Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Control_Limit).toExponential(2) + "\n"
+			  	+ "Lower tableContainer Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_tableContainer_Limit).toExponential(2) + "\n"
+			  	+ "Upper tableContainer Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_tableContainer_Limit).toExponential(2) + "\n";
+			  	return toolTip;
+			} //end setWidgetToolTip()
+
+
+			//=====================================================================================
+			function checkPvTime(widget, pvName, pvTime)
+			{
+				var actualTime = Math.floor(Date.now())/1000;
+				var time2compare = pvTime*1. + 6400;//10.*page_.widgets[widget].pvList[pvName]/1000;
+				console.log(
+							  "Date now: "
+							+ actualTime
+							+ " pvtime: "
+							+ pvTime
+							+ " time2compare - actualTime: "
+							+ (time2compare - actualTime)
+							+ " refresh rate: "
+							+ page_.widgets[widget].pvList[pvName]
+							);
+
+				if ((pvTime !== undefined) && (time2compare > actualTime)) return true;
+				return false;
+			} //end checkPVTime()
+
+
+			//=====================================================================================
+			function setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, showLabel, foregroundColor, bkgColor, border)
+			{
+				var widgetNameElement = page_.widgets[widget].el.parentElement.children[0];
+				var widgetValueElement = page_.widgets[widget].el;
+
+				var actualTime = Math.floor(Date.now())/1000;
+
+				if (widgetNameElement !== null && widgetNameElement !== undefined)
+					if (showLabel == true)
+					{
+						if(pvSeverity == "MAJOR" )
+							widgetNameElement.innerHTML = "<center style = 'color: red'>" + pvName + "<br>Status: " + pvStatus + "<br>Severity: " + pvSeverity + "</center>";
+						else if(pvSeverity == "MINOR")
+							widgetNameElement.innerHTML = "<center style = 'color: orange'>" + pvName + "<br>Status: " + pvStatus + "<br>Severity: " + pvSeverity + "</center>";
+						else if (!checkPvTime(widget, pvName, pvTime))
+							widgetNameElement.innerHTML = "<center style = 'color:" + foregroundColor + "'>"
+														+ pvName
+														+ "<br><i>(Not updated for more than " + parseInt((actualTime - pvTime*1.)/60) + " minutes)</i></center>";
+						else
+							widgetNameElement.innerHTML = pvName;
+
+					}
+
+				if (widgetValueElement !== null && widgetValueElement !== undefined)
+				{
+					if (timeCheck && checkPvTime(widget, pvName, pvTime))
+					{
+						widgetValueElement.style.backgroundColor = 'green';
+						widgetValueElement.style.border = border;
+					}
+					else
+					{
+						widgetValueElement.style.backgroundColor = bkgColor;
+						widgetValueElement.style.border = bkgColor;
+					}
+
+					if(pvSeverity == "NO_ALARM" )
+					{
+							widgetValueElement.style.border = "4px solid green";
+							widgetValueElement.style.backgroundColor = 'green';
+					}
+					else if(pvSeverity == "MINOR" )
+					{
+						widgetValueElement.style.border = "4px solid orange";
+						widgetValueElement.style.backgroundColor = 'orange';
+					}
+					else if(pvSeverity == "MAJOR" )
+					{
+						widgetValueElement.style.border = "4px solid red";
+						widgetValueElement.style.backgroundColor = 'red';
+					}
+					else
+					{
+						widgetValueElement.style.border = "1px solid " + bkgColor;
+						widgetValueElement.style.backgroundColor = bkgColor;
+					}
+				}
+				else
+					console.log("setWidgetPVinfo(): widgetValueElement is null or not defined!");
+			} //end setWidgetPVinfo()
+
+
+			//=====================================================================================
+			//indicate that login should be kept alive
+			function indicateUserActivityToServer() 
+			{
+				Debug.log("indicateUserActivityToServer()");
+				DesktopContent.XMLHttpRequest(
+						"Request?RequestType=userActivityHeartbeat",
+						"", 
+						undefined /*returnHandler*/, 
+						0 /*reqParam*/, 
+						0 /*progressHandler*/, 
+						0 /*callHandlerOnErr*/, 
+						true /*doNoShowLoadingOverlay*/);	
+			} //end indicateUserActivityToServer()
+
+
+			//=====================================================================================
+			function isUserAdminHandler(req)
+			{
+				Debug.log("getPermissionHandler() was called. " + req.responseText);//Req: " + req.responseText);
+
+				isAdmin = JSON.parse(decodeURIComponent(DesktopContent.getXMLValue(req, "JSON")))["message"];
+				console.log("User Permission: " + isAdmin);
+				console.log(isAdmin);
+
+				if(isAdmin == "Yes")
+				{
+					isReadOnly_ = false;
+				}
+				else
+				{
+					isReadOnly_ = true;
+				}
+
+				console.log("Interface isReadOnly=" + isReadOnly_);
+			} //end isUserAdminHandler()
+
+
+			//=====================================================================================
+			function generateUID()
+			{
+				//BEGIN Put all pvs in a JSON and send to server
+				var pvList = "";
+				//console.log("page: ", page_);
+				for (var widget in page_.widgets)
+				{
+					console.log("generateUID: " +  page_.widgets[widget] + " " +  page_.widgets[widget].pvList);
+
+					for(var pv in page_.widgets[widget].pvList)
+					{
+						//pvList += pv + ":"  + page_.widgets[widget].pvList.valueOf()[pv] + ",";
+						pvList += pv + ",";
+					}
+				}
+
+				timeToPoll_ = true;
+
+				//END Put all pvs in a JSON and send to server
+				DesktopContent.XMLHttpRequest(
+					"Request?RequestType=generateUID",
+					"pvList=" + pvList,
+					generateUIDHandlerFunction);//, undefined, undefined, "sequence");
+			} //end generateUID(
+
+
+			//=====================================================================================
+			function generateUIDHandlerFunction(req)
+			{
+				var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
+
+				if(uid.message != "-1")
+					UID_ = uid.message;
+				else
+				{
+					UID_ = "";
+					Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
+				}
+
+				if(timeToPoll_)
+				{
+					pollServer();
+				}
+			} //end generateUIDHandlerFunction()
+
+
+			//=====================================================================================
+			function pollServer()
+			{
+				timeToPoll_ = false;
+				Debug.log("pollServer: polling server!");
+				console.log("pollServer(): ",page_.widgets);
+				//console.log("UID is ", UID_);
+				if(page_.widgets)
+				{
+					DesktopContent.XMLHttpRequest(
+						"Request?RequestType=poll&uid=" + UID_,
+						"", 
+						pollServerHandlerFunction /*returnHandler*/, 
+						0 /*reqParam*/, 
+						0 /*progressHandler*/, 
+						0 /*callHandlerOnErr*/, 
+						true /*doNoShowLoadingOverlay*/);	
+				}
+			} //end pollServer())
+
+
+			//=====================================================================================
+			function updateRefreshInterval()
+			{
+				console.log("updateRefreshInterval.refreshRate_ (ms): " + refreshRate_);
+				window.clearInterval(timerVariable_);
+				timerVariable_ = setInterval(pollServer, refreshRate_);
+			} //end updateRefreshInterval()
+
+
+			//=====================================================================================
+			function pollServerHandlerFunction(req)
+			{
+				Debug.log("pollServerHandlerFunction() was called. Req: " + req.responseText);
+
+ 				var jsonStr = DesktopContent.getXMLValue(req, "JSON");
+				jsonStr = jsonStr.replace(/\s/g, ''); //hack for removing whitespace 
+    			if(!jsonStr || jsonStr == "") 
+					return;
+
+				Debug.log(jsonStr);
+
+				var serverResponse;
+
+				serverResponse = JSON.parse(jsonStr);
+
+				Debug.log(serverResponse);
+
+				if(serverResponse.message == "NOT_FOUND")
+				{
+					console.log("Have to generate new UID!");
+					generateUID();
+					timeToPoll_ = true;
+				}
+				else
+				{
+					for(var pv in serverResponse)//have to use each pv and then loop through
+					{	
+						console.log("pollServerHandlerFunction: pv" + pv);						
+						for (var widget in page_.widgets)
+						{
+							console.log("pollServerHandlerFunction: " + page_.widgets[widget]);
+							for(var dependendentPV in page_.widgets[widget].pvList)
+							{
+								console.log("poll: " + dependendentPV);
+								if(pv == dependendentPV && page_.widgets[widget].loaded != "false")
+								{
+									console.log("Widget*************", widget, pv);
+									try
+									{
+										drawNewValue(
+												widget,
+												pv, 
+												serverResponse[pv].Value, 
+												serverResponse[pv].Timestamp, 
+												serverResponse[pv].Status, 
+												serverResponse[pv].Severity);
+									}
+									catch(e)
+									{
+										Debug.log("Error was caught updating new value to widget 'widget-" +
+											widget + "': " + e);											
+									}
+								}
+							}
+						}
+					}
+				}
+
+				timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+			} //end pollServerHandlerFunction()
+
+
+			//=====================================================================================
+			window.onresize = function() {
+				console.log("StopLightTable page: window.onresize()");
+				table_.style.height = window.innerHeight + "px";
+			};
+
+
+		</script>
+	</head>
+
+	<body onload='//init() called by DesktopContent.js'>
+		<div class="mainBlockContainer" id ="mainBlock">
+			<div class="topContainer">
+			</div>
+			<div class="bottomContainer">
+				<div class="tableContainer" id="tableContainer"></div>
+			</div>
+		</div> <!-- end main block container -->
+	</body>
+</html>
