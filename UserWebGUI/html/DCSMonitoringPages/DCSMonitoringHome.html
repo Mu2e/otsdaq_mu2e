@@ -23,20 +23,12 @@
 
 			//functions:
 			//	init()
-			//	getPvSet()
 			//	makeMainPage()
 
-			//	getAllPvList()
-			//	pvListReqHandler(req)
 			//	setupPvParams(id)
 			//	settingsReqHandler(req, passParams)
-			//	getPvHistory(widget, parameters)
-			//	pvHistoryReqHandler(req, passParams)
 
 			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
-			//	setWidgetToolTip(pvName, pvValue, pvTime, pvSettings)
-			//	checkPvTime(widget, pvName, pvTime)
-			//	setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, showLabel, foregroundColor, bkgColor, border)
 
 			//	indicateUserActivityToServer()
 			//	isUserAdminHandler(req)
@@ -66,7 +58,6 @@
 			//
 			//	- page init() is called by DesktopContent.js: 
 			//		* make Page_ to collect all objects to show PVs
-			//		* load PVs list
 			//		* makeMainPage()
 			//		* pollServer()
 			//		* generateUID()
@@ -134,9 +125,6 @@
 					//evaluateJS(cmdStr);
 				}
 
-				//Make sure pv list is up-to-date
-				getAllPvList();
-
 				UID_ = 0;
 
 				window.clearTimeout(timerVariable_);
@@ -153,49 +141,6 @@
 			{
 
 			} //end makeMainPage()
-
-
-			//=====================================================================================
-			function getAllPvList()
-			{
-				DesktopContent.XMLHttpRequest(
-						"Request?RequestType=getList",
-						"", 
-						pvListReqHandler /*returnHandler*/, 
-						0 /*reqParam*/, 
-						0 /*progressHandler*/, 
-						0 /*callHandlerOnErr*/, 
-						false /*doNoShowLoadingOverlay*/);
-
-			} //end getAllPvList()
-
-
-			//=====================================================================================
-			function pvListReqHandler(req)
-			{
-				console.log("pvListReqHandler: response received!");	
-				console.log(req.responseText);
-				datalist_ = document.createElement('datalist');
-				datalist_.id = "pvDatalist";
-				datalist_.innerHTML = "";
-
-				var jsonStr = DesktopContent.getXMLValue(req, "JSON");
-				if(!jsonStr || jsonStr == "") return;				
-				var pvListJSON;
-
-				//if invalid JSON return
-				//jsonStr.replace(/\"/g,"");
-				try {pvListJSON = JSON.parse(jsonStr); }
-				catch(e){console.log("Invalid JSON!"); return;}
-
-				console.log("pvListJSON:", pvListJSON);
-				for (var x in pvListJSON)
-				{
-					var option = document.createElement("option");
-					option.value = pvListJSON[x];
-					datalist_.appendChild(option);
-				}
-			} //end pvListReqHandler()
 
 
 			//=====================================================================================
@@ -235,160 +180,12 @@
 
 
 			//=====================================================================================
-			function getPvHistory(widged, parameters, startTime, endTime)
-			{
-				var pvList = "";
-				
-				if(page_.widgets[widged] === undefined)
-				{
-					Debug.log("Illegal widget UID (not found in widget list) received from child widget frame: " + 
-							  widged, Debug.HIGH_PRIORITY);
-					return;
-				}
-
-				for(var pv in page_.widgets[widged].pvList)
-				{
-					pvList += pv + ",";
-				}
-
-				var passParams = [widged, parameters];
-				DesktopContent.XMLHttpRequest("Request?RequestType=getPvArchiverData",
-									//post data 
-		    						"pvList=" + pvList + 
-									"&id=" + widged +
-									"&startTime=" + startTime +
-									"&endTime=" + endTime,
-									pvHistoryReqHandler /*handler*/,
-									 passParams /*parameter*/);
-				console.log("get history for widget! pvList: " + pvList);
-			} //end getPVHistory()
-
-
-			//=====================================================================================
-			function pvHistoryReqHandler(req, passParams) 
-			{
-				var jsonArr = req.responseXML.getElementsByTagName("JSON");
-				console.log("pvHistoryReqHandler()", jsonArr);
-
-				var id = passParams[0];
-				var parameters = passParams[1];
-				console.log("id: " + id + " parameter: " + parameters);
-
-				for (var i = jsonArr.length - 1; i >= 0; i--){
-					var history = JSON.parse(DesktopContent.getXMLValue(jsonArr[i]));				
-
-					for (var pv in history) {
-						console.log(pv);
-						console.log(history[pv].Timestamp + " " + history[pv].Value);
-						drawNewGraphValue(pv, pv, history[pv].Value, history[pv].Timestamp, history[pv].Status, history[pv].Severity);
-					}
-				}
-			} //end pvHistoryReqHandler()
-
-
-			//=====================================================================================
 			//write a new value of a PV
 			function drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
 			{
 				console.log("Text newValue() reached", pvName, pvValue);
 
 			} //end drawNewValue()
-
-
-			//=====================================================================================
-			function setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, pvSettings)
-			{
-				var toolTip =
-				pvName
-				+ "\nLast value: "
-				+ pvValue
-				+ " "
-				+ pvSettings[pvName].Units
-				
-				+ "\nTime: "
-				+ ConfigurationAPI.getDateString(new Date((pvTime | 0) * 1000))
-				+ "\nStatus: "
-				+ pvStatus
-				+ "\nSeverity: "
-				+ pvSeverity
-				+ "\nLower Warning Limit:  " + Number.parseFloat(pvSettings[pvName].Lower_Warning_Limit).toExponential(2) + "\n"
-			  	+ "Upper Warning Limit:  "   + Number.parseFloat(pvSettings[pvName].Upper_Warning_Limit).toExponential(2) + "\n"
-			  	+ "Lower Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Lower_Alarm_Limit).toExponential(2)   + "\n"
-			  	+ "Upper Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Upper_Alarm_Limit).toExponential(2)   + "\n"
-			  	+ "Lower Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Control_Limit).toExponential(2) + "\n"
-			  	+ "Upper Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Control_Limit).toExponential(2) + "\n"
-			  	+ "Lower Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Display_Limit).toExponential(2) + "\n"
-			  	+ "Upper Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Display_Limit).toExponential(2) + "\n";
-			  	return toolTip;
-			} //end setWidgetToolTip()
-
-
-			//=====================================================================================
-			function checkPvTime(widget, pvName, pvTime)
-			{
-				var actualTime = Math.floor(Date.now())/1000;
-				var time2compare = pvTime*1. + 1200;//10.*page_.widgets[widget].pvList[pvName]/1000;
-				console.log(
-							  "Date now: "
-							+ actualTime
-							+ " pvtime: "
-							+ pvTime
-							+ " time2compare - actualTime: "
-							+ (time2compare - actualTime)
-							+ " refresh rate: "
-							+ page_.widgets[widget].pvList[pvName]
-							);
-
-				if ((pvTime !== undefined) && (time2compare > actualTime)) return true;
-				return false;
-			} //end checkPVTime()
-
-
-			//=====================================================================================
-			function setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, showLabel, foregroundColor, bkgColor, border)
-			{
-				var widgetNameElement = page_.widgets[widget].el.parentElement.children[0];
-				var widgetValueElement = page_.widgets[widget].el;
-
-				var actualTime = Math.floor(Date.now())/1000;
-
-				if (widgetNameElement !== null && widgetNameElement !== undefined)
-					if (showLabel == true)
-					{
-						if(pvSeverity == "MAJOR" )
-							widgetNameElement.innerHTML = "<center style = 'color: red'>" + pvName + "<br>Status: " + pvStatus + "<br>Severity: " + pvSeverity + "</center>";
-						else if(pvSeverity == "MINOR")
-							widgetNameElement.innerHTML = "<center style = 'color: orange'>" + pvName + "<br>Status: " + pvStatus + "<br>Severity: " + pvSeverity + "</center>";
-						else if (!checkPvTime(widget, pvName, pvTime))
-							widgetNameElement.innerHTML = "<center style = 'color:" + foregroundColor + "'>"
-														+ pvName
-														+ "<br><i>(Not updated for more than " + parseInt((actualTime - pvTime*1.)/60) + " minutes)</i></center>";
-						else
-							widgetNameElement.innerHTML = pvName;
-
-					}
-
-				if (widgetValueElement !== null && widgetValueElement !== undefined)
-				{
-					if (checkPvTime(widget, pvName, pvTime))
-					{
-						widgetValueElement.style.backgroundColor = 'white';
-						widgetValueElement.style.border = border;
-					}
-					else
-					{
-						widgetValueElement.style.backgroundColor = bkgColor;
-						widgetValueElement.style.border = bkgColor;
-					}
-
-					if(pvSeverity == "MINOR" )
-						widgetValueElement.style.border = "4px solid orange";
-					else if(pvSeverity == "MAJOR" )
-						widgetValueElement.style.border = "4px solid red";
-				}
-				else
-					console.log("setWidgetPVinfo(): widgetValueElement is null or not defined!");
-			} //end setWidgetPVinfo()
 
 
 			//=====================================================================================
