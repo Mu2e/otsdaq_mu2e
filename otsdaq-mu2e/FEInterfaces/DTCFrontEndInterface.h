@@ -111,6 +111,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								GetFirmwareVersion				(__ARGS__);
 	void 								GetStatus						(__ARGS__);
 	void 								GetSimpleStatus					(__ARGS__);
+	void								GetTemperature					(__ARGS__);
 
 	// FIXME -- copy from CFOandDTC and implement using DTC.h
 	// void 								GetLinkLossOfLight				(__ARGS__);

@@ -90,6 +90,7 @@ class ROCCoreVInterface : public FEVInterface
 	virtual void							resetDTCLinkLossCounter		(void) = 0;  // pure virtual, must define in inheriting children
 
 	// ROC debugging functions
+	void 									registerFEMacros			(void);
 	void        							highRateCheck				(unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 	static void 							highRateCheckThread			(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 
@@ -108,6 +109,8 @@ class ROCCoreVInterface : public FEVInterface
 	//----------------- Emulator members
 	// return false when done with workLoop
   public:
+  	virtual void       					    GetStatus  					(__ARGS__);  
+	virtual void       					    GetFirmwareVersion			(__ARGS__);  
 	virtual bool 							emulatorWorkLoop			(void)
 	{
 		__COUT__ << "This is an empty emulator work loop! this function should be overridden "
