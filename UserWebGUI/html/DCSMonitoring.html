@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="en">
 	<head>
-		<title>DQM GUI</title>
+		<title>DCS Monitoring</title>
 
-		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DqmGUI.css">
+		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoring.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
@@ -20,14 +20,14 @@
 			/////////////////////////////////////////////////////////////////////////////////////////
 			/////////////////////////////////////////////////////////////////////////////////////////
 
-
+//
 			//=====================================================================================
 			//init called once body has loaded
 			function init() 
 			{
 				Debug.log("init() was called");
 				manageMenu();
-				openPage('/WebPath/UserWebPath/html/DqmPages/DqmHome.html');
+				openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html');
 			} //end init()
 
 
@@ -80,14 +80,14 @@
 						<img src="/WebPath/images/iconImages/mu2e_logo_oval_small.png" alt="" 	width="50%">
 						<img src="/WebPath/images/otsdaqIcons/logo.png" alt="" 	width="46%">
 					</div>
-					<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DqmPages/DqmHome.html')"><i class="fa fa-fw fa-home"></i> HOME</button>
+					<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html')"><i class="fa fa-fw fa-home"></i> HOME</button>
 					<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
 					<a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
 					<button class="dropdown-btn">DAQ
 						<i class="fa fa-caret-down"></i>
 					</button>
 					<div class="dropdown-container">
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DqmPages/DaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> Daq room health</button>
+						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> Daq room health</button>
 					</div>
 					<button class="dropdown-btn">DCS
 						<i class="fa fa-caret-down"></i>
@@ -112,7 +112,7 @@
 						<i class="fa fa-caret-down"></i>
 					</button>
 					<div class="dropdown-container">
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DqmPages/StopLightsTable.html')"><i class="fa fa-fw fa-home"></i> Ecal main</button>
+						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/StopLightsTable.html')"><i class="fa fa-fw fa-home"></i> Ecal main</button>
 					</div>
 					<button class="dropdown-btn">TRK
 						<i class="fa fa-caret-down"></i>

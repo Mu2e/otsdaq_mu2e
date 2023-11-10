@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html lang="en">
 	<head>
-		<title>Plot</title>
+		<title>DQM MOME PAGE</title>
 
 
 
-		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DqmPagesCss/Plot.css">
+		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoringPages/DCSMonitoringPageExample.css">
 
 		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
 		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
@@ -25,8 +25,6 @@
 			//	init()
 			//	getPvSet()
 			//	makeMainPage()
-			//	drawGraph()
-			//	makeGraph()
 
 			//	getAllPvList()
 			//	pvListReqHandler(req)
@@ -36,18 +34,17 @@
 			//	pvHistoryReqHandler(req, passParams)
 
 			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
-			//	drawNewGraphValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
 			//	setWidgetToolTip(pvName, pvValue, pvTime, pvSettings)
 			//	checkPvTime(widget, pvName, pvTime)
 			//	setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity, showLabel, foregroundColor, bkgColor, border)
 
 			//	indicateUserActivityToServer()
 			//	isUserAdminHandler(req)
-			//	generateUID()
-			//	generateUIDHandlerFunction(req)
 			//	pollServer()
+			//	generateUID()
 			//	updateRefreshInterval()
 			//	pollServerHandlerFunction(req)
+			//	generateUIDHandlerFunction(req)
 			//	setBackgroundColor(color)
 			//	evaluateJS(str)
 			//	isEmpty(obj)
@@ -82,6 +79,9 @@
 			//
 			//====================== end high-level behavior description
 
+			var windowWidth_, windowHeight_;
+
+			var mainBlock_ = {name:"", isHidden:false, el:""}; // = ["mainBlock", false ];
 
 			var refreshRate_ = 15000; //set default to refresh every 15 seconds (ms)
 			var timerVariable_;
@@ -102,7 +102,189 @@
 				}
 			}
 
-			var pvName_ = [];
+			var pvToUse_1 = [
+				 {"Mu2e:RackProt:1E:state": 0}
+				,{"Mu2e:RackProt:1W:state": 0}
+				// ,{"Mu2e:RackProt:2E:state": 0}
+				// ,{"Mu2e:RackProt:2W:state": 0}
+				// ,{"Mu2e:RackProt:3E:state": 0}
+				// ,{"Mu2e:RackProt:3W:state": 0}
+				// ,{"Mu2e:RackProt:4E:state": 0}
+				// ,{"Mu2e:RackProt:4W:state": 0}
+				// ,{"Mu2e:RackProt:5E:state": 0}
+				// ,{"Mu2e:RackProt:5W:state": 0}
+				// ,{"Mu2e:RackProt:6E:state": 0}
+				// ,{"Mu2e:RackProt:6W:state": 0}
+				// ,{"Mu2e:RackProt:7E:state": 0}
+				// ,{"Mu2e:RackProt:7W:state": 0}
+				,{"Mu2e:RackTemp:1E:0:T_hyst": 0}
+				,{"Mu2e:RackTemp:1E:0:T_trip": 0}
+				,{"Mu2e:RackTemp:1E:0:configbyte": 0}
+				,{"Mu2e:RackTemp:1E:0:temperature": 0}
+				,{"Mu2e:RackTemp:1E:1:T_hyst": 0}
+				,{"Mu2e:RackTemp:1E:1:T_trip": 0}
+				,{"Mu2e:RackTemp:1E:1:configbyte": 0}
+				,{"Mu2e:RackTemp:1E:1:temperature": 0}
+				,{"Mu2e:RackTemp:1E:2:T_hyst": 0}
+				,{"Mu2e:RackTemp:1E:2:T_trip": 0}
+				,{"Mu2e:RackTemp:1E:2:configbyte": 0}
+				,{"Mu2e:RackTemp:1E:2:temperature": 0}
+				,{"Mu2e:RackTemp:1W:0:T_hyst": 0}
+				,{"Mu2e:RackTemp:1W:0:T_trip": 0}
+				,{"Mu2e:RackTemp:1W:0:configbyte": 0}
+				,{"Mu2e:RackTemp:1W:0:temperature": 0}
+				,{"Mu2e:RackTemp:1W:1:T_hyst": 0}
+				,{"Mu2e:RackTemp:1W:1:T_trip": 0}
+				,{"Mu2e:RackTemp:1W:1:configbyte": 0}
+				,{"Mu2e:RackTemp:1W:1:temperature": 0}
+				,{"Mu2e:RackTemp:1W:2:T_hyst": 0}
+				,{"Mu2e:RackTemp:1W:2:T_trip": 0}
+				,{"Mu2e:RackTemp:1W:2:configbyte": 0}
+				,{"Mu2e:RackTemp:1W:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:2E:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:2E:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:2E:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:2E:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:2E:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:2E:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:2E:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:2E:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:2E:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:2E:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:2E:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:2E:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:2W:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:2W:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:2W:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:2W:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:2W:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:2W:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:2W:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:2W:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:2W:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:2W:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:2W:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:2W:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:3E:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:3E:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:3E:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:3E:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:3E:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:3E:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:3E:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:3E:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:3E:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:3E:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:3E:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:3E:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:3W:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:3W:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:3W:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:3W:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:3W:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:3W:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:3W:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:3W:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:3W:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:3W:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:3W:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:3W:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:4E:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:4E:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:4E:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:4E:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:4E:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:4E:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:4E:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:4E:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:4E:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:4E:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:4E:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:4E:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:4W:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:4W:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:4W:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:4W:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:4W:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:4W:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:4W:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:4W:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:4W:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:4W:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:4W:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:4W:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:5E:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:5E:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:5E:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:5E:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:5E:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:5E:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:5E:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:5E:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:5E:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:5E:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:5E:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:5E:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:5W:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:5W:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:5W:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:5W:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:5W:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:5W:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:5W:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:5W:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:5W:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:5W:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:5W:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:5W:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:6E:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:6E:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:6E:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:6E:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:6E:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:6E:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:6E:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:6E:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:6E:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:6E:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:6E:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:6E:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:6W:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:6W:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:6W:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:6W:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:6W:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:6W:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:6W:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:6W:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:6W:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:6W:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:6W:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:6W:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:7E:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:7E:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:7E:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:7E:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:7E:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:7E:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:7E:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:7E:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:7E:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:7E:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:7E:2:temperature": 0}
+				// ,{"Mu2e:RackTemp:7W:0:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:7W:0:T_trip": 0}
+				// ,{"Mu2e:RackTemp:7W:0:configbyte": 0}
+				// ,{"Mu2e:RackTemp:7W:0:temperature": 0}
+				// ,{"Mu2e:RackTemp:7W:1:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:7W:1:T_trip": 0}
+				// ,{"Mu2e:RackTemp:7W:1:configbyte": 0}
+				// ,{"Mu2e:RackTemp:7W:1:temperature": 0}
+				// ,{"Mu2e:RackTemp:7W:2:T_hyst": 0}
+				// ,{"Mu2e:RackTemp:7W:2:T_trip": 0}
+				// ,{"Mu2e:RackTemp:7W:2:configbyte": 0}
+				// ,{"Mu2e:RackTemp:7W:2:temperature": 0}
+				];
 
 			/////////////////////////////////////////////////////////////////////////////////////////
 			/////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +295,6 @@
 			function init() 
 			{
 				Debug.log("init() was called");
-				var parameterPvName = DesktopContent.getParameter(0,"pv_name");				
 
 				page_.createPage();
 
@@ -131,37 +312,88 @@
 					Debug.log("cmdStr=" + cmdStr);
 					//replace %22 with "
 					cmdStr = cmdStr.replace(/%22/g, "\"");
+					//evaluateJS(cmdStr);
 				}
 
 				//Make sure pv list is up-to-date
-				//getAllPvList();
+				getAllPvList();
 
 				UID_ = 0;
 
 				window.clearTimeout(timerVariable_);
+				//window.clearTimeout(lastAlarmsTimerVariable_);
+				//window.clearTimeout(alarmsLogTimerVariable_);
 
-				makeMainPage(parameterPvName);
+				makeMainPage();
 				generateUID();
 				pollServer();
+				//timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+				//getLastAlarms();
+				//lastAlarmsTimerVariable_ = window.setTimeout(pollLastAlarms, refreshRate_);
+				//getAlarmsLog();
+				//alarmsLogTimerVariable_ = window.setTimeout(pollAlarmsLog, refreshRate_);
 			} //end init()
+
+
+
+
+			var pvToUse_;
+			async function requestApi(url) {
+				const response = await fetch(url);
+				const json = await response.json();
+				console.log(json); //This prints the objects I need and gets called second
+				globalThis.pvToUse_ = json;
+				return json;
+			}
+
+			//=====================================================================================
+			//get set of PVs to show
+			function getPvSet()
+			{
+				//requestApi('/WebPath/JSONFiles/pvToUse_home.json');
+				// fetch('/WebPath/JSONFiles/pvToUse_home.json')
+				// .then(function (response) {
+				// 	return response.json();
+				// })
+				// .then(function (data) {
+				// 	getData(data);
+				// })
+				// .catch(function (err) {
+				// 	console.log(err);
+				// });
+				pvToUse_ = pvToUse_1;
+			}  //end getPvSet()
 
 
 			//=====================================================================================
 			//Make main page here
-			function makeMainPage(pvName)
+			function makeMainPage()
 			{
-				pvName_ [0] = {[pvName]:0};
-				var plot = document.getElementById('plot');
-				var widgetObject 		= {};
-				widgetObject.pvList 	= pvName_[0];
-				widgetObject.pvSettings = {};
-				widgetObject.el = plot;
-				page_.widgets[0] = widgetObject;
-				setupPvParams(0);
+				getPvSet();
+				var table = document.getElementById("rackTable");
 
-				var actualTime = Math.floor(Date.now())/1000;
-				var startTime = actualTime - 6*3600;
-				drawGraph(0, startTime, actualTime);
+				for (i = 0; i < Object.keys(pvToUse_).length; i++)
+				{
+					var row = table.insertRow(i);
+					var cell1 = row.insertCell(0);
+					cell1.id = "pvName-"+i;
+					cell1.innerHTML = Object.keys(pvToUse_[i])[0];
+					var cell2 = row.insertCell(1);
+					cell2.id = "pvValue-"+i;
+					var widgetObject 		= {};
+					widgetObject.pvList 	= pvToUse_[i];
+					widgetObject.pvSettings = {};
+					widgetObject.el = cell2;
+					page_.widgets[i] = widgetObject;
+					setupPvParams(i);
+				}
+				var header = table.insertRow(0);
+				var headerCell1 = document.createElement("TH");
+            	headerCell1.innerHTML = "Parameter";
+				var headerCell2 = document.createElement("TH");
+            	headerCell2.innerHTML = "Status";
+            	header.appendChild(headerCell1);
+            	header.appendChild(headerCell2);
 			} //end makeMainPage()
 
 
@@ -172,7 +404,7 @@
 			var plotPvList_ = {};
 			var plotParameters_ = {class: "", "show_labels": "false", "background_color": "transparent", "trace_type": "scatter", "trace_mode": "lines"};
 			//=====================================================================================
-			function drawGraph(widget, startTime, endTime)
+			function drawGraph(widget)
 			{
 				var plot = document.getElementById('plot');
 				var i = 0;
@@ -187,7 +419,9 @@
 				}
 
 				makeGraph();
-				getPvHistory(widget, plotParameters_, startTime, endTime);
+				var actualTime = Math.floor(Date.now())/1000;
+				var startTime = actualTime - 6*3600;
+				getPvHistory(widget, plotParameters_, startTime, actualTime);
 				actualGraphId_ = widget;
 			} //end drawGraph()
 
@@ -228,10 +462,10 @@
 	    		}, {responsive: true});
 
 	    		Plotly.relayout(plot, {
-								  width: window.innerWidth - 50
-								, height: window.innerHeight - 100}
+								  width: plot.innerWidth
+								, height: plot.innerHeight }
 							   );
-
+				
 				console.log("newGraph() reached");
 			} //end makeGraph()
 
@@ -264,6 +498,8 @@
 				if(!jsonStr || jsonStr == "") return;				
 				var pvListJSON;
 
+				//if invalid JSON return
+				//jsonStr.replace(/\"/g,"");
 				try {pvListJSON = JSON.parse(jsonStr); }
 				catch(e){console.log("Invalid JSON!"); return;}
 
@@ -371,24 +607,23 @@
 			{
 				console.log("Text newValue() reached", pvName, pvValue);
 
-				// var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
-				
-				// page_.widgets[widget].el.innerHTML = pvValue + " " + units;
+				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
+				page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ")'>" + pvValue + " " + units + "</button>";
 
-				// page_.widgets[widget].el.title = setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
+				page_.widgets[widget].el.title = setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
 
-				// setWidgetPvInfo(
-				// 				  widget
-				// 				, pvName
-				// 				, pvValue
-				// 				, pvTime
-				// 				, pvStatus
-				// 				, pvSeverity
-				// 				, false
-				// 				, "DimGray"
-				// 				, "LightGray"
-				// 				, "1px solid green"
-				// 				);
+				setWidgetPvInfo(
+								  widget
+								, pvName
+								, pvValue
+								, pvTime
+								, pvStatus
+								, pvSeverity
+								, true
+								, "DimGray"
+								, "LightGray"
+								, "4px solid green"
+								);
 
 				if(widget==actualGraphId_ && pvTime>lastPlotTime_)
 				{
@@ -493,7 +728,7 @@
 			function checkPvTime(widget, pvName, pvTime)
 			{
 				var actualTime = Math.floor(Date.now())/1000;
-				var time2compare = pvTime*1. + 6400;//10.*page_.widgets[widget].pvList[pvName]/1000;
+				var time2compare = pvTime*1. + 1200;//10.*page_.widgets[widget].pvList[pvName]/1000;
 				console.log(
 							  "Date now: "
 							+ actualTime
@@ -538,7 +773,7 @@
 				{
 					if (checkPvTime(widget, pvName, pvTime))
 					{
-						widgetValueElement.style.backgroundColor = 'green';
+						widgetValueElement.style.backgroundColor = 'white';
 						widgetValueElement.style.border = border;
 					}
 					else
@@ -548,15 +783,9 @@
 					}
 
 					if(pvSeverity == "MINOR" )
-					{
 						widgetValueElement.style.border = "4px solid orange";
-						widgetValueElement.style.backgroundColor = 'orange';
-					}
 					else if(pvSeverity == "MAJOR" )
-					{
 						widgetValueElement.style.border = "4px solid red";
-						widgetValueElement.style.backgroundColor = 'red';
-					}
 				}
 				else
 					console.log("setWidgetPVinfo(): widgetValueElement is null or not defined!");
@@ -602,6 +831,27 @@
 
 
 			//=====================================================================================
+			function pollServer()
+			{
+				timeToPoll_ = false;
+				Debug.log("pollServer: polling server!");
+				console.log("pollServer(): ",page_.widgets);
+				//console.log("UID is ", UID_);
+				if(page_.widgets)
+				{
+					DesktopContent.XMLHttpRequest(
+						"Request?RequestType=poll&uid=" + UID_,
+						"", 
+						pollServerHandlerFunction /*returnHandler*/, 
+						0 /*reqParam*/, 
+						0 /*progressHandler*/, 
+						0 /*callHandlerOnErr*/, 
+						true /*doNoShowLoadingOverlay*/);	
+				}
+			} //end pollServer()
+
+
+			//=====================================================================================
 			function generateUID()
 			{
 				//BEGIN Put all pvs in a JSON and send to server
@@ -625,48 +875,7 @@
 					"Request?RequestType=generateUID",
 					"pvList=" + pvList,
 					generateUIDHandlerFunction);//, undefined, undefined, "sequence");
-			} //end generateUID(
-
-
-			//=====================================================================================
-			function generateUIDHandlerFunction(req)
-			{
-				var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
-
-				if(uid.message != "-1")
-					UID_ = uid.message;
-				else
-				{
-					UID_ = "";
-					Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
-				}
-
-				if(timeToPoll_)
-				{
-					pollServer();
-				}
-			} //end generateUIDHandlerFunction()
-
-
-			//=====================================================================================
-			function pollServer()
-			{
-				timeToPoll_ = false;
-				Debug.log("pollServer: polling server!");
-				console.log("pollServer(): ",page_.widgets);
-				//console.log("UID is ", UID_);
-				if(page_.widgets)
-				{
-					DesktopContent.XMLHttpRequest(
-						"Request?RequestType=poll&uid=" + UID_,
-						"", 
-						pollServerHandlerFunction /*returnHandler*/, 
-						0 /*reqParam*/, 
-						0 /*progressHandler*/, 
-						0 /*callHandlerOnErr*/, 
-						true /*doNoShowLoadingOverlay*/);	
-				}
-			} //end pollServer())
+			} //end generateUID()
 
 
 			//=====================================================================================
@@ -742,39 +951,59 @@
 
 
 			//=====================================================================================
-			function showGraphPeriod(period /*days*/)
+			function generateUIDHandlerFunction(req)
 			{
-				var actualTime = Math.floor(Date.now())/1000;
-				var startTime = actualTime - period*24*3600;
-				drawGraph(0,startTime, actualTime);
-			} //end showGraphPeriod()
+				var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
+
+				if(uid.message != "-1")
+					UID_ = uid.message;
+				else
+				{
+					UID_ = "";
+					Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
+				}
+
+				if(timeToPoll_)
+				{
+					pollServer();
+				}
+			} //end generateUIDHandlerFunction()
 
 
 			//=====================================================================================
-			window.onresize = function() {
-				Plotly.relayout(document.getElementById("plot"),
-				{
-					width: (window.innerWidth - 50),
-					height: (window.innerHeight - 100)
-				});
-				//console.log("window.onresize Plotly.relayout");
-			};
+			function setBackgroundColor(color)
+			{
+				mainBlock_.el.style["background-color"] = color;
+			} //end setBackgroundColor()
 
+
+			//=====================================================================================
+			//evaluateJS ~~
+			function evaluateJS(str)
+			{
+				Debug.log("evaluateJS = " + str);
+				eval(str);
+			} //end evaluateJS()
+
+
+			//=====================================================================================
+			function isEmpty(obj)
+			{
+				return (Object.getOwnPropertyNames(obj).length === 0);
+			} //end isEmpty()rackTable
 
 		</script>
 	</head>
 
 	<body onload='//init() called by DesktopContent.js'>
-		<div class="mainBlockContainer" id ="mainBlock">
-			<div class="topContainer">
-				Show period
-				<button class='timeButton' onclick='showGraphPeriod(0.5)'>12 h</button>
-				<button class='timeButton' onclick='showGraphPeriod(1)'>1 day</button>
-				<button class='timeButton' onclick='showGraphPeriod(7)'>1 week</button>
-			</div>
-			<div class="bottomContainer">
-				<div class="plotContainer" id="plot"></div>
-			</div>
+		
+		<div id="mainBlockContainer" height="auto" width="auto">
+			<h2 align="center">Example Page</h2>
+			<div class="tableContainer" id="table" >
+				<table id="rackTable" align="left" border="1px">
+				</table>
+			</div> <!-- end table block -->
+			<div class="plotContainer" id="plot"></div>
 		</div> <!-- end main block container -->
 	</body>
 </html>
