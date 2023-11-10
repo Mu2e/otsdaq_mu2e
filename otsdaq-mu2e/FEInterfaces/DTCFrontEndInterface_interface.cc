@@ -225,7 +225,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"rocLinkIndex", "address", "writeData (CSV-literal or CSV-filename)", 
 						"incrementAddress (Default = false)", "requestAck (Default = false)"},
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions 
+					"*",
+					"This FE Macro enables users to write multiple words in the format of a comma separated values or "
+					"a CSV file."
+	);
 
 	// registerFEMacroFunction(
 	// 	"ROC_Write_ExtRegister",  // feMacroName
@@ -564,7 +568,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ResetPCIe),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions 
+					"*",
+					"Reset the PCIe interface."
+	);
 
 	registerFEMacroFunction(
 		"Check Firefly Temperature",
@@ -572,7 +579,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetFireflyTemperature),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Temperature"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Check the temperature from the Firefly RX IIC Bus."
+	);
 
 	registerFEMacroFunction(
 		"Check FPGA Temperature",
@@ -580,35 +590,52 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetFPGATemperature),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Temperature"},
-					1);  // requiredUserPermissions
+					1, 
+					"*", 
+					"Get the temperature of the FPGA in degrees Celesius. "
+					"A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor."
+	);
+
 	registerFEMacroFunction(
 		"ResetCFOLinkRx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkRx),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Reset the SERDES RX interface."
+	);
 	registerFEMacroFunction(
 		"ResetCFOLinkTx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkTx),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Reset the CFO SERDES RX interface."
+	);
 	registerFEMacroFunction(
 		"ResetCFOLinkRxPLL",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkRxPLL),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*", 
+					"Reset the CFO SERDES RX PLL."
+	);
 	registerFEMacroFunction(
 		"ResetCFOLinkTxPLL",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkTxPLL),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*", 
+					"Reset the CFO SERDES TX PLL."
+	);
 	
 
 	{ //add ROC FE Macros

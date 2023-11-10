@@ -109,7 +109,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::CFOHalt),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Transitions the state machine to <b>Halt</b> by setting the Enable Beam Off Mode Register to off."
+	);
 
 	registerFEMacroFunction(
 		"CFO Write",  // feMacroName
@@ -222,7 +225,6 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"Launchs the Event Building run plan. You must <b>Compile Runplan</b> and <b>Set Runplan</b> before launching. " /* feMacroTooltip */
 					"You do not need to compile and set the same runplan more than once. Use <b>Reset Runplan</b> and <b>Launch Runplan</b> thereafter."
 	);
-
 	
 	registerFEMacroFunction(
 		"Configure for Timing Chain",
@@ -230,8 +232,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::ConfigureForTimingChain),                  // feMacroFunction
 					std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions	
-	
+					1, 
+					"*", 
+					"This FE Macro configures the CFO for DTC chain synchronization."
+	);  // requiredUserPermissions	
 
 	// clang-format on
 
