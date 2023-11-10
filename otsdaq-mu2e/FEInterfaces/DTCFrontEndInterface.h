@@ -23,9 +23,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	DTCFrontEndInterface(const std::string&       interfaceUID,
 	                     const ConfigurationTree& theXDAQContextConfigTree,
 	                     const std::string&       interfaceConfigurationPath);
-
 	virtual ~DTCFrontEndInterface(void);
 
+	void 								DTCInstantiate();
+	
 	// specialized ROC handling slow controls
 	//----------------
 	virtual void 						configureSlowControls		(void) override;
@@ -62,7 +63,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// DTC specific items
 	//----------------
-	virtual std::string					readStatus					(void) override;
 	void 								configureHardwareDevMode	(void);
 	void 								configureEventBuildingMode	(int step = -1);
 	void 								configureLoopbackMode		(int step = -1);
@@ -111,7 +111,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								GetFirmwareVersion				(__ARGS__);
 	void 								GetStatus						(__ARGS__);
 	void 								GetSimpleStatus					(__ARGS__);
-	void								GetTemperature					(__ARGS__);
 
 	// FIXME -- copy from CFOandDTC and implement using DTC.h
 	// void 								GetLinkLossOfLight				(__ARGS__);

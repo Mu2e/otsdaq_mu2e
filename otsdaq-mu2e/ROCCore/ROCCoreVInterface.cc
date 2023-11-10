@@ -121,6 +121,12 @@ DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address
 catch(...)
 {
 	__SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
+	try	{ throw; } //one more try to printout extra info
+	catch(const std::exception &e)
+	{
+		ss << "Exception message: " << e.what();
+	}
+	catch(...){}
 	__FE_COUT_ERR__ << ss.str();
 	throw;
 } // end readRegister() catch
@@ -283,6 +289,12 @@ void ROCCoreVInterface::highRateCheckThread(ROCCoreVInterface* roc,
 catch(...)
 {
 	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
+	try	{ throw; } //one more try to printout extra info
+	catch(const std::exception &e)
+	{
+		ss << "Exception message: " << e.what();
+	}
+	catch(...){}
 	__MCOUT__(ss.str());
 }  // end highRateCheckThread() catch
 
@@ -373,6 +385,12 @@ void ROCCoreVInterface::highRateBlockCheckThread(ROCCoreVInterface* roc,
 catch(...)
 {
 	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
+	try	{ throw; } //one more try to printout extra info
+	catch(const std::exception &e)
+	{
+		ss << "Exception message: " << e.what();
+	}
+	catch(...){}
 	__MCOUT__(ss.str());
 }  // end highRateBlockCheckThread() catch
 
@@ -438,7 +456,12 @@ catch(const std::runtime_error& e)
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
-	__FE_MOUT__ << ss.str();
+	try	{ throw; } //one more try to printout extra info
+	catch(const std::exception &e)
+	{
+		ss << "Exception message: " << e.what();
+	}
+	catch(...){}
 	__FE_SS_THROW__;
 }
 
