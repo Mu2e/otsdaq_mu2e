@@ -49,73 +49,8 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 	}
 	// else not emulator mode
 
+	DTCInstantiate();
 
-
-	unsigned dtc_class_roc_mask = 0;
-	// create roc mask for DTC
-	{
-		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-
-		__FE_COUTV__(rocChildren.size());
-		roc_mask_ = 0;
-
-		for(auto& roc : rocChildren)
-		{
-			__FE_COUT__ << "roc uid " << roc.first << __E__;
-			bool enabled = roc.second.getNode("Status").getValue<bool>();
-			__FE_COUT__ << "roc enable " << enabled << __E__;
-
-			if(enabled)
-			{
-				int linkID = roc.second.getNode("linkID").getValue<int>();
-				roc_mask_ |= (0x1 << linkID);
-				dtc_class_roc_mask |=
-				    (0x1 << (linkID * 4));  // the DTC class instantiation expects each
-				                            // ROC has its own hex nibble
-			}
-		}
-
-		__FE_COUT__ << "DTC roc_mask_ = 0x" << std::hex << roc_mask_ << std::dec << __E__;
-		__FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex
-		            << dtc_class_roc_mask << std::dec << __E__;
-
-	}  // end create roc mask
-
-	// instantiate DTC with the appropriate ROCs enabled
-	std::string         expectedDesignVersion = "";
-	DTCLib::DTC_SimMode mode =
-	    emulate_cfo_ ? DTCLib::DTC_SimMode_NoCFO : DTCLib::DTC_SimMode_Disabled;
-		    
-
-	__FE_COUT__ << "DTC arguments..." << std::endl;
-	__FE_COUTV__(mode);
-	__FE_COUTV__(deviceIndex_);
-	__FE_COUTV__(dtc_class_roc_mask);
-	__FE_COUTV__(expectedDesignVersion);
-	__FE_COUTV__(skipInit_);
-	__FE_COUT__ << "END DTC arguments..." << std::endl;
-
-	thisDTC_ = new DTCLib::DTC(
-	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
-		true /* skipInit */, //always skip init and lots ots configure setup
-		"" /* simMemoryFile */,
-		getInterfaceUID()); 
-	
-	std::string designVersion = thisDTC_->ReadDesignDate();
-	__FE_COUTV__(designVersion);
-	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
-
-	createROCs();
-	registerFEMacros();
-
-	// DTC-specific info
-	dtc_location_in_chain_ = getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
-	
-
-	__FE_COUT_INFO__ << "DTC instantiated with name: " << getInterfaceUID()
-	                 << " dtc_location_in_chain_ = " << dtc_location_in_chain_
-	                 << " talking to /dev/mu2e" << deviceIndex_ << __E__;
 }  // end constructor()
 
 //==========================================================================================
@@ -517,13 +452,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					1);  // requiredUserPermissions
 	
-	std::string value = FEVInterface::getFEMacroConstArgument(std::vector<std::pair<const std::string,std::string>>{
-		
-	std::make_pair("Link to Shutdown (0-7, 6 is Control)","0")},
-	"Link to Shutdown (0-7, 6 is Control)");
-			
-			__COUTV__(value);
-
 
 	{ //add ROC FE Macros
 		__FE_COUT__ << "Getting children ROC FEMacros..." << __E__;
@@ -876,12 +804,6 @@ void DTCFrontEndInterface::createROCs(void)
 
 	__FE_COUT__ << "Done creating " << rocs_.size() << " ROC(s)" << std::endl;
 }  // end createROCs()
-
-//==================================================================================================
-std::string DTCFrontEndInterface::readStatus(void)
-{
-	return thisDTC_->FormattedRegDump(20);
-} // end readStatus()
 
 // //==================================================================================================
 // int DTCFrontEndInterface::getROCLinkStatus(int ROC_link)
@@ -1501,6 +1423,12 @@ catch(const std::exception& e)
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check the printouts!" << __E__;
+	try	{ throw; } //one more try to printout extra info
+	catch(const std::exception &e)
+	{
+		ss << "Exception message: " << e.what();
+	}
+	catch(...){}
 	__FE_SS_THROW__;
 }
 
@@ -3737,9 +3665,9 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {	
-	__SET_ARG_OUT__("Link Counters", thisDTC_->LinkCountersRegDump(20));
-	__SET_ARG_OUT__("Performance Counters", thisDTC_->PerformanceCountersRegDump(20));
-	__SET_ARG_OUT__("Packet Counters", thisDTC_->PacketCountersRegDump(20));
+	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
+	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));
+	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
 }  // end DTCCounters()
 
 // //========================================================================
@@ -3758,13 +3686,13 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::GetStatus(__ARGS__)
 {	
-	__SET_ARG_OUT__("Status", thisDTC_->FormattedRegDump(20));
+	__SET_ARG_OUT__("Status", thisDTC_->FormattedRegDump(20, thisDTC_->formattedDumpFunctions_));
 } //end GetStatus()
 
 //========================================================================
 void DTCFrontEndInterface::GetSimpleStatus(__ARGS__)
 {	
-	__SET_ARG_OUT__("Status", thisDTC_->FormattedRegDump(20, &(thisDTC_->formattedSimpleDumpFunctions_)));
+	__SET_ARG_OUT__("Status", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSimpleDumpFunctions_));
 } //end GetSimpleStatus()
 
 //========================================================================
@@ -3792,7 +3720,7 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::GetLinkErrors(__ARGS__)
 {	
-	__SET_ARG_OUT__("Link Errors", thisDTC_->SERDESErrorsRegDump(20));
+	__SET_ARG_OUT__("Link Errors", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESErrorFunctions_));
 } //end GetLinkErrors()
 
 // //========================================================================
@@ -3808,9 +3736,13 @@ void DTCFrontEndInterface::GetLinkErrors(__ARGS__)
 // 	createROCs();
 	
 // } //end ROCInstantiate()
+
 //========================================================================
-void DTCFrontEndInterface::DTCInstantiate(__ARGS__)
-{	
+void DTCFrontEndInterface::DTCInstantiate(__ARGS__) { DTCInstantiate(); }
+
+//========================================================================
+void DTCFrontEndInterface::DTCInstantiate()
+{
 	if(thisDTC_)
 		delete thisDTC_;
 	thisDTC_ = nullptr;
@@ -3849,22 +3781,48 @@ void DTCFrontEndInterface::DTCInstantiate(__ARGS__)
 
 	}  // end create roc mask
 
+	// instantiate DTC with the appropriate ROCs enabled
+	// DTC firmware design version must match ReadDesignDate()_ReadVivadoVersion() [ ignoring ReadDesignVersionNumber() for now ]
+	// for example the string might be "Jun/13/2023 16:00   raw-data: 0x23061316" + "_22.1"
 	std::string         expectedDesignVersion = "";
-
-	__COUT__ << "DTC arguments..." << std::endl;
-	__COUTV__(mode);
-	__COUTV__(deviceIndex_);
-	__COUTV__(dtc_class_roc_mask);
-	__COUTV__(expectedDesignVersion);
-	__COUTV__(skipInit_);
-	__COUT__ << "END DTC arguments..." << std::endl;
+	try
+	{
+		expectedDesignVersion = getSelfNode().getNode("ExpectedFirmwareVersion").getValue(); 
+	}
+	catch(const std::runtime_error& e)
+	{
+		//ignoring missing field, so not enforcing firmware version
+	}
+	
+	__FE_COUT__ << "DTC arguments..." << std::endl;
+	__FE_COUTV__(mode);
+	__FE_COUTV__(deviceIndex_);
+	__FE_COUTV__(dtc_class_roc_mask);
+	__FE_COUTV__(expectedDesignVersion);
+	__FE_COUTV__(skipInit_);
+	__FE_COUT__ << "END DTC arguments..." << std::endl;
 
 	thisDTC_ = new DTCLib::DTC(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
 		true /* skipInit */, //always skip init and lots ots configure setup
 		"" /* simMemoryFile */,
-		getInterfaceUID());
+		getInterfaceUID()); 
 	
+	std::string designVersion = thisDTC_->ReadDesignVersion();
+	__FE_COUTV__(designVersion);
+	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
+
+	createROCs();
+	registerFEMacros();
+
+	// DTC-specific info
+	dtc_location_in_chain_ =
+	    getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
+	
+	__FE_COUT_INFO__ << "DTC instantiated with name: " << getInterfaceUID()
+	                 << " dtc_location_in_chain_ = " << dtc_location_in_chain_
+	                 << " talking to /dev/mu2e" << deviceIndex_ << __E__;
+
 } //end DTCInstantiate()
 
 //========================================================================
