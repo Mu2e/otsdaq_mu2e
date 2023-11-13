@@ -51,69 +51,6 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 
 	DTCInstantiate();
 
-	// unsigned dtc_class_roc_mask = 0;
-	// // create roc mask for DTC
-	// {
-	// 	std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-	// 	    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-
-	// 	__FE_COUTV__(rocChildren.size());
-	// 	roc_mask_ = 0;
-
-	// 	for(auto& roc : rocChildren)
-	// 	{
-	// 		__FE_COUT__ << "roc uid " << roc.first << __E__;
-	// 		bool enabled = roc.second.getNode("Status").getValue<bool>();
-	// 		__FE_COUT__ << "roc enable " << enabled << __E__;
-
-	// 		if(enabled)
-	// 		{
-	// 			int linkID = roc.second.getNode("linkID").getValue<int>();
-	// 			roc_mask_ |= (0x1 << linkID);
-	// 			dtc_class_roc_mask |=
-	// 			    (0x1 << (linkID * 4));  // the DTC class instantiation expects each
-	// 			                            // ROC has its own hex nibble
-	// 		}
-	// 	}
-
-	// 	__FE_COUT__ << "DTC roc_mask_ = 0x" << std::hex << roc_mask_ << std::dec << __E__;
-	// 	__FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex
-	// 	            << dtc_class_roc_mask << std::dec << __E__;
-
-	// }  // end create roc mask
-
-	// // instantiate DTC with the appropriate ROCs enabled
-	// std::string         expectedDesignVersion = ""; // must match ReadDesignVersionNumber() + "_" + ReadDesignDate()
-	// // for example the string might be "Jun/13/2023 16:00   raw-data: 0x23061316"
-	// DTCLib::DTC_SimMode mode =
-	//     emulate_cfo_ ? DTCLib::DTC_SimMode_NoCFO : DTCLib::DTC_SimMode_Disabled;
-		    
-
-	// __FE_COUT__ << "DTC arguments..." << std::endl;
-	// __FE_COUTV__(mode);
-	// __FE_COUTV__(deviceIndex_);
-	// __FE_COUTV__(dtc_class_roc_mask);
-	// __FE_COUTV__(expectedDesignVersion);
-	// __FE_COUTV__(skipInit_);
-	// __FE_COUT__ << "END DTC arguments..." << std::endl;
-
-	// thisDTC_ = new DTCLib::DTC(
-	//     mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
-	// 	true /* skipInit */, //always skip init and lots ots configure setup
-	// 	"" /* simMemoryFile */,
-	// 	getInterfaceUID()); 
-	
-
-	// createROCs();
-	// registerFEMacros();
-
-	// // DTC-specific info
-	// dtc_location_in_chain_ =
-	//     getSelfNode().getNode("LocationInChain").getValue<unsigned int>();
-	
-	// __FE_COUT_INFO__ << "DTC instantiated with name: " << getInterfaceUID()
-	//                  << " dtc_location_in_chain_ = " << dtc_location_in_chain_
-	//                  << " talking to /dev/mu2e" << deviceIndex_ << __E__;
 }  // end constructor()
 
 //==========================================================================================
