@@ -18,10 +18,10 @@ fcldir      fq_dir      fcl
 
 #
 product		 		version		optional
-otsdaq				v2_06_11
-otsdaq_utilities	v2_06_11
-otsdaq_components	v2_06_11
-otsdaq_epics		v2_06_11
+otsdaq				v2_07_00
+otsdaq_utilities	v2_07_00
+otsdaq_components	v2_07_00
+otsdaq_epics		v2_07_00
 artdaq_mu2e			v1_06_02
 cetmodules			v3_21_02	-	only_for_build
 end_product_list
