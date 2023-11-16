@@ -272,7 +272,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Upstream Rx Lock Loss Count"},
 					1, 
 					"*", 
-					"Displays the number of times the Jitter Attenuator PLL lost lock since the last reset. "
+					"Displays the number of times the CFO Control Link lost CDR lock since the last reset. "
 					"Use the FE Macro <b>Reset Loss-of-Lock Counter</b> to reset the register counter to zero."
 	);
 	
@@ -345,9 +345,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Register Write Results"},
 					1,  // requiredUserPermissions 
 					"*", 
-					"Select the source to subject the jitter attenuator: a local oscilator on the DTC or RTF.\n"
-					"RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to RTF</b>. "
-					"The "
+					"Select the source of the jitter attenuator: a local oscilator on the DTC or RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to RTF</b>. "
 	);
 
 
@@ -383,9 +382,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Diagnostic RX FIFO"},
 					1,    // requiredUserPermissions
 					"*", 
-					"This FE Macro reads the ROC link RX diagnostic FIFO\'s buffer from the SERDES. "
+					"This FE Macro reads the ROC link RX diagnostic FIFO buffer from the SERDES. "
 					"When empty, the FIFO reports 0XDEADDEAD. <b>Note</b>: the FIFO must be read at least once before valid data appears. "
-					"Reading the FIFO pulses the FIFO\'s Read Enable input."
+					"Reading the FIFO pulses the Read Enable input."
 	);
 
 	registerFEMacroFunction(
@@ -396,9 +395,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Diagnostic TX FIFO"},
 					1,   // requiredUserPermissions
 					"*", 
-					"This FE Macro reads the ROC link TX diagnostic FIFO\'s buffer from the SERDES. "
+					"This FE Macro reads the ROC link TX diagnostic FIFO buffer from the SERDES. "
 					"When empty, the FIFO reports 0XDEADDEAD. <b>Note</b>: the FIFO must be read at least once before valid data appears. "
-					"Reading the FIFO pulses the FIFO\'s Read Enable input."
+					"Reading the FIFO pulses the Read Enable input."
 	);
 					
 	registerFEMacroFunction(
@@ -482,7 +481,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					1,    // requiredUserPermissions
 					"*", 
-					"Sets the DTC in loop back mode. This is accomplished by disabling all links except for <b>ROC_Link</b>. "
+					"Sets the DTC in loopback mode. This is accomplished by disabling all links except for <b>ROC_Link</b>. "
 					"If <b>setAsPassThrough</b> is enabled, the DTC Control Register bit 28 is set to low (default). "
 					"This means the CFO Link SERDES output is routed back to the source. "
 					"CFO packets will be transmitted instead to the next DTC (Normal operation). "

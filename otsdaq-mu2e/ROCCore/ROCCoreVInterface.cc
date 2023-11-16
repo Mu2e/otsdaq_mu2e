@@ -25,8 +25,6 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 
 	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: " << linkID_
 	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
-
-	registerFEMacros();
 	
 	__FE_COUT__ << "Constructed." << __E__;
 }  // end constructor()
@@ -50,39 +48,6 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 
 	__GEN_COUT__ << "Destructed." << __E__;
 }  // end destructor()
-
-//==============================================================================
-void ROCCoreVInterface::registerFEMacros()
-{
-	__FE_COUT__ << "Registering ROC FE Macros..." << __E__;
-
-	mapOfFEMacroFunctions_.clear();
-
-	// clang-format off
-
-	registerFEMacroFunction(
-		"Get Firmware Version",  							// feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-				&ROCCoreVInterface::GetFirmwareVersion),  							   					// feMacroFunction
-					std::vector<std::string>{}, 						// namesOfInputArgs
-					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-				1,  												// requiredUserPermissions ("allUsers:0 | TDAQ:255")
-				"*",  												// allowedCallingFEs
-				"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."  // feMacroTooltip
-	);
-
-	registerFEMacroFunction(
-		"Get Status",						// feMacroName
-		static_cast<FEVInterface::frontEndMacroFunction_t>(
-			&ROCCoreVInterface::GetStatus
-		),    								// feMacroFunction
-		std::vector<std::string>{},  		// namesOfInputArgs
-		std::vector<std::string>{"Status"},	// namesOfOutputArgs
-		1,									// requiredUserPermissions
-		"*",  								// allowedCallingFEs
-		"This FE Macro reads and displays all registers in a human-readable format."  // feMacroTooltip
-	);
-}
 
 //==================================================================================================
 void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
@@ -173,20 +138,6 @@ void ROCCoreVInterface::writeBlock(const std::vector<DTCLib::roc_data_t>& writeD
 		return writeROCBlock(writeData, address, incrementAddress, requestAck);
 
 }  // end readBlock()
-
-//==================================================================================================
-void ROCCoreVInterface::GetStatus(__ARGS__)
-{
-	 __FE_SS__ << "Error: You must implement \'GetStatus\' for your interface." << __E__;
-	__SS_THROW__;
-} // end GetStatus()
-
-//==================================================================================================
-void ROCCoreVInterface::GetFirmwareVersion(__ARGS__)
-{
-	 __FE_SS__ << "Error: You must implement \'GetFirmwareVersion\' for your interface." << __E__;
-	__SS_THROW__;
-} // end GetFirmwareVersion()
 
 ////==================================================================================================
 // int ROCCoreVInterface::readTimestamp() { return this->readRegister(12); }

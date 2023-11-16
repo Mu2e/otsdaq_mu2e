@@ -174,8 +174,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					1, // requiredUserPermissions
 					"*",
 					"The Jitter Attenuator is used to remove jitter, or variation in the timing of signals. "
-					"Select the source to subject the jitter attenuator: a local oscilator on the CFO or RTF.\n"
-					"RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to RTF</b>."
+					"Select the source of the jitter attenuator: a local oscilator on the CFO or RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to RTF</b>."
 	); 
 
 	registerFEMacroFunction(
@@ -198,7 +198,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					1,    // requiredUserPermissions	
 					"*" /* allowedCallingFEs */,
 					"This FE Macro compiles the CFO run plan to a binary file. You must compile before running <b>Set Runplan</b> "
-					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: /mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: /mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
+					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
 					); 
 
 	registerFEMacroFunction(
@@ -211,7 +211,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"*", /* allowedCallingFEs */
 					"Download the binary run plan to the CFO. <b>You must first compile your run plan</b>.\n\n\n\n" /* feMacroTooltip */
 					"Paramters:\n" 
-					"\tBinary Run File (string): Path to the binary run plan. Default: /mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n"
+					"\tBinary Run File (string): Path to the binary run plan. Default: srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n"
 	);
 
 	registerFEMacroFunction(
@@ -1539,18 +1539,9 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
 		"/mu2e_pcie_utils/cfoInterfaceLib/";
-	
-	std::string inFileName  = SOURCE_BASE_PATH + "Commands.txt";
-	std::string outFileName = SOURCE_BASE_PATH + "Commands.bin";
 
-	if (__GET_ARG_IN__("Input Text File", std::string).compare("") != 0)
-	{
-		inFileName  = __GET_ARG_IN__("Input Text File", std::string);
-	}
-	if (__GET_ARG_IN__("Output Binary File", std::string).compare("") != 0)
-	{
-		outFileName  = __GET_ARG_IN__("Output Binary File", std::string);
-	}
+	std::string inFileName  = __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
+	std::string outFileName = __GET_ARG_IN__("Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
 
 	inFile.open(inFileName.c_str(), std::ios::in);
 	if (!(inFile.is_open()))
@@ -1600,13 +1591,7 @@ void CFOFrontEndInterface::SetRunplan(__ARGS__)
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
 		"/mu2e_pcie_utils/cfoInterfaceLib/";
-	std::string setFileName;// = __GET_ARG_IN__("Binary Run File", std::string);
-	setFileName = SOURCE_BASE_PATH + "Commands.bin";
-
-	if(__GET_ARG_IN__("Binary Run File", std::string).compare("") != 0)
-	{
-		setFileName = __GET_ARG_IN__("Binary Run File", std::string);
-	}
+	std::string setFileName = __GET_ARG_IN__("Binary Run File", std::string, SOURCE_BASE_PATH + "Commands.bin");
 	
 	std::ifstream file(setFileName, std::ios::binary | std::ios::ate);
 	if (file.eof())

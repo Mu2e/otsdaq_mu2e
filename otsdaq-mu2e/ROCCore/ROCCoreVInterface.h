@@ -81,6 +81,8 @@ class ROCCoreVInterface : public FEVInterface
 
 
 	// pure virtual specific ROC functions
+	virtual void       					    GetStatus  					(void) = 0;  // pure virtual, must define in inheriting children
+	virtual void       					    GetFirmwareVersion			(void) = 0;  // pure virtual, must define in inheriting children
 	virtual int  							readTimestamp				(void) = 0;  // pure virtual, must define in inheriting children
 	virtual void 							writeDelay					(uint16_t delay) = 0;  // 5ns steps // pure virtual, must
 	                						                			              // define in inheriting children
@@ -109,8 +111,6 @@ class ROCCoreVInterface : public FEVInterface
 	//----------------- Emulator members
 	// return false when done with workLoop
   public:
-  	virtual void       					    GetStatus  					(__ARGS__);  
-	virtual void       					    GetFirmwareVersion			(__ARGS__);  
 	virtual bool 							emulatorWorkLoop			(void)
 	{
 		__COUT__ << "This is an empty emulator work loop! this function should be overridden "
