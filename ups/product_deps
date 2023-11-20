@@ -23,12 +23,19 @@ otsdaq_utilities	v2_07_00
 otsdaq_components	v2_07_00
 otsdaq_epics		v2_07_00
 artdaq_mu2e			v1_06_02
-cetmodules			v3_21_02	-	only_for_build
+cetmodules			v3_22_02	-	only_for_build
 end_product_list
 
 # -nq- here means there is no qualifier
 # a "-" here means the dependent product is not required by the parent and will not be setup
 qualifier		otsdaq			otsdaq_utilities	otsdaq_components	otsdaq_epics	artdaq_mu2e		notes
+e28:s126:prof	e28:s126:prof	e28:s126:prof		e28:s126:prof		e28:s126:prof	e28:s126:prof	-std=c++20
+e28:s126:debug	e28:s126:debug	e28:s126:debug		e28:s126:debug		e28:s126:debug	e28:s126:debug	-std=c++20
+e26:s126:prof	e26:s126:prof	e26:s126:prof		e26:s126:prof		e26:s126:prof	e26:s126:prof	-std=c++17
+e26:s126:debug	e26:s126:debug	e26:s126:debug		e26:s126:debug		e26:s126:debug	e26:s126:debug	-std=c++17
+e20:s126:prof	e20:s126:prof	e20:s126:prof		e20:s126:prof		e20:s126:prof	e20:s126:prof	-std=c++17
+e20:s126:debug	e20:s126:debug	e20:s126:debug		e20:s126:debug		e20:s126:debug	e20:s126:debug	-std=c++17
+
 e28:s124:prof	e28:s124:prof	e28:s124:prof		e28:s124:prof		e28:s124:prof	e28:s124:prof	-std=c++20
 e28:s124:debug	e28:s124:debug	e28:s124:debug		e28:s124:debug		e28:s124:debug	e28:s124:debug	-std=c++20
 e26:s124:prof	e26:s124:prof	e26:s124:prof		e26:s124:prof		e26:s124:prof	e26:s124:prof	-std=c++17
