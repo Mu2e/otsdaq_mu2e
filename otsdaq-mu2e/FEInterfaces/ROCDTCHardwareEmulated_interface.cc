@@ -146,6 +146,13 @@ void ROCDTCHardwareEmulated::writeROCBlock(const std::vector<DTCLib::roc_data_t>
 	
 }  // end writeROCBlock()
 
+
+//==================================================================================================
+void ROCDTCHardwareEmulated::GetStatus() { return; }
+
+//==================================================================================================
+void ROCDTCHardwareEmulated::GetFirmwareVersion() { return; }
+
 //==================================================================================================
 int ROCDTCHardwareEmulated::readTimestamp() { return this->readRegister(12); }
 

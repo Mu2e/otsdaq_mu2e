@@ -73,6 +73,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								GetFirmwareVersion				(__ARGS__);
 	void 								GetStatus						(__ARGS__);
 	void 								GetCounters						(__ARGS__);
+	void 								GetFPGATemperature				(__ARGS__);
 	void								SelectJitterAttenuatorSource	(__ARGS__);
 
 

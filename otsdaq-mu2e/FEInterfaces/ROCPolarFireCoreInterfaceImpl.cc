@@ -121,6 +121,12 @@ void ROCPolarFireCoreInterface::writeROCBlock(const std::vector<DTCLib::roc_data
 }  // end writeROCBlock()
 
 //==================================================================================================
+void ROCPolarFireCoreInterface::GetStatus() { return; }
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::GetFirmwareVersion() { return; }
+
+//==================================================================================================
 int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================

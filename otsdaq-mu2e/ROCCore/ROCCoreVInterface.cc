@@ -25,7 +25,7 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 
 	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: " << linkID_
 	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
-
+	
 	__FE_COUT__ << "Constructed." << __E__;
 }  // end constructor()
 

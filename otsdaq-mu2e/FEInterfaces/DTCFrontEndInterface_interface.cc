@@ -86,7 +86,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
 					std::vector<std::string>{},
 					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-					1);//"allUsers:0 | TDAQ:255");
+					1,  //"allUsers:0 | TDAQ:255");
+					"*",
+					"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
+	);
 					
 	// registerFEMacroFunction(
 	// 	"Flash_LEDs",  // feMacroName
@@ -102,7 +105,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetStatus),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Reads and displays all registers in a human-readable format."
+	);
 
 	registerFEMacroFunction(
 		"Get Simple Status",
@@ -110,31 +116,44 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetSimpleStatus),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Similar to <b>Get Status</b>, this FE Macro fetches data from a select few registers. "
+					"Registers <b>DTC Control, ROC Emulation Enable, Link Enable, SERDES Reset, and SERDES Reset Done</b> are displayed in a human-readable format."
+	);
 
 	registerFEMacroFunction(
-		"ROC_Write",  // feMacroName
+		"ROC Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteROC),  // feMacroFunction
 					std::vector<std::string>{"rocLinkIndex", "address", "writeData"},
 					std::vector<std::string>{},  // namesOfOutput
-					1);                          // requiredUserPermissions
+					1,                           // requiredUserPermissions
+					"*",
+					"This FE Macro writes data to a specific register on a specified link."
+	);
 
 	registerFEMacroFunction(
-		"ROC_Read",
+		"ROC Read",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ReadROC),                  // feMacroFunction
 					std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*",
+					"This FE Macro reads data from a ROC given a link and address."
+	);
 
 	registerFEMacroFunction(
-		"ROC_BlockRead",
+		"ROC BlockRead",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ROCBlockRead),
 					std::vector<std::string>{"rocLinkIndex", "address", "numberOfWords", "incrementAddress"},
 					std::vector<std::string>{"readData"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions 
+					"*",
+					"This FE Macro is used to read multiple words from a ROC."
+	);
 
 	registerFEMacroFunction(
 		"ROC_BlockWrite",
@@ -143,7 +162,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"rocLinkIndex", "address", "writeData (CSV-literal or CSV-filename)", 
 						"incrementAddress (Default = false)", "requestAck (Default = false)"},
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions 
+					"*",
+					"This FE Macro enables users to write multiple words in the format of a comma separated values or "
+					"a CSV file."
+	);
 
 	// registerFEMacroFunction(
 	// 	"ROC_Write_ExtRegister",  // feMacroName
@@ -174,31 +197,44 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"doNotReadBack (bool)", "saveBinaryDataToFile (bool)", "Software Generated Data Requests (bool)",
 						"Do Not Send Heartbeats (bool)"}, 
 					std::vector<std::string>{"response"},
-					1);  // requiredUserPermissions
+					1, // requiredUserPermissions
+					"*",
+					"Send a request for a number of events and waits for the respective responses. "
+					"Currently, the responses are simulated data (a counter)."
+	);
 					
 	registerFEMacroFunction(
-		"DTC_Write",  // feMacroName
+		"DTC Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteDTC),  // feMacroFunction
 					std::vector<std::string>{"address", "writeData"},
 					std::vector<std::string>{},  // namesOfOutput
-					1);                          // requiredUserPermissions
+					1,                           // requiredUserPermissions
+					"*",
+					"This FE Macro writes to the DTC registers."
+	);
 
 	registerFEMacroFunction(
-		"DTC_Read",
+		"DTC Read",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ReadDTC),                  // feMacroFunction
 					std::vector<std::string>{"address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*", 
+					"Read from the DTC Memory Map."
+	);
 
 	registerFEMacroFunction(
-		"DTC_Reset",
+		"DTC Reset",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCReset),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1, // requiredUserPermissions
+					"*",
+					"Executes a soft reset of the DTC by setting the reset bit (31) to true on the <b>DTC Control Register</b> (0x9100)."
+	);
 
 	// registerFEMacroFunction(
 	// 	"DTC_HighRate_DCS_Check",
@@ -234,7 +270,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					std::vector<std::string>{						
 						"Upstream Rx Lock Loss Count"},
-					1);  // requiredUserPermissions
+					1, 
+					"*", 
+					"Displays the number of times the CFO Control Link lost CDR lock since the last reset. "
+					"Use the FE Macro <b>Reset Loss-of-Lock Counter</b> to reset the register counter to zero."
+	);
 	
 
 	registerFEMacroFunction(
@@ -244,7 +284,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					std::vector<std::string>{						
 						"Upstream Rx Lock Loss Count"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*",
+					"Use this FE Macro to reset the Loss-of-Lock register counter to zero. Reseting the DTC will also reset this register."
+	);
 	
 	
 	registerFEMacroFunction(
@@ -256,7 +299,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Link Counters",
 						"Performance Counters",
 						"Packet Counters"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Fetches data from all the counter registers in a human-readable format. "
+					"Counters include the number of bytes and packets transmitted and recieved over ROC/CFO links since the last reset. "
+					"Also includes Event Builder, Jitter Attenuator, Emulated ROC delay, Heartbeat packet and Data Header packet counters since last reset. "
+	);
 
 	registerFEMacroFunction(
 		"Get Upstream Rx Control Link Status",
@@ -282,7 +330,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetLinkLockStatus),
 				        std::vector<std::string>{},
 						std::vector<std::string>{"Lock Status"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*", 
+					"Read the SERDES CDR Lock bit on all links."
+	);
 
 	registerFEMacroFunction(
 		"Select Jitter Attenuator Source",
@@ -292,7 +343,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 												"DoNotSet",
 												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions 
+					"*", 
+					"Select the source of the jitter attenuator: a local oscilator on the DTC or the RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>. "
+	);
 
 
 	
@@ -302,7 +357,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetEmulatedROCEventFragmentSize),
 				        std::vector<std::string>{"ROC Fragment Size (11-bits)"},
 						std::vector<std::string>{"Size Written"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*",
+					"Use this to change the size of an event, the number of packets the CFO will request from the link."
+	);
 	
 
 	registerFEMacroFunction(
@@ -311,7 +369,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::configureHardwareDevMode),
 				        std::vector<std::string>{},
 						std::vector<std::string>{"Setting the CFO emulated, DCS enabled and the retransmission off"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*", 
+					"This FE Macro prepares the DTC for HW Dev Mode (emulated CFO)."
+	);
 
 	registerFEMacroFunction(
 		"Read Rx Diag FIFO",
@@ -319,7 +380,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::readRxDiagFIFO),
 				        std::vector<std::string>{"LinkIndex"},
 						std::vector<std::string>{"Diagnostic RX FIFO"},
-					1);  // requiredUserPermissions
+					1,    // requiredUserPermissions
+					"*", 
+					"This FE Macro reads the ROC link RX diagnostic FIFO buffer from the SERDES. "
+					"When empty, the FIFO reports 0XDEADDEAD. <b>Note</b>: the FIFO must be read at least once before valid data appears. "
+					"Reading the FIFO pulses the Read Enable input."
+	);
 
 	registerFEMacroFunction(
 		"Read Tx Diag FIFO",
@@ -327,7 +393,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::readTxDiagFIFO),
 				        std::vector<std::string>{"LinkIndex"},
 						std::vector<std::string>{"Diagnostic TX FIFO"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*", 
+					"This FE Macro reads the ROC link TX diagnostic FIFO buffer from the SERDES. "
+					"When empty, the FIFO reports 0XDEADDEAD. <b>Note</b>: the FIFO must be read at least once before valid data appears. "
+					"Reading the FIFO pulses the Read Enable input."
+	);
 					
 	registerFEMacroFunction(
 		"Get Link Errors",
@@ -335,23 +406,35 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetLinkErrors),
 				        std::vector<std::string>{""},
 						std::vector<std::string>{"Link Errors"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*", 
+					"This FE Macro returns the number of errors on all links since last reset. "
+					"Errors include the number of times illegal characters, a disparity, PRBS, and CRC error the SERDES has received. "
+					"It also includes the number of EVB RX packet errors, and number of times the Jitter Attenuator lost the RX Recovered clock and "
+					"lost the RX External clock since last reset."
+	);
 
 	registerFEMacroFunction(
-		"DTCInstantiate",
+		"DTC Instantiate",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCInstantiate),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions	
+					1,    // requiredUserPermissions	
+					"*", 
+					"This FE Macro reinstantiates the DTC interface class."
+	);
 					
 	registerFEMacroFunction(
-		"DTC_Reset_Links",
+		"DTC Reset Links",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetDTCLinks),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions 
+					"*", 
+					"This FE Macro resets the SERDES TX/RX links and then the SERDES."
+	);
 
 	registerFEMacroFunction(
 		"Headers Format test",
@@ -359,7 +442,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				&DTCFrontEndInterface::HeaderFormatTest),
 				std::vector<std::string>{},
 				std::vector<std::string>{"setRegister"},
-				1);
+				1, 
+				"*", 
+				"Use this FE Macro to test the header format using emulated CFO Heartbeat packets."
+	);
 
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS <<
@@ -381,7 +467,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ROCResetLink),
 				    std::vector<std::string>{"Link", "Lane"},
 					std::vector<std::string>{"readData"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions
+					"*", 
+					"This FE Macro resets the SERDES TX and RX links of the ROCs, CFO, and EVB, and then resets SERDES."
+	);
 
 	
 	registerFEMacroFunction(
@@ -390,7 +479,13 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ManualLoopbackSetup),
 				    std::vector<std::string>{"setAsPassthrough", "ROC_Link"},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,    // requiredUserPermissions
+					"*", 
+					"Sets the DTC in loopback mode. This is accomplished by disabling all links except for <b>ROC_Link</b>. "
+					"If <b>setAsPassThrough</b> is enabled, the DTC Control Register bit 28 is set to low (default). "
+					"This means the CFO Link SERDES output is routed back to the source. "
+					"CFO packets will be transmitted instead to the next DTC (Normal operation). "
+	);
 	
 	registerFEMacroFunction(
 		"Check Firefly Loss-of-Light",
@@ -398,7 +493,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetLinkLossOfLight),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Link Status"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Checking the Loss-of-Light reads from the I2C bus register on the Firefly for any light source."
+	);
 
 	registerFEMacroFunction(
 		"Reset PCIe",
@@ -406,7 +504,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ResetPCIe),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions 
+					"*",
+					"Reset the PCIe interface."
+	);
 
 	registerFEMacroFunction(
 		"Check Firefly Temperature",
@@ -414,7 +515,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetFireflyTemperature),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Temperature"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Check the temperature from the Firefly RX IIC Bus."
+	);
 
 	registerFEMacroFunction(
 		"Check FPGA Temperature",
@@ -422,35 +526,52 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::GetFPGATemperature),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Temperature"},
-					1);  // requiredUserPermissions
+					1, 
+					"*", 
+					"Get the temperature of the FPGA in degrees Celesius. "
+					"A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor."
+	);
+
 	registerFEMacroFunction(
 		"ResetCFOLinkRx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkRx),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Reset the SERDES RX interface."
+	);
 	registerFEMacroFunction(
 		"ResetCFOLinkTx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkTx),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Reset the CFO SERDES RX interface."
+	);
 	registerFEMacroFunction(
 		"ResetCFOLinkRxPLL",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkRxPLL),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*", 
+					"Reset the CFO SERDES RX PLL."
+	);
 	registerFEMacroFunction(
 		"ResetCFOLinkTxPLL",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkTxPLL),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*", 
+					"Reset the CFO SERDES TX PLL."
+	);
 	
 
 	{ //add ROC FE Macros
@@ -4117,5 +4238,6 @@ void DTCFrontEndInterface::loopbackTest(int step)
 
 	indicateIterationWork();	
 } //end loopbackTest()
+
 
 DEFINE_OTS_INTERFACE(DTCFrontEndInterface)

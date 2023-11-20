@@ -81,6 +81,8 @@ class ROCCoreVInterface : public FEVInterface
 
 
 	// pure virtual specific ROC functions
+	virtual void       					    GetStatus  					(void) = 0;  // pure virtual, must define in inheriting children
+	virtual void       					    GetFirmwareVersion			(void) = 0;  // pure virtual, must define in inheriting children
 	virtual int  							readTimestamp				(void) = 0;  // pure virtual, must define in inheriting children
 	virtual void 							writeDelay					(uint16_t delay) = 0;  // 5ns steps // pure virtual, must
 	                						                			              // define in inheriting children
@@ -90,6 +92,7 @@ class ROCCoreVInterface : public FEVInterface
 	virtual void							resetDTCLinkLossCounter		(void) = 0;  // pure virtual, must define in inheriting children
 
 	// ROC debugging functions
+	void 									registerFEMacros			(void);
 	void        							highRateCheck				(unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 	static void 							highRateCheckThread			(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 
