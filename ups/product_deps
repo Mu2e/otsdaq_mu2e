@@ -22,7 +22,7 @@ otsdaq				v2_07_00
 otsdaq_utilities	v2_07_00
 otsdaq_components	v2_07_00
 otsdaq_epics		v2_07_00
-artdaq_mu2e			v1_06_02
+artdaq_mu2e			v1_07_00
 cetmodules			v3_22_02	-	only_for_build
 end_product_list
 
