@@ -345,8 +345,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Register Write Results"},
 					1,  // requiredUserPermissions 
 					"*", 
-					"Select the source of the jitter attenuator: a local oscilator on the DTC or RTF.\n"
-					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to RTF</b>. "
+					"Select the source of the jitter attenuator: a local oscilator on the DTC or the RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>. "
 	);
 
 

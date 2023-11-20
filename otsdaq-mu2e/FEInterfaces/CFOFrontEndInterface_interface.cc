@@ -174,8 +174,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					1, // requiredUserPermissions
 					"*",
 					"The Jitter Attenuator is used to remove jitter, or variation in the timing of signals. "
-					"Select the source of the jitter attenuator: a local oscilator on the CFO or RTF.\n"
-					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to RTF</b>."
+					"Select the source of the jitter attenuator: a local oscilator on the CFO or the RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>."
 	); 
 
 	registerFEMacroFunction(
