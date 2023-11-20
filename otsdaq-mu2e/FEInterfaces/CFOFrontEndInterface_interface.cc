@@ -1585,7 +1585,7 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 void CFOFrontEndInterface::SetRunplan(__ARGS__)
 {	
 	//copying functionality of..
-	//	cfoUtil write_program -p /hom``````e/kwar/cfo/RunplanFiveDTCs1.bin --cfo 0
+	//	cfoUtil write_program -p /home/kwar/cfo/RunplanFiveDTCs1.bin --cfo 0
 
 	__FE_COUT__ << "Set CFO Run Plan"  << __E__;
 
