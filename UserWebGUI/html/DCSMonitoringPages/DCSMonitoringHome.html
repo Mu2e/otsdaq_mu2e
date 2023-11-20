@@ -25,22 +25,12 @@
 			//	init()
 			//	makeMainPage()
 
-			//	setupPvParams(id)
-			//	settingsReqHandler(req, passParams)
-
 			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
 
-			//	indicateUserActivityToServer()
-			//	isUserAdminHandler(req)
 			//	pollServer()
 			//	generateUID()
-			//	updateRefreshInterval()
 			//	pollServerHandlerFunction(req)
 			//	generateUIDHandlerFunction(req)
-			//	setBackgroundColor(color)
-			//	evaluateJS(str)
-			//	isEmpty(obj)
-
 
 			//top-level scope (global) variables:
 
@@ -81,7 +71,6 @@
 			var UID_ = 0;
 			var timeToPoll_ = false;
 
-			var isReadOnly_;
 			var datalist_;
 
 			page_.createPage = function(){
@@ -107,13 +96,6 @@
 				Debug.log("init() was called");
 
 				page_.createPage();
-
-				isReadOnly_ = false;
-
-				DesktopContent.XMLHttpRequest(
-				                    "Request?RequestType=isUserAdmin",
-				                    "",
-				                    isUserAdminHandler);
 
 				//get command string if opening a new window
 				var cmdStr = DesktopContent.getParameter(2); //from  location.search
@@ -144,86 +126,12 @@
 
 
 			//=====================================================================================
-			//	expecting id as 'widget-#' ..and this function extracts the 
-			//	widget UID as integer #
-			function setupPvParams(id)
-			{
-				console.log("setting up widget! " + id);
-
-				var pvListCSV = "";
-
-				for(var pv in page_.widgets[id].pvList)
-				{
-					pvListCSV += pv + ",";
-				}
-
-				DesktopContent.XMLHttpRequest("Request?RequestType=getPVSettings",
-							//post data 
-    						"pvList=" + pvListCSV + 
-							"&id=" + id,
-							settingsReqHandler /*handler*/,
-							id /*parameter*/);
-
-			} //end setupWidget()
-
-
-			//=====================================================================================
-			function settingsReqHandler(req, id)
-			{
-				page_.widgets[id].pvSettings = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));				
-
-				console.log(req);
-				console.log("pvSettings", page_.widgets[id].pvSettings);
-				console.log("id", id);
-
-			} //end settingsReqHandler()
-
-
-			//=====================================================================================
 			//write a new value of a PV
 			function drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
 			{
 				console.log("Text newValue() reached", pvName, pvValue);
 
 			} //end drawNewValue()
-
-
-			//=====================================================================================
-			//indicate that login should be kept alive
-			function indicateUserActivityToServer() 
-			{
-				Debug.log("indicateUserActivityToServer()");
-				DesktopContent.XMLHttpRequest(
-						"Request?RequestType=userActivityHeartbeat",
-						"", 
-						undefined /*returnHandler*/, 
-						0 /*reqParam*/, 
-						0 /*progressHandler*/, 
-						0 /*callHandlerOnErr*/, 
-						true /*doNoShowLoadingOverlay*/);	
-			} //end indicateUserActivityToServer()
-
-
-			//=====================================================================================
-			function isUserAdminHandler(req)
-			{
-				Debug.log("getPermissionHandler() was called. " + req.responseText);//Req: " + req.responseText);
-
-				isAdmin = JSON.parse(decodeURIComponent(DesktopContent.getXMLValue(req, "JSON")))["message"];
-				console.log("User Permission: " + isAdmin);
-				console.log(isAdmin);
-
-				if(isAdmin == "Yes")
-				{
-					isReadOnly_ = false;
-				}
-				else
-				{
-					isReadOnly_ = true;
-				}
-
-				console.log("Interface isReadOnly=" + isReadOnly_);
-			} //end isUserAdminHandler()
 
 
 			//=====================================================================================
@@ -272,15 +180,6 @@
 					"pvList=" + pvList,
 					generateUIDHandlerFunction);//, undefined, undefined, "sequence");
 			} //end generateUID()
-
-
-			//=====================================================================================
-			function updateRefreshInterval()
-			{
-				console.log("updateRefreshInterval.refreshRate_ (ms): " + refreshRate_);
-				window.clearInterval(timerVariable_);
-				timerVariable_ = setInterval(pollServer, refreshRate_);
-			} //end updateRefreshInterval()
 
 
 			//=====================================================================================
@@ -364,29 +263,6 @@
 					pollServer();
 				}
 			} //end generateUIDHandlerFunction()
-
-
-			//=====================================================================================
-			function setBackgroundColor(color)
-			{
-				mainBlock_.el.style["background-color"] = color;
-			} //end setBackgroundColor()
-
-
-			//=====================================================================================
-			//evaluateJS ~~
-			function evaluateJS(str)
-			{
-				Debug.log("evaluateJS = " + str);
-				eval(str);
-			} //end evaluateJS()
-
-
-			//=====================================================================================
-			function isEmpty(obj)
-			{
-				return (Object.getOwnPropertyNames(obj).length === 0);
-			} //end isEmpty()rackTable
 
 		</script>
 	</head>
