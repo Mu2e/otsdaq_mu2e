@@ -42,14 +42,6 @@ e26:s124:prof	e26:s124:prof	e26:s124:prof		e26:s124:prof		e26:s124:prof	e26:s124
 e26:s124:debug	e26:s124:debug	e26:s124:debug		e26:s124:debug		e26:s124:debug	e26:s124:debug	-std=c++17
 e20:s124:prof	e20:s124:prof	e20:s124:prof		e20:s124:prof		e20:s124:prof	e20:s124:prof	-std=c++17
 e20:s124:debug	e20:s124:debug	e20:s124:debug		e20:s124:debug		e20:s124:debug	e20:s124:debug	-std=c++17
-
-e26:s123:prof	e26:s123:prof	e26:s123:prof		e26:s123:prof		e26:s123:prof	e26:s123:prof	-std=c++17
-e26:s123:debug	e26:s123:debug	e26:s123:debug		e26:s123:debug		e26:s123:debug	e26:s123:debug	-std=c++17
-e20:s123:prof	e20:s123:prof	e20:s123:prof		e20:s123:prof		e20:s123:prof	e20:s123:prof	-std=c++17
-e20:s123:debug	e20:s123:debug	e20:s123:debug		e20:s123:debug		e20:s123:debug	e20:s123:debug	-std=c++17
-
-e20:s112:prof	e20:s112:prof	e20:s112:prof		e20:s112:prof		e20:s112:prof	e20:s112:prof	-std=c++17
-e20:s112:debug	e20:s112:debug	e20:s112:debug		e20:s112:debug		e20:s112:debug	e20:s112:debug	-std=c++17
 end_qualifier_list
 
 # Preserve tabs and formatting in emacs and vi / vim:
