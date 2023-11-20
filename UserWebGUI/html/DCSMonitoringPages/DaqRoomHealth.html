@@ -14,7 +14,6 @@
 		<script type="text/JavaScript" src="/WebPath/js/js_lib/SlowControlsAPI.js"></script>
 
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<script type="text/javascript" src="/WebPath/html/widgets/libraries/plotly-1.27.1.min.js"></script>
 
 		<script>
 
@@ -23,17 +22,11 @@
 			//	makeMainPage()
 			//  drawGraph()
 
-			//	setupPvParams(id)
-			//	settingsReqHandler(req, passParams)
-
 			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
 
-			//	indicateUserActivityToServer()
-			//	isUserAdminHandler(req)
 			//	generateUID()
 			//	generateUIDHandlerFunction(req)
 			//	pollServer()
-			//	updateRefreshInterval()
 			//	pollServerHandlerFunction(req)
 
 
@@ -53,13 +46,12 @@
 			//
 			//	- page init() is called by DesktopContent.js: 
 			//		* make Page_ to collect all objects to show PVs
-			//		* load PVs list
 			//		* makeMainPage()
-			//		* pollServer()
+			//			* setupPvParams(settings)
+			//			* Pass alarm thresholds, etc associated with pvList to widget content
 			//		* generateUID()
+			//			* pollServer()
 			//
-			//	- setupPvParams(settings)
-			//		* Pass alarm thresholds, etc associated with pvList to widget content
 			//
 			//	- drawNewValue()
 			//		* Update widget drawing based on new value (and append to history if needed)
@@ -72,8 +64,6 @@
 
 			var UID_ = 0;
 			var timeToPoll_ = false;
-
-			var isReadOnly_;
 
 			page_.createPage = function(){
 
@@ -432,13 +422,6 @@
 
 				page_.createPage();
 
-				isReadOnly_ = false;
-
-				DesktopContent.XMLHttpRequest(
-				                    "Request?RequestType=isUserAdmin",
-				                    "",
-				                    isUserAdminHandler);
-
 				//get command string if opening a new window
 				var cmdStr = DesktopContent.getParameter(2); //from  location.search
 				if (cmdStr && cmdStr != "") {
@@ -448,14 +431,8 @@
 					cmdStr = cmdStr.replace(/%22/g, "\"");
 				}
 
-				UID_ = 0;
-
-				window.clearTimeout(timerVariable_);
-
 				makeMainPage();
 				generateUID();
-				pollServer();
-
 			} //end init()
 
 
@@ -503,7 +480,7 @@
 
 							var widgetsLength = Object.keys(page_.widgets).length;
 							page_.widgets[widgetsLength] = widgetObject;
-							setupPvParams(widgetsLength);
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 						}
 
 						//EAST RACK Temperatures
@@ -520,7 +497,7 @@
 
 							var widgetsLength = Object.keys(page_.widgets).length;
 							page_.widgets[widgetsLength] = widgetObject;
-							setupPvParams(widgetsLength);
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 						}
 
 						//WEST RACK LEDs
@@ -537,7 +514,7 @@
 
 							var widgetsLength = Object.keys(page_.widgets).length;
 							page_.widgets[widgetsLength] = widgetObject;
-							setupPvParams(widgetsLength);
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 						}
 
 						//WEST RACK Temperatures
@@ -554,7 +531,7 @@
 
 							var widgetsLength = Object.keys(page_.widgets).length;
 							page_.widgets[widgetsLength] = widgetObject;
-							setupPvParams(widgetsLength);
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 						}
 					}
 
@@ -589,7 +566,7 @@
 									widgetObject.el = ledE;
 									var widgetsLength = Object.keys(page_.widgets).length;
 									page_.widgets[widgetsLength] = widgetObject;
-									setupPvParams(widgetsLength);
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 								}
 							}
 						}
@@ -614,7 +591,7 @@
 									widgetObject.el = temperE;
 									var widgetsLength = Object.keys(page_.widgets).length;
 									page_.widgets[widgetsLength] = widgetObject;
-									setupPvParams(widgetsLength);
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 								}
 							}
 						}
@@ -645,7 +622,7 @@
 									widgetObject.el = ledW;
 									var widgetsLength = Object.keys(page_.widgets).length;
 									page_.widgets[widgetsLength] = widgetObject;
-									setupPvParams(widgetsLength);
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 								}
 							}
 						}
@@ -670,7 +647,7 @@
 									widgetObject.el = temperW;
 									var widgetsLength = Object.keys(page_.widgets).length;
 									page_.widgets[widgetsLength] = widgetObject;
-									setupPvParams(widgetsLength);
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
 								}
 							}
 						}
@@ -690,42 +667,6 @@
 
 
 			//=====================================================================================
-			//	expecting id as 'widget-#' ..and this function extracts the 
-			//	widget UID as integer #
-			function setupPvParams(id)
-			{
-				console.log("setting up widget! " + id);
-
-				var pvListCSV = "";
-
-				for(var pv in page_.widgets[id].pvList)
-				{
-					pvListCSV += pv + ",";
-				}
-
-				DesktopContent.XMLHttpRequest("Request?RequestType=getPVSettings",
-							//post data 
-    						"pvList=" + pvListCSV + 
-							"&id=" + id,
-							settingsReqHandler /*handler*/,
-							id /*parameter*/);
-
-			} //end setupWidget()
-
-
-			//=====================================================================================
-			function settingsReqHandler(req, id)
-			{
-				page_.widgets[id].pvSettings = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));				
-
-				console.log(req);
-				console.log("pvSettings", page_.widgets[id].pvSettings);
-				console.log("id", id);
-
-			} //end settingsReqHandler()
-
-
-			//=====================================================================================
 			//write a new value of a PV
 			function drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
 			{
@@ -734,7 +675,6 @@
 				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
 				
 				if(page_.widgets[widget].el.id.indexOf('temper-') != -1)
-					//page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'>" + Number.parseFloat(pvValue).toFixed(1) + " " + units + "</button>";
 					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
 				else if(page_.widgets[widget].el.id.indexOf('led-') != -1)
 					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
@@ -760,46 +700,11 @@
 
 
 			//=====================================================================================
-			//indicate that login should be kept alive
-			function indicateUserActivityToServer() 
-			{
-				Debug.log("indicateUserActivityToServer()");
-				DesktopContent.XMLHttpRequest(
-						"Request?RequestType=userActivityHeartbeat",
-						"", 
-						undefined /*returnHandler*/, 
-						0 /*reqParam*/, 
-						0 /*progressHandler*/, 
-						0 /*callHandlerOnErr*/, 
-						true /*doNoShowLoadingOverlay*/);	
-			} //end indicateUserActivityToServer()
-
-
-			//=====================================================================================
-			function isUserAdminHandler(req)
-			{
-				Debug.log("getPermissionHandler() was called. " + req.responseText);//Req: " + req.responseText);
-
-				isAdmin = JSON.parse(decodeURIComponent(DesktopContent.getXMLValue(req, "JSON")))["message"];
-				console.log("User Permission: " + isAdmin);
-				console.log(isAdmin);
-
-				if(isAdmin == "Yes")
-				{
-					isReadOnly_ = false;
-				}
-				else
-				{
-					isReadOnly_ = true;
-				}
-
-				console.log("Interface isReadOnly=" + isReadOnly_);
-			} //end isUserAdminHandler()
-
-
-			//=====================================================================================
 			function generateUID()
 			{
+				UID_ = 0;
+				window.clearTimeout(timerVariable_);
+
 				//BEGIN Put all pvs in a JSON and send to server
 				var pvList = "";
 				//console.log("page: ", page_);
@@ -809,19 +714,16 @@
 
 					for(var pv in page_.widgets[widget].pvList)
 					{
-						//pvList += pv + ":"  + page_.widgets[widget].pvList.valueOf()[pv] + ",";
 						pvList += pv + ",";
 					}
 				}
-
-				timeToPoll_ = true;
 
 				//END Put all pvs in a JSON and send to server
 				DesktopContent.XMLHttpRequest(
 					"Request?RequestType=generateUID",
 					"pvList=" + pvList,
 					generateUIDHandlerFunction);//, undefined, undefined, "sequence");
-			} //end generateUID(
+			} //end generateUID()
 
 
 			//=====================================================================================
@@ -837,20 +739,15 @@
 					Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
 				}
 
-				if(timeToPoll_)
-				{
-					pollServer();
-				}
+				pollServer();
 			} //end generateUIDHandlerFunction()
 
 
 			//=====================================================================================
 			function pollServer()
 			{
-				timeToPoll_ = false;
 				Debug.log("pollServer: polling server!");
 				console.log("pollServer(): ",page_.widgets);
-				//console.log("UID is ", UID_);
 				if(page_.widgets)
 				{
 					DesktopContent.XMLHttpRequest(
@@ -862,16 +759,7 @@
 						0 /*callHandlerOnErr*/, 
 						true /*doNoShowLoadingOverlay*/);	
 				}
-			} //end pollServer())
-
-
-			//=====================================================================================
-			function updateRefreshInterval()
-			{
-				console.log("updateRefreshInterval.refreshRate_ (ms): " + refreshRate_);
-				window.clearInterval(timerVariable_);
-				timerVariable_ = setInterval(pollServer, refreshRate_);
-			} //end updateRefreshInterval()
+			} //end pollServer()
 
 
 			//=====================================================================================
@@ -896,7 +784,6 @@
 				{
 					console.log("Have to generate new UID!");
 					generateUID();
-					timeToPoll_ = true;
 				}
 				else
 				{
@@ -905,13 +792,13 @@
 						console.log("pollServerHandlerFunction: pv" + pv);						
 						for (var widget in page_.widgets)
 						{
-							console.log("pollServerHandlerFunction: " + page_.widgets[widget]);
+							//console.log("pollServerHandlerFunction: " + page_.widgets[widget]);
 							for(var dependendentPV in page_.widgets[widget].pvList)
 							{
-								console.log("poll: " + dependendentPV);
+								//console.log("poll: " + dependendentPV);
 								if(pv == dependendentPV && page_.widgets[widget].loaded != "false")
 								{
-									console.log("Widget*************", widget, pv);
+									//console.log("Widget*************", widget, pv);
 									try
 									{
 										drawNewValue(
@@ -931,9 +818,9 @@
 							}
 						}
 					}
-				}
 
-				timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+					timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+				}
 			} //end pollServerHandlerFunction()
 
 
