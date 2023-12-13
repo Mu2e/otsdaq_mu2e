@@ -4079,7 +4079,7 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
 {	
-	if(__GET_ARG_IN__("EnableCFOEmulation (DEFAULT = false",bool,false))
+	if(__GET_ARG_IN__("EnableCFOEmulation (DEFAULT = false)",bool,false))
 		thisDTC_->SetCFOEmulationMode();
 	else 
 		thisDTC_->ClearCFOEmulationMode();
