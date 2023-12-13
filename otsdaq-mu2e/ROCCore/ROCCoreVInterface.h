@@ -38,27 +38,8 @@ class ROCCoreVInterface : public FEVInterface
 	bool 									running						(void) override;
 
 	//----------------
-	// just to keep FEVInterface, defining universal read..
-	void 									universalRead				(
-		char* 										address, 
-		char* 										readValue) override
-	{
-		__SS__ << "Not defined. Should never be called. Parent should be "
-		          "DTCFrontEndInterface, not "
-		          "FESupervisor."
-		       << __E__;
-		__SS_THROW__;
-	}
-	void 									universalWrite				(
-		char* 										address, 
-		char* 										writeValue) override
-	{
-		__SS__ << "Not defined. Should never be called. Parent should be "
-		          "DTCFrontEndInterface, not "
-		          "FESupervisor."
-		       << __E__;
-		__SS_THROW__;
-	}
+	void 									universalRead				(char* address, char* readValue) override;
+	void 									universalWrite				(char* address, char* writeValue) override;
 	//----------------
 
 	// write and read to registers
@@ -69,10 +50,10 @@ class ROCCoreVInterface : public FEVInterface
 	void 									readBlock					(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress);     // chooses ROC or Emulator version
 	void 									writeBlock					(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true);     // chooses ROC or Emulator version
 
-	virtual void 							writeROCRegister			(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData) = 0;  // pure virtual, must define in inheriting children
-	virtual DTCLib::roc_data_t				readROCRegister				(DTCLib::roc_address_t address) = 0;  // pure virtual, must define in inheriting children
-	virtual void 							readROCBlock				(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress) {throw std::runtime_error("UNDEFINED BLOCK ROC READ");}; // pure virtual, must define in inheriting children
-	virtual void 							writeROCBlock				(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true) {throw std::runtime_error("UNDEFINED BLOCK ROC WRITE");};     // pure virtual, must define in inheriting children
+	virtual void 							writeROCRegister			(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData); //all definitions are likely the same for all ROCs.. = 0;  // pure virtual, must define in inheriting children
+	virtual DTCLib::roc_data_t				readROCRegister				(DTCLib::roc_address_t address);  //all definitions are likely the same for all ROCs.. pure virtual, must define in inheriting children
+	virtual void 							readROCBlock				(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress); //all definitions are likely the same for all ROCs.. {throw std::runtime_error("UNDEFINED BLOCK ROC READ");}; // pure virtual, must define in inheriting children
+	virtual void 							writeROCBlock				(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true); //all definitions are likely the same for all ROCs.. {throw std::runtime_error("UNDEFINED BLOCK ROC WRITE");};     // pure virtual, must define in inheriting children
 
 	virtual void 							writeEmulatorRegister		(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData) = 0;  // pure virtual, must define in inheriting children
 	virtual DTCLib::roc_data_t				readEmulatorRegister		(DTCLib::roc_address_t address) = 0;  // pure virtual, must define in inheriting children
