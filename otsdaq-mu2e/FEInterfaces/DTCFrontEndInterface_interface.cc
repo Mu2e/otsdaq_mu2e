@@ -91,13 +91,13 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
 	);
 					
-	// registerFEMacroFunction(
-	// 	"Flash_LEDs",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::FlashLEDs),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1);                          // requiredUserPermissions
+	registerFEMacroFunction(
+		"Flash_LEDs",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::FlashLEDs),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{},  // namesOfOutputArgs
+					1);                          // requiredUserPermissions
     
 	registerFEMacroFunction(
 		"Get Status",
@@ -1568,8 +1568,12 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 
 	thisDTC_->ResetDTC(); //put DTC in known state with DTC reset
 	thisDTC_->ClearDTCControlRegister();
-
-	if(configure_clock_)
+	
+	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
+	//	So solution:
+	//		- only configure JA one time ever after cold start
+	//		- from then on, do not touch JA
+	if(0 && configure_clock_)
 	{
 		uint32_t select      = 0;
 		try
@@ -1822,6 +1826,10 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			break;
 		case 1:
 			{
+				//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
+				//	So solution:
+				//		- only configure JA one time ever after cold start
+				//		- from then on, do not touch JA
 				if(configure_clock_)
 				{
 					uint32_t select = 0;
@@ -1841,7 +1849,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 					//For DTC - 0 ==> CFO Control Link
 					//For DTC - 1 ==> RTF copper clock
 					//For DTC - 2 ==> FPGA FMC
-					thisDTC_->SetJitterAttenuatorSelect(select);
+					thisDTC_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
 				}
 				else
 					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
@@ -3791,11 +3799,11 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
 }  // end DTCCounters()
 
-// //========================================================================
-// void DTCFrontEndInterface::FlashLEDs(__ARGS__)
-// {	
-// 	thisDTC_->FlashLEDs();
-// } //end FlashLEDs()
+//========================================================================
+void DTCFrontEndInterface::FlashLEDs(__ARGS__)
+{	
+	thisDTC_->FlashLEDs();
+} //end FlashLEDs()
 
 //==============================================================================
 // GetFirmwareVersion

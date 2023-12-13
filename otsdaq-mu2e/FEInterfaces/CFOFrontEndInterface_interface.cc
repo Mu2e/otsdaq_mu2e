@@ -21,9 +21,6 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	__FE_COUT__ << "instantiate CFO... " << getInterfaceUID() << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-
-
-	//unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
@@ -764,8 +761,8 @@ void CFOFrontEndInterface::configure(void)
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		// registerWrite(0x9114, 0x0000ffff);
 
-		__FE_COUT__ << "CFO set Event Window interval time" << __E__;
-		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */); //0x154 = 1.7us, 0x1f40 = 40us, 0 = NO markers
+		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, as of Firmware version: Nov/09/2023 11:00" << __E__;
+		// thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */); //0x154 = 1.7us, 0x1f40 = 40us, 0 = NO markers
 		//    registerWrite(0x91a0,0x154);   //1.7us
 		// registerWrite(0x91a0, 0x1f40);  // 40us
 		// 	registerWrite(0x91a0,0x00000000); 	// for NO markers, write these
@@ -804,7 +801,6 @@ void CFOFrontEndInterface::configure(void)
 	indicateIterationWork();  // I still need to be touched
 	return;
 } //end configure()
-
 
 //==============================================================================
 void CFOFrontEndInterface::configureEventBuildingMode(int step)
@@ -845,8 +841,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-		__FE_COUT__ << "CFO set beam off Event Window interval time" << __E__;
-		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
+		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, as of Firmware version: Nov/09/2023 11:00" << __E__;		
+		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
 		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
@@ -1009,7 +1005,7 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 					__FE_COUTV__(select);
 					//For CFO - 0 ==> Local oscillator
 					//For CFO - 1 ==> RTF copper clock
-					thisCFO_->SetJitterAttenuatorSelect(select);					
+					thisCFO_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);					
 				}
 				else
 					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
@@ -1532,7 +1528,7 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 
 	__FE_COUT__ << "Compile CFO Run Plan"  << __E__;
 
-	CFOLib::CFO_Compiler compiler( 40000000 /* 40MHz FPGAClock for calculating delays */);
+	CFOLib::CFO_Compiler compiler;
 
 	std::ifstream inFile;
 	std::ofstream outFile;
@@ -1542,42 +1538,63 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 
 	std::string inFileName  = __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
 	std::string outFileName = __GET_ARG_IN__("Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
+	
+	
+	// ;
+	// try
+	// {
+	// 	inFile.open(inFileName.c_str(), std::ios::in);
+	// 	if (!(inFile.is_open()))
+	// 	{
+	// 		__SS__ << ("Input File (" + inFileName + ") didn't open. Does it exist?") << __E__;
+	// 		__SS_THROW__;
+	// 	}
 
-	inFile.open(inFileName.c_str(), std::ios::in);
-	if (!(inFile.is_open()))
-	{
-		__SS__ << ("Input File (" + inFileName + ") didn't open. Does it exist?") << __E__;
-		__SS_THROW__;
-	}
+	// 	outFile.open(outFileName.c_str(), std::ios::out | std::ios::binary);
 
-	outFile.open(outFileName.c_str(), std::ios::out | std::ios::binary);
+	// 	if (!(outFile.is_open()))
+	// 	{
+	// 		__SS__ << ("Output File (" + outFileName + ") didn't open. Does it exist?") << __E__;
+	// 		__SS_THROW__;
+	// 	}
 
-	if (!(outFile.is_open()))
-	{
-		__SS__ << ("Output File (" + outFileName + ") didn't open. Does it exist?") << __E__;
-		__SS_THROW__;
-	}
+	// 	std::vector<std::string> lines;
+	// 	resultSs << "\n\nSource Text:\n";
+	// 	while (!inFile.eof())
+	// 	{
+	// 		std::string line;
+	// 		getline(inFile, line);
+	// 		lines.push_back(line);
 
-	std::vector<std::string> lines;
-	while (!inFile.eof())
-	{
-		std::string line;
-		getline(inFile, line);
-		lines.push_back(line);
-	}
-	inFile.close();
+	// 		resultSs << lines.size() << ": " << line;
+	// 	}
+	// 	inFile.close();
 
-	std::deque<char> output = compiler.processFile(lines);
-	for (auto c : output)
-	{
-		outFile << c;
-	}
-	outFile.close();
+	// 	std::deque<char> output = compiler.processFile(lines);
+	// 	resultSs << "\n\\nBinary Result:\n";
+	// 	int cnt = 0;
+	// 	for (auto c : output)
+	// 	{
+	// 		outFile << c;
+	// 		++cnt;
+	// 		if(cnt%8 == 0) resultSs << "\n" << (cnt/8 + 1) << ": 0x";
+	// 		resultSs << std::hex << (uint16_t)c;			
+	// 	}
+	// 	resultSs << "\n";
+	// 	outFile.close();	
+	// }
+	// catch(const std::runtime_error& e)
+	// {
+	// 	__SS__ << "Error caught wile compiling source text at '" <<
+	// 		"<FILE>" <<
+	// 		inFileName << "</FILE>' into binary run plan at '" <<
+	// 		"<FILE>" <<
+	// 		outFileName << "</FILE>.'\n" << e.what() << __E__;
 
-	std::stringstream resultSs;
-	resultSs << "Run plan text file: " << inFileName << __E__ <<
-		"was compiled to binary: " << outFileName << __E__;
-	__SET_ARG_OUT__("Result", resultSs.str());
+	// 	__SS_THROW__;
+	// }
+	
+	__SET_ARG_OUT__("Result", "\n" + compiler.processFile(inFileName, outFileName));
 } //end CompileRunplan()
 
 
