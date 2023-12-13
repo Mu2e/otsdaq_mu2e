@@ -61,7 +61,7 @@ void ROCPolarFireCoreInterface::GetStatus() { __SS__ << "TODO"; __SS_THROW__; }
 void ROCPolarFireCoreInterface::GetFirmwareVersion() { __SS__ << "TODO"; __SS_THROW__; }
 
 //==================================================================================================
-int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
+int ROCPolarFireCoreInterface::readInjectedPulseTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================
 void ROCPolarFireCoreInterface::writeDelay(uint16_t delay)

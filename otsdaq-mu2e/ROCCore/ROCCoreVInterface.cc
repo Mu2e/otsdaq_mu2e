@@ -259,7 +259,7 @@ void ROCCoreVInterface::writeROCBlock(const std::vector<DTCLib::roc_data_t>& 	wr
 }  // end writeROCBlock()
 
 ////==================================================================================================
-// int ROCCoreVInterface::readTimestamp() { return this->readRegister(12); }
+// int ROCCoreVInterface::readInjectedPulseTimestamp() { return this->readRegister(12); }
 //
 ////==================================================================================================
 // void ROCCoreVInterface::writeDelay(unsigned delay)
