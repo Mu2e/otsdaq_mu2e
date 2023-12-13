@@ -1514,9 +1514,6 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
 
 	thisCFO_->ResetCFORunPlan();
-	// registerWrite(0x9100, 0x08000005); 
-	// registerWrite(0x9100, 0x00000005); 
-
 
 } //end ResetRunplan()
 
@@ -1538,65 +1535,10 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 
 	std::string inFileName  = __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
 	std::string outFileName = __GET_ARG_IN__("Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
-	
-	
-	// ;
-	// try
-	// {
-	// 	inFile.open(inFileName.c_str(), std::ios::in);
-	// 	if (!(inFile.is_open()))
-	// 	{
-	// 		__SS__ << ("Input File (" + inFileName + ") didn't open. Does it exist?") << __E__;
-	// 		__SS_THROW__;
-	// 	}
-
-	// 	outFile.open(outFileName.c_str(), std::ios::out | std::ios::binary);
-
-	// 	if (!(outFile.is_open()))
-	// 	{
-	// 		__SS__ << ("Output File (" + outFileName + ") didn't open. Does it exist?") << __E__;
-	// 		__SS_THROW__;
-	// 	}
-
-	// 	std::vector<std::string> lines;
-	// 	resultSs << "\n\nSource Text:\n";
-	// 	while (!inFile.eof())
-	// 	{
-	// 		std::string line;
-	// 		getline(inFile, line);
-	// 		lines.push_back(line);
-
-	// 		resultSs << lines.size() << ": " << line;
-	// 	}
-	// 	inFile.close();
-
-	// 	std::deque<char> output = compiler.processFile(lines);
-	// 	resultSs << "\n\\nBinary Result:\n";
-	// 	int cnt = 0;
-	// 	for (auto c : output)
-	// 	{
-	// 		outFile << c;
-	// 		++cnt;
-	// 		if(cnt%8 == 0) resultSs << "\n" << (cnt/8 + 1) << ": 0x";
-	// 		resultSs << std::hex << (uint16_t)c;			
-	// 	}
-	// 	resultSs << "\n";
-	// 	outFile.close();	
-	// }
-	// catch(const std::runtime_error& e)
-	// {
-	// 	__SS__ << "Error caught wile compiling source text at '" <<
-	// 		"<FILE>" <<
-	// 		inFileName << "</FILE>' into binary run plan at '" <<
-	// 		"<FILE>" <<
-	// 		outFileName << "</FILE>.'\n" << e.what() << __E__;
-
-	// 	__SS_THROW__;
-	// }
-	
+		
 	__SET_ARG_OUT__("Result", "\n" + compiler.processFile(inFileName, outFileName));
-} //end CompileRunplan()
 
+} //end CompileRunplan()
 
 //========================================================================
 void CFOFrontEndInterface::SetRunplan(__ARGS__)
@@ -1642,17 +1584,8 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-	// registerWrite(0x914c, 0x0); 
-	// registerWrite(0x914c, 0x0000ffff); 
 
 } //end LaunchRunplan()
-
-// //========================================================================
-// void CFOFrontEndInterface::FlashLEDs(__ARGS__)
-// {	
-// 	thisCFO_->FlashLEDs();
-// } //end FlashLEDs()
-
 
 //========================================================================
 void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->ResetCFO(); }
@@ -1683,14 +1616,11 @@ void CFOFrontEndInterface::GetCounters(__ARGS__)
 void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 {	
 
-	//call virtual readStatus
-
 	int stepIndex = __GET_ARG_IN__("StepIndex", int);
 
 	// do 0, then 1
 	configureForTimingChain(stepIndex);
-	// configureForTimingChain(1);
-
+	
 } //end ConfigureForTimingChain()
 
 //========================================================================
