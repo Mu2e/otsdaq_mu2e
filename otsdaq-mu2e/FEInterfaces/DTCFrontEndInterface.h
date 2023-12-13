@@ -163,6 +163,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetCFOLinkTx			(__ARGS__);
 	void 								ResetCFOLinkRxPLL			(__ARGS__);
 	void 								ResetCFOLinkTxPLL			(__ARGS__);
+	void 								SetCFOEmulationMode			(__ARGS__);
 
 	
 	// clang-format on

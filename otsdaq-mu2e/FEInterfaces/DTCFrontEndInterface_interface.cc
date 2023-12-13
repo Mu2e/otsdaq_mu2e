@@ -572,6 +572,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*", 
 					"Reset the CFO SERDES TX PLL."
 	);
+
+	registerFEMacroFunction(
+		"Set CFO Emulation Mode",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetCFOEmulationMode),            // feMacroFunction
+					std::vector<std::string>{"EnableCFOEmulation (DEFAULT = false)"},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,  // requiredUserPermissions
+					"*", 
+					"Enable or Disable CFO Emulation Mode at the DTC."
+	);
 	
 
 	{ //add ROC FE Macros
@@ -4065,6 +4076,14 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
 } //end ResetCFOLinkTxPLL()
 
+//========================================================================
+void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
+{	
+	if(__GET_ARG_IN__("EnableCFOEmulation (DEFAULT = false",bool,false))
+		thisDTC_->SetCFOEmulationMode();
+	else 
+		thisDTC_->ClearCFOEmulationMode();
+} //end ResetCFOLinkTxPLL()
 
 //========================================================================
 void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
