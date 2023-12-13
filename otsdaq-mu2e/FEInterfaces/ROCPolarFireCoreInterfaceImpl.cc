@@ -55,6 +55,12 @@ void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<DTCLib::roc_data_t
 }  // end readEmulatorBlock()
 
 //==================================================================================================
+void ROCPolarFireCoreInterface::GetStatus() { __SS__ << "TODO"; __SS_THROW__; }
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::GetFirmwareVersion() { __SS__ << "TODO"; __SS_THROW__; }
+
+//==================================================================================================
 int ROCPolarFireCoreInterface::readTimestamp() { return this->readRegister(12); }
 
 //==================================================================================================

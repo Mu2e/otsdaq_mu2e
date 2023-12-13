@@ -25,7 +25,7 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 
 	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: " << linkID_
 	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
-
+	
 	__FE_COUT__ << "Constructed." << __E__;
 }  // end constructor()
 
@@ -212,7 +212,8 @@ uint16_t ROCCoreVInterface::readROCRegister(uint16_t address)
 	catch(...)
 	{
 		__FE_COUT_ERR__ << "DTC failed DCS read" << __E__;
-		read_data = -999;
+		// read_data = -999;
+		throw;
 	}
 
 	return read_data;

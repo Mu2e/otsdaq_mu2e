@@ -66,7 +66,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
 					std::vector<std::string>{},
 					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-					1);//"allUsers:0 | TDAQ:255");
+					1,   //"allUsers:0 | TDAQ:255");
+					"*",  /* allowedCallingFEs */
+					"Read the modification date of the CFO firmware using <b>MON/DD/20YY HH:00</b> format."
+	);
 					
 	// registerFEMacroFunction(
 	// 	"Flash_LEDs",  // feMacroName
@@ -84,7 +87,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::GetStatus),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Status"},
-					1);  // requiredUserPermissions
+					1,   // requiredUserPermissions 
+					"*",  // allowedCallingFEs
+					"Reads and displays all registers in a print friendly format."
+	);
 
 	registerFEMacroFunction(
 		"CFO Reset",
@@ -92,7 +98,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::CFOReset),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",  // allowedCallingFEs
+					"Executes a soft reset of the CFO by setting the reset bit (31) to true on the <b>CFO Control Register</b> (0x9100)." 
+	);
 
 	registerFEMacroFunction(
 		"CFO Halt",
@@ -100,7 +109,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::CFOHalt),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*",
+					"Transitions the state machine to <b>Halt</b> by setting the Enable Beam Off Mode Register to off."
+	);
 
 	registerFEMacroFunction(
 		"CFO Write",  // feMacroName
@@ -108,7 +120,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::WriteCFO),  // feMacroFunction
 					std::vector<std::string>{"address", "writeData"},
 					std::vector<std::string>{},  // namesOfOutput
-					1);                          // requiredUserPermissions
+					1,    // requiredUserPermissions
+					"*",  // allowedCallingFEs
+					"This FE Macro writes to the CFO registers."
+	);
 
 	registerFEMacroFunction(
 		"Loopback Test",  // feMacroName
@@ -116,7 +131,14 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{"loopbacks", "link", "delay"},
 					std::vector<std::string>{"Response"},  // namesOfOutput
-					1); 
+					1,
+					"*", 
+					"Similar to <b>Test Loopback marker</b>, this FE Macro repeatedly measures the delay of markers from ROCs for a specified link. "
+					"The average delay is returned given the number of iterations (loopbacks), link, and delay (sleep between iterations). "
+					"This FE Macro is useful for Event Window synchronization.\n\n"
+					"Constraints:\n"
+					"\t-Loopback must be less than 10,000.\n"
+	); 
 
 	registerFEMacroFunction(
 		"Test Loopback marker",  // feMacroName
@@ -124,7 +146,11 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::TestMarker),  // feMacroFunction
 					std::vector<std::string>{"DTC-chain link index (0-7)"},
 					std::vector<std::string>{"Response"},  // namesOfOutput
-					1); 
+					1,
+					"*",
+					"This FE Macro measures the delay of a marker from ROCs. "
+					"Optionally, the delay can be measured over mutliple iterations with the <b>Loopback Test</B> Macro."
+	); 
 
 	registerFEMacroFunction(
 		"CFO Read",
@@ -132,7 +158,12 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::ReadCFO),                  // feMacroFunction
 					std::vector<std::string>{"address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
-					1);  // requiredUserPermissions
+					1,  // requiredUserPermissions
+					"*", 
+					"Read from the CFO Memory Map.\n\n"
+					"Parameters:\n"
+					"\taddress (uint16_t): Address in Memory Map.\n"
+	); 
 
 	registerFEMacroFunction(
 		"Select Jitter Attenuator Source",
@@ -140,7 +171,12 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
 				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)","DoNotSet"},
 						std::vector<std::string>{"Register Write Results"},
-					1);  // requiredUserPermissions
+					1, // requiredUserPermissions
+					"*",
+					"The Jitter Attenuator is used to remove jitter, or variation in the timing of signals. "
+					"Select the source of the jitter attenuator: a local oscilator on the CFO or the RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>."
+	); 
 
 	registerFEMacroFunction(
 		"Reset Runplan",
@@ -148,23 +184,35 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::ResetRunplan),                  // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions					
+					1,   // requiredUserPermissions					
+					"*",
+					"Resets the Event Building run plan by setting the reset bit (27) to true on the <b>CFO Control Register</b>."
+	);
 
 	registerFEMacroFunction(
 		"Compile Runplan",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CompileRunplan),                  // feMacroFunction
-					std::vector<std::string>{},//"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
+					std::vector<std::string>{"Input Text File", "Output Binary File"},//"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
-					1);  // requiredUserPermissions	
+					1,    // requiredUserPermissions	
+					"*" /* allowedCallingFEs */,
+					"This FE Macro compiles the CFO run plan to a binary file. You must compile before running <b>Set Runplan</b> "
+					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
+					); 
 
 	registerFEMacroFunction(
 		"Set Runplan",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SetRunplan),                  // feMacroFunction
-					std::vector<std::string>{},//"Binary Run File"},  // namesOfInputArgs
+					std::vector<std::string>{"Binary Run File"},         // namesOfInputArgs
 					std::vector<std::string>{"Result"},
-					1);  // requiredUserPermissions	
+					1,   // requiredUserPermissions	
+					"*", /* allowedCallingFEs */
+					"Download the binary run plan to the CFO. <b>You must first compile your run plan</b>.\n\n\n\n" /* feMacroTooltip */
+					"Paramters:\n" 
+					"\tBinary Run File (string): Path to the binary run plan. Default: srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n"
+	);
 
 	registerFEMacroFunction(
 		"Launch Runplan",
@@ -172,8 +220,11 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::LaunchRunplan),                  // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions	
-
+					1,   // requiredUserPermissions	 
+					"*" /* allowedCallingFEs */,
+					"Launchs the Event Building run plan. You must <b>Compile Runplan</b> and <b>Set Runplan</b> before launching. " /* feMacroTooltip */
+					"You do not need to compile and set the same runplan more than once. Use <b>Reset Runplan</b> and <b>Launch Runplan</b> thereafter."
+	);
 	
 	registerFEMacroFunction(
 		"Configure for Timing Chain",
@@ -181,8 +232,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::ConfigureForTimingChain),                  // feMacroFunction
 					std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1);  // requiredUserPermissions	
-	
+					1, 
+					"*", 
+					"This FE Macro configures the CFO for DTC chain synchronization."
+	);  // requiredUserPermissions	
 
 	// clang-format on
 
@@ -240,6 +293,16 @@ uint32_t CFOFrontEndInterface::measureDelay(CFOLib::CFO_Link_ID link)
 
 	return delay;
 }
+
+//========================================================================
+void CFOFrontEndInterface::GetFPGATemperature(__ARGS__)
+{	
+	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
+	std::stringstream ss;
+	ss << thisCFO_->FormatFPGATemperature() << "\n\n" << thisCFO_->FormatFPGAAlarms();
+	__SET_ARG_OUT__("Temperature", ss.str());
+} //end GetFPGATemperature()
+
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link, handle the boadcast
 void CFOFrontEndInterface::LoopbackTest(__ARGS__)
@@ -250,7 +313,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	std::stringstream ostr;
 	ostr << std::endl;
 	
-	// parameters (TODO: make the default)
+	// parameters 
 	int numberOfLoopback = __GET_ARG_IN__("loopbacks", uint32_t);
 	int input_link = __GET_ARG_IN__("link", uint8_t);
 	int delay = __GET_ARG_IN__("delay", uint32_t);
@@ -1477,10 +1540,8 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
 		"/mu2e_pcie_utils/cfoInterfaceLib/";
 
-	std::string inFileName;// = __GET_ARG_IN__("Input Text Run Plan", std::string);
-	std::string outFileName;// = __GET_ARG_IN__("Output Binary Run File", std::string);
-	inFileName = SOURCE_BASE_PATH + "Commands.txt";
-	outFileName = SOURCE_BASE_PATH + "Commands.bin";
+	std::string inFileName  = __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
+	std::string outFileName = __GET_ARG_IN__("Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
 
 	inFile.open(inFileName.c_str(), std::ios::in);
 	if (!(inFile.is_open()))
@@ -1530,9 +1591,7 @@ void CFOFrontEndInterface::SetRunplan(__ARGS__)
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
 		"/mu2e_pcie_utils/cfoInterfaceLib/";
-	std::string setFileName;// = __GET_ARG_IN__("Binary Run File", std::string);
-	setFileName = SOURCE_BASE_PATH + "Commands.bin";
-
+	std::string setFileName = __GET_ARG_IN__("Binary Run File", std::string, SOURCE_BASE_PATH + "Commands.bin");
 	
 	std::ifstream file(setFileName, std::ios::binary | std::ios::ate);
 	if (file.eof())

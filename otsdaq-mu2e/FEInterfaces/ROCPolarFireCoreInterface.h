@@ -39,7 +39,9 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 
 	// specific ROC functions
-	virtual int  							readTimestamp			(void) override;
+	virtual void  							GetStatus				(void) override;
+	virtual void 							GetFirmwareVersion		(void) override;
+	virtual int  							readTimestamp			(void);
 	virtual void 							writeDelay				(uint16_t delay) override;  // 5ns steps
 	virtual int  							readDelay				(void) override;            	// 5ns steps
 

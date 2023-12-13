@@ -72,6 +72,13 @@ void ROCDTCHardwareEmulated::universalBlockRead(char* address, char* returnValue
 	
 }  // end universalBlockRead()
 
+
+//==================================================================================================
+void ROCDTCHardwareEmulated::GetStatus() { __SS__ << "TODO"; __SS_THROW__; }
+
+//==================================================================================================
+void ROCDTCHardwareEmulated::GetFirmwareVersion() { __SS__ << "TODO"; __SS_THROW__; }
+
 //==================================================================================================
 int ROCDTCHardwareEmulated::readTimestamp() { return this->readRegister(12); }
 
