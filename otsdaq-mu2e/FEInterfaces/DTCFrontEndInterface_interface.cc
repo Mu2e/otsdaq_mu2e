@@ -2305,7 +2305,7 @@ void DTCFrontEndInterface::stop(void)
 	// __FE_COUT__ << "Entering read timestamp loop..." << __E__;
 	// for(auto& roc : rocs_)
 	// {
-	// 	int timestamp_data = roc.second->readTimestamp();
+	// 	int timestamp_data = roc.second->readInjectedPulseTimestamp();
 
 	// 	__FE_COUT__ << "Read " << stopIndex << " -> " << device_name_ << " timestamp "
 	// 	            << timestamp_data << __E__;
