@@ -339,7 +339,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", 
+				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)", 
 												"DoNotSet",
 												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
@@ -1673,7 +1673,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 			thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
 		else
 			thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
-	thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+	// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 	thisDTC_->SetDMATimeoutPreset(0x00014141);  // DMA timeout from chants (default is 0x800)
 
 	//in 13-Oct-2023 tests with Rick, reseting the serdes PLL brought the ROC tx back up
@@ -1907,7 +1907,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 					thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
 			}
 				
-			thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+			// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 			thisDTC_->EnableDCSReception();
 
 			__FE_COUT__ << "DTC reset links" << __E__;		
@@ -3214,7 +3214,7 @@ void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
 { 
 	std::stringstream outss;
 	outss << thisDTC_->FormatRXCDRLockStatus() << "\n\n" << thisDTC_->FormatLinkEnable();
-	__SET_ARG_OUT__("Lock Status", outss.str()); 
+	__SET_ARG_OUT__("Lock Status", "\n" + outss.str()); 
 }  // end GetLinkLockStatus()
 
 //========================================================================
@@ -3298,7 +3298,7 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 {
 	uint32_t select = __GET_ARG_IN__(
-	    "Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", uint32_t);
+	    "Source Clock (0 is from CFO, 1 is from RJ45)", uint32_t);
 	select %= 4;
 	__FE_COUTV__((unsigned int)select);
 
@@ -3333,10 +3333,13 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 		__FE_COUTV__(alsoResetJA);
 		thisDTC_->SetJitterAttenuatorSelect(select, alsoResetJA);
 		sleep(1);
+		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		{
+			if(thisDTC_->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
 	}
-
-
-	// __SET_ARG_OUT__("Register Write Results", results.str());
 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
 
 	__SET_ARG_OUT__("Register Write Results", thisDTC_->FormatJitterAttenuatorCSR());	

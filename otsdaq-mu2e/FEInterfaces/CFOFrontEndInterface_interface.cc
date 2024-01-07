@@ -166,7 +166,9 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)","DoNotSet"},
+				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)",
+												"DoNotSet",
+												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
 					1, // requiredUserPermissions
 					"*",
@@ -1497,11 +1499,19 @@ void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 	if(!__GET_ARG_IN__(
 	    "DoNotSet", bool))
 	{
-		thisCFO_->SetJitterAttenuatorSelect(select);
+		bool alsoResetJA = __GET_ARG_IN__(
+	    		"AlsoResetJA", bool);
+		__FE_COUTV__(alsoResetJA);
+		thisCFO_->SetJitterAttenuatorSelect(select, alsoResetJA);
 		sleep(1);
+		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		{
+			if(thisCFO_->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
 	}
 
-	// __SET_ARG_OUT__("Register Write Results", results.str());
 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
 
 	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
