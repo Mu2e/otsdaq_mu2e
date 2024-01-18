@@ -207,7 +207,7 @@ uint16_t ROCCoreVInterface::readROCRegister(uint16_t address)
 
 	try
 	{
-		read_data = thisDTC_->ReadROCRegister(linkID_, address, 1);
+		read_data = thisDTC_->ReadROCRegister(linkID_, address, 200);
 	}
 	catch(...)
 	{

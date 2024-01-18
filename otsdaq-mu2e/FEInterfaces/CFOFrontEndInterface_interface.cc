@@ -36,6 +36,16 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 
 	registerFEMacros();
 
+	try //attempt to print out firmware version to the log
+	{
+		std::string designVersion = thisCFO_->ReadDesignVersion();
+		__FE_COUTV__(designVersion);
+	} 
+	catch (...) //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
+	{
+		__FE_COUT_WARN__ << "Failed to read the firmware version, likely a PCIe reset is needed!" << __E__;
+	} 
+
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
 	            << " talking to /dev/mu2e" << deviceIndex_ << __E__;
 	__FE_COUT__ << "Linux Kernel Driver Version: " << thisCFO_->GetDevice()->get_driver_version() << __E__;
@@ -923,8 +933,10 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 		case 0:
-			thisCFO_->ResetCFO();
-			thisCFO_->ClearCFOControlRegister();
+			//put CFO in known state with DTC reset and control clear
+			thisCFO_->SoftReset();
+			thisCFO_->ClearControlRegister();
+			
 			thisCFO_->DisableAllOutputs();
 
 
@@ -1598,7 +1610,7 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 } //end LaunchRunplan()
 
 //========================================================================
-void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->ResetCFO(); }
+void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->SoftReset(); }
 
 //========================================================================
 void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }

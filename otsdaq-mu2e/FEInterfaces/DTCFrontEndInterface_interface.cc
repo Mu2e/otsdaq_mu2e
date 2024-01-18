@@ -208,7 +208,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteDTC),  // feMacroFunction
 					std::vector<std::string>{"address", "writeData"},
-					std::vector<std::string>{},  // namesOfOutput
+					std::vector<std::string>{"Status"},  // namesOfOutput
 					1,                           // requiredUserPermissions
 					"*",
 					"This FE Macro writes to the DTC registers."
@@ -1577,8 +1577,9 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	                  // (set to 1 to turns off retrasmission DTC-ROC which isn't working
 	                  // right now)
 
-	thisDTC_->ResetDTC(); //put DTC in known state with DTC reset
-	thisDTC_->ClearDTCControlRegister();
+	//put DTC in known state with DTC reset and control clear
+	thisDTC_->SoftReset(); 
+	thisDTC_->ClearControlRegister(); 
 	
 	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 	//	So solution:
@@ -1831,8 +1832,10 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 		case 0:
-			thisDTC_->ResetDTC();
-			thisDTC_->ClearDTCControlRegister();
+			//put DTC in known state with DTC reset and control clear
+			thisDTC_->SoftReset();
+			thisDTC_->ClearControlRegister();
+			
 			indicateIterationWork();
 			break;
 		case 1:
@@ -2614,7 +2617,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		{
 			// readData = roc.second->readRegister(address);
 
-			readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 100);
+			readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 300);
 
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%X", readData);
@@ -2629,7 +2632,9 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		}
 	}
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS__ << "ROC link ID " << rocLinkIndex << 
+		" not found! Check the configuration of the DTC to make sure a child ROC is enabled at link " << 
+		rocLinkIndex << "." << __E__;
 	__FE_SS_THROW__;
 
 }  // end ReadROC()
@@ -3198,7 +3203,7 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	// readData          = //registerRead(0x9308);
 		
 	uint32_t    val   = thisDTC_->ReadJitterAttenuatorSelect().to_ulong();//(readData >> 4) & 3;
-	std::string JAsrc = val == 0 ? "Control Link" : (val == 1 ? "RJ45" : "FMC/SFP+");
+	std::string JAsrc = val == 0 ? "from CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
 
 	__SET_ARG_OUT__(
 	    "Upstream Rx Lock Loss Count",
@@ -3357,11 +3362,15 @@ void DTCFrontEndInterface::WriteDTC(__ARGS__)
 	int errorCode = getDevice()->write_register( address, 100, writeData);
 	if (errorCode != 0)
 	{
-		__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+		__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0') << std::setw(4) << address << ". Error code = " << errorCode;
 		__SS_THROW__;
 	}
 
-	// registerWrite(address, writeData);
+	std::stringstream ss;
+	ss << "Wrote " << std::dec << writeData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << writeData << 
+		" to address 0x" << std::setw(4) << address << ".";
+	__SET_ARG_OUT__("Status", ss.str());  // readDataStr);
+
 }  // end WriteDTC()
 
 //========================================================================
@@ -3374,18 +3383,21 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	int errorCode = getDevice()->read_register(address, 100, &readData);
 	if (errorCode != 0)
 	{
-		__FE_SS__ << "Error reading register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+		__FE_SS__ << "Error reading register 0x" << std::hex << address << " " << errorCode;
 		__SS_THROW__;
 	}	
 
 	// char readDataStr[100];
 	// sprintf(readDataStr,"0x%X",readData);
 	// converted to dec and hex display in FEVInterfacesManager handling of FE Macros
-	__SET_ARG_OUT__("readData", readData);  // readDataStr);
+	std::stringstream ss;
+	ss << "Read " << std::dec << readData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << readData << 
+		" from address 0x" << std::setw(4) << address << ".";
+	__SET_ARG_OUT__("readData", ss.str());  // readDataStr);
 }  // end ReadDTC()
 
 //========================================================================
-void DTCFrontEndInterface::DTCReset(__ARGS__) { thisDTC_->ResetDTC(); }
+void DTCFrontEndInterface::DTCReset(__ARGS__) { thisDTC_->SoftReset(); }
 
 // //========================================================================
 // void DTCFrontEndInterface::DTCReset()
@@ -3393,7 +3405,7 @@ void DTCFrontEndInterface::DTCReset(__ARGS__) { thisDTC_->ResetDTC(); }
 // 	__FE_COUT__ << "Starting DTC Reset: reset the DTC FPGA and SERDES" << __E__;
 
 // 	// 0x9100 is the DTC Control Register
-// 	thisDTC_->ResetDTC();
+// 	thisDTC_->SoftReset();
 // 	// registerWrite(0x9100, //registerRead(0x9100) |
 // 	//  	(1 << 31));  // bit 31 = DTC Reset FPGA
 
@@ -3951,8 +3963,11 @@ void DTCFrontEndInterface::DTCInstantiate()
 		"" /* simMemoryFile */,
 		getInterfaceUID()); 
 	
-	std::string designVersion = thisDTC_->ReadDesignVersion();
-	__FE_COUTV__(designVersion);
+	try //attempt to print out firmware version to the log
+	{
+		std::string designVersion = thisDTC_->ReadDesignVersion();
+		__FE_COUTV__(designVersion);
+	} catch (...) {} //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
 	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
 
 	createROCs();
