@@ -21,9 +21,6 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	__FE_COUT__ << "instantiate CFO... " << getInterfaceUID() << " "
 	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
-
-
-	//unsigned    roc_mask              = 0x1;
 	std::string expectedDesignVersion = "";
 	auto        mode                  = DTCLib::DTC_SimMode_NoCFO;
 
@@ -38,6 +35,16 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 		true /*skipInit*/, getInterfaceUID());
 
 	registerFEMacros();
+
+	try //attempt to print out firmware version to the log
+	{
+		std::string designVersion = thisCFO_->ReadDesignVersion();
+		__FE_COUTV__(designVersion);
+	} 
+	catch (...) //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
+	{
+		__FE_COUT_WARN__ << "Failed to read the firmware version, likely a PCIe reset is needed!" << __E__;
+	} 
 
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
 	            << " talking to /dev/mu2e" << deviceIndex_ << __E__;
@@ -169,7 +176,9 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)","DoNotSet"},
+				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)",
+												"DoNotSet",
+												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
 					1, // requiredUserPermissions
 					"*",
@@ -764,8 +773,8 @@ void CFOFrontEndInterface::configure(void)
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		// registerWrite(0x9114, 0x0000ffff);
 
-		__FE_COUT__ << "CFO set Event Window interval time" << __E__;
-		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */); //0x154 = 1.7us, 0x1f40 = 40us, 0 = NO markers
+		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, as of Firmware version: Nov/09/2023 11:00" << __E__;
+		// thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */); //0x154 = 1.7us, 0x1f40 = 40us, 0 = NO markers
 		//    registerWrite(0x91a0,0x154);   //1.7us
 		// registerWrite(0x91a0, 0x1f40);  // 40us
 		// 	registerWrite(0x91a0,0x00000000); 	// for NO markers, write these
@@ -804,7 +813,6 @@ void CFOFrontEndInterface::configure(void)
 	indicateIterationWork();  // I still need to be touched
 	return;
 } //end configure()
-
 
 //==============================================================================
 void CFOFrontEndInterface::configureEventBuildingMode(int step)
@@ -845,8 +853,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-		__FE_COUT__ << "CFO set beam off Event Window interval time" << __E__;
-		thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
+		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, as of Firmware version: Nov/09/2023 11:00" << __E__;		
+		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
 		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
@@ -925,8 +933,10 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 		case 0:
-			thisCFO_->ResetCFO();
-			thisCFO_->ClearCFOControlRegister();
+			//put CFO in known state with DTC reset and control clear
+			thisCFO_->SoftReset();
+			thisCFO_->ClearControlRegister();
+			
 			thisCFO_->DisableAllOutputs();
 
 
@@ -1009,7 +1019,7 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 					__FE_COUTV__(select);
 					//For CFO - 0 ==> Local oscillator
 					//For CFO - 1 ==> RTF copper clock
-					thisCFO_->SetJitterAttenuatorSelect(select);					
+					thisCFO_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);					
 				}
 				else
 					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
@@ -1501,11 +1511,19 @@ void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 	if(!__GET_ARG_IN__(
 	    "DoNotSet", bool))
 	{
-		thisCFO_->SetJitterAttenuatorSelect(select);
+		bool alsoResetJA = __GET_ARG_IN__(
+	    		"AlsoResetJA", bool);
+		__FE_COUTV__(alsoResetJA);
+		thisCFO_->SetJitterAttenuatorSelect(select, alsoResetJA);
 		sleep(1);
+		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		{
+			if(thisCFO_->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
 	}
 
-	// __SET_ARG_OUT__("Register Write Results", results.str());
 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
 
 	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
@@ -1518,9 +1536,6 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
 
 	thisCFO_->ResetCFORunPlan();
-	// registerWrite(0x9100, 0x08000005); 
-	// registerWrite(0x9100, 0x00000005); 
-
 
 } //end ResetRunplan()
 
@@ -1532,7 +1547,7 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 
 	__FE_COUT__ << "Compile CFO Run Plan"  << __E__;
 
-	CFOLib::CFO_Compiler compiler( 40000000 /* 40MHz FPGAClock for calculating delays */);
+	CFOLib::CFO_Compiler compiler;
 
 	std::ifstream inFile;
 	std::ofstream outFile;
@@ -1542,44 +1557,10 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 
 	std::string inFileName  = __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
 	std::string outFileName = __GET_ARG_IN__("Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
+		
+	__SET_ARG_OUT__("Result", "\n" + compiler.processFile(inFileName, outFileName));
 
-	inFile.open(inFileName.c_str(), std::ios::in);
-	if (!(inFile.is_open()))
-	{
-		__SS__ << ("Input File (" + inFileName + ") didn't open. Does it exist?") << __E__;
-		__SS_THROW__;
-	}
-
-	outFile.open(outFileName.c_str(), std::ios::out | std::ios::binary);
-
-	if (!(outFile.is_open()))
-	{
-		__SS__ << ("Output File (" + outFileName + ") didn't open. Does it exist?") << __E__;
-		__SS_THROW__;
-	}
-
-	std::vector<std::string> lines;
-	while (!inFile.eof())
-	{
-		std::string line;
-		getline(inFile, line);
-		lines.push_back(line);
-	}
-	inFile.close();
-
-	std::deque<char> output = compiler.processFile(lines);
-	for (auto c : output)
-	{
-		outFile << c;
-	}
-	outFile.close();
-
-	std::stringstream resultSs;
-	resultSs << "Run plan text file: " << inFileName << __E__ <<
-		"was compiled to binary: " << outFileName << __E__;
-	__SET_ARG_OUT__("Result", resultSs.str());
 } //end CompileRunplan()
-
 
 //========================================================================
 void CFOFrontEndInterface::SetRunplan(__ARGS__)
@@ -1625,20 +1606,11 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-	// registerWrite(0x914c, 0x0); 
-	// registerWrite(0x914c, 0x0000ffff); 
 
 } //end LaunchRunplan()
 
-// //========================================================================
-// void CFOFrontEndInterface::FlashLEDs(__ARGS__)
-// {	
-// 	thisCFO_->FlashLEDs();
-// } //end FlashLEDs()
-
-
 //========================================================================
-void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->ResetCFO(); }
+void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->SoftReset(); }
 
 //========================================================================
 void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
@@ -1666,14 +1638,11 @@ void CFOFrontEndInterface::GetCounters(__ARGS__)
 void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 {	
 
-	//call virtual readStatus
-
 	int stepIndex = __GET_ARG_IN__("StepIndex", int);
 
 	// do 0, then 1
 	configureForTimingChain(stepIndex);
-	// configureForTimingChain(1);
-
+	
 } //end ConfigureForTimingChain()
 
 //========================================================================

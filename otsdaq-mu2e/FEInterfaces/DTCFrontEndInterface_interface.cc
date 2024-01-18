@@ -91,13 +91,13 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
 	);
 					
-	// registerFEMacroFunction(
-	// 	"Flash_LEDs",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::FlashLEDs),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1);                          // requiredUserPermissions
+	registerFEMacroFunction(
+		"Flash_LEDs",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::FlashLEDs),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{},  // namesOfOutputArgs
+					1);                          // requiredUserPermissions
     
 	registerFEMacroFunction(
 		"Get Status",
@@ -208,7 +208,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteDTC),  // feMacroFunction
 					std::vector<std::string>{"address", "writeData"},
-					std::vector<std::string>{},  // namesOfOutput
+					std::vector<std::string>{"Status"},  // namesOfOutput
 					1,                           // requiredUserPermissions
 					"*",
 					"This FE Macro writes to the DTC registers."
@@ -339,7 +339,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Select Jitter Attenuator Source",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", 
+				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)", 
 												"DoNotSet",
 												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
@@ -571,6 +571,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					1,  // requiredUserPermissions
 					"*", 
 					"Reset the CFO SERDES TX PLL."
+	);
+
+	registerFEMacroFunction(
+		"Set CFO Emulation Mode",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetCFOEmulationMode),            // feMacroFunction
+					std::vector<std::string>{"EnableCFOEmulation (DEFAULT = false)"},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,  // requiredUserPermissions
+					"*", 
+					"Enable or Disable CFO Emulation Mode at the DTC."
 	);
 	
 
@@ -1566,10 +1577,15 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	                  // (set to 1 to turns off retrasmission DTC-ROC which isn't working
 	                  // right now)
 
-	thisDTC_->ResetDTC(); //put DTC in known state with DTC reset
-	thisDTC_->ClearDTCControlRegister();
-
-	if(configure_clock_)
+	//put DTC in known state with DTC reset and control clear
+	thisDTC_->SoftReset(); 
+	thisDTC_->ClearControlRegister(); 
+	
+	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
+	//	So solution:
+	//		- only configure JA one time ever after cold start
+	//		- from then on, do not touch JA
+	if(0 && configure_clock_)
 	{
 		uint32_t select      = 0;
 		try
@@ -1658,7 +1674,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 			thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
 		else
 			thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
-	thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+	// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 	thisDTC_->SetDMATimeoutPreset(0x00014141);  // DMA timeout from chants (default is 0x800)
 
 	//in 13-Oct-2023 tests with Rick, reseting the serdes PLL brought the ROC tx back up
@@ -1816,12 +1832,18 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 		case 0:
-			thisDTC_->ResetDTC();
-			thisDTC_->ClearDTCControlRegister();
+			//put DTC in known state with DTC reset and control clear
+			thisDTC_->SoftReset();
+			thisDTC_->ClearControlRegister();
+			
 			indicateIterationWork();
 			break;
 		case 1:
 			{
+				//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
+				//	So solution:
+				//		- only configure JA one time ever after cold start
+				//		- from then on, do not touch JA
 				if(configure_clock_)
 				{
 					uint32_t select = 0;
@@ -1841,7 +1863,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 					//For DTC - 0 ==> CFO Control Link
 					//For DTC - 1 ==> RTF copper clock
 					//For DTC - 2 ==> FPGA FMC
-					thisDTC_->SetJitterAttenuatorSelect(select);
+					thisDTC_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
 				}
 				else
 					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
@@ -1888,7 +1910,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 					thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
 			}
 				
-			thisDTC_->SetROCDCSResponseTimer(1000); //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+			// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 			thisDTC_->EnableDCSReception();
 
 			__FE_COUT__ << "DTC reset links" << __E__;		
@@ -2595,7 +2617,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		{
 			// readData = roc.second->readRegister(address);
 
-			readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 100);
+			readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 300);
 
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%X", readData);
@@ -2610,7 +2632,9 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		}
 	}
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS__ << "ROC link ID " << rocLinkIndex << 
+		" not found! Check the configuration of the DTC to make sure a child ROC is enabled at link " << 
+		rocLinkIndex << "." << __E__;
 	__FE_SS_THROW__;
 
 }  // end ReadROC()
@@ -3179,7 +3203,7 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	// readData          = //registerRead(0x9308);
 		
 	uint32_t    val   = thisDTC_->ReadJitterAttenuatorSelect().to_ulong();//(readData >> 4) & 3;
-	std::string JAsrc = val == 0 ? "Control Link" : (val == 1 ? "RJ45" : "FMC/SFP+");
+	std::string JAsrc = val == 0 ? "from CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
 
 	__SET_ARG_OUT__(
 	    "Upstream Rx Lock Loss Count",
@@ -3195,7 +3219,7 @@ void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
 { 
 	std::stringstream outss;
 	outss << thisDTC_->FormatRXCDRLockStatus() << "\n\n" << thisDTC_->FormatLinkEnable();
-	__SET_ARG_OUT__("Lock Status", outss.str()); 
+	__SET_ARG_OUT__("Lock Status", "\n" + outss.str()); 
 }  // end GetLinkLockStatus()
 
 //========================================================================
@@ -3279,7 +3303,7 @@ void DTCFrontEndInterface::GetUpstreamControlLinkStatus(__ARGS__)
 void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 {
 	uint32_t select = __GET_ARG_IN__(
-	    "Source (0 is Control Link Rx, 1 is RJ45, 2 is FPGA FMC)", uint32_t);
+	    "Source Clock (0 is from CFO, 1 is from RJ45)", uint32_t);
 	select %= 4;
 	__FE_COUTV__((unsigned int)select);
 
@@ -3314,10 +3338,13 @@ void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
 		__FE_COUTV__(alsoResetJA);
 		thisDTC_->SetJitterAttenuatorSelect(select, alsoResetJA);
 		sleep(1);
+		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		{
+			if(thisDTC_->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
 	}
-
-
-	// __SET_ARG_OUT__("Register Write Results", results.str());
 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
 
 	__SET_ARG_OUT__("Register Write Results", thisDTC_->FormatJitterAttenuatorCSR());	
@@ -3335,11 +3362,15 @@ void DTCFrontEndInterface::WriteDTC(__ARGS__)
 	int errorCode = getDevice()->write_register( address, 100, writeData);
 	if (errorCode != 0)
 	{
-		__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+		__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0') << std::setw(4) << address << ". Error code = " << errorCode;
 		__SS_THROW__;
 	}
 
-	// registerWrite(address, writeData);
+	std::stringstream ss;
+	ss << "Wrote " << std::dec << writeData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << writeData << 
+		" to address 0x" << std::setw(4) << address << ".";
+	__SET_ARG_OUT__("Status", ss.str());  // readDataStr);
+
 }  // end WriteDTC()
 
 //========================================================================
@@ -3352,18 +3383,21 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	int errorCode = getDevice()->read_register(address, 100, &readData);
 	if (errorCode != 0)
 	{
-		__FE_SS__ << "Error reading register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+		__FE_SS__ << "Error reading register 0x" << std::hex << address << " " << errorCode;
 		__SS_THROW__;
 	}	
 
 	// char readDataStr[100];
 	// sprintf(readDataStr,"0x%X",readData);
 	// converted to dec and hex display in FEVInterfacesManager handling of FE Macros
-	__SET_ARG_OUT__("readData", readData);  // readDataStr);
+	std::stringstream ss;
+	ss << "Read " << std::dec << readData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << readData << 
+		" from address 0x" << std::setw(4) << address << ".";
+	__SET_ARG_OUT__("readData", ss.str());  // readDataStr);
 }  // end ReadDTC()
 
 //========================================================================
-void DTCFrontEndInterface::DTCReset(__ARGS__) { thisDTC_->ResetDTC(); }
+void DTCFrontEndInterface::DTCReset(__ARGS__) { thisDTC_->SoftReset(); }
 
 // //========================================================================
 // void DTCFrontEndInterface::DTCReset()
@@ -3371,7 +3405,7 @@ void DTCFrontEndInterface::DTCReset(__ARGS__) { thisDTC_->ResetDTC(); }
 // 	__FE_COUT__ << "Starting DTC Reset: reset the DTC FPGA and SERDES" << __E__;
 
 // 	// 0x9100 is the DTC Control Register
-// 	thisDTC_->ResetDTC();
+// 	thisDTC_->SoftReset();
 // 	// registerWrite(0x9100, //registerRead(0x9100) |
 // 	//  	(1 << 31));  // bit 31 = DTC Reset FPGA
 
@@ -3791,11 +3825,11 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
 }  // end DTCCounters()
 
-// //========================================================================
-// void DTCFrontEndInterface::FlashLEDs(__ARGS__)
-// {	
-// 	thisDTC_->FlashLEDs();
-// } //end FlashLEDs()
+//========================================================================
+void DTCFrontEndInterface::FlashLEDs(__ARGS__)
+{	
+	thisDTC_->FlashLEDs();
+} //end FlashLEDs()
 
 //==============================================================================
 // GetFirmwareVersion
@@ -3929,8 +3963,11 @@ void DTCFrontEndInterface::DTCInstantiate()
 		"" /* simMemoryFile */,
 		getInterfaceUID()); 
 	
-	std::string designVersion = thisDTC_->ReadDesignVersion();
-	__FE_COUTV__(designVersion);
+	try //attempt to print out firmware version to the log
+	{
+		std::string designVersion = thisDTC_->ReadDesignVersion();
+		__FE_COUTV__(designVersion);
+	} catch (...) {} //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
 	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
 
 	createROCs();
@@ -4057,6 +4094,14 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
 } //end ResetCFOLinkTxPLL()
 
+//========================================================================
+void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
+{	
+	if(__GET_ARG_IN__("EnableCFOEmulation (DEFAULT = false)",bool,false))
+		thisDTC_->SetCFOEmulationMode();
+	else 
+		thisDTC_->ClearCFOEmulationMode();
+} //end ResetCFOLinkTxPLL()
 
 //========================================================================
 void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)

@@ -107,7 +107,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 
   public:
-	// void 								FlashLEDs						(__ARGS__);	
+	void 								FlashLEDs						(__ARGS__);	
 	void 								GetFirmwareVersion				(__ARGS__);
 	void 								GetStatus						(__ARGS__);
 	void 								GetSimpleStatus					(__ARGS__);
@@ -163,6 +163,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetCFOLinkTx			(__ARGS__);
 	void 								ResetCFOLinkRxPLL			(__ARGS__);
 	void 								ResetCFOLinkTxPLL			(__ARGS__);
+	void 								SetCFOEmulationMode			(__ARGS__);
 
 	
 	// clang-format on
