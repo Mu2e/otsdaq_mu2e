@@ -577,13 +577,47 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"Set CFO Emulation Mode",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SetCFOEmulationMode),            // feMacroFunction
-					std::vector<std::string>{"EnableCFOEmulation (DEFAULT = false)"},  // namesOfInputArgs
+					std::vector<std::string>{"Select CFO Emulation (DEFAULT = false)"},  // namesOfInputArgs
 					std::vector<std::string>{},
 					1,  // requiredUserPermissions
 					"*", 
-					"Enable or Disable CFO Emulation Mode at the DTC."
+					"Select or Deselect the CFO Emulator to take priority over the Link-6 external CFO. When selected, the CFO timing link, Link-6, will be ignored."
 	);
 	
+	registerFEMacroFunction(
+		"Set CFO Emulator for On/Off Spill Emulation",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation),                  // feMacroFunction
+					std::vector<std::string>{"Enable CFO Emulator (DEFAULT = false)",
+											"Number of 1.4s super cycle repetitions (0 := infinite)",
+											"Starting Event Window Tag",
+											"Enable Clock Markers (DEFAULT = false)"
+											},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,   // requiredUserPermissions					
+					"*",
+					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
+					"Enabling turns on emulated Event Window generation and timing markers based on the CFO emulator parameters."
+	);
+	registerFEMacroFunction(
+		"Set CFO Emulator for Fixed-width Event Window Emulation",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation),                  // feMacroFunction
+					std::vector<std::string>{"Enable CFO Emulator (DEFAULT = false)",
+											"Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",
+											"Number of Event Windows to generate (0 := infinite)",
+											"Starting Event Window Tag",
+											"Event Window Mode",
+											"Enable Clock Markers (DEFAULT = false)"
+											},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,   // requiredUserPermissions					
+					"*",
+					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
+					"Enabling turns on emulated Event Window generation and timing markers based on the CFO emulator parameters."
+	);
+
+
 
 	{ //add ROC FE Macros
 		__FE_COUT__ << "Getting children ROC FEMacros..." << __E__;
@@ -1625,8 +1659,6 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	// registers are set to zeros, the DTC generates only null heartbeats, and no Data
 	// Requests. For testing purposes, it's needed to set the Event Mode Bytes to some
 	// non-zero value.
-	// registerWrite(0x91c0, 0xffffffff);
-	// registerWrite(0x91c4, 0xffff);
 	thisDTC_->SetCFOEmulationEventMode(-1);
 	__FE_COUTV__(thisDTC_->ReadCFOEmulationEventMode());
 
@@ -3508,194 +3540,6 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 } // end configureHardwareDevMode()
 
 //========================================================================
-// TODO: print the packet with the correct event tag
-void DTCFrontEndInterface::BufferTest(__ARGS__)
-{
-	__FE_COUT__ << "Operation \"buffer_test\"" << std::endl;
-
-	// reset the dtc
-	// DTCReset();
-	// configureHardwareDevMode();
-
-	// release of all the buffers
-	getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
-
-	// stream to print the output
-	std::stringstream ostr;
-	ostr << std::endl;
-
-	// arguments
-	unsigned int numberOfEvents = __GET_ARG_IN__("numberOfEvents", uint32_t);
-	bool activeMatch = !__GET_ARG_IN__("doNotMatch (bool)", bool);
-	bool saveBinaryDataToFile = __GET_ARG_IN__("saveBinaryDataToFile (bool)", bool);
-	__FE_COUTV__(numberOfEvents);
-	__FE_COUTV__(activeMatch);
-	__FE_COUTV__(saveBinaryDataToFile);
-
-	// parameters
-	uint16_t debugPacketCount = 0; 
-	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration (Default=400)", uint32_t, 400);	//400 -- delay in the frequency of the emulated CFO
-	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack (bool)", bool);
-	// uint32_t requestDelay = 0;
-	bool incrementTimestamp = true;		// this parameter is not working with emulated CFO
-	bool useCFOinDTCEmulator = !__GET_ARG_IN__("Software Generated Data Requests (bool)", bool);
-	bool stickyDebugType = true;
-	bool quiet = false;
-	bool asyncRR = false;
-	bool forceNoDebugMode = true;
-	bool doNotSendHeartbeats = __GET_ARG_IN__("Do Not Send Heartbeats (bool)", bool);
-	int requestsAhead = 0;
-	unsigned int timestampStart = 10;	// no 0, because it's a get all (special thing)
-	auto debugType = DTCLib::DTC_DebugType_SpecialSequence;	// enum (0)
-
-	// event window Tag used to bind the request to the response
-	DTCLib::DTC_EventWindowTag eventTag = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
-
-	// create the emulated CFO instance
-	DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(thisDTC_,
-																useCFOinDTCEmulator,
-																debugPacketCount,
-																debugType,
-																stickyDebugType,
-																quiet,
-																asyncRR,
-																forceNoDebugMode);
-	// send the request for a range of events
-	cfo->SendRequestsForRange(numberOfEvents,
-								eventTag,
-								incrementTimestamp,
-								cfoDelay,
-								requestsAhead,
-								16 /* heartbeatsAfter */,
-								!doNotSendHeartbeats /* sendHeartbeats */);
-
-
-	std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
-			                       std::to_string(clock()) + ".bin";
-	FILE *fp = nullptr;
-	if(saveBinaryDataToFile)
-	{
-		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
-		__FE_COUTV__(filename);
-		fp = fopen(filename.c_str(), "wb");
-		if(!fp)
-		{
-			__FE_SS__ << "Failed to open file to save macro output '"
-						<< filename << "'..." << __E__;
-			__FE_SS_THROW__;
-		}
-	}
-	
-	// get the data requested
-	for(unsigned int ii = 0; !doNotReadBack &&  ii < numberOfEvents; ++ii)
-	{ 
-		// get the data
-		std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = thisDTC_->GetData(eventTag + ii, activeMatch);
-		ostr << "Read " << ii << ": Events returned by the DTC: " << events.size() << std::endl;
-		if (!events.empty()) 
-		{
-			for(auto& eventPtr : events) 
-			{
-				if (eventPtr == nullptr) 
-				{
-					ostr << "Error: Null pointer!" << std::endl;
-					continue;
-				}
-
-				// get the event
-				auto event = eventPtr.get();
-
-				// check the event tag window
-				ostr << "Request event tag:\t" << "0x" << std::hex << std::setw(4) << std::setfill('0') << std::to_string(eventTag.GetEventWindowTag(true) + ii) << std::endl;
-				ostr << "Response event tag:\t" << "0x" << std::hex << std::setw(4) << std::setfill('0') << event->GetEventWindowTag().GetEventWindowTag(true) << std::endl;
-
-				// get the event and the relative sub events
-				DTCLib::DTC_EventHeader *eventHeader = event->GetHeader();
-				std::vector<DTCLib::DTC_SubEvent> subevents = event->GetSubEvents();
-
-				// print the event header
-				ostr << eventHeader->toJson() << std::endl
-						<< "Subevents count: " << event->GetSubEventCount() << std::endl;
-				
-				// iterate over the subevents
-				for (unsigned int i = 0; i < subevents.size(); ++i)
-				{
-					// print the subevents header
-					DTCLib::DTC_SubEvent subevent = subevents[i];
-					ostr << "Subevent [" << i << "]:" << std::endl;
-					ostr << subevent.GetHeader()->toJson() << std::endl;
-
-					// check if there is an error on the link
-					if (subevent.GetHeader()->link0_status > 0)
-					{
-						ostr << "Error: " << std::endl;
-						std::bitset<8> link0_status(subevent.GetHeader()->link0_status);
-						if (link0_status.test(0)) 
-						{
-							ostr << "ROC Timeout Error!" << std::endl;
-						}
-						if (link0_status.test(2)) 
-						{
-							ostr << "Packet sequence number Error!" << std::endl;
-						}
-						if (link0_status.test(3)) 
-						{
-							ostr << "CRC Error!" << std::endl;
-						}
-						if (link0_status.test(6)) 
-						{
-							ostr << "Fatal Error!" << std::endl;
-						}
-						
-						continue;
-					}
-
-					// print the number of data blocks
-					ostr << "Number of Data Block: " << subevent.GetDataBlockCount() << std::endl;
-					
-					// iterate over the data blocks
-					std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent.GetDataBlocks();
-					for (unsigned int j = 0; j < dataBlocks.size(); ++j)
-					{
-						ostr << "Data block [" << j << "]:" << std::endl;
-						// print the data block header
-						DTCLib::DTC_DataHeaderPacket *dataHeader = dataBlocks[j].GetHeader().get();
-						ostr << dataHeader->toJSON() << std::endl;	
-
-						// print the data block payload
-						const void* dataPtr = dataBlocks[j].GetData();
-						ostr << "Data payload:" << std::endl;
-						for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=2)
-						{
-							auto thisWord = reinterpret_cast<const uint16_t*>(dataPtr)[l];
-							if(fp) fwrite(&thisWord,sizeof(uint16_t), 1, fp);
-							ostr << "\t0x" << std::hex << std::setw(4) << std::setfill('0') << static_cast<int>(thisWord) << std::endl;
-						}
-
-					}
-				}
-				ostr << std::endl << std::endl;
-			}
-		}
-	
-	}
-
-	if(fp) fclose(fp); //close binary file
-
-	// print the result
-	std::stringstream outSs;
-	outSs << "Number of events  requested: " + std::to_string(numberOfEvents) << __E__;
-	outSs << "Active Event Match: " << (activeMatch?"true":"false") << __E__;
-	outSs << "Event Duration: " << cfoDelay << " = " << cfoDelay*25 << " ns" << __E__;
-	outSs << "Reading back: " << (doNotReadBack?"false":"true") << __E__;
-	if(fp) outSs << "Binary data file saved at: " << filename << __E__;
-	outSs << ostr.str();
-
-	__SET_ARG_OUT__("response", outSs.str());
-	delete cfo;
-}
-
-//========================================================================
 void DTCFrontEndInterface::ROCResetLink(__ARGS__)
 {
 	__FE_COUT__ << "Operation \"link_config\"" << std::endl;
@@ -4095,15 +3939,6 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 } //end ResetCFOLinkTxPLL()
 
 //========================================================================
-void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
-{	
-	if(__GET_ARG_IN__("EnableCFOEmulation (DEFAULT = false)",bool,false))
-		thisDTC_->SetCFOEmulationMode();
-	else 
-		thisDTC_->ClearCFOEmulationMode();
-} //end ResetCFOLinkTxPLL()
-
-//========================================================================
 void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
 {	
 	std::stringstream rd;
@@ -4196,6 +4031,348 @@ void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
 
 	__SET_ARG_OUT__("Link Status",rd.str());
 } //end GetLinkLossOfLight()
+
+//========================================================================
+void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
+{	
+	if(__GET_ARG_IN__("Select CFO Emulation (DEFAULT = false)",bool,false))
+		thisDTC_->SetCFOEmulationMode();
+	else 
+		thisDTC_->ClearCFOEmulationMode();
+} //end SetCFOEmulationMode()
+
+//========================================================================
+void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
+{	
+	bool enable = (__GET_ARG_IN__("Enable CFO Emulator (DEFAULT = false)",bool,false));
+	__COUTV__(enable);
+
+	thisDTC_->DisableCFOEmulation();
+	if(!enable) //do not need to apply parameters if disabling		
+		return;
+	//else enabling, so apply parameters, then enable
+
+	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
+	thisDTC_->SetCFOEmulationHeartbeatInterval(0);  
+
+	uint32_t numberOfSuperCycles = __GET_ARG_IN__("Number of 1.4s super cycle repetitions (0 := infinite)",uint32_t);
+	__COUTV__(numberOfSuperCycles);
+	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfSuperCycles);
+	
+	uint64_t initialEventWindowTag = __GET_ARG_IN__("Starting Event Window Tag",uint64_t);
+	__COUTV__(initialEventWindowTag);
+	thisDTC_->SetCFOEmulationTimestamp(DTCLib::DTC_EventWindowTag(initialEventWindowTag));
+
+	bool enableClockMarkers = __GET_ARG_IN__("Enable Clock Markers (DEFAULT = false)",bool,false);
+	__COUTV__(enableClockMarkers);
+	thisDTC_->SetCFOEmulation40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+
+	thisDTC_->EnableReceiveCFOLink(); //enable forwarding if CFO timing link to ROCs
+	thisDTC_->EnableCFOEmulation();
+	
+} //end SetCFOEmulatorOnOffSpillEmulation()
+
+//========================================================================
+void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
+{	
+	bool enable = __GET_ARG_IN__("Enable CFO Emulator (DEFAULT = false)",bool,false);
+	__COUTV__(enable);
+
+	thisDTC_->DisableCFOEmulation();
+	if(!enable) //do not need to apply parameters if disabling		
+		return;
+	//else enabling, so apply parameters, then enable
+
+
+	std::string eventDuration = __GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string);
+	__COUTV__(eventDuration);
+	bool foundUnits = false;
+	size_t i;
+	for(i=0;i<eventDuration.size();++i)
+		if(eventDuration[i] == 's' 
+			|| eventDuration[i] == 'm'
+			|| eventDuration[i] == 'u'
+			|| eventDuration[i] == 'n'
+			|| eventDuration[i] == 'c')
+		{ foundUnits = true; break;}
+
+	if(!foundUnits)
+	{
+		__SS__ << "No units were found in the input parameters 'Fixed-width Event Window Duration' value: " <<
+			eventDuration <<
+			". Please use units when specifying event window duration (s, ms, us, ns, and clocks are allowed). For example '1.7us' or '1675ns' would be valid." << __E__;
+		__SS_THROW__;
+	}
+	std::string eventDurationSplitNumber = eventDuration.substr(0,i);
+	std::string eventDurationSplitUnits = eventDuration.substr(i);
+	__COUTV__(eventDurationSplitNumber);
+	__COUTV__(eventDurationSplitUnits);
+
+	//copied from CFO_Compiler.cpp::transcribeInstructions() [L494]
+	uint64_t value;
+	if(!StringMacros::getNumber(eventDurationSplitNumber,value))
+	{
+		__SS__<< "The duration parameter value '" << eventDurationSplitNumber << " " << eventDurationSplitUnits << "' is not a valid number. " <<
+			"Use 0x### to indicate hex and b### to indicate binary; otherwise, decimal is inferred." << __E__;
+		__SS_THROW__;
+	}
+	//test floating point in case integer conversion dropped something
+	double timeValue = strtod(eventDurationSplitNumber.c_str(), 0);
+	__COUTV__(timeValue);
+	if(timeValue < value)
+		timeValue = value;
+
+	const uint64_t 							FPGAClock_ = (1e9/(40e6) /* 40MHz FPGAClock for calculating delays */); //period of FPGA clock in ns	
+	__COUTV__(FPGAClock_);
+	__COUTV__(value);
+	__COUTV__(timeValue);
+
+	uint32_t eventDurationInClocks;
+	
+	if (eventDurationSplitUnits == "s")  // Wait wanted in seconds
+		eventDurationInClocks = timeValue * 1e9 / FPGAClock_;
+	else if (eventDurationSplitUnits == "ms")  // Wait wanted in milliseconds
+		eventDurationInClocks = timeValue * 1e6 / FPGAClock_;
+	else if (eventDurationSplitUnits == "us")  // Wait wanted in microseconds
+		eventDurationInClocks = timeValue * 1e3 / FPGAClock_;
+	else if (eventDurationSplitUnits == "ns")  // Wait wanted in nanoseconds
+	{
+		if ((value % FPGAClock_) != 0)
+		{
+			__SS__ << "FPGA can only wait in multiples of " <<
+				FPGAClock_ << " ns: the input event duration value '" << value << "' yields a remainder of " <<
+				(value % FPGAClock_) << __E__;
+			__SS_THROW__;
+		}
+		eventDurationInClocks = value / FPGAClock_;
+	}
+	else if (eventDurationSplitUnits == "clocks")  // Wait wanted in FPGA clocks
+		eventDurationInClocks = value;
+	else //impossible
+	{
+		__SS__ << "The event duration input parameter is missing a valid unit type after parameter: " << eventDurationSplitUnits <<
+			". Accepted unit types are clocks, ns, us, ms, and s." << __E__; 
+		__SS_THROW__;
+	}			
+	if(eventDurationInClocks < 40)
+	{
+		__SS__ << "The event duration input parameter can not evaluate to less than 40 clocks (1000ns). The input value '" << 
+			eventDurationSplitNumber << " " << eventDurationSplitUnits << "' evaluates to " << eventDurationInClocks
+			<< "clocks < 40." << __E__; 
+		__SS_THROW__;
+	}			
+
+	__COUTV__(eventDurationInClocks);
+	thisDTC_->SetCFOEmulationHeartbeatInterval(eventDurationInClocks);  
+
+	uint32_t numberOfEventWindows = __GET_ARG_IN__("Number of Event Windows to generate (0 := infinite)",uint32_t);
+	__COUTV__(numberOfEventWindows);
+	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfEventWindows);
+	
+	uint64_t initialEventWindowTag = __GET_ARG_IN__("Starting Event Window Tag",uint64_t);
+	__COUTV__(initialEventWindowTag);
+	thisDTC_->SetCFOEmulationTimestamp(DTCLib::DTC_EventWindowTag(initialEventWindowTag));
+
+	uint64_t eventWindowMode = __GET_ARG_IN__("Event Window Mode",uint64_t);
+	__COUTV__(eventWindowMode);
+	thisDTC_->SetCFOEmulationEventMode(eventWindowMode);
+
+	bool enableClockMarkers = __GET_ARG_IN__("Enable Clock Markers (DEFAULT = false)",bool,false);
+	__COUTV__(enableClockMarkers);
+	thisDTC_->SetCFOEmulation40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+
+	thisDTC_->EnableReceiveCFOLink();  //enable forwarding if CFO timing link to ROCs
+	thisDTC_->EnableCFOEmulation();
+	
+} //end SetCFOEmulatorFixedWidthEmulation()
+
+//========================================================================
+// TODO: print the packet with the correct event tag
+void DTCFrontEndInterface::BufferTest(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"buffer_test\"" << std::endl;
+
+	// reset the dtc
+	// DTCReset();
+	// configureHardwareDevMode();
+
+	// release of all the buffers
+	getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
+
+	// stream to print the output
+	std::stringstream ostr;
+	ostr << std::endl;
+
+	// arguments
+	unsigned int numberOfEvents = __GET_ARG_IN__("numberOfEvents", uint32_t);
+	bool activeMatch = !__GET_ARG_IN__("doNotMatch (bool)", bool);
+	bool saveBinaryDataToFile = __GET_ARG_IN__("saveBinaryDataToFile (bool)", bool);
+	__FE_COUTV__(numberOfEvents);
+	__FE_COUTV__(activeMatch);
+	__FE_COUTV__(saveBinaryDataToFile);
+
+	// parameters
+	uint16_t debugPacketCount = 0; 
+	uint32_t cfoDelay = __GET_ARG_IN__("eventDuration (Default=400)", uint32_t, 400);	//400 -- delay in the frequency of the emulated CFO
+	bool doNotReadBack = __GET_ARG_IN__("doNotReadBack (bool)", bool);
+	// uint32_t requestDelay = 0;
+	bool incrementTimestamp = true;		// this parameter is not working with emulated CFO
+	bool useCFOinDTCEmulator = !__GET_ARG_IN__("Software Generated Data Requests (bool)", bool);
+	bool stickyDebugType = true;
+	bool quiet = false;
+	bool asyncRR = false;
+	bool forceNoDebugMode = true;
+	bool doNotSendHeartbeats = __GET_ARG_IN__("Do Not Send Heartbeats (bool)", bool);
+	int requestsAhead = 0;
+	unsigned int timestampStart = 10;	// no 0, because it's a get all (special thing)
+	auto debugType = DTCLib::DTC_DebugType_SpecialSequence;	// enum (0)
+
+	// event window Tag used to bind the request to the response
+	DTCLib::DTC_EventWindowTag eventTag = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
+
+	// create the emulated CFO instance
+	DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(thisDTC_,
+																useCFOinDTCEmulator,
+																debugPacketCount,
+																debugType,
+																stickyDebugType,
+																quiet,
+																asyncRR,
+																forceNoDebugMode);
+	// send the request for a range of events
+	cfo->SendRequestsForRange(numberOfEvents,
+								eventTag,
+								incrementTimestamp,
+								cfoDelay,
+								requestsAhead,
+								16 /* heartbeatsAfter */,
+								!doNotSendHeartbeats /* sendHeartbeats */);
+
+
+	std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+			                       std::to_string(clock()) + ".bin";
+	FILE *fp = nullptr;
+	if(saveBinaryDataToFile)
+	{
+		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
+		__FE_COUTV__(filename);
+		fp = fopen(filename.c_str(), "wb");
+		if(!fp)
+		{
+			__FE_SS__ << "Failed to open file to save macro output '"
+						<< filename << "'..." << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+	
+	// get the data requested
+	for(unsigned int ii = 0; !doNotReadBack &&  ii < numberOfEvents; ++ii)
+	{ 
+		// get the data
+		std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = thisDTC_->GetData(eventTag + ii, activeMatch);
+		ostr << "Read " << ii << ": Events returned by the DTC: " << events.size() << std::endl;
+		if (!events.empty()) 
+		{
+			for(auto& eventPtr : events) 
+			{
+				if (eventPtr == nullptr) 
+				{
+					ostr << "Error: Null pointer!" << std::endl;
+					continue;
+				}
+
+				// get the event
+				auto event = eventPtr.get();
+
+				// check the event tag window
+				ostr << "Request event tag:\t" << "0x" << std::hex << std::setw(4) << std::setfill('0') << std::to_string(eventTag.GetEventWindowTag(true) + ii) << std::endl;
+				ostr << "Response event tag:\t" << "0x" << std::hex << std::setw(4) << std::setfill('0') << event->GetEventWindowTag().GetEventWindowTag(true) << std::endl;
+
+				// get the event and the relative sub events
+				DTCLib::DTC_EventHeader *eventHeader = event->GetHeader();
+				std::vector<DTCLib::DTC_SubEvent> subevents = event->GetSubEvents();
+
+				// print the event header
+				ostr << eventHeader->toJson() << std::endl
+						<< "Subevents count: " << event->GetSubEventCount() << std::endl;
+				
+				// iterate over the subevents
+				for (unsigned int i = 0; i < subevents.size(); ++i)
+				{
+					// print the subevents header
+					DTCLib::DTC_SubEvent subevent = subevents[i];
+					ostr << "Subevent [" << i << "]:" << std::endl;
+					ostr << subevent.GetHeader()->toJson() << std::endl;
+
+					// check if there is an error on the link
+					if (subevent.GetHeader()->link0_status > 0)
+					{
+						ostr << "Error: " << std::endl;
+						std::bitset<8> link0_status(subevent.GetHeader()->link0_status);
+						if (link0_status.test(0)) 
+						{
+							ostr << "ROC Timeout Error!" << std::endl;
+						}
+						if (link0_status.test(2)) 
+						{
+							ostr << "Packet sequence number Error!" << std::endl;
+						}
+						if (link0_status.test(3)) 
+						{
+							ostr << "CRC Error!" << std::endl;
+						}
+						if (link0_status.test(6)) 
+						{
+							ostr << "Fatal Error!" << std::endl;
+						}
+						
+						continue;
+					}
+
+					// print the number of data blocks
+					ostr << "Number of Data Block: " << subevent.GetDataBlockCount() << std::endl;
+					
+					// iterate over the data blocks
+					std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent.GetDataBlocks();
+					for (unsigned int j = 0; j < dataBlocks.size(); ++j)
+					{
+						ostr << "Data block [" << j << "]:" << std::endl;
+						// print the data block header
+						DTCLib::DTC_DataHeaderPacket *dataHeader = dataBlocks[j].GetHeader().get();
+						ostr << dataHeader->toJSON() << std::endl;	
+
+						// print the data block payload
+						const void* dataPtr = dataBlocks[j].GetData();
+						ostr << "Data payload:" << std::endl;
+						for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=2)
+						{
+							auto thisWord = reinterpret_cast<const uint16_t*>(dataPtr)[l];
+							if(fp) fwrite(&thisWord,sizeof(uint16_t), 1, fp);
+							ostr << "\t0x" << std::hex << std::setw(4) << std::setfill('0') << static_cast<int>(thisWord) << std::endl;
+						}
+
+					}
+				}
+				ostr << std::endl << std::endl;
+			}
+		}
+	
+	}
+
+	if(fp) fclose(fp); //close binary file
+
+	// print the result
+	std::stringstream outSs;
+	outSs << "Number of events  requested: " + std::to_string(numberOfEvents) << __E__;
+	outSs << "Active Event Match: " << (activeMatch?"true":"false") << __E__;
+	outSs << "Event Duration: " << cfoDelay << " = " << cfoDelay*25 << " ns" << __E__;
+	outSs << "Reading back: " << (doNotReadBack?"false":"true") << __E__;
+	if(fp) outSs << "Binary data file saved at: " << filename << __E__;
+	outSs << ostr.str();
+
+	__SET_ARG_OUT__("response", outSs.str());
+	delete cfo;
+} //end BufferTest()
 
 //========================================================================
 void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)

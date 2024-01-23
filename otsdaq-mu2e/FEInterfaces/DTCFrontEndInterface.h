@@ -107,63 +107,69 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 
   public:
-	void 								FlashLEDs						(__ARGS__);	
-	void 								GetFirmwareVersion				(__ARGS__);
-	void 								GetStatus						(__ARGS__);
-	void 								GetSimpleStatus					(__ARGS__);
+	void 								FlashLEDs							(__ARGS__);	
+	void 								GetFirmwareVersion					(__ARGS__);
+	void 								GetStatus							(__ARGS__);
+	void 								GetSimpleStatus						(__ARGS__);
 
-	// FIXME -- copy from CFOandDTC and implement using DTC.h
-	// void 								GetLinkLossOfLight				(__ARGS__);
-	// void 								GetFireflyTemperature			(__ARGS__);
-	// void								ResetLinkRx						(__ARGS__);
-	// void								ShutdownLinkTx					(__ARGS__);
-	// void								StartupLinkTx					(__ARGS__);
-	// void								ShutdownFireflyTx				(__ARGS__);
-	// void								StartupFireflyTx				(__ARGS__);
+	// FIXME -- copy from CFOandDTC and implement using DTC.h	
+	// void 							GetLinkLossOfLight					(__ARGS__);
+	// void 							GetFireflyTemperature				(__ARGS__);
+	// void								ResetLinkRx							(__ARGS__);
+	// void								ShutdownLinkTx						(__ARGS__);
+	// void								StartupLinkTx						(__ARGS__);
+	// void								ShutdownFireflyTx					(__ARGS__);
+	// void								StartupFireflyTx					(__ARGS__);
 
-	void 								ReadROC							(__ARGS__);
-	void 								WriteROC						(__ARGS__);
-	void 								ROCBlockRead					(__ARGS__);
-	void 								ROCBlockWrite					(__ARGS__);
-    void 								WriteExternalROCRegister		(__ARGS__);
-	void                              	ReadExternalROCRegister        	(__ARGS__);
-	// void 								DTCHighRateBlockCheck			(__ARGS__);
-	void 								DTCReset						(__ARGS__);
-	void 								DTCHighRateDCSCheck				(__ARGS__);
-	void 								RunROCFEMacro					(__ARGS__);
-	void 								DTCSendHeartbeatAndDataRequest	(__ARGS__);
-	void								ResetLossOfLockCounter			(__ARGS__);
-	void								ReadLossOfLockCounter			(__ARGS__);
-	void								GetUpstreamControlLinkStatus	(__ARGS__);
-	void								GetLinkLockStatus				(__ARGS__);	
-	void								SelectJitterAttenuatorSource	(__ARGS__);
-	void								WriteDTC						(__ARGS__);
-	void								ReadDTC							(__ARGS__);
-	void								SetEmulatedROCEventFragmentSize	(__ARGS__);
-	void								configureHardwareDevMode		(__ARGS__);
-	void								ConfigureForTimingChain			(__ARGS__);
-	void 								BufferTest						(__ARGS__);
+	void 								ReadROC								(__ARGS__);
+	void 								WriteROC							(__ARGS__);
+	void 								ROCBlockRead						(__ARGS__);
+	void 								ROCBlockWrite						(__ARGS__);
+    void 								WriteExternalROCRegister			(__ARGS__);
+	void                              	ReadExternalROCRegister        		(__ARGS__);
+	// void 							DTCHighRateBlockCheck				(__ARGS__);
+	void 								DTCReset							(__ARGS__);
+	void 								DTCHighRateDCSCheck					(__ARGS__);
+	void 								RunROCFEMacro						(__ARGS__);
+	void 								DTCSendHeartbeatAndDataRequest		(__ARGS__);
+	void								ResetLossOfLockCounter				(__ARGS__);
+	void								ReadLossOfLockCounter				(__ARGS__);
+	void								GetUpstreamControlLinkStatus		(__ARGS__);
+	void								GetLinkLockStatus					(__ARGS__);	
+	void								SelectJitterAttenuatorSource		(__ARGS__);
+	void								WriteDTC							(__ARGS__);
+	void								ReadDTC								(__ARGS__);
+	void								SetEmulatedROCEventFragmentSize		(__ARGS__);
+	void								configureHardwareDevMode			(__ARGS__);
+	void								ConfigureForTimingChain				(__ARGS__);
 
-	void 								DTCCounters						(__ARGS__);
-	void 								readRxDiagFIFO					(__ARGS__);
-	void 								readTxDiagFIFO					(__ARGS__);
-	void 								GetLinkErrors					(__ARGS__);
-	void 								ROCResetLink					(__ARGS__);
-	void								HeaderFormatTest				(__ARGS__);
+	void 								DTCCounters							(__ARGS__);
+	void 								readRxDiagFIFO						(__ARGS__);
+	void 								readTxDiagFIFO						(__ARGS__);
+	void 								GetLinkErrors						(__ARGS__);
+	void 								ROCResetLink						(__ARGS__);
+	void								HeaderFormatTest					(__ARGS__);
 
-	void 								DTCInstantiate					(__ARGS__);
-	void 								ResetDTCLinks					(__ARGS__);
-	void 								ManualLoopbackSetup				(__ARGS__);
+	void 								DTCInstantiate						(__ARGS__);
+	void 								ResetDTCLinks						(__ARGS__);
 
-	void 								GetLinkLossOfLight				(__ARGS__);
-	void 								ResetPCIe						(__ARGS__);
-	void 								GetFireflyTemperature		(__ARGS__);
-	void 								GetFPGATemperature			(__ARGS__);
-	void 								ResetCFOLinkRx			(__ARGS__);
-	void 								ResetCFOLinkTx			(__ARGS__);
-	void 								ResetCFOLinkRxPLL			(__ARGS__);
-	void 								ResetCFOLinkTxPLL			(__ARGS__);
-	void 								SetCFOEmulationMode			(__ARGS__);
+	void 								ResetPCIe							(__ARGS__);
+	void 								GetFireflyTemperature				(__ARGS__);
+	void 								GetFPGATemperature					(__ARGS__);
+	void 								ResetCFOLinkRx						(__ARGS__);
+	void 								ResetCFOLinkTx						(__ARGS__);
+	void 								ResetCFOLinkRxPLL					(__ARGS__);
+	void 								ResetCFOLinkTxPLL					(__ARGS__);
+
+	void 								GetLinkLossOfLight					(__ARGS__);
+	
+	void 								SetCFOEmulationMode					(__ARGS__);
+	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
+	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
+
+	void 								BufferTest							(__ARGS__);
+
+	void 								ManualLoopbackSetup					(__ARGS__);
 
 	
 	// clang-format on
