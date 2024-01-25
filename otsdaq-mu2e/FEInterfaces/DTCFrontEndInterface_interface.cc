@@ -1701,11 +1701,11 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
 	thisDTC_->DisableLink(DTCLib::DTC_Link_CFO);
 	thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
-	for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
+	for(size_t i=0;i<DTCLib::DTC_ROC_Links.size();++i)
 		if((roc_mask_ >> i) & 1)
-			thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
+			thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[i]);
 		else
-			thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
+			thisDTC_->DisableLink(DTCLib::DTC_ROC_Links[i]);
 	// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 	thisDTC_->SetDMATimeoutPreset(0x00014141);  // DMA timeout from chants (default is 0x800)
 
@@ -1934,12 +1934,12 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
 			thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
 			thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
-			for(size_t i = 0; i < DTCLib::DTC_Links.size(); ++i)
+			for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
 			{
 				if((roc_mask_ >> i) & 1)
-					thisDTC_->EnableLink(DTCLib::DTC_Links[i]);
+					thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[i]);
 				else
-					thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
+					thisDTC_->DisableLink(DTCLib::DTC_ROC_Links[i]);
 			}
 				
 			// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
@@ -3523,8 +3523,8 @@ void DTCFrontEndInterface::SetEmulatedROCEventFragmentSize(__ARGS__)
 
 	// uint32_t wword = (wsize << 16) | wsize;  // create word for both ROC bit positions
 
-	for(uint8_t i=0;i<DTCLib::DTC_Links.size();++i)
-		thisDTC_->SetCFOEmulationNumPackets(DTCLib::DTC_Links[i],wsize);
+	for(uint8_t i=0;i<DTCLib::DTC_ROC_Links.size();++i)
+		thisDTC_->SetCFOEmulationNumPackets(DTCLib::DTC_ROC_Links[i],wsize);
 	// registerWrite(0x91B0, wword);
 	// registerWrite(0x91B4, wword);
 	// registerWrite(0x91B8, wword);
@@ -3700,7 +3700,7 @@ void DTCFrontEndInterface::readRxDiagFIFO(__ARGS__)
 	DTCLib::DTC_Link_ID LinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("LinkIndex", uint8_t));
 
-	__SET_ARG_OUT__("Diagnostic RX FIFO", thisDTC_->FormatRXDiagFifo(DTCLib::DTC_Links[LinkIndex]));
+	__SET_ARG_OUT__("Diagnostic RX FIFO", thisDTC_->FormatRXDiagFifo(DTCLib::DTC_ROC_Links[LinkIndex]));
 
 	
 } //end readRxDiagFIFO()
@@ -3711,7 +3711,7 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 	DTCLib::DTC_Link_ID LinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("LinkIndex", uint8_t));
 
-	__SET_ARG_OUT__("Diagnostic TX FIFO", thisDTC_->FormatTXDiagFifo(DTCLib::DTC_Links[LinkIndex]));
+	__SET_ARG_OUT__("Diagnostic TX FIFO", thisDTC_->FormatTXDiagFifo(DTCLib::DTC_ROC_Links[LinkIndex]));
 
 	
 } //end readTxDiagFIFO()
@@ -4385,8 +4385,8 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 	
 	thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
 	thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
-	for(size_t i=0;i<DTCLib::DTC_Links.size();++i)
-		thisDTC_->DisableLink(DTCLib::DTC_Links[i]);
+	for(size_t i=0;i<DTCLib::DTC_ROC_Links.size();++i)
+		thisDTC_->DisableLink(DTCLib::DTC_ROC_Links[i]);
 
 	if(setAsPassthrough)
 	{
@@ -4394,7 +4394,7 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 		return;
 	}
 
-	thisDTC_->EnableLink(DTCLib::DTC_Links[ROC_Link]);
+	thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
 	
 
 } //end ManualLoopbackSetup()
