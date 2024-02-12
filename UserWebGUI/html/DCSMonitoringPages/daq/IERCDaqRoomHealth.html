@@ -1,0 +1,581 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>IERC Test Stand DAQ room health</title>
+
+
+
+		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoringPages/IERCDaqRoomHealth.css">
+
+		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+		<script type="text/JavaScript" src="/WebPath/js/js_lib/SlowControlsAPI.js"></script>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+		<script>
+
+			//functions:
+			//	init()
+			//	makeMainPage()
+			//  drawGraph()
+
+			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+
+			//	generateUID()
+			//	generateUIDHandlerFunction(req)
+			//	pollServer()
+			//	pollServerHandlerFunction(req)
+
+
+			//top-level scope (global) variables:
+
+			var page_ = page_ || {}; 	//define the page object if needed
+										//	page_.widgets = {
+										//		<widgetID> : <widget object := x, y, 
+										//			w, h, pvList{}, attributes{},
+										//			displayName, loaded,
+										//			el /*iframe element*/
+										//	} 
+
+			//====================== start high-level behavior description
+			//
+			//	High-level description of page interactions:
+			//
+			//	- page init() is called by DesktopContent.js: 
+			//		* make Page_ to collect all objects to show PVs
+			//		* makeMainPage()
+			//			* setupPvParams(settings)
+			//			* Pass alarm thresholds, etc associated with pvList to widget content
+			//		* generateUID()
+			//			* pollServer()
+			//
+			//
+			//	- drawNewValue()
+			//		* Update widget drawing based on new value (and append to history if needed)
+			//
+			//====================== end high-level behavior description
+
+
+			var refreshRate_ = 15000; //set default to refresh every 15 seconds (ms)
+			var timerVariable_;
+
+			var UID_ = 0;
+			var timeToPoll_ = false;
+
+			page_.createPage = function(){
+
+				this.name = "MyPage";
+				this.widgets = {};
+				this.addPV = function(pv){
+					console.log("Reached " + pv);
+				}
+			}
+
+			var pvLedE_ = [
+ 				  {"Mu2e:RackProt:1E:state": 1}
+				]; 
+
+			var pvLedW_ = [
+				  {"Mu2e:RackProt:1W:state": 1}
+			]; 
+
+			var pvTemperE_ = [
+				  {"Mu2e:RackTemp:1E:0:temperature": 1}
+				, {"Mu2e:RackTemp:1E:1:temperature": 1}
+				, {"Mu2e:RackTemp:1E:2:temperature": 1}
+			];
+
+			var pvTemperW_ = [
+				  {"Mu2e:RackTemp:1W:0:temperature": 1}
+				, {"Mu2e:RackTemp:1W:1:temperature": 1}
+				, {"Mu2e:RackTemp:1W:2:temperature": 1}
+			];
+
+			var pvNodeLedE_ = [
+				//1E
+				  {"Mu2e:PDU:1E_L:P1": [1, 1, 1]}
+				, {"Mu2e:PDU:1E_L:P2": [1, 1, 2]}
+				, {"Mu2e:PDU:1E_L:P3": [1, 1, 3]}
+				, {"Mu2e:PDU:1E_R:P1": [1, 1, 4]}
+				, {"Mu2e:PDU:1E_R:P2": [1, 1, 5]}
+				, {"Mu2e:PDU:1E_R:P3": [1, 1, 6]}
+			];
+
+			var pvNodeTemperE_ = [
+				//1E
+				  {"Mu2e:CompStatus:trk-01:DTC0:dtctemp": [1, 11, 1]}
+				, {"Mu2e:CompStatus:trk-01:DTC1:dtctemp": [1, 11, 2]}
+				, {"Mu2e:CompStatus:trk-02:DTC0:dtctemp": [1, 10, 1]}
+				, {"Mu2e:CompStatus:trk-02:DTC1:dtctemp": [1, 10, 2]}
+				, {"Mu2e:CompStatus:trk-03:DTC0:dtctemp": [1, 9, 1]}
+				, {"Mu2e:CompStatus:trk-03:DTC1:dtctemp": [1, 9, 2]}
+				, {"Mu2e:CompStatus:trk-04:DTC0:dtctemp": [1, 8, 1]}
+				, {"Mu2e:CompStatus:trk-04:DTC1:dtctemp": [1, 8, 2]}
+				, {"Mu2e:CompStatus:trk-05:DTC0:dtctemp": [1, 7, 1]}
+				, {"Mu2e:CompStatus:trk-05:DTC1:dtctemp": [1, 7, 2]}
+			];
+
+			var pvNodeLedW_ = [
+				//1W
+				  {"Mu2e:PDU:1W_L:P1": [1, 1, 1]}
+				, {"Mu2e:PDU:1W_L:P2": [1, 1, 2]}
+				, {"Mu2e:PDU:1W_L:P3": [1, 1, 3]}
+				, {"Mu2e:PDU:1W_R:P1": [1, 1, 4]}
+				, {"Mu2e:PDU:1W_R:P2": [1, 1, 5]}
+				, {"Mu2e:PDU:1W_R:P3": [1, 1, 6]}
+			];
+
+			var pvNodeTemperW_ = [
+				//1W
+				  {"Mu2e:CompStatus:calo-01:DTC0:dtctemp": [1, 11, 1]}
+				, {"Mu2e:CompStatus:calo-01:DTC1:dtctemp": [1, 11, 2]}
+				, {"Mu2e:CompStatus:calo-02:DTC0:dtctemp": [1, 10, 1]}
+				, {"Mu2e:CompStatus:calo-02:DTC1:dtctemp": [1, 10, 2]}
+				, {"Mu2e:CompStatus:calo-03:DTC0:dtctemp": [1, 9, 1]}
+				, {"Mu2e:CompStatus:calo-03:DTC1:dtctemp": [1, 9, 2]}
+				, {"Mu2e:CompStatus:calo-04:DTC0:dtctemp": [1, 8, 1]}
+				, {"Mu2e:CompStatus:calo-04:DTC1:dtctemp": [1, 8, 2]}
+				, {"Mu2e:CompStatus:calo-05:DTC0:dtctemp": [1, 7, 1]}
+				, {"Mu2e:CompStatus:calo-05:DTC1:dtctemp": [1, 7, 2]}
+			];
+
+			/////////////////////////////////////////////////////////////////////////////////////////
+			/////////////////////////////////////////////////////////////////////////////////////////
+
+
+			//=====================================================================================
+			//init called once body has loaded
+			function init() 
+			{
+				Debug.log("init() was called");
+
+				page_.createPage();
+
+				//get command string if opening a new window
+				var cmdStr = DesktopContent.getParameter(2); //from  location.search
+				if (cmdStr && cmdStr != "") {
+					//do incoming commands!
+					Debug.log("cmdStr=" + cmdStr);
+					//replace %22 with "
+					cmdStr = cmdStr.replace(/%22/g, "\"");
+				}
+
+				makeMainPage();
+				generateUID();
+			} //end init()
+
+
+			//=====================================================================================
+			//Make main page here
+			function makeMainPage()
+			{
+				var pvLedE_length = Object.keys(pvLedE_).length;
+				var pvLedW_length = Object.keys(pvLedW_).length;
+				var pvTemperE_length = Object.keys(pvTemperE_).length;
+				var pvTemperW_length = Object.keys(pvTemperW_).length;
+
+				for (i = 0; i < 1; i++)
+				{
+					var rackE = document.getElementById("rack" + (i+1) + "E");
+					var topRackE = document.createElement('div');
+					var bottomRackE = document.createElement('div');
+					topRackE.classList.add("topRack");
+					bottomRackE.classList.add("bottomRack");
+					rackE.appendChild(topRackE);
+					rackE.appendChild(bottomRackE);
+
+					var rackW = document.getElementById("rack" + (i+1) + "W");
+					var topRackW = document.createElement('div');
+					var bottomRackW = document.createElement('div');
+					topRackW.classList.add("topRack");
+					bottomRackW.classList.add("bottomRack");
+					rackW.appendChild(topRackW);
+					rackW.appendChild(bottomRackW);
+
+					//FILLS THE TOP RACK CONTAINER
+					for (j = 0; j < Math.max(pvLedE_length, pvLedW_length, pvTemperE_length, pvTemperW_length); j++)
+					{
+						//EAST RACK LEDs
+						if (pvLedE_[i+j] != undefined && Object.entries(pvLedE_[i+j])[0][1] == i+1)
+						{
+							var led = document.createElement('div');
+							led.id = "led-" + Object.entries(pvLedE_[i+j])[0][0];
+							led.classList.add("led");
+							topRackE.appendChild(led);
+							var widgetObject 		= {};
+							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvLedE_[i+j];
+							widgetObject.el = led;
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+						}
+
+						//EAST RACK Temperatures
+						if (pvTemperE_[i+j] != undefined && Object.entries(pvTemperE_[i+j])[0][1] == i+1)
+						{
+							var temper = document.createElement('div');
+							temper.id = "temper-" + Object.entries(pvTemperE_[i+j])[0][0];
+							temper.classList.add("temper");
+							topRackE.appendChild(temper);
+							var widgetObject 		= {};
+							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvTemperE_[i+j];
+							widgetObject.el = temper;
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+						}
+
+						//WEST RACK LEDs
+						if (pvLedW_[i+j] != undefined && Object.entries(pvLedW_[i+j])[0][1] == i+1)
+						{
+							var led = document.createElement('div');
+							led.id = "led-" + Object.entries(pvLedW_[i+j])[0][0];
+							led.classList.add("led");
+							topRackW.appendChild(led);
+							var widgetObject 		= {};
+							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvLedW_[i+j];
+							widgetObject.el = led;
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+						}
+
+						//WEST RACK Temperatures
+						if (pvTemperW_[i+j] != undefined && Object.entries(pvTemperW_[i+j])[0][1] == i+1)
+						{
+							var temper = document.createElement('div');
+							temper.id = "temper-" + Object.entries(pvTemperW_[i+j])[0][0];
+							temper.classList.add("temper");
+							topRackW.appendChild(temper);
+							var widgetObject 		= {};
+							widgetObject.pvSettings = {};
+							widgetObject.pvList 	= pvTemperW_[i+j];
+							widgetObject.el = temper;
+
+							var widgetsLength = Object.keys(page_.widgets).length;
+							page_.widgets[widgetsLength] = widgetObject;
+							SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+						}
+					}
+
+					//FILL THE BOTTOM RACK CONTAINER FOR NODES
+					var rackShelfSize = 11;
+					for (k = 0; k < rackShelfSize; k++)
+					{
+						var temperColumnSize = 2;
+						var ledColumnSize = 6;
+
+						//Fill East
+						var shelfE = document.createElement('div');
+						shelfE.classList.add("rackShelf");
+
+						for (l = 0; l < Object.keys(pvNodeLedE_).length; l++)
+						{
+							for (c = 0; c < ledColumnSize; c++)
+							{
+								if(Object.entries(pvNodeLedE_[l]) != undefined 
+									&& Object.entries(pvNodeLedE_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeLedE_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeLedE_[l])[0][1][2] == c+1)
+								{
+									var ledE = document.createElement('div');
+									ledE.classList.add("nodeLed");
+									shelfE.appendChild(ledE);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeLedE_[l];
+									ledE.id = "nodeLed-" + Object.entries(pvNodeLedE_[l])[0][0];
+									widgetObject.el = ledE;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+								}
+							}
+						}
+
+						for (l = 0; l < Object.keys(pvNodeTemperE_).length; l++)
+						{
+							for (c = 0; c < temperColumnSize; c++)
+							{
+								if(Object.entries(pvNodeTemperE_[l]) != undefined 
+									&& Object.entries(pvNodeTemperE_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeTemperE_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeTemperE_[l])[0][1][2] == c+1)
+								{
+									var temperE = document.createElement('div');
+									temperE.classList.add("nodeTemper");
+									shelfE.appendChild(temperE);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeTemperE_[l];
+									temperE.id = "temper-" + Object.entries(pvNodeTemperE_[l])[0][0];
+									widgetObject.el = temperE;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+								}
+							}
+						}
+
+						bottomRackE.appendChild(shelfE);
+
+						//Fill West
+						var shelfW = document.createElement('div');
+						shelfW.classList.add("rackShelf");
+
+						for (l = 0; l < Object.keys(pvNodeLedW_).length; l++)
+						{
+							for (c = 0; c < ledColumnSize; c++)
+							{
+								if(Object.entries(pvNodeLedW_[l]) != undefined 
+									&& Object.entries(pvNodeLedW_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeLedW_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeLedW_[l])[0][1][2] == c+1)
+								{
+									var ledW = document.createElement('div');
+									ledW.classList.add("nodeLed");
+									shelfW.appendChild(ledW);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeLedW_[l];
+									ledW.id = "nodeLed-" + Object.entries(pvNodeLedW_[l])[0][0];
+									widgetObject.el = ledW;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+								}
+							}
+						}
+
+						for (l = 0; l < Object.keys(pvNodeTemperW_).length; l++)
+						{
+							for (c = 0; c < temperColumnSize; c++)
+							{
+								if(Object.entries(pvNodeTemperW_[l]) != undefined 
+									&& Object.entries(pvNodeTemperW_[l])[0][1][0] == i+1
+									&& Object.entries(pvNodeTemperW_[l])[0][1][1] == k+1
+									&& Object.entries(pvNodeTemperW_[l])[0][1][2] == c+1)
+								{
+									var temperW = document.createElement('div');
+									temperW.classList.add("nodeTemper");
+									shelfW.appendChild(temperW);
+
+									var widgetObject 		= {};
+									widgetObject.pvSettings = {};
+									widgetObject.pvList 	= pvNodeTemperW_[l];
+									temperW.id = "temper-" + Object.entries(pvNodeTemperW_[l])[0][0];
+									widgetObject.el = temperW;
+									var widgetsLength = Object.keys(page_.widgets).length;
+									page_.widgets[widgetsLength] = widgetObject;
+									SlowControlsAPI.setupPvParams(widgetsLength, page_.widgets[widgetsLength]);
+								}
+							}
+						}
+
+						bottomRackW.appendChild(shelfW);
+					}
+				}
+			} //end makeMainPage()
+
+
+			//=====================================================================================
+			function drawGraph(widget, pvName)
+			{
+				var url = location.origin + "/WebPath/UserWebPath/html/DCSMonitoringPages/Plot.html?urn=" + DesktopContent._localUrnLid + "&pv_name=" + pvName;
+				DesktopContent.openNewWindow("Plot",pvName,url,false);
+			} //end drawGraph()
+
+
+			//=====================================================================================
+			//write a new value of a PV
+			function drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+			{
+				console.log("Text newValue() reached", pvName, pvValue);
+
+				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
+				
+				if(page_.widgets[widget].el.id.indexOf('temper-') != -1)
+					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
+				else if(page_.widgets[widget].el.id.indexOf('led-') != -1)
+					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
+				else if(page_.widgets[widget].el.id.indexOf('nodeLed-') != -1)
+					page_.widgets[widget].el.innerHTML = "<button class='pvNodeLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
+
+				page_.widgets[widget].el.title = SlowControlsAPI.setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
+
+				SlowControlsAPI.setWidgetPvInfo(
+								  widget
+								, pvName
+								, pvValue
+								, pvTime
+								, pvStatus
+								, pvSeverity
+								, true
+								, false
+								, "DimGray"
+								, "gray"
+								, "1px solid green"
+								);
+			} //end drawNewValue()
+
+
+			//=====================================================================================
+			function generateUID()
+			{
+				UID_ = 0;
+				window.clearTimeout(timerVariable_);
+
+				//BEGIN Put all pvs in a JSON and send to server
+				var pvList = "";
+				//console.log("page: ", page_);
+				for (var widget in page_.widgets)
+				{
+					console.log("generateUID: " +  page_.widgets[widget] + " " +  page_.widgets[widget].pvList);
+
+					for(var pv in page_.widgets[widget].pvList)
+					{
+						pvList += pv + ",";
+					}
+				}
+
+				//END Put all pvs in a JSON and send to server
+				DesktopContent.XMLHttpRequest(
+					"Request?RequestType=generateUID",
+					"pvList=" + pvList,
+					generateUIDHandlerFunction);//, undefined, undefined, "sequence");
+			} //end generateUID()
+
+
+			//=====================================================================================
+			function generateUIDHandlerFunction(req)
+			{
+				var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
+
+				if(uid.message != "-1")
+					UID_ = uid.message;
+				else
+				{
+					UID_ = "";
+					Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
+				}
+
+				pollServer();
+			} //end generateUIDHandlerFunction()
+
+
+			//=====================================================================================
+			function pollServer()
+			{
+				Debug.log("pollServer: polling server!");
+				console.log("pollServer(): ",page_.widgets);
+				if(page_.widgets)
+				{
+					DesktopContent.XMLHttpRequest(
+						"Request?RequestType=poll&uid=" + UID_,
+						"", 
+						pollServerHandlerFunction /*returnHandler*/, 
+						0 /*reqParam*/, 
+						0 /*progressHandler*/, 
+						0 /*callHandlerOnErr*/, 
+						true /*doNoShowLoadingOverlay*/);	
+				}
+			} //end pollServer()
+
+
+			//=====================================================================================
+			function pollServerHandlerFunction(req)
+			{
+				Debug.log("pollServerHandlerFunction() was called. Req: " + req.responseText);
+
+ 				var jsonStr = DesktopContent.getXMLValue(req, "JSON");
+				jsonStr = jsonStr.replace(/\s/g, ''); //hack for removing whitespace 
+    			if(!jsonStr || jsonStr == "") 
+					return;
+
+				Debug.log(jsonStr);
+
+				var serverResponse;
+
+				serverResponse = JSON.parse(jsonStr);
+
+				Debug.log(serverResponse);
+
+				if(serverResponse.message == "NOT_FOUND")
+				{
+					console.log("Have to generate new UID!");
+					generateUID();
+				}
+				else
+				{
+					for(var pv in serverResponse)//have to use each pv and then loop through
+					{	
+						console.log("pollServerHandlerFunction: pv" + pv);						
+						for (var widget in page_.widgets)
+						{
+							//console.log("pollServerHandlerFunction: " + page_.widgets[widget]);
+							for(var dependendentPV in page_.widgets[widget].pvList)
+							{
+								//console.log("poll: " + dependendentPV);
+								if(pv == dependendentPV && page_.widgets[widget].loaded != "false")
+								{
+									//console.log("Widget*************", widget, pv);
+									try
+									{
+										drawNewValue(
+												widget,
+												pv, 
+												serverResponse[pv].Value, 
+												serverResponse[pv].Timestamp, 
+												serverResponse[pv].Status, 
+												serverResponse[pv].Severity);
+									}
+									catch(e)
+									{
+										Debug.log("Error was caught updating new value to widget 'widget-" +
+											widget + "': " + e);											
+									}
+								}
+							}
+						}
+					}
+
+					timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+				}
+			} //end pollServerHandlerFunction()
+
+
+		</script>
+	</head>
+
+	<body onload='//init() called by DesktopContent.js'>
+		<div class="mainBlockContainer">
+			<div class="legend">
+				<div>Color legend:</div>
+				<div style="background-color: green">No alarm</div>
+				<div style="background-color: orange">Warning</div>
+				<div style="background-color: red">Alarm</div>
+				<div style="background-color: gray">Stale</div>
+				<div style="background-color: darkslategray">Undefined state</div>
+			</div> 
+			<div class="title">
+				<h2 align="center"><br/>IERC Test Stand DAQ room health</h2>
+			</div>
+			<div class="BlockContainer">
+				<div class="rack" id="rack1E"><center>RACK 1E</center></div>
+				<div class="rack" id="rack1W"><center>RACK 1W</center></div>
+			</div> <!-- end top block container -->
+		</div> <!-- end main block container -->
+	</body>
+</html>
