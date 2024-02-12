@@ -1,7 +1,9 @@
   
 include(otsdaq::table)
 
-cet_build_plugin(DTCInterfaceTable otsdaq::table LIBRARIES REG otsdaq::SlowControlsTableBase
+cet_build_plugin(DTCInterfaceTable otsdaq::table LIBRARIES REG 
+    otsdaq::SlowControlsTableBase
+    otsdaq::XDAQContextTable
   )
     
 

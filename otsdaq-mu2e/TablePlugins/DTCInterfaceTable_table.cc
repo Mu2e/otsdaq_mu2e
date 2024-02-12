@@ -1,6 +1,8 @@
 #include "otsdaq-mu2e/TablePlugins/DTCInterfaceTable.h"
 #include "otsdaq/Macros/TablePluginMacros.h"  //for DEFINE_OTS_TABLE
 
+#include "otsdaq/TablePlugins/XDAQContextTable/XDAQContextTable.h"
+
 #include <sys/stat.h>  //for mkdir
 #include <iostream>
 
@@ -171,5 +173,102 @@ unsigned int	DTCInterfaceTable::slowControlsHandlerConfig	(
 //==============================================================================
 // return out file path
 std::string DTCInterfaceTable::setFilePath() const { return SLOWCONTROL_PV_FILE_PATH; }
+
+//==============================================================================
+// return status structures
+std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* cfgMgr) const
+{
+	//Steps:
+	//	Get all FE Supervisors
+	//		for each FE Supervisor
+	//			find DTCs
+	//				for each DTC
+	//					mark if parent is enabled
+	//				 	mark if self is enabled
+	//					for each ROC
+	//						mark if self is enabled
+
+	std::stringstream json;
+
+	const XDAQContextTable* contextTable = cfgMgr->__GET_CONFIG__(XDAQContextTable);
+	const std::vector<XDAQContextTable::XDAQContext>& contexts = contextTable->getContexts();
+
+
+	const std::string COL_NAME_feGroupLink 	= "LinkToFEInterfaceTable";
+	const std::string COL_NAME_fePlugin    	= "FEInterfacePluginName";
+	const std::string COL_NAME_feTypeLink  	= "LinkToFETypeTable";
+	const std::string COL_NAME_rocGroupLink	= "LinkToROCGroupTable";
+
+	const std::string PLUGIN_TYPE_dtc  		= "DTCFrontEndInterface";
+
+	__COUTV__(contexts.size());
+
+	json << "{\"dtcs\": [";
+
+	bool firstDTC = true;
+	for(auto& context : contexts)
+	{
+		for(auto& app : context.applications_)
+		{
+			if(XDAQContextTable::FETypeClassNames_.find(app.class_) == XDAQContextTable::FETypeClassNames_.end())
+				continue;
+
+			__COUTV__(app.applicationUID_); //all FE Supervisors
+
+			bool parentEnabled = (context.status_ && app.status_);
+
+			ConfigurationTree appNode = cfgMgr->getNode(
+				ConfigurationManager::XDAQ_APPLICATION_TABLE_NAME + "/" +
+				app.applicationUID_);
+			
+			std::vector<std::pair<std::string, ConfigurationTree>> feChildren = 
+				appNode.getNode(XDAQContextTable::colApplication_.colLinkToSupervisorTable_).
+					getNode(COL_NAME_feGroupLink).getChildren();
+
+			
+			for(const auto& interface : feChildren)
+			{
+				if(interface.second.getNode(COL_NAME_fePlugin).getValue<std::string>() !=
+					PLUGIN_TYPE_dtc)
+					continue;
+
+				__COUTV__(interface.first); //all DTCs
+				__COUTV__(parentEnabled);
+				__COUTV__(interface.second.status());
+
+				if(!firstDTC) json << ", ";
+				firstDTC = false;
+
+				json << "{\"name\": \"" << interface.first << "\" ";
+				json << ", \"parentApp\": \"" << 
+					context.address_ << ":" << context.port_ << "/" <<
+					context.contextUID_ << "/" <<
+					app.applicationUID_ << "\"";
+				json << ", \"parentEnabled\": \"" << (parentEnabled?"1":"0") << "\"";
+				json << ", \"enabled\": \"" << (interface.second.status()?"1":"0") << "\"";
+				json << ", \"rocs\": [";
+
+				std::vector<std::pair<std::string, ConfigurationTree>> dtcChildren = 
+					interface.second.getNode(COL_NAME_feTypeLink + "/" + COL_NAME_rocGroupLink).getChildren();
+
+				bool firstROC = true;
+				for(const auto& roc : dtcChildren)
+				{
+					if(!firstROC) json << ", ";
+					firstROC = false;
+
+					json << "{\"name\": \"" << roc.first << "\" ";
+					json << ", \"enabled\": \"" << (roc.second.status()?"1":"0") << "\"";
+					json << "}"; //close ROC structure
+				} //end ROC loop
+				json << "]}"; //end ROC array and DTC structure
+			} //end DTC loop
+
+		} //end primary application loop
+	} //end primary context loop
+	json << "]}";
+	__COUTV__(json.str());
+	return json.str();
+}  // end getStructureStatusAsJSON()
 
 DEFINE_OTS_TABLE(DTCInterfaceTable)

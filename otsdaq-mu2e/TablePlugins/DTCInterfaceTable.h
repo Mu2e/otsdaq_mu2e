@@ -25,6 +25,8 @@ class DTCInterfaceTable : public SlowControlsTableBase
 
 	virtual std::string		setFilePath					()  const override;
 
+	virtual std::string     getStructureStatusAsJSON 	(ConfigurationManager* configManager) const override;
+
   private:
 
 	// Column names
