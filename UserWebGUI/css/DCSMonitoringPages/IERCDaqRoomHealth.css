@@ -1,0 +1,177 @@
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: 			white;
+	overflow: 					hidden;
+	transition: 				background-color .25s;
+	overflow-x: scroll;
+	overflow-y: scroll;
+}
+
+/* Column containers */
+.mainBlockContainer {
+	display: flex;
+	flex-direction: column;
+  }
+
+.topBlockContainer {
+	
+  }
+
+.bottomBlockContainer {
+
+  }
+
+  /* Containers content */
+  .legend {
+	display: flex;
+	flex-direction: row;
+	width:	100%;
+  }
+
+  .legend > div{
+	margin-left: 10px;
+	height: 100%;
+	padding: 5px;
+	border-radius: 4px;
+}
+
+  /* Containers content */
+  .title {
+	display: flex;
+	flex-direction: row;
+	margin-left: 250px;
+	width:	100%;
+  }
+
+  .tableContainer {
+	-ms-flex: 20%; /* IE10 */
+	flex: 20%;
+	background-color: white;
+	padding: 0px;
+  }
+
+  .rack {
+	background-color: transparent;
+	border: 2px solid;
+	height: 600px;
+	width:	400px;
+	float: left;
+	margin-left: 20px;
+	margin-top: 18px;
+  }
+
+  .topRack {
+	width: 100%;
+	float: left;
+  }
+
+  .bottomRack {
+	width: 100%;
+	float: left;
+  }
+
+  .rackShelf {
+	background-color: transparent;
+	border: 2px solid;
+	width: 97%;
+    height: 23px;
+	margin: 1px;
+	float: left;
+  }
+
+  .led {
+	border-radius: 50%;
+	width: 20px;
+    height: 20px;
+	background-color: gray;
+	margin: 2px;
+	float: left;
+  }
+
+  .temper {
+	width: 25%;
+    height: 19px;
+	background-color: gray;
+	margin: 2px;
+	font-size-adjust: ic-height;
+    padding-top: 0px;
+	float: left;
+  }
+
+  .nodeLed {
+	border-radius: 50%;
+	width: 15px;
+    height: 15px;
+	background-color: gray;
+	margin: 2px;
+	float: left;
+  }
+
+  .nodeTemper {
+	width:35%;
+    height: 15px;
+	background-color: gray;
+	margin: 2px;
+	float: left;
+  }
+
+  /* Buttons */
+  .pvButton {
+	height: 100%;
+	width: 100%;
+	color: white;
+	border: none;
+	background-color: transparent;
+  }
+	
+  .pvButton:hover {
+	background-color: lightcoral;
+	transition: 0.7s;
+  }
+	
+  .pvLedButton {
+	position:relative;
+	top:-3px;
+	border-radius: 50%;
+	height: 98%;
+	width: 98%;
+	color: white;
+	border: none;
+	background-color: transparent;
+  }
+	
+  .pvLedButton:hover {
+	background-color: lightcoral;
+	transition: 0.7s;
+  }
+
+  .pvNodeLedButton {
+	position:relative;
+	top: -4px;
+	left: -4px;
+	border-radius: 50%;
+	height: 14px;
+	width: 14px;
+	color: white;
+	border: none;
+	background-color: transparent;
+  }
+	
+  .pvNodeLedButton:hover {
+	background-color: lightcoral;
+	transition: 0.7s;
+  }
+
+  /*Temperature text */
+  .temperText {
+	position:relative;
+	top:-4px;
+	width:100%;
+	height: 100%;
+	background-color: transparent;
+  }
+
