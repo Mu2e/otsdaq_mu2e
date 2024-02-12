@@ -203,12 +203,12 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* c
 
 	__COUTV__(contexts.size());
 
-	json << "{\"dtcs\": [";
+	json << "{\"apps\": [";
 
-	bool firstDTC = true;
+	bool firstApp = true;
 	for(auto& context : contexts)
 	{
-		for(auto& app : context.applications_)
+		for(auto& app : context.applications_) //App loop
 		{
 			if(XDAQContextTable::FETypeClassNames_.find(app.class_) == XDAQContextTable::FETypeClassNames_.end())
 				continue;
@@ -220,13 +220,21 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* c
 			ConfigurationTree appNode = cfgMgr->getNode(
 				ConfigurationManager::XDAQ_APPLICATION_TABLE_NAME + "/" +
 				app.applicationUID_);
-			
+
 			std::vector<std::pair<std::string, ConfigurationTree>> feChildren = 
 				appNode.getNode(XDAQContextTable::colApplication_.colLinkToSupervisorTable_).
 					getNode(COL_NAME_feGroupLink).getChildren();
 
-			
-			for(const auto& interface : feChildren)
+			if(!firstApp) json << ", ";
+			firstApp = false;
+
+			json << "{\"name\": \"" << context.contextUID_ << "_" << app.applicationUID_  << "\" ";
+			json << ", \"enabled\": \"" << (parentEnabled?"1":"0") << "\"";
+			json << ", \"dtcs\": [";
+
+			bool firstDTC = true;
+
+			for(const auto& interface : feChildren) //DTC loop
 			{
 				if(interface.second.getNode(COL_NAME_fePlugin).getValue<std::string>() !=
 					PLUGIN_TYPE_dtc)
@@ -252,7 +260,7 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* c
 					interface.second.getNode(COL_NAME_feTypeLink + "/" + COL_NAME_rocGroupLink).getChildren();
 
 				bool firstROC = true;
-				for(const auto& roc : dtcChildren)
+				for(const auto& roc : dtcChildren) //ROC loop
 				{
 					if(!firstROC) json << ", ";
 					firstROC = false;
@@ -261,12 +269,12 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* c
 					json << ", \"enabled\": \"" << (roc.second.status()?"1":"0") << "\"";
 					json << "}"; //close ROC structure
 				} //end ROC loop
-				json << "]}"; //end ROC array and DTC structure
+				json << "]}"; //end ROC array
 			} //end DTC loop
-
+			json << "]}"; //end DTC array
 		} //end primary application loop
 	} //end primary context loop
-	json << "]}";
+	json << "]}"; //end primary application structure
 	__COUTV__(json.str());
 	return json.str();
 }  // end getStructureStatusAsJSON()
