@@ -30,7 +30,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	__COUTV__(expectedDesignVersion);
 	__COUT__ << "END CFO arguments..." << std::endl;
 	//Note: if we do not skip init, then the CFO::SetSimMode writes registers!
-	thisCFO_ = new CFOLib::CFO_Registers(
+	thisCFO_ = new CFOLib::CFO(
 		mode, deviceIndex_, expectedDesignVersion, 
 		true /*skipInit*/, getInterfaceUID());
 
@@ -67,16 +67,16 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 	// clang-format off
 
-	registerFEMacroFunction(
-		"Get Firmware Version",  // feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
-					std::vector<std::string>{},
-					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-					1,   //"allUsers:0 | TDAQ:255");
-					"*",  /* allowedCallingFEs */
-					"Read the modification date of the CFO firmware using <b>MON/DD/20YY HH:00</b> format."
-	);
+	// registerFEMacroFunction(
+	// 	"Get Firmware Version",  // feMacroName
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
+	// 				std::vector<std::string>{},
+	// 				std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
+	// 				1,   //"allUsers:0 | TDAQ:255");
+	// 				"*",  /* allowedCallingFEs */
+	// 				"Read the modification date of the CFO firmware using <b>MON/DD/20YY HH:00</b> format."
+	// );
 					
 	// registerFEMacroFunction(
 	// 	"Flash_LEDs",  // feMacroName
@@ -88,16 +88,16 @@ void CFOFrontEndInterface::registerFEMacros(void)
     
 	
 
-	registerFEMacroFunction(
-		"Get Status",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::GetStatus),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Status"},
-					1,   // requiredUserPermissions 
-					"*",  // allowedCallingFEs
-					"Reads and displays all registers in a print friendly format."
-	);
+	// registerFEMacroFunction(
+	// 	"Get Status",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOFrontEndInterface::GetStatus),            // feMacroFunction
+	// 				std::vector<std::string>{},  // namesOfInputArgs
+	// 				std::vector<std::string>{"Status"},
+	// 				1,   // requiredUserPermissions 
+	// 				"*",  // allowedCallingFEs
+	// 				"Reads and displays all registers in a print friendly format."
+	// );
 
 	registerFEMacroFunction(
 		"CFO Reset",
@@ -172,20 +172,20 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"\taddress (uint16_t): Address in Memory Map.\n"
 	); 
 
-	registerFEMacroFunction(
-		"Select Jitter Attenuator Source",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)",
-												"DoNotSet",
-												"AlsoResetJA"},
-						std::vector<std::string>{"Register Write Results"},
-					1, // requiredUserPermissions
-					"*",
-					"The Jitter Attenuator is used to remove jitter, or variation in the timing of signals. "
-					"Select the source of the jitter attenuator: a local oscilator on the CFO or the RTF.\n"
-					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>."
-	); 
+	// registerFEMacroFunction(
+	// 	"Select Jitter Attenuator Source",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOFrontEndInterface::SelectJitterAttenuatorSource),
+	// 			        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)",
+	// 											"DoNotSet",
+	// 											"AlsoResetJA"},
+	// 					std::vector<std::string>{"Register Write Results"},
+	// 				1, // requiredUserPermissions
+	// 				"*",
+	// 				"The Jitter Attenuator is used to remove jitter, or variation in the timing of signals. "
+	// 				"Select the source of the jitter attenuator: a local oscilator on the CFO or the RTF.\n"
+	// 				"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>."
+	// ); 
 
 	registerFEMacroFunction(
 		"Reset Runplan",
@@ -301,16 +301,16 @@ uint32_t CFOFrontEndInterface::measureDelay(CFOLib::CFO_Link_ID link)
 	thisCFO_->DisableLinks();
 
 	return delay;
-}
+} //end measureDelay()
 
-//========================================================================
-void CFOFrontEndInterface::GetFPGATemperature(__ARGS__)
-{	
-	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
-	std::stringstream ss;
-	ss << thisCFO_->FormatFPGATemperature() << "\n\n" << thisCFO_->FormatFPGAAlarms();
-	__SET_ARG_OUT__("Temperature", ss.str());
-} //end GetFPGATemperature()
+// //========================================================================
+// void CFOFrontEndInterface::GetFPGATemperature(__ARGS__)
+// {	
+// 	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
+// 	std::stringstream ss;
+// 	ss << thisCFO_->FormatFPGATemperature() << "\n\n" << thisCFO_->FormatFPGAAlarms();
+// 	__SET_ARG_OUT__("Temperature", ss.str());
+// } //end GetFPGATemperature()
 
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link, handle the boadcast
@@ -1500,35 +1500,35 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	__SET_ARG_OUT__("readData",readDataStr);
 } //end ReadCFO()
 
-//========================================================================
-void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
-{
-	uint32_t select = __GET_ARG_IN__(
-	    "Source (0 is Local oscillator, 1 is RTF Copper Clock)", uint32_t);
-	select %= 4;
-	__FE_COUTV__((unsigned int)select);
+// //========================================================================
+// void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
+// {
+// 	uint32_t select = __GET_ARG_IN__(
+// 	    "Source (0 is Local oscillator, 1 is RTF Copper Clock)", uint32_t);
+// 	select %= 4;
+// 	__FE_COUTV__((unsigned int)select);
 
-	if(!__GET_ARG_IN__(
-	    "DoNotSet", bool))
-	{
-		bool alsoResetJA = __GET_ARG_IN__(
-	    		"AlsoResetJA", bool);
-		__FE_COUTV__(alsoResetJA);
-		thisCFO_->SetJitterAttenuatorSelect(select, alsoResetJA);
-		sleep(1);
-		for(int i=0;i<10;++i) //wait for JA to lock before reading
-		{
-			if(thisCFO_->ReadJitterAttenuatorLocked())
-				break;
-			sleep(1);
-		}
-	}
+// 	if(!__GET_ARG_IN__(
+// 	    "DoNotSet", bool))
+// 	{
+// 		bool alsoResetJA = __GET_ARG_IN__(
+// 	    		"AlsoResetJA", bool);
+// 		__FE_COUTV__(alsoResetJA);
+// 		thisCFO_->SetJitterAttenuatorSelect(select, alsoResetJA);
+// 		sleep(1);
+// 		for(int i=0;i<10;++i) //wait for JA to lock before reading
+// 		{
+// 			if(thisCFO_->ReadJitterAttenuatorLocked())
+// 				break;
+// 			sleep(1);
+// 		}
+// 	}
 
-	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
+// 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
 
-	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
+// 	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
 
-}  // end SelectJitterAttenuatorSource()
+// }  // end SelectJitterAttenuatorSource()
 
 //========================================================================
 void CFOFrontEndInterface::ResetRunplan(__ARGS__)
@@ -1615,18 +1615,18 @@ void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->SoftReset(); }
 //========================================================================
 void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
 
-//==============================================================================
-// GetFirmwareVersion
- void CFOFrontEndInterface::GetFirmwareVersion(__ARGS__)
-{	
-	__SET_ARG_OUT__("Firmware Version Date", thisCFO_->ReadDesignDate());
-}  // end GetFirmwareVersion()
+// //==============================================================================
+// // GetFirmwareVersion
+//  void CFOFrontEndInterface::GetFirmwareVersion(__ARGS__)
+// {	
+// 	__SET_ARG_OUT__("Firmware Version Date", thisCFO_->ReadDesignDate());
+// }  // end GetFirmwareVersion()
 
-//========================================================================
-void CFOFrontEndInterface::GetStatus(__ARGS__)
-{	
-	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20, thisCFO_->formattedDumpFunctions_));
-} //end GetStatus()
+// //========================================================================
+// void CFOFrontEndInterface::GetStatus(__ARGS__)
+// {	
+// 	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20, thisCFO_->formattedDumpFunctions_));
+// } //end GetStatus()
 
 //========================================================================
 void CFOFrontEndInterface::GetCounters(__ARGS__)

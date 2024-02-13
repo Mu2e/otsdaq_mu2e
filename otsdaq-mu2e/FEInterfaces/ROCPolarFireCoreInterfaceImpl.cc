@@ -16,6 +16,16 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 
 	__MCOUT_INFO__("ROCPolarFireCoreInterface instantiated with link: "
 	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+
+	
+
+	registerFEMacroFunction("Setup for Pattern Data Taking",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCPolarFireCoreInterface::SetupForPatternDataTaking),
+	                        std::vector<std::string>{}, //inputs parameters
+	                        std::vector<std::string>{}, //output parameters
+	                        1);  // requiredUserPermissions
+
 }  // end constructor()
 
 //==========================================================================================
@@ -55,10 +65,10 @@ void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<DTCLib::roc_data_t
 }  // end readEmulatorBlock()
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::GetStatus() { __SS__ << "TODO"; __SS_THROW__; }
+void ROCPolarFireCoreInterface::GetStatus(__ARGS__) { __SS__ << "TODO"; __SS_THROW__; }
 
 //==================================================================================================
-void ROCPolarFireCoreInterface::GetFirmwareVersion() { __SS__ << "TODO"; __SS_THROW__; }
+void ROCPolarFireCoreInterface::GetFirmwareVersion(__ARGS__) { __SS__ << "TODO"; __SS_THROW__; }
 
 //==================================================================================================
 int ROCPolarFireCoreInterface::readInjectedPulseTimestamp() { return this->readRegister(12); }
@@ -182,3 +192,23 @@ void ROCPolarFireCoreInterface::stop(void) {}
 //==============================================================================
 bool ROCPolarFireCoreInterface::running(void) { return false; }
 
+
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::SetupForPatternDataTaking(__ARGS__)
+{
+	__COUT_INFO__ << "SetupForPatternDataTaking()" << __E__;
+
+	//For future, to get link ID of this ROC:
+	__FE_COUTV__(getLinkID());
+
+	writeRegister(14,1);  //ROC reset
+	writeRegister(8,1 << 4);
+	writeRegister(30,0);
+	writeRegister(29,1);
+
+	__COUT_INFO__ << "end SetupForPatternDataTaking()" << __E__;
+
+
+	// __SET_ARG_OUT__("readValue",GetTemperature(channelnumber));
+} //end SetupForPatternDataTaking()

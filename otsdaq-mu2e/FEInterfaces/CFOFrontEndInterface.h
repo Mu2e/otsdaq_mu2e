@@ -5,7 +5,7 @@
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 
-#include "cfoInterfaceLib/CFO_Registers.h"
+#include "cfoInterfaceLib/CFO.h"
 #include "cfoInterfaceLib/CFO_Compiler.hh"
 
 namespace ots
@@ -46,6 +46,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	// hardware access
 	//----------------
 	virtual mu2edev* 					getDevice					(void) {return thisCFO_->GetDevice();};
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) {return thisCFO_;};
 
 	float 								delay[8][6][8];
 	float 								delay_rms[8][6][8];
@@ -57,7 +58,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
   private:
 	void 								registerFEMacros			(void);
 	
-	CFOLib::CFO_Registers* 				thisCFO_;
+	CFOLib::CFO* 						thisCFO_;
+	// CFOLib::CFO_Registers* 				thisCFO_;
 	int									timing_chain_first_substep_	   = -1;
 	//int                    configure_clock_ = 0;
 
@@ -70,11 +72,11 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
   public:
 	// void 								FlashLEDs						(__ARGS__);	
-	void 								GetFirmwareVersion				(__ARGS__);
-	void 								GetStatus						(__ARGS__);
+	// void 								GetFirmwareVersion				(__ARGS__);
+	// void 								GetStatus						(__ARGS__);
 	void 								GetCounters						(__ARGS__);
-	void 								GetFPGATemperature				(__ARGS__);
-	void								SelectJitterAttenuatorSource	(__ARGS__);
+	// void 								GetFPGATemperature				(__ARGS__);
+	// void								SelectJitterAttenuatorSource	(__ARGS__);
 
 
 	void 								CFOReset						(__ARGS__);

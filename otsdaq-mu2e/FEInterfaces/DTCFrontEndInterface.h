@@ -56,10 +56,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// hardware access
 	//----------------
 	virtual mu2edev* 					getDevice					(void) {return thisDTC_->GetDevice();};
-//	void 								universalRead				(char* address, char* readValue) override; //defined in 
-//	void 								universalWrite				(char* address, char* writeValue) override;
-	// dtc_data_t							registerRead				(dtc_address_t address);
-	// virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) {return thisDTC_;};
 
 	// DTC specific items
 	//----------------
@@ -69,11 +66,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								configureForTimingChain		(int step);
 
 	void								loopbackTest				(int step = -1);
-
-	// bool 								ROCActive					(unsigned int ROC_link);
-	// int  								getROCLinkStatus			(int ROC_link);
-	// int  								getCFOLinkStatus			(void);
-	// int  								checkLinkStatus				(void);
 
 	DTCLib::DTC* 									thisDTC_;
 
@@ -95,22 +87,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::pair<std::string /*ROC UID*/,
 			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
 
-	// std::map<std::string /* ROC UID*/, 
-	// 	FESlowControlsChannel> 						mapOfROCSlowControlsChannels_;
-
-	// m_ioc_reg_access_t 								reg_access_;
-
-	// dtc_data_t 										initial_9100_ = 0;
-	// dtc_data_t 										initial_9114_ = 0;
-
 	std::ofstream 									outputStream;
 
 
   public:
-	void 								FlashLEDs							(__ARGS__);	
-	void 								GetFirmwareVersion					(__ARGS__);
-	void 								GetStatus							(__ARGS__);
-	void 								GetSimpleStatus						(__ARGS__);
+	// void 								FlashLEDs							(__ARGS__);	
+	// void 								GetFirmwareVersion					(__ARGS__);
+	// void 								GetStatus							(__ARGS__);
+	// void 								GetSimpleStatus						(__ARGS__);
 
 	// FIXME -- copy from CFOandDTC and implement using DTC.h	
 	// void 							GetLinkLossOfLight					(__ARGS__);
@@ -121,25 +105,28 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// void								ShutdownFireflyTx					(__ARGS__);
 	// void								StartupFireflyTx					(__ARGS__);
 
+	void								SetupROCs							(__ARGS__);
 	void 								ReadROC								(__ARGS__);
 	void 								WriteROC							(__ARGS__);
-	void 								ROCBlockRead						(__ARGS__);
-	void 								ROCBlockWrite						(__ARGS__);
+	void 								BockReadROC							(__ARGS__);
+	void 								BockWriteROC						(__ARGS__);
     void 								WriteExternalROCRegister			(__ARGS__);
-	void                              	ReadExternalROCRegister        		(__ARGS__);
+	void                             	ReadExternalROCRegister        		(__ARGS__);
 	// void 							DTCHighRateBlockCheck				(__ARGS__);
-	void 								DTCReset							(__ARGS__);
+	void 								DTCSoftReset						(__ARGS__);
+	void 								DTCHardReset						(__ARGS__);
+
 	void 								DTCHighRateDCSCheck					(__ARGS__);
 	void 								RunROCFEMacro						(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest		(__ARGS__);
 	void								ResetLossOfLockCounter				(__ARGS__);
 	void								ReadLossOfLockCounter				(__ARGS__);
-	void								GetUpstreamControlLinkStatus		(__ARGS__);
 	void								GetLinkLockStatus					(__ARGS__);	
 	void								SelectJitterAttenuatorSource		(__ARGS__);
 	void								WriteDTC							(__ARGS__);
 	void								ReadDTC								(__ARGS__);
-	void								SetEmulatedROCEventFragmentSize		(__ARGS__);
+
+	// void								SetEmulatedROCEventFragmentSize		(__ARGS__);
 	void								configureHardwareDevMode			(__ARGS__);
 	void								ConfigureForTimingChain				(__ARGS__);
 
@@ -154,14 +141,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetDTCLinks						(__ARGS__);
 
 	void 								ResetPCIe							(__ARGS__);
-	void 								GetFireflyTemperature				(__ARGS__);
-	void 								GetFPGATemperature					(__ARGS__);
+	// void 								GetFireflyTemperature				(__ARGS__);
+	// void 								GetFPGATemperature					(__ARGS__);
 	void 								ResetCFOLinkRx						(__ARGS__);
 	void 								ResetCFOLinkTx						(__ARGS__);
 	void 								ResetCFOLinkRxPLL					(__ARGS__);
 	void 								ResetCFOLinkTxPLL					(__ARGS__);
 
-	void 								GetLinkLossOfLight					(__ARGS__);
+	// void 								GetLinkLossOfLight					(__ARGS__);
 	
 	void 								SetCFOEmulationMode					(__ARGS__);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);

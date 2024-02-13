@@ -61,16 +61,17 @@ class ROCCoreVInterface : public FEVInterface
 	virtual void 							writeEmulatorBlock			(const std::vector<DTCLib::roc_data_t>& writeData, DTCLib::roc_address_t address, bool incrementAddress, bool requestAck = true) {throw std::runtime_error("UNDEFINED BLOCK EMULATOR WRITE");};     // pure virtual, must define in inheriting children
 
 
-	// pure virtual specific ROC functions
-	virtual void       					    GetStatus  					(void) { __SS__ << "TODO"; __SS_THROW__; };  // pure virtual, must define in inheriting children
-	virtual void       					    GetFirmwareVersion			(void) { __SS__ << "TODO"; __SS_THROW__; };  // pure virtual, must define in inheriting children
-	virtual int       					    readInjectedPulseTimestamp				(void) { __SS__ << "TODO"; __SS_THROW__; };  // pure virtual, must define in inheriting children
-	virtual void 							writeDelay					(uint16_t delay) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // pure virtual, must
-	                						                			              // define in inheriting children
-	virtual int								readDelay					(void) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // pure virtual, must define in inheriting children
+	// virtual specific ROC functions
+	virtual void       					    GetStatus  					(__ARGS__) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
+	virtual void       					    GetFirmwareVersion			(__ARGS__) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 
-	virtual int								readDTCLinkLossCounter		(void) { __SS__ << "TODO"; __SS_THROW__; };  // pure virtual, must define in inheriting children
-	virtual void							resetDTCLinkLossCounter		(void) { __SS__ << "TODO"; __SS_THROW__; };  // pure virtual, must define in inheriting children
+	virtual int       					    readInjectedPulseTimestamp	(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
+	virtual void 							writeDelay					(uint16_t delay) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // virtual, must
+	                						                			              // define in inheriting children
+	virtual int								readDelay					(void) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // virtual, must define in inheriting children
+
+	virtual int								readDTCLinkLossCounter		(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
+	virtual void							resetDTCLinkLossCounter		(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 
 	// ROC debugging functions
 	void 									registerFEMacros			(void);
