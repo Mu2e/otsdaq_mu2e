@@ -188,7 +188,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BockWriteROC),
 					std::vector<std::string>{"rocLinkIndex", "address",
-						"writeData (CSV-literal or CSV-filename of 16-bit words, or keyword + parameter 'AUTOGENERATE <count>')", 
+						"writeData (CSV-literal or CSV-filename of 16-bit words, or keyword + parameter 'AUTOGENERATE count')", 
 						"incrementAddress (Default = false)", "requestAck (Default = false)"},
 					std::vector<std::string>{"Status"},
 					1,   // requiredUserPermissions 
@@ -228,6 +228,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Number of [Sub]Events (Default: 1)", 
 						"Starting Event Window Tag (Default: 0)",
 						"Match Event Tags (Default: false)", 
+						"Display Payload at GUI (Default: true)", 
 					// "eventDuration (Default := 400)", 
 						// "doNotReadBack (bool)", 
 						"Save Binary Data to File (Default: false)"
@@ -586,10 +587,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction(
 		"CFO Interface (Emulation) Setup",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::SetCFOEmulationMode),            // feMacroFunction
+					&DTCFrontEndInterface::SetupCFOInterface),            // feMacroFunction
 					std::vector<std::string>{
 						"Put DTC in CFO Emulation Mode (Default := false)",
 						"Set Link RX/TX Enable (Default := false)",
+						"Enable Auto-generation of Data Request Packets (Default := false)",
 					},  // namesOfInputArgs
 					std::vector<std::string>{},
 					1,  // requiredUserPermissions
@@ -604,6 +606,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Enable CFO Emulator (Default := false)",
 											"Number of 1.4s super cycle repetitions (0 := infinite)",
 											"Starting Event Window Tag",
+											"Enable Auto-generation of Data Request Packets (Default := false)",
 											"Enable Clock Markers (Default := false)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{},
@@ -621,6 +624,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"Number of Event Windows to generate (0 := infinite)",
 											"Starting Event Window Tag",
 											"Event Window Mode",
+											"Enable Auto-generation of Data Request Packets (Default := false)",
 											"Enable Clock Markers (Default := false)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{},
@@ -2713,7 +2717,7 @@ void DTCFrontEndInterface::BockWriteROC(__ARGS__)
 	DTCLib::DTC_Link_ID rocLinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
 	DTCLib::roc_address_t address          = __GET_ARG_IN__("address", DTCLib::roc_address_t);
-	std::string writeDataIn   = __GET_ARG_IN__("writeData (CSV-literal or CSV-filename of 16-bit words, or keyword + parameter 'AUTOGENERATE <count>')", std::string);
+	std::string writeDataIn   = __GET_ARG_IN__("writeData (CSV-literal or CSV-filename of 16-bit words, or keyword + parameter 'AUTOGENERATE count')", std::string);
 	bool     incrementAddress = __GET_ARG_IN__("incrementAddress (Default = false)", bool);
 	bool     requestAck = __GET_ARG_IN__("requestAck (Default = false)", bool);
 	std::vector<DTCLib::roc_data_t> writeData;
@@ -2727,7 +2731,8 @@ void DTCFrontEndInterface::BockWriteROC(__ARGS__)
 	if(writeDataIn.find("AUTOGENERATE") != std::string::npos)
 	{
 		__FE_COUT__ << "Auto-generating ROC write block data... 2nd argument is count." << __E__;
-		std::vector<std::string> split = StringMacros::getVectorFromString(writeDataIn);
+		std::vector<std::string> split = StringMacros::getVectorFromString(writeDataIn,
+			{',', '|', '&', ' '} /* delimeters */);
 		__FE_COUTV__(StringMacros::vectorToString(split));
 		if(split.size() != 2)
 		{
@@ -3729,7 +3734,7 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 // } //end GetLinkLossOfLight()
 
 //========================================================================
-void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
+void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 {	
 	if(__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false))
 		thisDTC_->SetCFOEmulationMode();
@@ -3751,7 +3756,12 @@ void DTCFrontEndInterface::SetCFOEmulationMode(__ARGS__)
 		thisDTC_->DisableTransmitCFOLink();
 	}
 
-} //end SetCFOEmulationMode()
+	if(__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false))
+		thisDTC_->EnableAutogenDRP();
+	else
+		thisDTC_->DisableAutogenDRP();
+
+} //end SetupCFOInterface()
 
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
@@ -3783,6 +3793,11 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 	bool enableClockMarkers = __GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false);
 	__COUTV__(enableClockMarkers);
 	thisDTC_->SetCFOEmulation40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+
+	if(__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false))
+		thisDTC_->EnableAutogenDRP();
+	else
+		thisDTC_->DisableAutogenDRP();
 
 	thisDTC_->EnableReceiveCFOLink(); //enable forwarding if CFO timing link to ROCs
 	thisDTC_->EnableCFOEmulation();
@@ -3903,6 +3918,11 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 	__COUTV__(enableClockMarkers);
 	thisDTC_->SetCFOEmulation40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
+	if(__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false))
+		thisDTC_->EnableAutogenDRP();
+	else
+		thisDTC_->DisableAutogenDRP();
+
 	thisDTC_->EnableReceiveCFOLink();  //enable forwarding if CFO timing link to ROCs
 	thisDTC_->EnableCFOEmulation();
 	
@@ -3931,12 +3951,14 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 	bool activeMatch = !__GET_ARG_IN__("Match Event Tags (Default: false)", bool);
 	unsigned int timestampStart = __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", unsigned int);
 	bool saveBinaryDataToFile = __GET_ARG_IN__("Save Binary Data to File (Default: false)", bool);
+	bool displayPayloadAtGUI = __GET_ARG_IN__("Display Payload at GUI (Default: true)", bool, true);
 	
 	__FE_COUTV__(dataAreSubEvents);
 	__FE_COUTV__(numberOfEvents);
 	__FE_COUTV__(activeMatch);
 	__FE_COUTV__(timestampStart);
 	__FE_COUTV__(saveBinaryDataToFile);
+	__FE_COUTV__(displayPayloadAtGUI);
 
        ostr << "Step 1 " << std::endl;
 
@@ -4089,11 +4111,11 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 							// print the data block payload raw data
 							{
 								auto dataPtr = reinterpret_cast<const uint8_t*>(dataBlocks[j].GetData());
-								ostr << "Data payload:" << std::endl;
+								if(displayPayloadAtGUI) ostr << "Data payload:" << std::endl;
 								for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=2)
 								{
 									if(fp) fwrite(&dataPtr[l],sizeof(uint32_t), 1, fp);
-									ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
+									if(displayPayloadAtGUI) ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 								}
 							}
 
@@ -4239,11 +4261,11 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 					// print the data block payload raw data
 					{
 						auto dataPtr = reinterpret_cast<const uint8_t*>(dataBlocks[j].GetData());
-						ostr << "Data payload:" << std::endl;
+						if(displayPayloadAtGUI) ostr << "Data payload:" << std::endl;
 						for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=4)
 						{
 							if(fp) fwrite(&dataPtr[l],sizeof(uint32_t), 1, fp);
-							ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
+							if(displayPayloadAtGUI) ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 						}
 					}
 

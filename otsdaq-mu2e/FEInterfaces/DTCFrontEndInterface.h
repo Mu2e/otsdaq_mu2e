@@ -150,7 +150,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// void 								GetLinkLossOfLight					(__ARGS__);
 	
-	void 								SetCFOEmulationMode					(__ARGS__);
+	void 								SetupCFOInterface					(__ARGS__);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 
