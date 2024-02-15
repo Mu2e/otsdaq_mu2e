@@ -621,7 +621,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation),                  // feMacroFunction
 					std::vector<std::string>{"Enable CFO Emulator (Default := false)",
 											"Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",
-											"Number of Event Windows to generate (0 := infinite)",
+											"Number of Event Window Markers to generate (0 := infinite)",
 											"Starting Event Window Tag",
 											"Event Window Mode",
 											"Enable Auto-generation of Data Request Packets (Default := false)",
@@ -3902,7 +3902,7 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 	__COUTV__(eventDurationInClocks);
 	thisDTC_->SetCFOEmulationHeartbeatInterval(eventDurationInClocks);  
 
-	uint32_t numberOfEventWindows = __GET_ARG_IN__("Number of Event Windows to generate (0 := infinite)",uint32_t);
+	uint32_t numberOfEventWindows = __GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t);
 	__COUTV__(numberOfEventWindows);
 	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfEventWindows);
 	
