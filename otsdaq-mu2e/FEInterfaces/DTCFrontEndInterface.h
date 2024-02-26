@@ -69,6 +69,35 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	DTCLib::DTC* 									thisDTC_;
 
+	struct DetachedBufferTestThreadStruct
+	{
+		std::mutex 				lock_;
+		std::atomic<bool>		running_ = false;
+		std::atomic<bool>		exitThread_ = false;
+		std::atomic<bool>		resetStartEventTag_ = false;
+
+		DTCLib::DTC* 			thisDTC_;
+
+		bool					inSubeventMode_ = false;
+		bool					activeMatch_ = false;
+		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;		
+		bool					saveBinaryData_ = false;
+
+		std::atomic<uint64_t>	eventsCount_;
+		std::atomic<uint64_t>	subeventsCount_;
+		std::atomic<uint64_t>	mismatchedEventTagsCount_;
+		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_, 
+			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;
+
+		FILE*					fp_ = nullptr;
+
+	};  // end DetachedBufferTestThreadStruct declaration
+
+	static std::string getDetachedBufferTestStatus(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static void handleDetachedSubevent(const DTCLib::DTC_SubEvent& subevent,
+		std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
+
   private:
 	void 								createROCs					(void);
 	void 								registerFEMacros			(void);
@@ -87,8 +116,12 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::pair<std::string /*ROC UID*/,
 			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
 
-	std::ofstream 									outputStream;
+	// std::ofstream 									outputStream;
 
+
+
+	static void detechedBufferTestThread(
+		std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 
   public:
 	// void 								FlashLEDs							(__ARGS__);	
@@ -155,6 +188,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 
 	void 								BufferTest							(__ARGS__);
+	void 								PatternTest							(__ARGS__);
+	void 								BufferTest_detached					(__ARGS__);
 
 	void 								ManualLoopbackSetup					(__ARGS__);
 
