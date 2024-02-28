@@ -82,6 +82,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		bool					activeMatch_ = false;
 		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;		
 		bool					saveBinaryData_ = false;
+		bool					doNotResetCounters_ = false;
 
 		std::atomic<uint64_t>	eventsCount_;
 		std::atomic<uint64_t>	subeventsCount_;
