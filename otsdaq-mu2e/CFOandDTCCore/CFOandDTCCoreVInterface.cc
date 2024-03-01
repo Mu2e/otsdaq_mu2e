@@ -109,6 +109,32 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 {	
 	// clang-format off
 
+	bool isCFO = getInterfaceType() == "CFOFrontEndInterface";
+
+	registerFEMacroFunction(
+		std::string(isCFO?"CFO ":"DTC ") + "Soft Reset",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::SoftReset),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1, // requiredUserPermissions
+					"*",
+					"Executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " by setting the reset bit (31) to true on the <b>" + std::string(isCFO?"CFO ":"DTC ") + "Control Register</b> (0x9100). "
+					"This bit clear counters and FIFOs; it does not change select/control bits, it does not reset the primary " + std::string(isCFO?"CFO":"DTC") + " Timing Interface block."
+	);
+
+	registerFEMacroFunction(
+		std::string(isCFO?"CFO ":"DTC ") + "Hard Reset",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::HardReset),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1, // requiredUserPermissions
+					"*",
+					"Executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " by setting the reset bit (0) to true on the <b>" + std::string(isCFO?"CFO ":"DTC ") + "Control Register</b> (0x9100). "
+					"This bit is like a ‘factory reset’ - it DOES change select/control/threshold bits back to defaults; it DOES reset the primary FPGA Timing Interface block. It also executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " after the hard reset."
+	);
+
 	registerFEMacroFunction(
 		"Get Firmware Version",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -530,6 +556,12 @@ void CFOandDTCCoreVInterface::SelectJitterAttenuatorSource(__ARGS__)
 	__SET_ARG_OUT__("Register Write Results", getCFOandDTCRegisters()->FormatJitterAttenuatorCSR());	
 
 }  // end SelectJitterAttenuatorSource()
+
+
+//========================================================================
+void CFOandDTCCoreVInterface::SoftReset(__ARGS__) { getCFOandDTCRegisters()->SoftReset(); }
+//========================================================================
+void CFOandDTCCoreVInterface::HardReset(__ARGS__) { getCFOandDTCRegisters()->HardReset(); }
 
 //
 ////==================================================================================================

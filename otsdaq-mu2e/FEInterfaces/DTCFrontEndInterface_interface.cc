@@ -316,30 +316,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Read from the DTC Memory Map."
 	);
 
-	registerFEMacroFunction(
-		"DTC Soft Reset",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::DTCSoftReset),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1, // requiredUserPermissions
-					"*",
-					"Executes a soft reset of the DTC by setting the reset bit (31) to true on the <b>DTC Control Register</b> (0x9100). "
-					"This bit clear counters and FIFOs; it does not change select/control bits, it does not reset the primary DTC Timing Interface block."
-	);
-
-	registerFEMacroFunction(
-		"DTC Hard Reset",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::DTCHardReset),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1, // requiredUserPermissions
-					"*",
-					"Executes a soft reset of the DTC by setting the reset bit (0) to true on the <b>DTC Control Register</b> (0x9100). "
-					"This bit is like a ‘factory reset’ - it DOES change select/control/threshold bits back to defaults; it DOES reset the primary DTC Timing Interface block. It also executes a soft reset of the DTC after the hard reset."
-	);
-
 	// registerFEMacroFunction(
 	// 	"DTC_HighRate_DCS_Check",
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -3265,11 +3241,6 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	__SET_ARG_OUT__("readData", ss.str());  // readDataStr);
 }  // end ReadDTC()
 
-//========================================================================
-void DTCFrontEndInterface::DTCSoftReset(__ARGS__) { thisDTC_->SoftReset(); }
-//========================================================================
-void DTCFrontEndInterface::DTCHardReset(__ARGS__) { thisDTC_->HardReset(); }
-
 // //========================================================================
 // void DTCFrontEndInterface::DTCSoftReset()
 // {
@@ -4143,6 +4114,16 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
 		statusSs << "Next Expected Event Window Tag:" << threadStruct->nextEventWindowTag_ << __E__;
 		statusSs << "Mismatched Event Tags count:" << threadStruct->mismatchedEventTagsCount_ << __E__;
+
+		if(threadStruct->mismatchedEventTagJumps_.size() < 20)
+		{
+			statusSs << "\t Mismatched Tag Jumps..." << __E__;
+			for(size_t i=0;i<threadStruct->mismatchedEventTagJumps_.size();++i)
+				statusSs << "\t\t Mismatch Jump-" << i <<
+					" Expected:" << threadStruct->mismatchedEventTagJumps_[i].first <<
+					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second << __E__;
+		}
+
 		
 		statusSs << "ROC Fragments..." << __E__;
 		for(size_t i=0;i<threadStruct->rocFragmentsCount_.size();++i)
@@ -4184,12 +4165,16 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	// check the subevent tag window
 	if(threadStruct->nextEventWindowTag_ != subevent->GetEventWindowTag().GetEventWindowTag(true))
 	{
-		++(threadStruct->mismatchedEventTagsCount_);
+		++(threadStruct->mismatchedEventTagsCount_);		
 		std::stringstream ostr;
 		ostr << "Mismatched event tag. Expected = 0x" << std::hex << std::setw(4) << std::setfill('0') <<
 			threadStruct->nextEventWindowTag_ << ", Received = 0x" << std::hex << std::setw(4) << std::setfill('0') <<
 			subevent->GetEventWindowTag().GetEventWindowTag(true);
 		__COUT__ << ostr.str();
+		threadStruct->mismatchedEventTagJumps_.push_back(std::make_pair<uint64_t, uint64_t>(
+			threadStruct->nextEventWindowTag_,
+			subevent->GetEventWindowTag().GetEventWindowTag(true)
+		));
 	}
 	
 	if(threadStruct->inSubeventMode_)
@@ -4369,6 +4354,7 @@ try
 		threadStruct->eventsCount_ = 0;
 		threadStruct->subeventsCount_ = 0;
 		threadStruct->mismatchedEventTagsCount_ = 0;
+		threadStruct->mismatchedEventTagJumps_.clear();
 		threadStruct->rocFragmentsCount_ = {0,0,0,0,0,0};
 		threadStruct->rocPayloadEmptyCount_ = {0,0,0,0,0,0};	
 		threadStruct->rocFragmentTimeoutsCount_ = {0,0,0,0,0,0};
@@ -4407,6 +4393,7 @@ try
 						threadStruct->eventsCount_ = 0;
 						threadStruct->subeventsCount_ = 0;
 						threadStruct->mismatchedEventTagsCount_ = 0;
+						threadStruct->mismatchedEventTagJumps_.clear();
 						threadStruct->rocFragmentsCount_ = {0,0,0,0,0,0};
 						threadStruct->rocPayloadEmptyCount_ = {0,0,0,0,0,0};	
 						threadStruct->rocFragmentTimeoutsCount_ = {0,0,0,0,0,0};
@@ -4426,7 +4413,7 @@ try
 
 		if(!threadStruct->inSubeventMode_) //treat as an Event
 		{			
-			// get the data requested as events
+		  TLOG_DEBUG() << "get the data requested as events via ->GetData(...)";
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				threadStruct->activeMatch_)).size())
 			{ 
@@ -4455,6 +4442,11 @@ try
 							threadStruct->nextEventWindowTag_ << ", Received = 0x" << std::hex << std::setw(4) << std::setfill('0') <<
 							event->GetEventWindowTag().GetEventWindowTag(true);
 						__COUT__ << ostr.str();
+
+						threadStruct->mismatchedEventTagJumps_.push_back(std::make_pair<uint64_t, uint64_t>(
+							threadStruct->nextEventWindowTag_,
+							event->GetEventWindowTag().GetEventWindowTag(true)
+						));
 					}
 					threadStruct->nextEventWindowTag_ = event->GetEventWindowTag().GetEventWindowTag(true) + 1; //increment for next
 
@@ -4482,7 +4474,7 @@ try
 		}
 		else //Treat as Subevent
 		{
-			// get the data requested as events
+		  TLOG_DEBUG() << "get the data requested as events via ->GetSubEventData(...)";
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				threadStruct->activeMatch_)).size())
 			{ 

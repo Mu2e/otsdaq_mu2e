@@ -87,8 +87,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t>	eventsCount_;
 		std::atomic<uint64_t>	subeventsCount_;
 		std::atomic<uint64_t>	mismatchedEventTagsCount_;
+		std::vector<std::pair<uint64_t, uint64_t>>	mismatchedEventTagJumps_;
+
 		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_, 
-			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;
+			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;		
 
 		FILE*					fp_ = nullptr;
 
@@ -147,9 +149,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
     void 								WriteExternalROCRegister			(__ARGS__);
 	void                             	ReadExternalROCRegister        		(__ARGS__);
 	// void 							DTCHighRateBlockCheck				(__ARGS__);
-	void 								DTCSoftReset						(__ARGS__);
-	void 								DTCHardReset						(__ARGS__);
-
+	
 	void 								DTCHighRateDCSCheck					(__ARGS__);
 	void 								RunROCFEMacro						(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest		(__ARGS__);

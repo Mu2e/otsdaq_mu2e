@@ -84,6 +84,9 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 
   public: 
+	void 								SoftReset						(__ARGS__);
+	void 								HardReset						(__ARGS__);
+
 	void								GetFirmwareVersion					(__ARGS__);
 	void 								ResetPCIe							(__ARGS__);	
 	void 								FlashLEDs							(__ARGS__);	
