@@ -510,6 +510,16 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					1,"*" /*allowedCallingFEs*/,
 					feMacroTooltip.str());  // requiredUserPermissions
 
+	registerFEMacroFunction(
+		"Loopback CFO Emulator Test Run",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::CFOEmulatorLoopbackTest),
+				    std::vector<std::string>{},
+					std::vector<std::string>{"Result"},
+					1,    // requiredUserPermissions
+					"*", 
+					"Executes a loopback test at the DTC's CFO emulator, and broadcasts loopback markers to all ROCs."
+	);
 	
 	registerFEMacroFunction(
 		"Loopback Manual Setup",
@@ -4395,6 +4405,24 @@ try
 					__COUT_INFO__ << "Restarting detached buffer test thread looking for Event Window Tag = " << 
 						threadStruct->nextEventWindowTag_ << std::endl;
 
+					//close and reopen file
+					if(threadStruct->fp_) fclose(threadStruct->fp_);
+
+					if(threadStruct->saveBinaryData_)
+					{
+						std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+													std::to_string(clock()) + ".bin";
+						filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
+						__COUTV__(filename);
+						threadStruct->fp_ = fopen(filename.c_str(), "wb");
+						if(!threadStruct->fp_)
+						{
+							__SS__ << "Failed to open file to save macro output '"
+										<< filename << "'..." << __E__;
+							__SS_THROW__;
+						}		
+					}
+
 					//reset counts
 					if(!threadStruct->doNotResetCounters_)
 					{
@@ -5414,7 +5442,18 @@ void DTCFrontEndInterface::PatternTest(__ARGS__)
 	// delete cfo;
 } //end PatternTest()
 
+//========================================================================
+void DTCFrontEndInterface::CFOEmulatorLoopbackTest(__ARGS__)
+{	
+	__FE_COUT__ << "CFO Emulator Loopback Test run" << __E__;
 
+	thisDTC_->EnableCFOLoopback();
+	thisDTC_->RunCFOEmulatorLoopbackTest();
+
+	std::stringstream outSs;
+	outSs << "Done.";
+	__SET_ARG_OUT__("Result", outSs.str());
+} //end CFOEmulatorLoopbackTest()
 
 //========================================================================
 void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)

@@ -192,6 +192,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								PatternTest							(__ARGS__);
 	void 								BufferTest_detached					(__ARGS__);
 
+
+	void 								CFOEmulatorLoopbackTest				(__ARGS__);
 	void 								ManualLoopbackSetup					(__ARGS__);
 
 	
