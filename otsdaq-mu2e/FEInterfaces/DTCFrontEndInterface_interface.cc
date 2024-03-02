@@ -4123,6 +4123,14 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 					" Expected:" << threadStruct->mismatchedEventTagJumps_[i].first <<
 					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second << __E__;
 		}
+		else
+		{
+			statusSs << "\t TOO MANY Mismatched Tag Jumps (showing 10)..." << __E__;
+			for(size_t i=0;i < 10;++i)
+				statusSs << "\t\t Mismatch Jump-" << i <<
+					" Expected:" << threadStruct->mismatchedEventTagJumps_[i].first <<
+					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second << __E__;
+		}
 
 		
 		statusSs << "ROC Fragments..." << __E__;
