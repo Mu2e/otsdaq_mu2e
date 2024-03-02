@@ -4491,7 +4491,7 @@ try
 					}
 					handleDetachedSubevent(*(subeventPtr.get()), threadStruct);
 				}
-				
+				//threadStruct->thisDTC_->ReleaseBuffers(DTC_DMA_Engine_DAQ,subevents.size()); // This currently does not exist, but it would be most efficient to release here
 			} //end primary Sub Event loop
 			//if here, no more data in DMA buffer
 			if(lastCount != threadStruct->subeventsCount_ || ii%100)
