@@ -6,8 +6,8 @@ cet_build_plugin(ROCPolarFireCoreInterface otsdaq::FEInterface LIBRARIES REG ots
  cet_build_plugin(ROCDTCHardwareEmulated otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::ROCCore
  )
     
-cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore
- )
+cet_make_library(LIBRARY_NAME DTCFrontEndInterface SOURCE DTCFrontEndInterfaceImpl.cc LIBRARIES PUBLIC otsdaq_mu2e::CFOandDTCCore )
+cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::DTCFrontEndInterface )
  
 cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq_mu2e::CFOandDTCCore mu2e_pcie_utils::CFOInterface
  )

@@ -91,19 +91,24 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_, 
 			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;		
+		uint64_t				totalSubeventBytesTransferred_;
+		std::chrono::time_point<std::chrono::steady_clock>
+							transferStartTime_, transferEndTime_;
 
 		FILE*					fp_ = nullptr;
 
 	};  // end DetachedBufferTestThreadStruct declaration
 
-	static std::string getDetachedBufferTestStatus(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
-	static void handleDetachedSubevent(const DTCLib::DTC_SubEvent& subevent,
-		std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static std::string 					getDetachedBufferTestStatus			(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static uint64_t 					getDetachedBufferTestReceivedCount	(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static void 						handleDetachedSubevent				(const DTCLib::DTC_SubEvent& subevent,
+																				std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+
 	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
 
   private:
-	void 								createROCs					(void);
-	void 								registerFEMacros			(void);
+	void 								createROCs							(void);
+	void 								registerFEMacros					(void);
 
 	int         									dtc_location_in_chain_ = -1;
 	unsigned int   									roc_mask_              = 0;
@@ -187,6 +192,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								SetupCFOInterface					(__ARGS__);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
+	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
+																			std::string eventDuration, uint32_t numberOfEventWindows, uint64_t initialEventWindowTag,
+																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
+																			bool doNotResetCounters);
 
 	void 								BufferTest							(__ARGS__);
 	void 								PatternTest							(__ARGS__);
