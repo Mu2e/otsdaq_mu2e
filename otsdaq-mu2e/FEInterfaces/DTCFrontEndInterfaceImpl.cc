@@ -4156,11 +4156,6 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 		statusSs << "Total Subevent Bytes Transferred (including Headers): " << 
 			threadStruct->totalSubeventBytesTransferred_ << __E__;
 
-		// statusSs << "Start of Data Transfer: " << std::chrono::duration_cast<std::chrono::nanoseconds>(
-		// 		threadStruct->transferStartTime_).count() << __E__;
-		// statusSs << "End of Data Transfer: " << std::chrono::duration_cast<std::chrono::nanoseconds>(
-		// 		threadStruct->transferEndTime_).count() << __E__;
-
 		long long ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
 				threadStruct->transferEndTime_ - threadStruct->transferStartTime_).count();
 		if(ns > 1000) //prevent divide by 0
@@ -4229,7 +4224,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 
 	++(threadStruct->subeventsCount_);
 
-#if 0
+#if 1
 	// check the subevent tag window
 	if(threadStruct->nextEventWindowTag_ != subevent->GetEventWindowTag().GetEventWindowTag(true))
 	{
@@ -4264,7 +4259,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 
 	threadStruct->totalSubeventBytesTransferred_ += 32; //for subevent header
 
-#if 0	
+#if 1	
 	// check if there is an error on the link in the subevent header
 	if (subevent->GetHeader()->link0_status > 0)
 	{
@@ -4351,7 +4346,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 		// 4	“Overflow” flag indicates data is good, but not all data could be sent.
 		// 7:5	Reserved
 
-#if 0
+#if 1
 		if((dataHeader->GetStatus() >> 3) & 1)
 			++(threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()]);		
 		
@@ -4375,7 +4370,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 			if(dataHeader->GetByteCount() - 16 == 0)	//count empty payloads	
 				++(threadStruct->rocPayloadEmptyCount_[dataHeader->GetLinkID()]);		
 
-#if 0
+#if 1
 			auto dataPtr = reinterpret_cast<const uint8_t*>(dataBlocks[j].GetData());
 
 			// if(displayPayloadAtGUI) ostr << "Data payload:" << std::endl;
