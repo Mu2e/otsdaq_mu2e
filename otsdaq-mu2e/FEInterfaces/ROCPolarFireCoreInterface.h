@@ -33,15 +33,19 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 	virtual void 							readEmulatorBlock		(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t numberOfReads, bool incrementAddress) override; 
 	
-	// specific ROC functions
-	virtual void  							GetStatus				(void) override;
-	virtual void 							GetFirmwareVersion		(void) override;
-	virtual int  							readInjectedPulseTimestamp			(void) override;
-	virtual void 							writeDelay				(uint16_t delay) override;  // 5ns steps
-	virtual int  							readDelay				(void) override;            	// 5ns steps
+	// specific ROC functions	
+	virtual int  							readInjectedPulseTimestamp					(void) override;
+	virtual void 							writeDelay									(uint16_t delay) override;  // 5ns steps
+	virtual int  							readDelay									(void) override;            	// 5ns steps
 
-	virtual int  							readDTCLinkLossCounter	(void) override;
-	virtual void 							resetDTCLinkLossCounter	(void) override;
+	virtual int  							readDTCLinkLossCounter						(void) override;
+	virtual void 							resetDTCLinkLossCounter						(void) override;
+
+
+	virtual void  							GetStatus									(__ARGS__) override;
+	virtual void 							GetFirmwareVersion							(__ARGS__) override;
+	void 									SetupForPatternDataTaking					(__ARGS__);
+
 	// clang-format on
 };
 

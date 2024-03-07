@@ -108,45 +108,126 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 {	
 	// clang-format off
-	// registerFEMacroFunction(
-	// 	"Get Firmware Version",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOandDTCCoreVInterface::GetFirmwareVersion),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-	// 				1);//"allUsers:0 | TDAQ:255");
+
+	bool isCFO = getInterfaceType() == "CFOFrontEndInterface";
+
+	registerFEMacroFunction(
+		std::string(isCFO?"CFO ":"DTC ") + "Soft Reset",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::SoftReset),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1, // requiredUserPermissions
+					"*",
+					"Executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " by setting the reset bit (31) to true on the <b>" + std::string(isCFO?"CFO ":"DTC ") + "Control Register</b> (0x9100). "
+					"This bit clear counters and FIFOs; it does not change select/control bits, it does not reset the primary " + std::string(isCFO?"CFO":"DTC") + " Timing Interface block."
+	);
+
+	registerFEMacroFunction(
+		std::string(isCFO?"CFO ":"DTC ") + "Hard Reset",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::HardReset),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1, // requiredUserPermissions
+					"*",
+					"Executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " by setting the reset bit (0) to true on the <b>" + std::string(isCFO?"CFO ":"DTC ") + "Control Register</b> (0x9100). "
+					"This bit is like a ‘factory reset’ - it DOES change select/control/threshold bits back to defaults; it DOES reset the primary FPGA Timing Interface block. It also executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " after the hard reset."
+	);
+
+	registerFEMacroFunction(
+		"Get Firmware Version",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetFirmwareVersion),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
+					1,  //"allUsers:0 | TDAQ:255");
+					"*",
+					"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
+	);
+
+	registerFEMacroFunction(
+		"Reset PCIe",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::ResetPCIe),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Status"}, // namesOfOutputArgs
+					1,  // requiredUserPermissions 
+					"*",
+					"Reset the PCIe interface allocated for this FPGA."
+	);
 					
-	// registerFEMacroFunction(
-	// 	"Flash_LEDs",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOandDTCCoreVInterface::FlashLEDs),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1);                          // requiredUserPermissions
+	registerFEMacroFunction(
+		"Flash LEDs",  // feMacroName
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::FlashLEDs),  // feMacroFunction
+					std::vector<std::string>{},
+					std::vector<std::string>{"Status"}, // namesOfOutputArgs
+					1,  // requiredUserPermissions
+					"*", // allowedCallingFEs
+					"Flashes the LEDs, for example to help find the target FPGA in a multi-FPGA deployment."
+	);
     
-	// registerFEMacroFunction(
-	// 	"Get Status",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOandDTCCoreVInterface::GetStatus),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Status"},
-	// 				1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Get Status",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetStatus),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Status"},
+					1,  // requiredUserPermissions
+					"*", // allowedCallingFEs
+					"Reads and displays all registers in a human-readable format."
+	);
 
-	// registerFEMacroFunction(
-	// 	"Check Firefly Temperature",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOandDTCCoreVInterface::GetFireflyTemperature),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Temperature"},
-	// 				1);  // requiredUserPermissions
+	registerFEMacroFunction(
+		"Get Simple Status",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetSimpleStatus),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Status"},
+					1,  // requiredUserPermissions
+					"*", // allowedCallingFEs
+					"Similar to <b>Get Status</b>, this FE Macro fetches data from a select few registers. "
+					"Registers <b>DTC Control, ROC Emulation Enable, Link Enable, SERDES Reset, and SERDES Reset Done</b> are displayed in a human-readable format."
+	);
+	
+	registerFEMacroFunction(
+		"Check Firefly Temperature",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetFireflyTemperature),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Temperature"},
+					1,  // requiredUserPermissions
+					"*",
+					"Check the temperature from the Firefly RX IIC Bus."
+	);
 
-	// registerFEMacroFunction(
-	// 	"Check FPGA Temperature",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOandDTCCoreVInterface::GetFPGATemperature),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Temperature"},
-	// 				1);  // requiredUserPermissions
+	
+	registerFEMacroFunction(
+		"Check FPGA Temperature",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetFPGATemperature),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Temperature"},
+					1, 
+					"*", 
+					"Get the temperature of the FPGA in degrees Celesius. "
+					"A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor."
+	);
+
+	registerFEMacroFunction(
+		"Jitter Attenuator Setup",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::SelectJitterAttenuatorSource),
+				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)", 
+												"DoNotSet",
+												"AlsoResetJA"},
+						std::vector<std::string>{"Register Write Results"},
+					1,  // requiredUserPermissions 
+					"*", 
+					"Select the source of the jitter attenuator: a local oscilator on the DTC or the RTF.\n"
+					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>. "
+	);
 
 	// registerFEMacroFunction(
 	// 	"Reset Link Rx",
@@ -228,32 +309,6 @@ void CFOandDTCCoreVInterface::universalRead(char* address, char* returnValue)
 	}
 }  // end universalRead()
 
-// //===========================================================================================
-// // registerRead: return = value read from register at address "address"
-// //
-// dtc_data_t CFOandDTCCoreVInterface::registerRead(dtc_address_t address)
-// { 	// lock mutex scope
-// 	std::lock_guard<std::mutex> lock(readWriteOperationMutex_);
-// 	reg_access_.access_type = 0;  // 0 = read, 1 = write
-// 	reg_access_.reg_offset  = address;
-// 	// __COUTV__(reg_access.reg_offset);
-
-// 	if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
-// 	{
-// 		__FE_SS__ << "ERROR: DTC register read - Does file exist? -> /dev/mu2e" << device_
-// 		       << __E__;
-// 		__SS_THROW__;
-// 	}
-
-// 	__FE_COUT__	<< time(0) << " READ  address: 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << reg_access_.reg_offset 
-// 				<< " \t read-value:  0x" << std::setw(8) << std::setprecision(8) << std::hex << reg_access_.val << __E__;
-
-// 	// if(reg_access_.val == 0xbf80c0c0)
-// 	// 	__FE_COUT__ << StringMacros::stackTrace() << __E__;
-// 	return reg_access_.val;
-// }  // end registerRead() and unlock mutex scope
-
-
 //=====================================================================================
 // universalWrite
 //	Must implement this function for Macro Maker to work with this
@@ -277,94 +332,236 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 	}
 }  // end universalWrite()
 
-// //===============================================================================================
-// // registerWrite: return = value readback from register at address "address"
-// dtc_data_t CFOandDTCCoreVInterface::registerWrite(dtc_address_t address, dtc_data_t dataToWrite)
-// {
+//==============================================================================
+// GetFirmwareVersion
+void CFOandDTCCoreVInterface::GetFirmwareVersion(__ARGS__)
+{	
+	__SET_ARG_OUT__("Firmware Version Date", getCFOandDTCRegisters()->ReadDesignDate());
+}  // end GetFirmwareVersion()
 
-// 	{// lock mutex scope
-// 		std::lock_guard<std::mutex> lock(readWriteOperationMutex_);
-// 		reg_access_.access_type = 1;  // 0 = read, 1 = write
-// 		reg_access_.reg_offset  = address;
-// 		reg_access_.val = dataToWrite;
+//========================================================================
+void CFOandDTCCoreVInterface::ResetPCIe(__ARGS__)
+{	
+	getCFOandDTCRegisters()->ResetPCIe();
+	__SET_ARG_OUT__("Status", "Done");
+} //end ResetPCIe()
 
-// 		if(ioctl(fd_, M_IOC_REG_ACCESS, &reg_access_))
-// 			__FE_COUT_ERR__ << "ERROR with register write - Does file exist? /dev/mu2e"
-// 							<< device_ << __E__;
-// 	} // unlock mutex scope
+//========================================================================
+void CFOandDTCCoreVInterface::FlashLEDs(__ARGS__)
+{	
+	getCFOandDTCRegisters()->FlashLEDs();
+	__SET_ARG_OUT__("Status", "Done");
+} //end FlashLEDs()
 
-	
-// 	//do DTC- and CFO-specific readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
-// 	//	which should leverage common readback verification defined in CFOandDTCCoreVInterface::readbackVerify()
+//========================================================================
+void CFOandDTCCoreVInterface::GetStatus(__ARGS__)
+{	
+	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(20, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
+} //end GetStatus()
 
-// 	__FE_COUT__	<< "WRITE address: 0x" 		<< std::setw(4) << std::setprecision(4) << std::hex << address 
-// 				<< " \t write-value: 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite << __E__;
+//========================================================================
+void CFOandDTCCoreVInterface::GetSimpleStatus(__ARGS__)
+{	
+	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(20, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
+} //end GetSimpleStatus()
+
+//========================================================================
+void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)
+{	
+	std::stringstream rd;
 
 
 
+	//do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
+/*
+	// #Read Firefly RX LOS registers
+	// #enable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// #Device address, register address, null, null
+	// my_cntl write 0x9298 0x54080000
+	registerWrite(0x9298,0x54080000);
+	// #read enable
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// #disable IIC on Firefly
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// #read data: Device address, register address, null, value
+	// my_cntl read 0x9298
+*/
+	getCFOandDTCRegisters()->SetTXRXFireflySelect(true);
+	getCFOandDTCRegisters()->WriteFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/, 0 /*data*/);
+	getCFOandDTCRegisters()->SetTXRXFireflySelect(false);
 
-// 	//--------------------------------------------------------
-// 	//Monitor register writes (for debugging)
-// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << ", \t " << "address: 0x" << 
-// 		std::setw(4) << std::setprecision(4) << std::hex << address <<
-// 		"," << " \t dataToWrite: 0x" << 
-// 		std::setw(8) << std::setprecision(8) << std::hex << dataToWrite << "\n";
-// 	regWriteMonitorStream_.flush();
-// 	//end of Monitor register writes
-// 	//--------------------------------------------------------
+	// #{EVB, ROC4, ROC1, CFO, unused, ROC5, unused, unused}
+	usleep(1000*100);
 
-// 	return registerRead(address);
-// }  // end registerWrite()
+/*
+	// #Read Firefly RX LOS registers
+	// my_cntl write 0x93a0 0x00000200
+	registerWrite(0x93a0,0x00000200);
+	// my_cntl write 0x9298 0x54070000
+	registerWrite(0x9298,0x54070000);
+	// my_cntl write 0x929c 0x00000002
+	registerWrite(0x929c,0x00000002);
+	// my_cntl write 0x93a0 0x00000000
+	registerWrite(0x93a0,0x00000000);
+	// my_cntl read 0x9298
+*/
 
-// //===============================================================================================
-// // readbackVerify: throw exception if readbackValue does correspond to dataToWrite, for a given address
-// void CFOandDTCCoreVInterface::readbackVerify(dtc_address_t address, dtc_data_t dataToWrite, dtc_data_t readbackValue)
-// {
-// 	switch(address)
-// 	{
-// 		case 0x9168: // lowest 16-bits are the I2C read value. So ignore in write validation			
-// 		case 0x9298:
-// 			dataToWrite		&= 0xffff0000; 
-// 			readbackValue 	&= 0xffff0000; 
-// 			break;
-// 		case 0x93a0: // upper 16-bits are part of I2C operation. So ignore in write validation			
-// 			dataToWrite		&= 0x0000ffff; 
-// 			readbackValue 	&= 0x0000ffff; 
-// 			break;
-// 		case 0x9100: //bit 31 is reset bit, which is write only 
-// 			dataToWrite		&= 0x7fffffff;
-// 			readbackValue   &= 0x7fffffff; 
-// 			break;
-// 		default:; // do direct comparison
-// 	} //end readback verification address case handling
-	
-// 	if(readbackValue != dataToWrite)
-// 	{
-// 		__FE_SS__ 	<< "write value 0x"	<< std::setw(8) << std::setprecision(8) << std::hex << dataToWrite
-// 				<< " to register 0x" 	<< std::setw(4) << std::setprecision(4) << std::hex << address << 
-// 				"... read back 0x"	 	<< std::setw(8) << std::setprecision(8) << std::hex << readbackValue <<
-// 				"\n\n" << StringMacros::stackTrace() << __E__;
-// 		__FE_SS_THROW__;
-// 		// __FE_COUT_ERR__ << ss.str(); 
-// 	}
-// } //end readbackVerify()
+	getCFOandDTCRegisters()->SetTXRXFireflySelect(true);
+	getCFOandDTCRegisters()->WriteFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/, 0 /*data*/);
+	getCFOandDTCRegisters()->SetTXRXFireflySelect(false);
 
-// //==================================================================================================
-// // turn on LEDs on front of timing card
-// void CFOandDTCCoreVInterface::turnOnLED()
-// {
-// 	// bit[16-20] = 1
-// 	registerWrite(0x9100, registerRead(0x9100) | 0x001f0000);
-// } //end turnOnLED()
+	//END do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
 
-// //==================================================================================================
-// // turn off LEDs on front of timing card
-// void CFOandDTCCoreVInterface::turnOffLED()
-// {
-// 	// bit[16-20] = 0
-// 	registerWrite(0x9100, registerRead(0x9100) & (~0x001f0000));
-// } //end turnOffLED()
+	dtc_data_t val=0, val2=0, tmpVal;
+	for(int i=0;i<5;++i)
+	{
+		usleep(1000*100 /* 100 ms */);
+		getCFOandDTCRegisters()->SetTXRXFireflySelect(true);
+		//OR := if ever 1, mark dead
+		tmpVal = getCFOandDTCRegisters()->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/); 
+		val |= tmpVal;//getCFOandDTCRegisters()->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/);
+		__COUT__ << "0x08 ==> " << std::hex << " OrVal = 0x" << val << " readval = 0x" << tmpVal << __E__;
+		getCFOandDTCRegisters()->SetTXRXFireflySelect(false);
+			
+		
+		usleep(1000*100 /* 100 ms */);
+		getCFOandDTCRegisters()->SetTXRXFireflySelect(true);
+		//OR := if ever 1, mark dead
+		tmpVal = getCFOandDTCRegisters()->ReadFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/);
+		val2 |= tmpVal;
+		__COUT__ << "0x07 ==> " << std::hex << " OrVal = 0x" << val2 << " readval = 0x" << tmpVal << __E__;
+		getCFOandDTCRegisters()->SetTXRXFireflySelect(false);
+	} //end multi-read to check for strange value changing
 
+	// #ROC0 bit 3
+	rd << "{0:" << (((val2>>(0+3))&1)?"DEAD":"OK");
+	// #ROC1 bit 5
+	rd << ", 1: " << (((val>>(0+5))&1)?"DEAD":"OK");
+	// #ROC2 bit 2
+	rd << ", 2:" << (((val2>>(0+2))&1)?"DEAD":"OK");
+	// #ROC3 bit 0
+	rd << ", 3:" << (((val2>>(0+0))&1)?"DEAD":"OK");
+	// #ROC4 bit 6
+	rd << ", 4: " << (((val>>(0+6))&1)?"DEAD":"OK");
+	// #ROC5 bit 1
+	rd << ", 5: " << (((val>>(0+1))&1)?"DEAD":"OK");
+	// #CFO bit 4
+	rd << ", 6/CFO: " << (((val>>(0+4))&1)?"DEAD":"OK");
+	// #EVB bit 7  Are EVB and CFO reversed?
+	rd << ", 7/EVB: " << (((val>>(0+7))&1)?"DEAD":"OK") << "}";
+
+
+
+	__SET_ARG_OUT__("Link Status",rd.str());
+} //end GetLinkLossOfLight()
+
+
+//========================================================================
+void CFOandDTCCoreVInterface::GetFireflyTemperature(__ARGS__)
+{	
+	std::stringstream rd;
+
+	// // #Read Firefly RX temp registers
+	// // #enable IIC on Firefly
+	// // my_cntl write 0x93a0 0x00000200
+	// registerWrite(0x93a0,0x00000200);
+	// // #Device address, register address, null, null
+	// // my_cntl write 0x9298 0x54160000
+	// registerWrite(0x9298,0x54160000);
+	// // #read enable
+	// // my_cntl write 0x929c 0x00000002
+	// registerWrite(0x929c,0x00000002);
+	// // #disable IIC on Firefly
+	// // my_cntl write 0x93a0 0x00000000
+	// registerWrite(0x93a0,0x00000000);
+	// // #read data: Device address, register address, null, temp in 2's compl.
+	// // my_cntl read 0x9298
+
+	rd << "Note: temperatures of 65C or higher should be addressed by DAQ experts.\n\n";
+
+	getCFOandDTCRegisters()->SetTXRXFireflySelect(true);
+	auto val = getCFOandDTCRegisters()->ReadFireflyRXIICInterface(0x54 /*device*/, 0x16 /*address*/);
+	getCFOandDTCRegisters()->SetTXRXFireflySelect(false);	
+
+
+	// dtc_data_t val = registerRead(0x9298) & 0x0FF;
+	rd << std::fixed << std::setprecision(1) << uint16_t(val) << ".0 C, " << double(val)*9/5 + 32 << " F, <65C=" << (val < 65?"GOOD":"BAD") <<
+		"\n\n" << getCFOandDTCRegisters()->FormatFPGAAlarms();
+
+	__SET_ARG_OUT__("Temperature",rd.str());
+} //end GetFireflyTemperature()
+
+//========================================================================
+void CFOandDTCCoreVInterface::GetFPGATemperature(__ARGS__)
+{	
+	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
+	std::stringstream ss;
+	ss << "Note: temperatures of 65C or higher should be addressed by DAQ experts.\n\n";
+	ss << getCFOandDTCRegisters()->FormatFPGATemperature() << "\n\n" << getCFOandDTCRegisters()->FormatFPGAAlarms();
+	__SET_ARG_OUT__("Temperature", ss.str());
+} //end GetFPGATemperature()
+
+//========================================================================
+void CFOandDTCCoreVInterface::SelectJitterAttenuatorSource(__ARGS__)
+{
+	uint32_t select = __GET_ARG_IN__(
+	    "Source Clock (0 is from CFO, 1 is from RJ45)", uint32_t);
+	select %= 4;
+	__FE_COUTV__((unsigned int)select);
+
+	// choose jitter attenuator input select (reg 0x9308, bits 5:4)
+	//  0 is Upstream Control Link Rx Recovered Clock
+	//  1 is RJ45 Upstream Clock
+	//  2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
+
+	// char              reg_0x9308[100];
+	// uint32_t          val = registerRead(0x9308);
+	// std::stringstream results;
+
+	// sprintf(reg_0x9308, "0x%8.8X", val);
+	// __FE_COUTV__(reg_0x9308);
+	// results << "reg_0x9118 Starting Value: " << reg_0x9308 << __E__;
+
+	// val &= ~(3 << 4);          // clear the two bits
+	// val &= ~(1);               // ensure unreset of jitter attenuator
+	// val |= (select & 3) << 4;  // set the two bits to selected value
+
+	// sprintf(reg_0x9308, "0x%8.8X", val);
+	// __FE_COUTV__(reg_0x9308);
+	// results << "reg_0x9118 Select Value: " << reg_0x9308 << __E__;
+
+	// registerWrite(0x9308, val);  // write select value
+
+	if(!__GET_ARG_IN__(
+	    "DoNotSet", bool))
+	{
+		bool alsoResetJA = __GET_ARG_IN__(
+	    		"AlsoResetJA", bool);
+		__FE_COUTV__(alsoResetJA);
+		getCFOandDTCRegisters()->SetJitterAttenuatorSelect(select, alsoResetJA);
+		sleep(1);
+		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		{
+			if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
+	}
+	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
+
+	__SET_ARG_OUT__("Register Write Results", getCFOandDTCRegisters()->FormatJitterAttenuatorCSR());	
+
+}  // end SelectJitterAttenuatorSource()
+
+
+//========================================================================
+void CFOandDTCCoreVInterface::SoftReset(__ARGS__) { getCFOandDTCRegisters()->SoftReset(); }
+//========================================================================
+void CFOandDTCCoreVInterface::HardReset(__ARGS__) { getCFOandDTCRegisters()->HardReset(); }
 
 //
 ////==================================================================================================
@@ -1838,7 +2035,6 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 
 // 	return;
 // }
-
 
 // //==============================================================================
 // // GetFirmwareVersion

@@ -56,10 +56,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// hardware access
 	//----------------
 	virtual mu2edev* 					getDevice					(void) {return thisDTC_->GetDevice();};
-//	void 								universalRead				(char* address, char* readValue) override; //defined in 
-//	void 								universalWrite				(char* address, char* writeValue) override;
-	// dtc_data_t							registerRead				(dtc_address_t address);
-	// virtual	dtc_data_t					registerWrite				(dtc_address_t address, dtc_data_t dataToWrite) override;  // return read value after having written dataToWrite
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) {return thisDTC_;};
 
 	// DTC specific items
 	//----------------
@@ -70,16 +67,48 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void								loopbackTest				(int step = -1);
 
-	// bool 								ROCActive					(unsigned int ROC_link);
-	// int  								getROCLinkStatus			(int ROC_link);
-	// int  								getCFOLinkStatus			(void);
-	// int  								checkLinkStatus				(void);
-
 	DTCLib::DTC* 									thisDTC_;
 
+	struct DetachedBufferTestThreadStruct
+	{
+		std::mutex 				lock_;
+		std::atomic<bool>		running_ = false;
+		std::atomic<bool>		exitThread_ = false;
+		std::atomic<bool>		resetStartEventTag_ = false;
+
+		DTCLib::DTC* 			thisDTC_;
+
+		bool					inSubeventMode_ = false;
+		bool					activeMatch_ = false;
+		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;		
+		bool					saveBinaryData_ = false;
+		bool					doNotResetCounters_ = false;
+
+		std::atomic<uint64_t>	eventsCount_;
+		std::atomic<uint64_t>	subeventsCount_;
+		std::atomic<uint64_t>	mismatchedEventTagsCount_;
+		std::vector<std::pair<uint64_t, uint64_t>>	mismatchedEventTagJumps_;
+
+		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_, 
+			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;		
+		uint64_t				totalSubeventBytesTransferred_;
+		std::chrono::time_point<std::chrono::steady_clock>
+							transferStartTime_, transferEndTime_;
+
+		FILE*					fp_ = nullptr;
+
+	};  // end DetachedBufferTestThreadStruct declaration
+
+	static std::string 					getDetachedBufferTestStatus			(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static uint64_t 					getDetachedBufferTestReceivedCount	(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static void 						handleDetachedSubevent				(const DTCLib::DTC_SubEvent& subevent,
+																				std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+
+	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
+
   private:
-	void 								createROCs					(void);
-	void 								registerFEMacros			(void);
+	void 								createROCs							(void);
+	void 								registerFEMacros					(void);
 
 	int         									dtc_location_in_chain_ = -1;
 	unsigned int   									roc_mask_              = 0;
@@ -95,22 +124,18 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::pair<std::string /*ROC UID*/,
 			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
 
-	// std::map<std::string /* ROC UID*/, 
-	// 	FESlowControlsChannel> 						mapOfROCSlowControlsChannels_;
+	// std::ofstream 									outputStream;
 
-	// m_ioc_reg_access_t 								reg_access_;
 
-	// dtc_data_t 										initial_9100_ = 0;
-	// dtc_data_t 										initial_9114_ = 0;
 
-	std::ofstream 									outputStream;
-
+	static void detechedBufferTestThread(
+		std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 
   public:
-	void 								FlashLEDs							(__ARGS__);	
-	void 								GetFirmwareVersion					(__ARGS__);
-	void 								GetStatus							(__ARGS__);
-	void 								GetSimpleStatus						(__ARGS__);
+	// void 								FlashLEDs							(__ARGS__);	
+	// void 								GetFirmwareVersion					(__ARGS__);
+	// void 								GetStatus							(__ARGS__);
+	// void 								GetSimpleStatus						(__ARGS__);
 
 	// FIXME -- copy from CFOandDTC and implement using DTC.h	
 	// void 							GetLinkLossOfLight					(__ARGS__);
@@ -121,25 +146,26 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// void								ShutdownFireflyTx					(__ARGS__);
 	// void								StartupFireflyTx					(__ARGS__);
 
+	void								SetupROCs							(__ARGS__);
 	void 								ReadROC								(__ARGS__);
 	void 								WriteROC							(__ARGS__);
-	void 								ROCBlockRead						(__ARGS__);
-	void 								ROCBlockWrite						(__ARGS__);
+	void 								BockReadROC							(__ARGS__);
+	void 								BockWriteROC						(__ARGS__);
     void 								WriteExternalROCRegister			(__ARGS__);
-	void                              	ReadExternalROCRegister        		(__ARGS__);
+	void                             	ReadExternalROCRegister        		(__ARGS__);
 	// void 							DTCHighRateBlockCheck				(__ARGS__);
-	void 								DTCReset							(__ARGS__);
+	
 	void 								DTCHighRateDCSCheck					(__ARGS__);
 	void 								RunROCFEMacro						(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest		(__ARGS__);
 	void								ResetLossOfLockCounter				(__ARGS__);
 	void								ReadLossOfLockCounter				(__ARGS__);
-	void								GetUpstreamControlLinkStatus		(__ARGS__);
 	void								GetLinkLockStatus					(__ARGS__);	
 	void								SelectJitterAttenuatorSource		(__ARGS__);
 	void								WriteDTC							(__ARGS__);
 	void								ReadDTC								(__ARGS__);
-	void								SetEmulatedROCEventFragmentSize		(__ARGS__);
+
+	// void								SetEmulatedROCEventFragmentSize		(__ARGS__);
 	void								configureHardwareDevMode			(__ARGS__);
 	void								ConfigureForTimingChain				(__ARGS__);
 
@@ -154,21 +180,29 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetDTCLinks						(__ARGS__);
 
 	void 								ResetPCIe							(__ARGS__);
-	void 								GetFireflyTemperature				(__ARGS__);
-	void 								GetFPGATemperature					(__ARGS__);
+	// void 								GetFireflyTemperature				(__ARGS__);
+	// void 								GetFPGATemperature					(__ARGS__);
 	void 								ResetCFOLinkRx						(__ARGS__);
 	void 								ResetCFOLinkTx						(__ARGS__);
 	void 								ResetCFOLinkRxPLL					(__ARGS__);
 	void 								ResetCFOLinkTxPLL					(__ARGS__);
 
-	void 								GetLinkLossOfLight					(__ARGS__);
+	// void 								GetLinkLossOfLight					(__ARGS__);
 	
-	void 								SetCFOEmulationMode					(__ARGS__);
+	void 								SetupCFOInterface					(__ARGS__);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
+	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
+																			std::string eventDuration, uint32_t numberOfEventWindows, uint64_t initialEventWindowTag,
+																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
+																			bool doNotResetCounters);
 
 	void 								BufferTest							(__ARGS__);
+	void 								PatternTest							(__ARGS__);
+	void 								BufferTest_detached					(__ARGS__);
 
+
+	void 								CFOEmulatorLoopbackTest				(__ARGS__);
 	void 								ManualLoopbackSetup					(__ARGS__);
 
 	

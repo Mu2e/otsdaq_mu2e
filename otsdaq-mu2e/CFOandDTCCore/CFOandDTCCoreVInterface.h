@@ -7,7 +7,8 @@
 #include <string>
 #include <mutex>
 #include "dtcInterfaceLib/mu2edev.h"
-//#include "dtcInterfaceLib/DTC.h"
+#include "cfoInterfaceLib/CFO.h"
+#include "dtcInterfaceLib/CFOandDTC_Registers.h"
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
@@ -55,6 +56,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void 								universalRead				(char* address, char* readValue) override;
 	void 								universalWrite				(char* address, char* writeValue) override;
 	virtual mu2edev* 					getDevice					(void) = 0;
+	virtual DTCLib::CFOandDTC_Registers* getCFOandDTCRegisters		(void) = 0;
 
 	// DTC specific items
 	//----------------
@@ -82,7 +84,19 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 
   public: 
-	// std::string							GetFirmwareVersion			(void);
+	void 								SoftReset						(__ARGS__);
+	void 								HardReset						(__ARGS__);
+
+	void								GetFirmwareVersion					(__ARGS__);
+	void 								ResetPCIe							(__ARGS__);	
+	void 								FlashLEDs							(__ARGS__);	
+	void 								GetStatus							(__ARGS__);
+	void 								GetSimpleStatus						(__ARGS__);
+	void 								GetLinkLossOfLight					(__ARGS__);
+	void 								GetFireflyTemperature				(__ARGS__);
+	void 								GetFPGATemperature					(__ARGS__);
+	void								SelectJitterAttenuatorSource		(__ARGS__);
+	
 		// void								ResetLinkRx					(__ARGS__);
 	// void								ShutdownLinkTx				(__ARGS__);
 	// void								StartupLinkTx				(__ARGS__);
