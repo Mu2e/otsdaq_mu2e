@@ -25,6 +25,16 @@ body {
 		text-align: center;
 		padding: 14px 20px;
 		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.navbar span {
+		float: left;
+		display: block;
+		color: white;
+		text-align: center;
+		padding: 14px 20px;
+		text-decoration: none;
 	}
 
 	/* Right-aligned link */

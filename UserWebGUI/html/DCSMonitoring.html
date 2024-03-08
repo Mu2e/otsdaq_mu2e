@@ -26,10 +26,26 @@
 			function init() 
 			{
 				Debug.log("init() was called");
+				updateClock()
+				setInterval(updateClock, 1000);
+				
 				manageMenu();
+				
 				openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html');
 			} //end init()
 
+			//=====================================================================================
+			//updateClock
+			function updateClock()
+			{
+				const gmtTime = new Date().toUTCString();
+				const cetTime = new Date().toLocaleString('nl-NL', {timeZone: 'Europe/Berlin'});
+				const centralTime = new Date().toLocaleString('nl-NL', {timeZone: 'America/Chicago'});
+
+				document.getElementById('central').innerHTML = centralTime;
+				//document.getElementById('gmt').innerHTML = gmtTime;
+				//document.getElementById('cet').innerHTML = cetTime;
+			} //end updateClock()
 
 			//=====================================================================================
 			function manageMenu(obj)
@@ -65,10 +81,9 @@
 	<body onload='//init() called by DesktopContent.js'>
 
 		<div class="navbar">
-			<a href="#">Link</a>
-			<a href="#">Link</a>
-			<a href="#">Link</a>
-			<a href="#" class="right">Link</a>
+			<span class="left">Time: </span>
+			<span class="left" id="central"></span>
+			<a class="right" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html')"><i class="fa fa-fw fa-home"></i> HOME</a>
 		</div>
 
 		<div class="row">
@@ -89,14 +104,14 @@
 					<div class="dropdown-container">
 						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/DaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> DAQ room health</button>
 						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/IERCDaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> IERC test-stand room health</button>
-						<button class="open-page-btn" onmousedown="openPage('http://localhost:3000/goto/OrSS_3ISg?orgId=1')"><i class="fa fa-fw fa-thermometer"></i> Graphite</button>
+						<button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/e65b525b-f0c3-4cf3-8a30-f1cf80720b0c/antonio?orgId=1')"><i class="fa fa-fw fa-thermometer"></i> Graphana</button>
 					</div>
 					<button class="dropdown-btn">DCS
 						<i class="fa fa-caret-down"></i>
 					</button>
 					<div class="dropdown-container">
 						<button class="open-page-btn" onmousedown="openPage('http://localhost:4812/main')"><i class="fa fa-fw fa-gear"></i> Archiver status</button>
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/html/SlowControlsDashboard.html')"><i class="fa fa-fw fa-gear"></i> Dashboard</button>
+						<button class="open-page-btn" onmousedown="openPage('/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_2.bob')"><i class="fa fa-fw fa-gear"></i> Dashboard</button>
 					</div>
 					<button class="dropdown-btn">STM
 						<i class="fa fa-caret-down"></i>
