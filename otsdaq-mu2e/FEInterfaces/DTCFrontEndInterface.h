@@ -55,8 +55,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// hardware access
 	//----------------
-	virtual mu2edev* 					getDevice					(void) {return thisDTC_->GetDevice();};
-	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) {return thisDTC_;};
+	virtual mu2edev* 					getDevice					(void) override {return thisDTC_->GetDevice();};
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override {return thisDTC_;};
 
 	// DTC specific items
 	//----------------

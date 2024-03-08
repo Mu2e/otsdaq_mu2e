@@ -45,8 +45,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// hardware access
 	//----------------
-	virtual mu2edev* 					getDevice					(void) {return thisCFO_->GetDevice();};
-	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) {return thisCFO_;};
+	virtual mu2edev* 					getDevice					(void) override {return thisCFO_->GetDevice();};
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override {return thisCFO_;};
 
 	float 								delay[8][6][8];
 	float 								delay_rms[8][6][8];
@@ -63,12 +63,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	int									timing_chain_first_substep_	   = -1;
 	//int                    configure_clock_ = 0;
 
-	int          						loopback_distribution_[10000];
-	unsigned int 						min_distribution_;
-	unsigned int 						max_distribution_;
 	float        						average_loopback_;
-	float        						rms_loopback_;
-	float        						failed_loopback_;
 
   public:
 	// void 								FlashLEDs						(__ARGS__);	
