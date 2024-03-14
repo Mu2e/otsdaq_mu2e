@@ -10,7 +10,9 @@ HOSTNAME="$(hostname -f)"
 
 echo "SCRIPT_DIR: ${SCRIPT_DIR}"
 
-lspci | grep 'Xilinx.*7042' && foundXi=1 || foundXi=0
+RegEx='Xilinx.*704[23]'
+
+lspci | grep "$RegEx" && foundXi=1 || foundXi=0
 
 if [ "$foundXi" = 1 ];then
     echo "Found DTC or CFO (Xilinx) card; removing mu2e driver;"
@@ -21,7 +23,7 @@ if [ "$foundXi" = 1 ];then
     sleep 3
     rmmod mu2e
 else
-    echo 'No Xilinx 7042 cards found -- exiting'
+    echo "No $RegEx cards found -- exiting"
     exit 1
 fi
 
@@ -41,7 +43,7 @@ do
     echo "1" > /sys/bus/pci/devices/0000:${array[0]}/remove
 
 done <<EOF
-$(lspci | grep 'Xilinx.*7042')
+$(lspci | grep "$RegEx")
 EOF
 
 sleep 1
