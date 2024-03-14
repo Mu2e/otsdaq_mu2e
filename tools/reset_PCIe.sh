@@ -18,10 +18,11 @@ if [ "$foundXi" = 1 ];then
     echo "Found DTC or CFO (Xilinx) card; removing mu2e driver;"
     echo "first killing any processes that may be using the device."
     pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
-    test -n "$pids" && { echo "First attempt kill $pids"; kill $pids; }
-    killall xdaq.exe
+    test -n "$pids" && { echo "First attempt to kill $pids (which are using /dev/mu2e?)"; kill $pids; }
+    killall -9 xdaq.exe
     sleep 3
     rmmod mu2e
+    lsmod | grep mu2e && { while true;do echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
 else
     echo "No $RegEx cards found -- exiting"
     exit 1
