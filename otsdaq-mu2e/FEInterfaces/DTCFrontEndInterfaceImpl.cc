@@ -133,6 +133,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetupROCs),
 						std::vector<std::string>{"Target ROC (Default = -1 := all ROCs)",
 				        						"Set Link RX/TX Enable (Default := false)",
+				        						"Set Link Timing Enable (Default := false)",
 				        						"Set ROC Emulation Enable (Default := false)",
 				        						"ROC Emulation Type (Default = 0: Internal, 1: Fiber-Loopback, 2: External)",
 				        						"ROC generated Data Payload fragment packet count (11-bits, Default := 16)",
@@ -3337,6 +3338,8 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 
 	bool rocRxTxEnable = __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false);
 	__FE_COUTV__(rocRxTxEnable);
+	bool rocTimingEnable = __GET_ARG_IN__("Set Link Timing Enable (Default := false)", bool, false);
+	__FE_COUTV__(rocTimingEnable);
 	bool rocEmulationEnable = __GET_ARG_IN__("Set ROC Emulation Enable (Default := false)", bool, false);
 	
 	__FE_COUTV__(rocEmulationEnable);
@@ -3346,6 +3349,12 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 		thisDTC_->EnableLink(rocLinkIndex);
 	else
 		thisDTC_->DisableLink(rocLinkIndex);
+
+	if(rocRxTxEnable)
+		thisDTC_->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, true);
+	else
+		thisDTC_->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, false);
+		
 
 	DTCLib::DTC_ROC_Emulation_Type rocEmulationType =
 	    DTCLib::DTC_ROC_Emulation_Type(__GET_ARG_IN__("ROC Emulation Type (Default = 0: Internal, 1: Fiber-Loopback, 2: External)", uint8_t, 0 /* internal */));
@@ -3841,7 +3850,7 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 
 	bool enableClockMarkers = __GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false);
 	__FE_COUTV__(enableClockMarkers);
-	thisDTC_->SetCFOEmulation40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+	thisDTC_->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
 	if(__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false))
 		thisDTC_->EnableAutogenDRP();
@@ -4055,7 +4064,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 
 	// bool enableClockMarkers = __GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false);
 	__FE_COUTV__(enableClockMarkers);
-	thisDTC_->SetCFOEmulation40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+	thisDTC_->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
 	if(enableAutogenDRP)	//__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false))
 		thisDTC_->EnableAutogenDRP();
@@ -4174,8 +4183,10 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 			statusSs << "\t Mismatched Tag Jumps..." << __E__;
 			for(size_t i=0;i<threadStruct->mismatchedEventTagJumps_.size();++i)
 				statusSs << "\t\t Mismatch Jump-" << i <<
-					" Expected:" << threadStruct->mismatchedEventTagJumps_[i].first <<
-					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second << __E__;
+					" Expected:" << threadStruct->mismatchedEventTagJumps_[i].first << 
+					std::hex << "(0x" << threadStruct->mismatchedEventTagJumps_[i].first << ")" << std::dec <<
+					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second <<
+					std::hex << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second << ")" << std::dec << __E__;
 		}
 		else
 		{
@@ -4183,7 +4194,9 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 			for(size_t i=0;i < 10;++i)
 				statusSs << "\t\t Mismatch Jump-" << i <<
 					" Expected:" << threadStruct->mismatchedEventTagJumps_[i].first <<
-					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second << __E__;
+					std::hex << "(0x" << threadStruct->mismatchedEventTagJumps_[i].first << ")" << std::dec <<
+					" Received:" << threadStruct->mismatchedEventTagJumps_[i].second << 
+					std::hex << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second << ")" << std::dec << __E__;
 		}
 
 		
@@ -4260,6 +4273,17 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	threadStruct->totalSubeventBytesTransferred_ += 32; //for subevent header
 
 #if 1	
+	//save raw subevent header
+	{
+		auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
+		for (int l = 0; l < 32; l+=4)
+		{
+			if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
+			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
+		}
+	}
+
+
 	// check if there is an error on the link in the subevent header
 	if (subevent->GetHeader()->link0_status > 0)
 	{
@@ -4508,7 +4532,7 @@ try
 					threadStruct->resetStartEventTag_ = false; //clear mailbox
 				}
 
-				//release buffers for restart				
+				//release buffers for restart
 				threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 			}
 			
