@@ -22,7 +22,7 @@ if [ "$foundXi" = 1 ];then
     killall -9 xdaq.exe
     sleep 3
     rmmod mu2e
-    lsmod | grep mu2e && { while true;do echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
+    lsmod | grep mu2e && { echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
 else
     echo "No $RegEx cards found -- exiting"
     exit 1
