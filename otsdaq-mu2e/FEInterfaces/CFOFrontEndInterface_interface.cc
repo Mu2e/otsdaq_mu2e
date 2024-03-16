@@ -1535,7 +1535,10 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 {	
 	__FE_COUT__ << "Reset CFO Run Plan"  << __E__;
 
-	thisCFO_->ResetCFORunPlan();
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	// thisCFO_->ResetCFORunPlan();
+	thisCFO_->SoftReset();
 
 } //end ResetRunplan()
 
@@ -1605,6 +1608,9 @@ void CFOFrontEndInterface::LaunchRunplan(__ARGS__)
 	__FE_COUT__ << "Launch CFO Run Plan"  << __E__;
 
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->SoftReset();
+	usleep(10);	
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 } //end LaunchRunplan()
