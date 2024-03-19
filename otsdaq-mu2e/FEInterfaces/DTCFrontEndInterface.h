@@ -202,8 +202,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								BufferTest_detached					(__ARGS__);
 
 
-        void                                                            SoftwareDR                                     (__ARGS__);
-        void                                                            PunchedClock                                   (__ARGS__);
+    void                                SoftwareDataRequest                 (__ARGS__);
+    void                                PunchedClock                        (__ARGS__);
 
 	void 								CFOEmulatorLoopbackTest				(__ARGS__);
 	void 								ManualLoopbackSetup					(__ARGS__);

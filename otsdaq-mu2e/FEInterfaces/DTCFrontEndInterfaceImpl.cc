@@ -680,7 +680,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction(
 		"DTC Software Data Request",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::SoftwareDR),            // feMacroFunction
+					&DTCFrontEndInterface::SoftwareDataRequest),            // feMacroFunction
 					std::vector<std::string>{"Event Window Tag"},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
 					1,  // requiredUserPermissions
@@ -1573,8 +1573,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	// registerWrite(0x91AC, 0); // Set number of heartbeats packets
 
     // If this is a CRV ROC, enable the punched clock by default
-	__FE_COUT__ << "firmware flavour is " << getCFOandDTCRegisters()->ReadDesigFlavour() << __E__;
-	if(getCFOandDTCRegisters()->ReadDesigFlavour() == "e")
+	if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
     {
 		__FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
 	    thisDTC_->SetPunchEnable();
@@ -1624,6 +1623,8 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	
 	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+
+	thisDTC_->SoftReset(); // soft reset to clear lock counters
 }  // end configureHardwareDevMode()
 
 //==============================================================================
@@ -3949,7 +3950,7 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 } //end SetCFOEmulatorOnOffSpillEmulation()
 
 //========================================================================
-void DTCFrontEndInterface::SoftwareDR(__ARGS__) {
+void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) {
 
 	uint64_t when = __GET_ARG_IN__("Event Window Tag",uint64_t);
 	//uint8_t link  = __GET_ARG_IN__("LinkIndex", uint8_t);
@@ -3959,7 +3960,7 @@ void DTCFrontEndInterface::SoftwareDR(__ARGS__) {
         //                                true, false); // link, EVT, quiet, debug
 
         thisDTC_->EnableSoftwareDRP();
-        thisDTC_->SetDataRequest(DTCLib::DTC_EventWindowTag(when));
+        thisDTC_->SetSoftwareDataRequest(DTCLib::DTC_EventWindowTag(when));
 
         std::stringstream outSs;
 	outSs << "Sent software DR for EVT " << std::hex << when << __E__;
