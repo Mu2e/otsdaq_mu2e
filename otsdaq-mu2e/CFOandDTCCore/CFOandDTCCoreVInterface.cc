@@ -146,16 +146,16 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
 	);
 
-	registerFEMacroFunction(
-		"Reset PCIe",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::ResetPCIe),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Status"}, // namesOfOutputArgs
-					1,  // requiredUserPermissions 
-					"*",
-					"Reset the PCIe interface allocated for this FPGA."
-	);
+	// registerFEMacroFunction( //RAR not working!
+	// 	"Reset PCIe",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOandDTCCoreVInterface::ResetPCIe),            // feMacroFunction
+	// 				std::vector<std::string>{},  // namesOfInputArgs
+	// 				std::vector<std::string>{"Status"}, // namesOfOutputArgs
+	// 				1,  // requiredUserPermissions 
+	// 				"*",
+	// 				"Reset the PCIe interface allocated for this FPGA."
+	// );
 					
 	registerFEMacroFunction(
 		"Flash LEDs",  // feMacroName
