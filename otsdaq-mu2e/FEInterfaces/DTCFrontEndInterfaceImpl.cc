@@ -199,51 +199,126 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	);
 
 	// Until further subsystem ROC development starts up, ignore the external block register access of core ROC firmware template established for the ROC dev cards.
-	// registerFEMacroFunction(
-	// 	"ROC_Write_ExtRegister",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::WriteExternalROCRegister),  // feMacroFunction
-	// 				std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1);                          // requiredUserPermissions
+	if(0) // unregistering of "temporarily" unused macros
+	{
+		registerFEMacroFunction(
+			"ROC_Write_ExtRegister",  // feMacroName
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::WriteExternalROCRegister),  // feMacroFunction
+						std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
+						std::vector<std::string>{},  // namesOfOutputArgs
+						1);                          // requiredUserPermissions
 
-	// registerFEMacroFunction(
-	// 	"ROC_Read_ExtRegister",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::ReadExternalROCRegister),
-	// 				std::vector<std::string>{"rocLinkIndex", "block", "address"},
-	// 				std::vector<std::string>{"readData"},
-	// 				1);  // requiredUserPermissions			
+		registerFEMacroFunction(
+			"ROC_Read_ExtRegister",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::ReadExternalROCRegister),
+						std::vector<std::string>{"rocLinkIndex", "block", "address"},
+						std::vector<std::string>{"readData"},
+						1);  // requiredUserPermissions			
 
-							
+								
 
-	
+		
 
 
-	// registerFEMacroFunction(
-	// 	"Buffer Test",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::BufferTest),                  // feMacroFunction
-	// 				std::vector<std::string>{
-	// 					"Data are SubEvents (Default: true)",
-	// 					"Number of [Sub]Events (Default: 1)", 
-	// 					"Starting Event Window Tag (Default: 0)",
-	// 					"Match Event Tags (Default: false)", 
-	// 					"Display Payload at GUI (Default: true)", 
-	// 				// "eventDuration (Default := 400)", 
-	// 					// "doNotReadBack (bool)", 
-	// 					"Save Binary Data to File (Default: false)"
-	// 					// "Software Generated Data Requests (bool)",
-	// 					// "Do Not Send Heartbeats (bool)"
-	// 					}, 
-	// 				std::vector<std::string>{"response"},
-	// 				1, // requiredUserPermissions
-	// 				"*",
-	// 				"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
-	// 				// "Send a request for a number of events and waits for the respective responses. "
-	// 				// "Currently, the responses are simulated data (a counter)."
-	// );
+		registerFEMacroFunction(
+			"Buffer Test",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::BufferTest),                  // feMacroFunction
+						std::vector<std::string>{
+							"Data are SubEvents (Default: true)",
+							"Number of [Sub]Events (Default: 1)", 
+							"Starting Event Window Tag (Default: 0)",
+							"Match Event Tags (Default: false)", 
+							"Display Payload at GUI (Default: true)", 
+						// "eventDuration (Default := 400)", 
+							// "doNotReadBack (bool)", 
+							"Save Binary Data to File (Default: false)"
+							// "Software Generated Data Requests (bool)",
+							// "Do Not Send Heartbeats (bool)"
+							}, 
+						std::vector<std::string>{"response"},
+						1, // requiredUserPermissions
+						"*",
+						"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
+						// "Send a request for a number of events and waits for the respective responses. "
+						// "Currently, the responses are simulated data (a counter)."
+		);
 
+		registerFEMacroFunction(
+			"Pattern Test",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::PatternTest),                  // feMacroFunction
+						std::vector<std::string>{
+							"Data are SubEvents (Default: true)",
+							"Number of [Sub]Events (Default: 1)", 
+							"Starting Event Window Tag (Default: 0)",
+							"Match Event Tags (Default: false)", 
+							"Display Payload at GUI (Default: true)", 
+						// "eventDuration (Default := 400)", 
+							// "doNotReadBack (bool)", 
+							"Save Binary Data to File (Default: false)"
+							// "Software Generated Data Requests (bool)",
+							// "Do Not Send Heartbeats (bool)"
+							}, 
+						std::vector<std::string>{"response"},
+						1, // requiredUserPermissions
+						"*",
+						"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
+						// "Send a request for a number of events and waits for the respective responses. "
+						// "Currently, the responses are simulated data (a counter)."
+		);
+
+		registerFEMacroFunction(
+			"DTC_HighRate_DCS_Check",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::DTCHighRateDCSCheck),
+						std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+							"correctRegisterValue0","correctRegisterValue1"},
+						std::vector<std::string>{},
+						1);  // requiredUserPermissions
+						
+		registerFEMacroFunction(
+			"DTC_HighRate_DCS_Block_Check",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::DTCHighRateBlockCheck),
+						std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+							"correctRegisterValue0","correctRegisterValue1"},
+						std::vector<std::string>{},
+						1);  // requiredUserPermissions
+
+		registerFEMacroFunction(
+			"DTC_SendHeartbeatAndDataRequest",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
+						std::vector<std::string>{"numberOfRequests","timestampStart","useSWCFOEmulator","rocMask"},
+						std::vector<std::string>{"readData"},
+						1);  // requiredUserPermissions					
+						
+		
+		registerFEMacroFunction(
+			"DTC Instantiate",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+						&DTCFrontEndInterface::DTCInstantiate),
+						std::vector<std::string>{},
+						std::vector<std::string>{},
+						1,    // requiredUserPermissions	
+						"*", 
+						"This FE Macro reinstantiates the DTC interface class."
+		);
+
+		registerFEMacroFunction(
+			"Headers Format test",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::HeaderFormatTest),
+					std::vector<std::string>{},
+					std::vector<std::string>{"setRegister"},
+					1, 
+					"*", 
+					"Use this FE Macro to test the header format using emulated CFO Heartbeat packets."
+		);
+	} // end unregistering of "temporarily" unused macros
 
 	registerFEMacroFunction(
 		"Buffer Test Detached",
@@ -271,29 +346,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					// "Currently, the responses are simulated data (a counter)."
 	);
 
-	// registerFEMacroFunction(
-	// 	"Pattern Test",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::PatternTest),                  // feMacroFunction
-	// 				std::vector<std::string>{
-	// 					"Data are SubEvents (Default: true)",
-	// 					"Number of [Sub]Events (Default: 1)", 
-	// 					"Starting Event Window Tag (Default: 0)",
-	// 					"Match Event Tags (Default: false)", 
-	// 					"Display Payload at GUI (Default: true)", 
-	// 				// "eventDuration (Default := 400)", 
-	// 					// "doNotReadBack (bool)", 
-	// 					"Save Binary Data to File (Default: false)"
-	// 					// "Software Generated Data Requests (bool)",
-	// 					// "Do Not Send Heartbeats (bool)"
-	// 					}, 
-	// 				std::vector<std::string>{"response"},
-	// 				1, // requiredUserPermissions
-	// 				"*",
-	// 				"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
-	// 				// "Send a request for a number of events and waits for the respective responses. "
-	// 				// "Currently, the responses are simulated data (a counter)."
-	// );
 
 
 	registerFEMacroFunction(
@@ -318,32 +370,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Read from the DTC Memory Map."
 	);
 
-	// registerFEMacroFunction(
-	// 	"DTC_HighRate_DCS_Check",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::DTCHighRateDCSCheck),
-	// 				std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
-	// 					"correctRegisterValue0","correctRegisterValue1"},
-	// 				std::vector<std::string>{},
-	// 				1);  // requiredUserPermissions
-					
-	// registerFEMacroFunction(
-	// 	"DTC_HighRate_DCS_Block_Check",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::DTCHighRateBlockCheck),
-	// 				std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
-	// 					"correctRegisterValue0","correctRegisterValue1"},
-	// 				std::vector<std::string>{},
-	// 				1);  // requiredUserPermissions
-
-	// registerFEMacroFunction(
-	// 	"DTC_SendHeartbeatAndDataRequest",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest),
-	// 				std::vector<std::string>{"numberOfRequests","timestampStart","useSWCFOEmulator","rocMask"},
-	// 				std::vector<std::string>{"readData"},
-	// 				1);  // requiredUserPermissions					
-					
 			
 	registerFEMacroFunction(
 		"Loss-of-Lock Counter Read",
@@ -398,21 +424,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*", 
 					"Read the SERDES CDR Lock bit on all links."
 	);
-
-	// registerFEMacroFunction(
-	// 	"Select Jitter Attenuator Source",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::SelectJitterAttenuatorSource),
-	// 			        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)", 
-	// 											"DoNotSet",
-	// 											"AlsoResetJA"},
-	// 					std::vector<std::string>{"Register Write Results"},
-	// 				1,  // requiredUserPermissions 
-	// 				"*", 
-	// 				"Select the source of the jitter attenuator: a local oscilator on the DTC or the RTF.\n"
-	// 				"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>. "
-	// );
-
 	
 	registerFEMacroFunction(
 		"Configure DTC for HWDevmode",
@@ -464,17 +475,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"It also includes the number of EVB RX packet errors, and number of times the Jitter Attenuator lost the RX Recovered clock and "
 					"lost the RX External clock since last reset."
 	);
-
-	// registerFEMacroFunction(
-	// 	"DTC Instantiate",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::DTCInstantiate),
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},
-	// 				1,    // requiredUserPermissions	
-	// 				"*", 
-	// 				"This FE Macro reinstantiates the DTC interface class."
-	// );
 					
 	registerFEMacroFunction(
 		"Reset ALL (CFO/ROC/EVB) DTC Links",
@@ -486,17 +486,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*", 
 					"This FE Macro resets the SERDES TX/RX links and then the SERDES."
 	);
-
-	// registerFEMacroFunction(
-	// 	"Headers Format test",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 			&DTCFrontEndInterface::HeaderFormatTest),
-	// 			std::vector<std::string>{},
-	// 			std::vector<std::string>{"setRegister"},
-	// 			1, 
-	// 			"*", 
-	// 			"Use this FE Macro to test the header format using emulated CFO Heartbeat packets."
-	// );
 
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS <<
@@ -547,40 +536,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*",
 					"Checking the Loss-of-Light reads from the I2C bus register on the Firefly for any light source."
 	);
-
-	// registerFEMacroFunction(
-	// 	"Reset PCIe",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::ResetPCIe),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Status"},
-	// 				1,  // requiredUserPermissions 
-	// 				"*",
-	// 				"Reset the PCIe interface."
-	// );
-
-	// registerFEMacroFunction(
-	// 	"Check Firefly Temperature",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::GetFireflyTemperature),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Temperature"},
-	// 				1,  // requiredUserPermissions
-	// 				"*",
-	// 				"Check the temperature from the Firefly RX IIC Bus."
-	// );
-
-	// registerFEMacroFunction(
-	// 	"Check FPGA Temperature",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::GetFPGATemperature),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Temperature"},
-	// 				1, 
-	// 				"*", 
-	// 				"Get the temperature of the FPGA in degrees Celesius. "
-	// 				"A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor."
-	// );
 
 	registerFEMacroFunction(
 		"Reset CFO Link Rx",
@@ -2862,231 +2817,65 @@ void DTCFrontEndInterface::BockWriteROC(__ARGS__)
 
 }  // end BockWriteROC()
 
-// //========================================================================
-// void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
-// {
-// 	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
-// 	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
-// 	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
-// 	unsigned int correctRegisterValue0 =
-// 	    __GET_ARG_IN__("correctRegisterValue0", unsigned int);
-// 	unsigned int correctRegisterValue1 =
-// 	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
+//========================================================================
+void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
+{
+	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
+	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
+	unsigned int correctRegisterValue0 =
+	    __GET_ARG_IN__("correctRegisterValue0", unsigned int);
+	unsigned int correctRegisterValue1 =
+	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
 
-// 	__FE_COUTV__(linkIndex);
-// 	__FE_COUTV__(loops);
-// 	__FE_COUTV__(baseAddress);
-// 	__FE_COUTV__(correctRegisterValue0);
-// 	__FE_COUTV__(correctRegisterValue1);
+	__FE_COUTV__(linkIndex);
+	__FE_COUTV__(loops);
+	__FE_COUTV__(baseAddress);
+	__FE_COUTV__(correctRegisterValue0);
+	__FE_COUTV__(correctRegisterValue1);
 
-// 	for(auto& roc : rocs_)
-// 		if(roc.second->getLinkID() == linkIndex)
-// 		{
-// 			roc.second->highRateBlockCheck(
-// 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
-// 			return;
-// 		}
+	for(auto& roc : rocs_)
+		if(roc.second->getLinkID() == linkIndex)
+		{
+			roc.second->highRateBlockCheck(
+			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
+			return;
+		}
 
-// 	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
-// 	__FE_SS_THROW__;
+	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
+	__FE_SS_THROW__;
 
-// }  // end DTCHighRateBlockCheck()
+}  // end DTCHighRateBlockCheck()
 
-// //========================================================================
-// void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
-// {
-// 	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
-// 	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
-// 	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
-// 	unsigned int correctRegisterValue0 =
-// 	    __GET_ARG_IN__("correctRegisterValue0", unsigned int);
-// 	unsigned int correctRegisterValue1 =
-// 	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
+//========================================================================
+void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
+{
+	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
+	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
+	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
+	unsigned int correctRegisterValue0 =
+	    __GET_ARG_IN__("correctRegisterValue0", unsigned int);
+	unsigned int correctRegisterValue1 =
+	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
 
-// 	__FE_COUTV__(linkIndex);
-// 	__FE_COUTV__(loops);
-// 	__FE_COUTV__(baseAddress);
-// 	__FE_COUTV__(correctRegisterValue0);
-// 	__FE_COUTV__(correctRegisterValue1);
+	__FE_COUTV__(linkIndex);
+	__FE_COUTV__(loops);
+	__FE_COUTV__(baseAddress);
+	__FE_COUTV__(correctRegisterValue0);
+	__FE_COUTV__(correctRegisterValue1);
 
-// 	for(auto& roc : rocs_)
-// 		if(roc.second->getLinkID() == linkIndex)
-// 		{
-// 			roc.second->highRateCheck(
-// 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
-// 			return;
-// 		}
+	for(auto& roc : rocs_)
+		if(roc.second->getLinkID() == linkIndex)
+		{
+			roc.second->highRateCheck(
+			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
+			return;
+		}
 
-// 	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
-// 	__FE_SS_THROW__;
+	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
+	__FE_SS_THROW__;
 
-// }  // end DTCHighRateDCSCheck()
-
-// //========================================================================
-// void DTCFrontEndInterface::DTCSendHeartbeatAndDataRequest(__ARGS__)
-// {
-// 	unsigned int number           = __GET_ARG_IN__("numberOfRequests", unsigned int);
-// 	unsigned int timestampStart   = __GET_ARG_IN__("timestampStart", unsigned int);
-// 	bool         useSWCFOEmulator = __GET_ARG_IN__("useSWCFOEmulator", bool);
-// 	unsigned int rocMask          = __GET_ARG_IN__("rocMask", unsigned int);
-
-// 	//	auto start = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
-
-// 	bool     incrementTimestamp = true;
-// 	uint32_t cfodelay = 20000;  // have no idea what this is, but 1000 didn't work (don't
-// 	                            // know if 10000 works, either)
-// 	int requestsAhead    = 0;
-// 	int heartbeatPackets = 32;
-
-// 	__FE_COUTV__(number);
-// 	__FE_COUTV__(timestampStart);
-// 	__FE_COUTV__(useSWCFOEmulator);
-// 	__FE_COUTV__(rocMask);
-
-// 	if(thisDTC_)
-// 		delete thisDTC_;
-// 	thisDTC_    = new DTCLib::DTC(DTCLib::DTC_SimMode_NoCFO, deviceIndex_, rocMask, "");
-// 	auto device = thisDTC_->GetDevice();
-
-// 	// auto initTime = device->GetDeviceTime();
-// 	device->ResetDeviceTime();
-// 	// auto afterInit = std::chrono::steady_clock::now();
-
-// 	if(emulate_cfo_ == 1)
-// 	{
-// 		thisDTC_->SetSequenceNumberDisable();  // Set 9100 bit 10
-// 		// registerWrite(0x9100, 0x40808404);  // bit 30 = CFO emulation enable, bit 15 =
-// 		// CFO
-// 		//  emulation mode, bit 2 = DCS enable
-// 		//  bit 10 turns off retry which isn't working right now
-// 		//	sleep(1);
-
-// 		// set number of null heartbeats
-// 		// registerWrite(0x91BC, 0x0);
-// 		//	registerWrite(0x91BC, 0x10);  // new incantaton from Rick K. 12/18/2019
-// 		//	  sleep(1);
-
-// 		// # Send data
-// 		// #disable 40mhz marker
-// 		thisDTC_->SetCFOEmulation40MHzMarkerInterval(0);
-// 		// registerWrite(0x91f4, 0x0);
-// 		//	  sleep(1);
-
-// 		// #set num dtcs
-// 		thisDTC_->SetEVBNumberOfDestinationNodes(1);
-// 		// registerWrite(0x9158, 0x1);
-// 		//	  sleep(1);
-
-// 		uint16_t debugPacketCount = 0;
-// 		auto     debugType        = DTCLib::DTC_DebugType_SpecialSequence;
-// 		bool     stickyDebugType  = true;
-// 		bool     quiet            = false;
-// 		bool     asyncRR          = false;
-// 		bool     forceNoDebugMode = true;
-
-// 		DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
-// 		    new DTCLib::DTCSoftwareCFO(thisDTC_,
-// 		                               useSWCFOEmulator,
-// 		                               debugPacketCount,
-// 		                               debugType,
-// 		                               stickyDebugType,
-// 		                               quiet,
-// 		                               asyncRR,
-// 		                               forceNoDebugMode);
-
-// 		EmulatedCFO_->SendRequestsForRange(
-// 		    number,
-// 		    DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart)),
-// 		    incrementTimestamp,
-// 		    cfodelay,
-// 		    requestsAhead,
-// 		    heartbeatPackets);
-
-// 		// auto readoutRequestTime = device->GetDeviceTime();
-// 		device->ResetDeviceTime();
-// 		// auto afterRequests = std::chrono::steady_clock::now();
-
-// 		// print out stuff
-// 		unsigned quietCount = 20;
-// 		quiet               = false;
-
-// 		std::stringstream ostr;
-// 		ostr << std::endl;
-
-// 		for(unsigned ii = 0; ii < number; ++ii)
-// 		{
-// 			__FE_COUT__ << "Buffer Read " << std::dec << ii << std::endl;
-// 			mu2e_databuff_t* buffer;
-// 			auto             tmo_ms = 1500;
-// 			__FE_COUT__ << "util - before read for DAQ - ii=" << ii;
-// 			auto sts = device->read_data(
-// 			    DTC_DMA_Engine_DAQ, reinterpret_cast<void**>(&buffer), tmo_ms);
-// 			__FE_COUT__ << "util - after read for DAQ - ii=" << ii << ", sts=" << sts
-// 			            << ", buffer=" << (void*)buffer;
-
-// 			if(sts > 0)
-// 			{
-// 				void* readPtr = &buffer[0];
-// 				auto  bufSize = static_cast<uint16_t>(*static_cast<uint64_t*>(readPtr));
-// 				readPtr       = static_cast<uint8_t*>(readPtr) + 8;
-
-// 				std::cout << "Buffer reports DMA size of " << std::dec << bufSize
-// 				          << " bytes. Device driver reports read of " << sts << " bytes,"
-// 				          << std::endl;
-
-// 				std::cout << "util - bufSize is " << bufSize;
-// 				//	__SET_ARG_OUT__("bufSize", bufSize);
-
-// 				//	__FE_COUT__ << "bufSize" << bufSize;
-// 				outputStream.write(static_cast<char*>(readPtr), sts - 8);
-
-// 				auto maxLine = static_cast<unsigned>(ceil((sts - 8) / 16.0));
-// 				std::cout << "maxLine " << maxLine;
-// 				for(unsigned line = 0; line < maxLine; ++line)
-// 				{
-// 					ostr << "0x" << std::hex << std::setw(5) << std::setfill('0') << line
-// 					     << "0: ";
-// 					for(unsigned byte = 0; byte < 8; ++byte)
-// 					{
-// 						if(line * 16 + 2 * byte < sts - 8u)
-// 						{
-// 							auto thisWord =
-// 							    reinterpret_cast<uint16_t*>(buffer)[4 + line * 8 + byte];
-// 							ostr << std::setw(4) << static_cast<int>(thisWord) << " ";
-// 						}
-// 					}
-
-// 					ostr << std::endl;
-// 					//	std::cout << ostr.str();
-
-// 					//__SET_ARG_OUT__("readData", ostr.str());  // write to data file
-
-// 					__FE_COUT__ << ostr.str();  // write to log file
-
-// 					if(maxLine > quietCount * 2 && quiet && line == (quietCount - 1))
-// 					{
-// 						line = static_cast<unsigned>(ceil((sts - 8) / 16.0)) -
-// 						       (1 + quietCount);
-// 					}
-// 				}
-// 			}
-// 			device->read_release(DTC_DMA_Engine_DAQ, 1);
-// 		}
-// 		ostr << std::endl;
-
-// 		__SET_ARG_OUT__("readData", ostr.str());  // write to data file
-
-// 		__FE_COUT__ << ostr.str();                // write to log file
-
-// 		delete EmulatedCFO_;
-// 	}
-// 	else
-// 	{
-// 		__FE_SS__ << "Error! DTC must be in CFOEmulate mode" << __E__;
-// 		__FE_SS_THROW__;
-// 	}
-
-// }  // end DTCSendHeartbeatAndDataRequest()
+}  // end DTCHighRateDCSCheck()
 
 //========================================================================
 void DTCFrontEndInterface::ResetLossOfLockCounter(__ARGS__)
