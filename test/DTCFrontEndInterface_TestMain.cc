@@ -105,6 +105,7 @@ int main(int argc, char* argv[])
         0, //bool enableClockMarkers, 
         1, //bool enableAutogenDRP, 
         0, //bool saveBinaryDataToFile,
+        0, //bool saveSubeventHeadersToDataFile,
         0//	bool doNotResetCounters )
     );
 	int i=0;

@@ -82,6 +82,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		bool					activeMatch_ = false;
 		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;		
 		bool					saveBinaryData_ = false;
+		bool					saveSubeventsToBinaryData_ = false;		
 		bool					doNotResetCounters_ = false;
 
 		std::atomic<uint64_t>	eventsCount_;
@@ -195,7 +196,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
 																			std::string eventDuration, uint32_t numberOfEventWindows, uint64_t initialEventWindowTag,
 																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
-																			bool doNotResetCounters);
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters);
 
 	void 								BufferTest							(__ARGS__);
 	void 								PatternTest							(__ARGS__);
