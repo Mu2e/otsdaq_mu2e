@@ -677,8 +677,27 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO emulator parameters."
 	);
+	registerFEMacroFunction(
+		"DTC Software Data Request",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SoftwareDataRequest),            // feMacroFunction
+					std::vector<std::string>{"Event Window Tag"},  // namesOfInputArgs
+					std::vector<std::string>{"response"},
+					1,  // requiredUserPermissions
+					"*", 
+					"Send a software DR from the DTC."
+	);
 
-
+	registerFEMacroFunction(
+		"DTC Punched Clock",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::PunchedClock),            // feMacroFunction
+					std::vector<std::string>{"Enable (Default := true)"},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,  // requiredUserPermissions
+					"*", 
+					"Punched Clock Enable/Disable."
+	);
 
 	{ //add ROC FE Macros
 		__FE_COUT__ << "Getting children ROC FEMacros..." << __E__;
@@ -1553,6 +1572,12 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	thisDTC_->SetCFOEmulationNumNullHeartbeats(0x10);
 	// registerWrite(0x91AC, 0); // Set number of heartbeats packets
 
+    // If this is a CRV ROC, enable the punched clock by default
+	if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+    {
+		__FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
+	    thisDTC_->SetPunchEnable();
+	}
 
 	// check if any ROCs should be DTC-hardware emulated ROCs
 	{
@@ -1598,6 +1623,8 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	
 	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+
+	thisDTC_->SoftReset(); // soft reset to clear lock counters
 }  // end configureHardwareDevMode()
 
 //==============================================================================
@@ -3921,6 +3948,33 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 	__SET_ARG_OUT__("response", outSs.str());
 	
 } //end SetCFOEmulatorOnOffSpillEmulation()
+
+//========================================================================
+void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) {
+
+	uint64_t when = __GET_ARG_IN__("Event Window Tag",uint64_t);
+	//uint8_t link  = __GET_ARG_IN__("LinkIndex", uint8_t);
+
+	//thisDTC_->SendDataRequestPacket(DTCLib::DTC_Link_ID(link), 
+        //                                DTCLib::DTC_EventWindowTag(when), 
+        //                                true, false); // link, EVT, quiet, debug
+
+        thisDTC_->EnableSoftwareDRP();
+        thisDTC_->SetSoftwareDataRequest(DTCLib::DTC_EventWindowTag(when));
+
+        std::stringstream outSs;
+	outSs << "Sent software DR for EVT " << std::hex << when << __E__;
+	__SET_ARG_OUT__("response",  outSs.str());
+
+} // end SoftwareDR()
+
+void DTCFrontEndInterface::PunchedClock(__ARGS__) {
+        auto enable = __GET_ARG_IN__("Enable (Default := true)", bool, true);
+        if (enable) thisDTC_->SetPunchEnable();
+        else        thisDTC_->ClearPunchEnable();
+} // end PunchedClock()
+
+//========================================================================
 
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
