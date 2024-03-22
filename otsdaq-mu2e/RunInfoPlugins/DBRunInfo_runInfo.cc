@@ -43,12 +43,12 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 
 	if(PQstatus(runInfoDbConn) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to prototype_run_info database for insert new run number and info!\n" << __E__;
+		__COUT__ << "Unable to connect to run_info database to insert new run number and info!\n" << __E__;
 		PQfinish(runInfoDbConn);
 	}
 	else
 	{
-		__COUT__ << "Connected to prototype_run_info database for insert new run number and info!\n" << __E__;
+		__COUT__ << "Connected to run_info database to insert new run number and info!\n" << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
 
