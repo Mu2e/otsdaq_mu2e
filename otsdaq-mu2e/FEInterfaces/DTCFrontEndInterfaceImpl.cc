@@ -661,6 +661,27 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	{ //add ROC FE Macros
 		__FE_COUT__ << "Getting children ROC FEMacros..." << __E__;
 		rocFEMacroMap_.clear();
+
+		//first check if all ROCs are the same plugin type
+		//	if they are, use ROC_UID to target -1 or individual ROC and only make one FE Macro entry to reprent all ROCs
+		bool allROCsAreSameType = true;
+		std::string pluginType = "";
+		for(auto& roc : rocs_)
+		{
+			if(pluginType == "")
+			{
+				pluginType = roc.second->getInterfaceType();
+				__FE_COUT__ << "First ROC plugin type is '" << pluginType << "'" << __E__;
+			}
+			else if(pluginType != roc.second->getInterfaceType())
+			{
+				allROCsAreSameType = false;
+				__FE_COUT__ << "Not all ROCs are the same plugin type, so individual FE Macros will be created." << __E__;
+				break;
+			}
+		} //end check for same ROC plugin type
+
+
 		for(auto& roc : rocs_)
 		{
 			auto feMacros = roc.second->getMapOfFEMacroFunctions();
@@ -668,34 +689,69 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			{
 				__FE_COUT__ << roc.first << "::" << feMacro.first << __E__;
 
-				//make DTC FEMacro forwarding to ROC FEMacro				
-                std::string macroName =
-                                "Link" +
-                                std::to_string(roc.second->getLinkID()) +
-                                "_" + roc.first + "_" +
-                                feMacro.first;
-                __FE_COUTV__(macroName);
-                std::vector<std::string> inputArgs,outputArgs;
-				//TODO, take ROC target as parameter for ROC FE Macros				
-                //inputParams.push_back("ROC_UID");
-                //inputParams.push_back("ROC_FEMacroName");
-				for(auto& inArg: feMacro.second.namesOfInputArguments_)
-					inputArgs.push_back(inArg);
-				for(auto& outArg: feMacro.second.namesOfOutputArguments_)
-					outputArgs.push_back(outArg);
+				if(!allROCsAreSameType)
+				{
+					//make DTC FEMacro forwarding to ROC FEMacro				
+					std::string macroName =
+									"Link" +
+									std::to_string(roc.second->getLinkID()) +
+									"_" + roc.first + "_" +
+									feMacro.first;
+					__FE_COUTV__(macroName);
+					std::vector<std::string> inputArgs,outputArgs;
+					for(auto& inArg: feMacro.second.namesOfInputArguments_)
+						inputArgs.push_back(inArg);
+					for(auto& outArg: feMacro.second.namesOfOutputArguments_)
+						outputArgs.push_back(outArg);
 
-				__FE_COUTV__(StringMacros::vectorToString(inputArgs));
-				__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+					__FE_COUTV__(StringMacros::vectorToString(inputArgs));
+					__FE_COUTV__(StringMacros::vectorToString(outputArgs));
 
-				rocFEMacroMap_.emplace(std::make_pair(macroName,
-						std::make_pair(roc.first,feMacro.first)));
+					rocFEMacroMap_.emplace(std::make_pair(macroName,
+							std::make_pair(roc.first,feMacro.first)));
 
-				registerFEMacroFunction(macroName,
-						static_cast<FEVInterface::frontEndMacroFunction_t>(
-								&DTCFrontEndInterface::RunROCFEMacro),
-								inputArgs,
-								outputArgs,
-								1);  // requiredUserPermissions
+					registerFEMacroFunction(macroName,
+							static_cast<FEVInterface::frontEndMacroFunction_t>(
+									&DTCFrontEndInterface::RunROCFEMacro),
+									inputArgs,
+									outputArgs,
+									1);  // requiredUserPermissions
+				}
+				else //allROCsAreSameType
+				{
+					//make DTC FEMacro forwarding to ROC FEMacro				
+					std::string macroName =
+									"ROC FEMacro - " +
+									feMacro.first;
+					__FE_COUTV__(macroName);
+					std::vector<std::string> inputArgs,outputArgs;
+					//take ROC target as parameter for ROC FE Macros (allow -1 as wildcard for all)
+					inputArgs.push_back("Target ROC (Default = -1 := all ROCs)");
+					for(auto& inArg: feMacro.second.namesOfInputArguments_)
+						inputArgs.push_back(inArg);
+					outputArgs.push_back("Target ROC"); //for display (especially to see which ROCs were targeted with -1)
+					for(auto& outArg: feMacro.second.namesOfOutputArguments_)
+						outputArgs.push_back(outArg);
+
+					__FE_COUTV__(StringMacros::vectorToString(inputArgs));
+					__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+
+					rocFEMacroMap_.emplace(std::make_pair(macroName,
+							std::make_pair("" /* no ROC id, because applies to all */,feMacro.first)));
+
+					registerFEMacroFunction(macroName,
+							static_cast<FEVInterface::frontEndMacroFunction_t>(
+									&DTCFrontEndInterface::RunROCFEMacro),
+									inputArgs,
+									outputArgs,
+									1);  // requiredUserPermissions
+				}
+			}
+
+			if(allROCsAreSameType)
+			{
+				__FE_COUT__ << "All ROCs are same plugin type, so defined by first ROC." << __E__;
+				break;	
 			}
 		}
 	} //end add ROC FE Macros
@@ -2975,58 +3031,6 @@ void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
 	__SET_ARG_OUT__("Lock Status", "\n" + outss.str()); 
 }  // end GetLinkLockStatus()
 
-// //========================================================================
-// void DTCFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
-// {
-// 	uint32_t select = __GET_ARG_IN__(
-// 	    "Source Clock (0 is from CFO, 1 is from RJ45)", uint32_t);
-// 	select %= 4;
-// 	__FE_COUTV__((unsigned int)select);
-
-// 	// choose jitter attenuator input select (reg 0x9308, bits 5:4)
-// 	//  0 is Upstream Control Link Rx Recovered Clock
-// 	//  1 is RJ45 Upstream Clock
-// 	//  2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
-
-// 	// char              reg_0x9308[100];
-// 	// uint32_t          val = registerRead(0x9308);
-// 	// std::stringstream results;
-
-// 	// sprintf(reg_0x9308, "0x%8.8X", val);
-// 	// __FE_COUTV__(reg_0x9308);
-// 	// results << "reg_0x9118 Starting Value: " << reg_0x9308 << __E__;
-
-// 	// val &= ~(3 << 4);          // clear the two bits
-// 	// val &= ~(1);               // ensure unreset of jitter attenuator
-// 	// val |= (select & 3) << 4;  // set the two bits to selected value
-
-// 	// sprintf(reg_0x9308, "0x%8.8X", val);
-// 	// __FE_COUTV__(reg_0x9308);
-// 	// results << "reg_0x9118 Select Value: " << reg_0x9308 << __E__;
-
-// 	// registerWrite(0x9308, val);  // write select value
-
-// 	if(!__GET_ARG_IN__(
-// 	    "DoNotSet", bool))
-// 	{
-// 		bool alsoResetJA = __GET_ARG_IN__(
-// 	    		"AlsoResetJA", bool);
-// 		__FE_COUTV__(alsoResetJA);
-// 		thisDTC_->SetJitterAttenuatorSelect(select, alsoResetJA);
-// 		sleep(1);
-// 		for(int i=0;i<10;++i) //wait for JA to lock before reading
-// 		{
-// 			if(thisDTC_->ReadJitterAttenuatorLocked())
-// 				break;
-// 			sleep(1);
-// 		}
-// 	}
-// 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
-
-// 	__SET_ARG_OUT__("Register Write Results", thisDTC_->FormatJitterAttenuatorCSR());	
-
-// }  // end SelectJitterAttenuatorSource()
-
 //========================================================================
 void DTCFrontEndInterface::WriteDTC(__ARGS__)
 {
@@ -3072,48 +3076,6 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	__SET_ARG_OUT__("readData", ss.str());  // readDataStr);
 }  // end ReadDTC()
 
-// //========================================================================
-// void DTCFrontEndInterface::DTCSoftReset()
-// {
-// 	__FE_COUT__ << "Starting DTC Reset: reset the DTC FPGA and SERDES" << __E__;
-
-// 	// 0x9100 is the DTC Control Register
-// 	thisDTC_->SoftReset();
-// 	// registerWrite(0x9100, //registerRead(0x9100) |
-// 	//  	(1 << 31));  // bit 31 = DTC Reset FPGA
-
-// 	// usleep(500000 /*500ms*/);
-// 	// sleep(3);
-
-// 	// reset DTC serdes osc
-// 	// thisDTC_->SetCFOEmulationMode(); //not needed after configureHardwareDevMode 
-
-
-
-// 	// registerWrite(0x9100, //registerRead(0x9100) | 
-// 	// 	(1 << 15));  // Turn on CFO Emulation Mode for Serdes Reset
-// 	// registerWrite(0x9118, 0xffff00ff);      // SERDES resets
-// 	// registerWrite(0x9118, 0x00000000);      // clear SERDES resets
-	
-// 	//Rick says he never resets links unless there is a problem:
-// 	// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-// 	// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-// 	// thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-// 	//there is also bit-8 of the control register, that resets all the links
-
-
-// 	// if(emulate_cfo_ == 1)
-// 	// {
-// 	// 	// registerWrite(0x9100, registerRead(0x9100) & ~(1 << 15)); // Turn off CFO Emulation Mode 
-// 	// 	thisDTC_->ClearCFOEmulationMode();
-// 	// }
-
-// 	// usleep(500000 /*500ms*/);
-// 	// sleep(2);
-
-// 	__FE_COUT__ << "Done with DTC Reset." << __E__;
-// }  // end DTCSoftReset()
-
 //========================================================================
 void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 {
@@ -3134,18 +3096,65 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 	const std::string& rocUID         = feMacroIt->second.first;
 	const std::string& rocFEMacroName = feMacroIt->second.second;
 
-	__FE_COUTV__(rocUID);
-	__FE_COUTV__(rocFEMacroName);
-
-	auto rocIt = rocs_.find(rocUID);
-	if(rocIt == rocs_.end())
+	if(rocUID == "")
 	{
-		__FE_SS__ << "Fatal error - ROC name '" << rocUID << "' not found in DTC's map!"
-		          << __E__;
-		__FE_SS_THROW__;
-	}
+		__FE_COUT__ << "Using ROC Link Index parameter to define ROC target" << __E__;
 
-	rocIt->second->runSelfFrontEndMacro(rocFEMacroName, argsIn, argsOut);
+		DTCLib::DTC_Link_ID rocLinkIndex =
+			DTCLib::DTC_Link_ID(__GET_ARG_IN__("Target ROC (Default = -1 := all ROCs)", uint8_t, -1 /* ALL */));
+		__FE_COUTV__(rocLinkIndex);
+
+		//remove ROC index from input args (since not in official Macro registration)
+		std::vector<ots::FEVInterface::frontEndMacroArg_t> inputArgs_inst;
+		for(size_t i=1; i<argsIn.size(); ++i)
+			inputArgs_inst.push_back(argsIn[i]);
+
+		FEVInterface::frontEndMacroConstArgs_t inputArgs = inputArgs_inst;
+		
+
+		for(auto& roc : rocs_)
+		{
+			if(rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+				roc.second->getLinkID() == rocLinkIndex)
+			{
+				__FE_COUTV__(rocFEMacroName);
+				__FE_COUTV__(roc.second->getLinkID());
+
+				//for each ROC, append result to argsOut
+				std::vector<ots::FEVInterface::frontEndMacroArg_t> outputArgs_inst;
+				FEVInterface::frontEndMacroArgs_t outputArgs = outputArgs_inst;
+				for(size_t i=1;i<argsOut.size();++i)
+					outputArgs.push_back(make_pair(argsOut[i].first,""));
+
+				roc.second->runSelfFrontEndMacro(rocFEMacroName, inputArgs, outputArgs);
+
+				//append output args CSV-style
+				argsOut[0].second  += (argsOut[0].second.size()?", ":"") +
+					roc.second->getLinkID();
+ 				for(size_t i=1; i < argsOut.size() && i-1 < outputArgs.size(); ++i) 
+					argsOut[i].second += (argsOut[i].second.size()?", ":"") +
+						outputArgs[i-1].second;
+				
+				if(rocLinkIndex != DTCLib::DTC_Link_ID::DTC_Link_ALL)	
+					break; //done with target ROC
+			}
+		} //end ROC FEMacro launch loop
+	}
+	else //individual target defined by feMacroIt pair
+	{
+		__FE_COUTV__(rocUID);
+		__FE_COUTV__(rocFEMacroName);
+
+		auto rocIt = rocs_.find(rocUID);
+		if(rocIt == rocs_.end())
+		{
+			__FE_SS__ << "Fatal error - ROC name '" << rocUID << "' not found in DTC's map!"
+					<< __E__;
+			__FE_SS_THROW__;
+		}
+
+		rocIt->second->runSelfFrontEndMacro(rocFEMacroName, argsIn, argsOut);
+	}
 
 }  // end RunROCFEMacro()
 
@@ -3200,7 +3209,7 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 		__FE_SS_THROW__;
 	}
 
-	thisDTC_->SetCFOEmulationNumPackets(rocLinkIndex,wsize);
+	thisDTC_->SetROCEmulationNumPackets(rocLinkIndex,wsize);
 	
 	__SET_ARG_OUT__("Result", thisDTC_->FormattedRegDump(20,thisDTC_->formattedROCEmulationFunctions_));
 
@@ -3212,32 +3221,6 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 	configureHardwareDevMode();
 } // end configureHardwareDevMode()
 
-// //========================================================================
-// void DTCFrontEndInterface::HeaderFormatTest(__ARGS__) 
-// {
-// 	__FE_COUT__ << "Operation \"heder_format\"" << std::endl;
-
-// 	std::stringstream ostr;
-// 	ostr << std::endl;
-
-// 	auto device = thisDTC_->GetDevice();
-
-// 	device->write_register(37316, 100, 170);	// 0x91c4 <- 0xAA
-// 	TLOG(TLVL_ERROR) << "Write " << std::hex << 170 << " in 0x91C4" << std::endl;
-// 	ostr << "Write " << std::hex << 170 << " in 0x91C4" << std::endl;
-
-// 	device->write_register(37312, 100, 47802);	// 0x91c0 <- 0xBABA
-// 	TLOG(TLVL_ERROR) << "Write " << std::hex << 47802 << " in 0x91C0" << std::endl;
-// 	ostr << "Write " << std::hex << 47802 << " in 0x91C0" << std::endl;
-
-// 	device->write_register(37204, 100, 205);	// 0x9154 <- 0xCD
-// 	TLOG(TLVL_ERROR) << "Write " << std::hex << 205 << " in 0x9154" << std::endl;
-// 	ostr << "Write " << std::hex << 205 << " in 0x9154" << std::endl;
-
-// 	std::string outStr = "Test packet headers \n" + ostr.str();
-// 	__SET_ARG_OUT__("setRegister", outStr);
-// }
-
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {	
@@ -3245,31 +3228,6 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));
 	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
 }  // end DTCCounters()
-
-// //========================================================================
-// void DTCFrontEndInterface::FlashLEDs(__ARGS__)
-// {	
-// 	thisDTC_->FlashLEDs();
-// } //end FlashLEDs()
-
-// //==============================================================================
-// // GetFirmwareVersion
-//  void DTCFrontEndInterface::GetFirmwareVersion(__ARGS__)
-// {	
-// 	__SET_ARG_OUT__("Firmware Version Date", thisDTC_->ReadDesignDate());
-// }  // end GetFirmwareVersion()
-
-// //========================================================================
-// void DTCFrontEndInterface::GetStatus(__ARGS__)
-// {	
-// 	__SET_ARG_OUT__("Status", thisDTC_->FormattedRegDump(20, thisDTC_->formattedDumpFunctions_));
-// } //end GetStatus()
-
-// //========================================================================
-// void DTCFrontEndInterface::GetSimpleStatus(__ARGS__)
-// {	
-// 	__SET_ARG_OUT__("Status", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSimpleDumpFunctions_));
-// } //end GetSimpleStatus()
 
 //========================================================================
 void DTCFrontEndInterface::readRxDiagFIFO(__ARGS__)
@@ -3434,59 +3392,6 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 
 } //end ConfigureForTimingChain()
 
-// //========================================================================
-// void DTCFrontEndInterface::ResetPCIe(__ARGS__)
-// {	
-// 	thisDTC_->ResetPCIe();
-
-// 	__SET_ARG_OUT__("Status", "Done");
-// } //end ResetPCIe()
-
-// //========================================================================
-// void DTCFrontEndInterface::GetFPGATemperature(__ARGS__)
-// {	
-// 	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
-// 	std::stringstream ss;
-// 	ss << "Note: temperatures of 65C or higher should be addressed by DAQ experts.\n\n";
-// 	ss << thisDTC_->FormatFPGATemperature() << "\n\n" << thisDTC_->FormatFPGAAlarms();
-// 	__SET_ARG_OUT__("Temperature", ss.str());
-// } //end GetFPGATemperature()
-
-// //========================================================================
-// void DTCFrontEndInterface::GetFireflyTemperature(__ARGS__)
-// {	
-// 	std::stringstream rd;
-
-// 	// // #Read Firefly RX temp registers
-// 	// // #enable IIC on Firefly
-// 	// // my_cntl write 0x93a0 0x00000200
-// 	// registerWrite(0x93a0,0x00000200);
-// 	// // #Device address, register address, null, null
-// 	// // my_cntl write 0x9298 0x54160000
-// 	// registerWrite(0x9298,0x54160000);
-// 	// // #read enable
-// 	// // my_cntl write 0x929c 0x00000002
-// 	// registerWrite(0x929c,0x00000002);
-// 	// // #disable IIC on Firefly
-// 	// // my_cntl write 0x93a0 0x00000000
-// 	// registerWrite(0x93a0,0x00000000);
-// 	// // #read data: Device address, register address, null, temp in 2's compl.
-// 	// // my_cntl read 0x9298
-
-// 	rd << "Note: temperatures of 65C or higher should be addressed by DAQ experts.\n\n";
-
-// 	thisDTC_->SetTXRXFireflySelect(true);
-// 	auto val = thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x16 /*address*/);
-// 	thisDTC_->SetTXRXFireflySelect(false);	
-
-
-// 	// dtc_data_t val = registerRead(0x9298) & 0x0FF;
-// 	rd << std::fixed << std::setprecision(1) << uint16_t(val) << ".0 C, " << double(val)*9/5 + 32 << " F, <65C=" << (val < 65?"GOOD":"BAD") <<
-// 		"\n\n" << thisDTC_->FormatFPGAAlarms();
-
-// 	__SET_ARG_OUT__("Temperature",rd.str());
-// } //end GetFireflyTemperature()
-
 //========================================================================
 void DTCFrontEndInterface::ResetCFOLinkRx(__ARGS__)
 {	
@@ -3507,100 +3412,6 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 {	
 	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
 } //end ResetCFOLinkTxPLL()
-
-// //========================================================================
-// void DTCFrontEndInterface::GetLinkLossOfLight(__ARGS__)
-// {	
-// 	std::stringstream rd;
-
-
-
-// 	//do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
-// /*
-// 	// #Read Firefly RX LOS registers
-// 	// #enable IIC on Firefly
-// 	// my_cntl write 0x93a0 0x00000200
-// 	registerWrite(0x93a0,0x00000200);
-// 	// #Device address, register address, null, null
-// 	// my_cntl write 0x9298 0x54080000
-// 	registerWrite(0x9298,0x54080000);
-// 	// #read enable
-// 	// my_cntl write 0x929c 0x00000002
-// 	registerWrite(0x929c,0x00000002);
-// 	// #disable IIC on Firefly
-// 	// my_cntl write 0x93a0 0x00000000
-// 	registerWrite(0x93a0,0x00000000);
-// 	// #read data: Device address, register address, null, value
-// 	// my_cntl read 0x9298
-// */
-// 	thisDTC_->SetTXRXFireflySelect(true);
-// 	thisDTC_->WriteFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/, 0 /*data*/);
-// 	thisDTC_->SetTXRXFireflySelect(false);
-
-// 	// #{EVB, ROC4, ROC1, CFO, unused, ROC5, unused, unused}
-// 	usleep(1000*100);
-
-// /*
-// 	// #Read Firefly RX LOS registers
-// 	// my_cntl write 0x93a0 0x00000200
-// 	registerWrite(0x93a0,0x00000200);
-// 	// my_cntl write 0x9298 0x54070000
-// 	registerWrite(0x9298,0x54070000);
-// 	// my_cntl write 0x929c 0x00000002
-// 	registerWrite(0x929c,0x00000002);
-// 	// my_cntl write 0x93a0 0x00000000
-// 	registerWrite(0x93a0,0x00000000);
-// 	// my_cntl read 0x9298
-// */
-
-// 	thisDTC_->SetTXRXFireflySelect(true);
-// 	thisDTC_->WriteFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/, 0 /*data*/);
-// 	thisDTC_->SetTXRXFireflySelect(false);
-
-// 	//END do initial set of writes to get the live read of loss-of-light status (because it is latched value from last read)
-
-// 	dtc_data_t val=0, val2=0, tmpVal;
-// 	for(int i=0;i<5;++i)
-// 	{
-// 		usleep(1000*100 /* 100 ms */);
-// 		thisDTC_->SetTXRXFireflySelect(true);
-// 		//OR := if ever 1, mark dead
-// 		tmpVal = thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/); 
-// 		val |= tmpVal;//thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x08 /*address*/);
-// 		__COUT__ << "0x08 ==> " << std::hex << " OrVal = 0x" << val << " readval = 0x" << tmpVal << __E__;
-// 		thisDTC_->SetTXRXFireflySelect(false);
-			
-		
-// 		usleep(1000*100 /* 100 ms */);
-// 		thisDTC_->SetTXRXFireflySelect(true);
-// 		//OR := if ever 1, mark dead
-// 		tmpVal = thisDTC_->ReadFireflyRXIICInterface(0x54 /*device*/, 0x07 /*address*/);
-// 		val2 |= tmpVal;
-// 		__COUT__ << "0x07 ==> " << std::hex << " OrVal = 0x" << val2 << " readval = 0x" << tmpVal << __E__;
-// 		thisDTC_->SetTXRXFireflySelect(false);
-// 	} //end multi-read to check for strange value changing
-
-// 	// #ROC0 bit 3
-// 	rd << "{0:" << (((val2>>(0+3))&1)?"DEAD":"OK");
-// 	// #ROC1 bit 5
-// 	rd << ", 1: " << (((val>>(0+5))&1)?"DEAD":"OK");
-// 	// #ROC2 bit 2
-// 	rd << ", 2:" << (((val2>>(0+2))&1)?"DEAD":"OK");
-// 	// #ROC3 bit 0
-// 	rd << ", 3:" << (((val2>>(0+0))&1)?"DEAD":"OK");
-// 	// #ROC4 bit 6
-// 	rd << ", 4: " << (((val>>(0+6))&1)?"DEAD":"OK");
-// 	// #ROC5 bit 1
-// 	rd << ", 5: " << (((val>>(0+1))&1)?"DEAD":"OK");
-// 	// #CFO bit 4
-// 	rd << ", 6/CFO: " << (((val>>(0+4))&1)?"DEAD":"OK");
-// 	// #EVB bit 7  Are EVB and CFO reversed?
-// 	rd << ", 7/EVB: " << (((val>>(0+7))&1)?"DEAD":"OK") << "}";
-
-
-
-// 	__SET_ARG_OUT__("Link Status",rd.str());
-// } //end GetLinkLossOfLight()
 
 //========================================================================
 void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
@@ -3666,7 +3477,7 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 		getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
-	thisDTC_->SetCFOEmulationHeartbeatInterval(0);  
+	thisDTC_->SetCFOEmulationEventWindowInterval(0);  
 
 	uint32_t numberOfSuperCycles = __GET_ARG_IN__("Number of 1.4s super cycle repetitions (0 := infinite)",uint32_t);
 	__FE_COUTV__(numberOfSuperCycles);
@@ -3908,7 +3719,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	}			
 
 	__FE_COUTV__(eventDurationInClocks);
-	thisDTC_->SetCFOEmulationHeartbeatInterval(eventDurationInClocks);  
+	thisDTC_->SetCFOEmulationEventWindowInterval(eventDurationInClocks);  
 
 	// uint32_t numberOfEventWindows = __GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t);
 	__FE_COUTV__(numberOfEventWindows);
