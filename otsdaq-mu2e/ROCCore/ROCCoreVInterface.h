@@ -81,7 +81,7 @@ class ROCCoreVInterface : public FEVInterface
 	void        							highRateBlockCheck			(unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 	static void 							highRateBlockCheckThread	(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 
-	inline unsigned int 					getLinkID					(void) { return linkID_; }
+	inline DTCLib::DTC_Link_ID				getLinkID					(void) { return linkID_; }
 
 	bool         									emulatorMode_;
 	DTCLib::DTC* 									thisDTC_;
