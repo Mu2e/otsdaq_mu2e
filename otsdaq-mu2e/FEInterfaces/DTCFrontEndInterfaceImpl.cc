@@ -1625,6 +1625,19 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 
 	thisDTC_->SoftReset(); // soft reset to clear lock counters
+
+    //------------------------------ ROCs //------------------------------
+    bool doConfigureROCs = false;
+	try {
+		doConfigureROCs = Configurable::getSelfNode()
+	 	                        .getNode("EnableROCConfigureStep")
+	 		                    .getValue<bool>();
+	} catch(...) { }  // ignore missing field
+	if(doConfigureROCs) {
+	    for(auto& roc : rocs_) {
+	        roc.second->configure();
+		}
+	}
 }  // end configureHardwareDevMode()
 
 //==============================================================================
