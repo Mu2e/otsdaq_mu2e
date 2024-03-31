@@ -765,6 +765,16 @@ void DTCFrontEndInterface::registerFEMacros(void)
 //==============================================================================
 void DTCFrontEndInterface::configureSlowControls(void)
 {
+    bool  slowControlsEnable = true;
+   try { 
+	slowControlsEnable = getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+    } catch(...) {
+        __FE_COUT__ << "Missing `slowControlsEnable` in configuration, slowControlsEnable defaults to " << slowControlsEnable << __E__;
+    }
+    if(!slowControlsEnable) {
+	    __FE_COUT__ << "Slow controls are disabled..." << __E__;
+	    return;
+    }
 	__FE_COUT__ << "Configuring slow controls..." << __E__;
 
 	// parent configure adds DTC slow controls channels
