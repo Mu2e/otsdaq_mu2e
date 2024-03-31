@@ -1650,7 +1650,12 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	} catch(...) { }  // ignore missing field
 	if(doConfigureROCs) {
 	    for(auto& roc : rocs_) {
-	        roc.second->configure();
+        // make sure the link is ready
+	    if(!thisDTC_->WaitForLinkReady(roc.second->getLinkID(), 1000 /*us*/, 2.0 /*seconds*/)) { // 2s default by default
+		    __FE_SS__  << "ROC " << roc.first << " on link " << roc.second->getLinkID() << " was not ready after 2s. Aborting ROC configuration.";
+		    __SS_THROW__;
+	    }
+		roc.second->configure();
 		}
 	}
 }  // end configureHardwareDevMode()
