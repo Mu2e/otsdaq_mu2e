@@ -122,9 +122,15 @@
 					<button class="dropdown-btn">CRV
 						<i class="fa fa-caret-down"></i>
 					</button>
-					<div class="dropdown-container">
-						<a href="#">Link CRV main page</a>
-					</div>
+						<div class="dropdown-container">
+							<button class="dropdown-btn">Wideband
+								<i class="fa fa-caret-down"></i>
+							</button>
+							<div class="dropdown-container">
+								<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/Wideband.html')"><i class="fa fa-fw fa-star"></i> EPICS</button>
+								<button class="open-page-btn" onmousedown="openPage('http://localhost:3000/dashboards/f/bdh4zimmwar5sa/wideband')"><i class="fa fa-fw fa-star"></i> Graphite</button>
+							</div>
+						</div>
 					<button class="dropdown-btn">ECAL
 						<i class="fa fa-caret-down"></i>
 					</button>
@@ -138,12 +144,7 @@
 						<a href="#">Link TRK main page</a>
 					</div>
 
-					<button class="dropdown-btn">Wideband
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/Wideband.html')"><i class="fa fa-fw fa-star"></i> DCS</button>
-					</div>
+
 				</div> <!-- end sidenav -->
 			</div> <!-- end side block -->
 			<div class="main">
