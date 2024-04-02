@@ -1,0 +1,1185 @@
+<!-- 
+    Samuel Grant -- Jan 2024
+    sgrant@anl.gov
+ -->
+
+ <!DOCTYPE HTML>
+ <html lang="en">
+ <head>
+     <!-- Preamble -->
+     <meta charset="UTF-8">
+ 
+     <!-- <link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DqmPagesCss/Sam.css"> -->
+     <link rel="stylesheet" type="text/css" href="/WebPath/css/MultiSelectBox.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+     <script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+     <script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+     <script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+     <script type="text/JavaScript" src="/WebPath/js/widgetLibrary.js">
+     </script>
+     <script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+     <script type="text/JavaScript" src="/WebPath/js/js_lib/MultiSelectBox.js"></script>
+     <script type="text/javascript" src="/WebPath/html/widgets/libraries/plotly-1.27.1.min.js"></script>
+ 
+     <!-- CSS styles go here  -->
+     <style>
+ 
+         body {
+             font-family: Arial, Helvetica, sans-serif;
+             background-color: #ffffff;
+             color: rgb(0, 0, 0);
+         }
+ 
+         .legend-container {
+ 
+             display: flex;
+             justify-content: left;
+             align-items: left;
+             /* border: 1px solid #ccc; */
+             height: 50px; 
+         }
+ 
+         .legend {
+             /* max-width: 500px; */
+             margin: 10px;
+             /* padding: 5px; */
+             display: flex;
+             /* flex-direction: row; */ /* This line is not needed */
+             align-items: flex-start;
+             float: left;
+         }
+ 
+         /* Add this CSS rule to force a fixed width for the legend items */
+         .legend-item {
+             /* width: 200px;  Set the width based on your design */
+             display: flex;
+             align-items: left;
+             margin-bottom: 10px;
+             padding: 10px;
+             font-size: 18px;
+         }
+ 
+         .legend-key {
+             width: 20px;
+             height: 20px;
+             border-radius: 10px;
+             margin-right: 10px;
+         }
+ 
+         .legend-no-alarm .legend-key {
+             background-color: green;
+         }
+ 
+         .legend-warning .legend-key {
+             background-color: orange;
+         }
+ 
+         .legend-alarm .legend-key {
+             background-color: red;
+         }
+ 
+         .legend-undefined .legend-key {
+             background-color: gray;
+         }
+ 
+         .legend-text {
+             font-weight: bold;
+         }
+ 
+         .main-title-container { 
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             /* border: 1px solid #ccc;  */
+             height: 50px; 
+ 
+         }
+ 
+         .main-title {
+             font-size: 32px;
+             font-weight: bold;
+             text-align: center;
+             /* Add other styling properties as needed */
+         }
+ 
+         .two-column-container {
+             display: flex;
+             justify-content: space-between;
+             max-width: 100%; /* Set a maximum width for responsiveness */
+             margin: 0 auto; /* Center the content horizontally */
+         }
+ 
+         /* Left column */
+         .pv-table-container {
+             width: 45%;
+             padding: 25px;
+             box-sizing: border-box; /* Include padding in the width */
+         }
+         .pv-table {
+             font-size: 18px;
+             
+             /* font-weight: bold;
+             text-align: center; */
+             /* Add other styling properties as needed */
+         }
+ 
+         table {
+             width: 100%;
+             border-collapse: collapse;
+             border-radius: 5px;
+             /* border: 1px solid #ccc;
+             border-radius: 10px; */
+         }
+ 
+         th, td {
+             border: 1px solid #ccc;
+             /* border-radius: 5px; */
+             padding: 8px;
+             text-align: center;
+         }
+ 
+         th {
+             font-color: white
+             background-color: rgb(0, 0, 0); /* Header background color */
+         }
+ 
+         tr:nth-child(even) {
+             background-color: white; /* Alternate row color */
+         }
+ 
+         tr:hover {
+             background-color: white; /* Hover row color */
+         }
+ 
+         table {
+             width: 100%;
+             border-collapse: collapse;
+             border-radius: 5px;
+             /* border: 1px solid #ccc;
+             border-radius: 10px; */
+         }
+ 
+         /* Styles for the plot container (right column) */
+         .pv-plot-container {
+             width: 50%;
+             box-sizing: border-box; /* Include padding in the width */
+         }
+ 
+         .pv-plot { 
+             font-size: 16px;
+         }
+ 
+         /* Styles for the plot container (right column) */
+         .start-time-button-container {
+             width: 50%;
+             box-sizing: border-box; /* Include padding in the width */
+             font-size: 16px;
+         }
+ 
+         .developer-notes {
+             width: 100%;
+             padding: 10px;
+             /* border: 1px solid #ccc; */
+             border-radius: 5px;
+         }
+ 
+     </style>
+ 
+     <!-- JavaScript goes here  -->
+ 
+     <script>
+ 
+         // ---------- Globals ----------
+ 
+         var page_ = page_ || {}; // container for widgets (objects)
+ 
+         var isReadOnly_ = true; // initially true
+         var UID_ = 0;
+         var timeToPoll_ = false;
+         var refreshRate_ = 15000; // ms
+         var timerVariable_; // timeout control variable
+         //var firstCall = true; // initial loading bool
+ 
+         // Plotting
+         var lastPlotTime_ = 0;
+         var actualGraphId_; 
+         var datalist_;
+         var plotTimeData_ = {};
+         var plotTimeData_ = {};
+         var plotValueData_ = {};
+         var plotPvList_ = {};
+         var plotParameters_ = {class: "", "show_labels": "false", "background_color": "transparent", "trace_type": "scatter", "trace_mode": "lines"};
+         
+         // EPICS PVs to monitor, structured as an array of objects
+         var pvs_ = [
+             {"Mu2e:TDAQ_crv:daq08DTC:DTC_status": {
+                 Alias: "Status",
+                 System: "DTC" }
+             },
+             {"Mu2e:TDAQ_crv:daq08DTC:DTC_temperature": {
+                 Alias: "Temperature",
+                 System: "DTC" }
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:ROC_cnt": {
+                 Alias: "Counter",
+                 System: "ROC" }
+             }, 
+             {"Mu2e:TDAQ_crv:crvROC09:ROC_active_febs": {
+                 Alias: "Active FEBs",
+                 System: "ROC" }
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:ROC_p1_voltage": {
+                 Alias: "P1 voltage",
+                 System: "ROC" }
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:ROC_p1_current": {
+                 Alias: "P1 current",
+                 System: "ROC" }
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_temperature": {
+                 Alias: "P1 temperature",
+                 System: "FEB" }
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_0": {
+                 Alias: "ADC bias 0",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_1": {
+                 Alias: "ADC bias 1",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_2": {
+                 Alias: "ADC bias 2",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_3": {
+                 Alias: "ADC bias 3",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_4": {
+                 Alias: "ADC bias 4",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_5": {
+                 Alias: "ADC bias 5",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_6": {
+                 Alias: "ADC bias 6",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_7": {
+                 Alias: "ADC bias 7",
+                 System: "FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB0_temperature": {
+                 Alias: "CMB0 temperature",
+                 System: "FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB1_temperature": {
+                 Alias: "CMB1 temperature",
+                 System: "FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB2_temperature": {
+                 Alias: "CMB2 temperature",
+                 System: "FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB3_temperature": {
+                 Alias: "CMB3 temperature",
+                 System: "FEB"}
+             }//,
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB2_temperature": {
+            //      Alias: "CMB2 temperature",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB3_temperature": {
+            //      Alias: "CMB3 temperature",
+            //      System: "FEB0"}
+            //  }//,
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_1": {
+            //      Alias: "ADC bias 1",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_2": {
+            //      Alias: "ADC bias 2",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_3": {
+            //      Alias: "ADC bias 3",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_4": {
+            //      Alias: "ADC bias 4",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_5": {
+            //      Alias: "ADC bias 5",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_6": {
+            //      Alias: "ADC bias 6",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_7": {
+            //      Alias: "ADC bias 7",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB0_temperature": {
+            //      Alias: "CMB0 temperature",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB1_temperature": {
+            //      Alias: "CMB1 temperature",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB2_temperature": {
+            //      Alias: "CMB2 temperature",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB3_temperature": {
+            //      Alias: "CMB3 temperature",
+            //      System: "FEB0"}
+            //  }//,
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_DAC_bias_0": {
+            //      Alias: "DAC bias 0",
+            //      System: "FEB0"}
+            //  },
+            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_DAC_bias_1": {
+            //      Alias: "DAC bias 1",
+            //      System: "FEB0"}
+            //  }
+ 
+         ];
+ 
+         // ---------- Setup page ----------
+ 
+         page_.createPage = function(){
+             this.name = "MyPage";
+             this.widgets = {};
+             this.addPV = function(pv) {
+                 console.log("Reached " + pv);
+             }
+         }
+ 
+         // ---------- Helper functions ----------
+ 
+         function isUserAdminHandler(req) {
+ 
+             Debug.log("getPermissionHandler() was called. " + req.responseText);
+ 
+             isAdmin = JSON.parse(decodeURIComponent(DesktopContent.getXMLValue(req, "JSON")))["message"];
+             console.log("User Permission: " + isAdmin);
+ 
+             if(isAdmin == "Yes"){
+                 isReadOnly_ = false;
+             } else{
+                 isReadOnly_ = true;
+             }
+ 
+             console.log("Interface isReadOnly=" + isReadOnly_);
+ 
+         }
+ 
+         function generateUID() {
+ 
+             console.log("Generating UID")
+ 
+             // Put all pvs in a JSON and send to server
+             var pvList = "";
+ 
+             for (var widget in page_.widgets)  {
+                 console.log("Generate UID: " +  page_.widgets[widget] + " " +  page_.widgets[widget].pvList);
+ 
+                 for(var pv in page_.widgets[widget].pvList) {
+                     //pvList += pv + ":"  + page_.widgets[widget].pvList.valueOf()[pv] + ",";
+                     pvList += pv + ",";
+                 }
+             }
+ 
+             timeToPoll_ = true;
+ 
+             //END Put all pvs in a JSON and send to server
+             DesktopContent.XMLHttpRequest(
+                 "Request?RequestType=generateUID",
+                 "pvList=" + pvList,
+                 generateUIDHandler);//, undefined, undefined, "sequence");
+ 
+             console.log("Generated UID")
+ 
+         } 
+ 
+         function generateUIDHandler(req) {
+ 
+             console.log("Handling UID generation request")
+ 
+             var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
+ 
+             if(uid.message != "-1")
+                 UID_ = uid.message;
+             else {
+                 UID_ = "";
+                 Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
+             }
+ 
+             if(timeToPoll_) {
+                 pollServer();
+             }
+ 
+             console.log("Handled UID generation request")
+ 
+         } 
+ 
+         function getAllPvList() {
+ 
+             console.log("Getting PV list")
+ 
+             DesktopContent.XMLHttpRequest(
+                     "Request?RequestType=getList",
+                     "", 
+                     pvListReqHandler /*returnHandler*/, 
+                     0 /*reqParam*/, 
+                     0 /*progressHandler*/, 
+                     0 /*callHandlerOnErr*/, 
+                     false /*doNoShowLoadingOverlay*/);
+         } 
+ 
+         function pvListReqHandler(req) {
+ 
+             console.log("Handling list PV request");	
+             console.log(req.responseText);
+             datalist_ = document.createElement('datalist');
+             datalist_.id = "pvDatalist";
+             datalist_.innerHTML = "";
+ 
+             var jsonStr = DesktopContent.getXMLValue(req, "JSON");
+             if(!jsonStr || jsonStr == "") return;				
+             var pvListJSON;
+ 
+             //if invalid JSON return
+             //jsonStr.replace(/\"/g,"");
+             try {pvListJSON = JSON.parse(jsonStr); }
+             catch(e){console.log("Invalid JSON!"); return;}
+ 
+             console.log("pvListJSON:", pvListJSON);
+             for (var x in pvListJSON)
+             {
+                 var option = document.createElement("option");
+                 option.value = pvListJSON[x];
+                 datalist_.appendChild(option);
+             }
+         } 
+ 
+         function setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, pvSettings) {
+             console.log("Setting widget tool tip for", pvName)
+             var toolTip =
+             pvName
+             + "\nLast value: "
+             + pvValue
+             + " "
+             + pvSettings[pvName].Units
+             
+             + "\nTime: "
+             + ConfigurationAPI.getDateString(new Date((pvTime | 0) * 1000))
+             + "\nStatus: "
+             + pvStatus
+             + "\nSeverity: "
+             + pvSeverity
+             + "\nLower Warning Limit:  " + Number.parseFloat(pvSettings[pvName].Lower_Warning_Limit).toExponential(2) + "\n"
+             + "Upper Warning Limit:  "   + Number.parseFloat(pvSettings[pvName].Upper_Warning_Limit).toExponential(2) + "\n"
+             + "Lower Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Lower_Alarm_Limit).toExponential(2)   + "\n"
+             + "Upper Alarm Limit:    "   + Number.parseFloat(pvSettings[pvName].Upper_Alarm_Limit).toExponential(2)   + "\n"
+             + "Lower Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Control_Limit).toExponential(2) + "\n"
+             + "Upper Control Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Control_Limit).toExponential(2) + "\n"
+             + "Lower Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Lower_Display_Limit).toExponential(2) + "\n"
+             + "Upper Display Limit:   "  + Number.parseFloat(pvSettings[pvName].Upper_Display_Limit).toExponential(2) + "\n";
+             return toolTip;
+         } 
+ 
+         function checkPvTime(widget, pvName, pvTime) {
+             console.log("Checking PV time for", pvName)
+             var timeNow = Math.floor(Date.now())/1000;
+             var time2compare = pvTime*1. + 1200;//10.*page_.widgets[widget].pvList[pvName]/1000;
+             console.log(
+                             "Date now: "
+                         + timeNow
+                         + " pvtime: "
+                         + pvTime
+                         + " time2compare - timeNow: "
+                         + (time2compare - timeNow)
+                         + " refresh rate: "
+                         + page_.widgets[widget].pvList[pvName]
+                         );
+ 
+             if ((pvTime !== undefined) && (time2compare > timeNow)) return true;
+             return false;
+         }
+ 
+         function convertADUToCelsius() {
+ 
+             return;
+         }
+             
+         // ---------- PV display ----------
+ 
+         // Populate PV table cells with PV system name, parameter alias, value, and alarm info
+         function setWidgetPvInfo(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity) { 
+ 
+             // Row
+             var widgetSysNameElement = page_.widgets[widget].el.parentElement.children[0];
+             var widgetPvNameElement = page_.widgets[widget].el.parentElement.children[1];
+             var widgetValueElement = page_.widgets[widget].el;
+ 
+             console.log("Filling table: " + widgetSysNameElement + " " + widgetPvNameElement + " " + widgetValueElement)
+ 
+             var timeNow = Math.floor(Date.now())/1000;
+ 
+             if (widgetPvNameElement == null && widgetPvNameElement == undefined) {
+                 console.log("Error: widgetNameElement undefined!")
+             } else { 
+ 
+                 console.log("Drawing ", pvName)
+ 
+                 widgetSysNameElement.innerHTML = page_.widgets[widget].pvSystem;
+                 widgetPvNameElement.innerHTML = page_.widgets[widget].pvAlias;
+                 widgetValueElement.widgetValueElement = page_.widgets[widget].pvAlias;
+ 
+                 // Define alarm colour in table
+                 var alarmColour = ""; // default for "undefined"
+                 if (pvSeverity == "NO_ALARM" ) alarmColour = "green";
+                 else if (pvSeverity == "MINOR" ) alarmColour = "orange";
+                 else if (pvSeverity == "MAJOR" ) alarmColour = "red";
+                 else alarmColour = "grey";
+ 
+                 // Set colour
+                 widgetSysNameElement.style.backgroundColor = alarmColour; 
+                 widgetPvNameElement.style.backgroundColor = alarmColour;
+                 widgetValueElement.style.backgroundColor = alarmColour;
+ 
+             }
+         }
+ 
+         function displayValue(widget, pvValue, units) {
+             alert(pvValue + " " + units); // Display the value and its unit in an alert box
+         }
+ 
+         // Place PV info on the page, also sets up the graph button
+         function drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity) {
+ 
+             console.log("Drawing new value:", page_.widgets[widget], pvValue); 
+ 
+             // Unit conversion here?
+ 
+             var alias = page_.widgets[widget].pvAlias;
+             // var settings = page_.widgets[widget].pvSettings;
+             var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
+ 
+             // console.log("Alias: ", alias)
+             // console.log("Settings: ", settings)
+             // console.log("Units: ", units)
+ 
+             page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ")'>" + pvValue + " " + units + "</button>";
+ 
+             // This is where the actual PV value is inserted
+ 
+             // console.log("DEBUG: inserting PV value: ", pvName + " " + pvValue) 
+             // page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='displayValue(" + widget + ", \"" + pvName + "\", \"" + units + "\")'>" + pvValue + " " + units + "</button>";
+ 
+             page_.widgets[widget].el.title = setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
+             
+             console.log("PV widget tooltip: ", page_.widgets[widget].el.title)
+ 
+             setWidgetPvInfo(
+                             widget
+                             , alias 
+                             , pvValue
+                             , pvTime
+                             , pvStatus
+                             , pvSeverity
+                             , true 
+                             );
+ 
+             if(widget==actualGraphId_ && pvTime>lastPlotTime_) {
+                 lastPlotTime_ = pvTime;
+                 drawNewGraphValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity);
+             }
+ 
+             console.log("Finished drawing new value")
+         } 
+ 
+         // ---------- Poll server ----------
+ 
+         // Poll the server for PV values
+         function pollServer() {
+ 
+             console.log("Polling server ", page_.widgets);
+ 
+             // Draw a graph to start 
+             // drawGraph(page_.widgets);
+ 
+             timeToPoll_ = false;
+ 
+             // If we have loaded the PV widgets, request their values
+             if(page_.widgets) {
+                 DesktopContent.XMLHttpRequest(
+                     "Request?RequestType=poll&uid=" + UID_,
+                     "", 
+                     pollServerHandler /*returnHandler*/, 
+                     0 /*reqParam*/, 
+                     0 /*progressHandler*/, 
+                     0 /*callHandlerOnErr*/, 
+                     true /*doNoShowLoadingOverlay*/);	
+             }
+ 
+         } 
+ 
+         // Handle the poll server request
+         function pollServerHandler(req) {
+ 
+             console.log("Handling server poll request: ", req.responseText);
+ 
+             var jsonStr = DesktopContent.getXMLValue(req, "JSON");
+ 
+             var serverResponse = JSON.parse(jsonStr);
+             console.log("Server response :", serverResponse);
+ 
+             if(serverResponse.message == "NOT_FOUND") {
+                 console.log("Server not responding, generating new UID");
+                 generateUID();
+                 timeToPoll_ = true;
+             } else {
+                 // Loop through each PV and refresh
+                 for(var pv in serverResponse) {	
+                     console.log("pollServerHandler PV: " + pv);						
+                     for (var widget in page_.widgets) {
+                         console.log("pollServerHandler: " + page_.widgets[widget]);
+                         for(var dependendentPV in page_.widgets[widget].pvList) {
+                             console.log("poll: " + dependendentPV);
+                             if(pv == dependendentPV && page_.widgets[widget].loaded != "false") {
+                                 console.log("Widget *** ", widget, pv);
+                                 try {
+                                     drawNewValue(
+                                             widget,
+                                             pv, 
+                                             serverResponse[pv].Value, 
+                                             serverResponse[pv].Timestamp, 
+                                             serverResponse[pv].Status, 
+                                             serverResponse[pv].Severity);
+                                 }
+                                 catch(e) {
+                                     console.log("Error was caught updating new value to widget 'widget-" +widget + "': " + e);											
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+ 
+             timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+ 
+         } 
+ 
+         // ---------- PV setup ----------
+ 
+         // This does not get the PV data, it justs sets up the metadata
+         function setupPV(id) {
+ 
+             console.log("Setting up PV widget");
+ 
+             // Append a comma seperated list of the PVs being requested
+             var pvListCSV = "";
+ 
+             for(var pv in page_.widgets[id].pvList) {
+                 pvListCSV += pv + ",";
+             }
+ 
+             console.log("Making PV settings request with", pvListCSV, id);
+ 
+             // Make the request 
+             DesktopContent.XMLHttpRequest("Request?RequestType=getPVSettings",
+                         //post data 
+                         "pvList=" + pvListCSV + 
+                         "&id=" + id,
+                         settingsReqHandler /*handler*/,
+                         id /*parameter*/);
+ 
+         }
+ 
+         // Make the PV settings request
+         function settingsReqHandler(req, id) {
+ 
+             console.log("Handling PV settings request", req, id)
+ 
+             page_.widgets[id].pvSettings = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));		
+ 
+             console.log("req ", req);
+             console.log("pvSettings ", page_.widgets[id].pvSettings);
+             console.log("id ", id);
+ 
+         }
+ 
+         // ---------- Plotting / PV history ----------
+ 
+         // page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ")'>" + pvValue + " " + units + "</button>";
+ 
+ 
+         // Get graph start time from dropdown
+         function getStartTime() {
+ 
+             var dropdown = document.getElementById("startTimeDropdown");
+             var startTime = dropdown.value;
+ 
+             if (!startTime) {
+                 startTime = 1; // default is 1 hour
+             } 
+ 
+             if (startTime === "custom") {
+                 // Get custom time from the input field
+                 var customInputContainer = document.getElementById("customInputContainer");
+                 customInputContainer.style.display = 'block'; // Show the custom start time container
+                 var customInput = document.getElementById("customInput");
+                 startTime = parseFloat(customInput.value);
+                 console.log("Custom start time: " + startTime)
+             } 
+ 
+             return startTime
+ 
+         }
+ 
+         function drawGraph(widget) {
+ 
+             var plot = document.getElementById('pvPlot');
+ 
+             var i = 0;
+             plotPvList_ = {};
+ 
+             for (pv in page_.widgets[widget].pvList){
+                 plotTimeData_[pv] = [];
+                 plotValueData_[pv] = [];
+                 plotPvList_[pv] = i;
+                 i++;
+             }
+ 
+             makeGraph(widget);
+ 
+             var startTimeContainer = document.getElementById('startTimeContainer');
+             startTimeContainer.style.display = 'block'; // Show the start time container
+ 
+             var timeNow = Math.floor(Date.now())/1000;
+             var startTime =  timeNow - getStartTime()*3600; //  timeNow - 1*3600; // This doesn't work for whatever reason
+             
+             getPvHistory(widget, plotParameters_, startTime, timeNow);
+ 
+             actualGraphId_ = widget;
+ 
+         } 
+ 
+         // Setup graph
+         function makeGraph(widget) {
+ 
+             // Retrieve PV info
+             var pvName = Object.keys(page_.widgets[widget].pvList)[0];
+             var pvAlias = page_.widgets[widget].pvAlias;
+             var pvUnits = page_.widgets[widget].pvSettings[pvName].Units;
+ 
+             console.log("Making graph for ", pvName);
+ 
+             // Get the plot element
+             var plot = document.getElementById("pvPlot");
+ 
+             // Create an array to hold trace data for each PV
+             var traces = [];
+ 
+             // Functionality for overlay?
+             for (var pv in plotPvList_) {
+                 var trace = {
+                     x: [],
+                     y: [],
+                     type: "scatter",
+                     // line: {
+                     //     color: "red" // Set trace line color to red
+                     // },
+                     visible: true // the default is "false"...
+                 };
+ 
+                 traces.push(trace);
+             }
+ 
+             // Create layout configuration with xaxis and yaxis settings
+             var layout = {
+                 xaxis: {
+                     title: 'Time',
+                     titlefont: { size: 18 },
+                     showticklabels: true
+                 },
+                 yaxis: {
+                     title: pvAlias+" ["+pvUnits+"]",
+                     titlefont: { size: 18 },
+                     zeroline: true
+                 }
+             };
+ 
+             // Initialize the plot using Plotly
+             Plotly.newPlot(plot.id, traces, layout);
+ 
+             // Set the plot dimensions
+             Plotly.relayout(plot, { width: plot.innerWidth, height: plot.innerHeight });
+ 
+             console.log("Finished making graph");
+ 
+         }
+ 
+         function getPvHistory(widget, parameters, startTime, endTime) {
+ 
+             console.log("Getting PV history")
+ 
+             var pvList = "";
+ 
+             if(page_.widgets[widget] === undefined) {
+                 console.log("Illegal widget UID (not found in widget list) received from child widget frame: " + 
+                 widget, Debug.HIGH_PRIORITY);
+                 return;
+             }
+ 
+             for(var pv in page_.widgets[widget].pvList) {
+                 pvList += pv + ",";
+             }
+ 
+             var passParams = [widget, parameters];
+ 
+             DesktopContent.XMLHttpRequest("Request?RequestType=getPvArchiverData",
+                                 //post data 
+                                 "pvList=" + pvList + 
+                                 "&id=" + widget +
+                                 "&startTime=" + startTime +
+                                 "&endTime=" + endTime,
+                                 pvHistoryReqHandler /*handler*/,
+                                 passParams /*parameter*/);
+ 
+             console.log("Got history for widget! pvList: " + pvList);
+ 
+         } 
+ 
+         function pvHistoryReqHandler(req, passParams) {
+ 
+             var jsonArr = req.responseXML.getElementsByTagName("JSON");
+             console.log("Handling PV history request ", jsonArr);
+ 
+             var widget= passParams[0];
+             var parameters = passParams[1];
+             console.log("widget: " + widget + " parameter: " + parameters);
+ 
+             for (var i = jsonArr.length - 1; i >= 0; i--){
+                 var history = JSON.parse(DesktopContent.getXMLValue(jsonArr[i]));				
+ 
+                 for (var pvName in history) {
+                     // console.log("Drawing new graph value for\n" + pvName + "at " + history[pvName].Timestamp)
+                     drawNewGraphValue(widget, pvName, history[pvName].Value, history[pvName].Timestamp, history[pvName].Status, history[pvName].Severity);
+                 }
+ 
+             }
+         } 
+ 
+         // Update graph
+ 
+         function drawNewGraphValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity) {
+ 
+             // Retrieve extra PV info
+ 
+             var pvAlias = page_.widgets[widget].pvAlias;
+             var pvSytem = page_.widgets[widget].pvSystem;
+ 
+             console.log("Drawing new graph value: x = " +pvTime+ "; y = "+pvValue);
+ 
+             // Get date
+             var date = new Date(pvTime * 1000);
+             var timeNow = Math.floor(Date.now())/1000;
+ 
+             if (plotTimeData_[pvName] !== undefined && plotTimeData_[pvName].length) {
+                 // Skip if this data point has already been plotted
+                 if (date <= plotTimeData_[pvName][plotTimeData_[pvName].length - 1]) {
+                     console.log("Point already plotted, returning");
+                     return;
+                 }
+             }
+ 
+             if (plotTimeData_[pvName] !== undefined) plotTimeData_[pvName].push(date);
+             if (plotValueData_[pvName] !== undefined) plotValueData_[pvName].push(pvValue);
+ 
+             // console.log("Strip Chart newValue() reached", pvName, pvValue);
+             console.log("Time data: ", plotTimeData_);
+             console.log("Value data:", plotValueData_);
+             
+             var plot = document.getElementById("pvPlot");
+ 
+ 
+             var alarmStatus; //  = "Undefined";
+             if (pvSeverity=="NO_ALARM") alarmStatus = "No alarm";
+             else if (pvSeverity=="MINOR") alarmStatus = "Warning";
+             else if (pvSeverity=="MAJOR") alarmStatus = "Alarm";
+             else alarmStatus = "Undefined";
+ 
+             // Define alarm color in table
+             var plotColor = "grey"; // default for "undefined"
+             if (pvSeverity == "NO_ALARM") plotColor = "green";
+             else if (pvSeverity == "MINOR") plotColor = "orange";
+             else if (pvSeverity == "MAJOR") plotColor = "red";
+ 
+             if (Object.getOwnPropertyNames(plotPvList_).length == 1) {
+                 Plotly.relayout(plot, {
+                     width: plot.innerWidth,
+                     height: plot.innerHeight,
+                     // Legend
+                     // title: pvSytem+": "+pvAlias+"<br>PV name: "+pvName+"<br>Status: "+alarmStatus,
+                     title: pvAlias+" ("+pvSytem+")<br>Status: "+alarmStatus,
+                     titlefont: { size: 16, color: plotColor }
+                 });
+             }
+ 
+             var ntraces = [];
+             var traces = [];
+             var i = 0;
+ 
+             console.log("Starting loop through graph values")
+ 
+             for (pv in plotPvList_) {
+ 
+                 ntraces.push(i);
+ 
+                 var xval = [];
+                 var yval = [];
+ 
+                 if (plotTimeData_[pv] !== undefined && plotValueData_[pv] !== undefined) {
+                     xval = plotTimeData_[pv];
+                     yval = plotValueData_[pv];
+                     console.log("x: "+xval+", y: "+yval)
+                 } else console.log("DEBUG: " +plotTimeData_[pv]+ " " +plotValueData_[pv])
+ 
+                 var trace = {
+                     x: xval,
+                     y: yval,
+                     type: plotParameters_["trace_type"],
+                     mode: plotParameters_["trace_mode"],
+                     name: pv,
+                     visible: plot.data[i].visible === true ? true : 'legendonly',
+                     line: {
+                         color: plotColor // Set trace line color based on severity
+                     }
+                 };
+ 
+                 console.log("Trace: ", trace)
+ 
+                 traces.push(trace);
+                 i++;
+                 
+             }
+ 
+             if (ntraces.length) Plotly.deleteTraces(plot, ntraces);
+             if (traces.length) Plotly.addTraces(plot, traces);
+ 
+             console.log("Finished drawing new value for", pvName);
+ 
+         }
+ 
+         // ---------- Table builder ----------
+         function makePvTable() {
+ 
+             // Print message to console
+             console.log("Setting up PV table:");
+ 
+             // Create table widget
+             var table = document.getElementById("pvTable");
+ 
+             // Create header row
+             var headerRow = table.insertRow(0);
+ 
+             // Create table header for System
+             var headerCell0 = document.createElement("TH");
+             headerCell0.textContent = "System";
+             headerRow.appendChild(headerCell0);
+ 
+             // Create table header for Parameter
+             var headerCell1 = document.createElement("TH");
+             headerCell1.textContent = "Parameter";
+             headerRow.appendChild(headerCell1);
+ 
+             var headerCell2 = document.createElement("TH");
+             headerCell2.textContent = "Value";
+             headerRow.appendChild(headerCell2);
+ 
+             // Row counter
+             var i_row = 0;
+ 
+             for (var pvObject of pvs_) {
+ 
+                 var pvName = Object.keys(pvObject)[0]; // Get the PV name
+                 var pvAlias = pvObject[pvName].Alias; // Access the "Alias" property
+                 var pvSystem = pvObject[pvName].System; // Access the "System" property
+ 
+                 console.log("PV:", pvObject);
+                 console.log("PV name: ", pvName);
+                 console.log("PV alias:", pvAlias);
+                 console.log("PV system:", pvSystem);
+ 
+                 // Create a new table row
+                 var row = table.insertRow(i_row + 1); // skip header row
+ 
+                 // Insert system name cell
+                 var systemNameCell = row.insertCell(0);
+                 systemNameCell.textContent = pvSystem;
+ 
+                 // Insert parameter name cell (aliased)
+                 var pvNameCell = row.insertCell(1);
+                 pvNameCell.textContent = pvAlias;
+ 
+                 // Insert parameter value cell
+                 var valueCell = row.insertCell(2);
+ 
+                 // Create a PV widget and configure it 
+                 var pvWidget = {};
+ 
+                 pvWidget.pvList = pvObject; // object
+                 pvWidget.pvAlias = pvAlias; // display name (alias)
+                 pvWidget.pvSystem = pvSystem; // system: DTC/ROC/FEB
+                 pvWidget.el = valueCell;
+ 
+                 // Add this Widget to the page
+                 page_.widgets[i_row] = pvWidget;
+ 
+                 // Setup the PV widget (you can keep your existing code here)
+                 setupPV(i_row);
+ 
+                 i_row++;
+             }
+ 
+             console.log("Finished building PV table.")
+ 
+         }
+ 
+         // ---------- Main ----------
+         
+         // Initialise page
+         function init() {
+ 
+             console.log("Initialising...");
+ 
+             // Set up page (container for widgets/widgets)
+             page_.createPage();
+ 
+             // Not sure about the stuff commented out below. It doesn't stop the page from working if you don't have it...\
+ 
+             // // Check user permissions
+             //  DesktopContent.XMLHttpRequest("Request?RequestType=isUserAdmin", "", isUserAdminHandler);
+ 
+             // // Get command string if opening a new window
+             // var cmdStr = DesktopContent.getParameter(2); //from  location.search
+             // if (cmdStr && cmdStr != "") {
+             //     //do incoming commands!
+             //     Debug.log("cmdStr=" + cmdStr);
+             //     //replace %22 with "
+             //     cmdStr = cmdStr.replace(/%22/g, "\"");
+             //     //evaluateJS(cmdStr);
+             // }
+ 
+             // Ensure PV list is up-to-date
+             getAllPvList();
+ 
+             // Handle timeout
+             window.clearTimeout(timerVariable_)
+ 
+             // Create the PV table
+             makePvTable();
+ 
+             console.log("Created PV table, polling server...")
+             
+             // Periodically poll the server to retrieve the PV values
+             pollServer();
+ 
+         } 
+ 
+     </script>
+ 
+ </head>
+ 
+ <body onload='//init() called by DesktopContent.js'>
+ 
+     <!-- Alarm status legend -->
+     <div class="legend-container">
+         <div class="legend">
+             <div class="legend-item legend-no-alarm">
+                 <div class="legend-key"></div>
+                 <div class="legend-text">No alarm</div>
+             </div>
+             <div class="legend-item legend-warning">
+                 <div class="legend-key"></div>
+                 <div class="legend-text">Warning</div>
+             </div>
+             <div class="legend-item legend-alarm">
+                 <div class="legend-key"></div>
+                 <div class="legend-text">Alarm</div>
+             </div>
+             <div class="legend-item legend-undefined">
+                 <div class="legend-key"></div>
+                 <div class="legend-text">Undefined</div>
+             </div>
+         </div>
+     </div> 
+ 
+     <!-- Main page title -->
+     <div class="main-title-container">
+         <div class="main-title">Wideband monitoring</div>
+     </div> 
+     
+     <!--- Main page body -->
+     <div class="two-column-container">
+         <!-- PV table -->
+         <div class="pv-table-container">
+             <div class="pv-table"> 
+                 <table id="pvTable"></table> 
+             </div> 
+         </div>  
+ 
+         <!--- PV plot -->
+         <div class="pv-plot-container">
+             <div class="pv-plot" id="pvPlot"> </div>  
+ 
+             <div id="startTimeContainer" style="display: none;">
+                 <label for="startTimeDropdown" style="font-size: 18px;">Select start time:</label>
+                 <select id="startTimeDropdown" style="font-size: 18px;">
+                     <option value="1">1 hour ago</option>
+                     <option value="6">6 hours ago</option>
+                     <option value="12">12 hours ago</option>
+                     <option value="24">24 hours ago</option>
+                     <option value="custom">Custom</option> 
+                     <!-- Add more options as needed -->
+                 </select>
+ 
+                 <!-- Input for custom time or hours (hidden by default) -->
+                 <div id="customInputContainer" style="display: none;">
+                     <label for="customInput" style="font-size: 18px;">Enter number of hours: </label>
+                     <input type="text" id="customInput">
+                 </div>
+                 <button onclick="getStartTime()" style="font-size: 18px;">Apply</button>
+             </div>
+ 
+ 
+         </div> 
+ 
+         <!-- Start time dropdown container  -->
+         <!-- <div class="start-time-button-container">
+             <div class="start-time-button"> 
+                 <label for="startTimeDropdown">Select Start Time:</label>
+                 <select id="startTimeDropdown">
+                     <option value="1">1 hour ago</option>
+                     <option value="6">6 hours ago</option>
+                     <option value="24">24 hours ago</option>
+                 </select>
+                 <button onclick="getStartTime()">Apply</button>
+             </div> 
+         </div>   -->
+ 
+     </div>
+ 
+ </body>
+ </html>
+ 
