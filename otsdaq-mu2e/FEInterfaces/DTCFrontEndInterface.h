@@ -167,7 +167,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
-																			std::string eventDuration, uint32_t numberOfEventWindows, uint64_t initialEventWindowTag,
+																			std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
 																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters);
 
