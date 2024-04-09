@@ -56,7 +56,7 @@
              align-items: left;
              margin-bottom: 10px;
              padding: 10px;
-             font-size: 18px;
+             font-size: 24px;
          }
  
          .legend-key {
@@ -96,7 +96,7 @@
          }
  
          .main-title {
-             font-size: 32px;
+             font-size: 36px;
              font-weight: bold;
              text-align: center;
              /* Add other styling properties as needed */
@@ -115,14 +115,25 @@
              padding: 25px;
              box-sizing: border-box; /* Include padding in the width */
          }
+
          .pv-table {
-             font-size: 18px;
+             font-size: 20px;
              
              /* font-weight: bold;
              text-align: center; */
              /* Add other styling properties as needed */
          }
  
+         /* PV button */
+        .pvButton {
+            /* height: 100%;
+            width: 100%; */
+            border: none;
+            background-color: rgba(255, 255, 255, 0.426);
+            font-size: 20px;
+            
+        }
+
          table {
              width: 100%;
              border-collapse: collapse;
@@ -166,14 +177,14 @@
          }
  
          .pv-plot { 
-             font-size: 16px;
+             font-size: 24px;
          }
  
          /* Styles for the plot container (right column) */
          .start-time-button-container {
              width: 50%;
              box-sizing: border-box; /* Include padding in the width */
-             font-size: 16px;
+             font-size: 24px;
          }
  
          .developer-notes {
@@ -238,117 +249,100 @@
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_temperature": {
                  Alias: "P1 temperature",
-                 System: "FEB" }
+                 System: "P1 FEB" }
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_0": {
                  Alias: "ADC bias 0",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_1": {
                  Alias: "ADC bias 1",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_2": {
                  Alias: "ADC bias 2",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_3": {
                  Alias: "ADC bias 3",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_4": {
                  Alias: "ADC bias 4",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_5": {
                  Alias: "ADC bias 5",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_6": {
                  Alias: "ADC bias 6",
-                 System: "FEB"},
+                 System: "P1 FEB"},
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_Bias_7": {
                  Alias: "ADC bias 7",
-                 System: "FEB"},
+                 System: "P1 FEB"},
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_1_2Vpos": {
+                 Alias: "+1.2 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_1_8Vpos": {
+                 Alias: "+1.8 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_5Vpos": {
+                 Alias: "+5.0 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_10Vpos": {
+                 Alias: "+10.0 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_2_5Vpos": {
+                 Alias: "+2.5 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_5Vneg": {
+                 Alias: "-5.0 V supply",
+                 System: "P1 FEB"}
+             },            
+            {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_3_3Vpos": {
+                 Alias: "+3.3 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_15Vpos": {
+                 Alias: "+15.0 V supply",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_2_5Vpos": {
+                 Alias: "+2.5 V supply",
+                 System: "P1 FEB"}
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB0_temperature": {
                  Alias: "CMB0 temperature",
-                 System: "FEB"}
+                 System: "P1 FEB"}
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB1_temperature": {
                  Alias: "CMB1 temperature",
-                 System: "FEB"}
+                 System: "P1 FEB"}
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB2_temperature": {
                  Alias: "CMB2 temperature",
-                 System: "FEB"}
+                 System: "P1 FEB"}
              },
              {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_CMB3_temperature": {
                  Alias: "CMB3 temperature",
-                 System: "FEB"}
-             }//,
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB2_temperature": {
-            //      Alias: "CMB2 temperature",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB3_temperature": {
-            //      Alias: "CMB3 temperature",
-            //      System: "FEB0"}
-            //  }//,
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_1": {
-            //      Alias: "ADC bias 1",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_2": {
-            //      Alias: "ADC bias 2",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_3": {
-            //      Alias: "ADC bias 3",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_4": {
-            //      Alias: "ADC bias 4",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_5": {
-            //      Alias: "ADC bias 5",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_6": {
-            //      Alias: "ADC bias 6",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_ADC_bias_7": {
-            //      Alias: "ADC bias 7",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB0_temperature": {
-            //      Alias: "CMB0 temperature",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB1_temperature": {
-            //      Alias: "CMB1 temperature",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB2_temperature": {
-            //      Alias: "CMB2 temperature",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_CMB3_temperature": {
-            //      Alias: "CMB3 temperature",
-            //      System: "FEB0"}
-            //  }//,
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_DAC_bias_0": {
-            //      Alias: "DAC bias 0",
-            //      System: "FEB0"}
-            //  },
-            //  {"Mu2e:TDAQ_mu2e:crvROC0:FEB0_DAC_bias_1": {
-            //      Alias: "DAC bias 1",
-            //      System: "FEB0"}
-            //  }
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_BiasDac_0": {
+                 Alias: "Bias Bus 0 DAC",
+                 System: "P1 FEB"}
+             },
+             {"Mu2e:TDAQ_crv:crvROC09:FEB_p1_BiasDac_1": {
+                 Alias: "Bias Bus 1 DAC",
+                 System: "P1 FEB"}
+             }
  
          ];
  
@@ -733,14 +727,14 @@
                  startTime = 1; // default is 1 hour
              } 
  
-             if (startTime === "custom") {
-                 // Get custom time from the input field
-                 var customInputContainer = document.getElementById("customInputContainer");
-                 customInputContainer.style.display = 'block'; // Show the custom start time container
-                 var customInput = document.getElementById("customInput");
-                 startTime = parseFloat(customInput.value);
-                 console.log("Custom start time: " + startTime)
-             } 
+            //  if (startTime === "custom") {
+            //      // Get custom time from the input field
+            //      var customInputContainer = document.getElementById("customInputContainer");
+            //      customInputContainer.style.display = 'block'; // Show the custom start time container
+            //      var customInput = document.getElementById("customInput");
+            //      startTime = parseFloat(customInput.value);
+            //      console.log("Custom start time: " + startTime)
+            //  } 
  
              return startTime
  
@@ -766,7 +760,10 @@
              startTimeContainer.style.display = 'block'; // Show the start time container
  
              var timeNow = Math.floor(Date.now())/1000;
-             var startTime =  timeNow - getStartTime()*3600; //  timeNow - 1*3600; // This doesn't work for whatever reason
+             
+             var startTime =  timeNow - getStartTime()*3600; // 
+
+            //  console.log("startTime "+ startTime)
              
              getPvHistory(widget, plotParameters_, startTime, timeNow);
  
@@ -799,7 +796,11 @@
                      // line: {
                      //     color: "red" // Set trace line color to red
                      // },
-                     visible: true // the default is "false"...
+                     visible: true, // the default is "false"...
+                     mode: "lines",
+                     line: {
+                        width: 10
+                     }
                  };
  
                  traces.push(trace);
@@ -807,14 +808,19 @@
  
              // Create layout configuration with xaxis and yaxis settings
              var layout = {
+                 width: 11 * 100,  // Adjust as needed
+                 height: 8 * 100, // Adjust as needed
+                //  line: {
+                //     width: 3 // Adjust the line width as needed
+                //  }
                  xaxis: {
                      title: 'Time',
-                     titlefont: { size: 18 },
+                     titlefont: { size: 24 },
                      showticklabels: true
                  },
                  yaxis: {
                      title: pvAlias+" ["+pvUnits+"]",
-                     titlefont: { size: 18 },
+                     titlefont: { size: 24 },
                      zeroline: true
                  }
              };
@@ -857,7 +863,8 @@
                                  passParams /*parameter*/);
  
              console.log("Got history for widget! pvList: " + pvList);
- 
+             console.log("Start time: " + startTime)
+             
          } 
  
          function pvHistoryReqHandler(req, passParams) {
@@ -932,7 +939,7 @@
                      // Legend
                      // title: pvSytem+": "+pvAlias+"<br>PV name: "+pvName+"<br>Status: "+alarmStatus,
                      title: pvAlias+" ("+pvSytem+")<br>Status: "+alarmStatus,
-                     titlefont: { size: 16, color: plotColor }
+                     titlefont: { size: 24, color: plotColor }
                  });
              }
  
@@ -1144,22 +1151,22 @@
              <div class="pv-plot" id="pvPlot"> </div>  
  
              <div id="startTimeContainer" style="display: none;">
-                 <label for="startTimeDropdown" style="font-size: 18px;">Select start time:</label>
-                 <select id="startTimeDropdown" style="font-size: 18px;">
+                 <label for="startTimeDropdown" style="font-size: 24px;">Select start time:</label>
+                 <select id="startTimeDropdown" style="font-size: 24px;">
                      <option value="1">1 hour ago</option>
                      <option value="6">6 hours ago</option>
                      <option value="12">12 hours ago</option>
                      <option value="24">24 hours ago</option>
-                     <option value="custom">Custom</option> 
+                     <!-- <option value="custom">Custom</option>  -->
                      <!-- Add more options as needed -->
                  </select>
  
                  <!-- Input for custom time or hours (hidden by default) -->
                  <div id="customInputContainer" style="display: none;">
-                     <label for="customInput" style="font-size: 18px;">Enter number of hours: </label>
+                     <label for="customInput" style="font-size: 24px;">Enter number of hours: </label>
                      <input type="text" id="customInput">
                  </div>
-                 <button onclick="getStartTime()" style="font-size: 18px;">Apply</button>
+                 <button onclick="getStartTime()" style="font-size: 24px;">Apply</button>
              </div>
  
  
