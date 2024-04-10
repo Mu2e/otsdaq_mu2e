@@ -1,0 +1,1 @@
+/home/mu2ecrv/daq/ots_v3/srcs/otsdaq_mu2e_crv/UserWebGUI/js/mu2e.js
