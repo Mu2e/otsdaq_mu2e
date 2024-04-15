@@ -1630,6 +1630,39 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
 	}  // end check if any ROCs should be DTC-hardware emulated ROCs
 
+    // set the DTC ID, "data in this field are passed to the DTC ID field 
+    // of the Event Header in built events." from docdb 4097
+    uint32_t dtcEventBuilderReg_DTCID = 0;
+    uint32_t dtcEventBuilderReg_Mode = 0;
+    uint32_t dtcEventBuilderReg_PartitionID = 0;
+    uint32_t dtcEventBuilderReg_MACIndex = 0;
+    try {
+			dtcEventBuilderReg_DTCID =
+				getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+			dtcEventBuilderReg_Mode =
+				getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
+			dtcEventBuilderReg_PartitionID =
+				getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
+			dtcEventBuilderReg_MACIndex =
+				getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
+			__FE_COUTV__(dtcEventBuilderReg_DTCID);
+			__FE_COUTV__(dtcEventBuilderReg_Mode);
+			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
+			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
+
+			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
+			// EVB Local MAC Index [7-0]
+			thisDTC_->SetEVBInfo(dtcEventBuilderReg_DTCID,
+				dtcEventBuilderReg_Mode,
+				dtcEventBuilderReg_PartitionID,
+				dtcEventBuilderReg_MACIndex);
+		}
+		catch(...)
+		{
+			__FE_COUT_INFO__ << "Ignoring missing event building configuration values."
+								<< __E__;
+		}
+
 	//enable ROC links (do not forget CFO link is off in HW dev mode)
 	__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
 	thisDTC_->DisableLink(DTCLib::DTC_Link_CFO);
