@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         1, //bool enable, 
         1, //bool useDetachedBufferTest,
         "0x44 clocks", //std::string eventDuration, 
-        numberOfEventWindowMarkers, //uint32_t numberOfEventWindows, 
+        numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
         0, //uint64_t initialEventWindowTag,
         1, //uint64_t eventWindowMode, 
         0, //bool enableClockMarkers, 

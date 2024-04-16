@@ -1014,14 +1014,6 @@ try
 	// /////////////////////////////
 	// /////////////////////////////
 
-	// // if(regWriteMonitorStream_.is_open())
-	// // {
-	// // 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0)
-	// // 	                       << ", \t ---------- Configure step " << getIterationIndex()
-	// // 	                       << ":" << getSubIterationIndex() << "\n";
-	// // 	regWriteMonitorStream_.flush();
-	// // }
-
 	// if(getConfigurationManager()
 	//        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/SkipCFOandDTCConfigureSteps")
 	//        .getValue<bool>())
@@ -1947,15 +1939,30 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 //==============================================================================
 void DTCFrontEndInterface::halt(void)
 {
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0)
-	// 	                       << ", \t ---------- Halting..."
-	// 	                       << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
+	const std::string transitionStr = "Halting";
 
-	__FE_COUT__ << "Halting..." << __E__;
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
+
+		thisDTC_->DisableCFOEmulation(); //stop Event Window Marker generation
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
+		thisDTC_->DisableCFOLoopback();
+	}
+	else
+	{
+		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
+		__FE_SS_THROW__;
+	}
 
 	for(auto& roc : rocs_)  // halt "as usual"
 	{
@@ -1982,15 +1989,31 @@ void DTCFrontEndInterface::halt(void)
 //==============================================================================
 void DTCFrontEndInterface::pause(void)
 {
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0)
-	// 	                       << ", \t ---------- Pausing..."
-	// 	                       << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
+	const std::string transitionStr = "Pausing";
 
-	__FE_COUT__ << "Pausing..." << __E__;
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
+
+		thisDTC_->DisableCFOEmulation(); //stop Event Window Marker generation
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
+		thisDTC_->DisableCFOLoopback();
+	}
+	else
+	{
+		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
 	for(auto& roc : rocs_)  // pause "as usual"
 	{
 		roc.second->pause();
@@ -2000,20 +2023,187 @@ void DTCFrontEndInterface::pause(void)
 	//	readStatus();
 
 	__FE_COUT__ << "Paused." << __E__;
-}
+} //end pause()
+
+//==============================================================================
+void DTCFrontEndInterface::stop(void)
+{
+	const std::string transitionStr = "Stopping";
+
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
+
+		thisDTC_->DisableCFOEmulation(); //stop Event Window Marker generation
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
+		thisDTC_->DisableCFOLoopback();
+	}
+	else
+	{
+		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
+	if(emulatorMode_)
+	{
+		__FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size() << __E__;
+		for(auto& roc : rocs_)
+			roc.second->stop();
+	}
+	else //not emulating all ROCs
+	{
+		__FE_COUT__ << "DTC stopping... # of ROCs = " << rocs_.size() << __E__;
+		for(auto& roc : rocs_)
+			roc.second->stop();
+	}
+
+
+	return;
+
+	// must close data file on each possible return with call 'if(runDataFile_.is_open())
+	// runDataFile_.close();'
+
+	// if(emulatorMode_)
+	// {
+	// 	__FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size() << __E__;
+	// 	for(auto& roc : rocs_)
+	// 		roc.second->stop();
+
+	// 	// if(runDataFile_.is_open())
+	// 	// 	runDataFile_.close();
+	// 	return;
+	// }
+
+	// int numberOfCAPTANPulses =
+	//     getConfigurationManager()
+	//         ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
+	//         .getValue<unsigned int>();
+
+	// __FE_COUTV__(numberOfCAPTANPulses);
+
+	// // int stopIndex = getIterationIndex();
+
+	// if(numberOfCAPTANPulses == 0)
+	// {
+	// 	for(auto& roc : rocs_)  // stop "as usual"
+	// 	{
+	// 		roc.second->stop();
+	// 	}
+	// 	// if(runDataFile_.is_open())
+	// 	// 	runDataFile_.close();
+	// 	// return;
+	// }
+
+	// if(stopIndex == 0)
+	// {
+	// 	//		int i = 0;
+	// 	for(auto& roc : rocs_)
+	// 	{
+	// 		// re-align link
+	// 		roc.second->writeRegister(22, 0);
+	// 		roc.second->writeRegister(22, 1);
+
+	// 		// std::stringstream filename;
+	// 		// filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC"
+	// 		//          << roc.second->getLinkID() << "data.txt";
+	// 		// std::string filenamestring = filename.str();
+	// 		// datafile_[i].open(filenamestring);
+	// 		//	i++;
+	// 	}
+	// }
+
+	// if(stopIndex > numberOfCAPTANPulses)
+	// {
+	// 	int i = 0;
+	// 	for(auto& roc : rocs_)
+	// 	{
+	// 		__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost "
+	// 		                          << roc.second->readDTCLinkLossCounter()
+	// 		                          << " times");
+	// 		datafile_[i].close();
+	// 		i++;
+	// 	}
+	// 	if(runDataFile_.is_open())
+	// 		runDataFile_.close();
+	// 	return;
+	// }
+
+	// int i = 0;
+	// __FE_COUT__ << "Entering read timestamp loop..." << __E__;
+	// for(auto& roc : rocs_)
+	// {
+	// 	int timestamp_data = roc.second->readInjectedPulseTimestamp();
+
+	// 	__FE_COUT__ << "Read " << stopIndex << " -> " << device_name_ << " timestamp "
+	// 	            << timestamp_data << __E__;
+
+	// 	datafile_[i] << stopIndex << " " << timestamp_data << std::endl;
+	// 	i++;
+	// }
+
+	// indicateIterationWork();
+	// return;
+}  // end stop()
 
 //==============================================================================
 void DTCFrontEndInterface::resume(void)
 {
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0)
-	// 	                       << ", \t ---------- Resuming..."
-	// 	                       << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
+	const std::string transitionStr = "Resuming";
 
-	__FE_COUT__ << "Resuming..." << __E__;
+	__FE_COUTV__(operatingMode_);
+	__FE_COUTV__(emulatorMode_);
+
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
+
+		uint32_t numberOfEventWindowMarkers =
+			getConfigurationManager()
+				->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
+				.getValue<unsigned int>();
+		__FE_COUT__ << "Using 'numberOfCAPTANPulses' for number of Event Windows to generate: " << numberOfEventWindowMarkers << __E__;
+
+
+		SetCFOEmulatorFixedWidthEmulation(
+			1, //bool enable, 
+			false, //bool useDetachedBufferTest,
+			"0x44 clocks", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			0, //uint64_t initialEventWindowTag,
+			1, //uint64_t eventWindowMode, 
+			0, //bool enableClockMarkers, 
+			1, //bool enableAutogenDRP, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0//	bool doNotResetCounters )
+		);
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
+		loopbackTest();
+	}
+	else
+	{
+		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
 	for(auto& roc : rocs_)  // resume "as usual"
 	{
 		roc.second->resume();
@@ -2028,20 +2218,43 @@ void DTCFrontEndInterface::resume(void)
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
+	const std::string transitionStr = "Starting";
+
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
-	if(operatingMode_ == "HardwareDevMode")
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
-		__FE_COUT_INFO__ << "Starting for hardware development mode!" << __E__;
+		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
+
+		uint32_t numberOfEventWindowMarkers =
+			getConfigurationManager()
+				->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
+				.getValue<unsigned int>();
+		__FE_COUT__ << "Using 'numberOfCAPTANPulses' for number of Event Windows to generate: " << numberOfEventWindowMarkers << __E__;
+
+
+		SetCFOEmulatorFixedWidthEmulation(
+			1, //bool enable, 
+			false, //bool useDetachedBufferTest,
+			"0x44 clocks", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			0, //uint64_t initialEventWindowTag,
+			1, //uint64_t eventWindowMode, 
+			0, //bool enableClockMarkers, 
+			1, //bool enableAutogenDRP, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0//	bool doNotResetCounters )
+		);
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
-		__FE_COUT_INFO__ << "Starting for Event Building mode!" << __E__;
+		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
-	else if(operatingMode_ == "LoopbackMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
-		__FE_COUT_INFO__ << "Starting for Loopback mode!" << __E__;
+		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
 		loopbackTest();
 	}
 	else
@@ -2062,14 +2275,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	// ///////////////////////////// old start
 	// /////////////////////////////
 	// /////////////////////////////
-
-	// // if(regWriteMonitorStream_.is_open())
-	// // {
-	// // 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0)
-	// // 	                       << ", \t ---------- Starting..."
-	// // 	                       << "\n";
-	// // 	regWriteMonitorStream_.flush();
-	// // }
 
 	// // open a file for this run number to write data to, if it hasn't been opened yet
 	// // define a data file
@@ -2254,101 +2459,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	// indicateIterationWork();
 	// return;
 }  // end start()
-
-//==============================================================================
-void DTCFrontEndInterface::stop(void)
-{
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "---------- Stopping..."
-	// 	                       << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
-
-	// must close data file on each possible return with call 'if(runDataFile_.is_open())
-	// runDataFile_.close();'
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator DTC stopping... # of ROCs = " << rocs_.size() << __E__;
-		for(auto& roc : rocs_)
-			roc.second->stop();
-
-		// if(runDataFile_.is_open())
-		// 	runDataFile_.close();
-		// return;
-	}
-
-	int numberOfCAPTANPulses =
-	    getConfigurationManager()
-	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
-	        .getValue<unsigned int>();
-
-	__FE_COUTV__(numberOfCAPTANPulses);
-
-	// int stopIndex = getIterationIndex();
-
-	if(numberOfCAPTANPulses == 0)
-	{
-		for(auto& roc : rocs_)  // stop "as usual"
-		{
-			roc.second->stop();
-		}
-		// if(runDataFile_.is_open())
-		// 	runDataFile_.close();
-		// return;
-	}
-
-	// if(stopIndex == 0)
-	// {
-	// 	//		int i = 0;
-	// 	for(auto& roc : rocs_)
-	// 	{
-	// 		// re-align link
-	// 		roc.second->writeRegister(22, 0);
-	// 		roc.second->writeRegister(22, 1);
-
-	// 		// std::stringstream filename;
-	// 		// filename << "/home/mu2edaq/sync_demo/ots/" << device_name_ << "_ROC"
-	// 		//          << roc.second->getLinkID() << "data.txt";
-	// 		// std::string filenamestring = filename.str();
-	// 		// datafile_[i].open(filenamestring);
-	// 		//	i++;
-	// 	}
-	// }
-
-	// if(stopIndex > numberOfCAPTANPulses)
-	// {
-	// 	int i = 0;
-	// 	for(auto& roc : rocs_)
-	// 	{
-	// 		__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost "
-	// 		                          << roc.second->readDTCLinkLossCounter()
-	// 		                          << " times");
-	// 		datafile_[i].close();
-	// 		i++;
-	// 	}
-	// 	if(runDataFile_.is_open())
-	// 		runDataFile_.close();
-	// 	return;
-	// }
-
-	// int i = 0;
-	// __FE_COUT__ << "Entering read timestamp loop..." << __E__;
-	// for(auto& roc : rocs_)
-	// {
-	// 	int timestamp_data = roc.second->readInjectedPulseTimestamp();
-
-	// 	__FE_COUT__ << "Read " << stopIndex << " -> " << device_name_ << " timestamp "
-	// 	            << timestamp_data << __E__;
-
-	// 	datafile_[i] << stopIndex << " " << timestamp_data << std::endl;
-	// 	i++;
-	// }
-
-	// indicateIterationWork();
-	// return;
-}  // end stop()
 
 //==============================================================================
 // return true to keep running
@@ -3675,7 +3785,7 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 
 //========================================================================
 std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable, bool useDetachedBufferTest,
-	std::string eventDuration, uint32_t numberOfEventWindows, uint64_t initialEventWindowTag,
+	std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 	uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
 	bool saveSubeventHeadersToDataFile, bool doNotResetCounters )
 {	
@@ -3782,9 +3892,9 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	__FE_COUTV__(eventDurationInClocks);
 	thisDTC_->SetCFOEmulationEventWindowInterval(eventDurationInClocks);  
 
-	// uint32_t numberOfEventWindows = __GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t);
-	__FE_COUTV__(numberOfEventWindows);
-	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfEventWindows);
+	// uint32_t numberOfEventWindowMarkers = __GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t);
+	__FE_COUTV__(numberOfEventWindowMarkers);
+	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfEventWindowMarkers);
 	
 	// uint64_t initialEventWindowTag = __GET_ARG_IN__("Starting Event Window Tag",uint64_t);
 	__FE_COUTV__(initialEventWindowTag);
@@ -5342,7 +5452,7 @@ void DTCFrontEndInterface::loopbackTest(int step)
 	if ((step % 2) != 0)
 	{
 		indicateIterationWork();
-		__FE_COUT__ << "Step " << step << " is odd, letting DTCs have a turn" << __E__;
+		__FE_COUT__ << "Step " << step << " is odd, letting the CFO have a turn" << __E__;
 		return;
 	}
 	unsigned int loopback_step = step / 2;
