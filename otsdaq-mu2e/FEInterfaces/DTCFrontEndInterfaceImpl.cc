@@ -765,6 +765,16 @@ void DTCFrontEndInterface::registerFEMacros(void)
 //==============================================================================
 void DTCFrontEndInterface::configureSlowControls(void)
 {
+    bool  slowControlsEnable = true;
+   try { 
+	slowControlsEnable = getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+    } catch(...) {
+        __FE_COUT__ << "Missing `slowControlsEnable` in configuration, slowControlsEnable defaults to " << slowControlsEnable << __E__;
+    }
+    if(!slowControlsEnable) {
+	    __FE_COUT__ << "Slow controls are disabled..." << __E__;
+	    return;
+    }
 	__FE_COUT__ << "Configuring slow controls..." << __E__;
 
 	// parent configure adds DTC slow controls channels
@@ -1665,6 +1675,24 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 
 	thisDTC_->SoftReset(); // soft reset to clear lock counters
+
+    //------------------------------ ROCs //------------------------------
+    bool doConfigureROCs = false;
+	try {
+		doConfigureROCs = Configurable::getSelfNode()
+	 	                        .getNode("EnableROCConfigureStep")
+	 		                    .getValue<bool>();
+	} catch(...) { }  // ignore missing field
+	if(doConfigureROCs) {
+	    for(auto& roc : rocs_) {
+        // make sure the link is ready
+	    if(!thisDTC_->WaitForLinkReady(roc.second->getLinkID(), 1000 /*us*/, 2.0 /*seconds*/)) { // 2s default by default
+		    __FE_SS__  << "ROC " << roc.first << " on link " << roc.second->getLinkID() << " was not ready after 2s. Aborting ROC configuration.";
+		    __SS_THROW__;
+	    }
+		roc.second->configure();
+		}
+	}
 }  // end configureHardwareDevMode()
 
 //==============================================================================
