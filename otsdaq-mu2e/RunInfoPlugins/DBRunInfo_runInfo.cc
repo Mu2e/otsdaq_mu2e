@@ -289,7 +289,7 @@ unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
 		__SS_THROW__;
 	}
 
-	return runNumber % 1000;
+	return runNumber;
 } //end claimNextRunNumber()
 
 //==============================================================================
