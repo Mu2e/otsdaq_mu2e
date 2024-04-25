@@ -201,7 +201,8 @@ try
 			std::lock_guard<std::mutex> lock(dtc.bufferTestThreadStruct_->lock_);
 			dtc.bufferTestThreadStruct_->exitThread_ = true;
 
-			dumpSpy = true;			
+			if(DTCFrontEndInterface::getDetachedBufferTestReceivedCount(dtc.bufferTestThreadStruct_) < numberOfEventWindowMarkers - 1)
+				dumpSpy = true;			
 			break;
 		}
 		++i;
@@ -211,7 +212,7 @@ try
 		sleep(1); //give 1 more second for thread
 
 	if(dumpSpy)
-		dtc.getDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */);
+		dtc.getDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
 	__COUT_INFO__ << "Thread and main exited!" << __E__;
 	return 0;
