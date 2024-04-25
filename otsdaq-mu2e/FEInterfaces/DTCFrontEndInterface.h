@@ -126,6 +126,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
   public:
 
 	void								SetupROCs							(__ARGS__);
+	std::string							SetupROCs							(DTCLib::DTC_Link_ID rocLinkIndex,
+																			bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
+																			DTCLib::DTC_ROC_Emulation_Type rocEmulationType, uint32_t size);
 	void 								ReadROC								(__ARGS__);
 	void 								WriteROC							(__ARGS__);
 	void 								BockReadROC							(__ARGS__);
@@ -165,6 +168,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	
 	void 								SetupCFOInterface					(__ARGS__);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
+	std::string							SetCFOEmulatorOnOffSpillEmulation	(bool enable,
+																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
+																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, bool saveSubeventHeadersToDataFile,
+																			bool doNotResetCounters);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
 																			std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
