@@ -3597,6 +3597,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	std::stringstream outSs;
 
 	thisDTC_->DisableCFOEmulation();
+	thisDTC_->DisableAutogenDRP();
 	if(!enable) //do not need to apply parameters if disabling		
 	{
 		outSs << "Halted CFO Emulator!" << __E__;
@@ -3687,7 +3688,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 
 	thisDTC_->EnableReceiveCFOLink(); //enable forwarding if CFO timing link to ROCs
 
-	__COUT_TYPE__(TLVL_DEBUG+30) << "Enabling CFO Emulation!" << __E__;
+	__COUTT__ << "Enabling CFO Emulation!" << __E__;
 	thisDTC_->EnableCFOEmulation();
 
 	outSs << "Launched CFO Emulator!" << __E__;
@@ -3752,6 +3753,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	std::stringstream outSs;
 
 	thisDTC_->DisableCFOEmulation();
+	thisDTC_->DisableAutogenDRP();
 	if(!enable) //do not need to apply parameters if disabling		
 	{
 		outSs << "Halted CFO Emulator!" << __E__;
@@ -3921,7 +3923,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 
 	thisDTC_->EnableReceiveCFOLink();  //enable forwarding if CFO timing link to ROCs
 
-	__COUT_TYPE__(TLVL_DEBUG+30) << "Enabling CFO Emulation!" << __E__;
+	__COUTT__ << "Enabling CFO Emulation!" << __E__;
 	thisDTC_->EnableCFOEmulation();
 
 	outSs << "Launched CFO Emulator!" << __E__;
@@ -4048,7 +4050,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 			std::dec << subevent->GetEventWindowTag().GetEventWindowTag(true) <<
 			" (0x" << std::hex << std::setw(4) << std::setfill('0') <<
 			subevent->GetEventWindowTag().GetEventWindowTag(true) << ")";
-		__COUT_TYPE__(TLVL_DEBUG+2) << __COUT_HDR__ << ostr.str();
+		__COUTT__ << ostr.str();
 		threadStruct->mismatchedEventTagJumps_.push_back(std::make_pair<uint64_t, uint64_t>(
 			threadStruct->nextEventWindowTag_,
 			subevent->GetEventWindowTag().GetEventWindowTag(true)
@@ -4161,7 +4163,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	{
 		// print the data block header
 		DTCLib::DTC_DataHeaderPacket *dataHeader = dataBlocks[j].GetHeader().get();			
-		__COUT_TYPE__(TLVL_DEBUG+3) << __COUT_HDR__ << dataHeader->toJSON() << __E__;
+		__COUTT__ << dataHeader->toJSON() << __E__;
 
 		++(threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]);		
 
@@ -4247,7 +4249,7 @@ try
 	//start with clean release
 	// getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 	threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
-	__COUT_TYPE__(TLVL_DEBUG+1) << "ReleaseAllBuffers called!" << __E__;
+	__COUTT__ << "ReleaseAllBuffers called!" << __E__;
 
 	std::vector<std::unique_ptr<DTCLib::DTC_Event>> events;
 	std::vector<std::unique_ptr<DTCLib::DTC_SubEvent>> subevents;
@@ -4365,7 +4367,7 @@ try
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				threadStruct->activeMatch_)).size())
 			{ 
-				__COUT_TYPE__(TLVL_DEBUG+1) << __COUT_HDR__ << "Read iteration #" << ii++ << ": Events returned by the DTC: " << events.size() << std::endl;
+				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++ << ": Events returned by the DTC: " << events.size() << std::endl;
 				if (events.empty()) break; //impossible!
 				
 				for(auto& eventPtr : events) 
@@ -4428,7 +4430,7 @@ try
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				threadStruct->activeMatch_)).size())
 			{ 
-				__COUT_TYPE__(TLVL_DEBUG+1) << __COUT_HDR__ << "Read iteration #" << ii++ << ": SubEvents returned by the DTC: " << subevents.size() << std::endl;
+				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++ << ": SubEvents returned by the DTC: " << subevents.size() << std::endl;
 				
 				if (subevents.empty()) continue; //impossible!
 				
