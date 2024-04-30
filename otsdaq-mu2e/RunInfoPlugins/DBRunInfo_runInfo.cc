@@ -407,5 +407,139 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 	
 } //end updateRunInfo()
 
+std::string DBRunInfo::getRunInfo(int runNumber) { 
+    std::ostringstream oss;
+    oss << "{\"name\":\"" << mfSubject_ << "\"";
+    int runInfoDbConnStatus_ = 0;
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		__COUT__ << "Unable to connect to the run_info database to get run status!\n" << __E__;
+		PQfinish(runInfoDbConn_);
+		
+		//Try to open again the db connection
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT__ << "Unable to connect for the second time to the run_info database to get run status!\n" << __E__;
+			PQfinish(runInfoDbConn_);
+		}
+		else
+		{
+			__COUT__ << "Connected after a second tentative to the run_info databaseto get run status!\n" << __E__;
+			runInfoDbConnStatus_ = 1;
+		}
+	}
+	else
+	{
+		__COUT__ << "Connected to the run_info database to get run status!\n" << __E__;
+		runInfoDbConnStatus_ = 1;
+	}
+
+	// get run info
+	if(runInfoDbConnStatus_ == 1)
+	{
+        char buffer[1024];
+        PGresult* res;
+        if(runNumber > 0) {
+		    snprintf(buffer,
+				sizeof(buffer),
+                "SELECT r.run_number as run_number, host_name, artdaq_partition, configuration_name, commit_time, \
+                transition_time, transition_description, run_type_description, \
+                configuration_version, trigger_table_name \
+                FROM %s.run_configuration r \
+                INNER JOIN %s.run_transition rt ON  r.run_number = rt.run_number \
+                INNER JOIN %s.transition_type tt ON rt.transition_type = tt.transition_id \
+                INNER JOIN %s.run_configuration_type rct ON r.run_type = rct.run_type_id  \
+                WHERE r.run_number = '%i' \
+                ORDER BY transition_time limit 100;",
+                //#inner join cause_type on run_transition.cause_type = cause_type.cause_id 
+				dbSchema_, dbSchema_, dbSchema_, dbSchema_,
+                runNumber);
+        } else { // get RunLog
+            snprintf(buffer,
+                sizeof(buffer),
+                "SELECT r.run_number as run_number, host_name, artdaq_partition, configuration_name, configuration_version, \
+                    commit_time, transition_description, run_type_description, transition_time, \
+                    configuration_version, trigger_table_name \
+                FROM %s.run_configuration r \
+                LEFT JOIN ( \
+                    SELECT * \
+                    FROM %s.run_transition \
+                    WHERE (run_number, transition_time) IN ( \
+                        SELECT run_number, MAX(transition_time) \
+                        FROM %s.run_transition \
+                        GROUP BY run_number \
+                    ) \
+                ) t ON r.run_number = t.run_number \
+                INNER JOIN %s.transition_type tt ON transition_type = tt.transition_id  \
+                INNER JOIN %s.run_configuration_type rct ON run_type  = rct.run_type_id \
+                order by commit_time desc \
+                limit %i;",
+                dbSchema_, dbSchema_, dbSchema_, dbSchema_, dbSchema_,
+                -runNumber);
+        }
+
+		res = PQexec(runInfoDbConn_, buffer);
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << buffer << " PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		//get run information
+        if(runNumber > 0) {
+            if(PQntuples(res) >= 1) {
+                oss << ", ";
+                oss << "\"run_number\":\""            << PQgetvalue(res, 0, PQfnumber(res, "run_number"))            << "\", ";
+                oss << "\"host_name\":\""             << PQgetvalue(res, 0, PQfnumber(res, "host_name"))             << "\", ";
+                oss << "\"artdaq_partition\":\""      << PQgetvalue(res, 0, PQfnumber(res, "artdaq_partition"))      << "\", ";
+                oss << "\"configuration\":\""         << PQgetvalue(res, 0, PQfnumber(res, "configuration_name"))    << "\", ";
+                oss << "\"configuration_version\":\"" << PQgetvalue(res, 0, PQfnumber(res, "configuration_version")) << "\", ";
+                oss << "\"trigger_table\":\""         << PQgetvalue(res, 0, PQfnumber(res, "trigger_table_name"))    << "\", ";
+                oss << "\"time\":\""                  << PQgetvalue(res, 0, PQfnumber(res, "commit_time"))           << "\", ";
+                oss << "\"run_type\":\""              << PQgetvalue(res, 0, PQfnumber(res, "run_type_description"))  << "\", ";
+                oss << "\"transitions\": [";
+                for(int rowidx = 0; rowidx < PQntuples(res); ++rowidx) {
+                    oss << "{";
+                    oss << "\"type\":\""        << PQgetvalue(res, rowidx, PQfnumber(res, "transition_description")) << "\", ";
+                    oss << "\"time\":\""        << PQgetvalue(res, rowidx, PQfnumber(res, "transition_time"))        << "\"";
+                    if(rowidx < PQntuples(res)-1) oss << "}, ";
+                    else                          oss << "} ";
+                }
+                oss << "]";
+            } else {
+                oss << ", \"error\":\"Run " << runNumber << " not found.\"";
+            }
+        } else if(runNumber < 0) { // RunLog
+            oss << ", \"runs\": [";
+                for(int rowidx = 0; rowidx < PQntuples(res); ++rowidx) {
+                    oss << "{";
+                    oss << "\"run_number\":\""             << PQgetvalue(res, 0, PQfnumber(res, "run_number"))             << "\", ";
+                    oss << "\"host_name\":\""              << PQgetvalue(res, 0, PQfnumber(res, "host_name"))              << "\", ";
+                    oss << "\"artdaq_partition\":\""       << PQgetvalue(res, 0, PQfnumber(res, "artdaq_partition"))       << "\", ";
+                    oss << "\"configuration\":\""          << PQgetvalue(res, 0, PQfnumber(res, "configuration_name"))     << "\", ";
+                    oss << "\"configuration_version\":\""  << PQgetvalue(res, 0, PQfnumber(res, "configuration_version")) << "\", ";
+                    oss << "\"trigger_table\":\""         << PQgetvalue(res, 0, PQfnumber(res, "trigger_table_name"))    << "\", ";
+                    oss << "\"time\":\""                   << PQgetvalue(res, 0, PQfnumber(res, "commit_time"))            << "\", ";
+                    oss << "\"last_transition\":\""        << PQgetvalue(res, 0, PQfnumber(res, "transition_description")) << "\", ";
+                    oss << "\"last_transition_time\":\""   << PQgetvalue(res, 0, PQfnumber(res, "transition_time"))        << "\", ";
+                    oss << "\"run_type\":\""               << PQgetvalue(res, 0, PQfnumber(res, "run_type_description"))   << "\" ";
+                    if(rowidx < PQntuples(res)-1) oss << "}, ";
+                    else                          oss << "}";
+                }
+            oss << "]";
+        } else { // runNumber = 0, no actice run number found (by GatewaySupervisor)
+            oss << ", \"error\":\"No active run number found.\"";
+        }
+        PQclear(res);
+    } else {
+        oss << ", \"error\":\"Database connection failed.\"";
+    }
+
+    oss << "}";
+    return oss.str();
+}
+
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)
