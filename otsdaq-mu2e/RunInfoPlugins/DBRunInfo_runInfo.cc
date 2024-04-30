@@ -515,16 +515,16 @@ std::string DBRunInfo::getRunInfo(int runNumber) {
             oss << ", \"runs\": [";
                 for(int rowidx = 0; rowidx < PQntuples(res); ++rowidx) {
                     oss << "{";
-                    oss << "\"run_number\":\""             << PQgetvalue(res, 0, PQfnumber(res, "run_number"))             << "\", ";
-                    oss << "\"host_name\":\""              << PQgetvalue(res, 0, PQfnumber(res, "host_name"))              << "\", ";
-                    oss << "\"artdaq_partition\":\""       << PQgetvalue(res, 0, PQfnumber(res, "artdaq_partition"))       << "\", ";
-                    oss << "\"configuration\":\""          << PQgetvalue(res, 0, PQfnumber(res, "configuration_name"))     << "\", ";
-                    oss << "\"configuration_version\":\""  << PQgetvalue(res, 0, PQfnumber(res, "configuration_version")) << "\", ";
-                    oss << "\"trigger_table\":\""         << PQgetvalue(res, 0, PQfnumber(res, "trigger_table_name"))    << "\", ";
-                    oss << "\"time\":\""                   << PQgetvalue(res, 0, PQfnumber(res, "commit_time"))            << "\", ";
-                    oss << "\"last_transition\":\""        << PQgetvalue(res, 0, PQfnumber(res, "transition_description")) << "\", ";
-                    oss << "\"last_transition_time\":\""   << PQgetvalue(res, 0, PQfnumber(res, "transition_time"))        << "\", ";
-                    oss << "\"run_type\":\""               << PQgetvalue(res, 0, PQfnumber(res, "run_type_description"))   << "\" ";
+                    oss << "\"run_number\":\""             << PQgetvalue(res, rowidx, PQfnumber(res, "run_number"))             << "\", ";
+                    oss << "\"host_name\":\""              << PQgetvalue(res, rowidx, PQfnumber(res, "host_name"))              << "\", ";
+                    oss << "\"artdaq_partition\":\""       << PQgetvalue(res, rowidx, PQfnumber(res, "artdaq_partition"))       << "\", ";
+                    oss << "\"configuration\":\""          << PQgetvalue(res, rowidx, PQfnumber(res, "configuration_name"))     << "\", ";
+                    oss << "\"configuration_version\":\""  << PQgetvalue(res, rowidx, PQfnumber(res, "configuration_version"))  << "\", ";
+                    oss << "\"trigger_table\":\""          << PQgetvalue(res, rowidx, PQfnumber(res, "trigger_table_name"))     << "\", ";
+                    oss << "\"time\":\""                   << PQgetvalue(res, rowidx, PQfnumber(res, "commit_time"))            << "\", ";
+                    oss << "\"last_transition\":\""        << PQgetvalue(res, rowidx, PQfnumber(res, "transition_description")) << "\", ";
+                    oss << "\"last_transition_time\":\""   << PQgetvalue(res, rowidx, PQfnumber(res, "transition_time"))        << "\", ";
+                    oss << "\"run_type\":\""               << PQgetvalue(res, rowidx, PQfnumber(res, "run_type_description"))   << "\" ";
                     if(rowidx < PQntuples(res)-1) oss << "}, ";
                     else                          oss << "}";
                 }
