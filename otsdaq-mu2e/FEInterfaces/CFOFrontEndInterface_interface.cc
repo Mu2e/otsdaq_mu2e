@@ -1555,7 +1555,7 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 	std::ifstream inFile;
 	std::ofstream outFile;
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTS_SOURCE")) + 
 		"/mu2e_pcie_utils/cfoInterfaceLib/";
 
 	std::string inFileName  = __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
@@ -1573,7 +1573,7 @@ void CFOFrontEndInterface::SetRunplan(__ARGS__)
 
 	__FE_COUT__ << "Set CFO Run Plan"  << __E__;
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("MRB_SOURCE")) + 
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTS_SOURCE")) + 
 		"/mu2e_pcie_utils/cfoInterfaceLib/";
 	std::string setFileName = __GET_ARG_IN__("Binary Run File", std::string, SOURCE_BASE_PATH + "Commands.bin");
 	

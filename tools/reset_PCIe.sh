@@ -23,33 +23,35 @@ if [ "$foundXi" = 1 ];then
     sleep 3
     rmmod mu2e
     lsmod | grep mu2e && { echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
+
+    echo
+    echo "Removing each PCIe Xilinx device on ${HOSTNAME}..."
+    echo
+    while read -r line
+    do
+        echo "Removing... $line"
+        IFS=' ' read -r -a array <<< "$line"
+
+        # for p in ${array[@]}; do
+        #     echo $p
+        # done
+        
+        echo "1" > /sys/bus/pci/devices/0000:${array[0]}/remove
+
+    done <<EOF
+    $(lspci | grep "$RegEx")
+EOF
+
 else
-    echo "No $RegEx cards found -- exiting"
-    exit 1
+    echo "No $RegEx cards found -- no need to unload mu2e kernel module"
 fi
 
 echo
-echo "Resetting each PCIe Xilinx device on ${HOSTNAME}..."
+echo "Recanning for PCIe devices on ${HOSTNAME}..."
 echo
-
-while read -r line
-do
-    echo "$line"
-    IFS=' ' read -r -a array <<< "$line"
-
-    # for p in ${array[@]}; do
-    #     echo $p
-    # done
-    
-    echo "1" > /sys/bus/pci/devices/0000:${array[0]}/remove
-
-done <<EOF
-$(lspci | grep "$RegEx")
-EOF
 
 sleep 1
 echo "1" > /sys/bus/pci/rescan
-
 
 echo "Now attempt to reload mu2e module via modprobe mu2e"
 modprobe mu2e
