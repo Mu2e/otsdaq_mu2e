@@ -21,9 +21,23 @@
 using namespace ots;
 
 int main(int argc, char* argv[])
+try
 {
-   __COUT__ << "DTCFrontEndInterface Test main()";
+   	__COUT_INFO__ << "DTCFrontEndInterface Test main()";
 
+	__COUTV__(argc);
+	for(int i=0;i<argc;++i)
+	{
+		__COUT_INFO__ << "arg[" << i << "] = " << argv[i] << __E__;
+	}
+	if(argc < 2)
+	{
+		__COUT_ERR__ << "\n\n\tUsage = Need at least 1 argument: DTCFrontEndInterface_TestMain.cc <numberOfEventWindowMarkers>\n\n" << __E__;
+		__COUT_ERR__ << "\n\n\t\t 2+ aruments will apply ROC emulator data generation size.\n\n" << __E__;
+		return 0;
+	}
+
+	uint32_t numberOfEventWindowMarkers = atoi(argv[1]);
 
 	//==============================================================================
 	// Define environment variables
@@ -80,20 +94,64 @@ int main(int argc, char* argv[])
         theConfigurationPath_);
 
 
-	__COUTV__(argc);
-	for(int i=0;i<argc;++i)
+	if(numberOfEventWindowMarkers == uint32_t(-1))
 	{
-		__COUT__ << "arg[" << i << "] = " << argv[i] << __E__;
+		__COUT_INFO__ << "Attempting Reset and Buffer Release ONLY!" << __E__;
+
+		dtc.thisDTC_->DisableCFOEmulation();
+		dtc.thisDTC_->SoftReset();
+		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
+		return 0;
 	}
-	if(argc < 2)
+	if(numberOfEventWindowMarkers == uint32_t(-2))
 	{
-		__SS__ << "Need at least 1 argument: DTCFrontEndInterface_TestMain.cc <numberOfEventWindowMarkers>" << __E__;
-		__SS_THROW__;
+		__COUT_INFO__ << "Attempting Buffer Release ONLY!" << __E__;
+		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+		__COUT_INFO__ << "ReleaseAllBuffers called!" << __E__;
+		return 0;
+	}
+	if(numberOfEventWindowMarkers == uint32_t(-3))
+	{
+		__COUT_INFO__ << "Setting to 32KB Max DMA Transfer size!" << __E__;
+		dtc.thisDTC_->SetTriggerDMATransferLength(0x8000);
+		__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
+		return 0;
+	}
+	if(numberOfEventWindowMarkers == uint32_t(-4))
+	{
+		__COUT_INFO__ << "Setting to 64KB Max DMA Transfer size!" << __E__;
+		dtc.thisDTC_->SetTriggerDMATransferLength(0xFFF8);
+		__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
+		return 0;
 	}
 
-    dtc.getCFOandDTCRegisters()->ReadDesignDate();
+    __COUT_INFO__ << "DTC version = " << dtc.thisDTC_->ReadDesignDate() << __E__;
+	__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
 
-	uint32_t numberOfEventWindowMarkers = atoi(argv[1]);
+	//setup ROCs
+	std::string reply;
+	for(int i=2;i<argc;++i)
+	{
+		int sz = atoi(argv[i]);
+		__COUT_INFO__ << "ROC #" << i-2 << " size arg[" << i << "] = " << sz << __E__;
+
+		if(sz == -1) //disabled
+			reply = dtc.SetupROCs(
+				DTCLib::DTC_Link_ID(i-2), //]DTCLib::DTC_Link_ID rocLinkIndex,
+				0, 1, 1, //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
+				DTCLib::DTC_ROC_Emulation_Type(0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),// DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
+				0// uint32_t size
+			);
+		else
+			reply = dtc.SetupROCs(
+				DTCLib::DTC_Link_ID(i-2), //]DTCLib::DTC_Link_ID rocLinkIndex,
+				1, 1, 1, //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
+				DTCLib::DTC_ROC_Emulation_Type(0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),// DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
+				atoi(argv[i])// uint32_t size
+			);
+	}
+	__COUT_INFO__ << "ROC Setup:\n" << reply << __E__;
     
     dtc.SetCFOEmulatorFixedWidthEmulation(
         1, //bool enable, 
@@ -106,28 +164,64 @@ int main(int argc, char* argv[])
         1, //bool enableAutogenDRP, 
         0, //bool saveBinaryDataToFile,
         0, //bool saveSubeventHeadersToDataFile,
-        0//	bool doNotResetCounters )
+        0  //bool doNotResetCounters )
     );
+	// dtc.SetCFOEmulatorOnOffSpillEmulation(
+	// 	1, //bool enable,
+	// 	1, //bool useDetachedBufferTest, 
+	// 	numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
+	// 	0, //uint64_t initialEventWindowTag,
+    //     0, //bool enableClockMarkers, 
+    //     1, //bool enableAutogenDRP, 
+    //     0, //bool saveBinaryDataToFile,
+    //     0, //bool saveSubeventHeadersToDataFile,
+    //     0  //bool doNotResetCounters )
+	// ); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+
 	int i=0;
+	bool dumpSpy = false;
 	while(1) 
 	{
 		sleep(1);
+		std::cout << '.' << std::flush;
 		if(i%10 == 9)
+		{
+			std::cout << "time(0) = " << time(0) << '\n' << std::flush;
 			__COUT_INFO__ << "\n" << 
 				DTCFrontEndInterface::getDetachedBufferTestStatus(dtc.bufferTestThreadStruct_) << __E__;	
+		}
 
-		if(DTCFrontEndInterface::getDetachedBufferTestReceivedCount(dtc.bufferTestThreadStruct_) >= numberOfEventWindowMarkers - 1)// start mutex scope
+		if((i > 5 && !dtc.bufferTestThreadStruct_->running_) || 
+			DTCFrontEndInterface::getDetachedBufferTestReceivedCount(dtc.bufferTestThreadStruct_) >= numberOfEventWindowMarkers - 1)// start mutex scope
 		{
-			__COUT_INFO__ << "\n" << 
+			__COUT_INFO__ << "Iteration exit #" << i << " - thread running = " << dtc.bufferTestThreadStruct_->running_ << "\n" << 
 				DTCFrontEndInterface::getDetachedBufferTestStatus(dtc.bufferTestThreadStruct_) << __E__;	
 
 			sleep(1);
 			std::lock_guard<std::mutex> lock(dtc.bufferTestThreadStruct_->lock_);
 			dtc.bufferTestThreadStruct_->exitThread_ = true;
+
+			if(DTCFrontEndInterface::getDetachedBufferTestReceivedCount(dtc.bufferTestThreadStruct_) < numberOfEventWindowMarkers - 1)
+				dumpSpy = true;			
 			break;
 		}
 		++i;
 	} //end main loop
 	sleep(1);
+	if(dtc.bufferTestThreadStruct_->running_)
+		sleep(1); //give 1 more second for thread
+
+	if(dumpSpy)
+		dtc.getDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+
 	__COUT_INFO__ << "Thread and main exited!" << __E__;
+	return 0;
 } //end main()
+catch(const std::runtime_error& e)
+{
+	__COUT_ERR__ << "Exception caught:\n\n" << e.what();
+}
+catch(...)
+{
+	__COUT_ERR__ << "Unknown exception caught.";
+}
