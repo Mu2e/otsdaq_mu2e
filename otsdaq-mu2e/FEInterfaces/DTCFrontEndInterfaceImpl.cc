@@ -766,12 +766,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 void DTCFrontEndInterface::configureSlowControls(void)
 {
     bool  slowControlsEnable = true;
-   try { 
-	slowControlsEnable = getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
-    } catch(...) {
+   	try 
+	{ 
+		slowControlsEnable = getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+    } 
+	catch(...) 
+	{
         __FE_COUT__ << "Missing `slowControlsEnable` in configuration, slowControlsEnable defaults to " << slowControlsEnable << __E__;
     }
-    if(!slowControlsEnable) {
+
+    if(!slowControlsEnable) 
+	{
 	    __FE_COUT__ << "Slow controls are disabled..." << __E__;
 	    return;
     }
@@ -1624,36 +1629,32 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 
     // set the DTC ID, "data in this field are passed to the DTC ID field 
     // of the Event Header in built events." from docdb 4097
-    uint32_t dtcEventBuilderReg_DTCID = 0;
-    uint32_t dtcEventBuilderReg_Mode = 0;
-    uint32_t dtcEventBuilderReg_PartitionID = 0;
-    uint32_t dtcEventBuilderReg_MACIndex = 0;
-    try {
-			dtcEventBuilderReg_DTCID =
-				getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
-			dtcEventBuilderReg_Mode =
-				getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
-			dtcEventBuilderReg_PartitionID =
-				getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
-			dtcEventBuilderReg_MACIndex =
-				getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
-			__FE_COUTV__(dtcEventBuilderReg_DTCID);
-			__FE_COUTV__(dtcEventBuilderReg_Mode);
-			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
-			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
+    try 
+	{
+		uint32_t dtcEventBuilderReg_DTCID =
+			getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+		uint32_t dtcEventBuilderReg_Mode =
+			getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
+		uint32_t dtcEventBuilderReg_PartitionID =
+			getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
+		uint32_t dtcEventBuilderReg_MACIndex =
+			getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
+		__FE_COUTV__(dtcEventBuilderReg_DTCID);
+		__FE_COUTV__(dtcEventBuilderReg_Mode);
+		__FE_COUTV__(dtcEventBuilderReg_PartitionID);
+		__FE_COUTV__(dtcEventBuilderReg_MACIndex);
 
-			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
-			// EVB Local MAC Index [7-0]
-			thisDTC_->SetEVBInfo(dtcEventBuilderReg_DTCID,
-				dtcEventBuilderReg_Mode,
-				dtcEventBuilderReg_PartitionID,
-				dtcEventBuilderReg_MACIndex);
-		}
-		catch(...)
-		{
-			__FE_COUT_INFO__ << "Ignoring missing event building configuration values."
-								<< __E__;
-		}
+		// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
+		// EVB Local MAC Index [7-0]
+		thisDTC_->SetEVBInfo(dtcEventBuilderReg_DTCID,
+			dtcEventBuilderReg_Mode,
+			dtcEventBuilderReg_PartitionID,
+			dtcEventBuilderReg_MACIndex);
+	}
+	catch(...)
+	{
+		__FE_COUT_INFO__ << "Ignoring missing event building configuration values." << __E__;
+	}
 
 	//enable ROC links (do not forget CFO link is off in HW dev mode)
 	__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
@@ -1678,20 +1679,26 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 
     //------------------------------ ROCs //------------------------------
     bool doConfigureROCs = false;
-	try {
+	try 
+	{
 		doConfigureROCs = Configurable::getSelfNode()
 	 	                        .getNode("EnableROCConfigureStep")
 	 		                    .getValue<bool>();
-	} catch(...) { }  // ignore missing field
-	if(doConfigureROCs) {
-	    for(auto& roc : rocs_) {
-        // make sure the link is ready
-	    if(!thisDTC_->WaitForLinkReady(roc.second->getLinkID(), 1000 /*us*/, 2.0 /*seconds*/)) { // 2s default by default
-		    __FE_SS__  << "ROC " << roc.first << " on link " << roc.second->getLinkID() << " was not ready after 2s. Aborting ROC configuration.";
-		    __SS_THROW__;
-	    }
-		roc.second->configure();
-		}
+	} 
+	catch(...) { }  // ignore missing field
+
+	if(doConfigureROCs) 
+	{
+	    for(auto& roc : rocs_) 
+		{
+			// make sure the roc link is ready before configuring
+			if(!thisDTC_->WaitForLinkReady(roc.second->getLinkID(), 1000 /*us*/, 2.0 /*seconds*/)) 
+			{
+				__FE_SS__  << "ROC " << roc.first << " on link " << roc.second->getLinkID() << " was not ready after 2s. Aborting ROC configuration.";
+				__FE_SS_THROW__;
+	    	}
+			roc.second->configure();
+		} //end roc configure loop
 	}
 }  // end configureHardwareDevMode()
 
