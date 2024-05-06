@@ -4123,7 +4123,8 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 			threadStruct->nextEventWindowTag_,
 			subevent->GetEventWindowTag().GetEventWindowTag(true)
 		));
-
+		__SS__ << ostr.str();
+		__SS_THROW__;
 		//to freeze TRACE
 		//TRACE_CNTL("modeM",0); // "freeze" like command line 'tmodeM 0'
 		// TRACE_CNTL("modeM",1); // "unfreeze" like command line 'tmodeM 1'
@@ -4542,6 +4543,8 @@ try
 catch(...)
 {
 	__COUT_ERR__ << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
+	threadStruct->thisDTC_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+
 	threadStruct->running_ = false;
 	try
 	{throw;} 

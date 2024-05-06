@@ -30,14 +30,15 @@ try
 	{
 		__COUT_INFO__ << "arg[" << i << "] = " << argv[i] << __E__;
 	}
-	if(argc < 2)
+	if(argc < 3)
 	{
-		__COUT_ERR__ << "\n\n\tUsage = Need at least 1 argument: DTCFrontEndInterface_TestMain.cc <numberOfEventWindowMarkers>\n\n" << __E__;
-		__COUT_ERR__ << "\n\n\t\t 2+ aruments will apply ROC emulator data generation size.\n\n" << __E__;
+		__COUT_ERR__ << "\n\n\tUsage = Need at least 1 argument: DTCFrontEndInterface_TestMain.cc <deviceIndex> <numberOfEventWindowMarkers>\n\n" << __E__;
+		__COUT_ERR__ << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n\n" << __E__;
 		return 0;
 	}
 
-	uint32_t numberOfEventWindowMarkers = atoi(argv[1]);
+	uint32_t deviceIndex = atoi(argv[1]);
+	uint32_t numberOfEventWindowMarkers = atoi(argv[2]);
 
 	//==============================================================================
 	// Define environment variables
@@ -68,7 +69,7 @@ try
 	// // Variables
 	std::string supervisorContextUID_           = "ContextCalo03";
 	std::string supervisorApplicationUID_       = "FESupervisorCalo03";
-	std::string feUID_       					= "DTC4";
+	std::string feUID_       					= deviceIndex==0? "DTC4" : "DTC5"; //DTC4 for Device0 and DTC5 for Device1
 	std::string theConfigurationPath_ = supervisorContextUID_ + "/LinkToApplicationTable/" + supervisorApplicationUID_ + 
         "/LinkToSupervisorTable/LinkToFEInterfaceTable/" + feUID_ + "/LinkToFETypeTable";
 
@@ -131,21 +132,21 @@ try
 
 	//setup ROCs
 	std::string reply;
-	for(int i=2;i<argc;++i)
+	for(int i=3;i<argc;++i)
 	{
 		int sz = atoi(argv[i]);
-		__COUT_INFO__ << "ROC #" << i-2 << " size arg[" << i << "] = " << sz << __E__;
+		__COUT_INFO__ << "ROC #" << i-3 << " size arg[" << i << "] = " << sz << __E__;
 
 		if(sz == -1) //disabled
 			reply = dtc.SetupROCs(
-				DTCLib::DTC_Link_ID(i-2), //]DTCLib::DTC_Link_ID rocLinkIndex,
+				DTCLib::DTC_Link_ID(i-3), //]DTCLib::DTC_Link_ID rocLinkIndex,
 				0, 1, 1, //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
 				DTCLib::DTC_ROC_Emulation_Type(0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),// DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 				0// uint32_t size
 			);
 		else
 			reply = dtc.SetupROCs(
-				DTCLib::DTC_Link_ID(i-2), //]DTCLib::DTC_Link_ID rocLinkIndex,
+				DTCLib::DTC_Link_ID(i-3), //]DTCLib::DTC_Link_ID rocLinkIndex,
 				1, 1, 1, //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
 				DTCLib::DTC_ROC_Emulation_Type(0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),// DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 				atoi(argv[i])// uint32_t size
