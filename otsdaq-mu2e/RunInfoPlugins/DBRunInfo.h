@@ -16,7 +16,7 @@ class DBRunInfo : public RunInfoVInterface
 	virtual ~DBRunInfo						(void);
 
 	virtual unsigned int 	insertRunCondition	(const std::string& runInfoConditions = "");
-	virtual unsigned int 	claimNextRunNumber	(const std::string& runInfoConditions = "");
+	virtual unsigned int 	claimNextRunNumber	(unsigned int conditionID, const std::string& runInfoConditions = "");
 	virtual void 			updateRunInfo		(unsigned int runNumber, RunInfoVInterface::RunStopType runStopType);
 
   private:

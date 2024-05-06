@@ -45,11 +45,6 @@ void DBRunInfo::openDbConnection()
 unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 {
 	unsigned int conditionID = (unsigned int)-1;
-	if(conditionID == (unsigned int)-1)
-	{
-		__SS__ << "Impossible conditionID not defined by run info plugin!" << __E__;
-		__SS_THROW__;
-	}
 
 	__COUT__ << "insert Run Condition" << __E__;
 
@@ -86,7 +81,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 	if(runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
-		char      buffer[1024];
+		char      buffer[4194304];
 
 		//extract run condition from runInfoConditions
 		std::string condition = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
@@ -94,8 +89,8 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 		snprintf(buffer,
 				sizeof(buffer),
 				"INSERT INTO %s.run_condition(						\
-											  condition				\
-											VALUES ('%s');",
+											  condition)			\
+											  VALUES ('%s');",
 				dbSchema_,
 				condition.c_str());
 
@@ -113,7 +108,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 
 		snprintf(buffer,
 				sizeof(buffer),
-				"select max(condition_ID) from %s.run_condition;",
+				"select max(condition_id) from %s.run_condition;",
 				dbSchema_);
 
 		res = PQexec(runInfoDbConn_, buffer);
@@ -150,9 +145,14 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 } //end insertRunCondition()
 
 //==============================================================================
-unsigned int DBRunInfo::claimNextRunNumber(const std::string& runInfoConditions)
+unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::string& runInfoConditions)
 {
-	unsigned int conditionID = 0; //  TODO move as function input
+	if(conditionID == (unsigned int)-1)
+	{
+		__SS__ << "Impossible condition ID number not retrived by run info plugin!" << __E__;
+		__SS_THROW__;
+	}
+
 	unsigned int runNumber = (unsigned int)-1;
 	__COUT__ << "claiming next Run Number" << __E__;
 	__COUTV__(runInfoConditions);
