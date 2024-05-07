@@ -89,8 +89,9 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 		snprintf(buffer,
 				sizeof(buffer),
 				"INSERT INTO %s.run_condition(						\
-											  condition)			\
-											  VALUES ('%s');",
+											  condition				\
+											, commit_time)			\
+											  VALUES ('%s',CURRENT_TIMESTAMP);",
 				dbSchema_,
 				condition.c_str());
 
