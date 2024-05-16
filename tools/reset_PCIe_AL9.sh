@@ -24,12 +24,13 @@ if [ "$foundXi" = 1 ];then
     rmmod mu2e
     lsmod | grep mu2e && { echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
 
+
     echo
     echo "Removing each PCIe Xilinx device on ${HOSTNAME}..."
     echo
     while read -r line
     do
-        echo "Removing... $line"
+        echo "$line"
         IFS=' ' read -r -a array <<< "$line"
 
         # for p in ${array[@]}; do
@@ -41,17 +42,17 @@ if [ "$foundXi" = 1 ];then
     done <<EOF
     $(lspci | grep "$RegEx")
 EOF
-
 else
     echo "No $RegEx cards found -- no need to unload mu2e kernel module"
 fi
 
 echo
-echo "Recanning for PCIe devices on ${HOSTNAME}..."
+echo "Rescanning for PCIe devices on ${HOSTNAME}..."
 echo
 
 sleep 1
 echo "1" > /sys/bus/pci/rescan
+
 
 echo "Now attempt to reload mu2e module via modprobe mu2e"
 modprobe mu2e
@@ -59,7 +60,7 @@ modprobe mu2e
 cd /root
 
 echo "Attempting to read firmware version on ${HOSTNAME}..."
-source ./setup_pcie.sh
+source ./setup_pcie_AL9.sh
 echo
 echo "PCIe Device 0 firmware version on ${HOSTNAME}:"
 my_cntl -d 0 read 0x9004 #device 0

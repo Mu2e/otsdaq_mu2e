@@ -15,10 +15,10 @@ class DBRunInfo : public RunInfoVInterface
 	                      					// const std::string&       configurationPath);
 	virtual ~DBRunInfo						(void);
 
-	
-	virtual unsigned int 	claimNextRunNumber	(const std::string& runInfoConditions = "");
+	virtual unsigned int 	insertRunCondition	(const std::string& runInfoConditions = "");
+	virtual unsigned int 	claimNextRunNumber	(unsigned int conditionID, const std::string& runInfoConditions = "");
 	virtual void 			updateRunInfo		(unsigned int runNumber, RunInfoVInterface::RunStopType runStopType);
-    std::string             getRunInfo          (int runNumber) override; 
+	std::string             getRunInfo          (int runNumber) override; 
 
   private:
   	const char* dbname_;
