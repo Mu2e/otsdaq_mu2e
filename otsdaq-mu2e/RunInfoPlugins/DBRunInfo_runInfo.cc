@@ -537,6 +537,7 @@ std::string DBRunInfo::getRunInfo(int runNumber) {
         oss << ", \"error\":\"Database connection failed.\"";
     }
 
+    PQfinish(runInfoDbConn_);
     oss << "}";
     return oss.str();
 }
