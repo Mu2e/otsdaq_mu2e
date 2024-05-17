@@ -22,7 +22,7 @@ DBRunInfo::DBRunInfo(
 	dbport_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PORT")? getenv("OTSDAQ_RUNINFO_DATABASE_PORT") : "");
 	dbuser_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_USER")? getenv("OTSDAQ_RUNINFO_DATABASE_USER") : "");
 	dbpwd_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PWD")? getenv("OTSDAQ_RUNINFO_DATABASE_PWD") : "");
-	dbSchema_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA") : "test");
+	dbSchema_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA") : "production");
 
 	//open db connection
 	openDbConnection();
@@ -260,8 +260,8 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 		snprintf(buffer,
 				sizeof(buffer),
-				"select max(run_number) from %s.run_configuration;",
-				dbSchema_);
+				"select max(run_number) from %s.run_configuration WHERE run_type = '%s';",
+				dbSchema_, runType);
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -452,11 +452,11 @@ std::string DBRunInfo::getRunInfo(int runNumber) {
 				sizeof(buffer),
                 "SELECT r.run_number as run_number, host_name, artdaq_partition, configuration_name, commit_time, \
                 transition_time, transition_description, run_type_description, \
-                configuration_version, trigger_table_name \
+                configuration_version, trigger_table_name, trigger_table_version, context_name, context_version \
                 FROM %s.run_configuration r \
                 INNER JOIN %s.run_transition rt ON  r.run_number = rt.run_number \
                 INNER JOIN %s.transition_type tt ON rt.transition_type = tt.transition_id \
-                INNER JOIN %s.run_configuration_type rct ON r.run_type = rct.run_type_id  \
+                INNER JOIN %s.run_type rct ON r.run_type = rct.run_type_id  \
                 WHERE r.run_number = '%i' \
                 ORDER BY transition_time limit 100;",
                 //#inner join cause_type on run_transition.cause_type = cause_type.cause_id 
@@ -467,7 +467,7 @@ std::string DBRunInfo::getRunInfo(int runNumber) {
                 sizeof(buffer),
                 "SELECT r.run_number as run_number, host_name, artdaq_partition, configuration_name, configuration_version, \
                     commit_time, transition_description, run_type_description, transition_time, \
-                    configuration_version, trigger_table_name \
+                    configuration_version, trigger_table_name, trigger_table_version, context_name, context_version \
                 FROM %s.run_configuration r \
                 LEFT JOIN ( \
                     SELECT * \
@@ -479,7 +479,7 @@ std::string DBRunInfo::getRunInfo(int runNumber) {
                     ) \
                 ) t ON r.run_number = t.run_number \
                 INNER JOIN %s.transition_type tt ON transition_type = tt.transition_id  \
-                INNER JOIN %s.run_configuration_type rct ON run_type  = rct.run_type_id \
+                INNER JOIN %s.run_type rct ON run_type  = rct.run_type_id \
                 order by commit_time desc \
                 limit %i;",
                 dbSchema_, dbSchema_, dbSchema_, dbSchema_, dbSchema_,
