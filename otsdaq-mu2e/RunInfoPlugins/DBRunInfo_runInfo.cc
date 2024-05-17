@@ -29,7 +29,9 @@ DBRunInfo::DBRunInfo(
 }
 
 //==============================================================================
-DBRunInfo::~DBRunInfo(void) { ; }
+DBRunInfo::~DBRunInfo(void) { 
+    PQfinish(runInfoDbConn_);
+}
 
 //==============================================================================
 void DBRunInfo::openDbConnection()
@@ -91,32 +93,17 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 				"INSERT INTO %s.run_condition(						\
 											  condition				\
 											, commit_time)			\
-											  VALUES ('%s',CURRENT_TIMESTAMP);",
+											  VALUES ('%s',CURRENT_TIMESTAMP) \
+                                              RETURNING condition_id;",
 				dbSchema_,
 				condition.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
-		if(PQresultStatus(res) != PGRES_COMMAND_OK)
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "INSERT INTO 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
 				<< __E__;
-			PQclear(res);
-			__SS_THROW__;
-		}
-
-		PQclear(res);
-
-		snprintf(buffer,
-				sizeof(buffer),
-				"select max(condition_id) from %s.run_condition;",
-				dbSchema_);
-
-		res = PQexec(runInfoDbConn_, buffer);
-
-		if(PQresultStatus(res) != PGRES_TUPLES_OK)
-		{
-			__SS__ << "SELECT FROM 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -235,7 +222,8 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 											, context_name			\
 											, context_version		\
 											, commit_time)			\
-											VALUES ('%s','%d','%d','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP);",
+											VALUES ('%s','%d','%d','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP) \
+                                            RETURNING run_number;",
 				dbSchema_,
 				runType,
 				conditionID,
@@ -248,26 +236,10 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 		res = PQexec(runInfoDbConn_, buffer);
 
-		if(PQresultStatus(res) != PGRES_COMMAND_OK)
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "INSERT INTO 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
 				<< __E__;
-			PQclear(res);
-			__SS_THROW__;
-		}
-
-		PQclear(res);
-
-		snprintf(buffer,
-				sizeof(buffer),
-				"select max(run_number) from %s.run_configuration WHERE run_type = '%s';",
-				dbSchema_, runType);
-
-		res = PQexec(runInfoDbConn_, buffer);
-
-		if(PQresultStatus(res) != PGRES_TUPLES_OK)
-		{
-			__SS__ << "SELECT FROM 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -413,6 +385,5 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 	}
 	
 } //end updateRunInfo()
-
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)
