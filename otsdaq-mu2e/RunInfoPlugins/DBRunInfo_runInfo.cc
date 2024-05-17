@@ -260,8 +260,8 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 		snprintf(buffer,
 				sizeof(buffer),
-				"select max(run_number) from %s.run_configuration;",
-				dbSchema_);
+				"select max(run_number) from %s.run_configuration WHERE run_type = '%s';",
+				dbSchema_, runType);
 
 		res = PQexec(runInfoDbConn_, buffer);
 
