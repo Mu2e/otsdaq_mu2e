@@ -181,8 +181,15 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 		PGresult* res;
 		char      buffer[1024];
 
-		//extract configuraiton name and version from runInfoConditions
-		std::string runConfiguration = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
+		// extract configuraiton name and version from runInfoConditions
+        auto start_pos = runInfoConditions.find("Configuration := ");
+        if(start_pos == std::string::npos ) {
+            __SS__ << "Could not find \"Configuration := \" in the configuration dump. You might need to set \"ConfigurationDumpOnRunFormat\" of your StateMachine to \"All\"." << __E__
+                   << "the supplied config dump is: " << runInfoConditions << __E__;
+		    __SS_THROW__;
+        }
+
+		std::string runConfiguration = runInfoConditions.substr(start_pos + sizeof("Configuration := ") - 1);
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find(')'));
 
 		std::string runConfigurationVersion = runConfiguration.substr(runConfiguration.find('(') + 1);
