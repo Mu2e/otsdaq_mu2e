@@ -202,6 +202,17 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					"Check the temperature from the Firefly RX IIC Bus."
 	);
 
+	registerFEMacroFunction(
+		"Check Firefly Loss-of-Light",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOandDTCCoreVInterface::GetLinkLossOfLight),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{"Link Status"},
+					1,  // requiredUserPermissions
+					"*",
+					"Checking the Loss-of-Light reads from the I2C bus register on the Firefly for any light source."
+	);
+
 	
 	registerFEMacroFunction(
 		"Check FPGA Temperature",

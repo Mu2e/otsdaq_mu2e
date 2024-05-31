@@ -26,6 +26,48 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: " << linkID_
 	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
 	
+
+	//enforce ROC firmware design version check, if exists in config
+	std::string         expectedDesignVersion = "";
+	try
+	{
+		expectedDesignVersion = getSelfNode().getNode("ExpectedFirmwareVersion").getValue(); 
+	}
+	catch(const std::runtime_error& e)
+	{
+		//ignoring missing field, so not enforcing firmware version
+	}
+
+	if(expectedDesignVersion != "")
+	{
+		std::string designVersionReadback = getFirmwareVersion();
+		__FE_COUTV__(designVersionReadback);
+		
+		if(expectedDesignVersion != designVersionReadback)
+		{
+			__FE_SS__ << "ROC firmware design version '" << designVersionReadback << 
+				"' does not match required version '" << expectedDesignVersion << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+		
+
+
+
+	registerFEMacroFunction("Get ROC Status",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCCoreVInterface::GetStatus),
+	                        std::vector<std::string>{}, //inputs parameters
+	                        std::vector<std::string>{"Result"}, //output parameters
+	                        1);  // requiredUserPermissions
+	registerFEMacroFunction("Get ROC Firmware Version",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCCoreVInterface::GetFirmwareVersion),
+	                        std::vector<std::string>{}, //inputs parameters
+	                        std::vector<std::string>{"Result"}, //output parameters
+	                        1);  // requiredUserPermissions
+
+
 	__FE_COUT__ << "Constructed." << __E__;
 }  // end constructor()
 
