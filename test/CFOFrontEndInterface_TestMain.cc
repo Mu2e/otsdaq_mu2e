@@ -96,13 +96,18 @@ try
 
 	if(numberOfEventWindowMarkers == uint32_t(-1))
 	{
-		__COUT_INFO__ << "Attempting Reset and Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up CFO for RTF, Reset and Buffer Release!" << __E__;
 
 		cfo.getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
 		sleep(1);
     	__COUT_INFO__ << "JA Status = " << cfo.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		
+		cfo.thisCFO_->CFOandDTC_Registers::ResetSERDES();
+		cfo.thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		
 		cfo.thisCFO_->SoftReset();
 		cfo.thisCFO_->ReleaseAllBuffers(CFO_DMA_Engine_DAQ);
+
 		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
@@ -127,6 +132,36 @@ try
 		__COUT_INFO__ << "CFO DMA sizes = " << cfo.thisCFO_->FormatDMATransferLength() << __E__;
 		return 0;
 	}
+	if(numberOfEventWindowMarkers == uint32_t(-5))
+	{
+		__COUT_INFO__ << "Resetting SESRDES!" << __E__;
+		cfo.thisCFO_->CFOandDTC_Registers::ResetSERDES();
+		__COUT_INFO__ << "Done resetting SESRDES!" << __E__;
+		sleep(1);
+		__COUT_INFO__ << "CFO links CDR: \n" << cfo.thisCFO_->FormatSERDESRXCDRLock() << __E__;
+		return 0;
+	}
+	if(numberOfEventWindowMarkers == uint32_t(-6))
+	{
+		__COUT_INFO__ << "Resetting SESRDES RX!" << __E__;
+		cfo.thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		__COUT_INFO__ << "Done resetting SESRDES RX!" << __E__;
+		sleep(1);
+		__COUT_INFO__ << "CFO links CDR: \n" << cfo.thisCFO_->FormatSERDESRXCDRLock() << __E__;
+		return 0;
+	}
+	if(numberOfEventWindowMarkers == uint32_t(-7))
+	{
+		__COUT_INFO__ << "Disabling and re-enabling links!" << __E__;
+		cfo.thisCFO_->DisableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		sleep(1);
+		cfo.thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		__COUT_INFO__ << "Done disabling and re-enabling links!" << __E__;
+		sleep(1);
+		__COUT_INFO__ << "CFO links CDR: \n" << cfo.thisCFO_->FormatSERDESRXCDRLock() << __E__;
+		return 0;
+	}
+	
 
     __COUT_INFO__ << "CFO version = " << cfo.thisCFO_->ReadDesignDate() << __E__;
 	__COUT_INFO__ << "CFO DMA sizes = " << cfo.thisCFO_->FormatDMATransferLength() << __E__;
@@ -196,6 +231,10 @@ try
 	sleep(1);
 	if(cfo.bufferTestThreadStruct_->running_)
 		sleep(1); //give 1 more second for thread
+
+	std::cout << "time(0) = " << time(0) << '\n' << std::flush;
+	__COUT_INFO__ << "\n" << 
+		CFOFrontEndInterface::getDetachedBufferTestStatus(cfo.bufferTestThreadStruct_) << __E__;	
 
 	if(dumpSpy)
 		cfo.getDevice()->spy(CFO_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);

@@ -154,6 +154,13 @@ try
 	}
 	__COUT_INFO__ << "ROC Setup:\n" << reply << __E__;
     
+	dtc.SetupCFOInterface(
+			0, //int forceCFOedge, 
+			true, //bool useCFOemulator, 
+			true, //bool alsoSetupJA,
+			true, //bool cfoRxTxEnable, 
+			true); //bool enableAutogenDRP);
+
     dtc.SetCFOEmulatorFixedWidthEmulation(
         1, //bool enable, 
         1, //bool useDetachedBufferTest,
@@ -211,6 +218,11 @@ try
 	sleep(1);
 	if(dtc.bufferTestThreadStruct_->running_)
 		sleep(1); //give 1 more second for thread
+
+
+	std::cout << "time(0) = " << time(0) << '\n' << std::flush;
+	__COUT_INFO__ << "\n" << 
+		DTCFrontEndInterface::getDetachedBufferTestStatus(dtc.bufferTestThreadStruct_) << __E__;	
 
 	if(dumpSpy)
 		dtc.getDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);

@@ -573,6 +573,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetupCFOInterface),            // feMacroFunction
 					std::vector<std::string>{
 						"Put DTC in CFO Emulation Mode (Default := false)",
+						"Also setup Jitter Attenuator (Default := false)",
 						"Set Link RX/TX Enable (Default := false)",
 						"Enable Auto-generation of Data Request Packets (Default := false)",
 						"Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)",
@@ -3593,6 +3594,7 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 		SetupCFOInterface(
 			__GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)", int, 2),
 			__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false),
+			__GET_ARG_IN__("Also setup Jitter Attenuator (Default := false)",bool,false),
 			__GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
 			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false)
 		)
@@ -3601,7 +3603,7 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 
 //========================================================================
 std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
-	bool useCFOemulator, bool cfoRxTxEnable, bool enableAutogenDRP)
+	bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP)
 {	
 
 	std::stringstream outSs;
@@ -3617,30 +3619,36 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
 		outSs << "Setting up CFO emulator...\n\n";
 		thisDTC_->SetCFOEmulationMode();
 			
-		//force JA from local osc		
-		getCFOandDTCRegisters()->SetJitterAttenuatorSelect(0 /* select local osc */, false /* alsoResetJA */);
-		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		if(alsoSetupJA)
 		{
-			if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
-				break;
-			sleep(1);
+			//force JA from local osc		
+			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(0 /* select local osc */, false /* alsoResetJA */);
+			for(int i=0;i<10;++i) //wait for JA to lock before reading
+			{
+				if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+					break;
+				sleep(1);
+			}
+			outSs << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 		}
-    	outSs << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 	}
 	else //using external CFO!
 	{
 		outSs << "Setting up external CFO...\n\n";
 
-		//force JA from RTF		
-		getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
-		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		if(alsoSetupJA)
 		{
-			if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
-				break;
-			sleep(1);
+			//force JA from RTF		
+			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
+			for(int i=0;i<10;++i) //wait for JA to lock before reading
+			{
+				if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+					break;
+				sleep(1);
+			}
+			__FE_COUT_INFO__ << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 		}
-    	__FE_COUT_INFO__ << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
-
+		
 		thisDTC_->ClearCFOEmulationMode();
 	}
 
@@ -3833,7 +3841,7 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 		SetCFOEmulatorFixedWidthEmulation(
 			__GET_ARG_IN__("Enable CFO Emulator (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
-			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
+			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string, "0x44 clocks"),
 			__GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t),
 			__GET_ARG_IN__("Starting Event Window Tag",uint64_t),
 			__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
@@ -4136,6 +4144,8 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 			statusSs << "Average Data Rate: " << 
 				((double)threadStruct->totalSubeventBytesTransferred_)/(ns/1000.0) << " MB/s" << __E__;
 		}
+		else 
+			statusSs << "Data Transfer Duration too short to establish date rate." << __E__;
 
 		statusSs << "Starting Event Window Tag:" << threadStruct->expectedEventTag_ << __E__;
 		statusSs << "Next Expected Event Window Tag:" << threadStruct->nextEventWindowTag_ << __E__;
@@ -4534,7 +4544,7 @@ try
 
 		if(!threadStruct->inSubeventMode_) //treat as an Event
 		{	
-		  	TLOG_DEBUG() << "get the data requested as events via ->GetData(...)";
+		  	__COUTT__ << __COUT_HDR__ << "get the data requested as events via ->GetData(...)";
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				threadStruct->activeMatch_)).size())
 			{ 
@@ -5546,7 +5556,7 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTest(__ARGS__)
 	__FE_COUT__ << "CFO Emulator Loopback Test run" << __E__;
 
 	thisDTC_->EnableCFOLoopback();
-	thisDTC_->RunCFOEmulatorLoopbackTest();
+	thisDTC_->RunCableDelayLoopbackTest();
 
 	std::stringstream outSs;
 	outSs << "Done.";
@@ -5572,6 +5582,9 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 		thisDTC_->DisableCFOLoopback();
 		return;
 	}
+	else
+		thisDTC_->EnableCFOLoopback();
+
 
 	thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
 	

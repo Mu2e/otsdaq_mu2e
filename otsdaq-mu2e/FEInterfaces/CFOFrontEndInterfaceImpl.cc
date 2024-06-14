@@ -110,8 +110,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"CFO Reset",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CFOReset),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
+					std::vector<std::string>{}, // namesOfInputArgs
+					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",  // allowedCallingFEs
 					"Executes a soft reset of the CFO by setting the reset bit (31) to true on the <b>CFO Control Register</b> (0x9100)." 
@@ -121,8 +121,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"CFO Halt",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CFOHalt),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
+					std::vector<std::string>{}, // namesOfInputArgs
+					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",
 					"Transitions the state machine to <b>Halt</b> by setting the Enable Beam Off Mode Register to off."
@@ -132,7 +132,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"CFO Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::WriteCFO),  // feMacroFunction
-					std::vector<std::string>{"address", "writeData"},
+					std::vector<std::string>{"address", "writeData"}, // namesOfInputArgs
 					std::vector<std::string>{},  // namesOfOutput
 					1,    // requiredUserPermissions
 					"*",  // allowedCallingFEs
@@ -143,7 +143,9 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Loopback Test",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
-					std::vector<std::string>{"loopbacks", "link", "delay"},
+					std::vector<std::string>{ // namesOfInputArgs
+						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)", 
+						"Target Link (-1 for all, Default := -1)"},
 					std::vector<std::string>{"Response"},  // namesOfOutput
 					1,
 					"*", 
@@ -198,8 +200,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Reset Runplan",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::ResetRunplan),                  // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{},
+					std::vector<std::string>{}, // namesOfInputArgs
+					std::vector<std::string>{}, // namesOfOutput
 					1,   // requiredUserPermissions					
 					"*",
 					"Resets the Event Building run plan by setting the reset bit (27) to true on the <b>CFO Control Register</b>."
@@ -336,21 +338,21 @@ void CFOFrontEndInterface::registerFEMacros(void)
 uint32_t CFOFrontEndInterface::measureDelay(CFOLib::CFO_Link_ID link)
 {
 	// TODO: how can I understand if the measure fails?
-	__FE_COUT__ << "Send loopback marker on link " << link << __E__;
+	__FE_COUT__ << "TODO Send loopback marker on link " << link << __E__;
 
-	thisCFO_->ResetDelayRegister();	// reset 0x9380
-	thisCFO_->DisableLinks();	// reset 0x9114
-	// configure the DTC (to configure the ROC in a loop)
-	thisCFO_->EnableLink(link, DTC_LinkEnableMode(true, true)); // enable Tx and Rx
-	thisCFO_->EnableDelayMeasureMode(link);
-	thisCFO_->EnableDelayMeasureNow(link);
-	u_int32_t delay = thisCFO_->ReadCableDelayValue(link);	// read delay
-	__FE_COUT__ << "Delay measured: " << delay << " (ns) on link: " <<  link << __E__;
-	// reset registers
-	thisCFO_->ResetDelayRegister();
-	thisCFO_->DisableLinks();
+	// thisCFO_->ResetDelayRegister();	// reset 0x9380
+	// thisCFO_->DisableLinks();	// reset 0x9114
+	// // configure the DTC (to configure the ROC in a loop)
+	// thisCFO_->EnableLink(link, DTC_LinkEnableMode(true, true)); // enable Tx and Rx
+	// thisCFO_->EnableDelayMeasureMode(link);
+	// thisCFO_->EnableDelayMeasureNow(link);
+	// u_int32_t delay = thisCFO_->ReadCableDelayValue(link);	// read delay
+	// __FE_COUT__ << "Delay measured: " << delay << " (ns) on link: " <<  link << __E__;
+	// // reset registers
+	// thisCFO_->ResetDelayRegister();
+	// thisCFO_->DisableLinks();
 
-	return delay;
+	return -1; //delay;
 } //end measureDelay()
 
 // //========================================================================
@@ -373,68 +375,124 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	ostr << std::endl;
 	
 	// parameters 
-	int numberOfLoopback = __GET_ARG_IN__("loopbacks", uint32_t);
-	int input_link = __GET_ARG_IN__("link", uint8_t);
-	int delay = __GET_ARG_IN__("delay", uint32_t);
+	int numberOfLoopbacksExp = __GET_ARG_IN__("Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)", 
+		uint32_t, 3);
+	int targetLink = __GET_ARG_IN__("Target Link (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
 
-	// config parameters (TODO: read from config)
-	unsigned alignament_marker = 10;
-	const int MAX_LOOPBACK = 10000;
-	const int MIN_LOOPBACK = 1;
+	__FE_COUTV__(numberOfLoopbacksExp);
+	__FE_COUTV__(targetLink);
 
-	if (numberOfLoopback > MAX_LOOPBACK)
-		numberOfLoopback = MAX_LOOPBACK;
+	ostr << "Number of Loopback Markers to Send: " << (1 << numberOfLoopbacksExp) << __E__;
+	ostr << "Target CFO Chain/Link: " << (targetLink == uint8_t(-1)?"All":(std::to_string(targetLink))) << __E__;
 
-	if (numberOfLoopback < MIN_LOOPBACK)
-		numberOfLoopback = MIN_LOOPBACK;
 
-	// variable to compuet the average
-	float avg_delay = 0.0;
-	unsigned int comulative_delay = 0;
-	// int fail_measure = 0;
+	bool clockMarkerWasOn = thisCFO_->ReadEmbeddedClockMarkerEnable();
+	__FE_COUTV__(clockMarkerWasOn);
+	if(clockMarkerWasOn)
+		thisCFO_->DisableEmbeddedClockMarker();
 
-	// log the input
-	__FE_COUTV__(numberOfLoopback);
-	__FE_COUTV__(input_link);
-	__FE_COUTV__(delay);
+	thisCFO_->SetCableDelayMeasureExponentialCount(numberOfLoopbacksExp);
+	thisCFO_->RunCableDelayLoopbackTest();
 
-	ostr << "Number of loopbacks: " << numberOfLoopback << std::endl;
 
-	// TODO: read from config with special param
-	if (numberOfLoopback < 0)
+	//wait until done with loopback test to return final measurement
+	bool cableDelayMeasureAnyDone = false;
+	bool cableDelayMeasureDone;
+	uint16_t doneLink = -1;
+	uint32_t measuredDelay;
+	uint16_t retries = 10;
+	while(!cableDelayMeasureAnyDone && retries-- > 0)
 	{
-		return;
+		usleep(1000);
+		for(uint16_t link = 0; link < 8; ++link)
+			for(uint16_t roc = 0; roc < 6; ++roc)
+			{
+				//measuredDelay is in units of 5/8 ns
+				measuredDelay = thisCFO_->ReadCableDelayMeasurement(CFOLib::CFO_Link_ID(link),roc,cableDelayMeasureDone);
+				if(cableDelayMeasureDone)
+				{
+					cableDelayMeasureAnyDone = true;
+					doneLink = link;
+					__FE_COUTV__(doneLink);
+				}
+				
+				__FE_COUT__ << "Link=" << link << " ROC=" << roc
+					<< " retriesLeft=" << retries << " done=" << cableDelayMeasureDone 
+					<< " delay=" << measuredDelay*5.0/8.0 << std::hex << "ns 0x" << measuredDelay << __E__;
+
+				if(cableDelayMeasureDone) 
+					ostr << "CFO-Link=" << link << " ROC=" << roc						
+						<< " delay=" << measuredDelay*5.0/8.0 << std::hex << "ns 0x" << measuredDelay << __E__;
+			} //end delay measure loop
 	}
-	if (input_link < 0)
-	{
-		return;
-	}
+	if(retries == 0)
+		ostr << "Loopback Timeout!" << __E__;
 
-	CFOLib::CFO_Link_ID link = static_cast<CFOLib::CFO_Link_ID>(input_link);
+	// sleep(1); //wait until done with loopback test to return clock markers
+	
+	if(clockMarkerWasOn)
+		thisCFO_->EnableEmbeddedClockMarker();
 
 
-	// sending first marker to align the clock of the ROC
-	__FE_COUT__ << "Align the ROC's clock..." <<  __E__;
-	for (unsigned int n = 0; n < alignament_marker; ++n)
-	{
-		measureDelay(link);
-	}
+	
+	// // config parameters (TODO: read from config)
+	// unsigned alignament_marker = 10;
+	// const int MAX_LOOPBACK = 10000;
+	// const int MIN_LOOPBACK = 1;
 
-	// send marker
-	for (int n = 0; n < numberOfLoopback; ++n)
-	{
-		// TODO: check if it fail
-		uint32_t link_delay = measureDelay(link);
-		comulative_delay += link_delay;
-		__FE_COUT__ << "[" << (n+1) << "] Record: " << link_delay <<  __E__;
-		usleep(delay);	// maybe not defined
-	}
+	// if (numberOfLoopback > MAX_LOOPBACK)
+	// 	numberOfLoopback = MAX_LOOPBACK;
 
-	avg_delay = comulative_delay / numberOfLoopback;
-	ostr << "Average delay: " << avg_delay << std::endl;
-	__FE_COUT__ << "Average delay: " << avg_delay << __E__;
+	// if (numberOfLoopback < MIN_LOOPBACK)
+	// 	numberOfLoopback = MIN_LOOPBACK;
 
-	ostr << std::endl << std::endl;
+	// // variable to compuet the average
+	// float avg_delay = 0.0;
+	// unsigned int comulative_delay = 0;
+	// // int fail_measure = 0;
+
+	// // log the input
+	// __FE_COUTV__(numberOfLoopback);
+	// __FE_COUTV__(input_link);
+	// __FE_COUTV__(delay);
+
+	// ostr << "Number of loopbacks: " << numberOfLoopback << std::endl;
+
+	// // TODO: read from config with special param
+	// if (numberOfLoopback < 0)
+	// {
+	// 	return;
+	// }
+	// if (input_link < 0)
+	// {
+	// 	return;
+	// }
+
+	// CFOLib::CFO_Link_ID link = static_cast<CFOLib::CFO_Link_ID>(input_link);
+
+
+	// // sending first marker to align the clock of the ROC
+	// __FE_COUT__ << "Align the ROC's clock..." <<  __E__;
+	// for (unsigned int n = 0; n < alignament_marker; ++n)
+	// {
+	// 	measureDelay(link);
+	// }
+
+	// // send marker
+	// for (int n = 0; n < numberOfLoopback; ++n)
+	// {
+	// 	// TODO: check if it fail
+	// 	uint32_t link_delay = measureDelay(link);
+	// 	comulative_delay += link_delay;
+	// 	__FE_COUT__ << "[" << (n+1) << "] Record: " << link_delay <<  __E__;
+	// 	usleep(delay);	// maybe not defined
+	// }
+
+	// avg_delay = comulative_delay / numberOfLoopback;
+	// ostr << "Average delay: " << avg_delay << std::endl;
+	// __FE_COUT__ << "Average delay: " << avg_delay << __E__;
+
+	// ostr << std::endl << std::endl;
 
 	__SET_ARG_OUT__("Response", ostr.str());
 
@@ -1991,8 +2049,8 @@ std::string CFOFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<CF
 		statusSs << "Detached thread running:" << (threadStruct->running_ ? "true" : "false") << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
 
-		statusSs << "Total Subevent Bytes Transferred (including Headers): " << 
-			threadStruct->totalSubeventBytesTransferred_ << __E__;
+		statusSs << "Total CFO Subevent Bytes Transferred: " << 
+			threadStruct->totalSubeventBytesTransferred_ << " bytes" << __E__;
 
 		long long ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
 				threadStruct->transferEndTime_ - threadStruct->transferStartTime_).count();
@@ -2003,6 +2061,8 @@ std::string CFOFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<CF
 			statusSs << "Average Data Rate: " << 
 				((double)threadStruct->totalSubeventBytesTransferred_)/(ns/1000.0) << " MB/s" << __E__;
 		}
+		else 
+			statusSs << "Data Transfer Duration too short to establish date rate." << __E__;
 
 		statusSs << "Starting Event Window Tag:" << threadStruct->expectedEventTag_ << __E__;
 		statusSs << "Next Expected Event Window Tag:" << threadStruct->nextEventWindowTag_ << __E__;
@@ -2237,7 +2297,7 @@ try
 
 		//CFO Records are a "subevent" (i.e. there is no opportunity for hardware event building including the CFO)
 		{
-		  	TLOG_DEBUG() << "get the data requested as events via ->GetSubEventData(...)";		
+		  	__COUTT__ << __COUT_HDR__ << "get the data requested as events via ->GetSubEventData(...)";		
 			//GetData will clear subevents first	
 			while(threadStruct->thisCFO_->GetData(subevents) && subevents.size())
 			{ 
@@ -2263,7 +2323,7 @@ try
 					", SubEvents received so far = " << threadStruct->subeventsCount_ << __E__;
 				lastCount = threadStruct->subeventsCount_;
 
-				threadStruct->thisCFO_->GetDevice()->spy(CFO_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+				// threadStruct->thisCFO_->GetDevice()->spy(CFO_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 			}
 		} // end Sub Event handling
 

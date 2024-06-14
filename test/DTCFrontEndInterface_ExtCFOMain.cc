@@ -97,12 +97,18 @@ try
 	
 	if(numberOfEventWindowMarkers == uint32_t(-1))
 	{
-		__COUT_INFO__ << "Attempting Reset and Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up DTC with external CFO for Loopback!" << __E__;
 
-		dtc.thisDTC_->DisableCFOEmulation();
-		dtc.getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
-		sleep(1);
-    	__COUT_INFO__ << "JA Status = " << dtc.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		dtc.thisDTC_->DisableCFOEmulation(); //enable external CFO
+		dtc.thisDTC_->EnableCFOLoopback(); //loopback at this DTC
+
+		dtc.SetupCFOInterface(
+			0, //int forceCFOedge, 
+			false, //bool useCFOemulator, 
+			true, //bool alsoSetupJA,
+			true, //bool cfoRxTxEnable, 
+			true); //bool enableAutogenDRP);
+
 		dtc.thisDTC_->SoftReset();
 		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
@@ -110,9 +116,20 @@ try
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-2))
 	{
-		__COUT_INFO__ << "Attempting Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up DTC with external CFO for Passhthrough!" << __E__;
+		dtc.thisDTC_->DisableCFOEmulation(); //enable external CFO
+		dtc.thisDTC_->DisableCFOLoopback(); //passhtrough CFO control link at this DTC
+		
+		dtc.SetupCFOInterface(
+			0, //int forceCFOedge, 
+			false, //bool useCFOemulator, 
+			true, //bool alsoSetupJA,
+			true, //bool cfoRxTxEnable, 
+			true); //bool enableAutogenDRP);
+
+		dtc.thisDTC_->SoftReset();
 		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
-		__COUT_INFO__ << "ReleaseAllBuffers called!" << __E__;
+		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-3))
@@ -130,12 +147,14 @@ try
 		return 0;
 	}
 
+
     __COUT_INFO__ << "DTC version = " << dtc.thisDTC_->ReadDesignDate() << __E__;
 	__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
 
 	dtc.SetupCFOInterface(
 		0, //int forceCFOedge, 
 		false, //bool useCFOemulator, 
+		true, //bool alsoSetupJA,
 		true, //bool cfoRxTxEnable, 
 		true); //bool enableAutogenDRP);
 
