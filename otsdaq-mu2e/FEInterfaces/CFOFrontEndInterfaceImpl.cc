@@ -74,38 +74,6 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 	// clang-format off
 
-	// registerFEMacroFunction(
-	// 	"Get Firmware Version",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-	// 				1,   //"allUsers:0 | TDAQ:255");
-	// 				"*",  /* allowedCallingFEs */
-	// 				"Read the modification date of the CFO firmware using <b>MON/DD/20YY HH:00</b> format."
-	// );
-					
-	// registerFEMacroFunction(
-	// 	"Flash_LEDs",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOFrontEndInterface::FlashLEDs),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1);                          // requiredUserPermissions
-    
-	
-
-	// registerFEMacroFunction(
-	// 	"Get Status",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOFrontEndInterface::GetStatus),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Status"},
-	// 				1,   // requiredUserPermissions 
-	// 				"*",  // allowedCallingFEs
-	// 				"Reads and displays all registers in a print friendly format."
-	// );
-
 	registerFEMacroFunction(
 		"CFO Reset",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -180,21 +148,6 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"Parameters:\n"
 					"\taddress (uint16_t): Address in Memory Map.\n"
 	); 
-
-	// registerFEMacroFunction(
-	// 	"Select Jitter Attenuator Source",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&CFOFrontEndInterface::SelectJitterAttenuatorSource),
-	// 			        std::vector<std::string>{"Source (0 is Local oscillator, 1 is RTF Copper Clock)",
-	// 											"DoNotSet",
-	// 											"AlsoResetJA"},
-	// 					std::vector<std::string>{"Register Write Results"},
-	// 				1, // requiredUserPermissions
-	// 				"*",
-	// 				"The Jitter Attenuator is used to remove jitter, or variation in the timing of signals. "
-	// 				"Select the source of the jitter attenuator: a local oscilator on the CFO or the RTF.\n"
-	// 				"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>."
-	// ); 
 
 	registerFEMacroFunction(
 		"Reset Runplan",

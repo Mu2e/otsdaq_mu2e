@@ -30,14 +30,15 @@ try
 	{
 		__COUT_INFO__ << "arg[" << i << "] = " << argv[i] << __E__;
 	}
-	if(argc != 3)
+	if(argc != 4)
 	{
-		__COUT_ERR__ << "\n\n\tUsage = Need 2 arguments: CFOFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers>\n\n" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = Need 3 arguments: CFOFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers> <runPlanMode>\n\n" << __E__;		
 		return 0;
 	}
 
 	uint32_t deviceIndex = atoi(argv[1]);
 	uint32_t numberOfEventWindowMarkers = atoi(argv[2]);
+	uint32_t runPlanMode = atoi(argv[3]); //0 for fixed width, 1 for super cycles
 
 	//==============================================================================
 	// Define environment variables
@@ -176,28 +177,31 @@ try
 	}
     __COUT_INFO__ << "JA Status = " << cfo.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 
-    cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
-        1, //bool enable, 
-        1, //bool useDetachedBufferTest,
-        "0x44 clocks", //std::string eventDuration, 
-        numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
-        100, //uint64_t initialEventWindowTag,
-        0x333, //uint64_t eventWindowMode, 
-        0, //bool enableClockMarkers, 
-        0, //bool saveBinaryDataToFile,
-        0, //bool saveSubeventHeadersToDataFile,
-        0  //bool doNotResetCounters )
-    );
-	// cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
-	// 	1, //bool enable,
-	// 	1, //bool useDetachedBufferTest, 
-	// 	numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
-	// 	0, //uint64_t initialEventWindowTag,
-    //  0, //bool enableClockMarkers, 
-    //  0, //bool saveBinaryDataToFile,
-    //  0, //bool saveSubeventHeadersToDataFile,
-    //  0  //bool doNotResetCounters )
-	// ); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+	__COUT_INFO__ << "runPlanMode = " << runPlanMode << __E__;
+	if(runPlanMode == 0)
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			1, //bool useDetachedBufferTest,
+			"0x44 clocks", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			0, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	else
+		cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
+			1, //bool enable,
+			1, //bool useDetachedBufferTest, 
+			numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
+			100, //uint64_t initialEventWindowTag,
+			0, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
 
 	int i=0;
 	bool dumpSpy = false;
