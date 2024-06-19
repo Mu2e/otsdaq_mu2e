@@ -258,22 +258,6 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 } //end registerFEMacros()
 
-// //===============================================================================================
-// // registerWrite: return = value readback from register at address "address"
-// //	Use base class CFOandDTCCoreVInterface::, and do readback verification in DTCFrontEndInterface::registerWrite() and CFOFrontEndInterface::registerWrite()
-// dtc_data_t CFOFrontEndInterface::registerWrite(
-// 	dtc_address_t address, dtc_data_t dataToWrite)
-// {
-// 	dtc_data_t readbackValue = CFOandDTCCoreVInterface::registerWrite(address,dataToWrite);
-
-// 	//--------------------------------------------------------
-// 	//do CFO-specific readback verification here...
-
-// 	//end CFO-specific readback verification here...
-// 	//--------------------------------------------------------
-
-// 	return readbackValue;
-// }  // end registerWrite()
 
 // //=====================================================================================
 // //
@@ -307,15 +291,6 @@ uint32_t CFOFrontEndInterface::measureDelay(CFOLib::CFO_Link_ID link)
 
 	return -1; //delay;
 } //end measureDelay()
-
-// //========================================================================
-// void CFOFrontEndInterface::GetFPGATemperature(__ARGS__)
-// {	
-// 	// rd << "Celsius: " << val << ", Fahrenheit: " << val*9/5 + 32 << ", " << (val < 65?"GOOD":"BAD");
-// 	std::stringstream ss;
-// 	ss << thisCFO_->FormatFPGATemperature() << "\n\n" << thisCFO_->FormatFPGAAlarms();
-// 	__SET_ARG_OUT__("Temperature", ss.str());
-// } //end GetFPGATemperature()
 
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link, handle the boadcast
@@ -929,7 +904,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 //==============================================================================
 void CFOFrontEndInterface::configureLoopbackMode(int step)
 {
-	__FE_COUT__ << "The loopback is performed in the strat phase." << __E__;
+	__FE_COUT__ << "The loopback is performed in the start transition." << __E__;
 	// if(step == -1)
 	// 	step = getIterationIndex();
 
@@ -1120,40 +1095,21 @@ void CFOFrontEndInterface::halt(void)
 	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-	// 		", \t ---------- Halting..." << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
-
 	// readStatus();
-}
+} //end halt()
 
 //==============================================================================
 void CFOFrontEndInterface::pause(void)
 {
 	__FE_COUT__ << "PAUSE: CFO status" << __E__;
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-	// 		", \t ---------- Pausing..." << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
 
 	// readStatus();
-}
+} // end pause()
 
 //==============================================================================
 void CFOFrontEndInterface::resume(void)
 {
 	__FE_COUT__ << "RESUME: CFO status" << __E__;
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-	// 		", \t ---------- Resuming..." << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
 
 	// readStatus();
 }
@@ -1170,12 +1126,6 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		loopbackTest(runNumber);
 		__FE_COUT_INFO__ << "End the loopback!" << __E__;
 	}
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-	// 		", \t ---------- Starting..." << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
 
 /* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
 
@@ -1332,18 +1282,11 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	indicateIterationWork();  // I still need to be touched
 	return;
 */
-}
+} //end start()
 
 //==============================================================================
 void CFOFrontEndInterface::stop(void)
 {
-	// if(regWriteMonitorStream_.is_open())
-	// {
-	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) << 
-	// 		", \t ---------- Stopping..." << "\n";
-	// 	regWriteMonitorStream_.flush();
-	// }
-
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
@@ -1513,7 +1456,7 @@ void CFOFrontEndInterface::stop(void)
 
 	indicateIterationWork();
 	return;
-}
+} //end stop()
 
 //==============================================================================
 bool CFOFrontEndInterface::running(void)
@@ -1524,7 +1467,7 @@ bool CFOFrontEndInterface::running(void)
 	}
 
 	return false;
-}
+} //end running()
 
 //========================================================================
 void CFOFrontEndInterface::WriteCFO(__ARGS__)
@@ -1561,36 +1504,6 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	sprintf(readDataStr,"0x%X",readData);
 	__SET_ARG_OUT__("readData",readDataStr);
 } //end ReadCFO()
-
-// //========================================================================
-// void CFOFrontEndInterface::SelectJitterAttenuatorSource(__ARGS__)
-// {
-// 	uint32_t select = __GET_ARG_IN__(
-// 	    "Source (0 is Local oscillator, 1 is RTF Copper Clock)", uint32_t);
-// 	select %= 4;
-// 	__FE_COUTV__((unsigned int)select);
-
-// 	if(!__GET_ARG_IN__(
-// 	    "DoNotSet", bool))
-// 	{
-// 		bool alsoResetJA = __GET_ARG_IN__(
-// 	    		"AlsoResetJA", bool);
-// 		__FE_COUTV__(alsoResetJA);
-// 		thisCFO_->SetJitterAttenuatorSelect(select, alsoResetJA);
-// 		sleep(1);
-// 		for(int i=0;i<10;++i) //wait for JA to lock before reading
-// 		{
-// 			if(thisCFO_->ReadJitterAttenuatorLocked())
-// 				break;
-// 			sleep(1);
-// 		}
-// 	}
-
-// 	__FE_COUT__ << "Done with jitter attenuator source select: " << select << __E__;
-
-// 	__SET_ARG_OUT__("Register Write Results", thisCFO_->FormatJitterAttenuatorCSR());
-
-// }  // end SelectJitterAttenuatorSource()
 
 //========================================================================
 void CFOFrontEndInterface::ResetRunplan(__ARGS__)
@@ -2322,19 +2235,6 @@ void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->SoftReset(); }
 
 //========================================================================
 void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
-
-// //==============================================================================
-// // GetFirmwareVersion
-//  void CFOFrontEndInterface::GetFirmwareVersion(__ARGS__)
-// {	
-// 	__SET_ARG_OUT__("Firmware Version Date", thisCFO_->ReadDesignDate());
-// }  // end GetFirmwareVersion()
-
-// //========================================================================
-// void CFOFrontEndInterface::GetStatus(__ARGS__)
-// {	
-// 	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(20, thisCFO_->formattedDumpFunctions_));
-// } //end GetStatus()
 
 //========================================================================
 void CFOFrontEndInterface::GetCounters(__ARGS__)
