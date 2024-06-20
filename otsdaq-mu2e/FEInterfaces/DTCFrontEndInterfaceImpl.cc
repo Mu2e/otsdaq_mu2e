@@ -3723,63 +3723,9 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	// 	getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 
 	if(useDetachedBufferTest)
-	{
 		initDetachedBufferTest(initialEventWindowTag,
 			 saveBinaryDataToFile, saveSubeventHeadersToDataFile, doNotResetCounters);
-		// __FE_COUTV__(saveBinaryDataToFile);
-		// __FE_COUTV__(saveSubeventHeadersToDataFile);
-		// __FE_COUTV__(doNotResetCounters);
-		// __FE_COUT__ << "Initializing detached buffer test!" << __E__;
-
-		// if(!bufferTestThreadStruct_) //initialize shared pointer for first time
-		// 	bufferTestThreadStruct_ = std::make_shared<DTCFrontEndInterface::DetachedBufferTestThreadStruct>();
-
-		// if(bufferTestThreadStruct_->running_)
-		// {
-		// 	__FE_COUT__ << "Found buffer test thread already running... so re-initializing" << __E__;
-
-		// 	// start mutex scope
-		// 	{
-		// 		std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-		// 		bufferTestThreadStruct_->inSubeventMode_ 		= true;
-		// 		bufferTestThreadStruct_->activeMatch_ 			= false;
-		// 		bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-		// 		bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-		// 		bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-		// 		bufferTestThreadStruct_->exitThread_ 			= false;
-		// 		bufferTestThreadStruct_->resetStartEventTag_ 	= true;
-		// 		bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
-		// 	}
-		// 	outSs << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
-		// 		" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		// }
-		// else
-		// {
-		// 	__FE_COUT__  << "Launching detached Buffer Test thread..." << __E__;
-		// 	// start mutex scope
-		// 	{
-		// 		std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-		// 		bufferTestThreadStruct_->inSubeventMode_ 		= true;
-		// 		bufferTestThreadStruct_->activeMatch_ 			= false;
-		// 		bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-		// 		bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-		// 		bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-		// 		bufferTestThreadStruct_->exitThread_ 			= false;
-		// 		bufferTestThreadStruct_->resetStartEventTag_ 	= false;
-		// 		bufferTestThreadStruct_->thisDTC_				= thisDTC_;
-		// 		bufferTestThreadStruct_->running_ 				= true;	
-		// 		bufferTestThreadStruct_->doNotResetCounters_ 	= false;
-		// 	}
-		// 	std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
-		// 				DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
-		// 			bufferTestThreadStruct_)
-		// 	.detach();
-		// 	outSs << "Launched detached Buffer Test thread and reading data DMA-0 starting at event tag " << initialEventWindowTag << 
-		// 		" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		// }
-
-		// sleep(1); //give time for buffer reading to be ready
-	}
+		
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
 	thisDTC_->SetCFOEmulationEventWindowInterval(0);  
@@ -3881,62 +3827,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	// 	getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 	
 	if(useDetachedBufferTest)
-	{
 		initDetachedBufferTest(initialEventWindowTag,
 			 saveBinaryDataToFile, saveSubeventHeadersToDataFile, doNotResetCounters);
-		// __FE_COUTV__(saveBinaryDataToFile);
-		// __FE_COUTV__(doNotResetCounters);
-		// __FE_COUT__ << "Initializing detached buffer test!" << __E__;
-
-		// if(!bufferTestThreadStruct_) //initialize shared pointer for first time
-		// 	bufferTestThreadStruct_ = std::make_shared<DTCFrontEndInterface::DetachedBufferTestThreadStruct>();
-		
-		// if(bufferTestThreadStruct_->running_)
-		// {
-		// 	__FE_COUT__ << "Found buffer test thread already running... so re-initializing" << __E__;
-			
-		// 	// start mutex scope
-		// 	{
-		// 		std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-		// 		bufferTestThreadStruct_->inSubeventMode_ 		= true;
-		// 		bufferTestThreadStruct_->activeMatch_ 			= false;
-		// 		bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-		// 		bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-		// 		bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-		// 		bufferTestThreadStruct_->exitThread_ 			= false;
-		// 		bufferTestThreadStruct_->resetStartEventTag_ 	= true;
-		// 		bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
-		// 	}
-		// 	outSs << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
-		// 		" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		// }
-		// else
-		// {
-		// 	__FE_COUT__  << "Launching detached Buffer Test thread..." << __E__;
-		// 	// start mutex scope
-		// 	{
-		// 		std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-		// 		bufferTestThreadStruct_->inSubeventMode_ 		= true;
-		// 		bufferTestThreadStruct_->activeMatch_ 			= false;
-		// 		bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-		// 		bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-		// 		bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-		// 		bufferTestThreadStruct_->exitThread_ 			= false;
-		// 		bufferTestThreadStruct_->resetStartEventTag_ 	= false;
-		// 		bufferTestThreadStruct_->thisDTC_				= thisDTC_;
-		// 		bufferTestThreadStruct_->running_ 				= true;	
-		// 		bufferTestThreadStruct_->doNotResetCounters_ 	= false;
-		// 	}
-		// 	std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
-		// 				DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
-		// 			bufferTestThreadStruct_)
-		// 	.detach();
-		// 	outSs << "Launched detached Buffer Test thread and reading data DMA-0 starting at event tag " << initialEventWindowTag << 
-		// 		" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		// }
-
-		// sleep(1); //give time for buffer reading to be ready
-	}
 
 	__FE_COUTV__(eventDuration);
 	bool foundUnits = false;

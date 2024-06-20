@@ -2185,7 +2185,7 @@ try
 			//if here, no more data in DMA buffer
 			if(lastCount != threadStruct->subeventsCount_ || ii%100 == 0)
 			{
-				__COUT__ << "No more subevents found in DMA bufferr... waiting... iteration #" << ii << 
+				__COUTT__ << "No more subevents found in DMA bufferr... waiting... iteration #" << ii << 
 					", SubEvents received so far = " << threadStruct->subeventsCount_ << __E__;
 				lastCount = threadStruct->subeventsCount_;
 

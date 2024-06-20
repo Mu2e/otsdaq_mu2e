@@ -179,6 +179,7 @@ try
 
 	__COUT_INFO__ << "runPlanMode = " << runPlanMode << __E__;
 	if(runPlanMode == 0)
+	{
 		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			1, //bool enable, 
 			1, //bool useDetachedBufferTest,
@@ -191,7 +192,9 @@ try
 			0, //bool saveSubeventHeadersToDataFile,
 			0  //bool doNotResetCounters )
 		);
-	else
+	}
+	else 
+	{
 		cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
 			1, //bool enable,
 			1, //bool useDetachedBufferTest, 
@@ -201,7 +204,9 @@ try
 			0, //bool saveBinaryDataToFile,
 			0, //bool saveSubeventHeadersToDataFile,
 			0  //bool doNotResetCounters )
-		); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+		); 
+		numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+	}
 
 	int i=0;
 	bool dumpSpy = false;
