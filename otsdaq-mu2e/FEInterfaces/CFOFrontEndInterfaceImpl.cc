@@ -1570,7 +1570,10 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 	
 
 	//set the file in hardware:
-	thisCFO_->GetDevice()->write_data(CFO_DMA_Engine_RunPlan, inputData, sizeof(inputData));
+	thisCFO_->GetDevice()->begin_dcs_transaction();
+	thisCFO_->GetDevice()->write_data(DTC_DMA_Engine_DCS, //CFO_DMA_Engine_RunPlan, 
+		inputData, sizeof(inputData));
+	thisCFO_->GetDevice()->end_dcs_transaction();
 
 	std::stringstream resultSs;
 	resultSs << "Downloaded to CFO binary run plan file: " << binFilename << __E__;
@@ -2061,7 +2064,7 @@ try
 		}		
 	}
 	//start with clean release
-	threadStruct->thisCFO_->ReleaseAllBuffers(CFO_DMA_Engine_DAQ);
+	threadStruct->thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 	__COUTT__ << "ReleaseAllBuffers called!" << __E__;
 
 	uint64_t ii = 0;
@@ -2156,7 +2159,7 @@ try
 				}
 
 				//release buffers for restart
-				threadStruct->thisCFO_->ReleaseAllBuffers(CFO_DMA_Engine_DAQ);
+				threadStruct->thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 			}
 			
 		} //done with check for starting event window tag
@@ -2180,7 +2183,7 @@ try
 					}
 					handleDetachedSubevent(*(subeventPtr.get()), threadStruct);
 				}
-				//threadStruct->thisCFO_->ReleaseBuffers(CFO_DMA_Engine_DAQ,subevents.size()); // This currently does not exist, but it would be most efficient to release here
+				//threadStruct->thisCFO_->ReleaseBuffers(DTC_DMA_Engine_DAQ, subevents.size()); // This currently does not exist, but it would be most efficient to release here
 			} //end primary Sub Event loop
 			//if here, no more data in DMA buffer
 			if(lastCount != threadStruct->subeventsCount_ || ii%100 == 0)
@@ -2189,7 +2192,7 @@ try
 					", SubEvents received so far = " << threadStruct->subeventsCount_ << __E__;
 				lastCount = threadStruct->subeventsCount_;
 
-				// threadStruct->thisCFO_->GetDevice()->spy(CFO_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+				// threadStruct->thisCFO_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 			}
 		} // end Sub Event handling
 
@@ -2213,7 +2216,7 @@ try
 catch(...)
 {
 	std::stringstream errSs; errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
-	threadStruct->thisCFO_->GetDevice()->spy(CFO_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+	threadStruct->thisCFO_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
 	threadStruct->running_ = false;
 	try

@@ -107,7 +107,7 @@ try
 		cfo.thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		
 		cfo.thisCFO_->SoftReset();
-		cfo.thisCFO_->ReleaseAllBuffers(CFO_DMA_Engine_DAQ);
+		cfo.thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 
 		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
@@ -115,7 +115,7 @@ try
 	if(numberOfEventWindowMarkers == uint32_t(-2))
 	{
 		__COUT_INFO__ << "Attempting Buffer Release ONLY!" << __E__;
-		cfo.thisCFO_->ReleaseAllBuffers(CFO_DMA_Engine_DAQ);
+		cfo.thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 		__COUT_INFO__ << "ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
@@ -246,7 +246,7 @@ try
 		CFOFrontEndInterface::getDetachedBufferTestStatus(cfo.bufferTestThreadStruct_) << __E__;	
 
 	if(dumpSpy)
-		cfo.getDevice()->spy(CFO_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+		cfo.getDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
 	__COUT_INFO__ << "Thread and main exited!" << __E__;
 	return 0;
