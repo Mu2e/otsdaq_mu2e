@@ -23,7 +23,7 @@ using namespace ots;
 int main(int argc, char* argv[])
 try
 {
-   	__COUT_INFO__ << "DTCFrontEndInterface Test main()";
+   	__COUT_INFO__ << "DTCFrontEndInterface External CFO main()";
 
 	__COUTV__(argc);
 	for(int i=0;i<argc;++i)
@@ -32,7 +32,7 @@ try
 	}
 	if(argc < 3)
 	{
-		__COUT_ERR__ << "\n\n\tUsage = Need at least 2 arguments: DTCFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers>\n\n" << __E__;
+		__COUT_ERR__ << "\n\n\tUsage = Need at least 2 arguments: DTCFrontEndInterface_ExtCFOMain <deviceIndex> <numberOfEventWindowMarkers>\n\n" << __E__;
 		__COUT_ERR__ << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n\n" << __E__;
 		return 0;
 	}
@@ -94,12 +94,21 @@ try
         cfgMgr.getNode(ConfigurationManager::XDAQ_CONTEXT_TABLE_NAME),
         theConfigurationPath_);
 
-
+	
 	if(numberOfEventWindowMarkers == uint32_t(-1))
 	{
-		__COUT_INFO__ << "Attempting Reset and Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up DTC with external CFO for Loopback!" << __E__;
 
-		dtc.thisDTC_->DisableCFOEmulation();
+		dtc.thisDTC_->DisableCFOEmulation(); //enable external CFO
+		dtc.thisDTC_->EnableCFOLoopback(); //loopback at this DTC
+
+		dtc.SetupCFOInterface(
+			0, //int forceCFOedge, 
+			false, //bool useCFOemulator, 
+			true, //bool alsoSetupJA,
+			true, //bool cfoRxTxEnable, 
+			true); //bool enableAutogenDRP);
+
 		dtc.thisDTC_->SoftReset();
 		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
@@ -107,9 +116,20 @@ try
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-2))
 	{
-		__COUT_INFO__ << "Attempting Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up DTC with external CFO for Passhthrough!" << __E__;
+		dtc.thisDTC_->DisableCFOEmulation(); //enable external CFO
+		dtc.thisDTC_->DisableCFOLoopback(); //passhtrough CFO control link at this DTC
+		
+		dtc.SetupCFOInterface(
+			0, //int forceCFOedge, 
+			false, //bool useCFOemulator, 
+			true, //bool alsoSetupJA,
+			true, //bool cfoRxTxEnable, 
+			true); //bool enableAutogenDRP);
+
+		dtc.thisDTC_->SoftReset();
 		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
-		__COUT_INFO__ << "ReleaseAllBuffers called!" << __E__;
+		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-3))
@@ -127,8 +147,16 @@ try
 		return 0;
 	}
 
+
     __COUT_INFO__ << "DTC version = " << dtc.thisDTC_->ReadDesignDate() << __E__;
 	__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
+
+	dtc.SetupCFOInterface(
+		0, //int forceCFOedge, 
+		false, //bool useCFOemulator, 
+		true, //bool alsoSetupJA,
+		true, //bool cfoRxTxEnable, 
+		true); //bool enableAutogenDRP);
 
 	//setup ROCs
 	std::string reply;
@@ -153,39 +181,13 @@ try
 			);
 	}
 	__COUT_INFO__ << "ROC Setup:\n" << reply << __E__;
+
+	dtc.thisDTC_->SoftReset(); //to reset event window tag starting point handling
+	dtc.initDetachedBufferTest(100,//initialEventWindowTag,
+			false, // saveBinaryDataToFile, 
+			false, //saveSubeventHeadersToDataFile, 
+			false); //doNotResetCounters);
     
-	dtc.SetupCFOInterface(
-			0, //int forceCFOedge, 
-			true, //bool useCFOemulator, 
-			true, //bool alsoSetupJA,
-			true, //bool cfoRxTxEnable, 
-			true); //bool enableAutogenDRP);
-
-    dtc.SetCFOEmulatorFixedWidthEmulation(
-        1, //bool enable, 
-        1, //bool useDetachedBufferTest,
-        "0x44 clocks", //std::string eventDuration, 
-        numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
-        0, //uint64_t initialEventWindowTag,
-        1, //uint64_t eventWindowMode, 
-        0, //bool enableClockMarkers, 
-        1, //bool enableAutogenDRP, 
-        0, //bool saveBinaryDataToFile,
-        0, //bool saveSubeventHeadersToDataFile,
-        0  //bool doNotResetCounters )
-    );
-	// dtc.SetCFOEmulatorOnOffSpillEmulation(
-	// 	1, //bool enable,
-	// 	1, //bool useDetachedBufferTest, 
-	// 	numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
-	// 	0, //uint64_t initialEventWindowTag,
-    //     0, //bool enableClockMarkers, 
-    //     1, //bool enableAutogenDRP, 
-    //     0, //bool saveBinaryDataToFile,
-    //     0, //bool saveSubeventHeadersToDataFile,
-    //     0  //bool doNotResetCounters )
-	// ); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
-
 	int i=0;
 	bool dumpSpy = false;
 	while(1) 
@@ -218,11 +220,6 @@ try
 	sleep(1);
 	if(dtc.bufferTestThreadStruct_->running_)
 		sleep(1); //give 1 more second for thread
-
-
-	std::cout << "time(0) = " << time(0) << '\n' << std::flush;
-	__COUT_INFO__ << "\n" << 
-		DTCFrontEndInterface::getDetachedBufferTestStatus(dtc.bufferTestThreadStruct_) << __E__;	
 
 	if(dumpSpy)
 		dtc.getDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
