@@ -10,8 +10,8 @@ jobs:
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_CI_ISSUES }}
-          ORGANIZATION: art-daq
-          PROJECT_NUMBER: 1
+          ORGANIZATION: Mu2e
+          PROJECT_NUMBER: 6
         run: |
           gh api graphql -f query='
             query($org: String!, $number: Int!) {
