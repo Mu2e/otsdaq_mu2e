@@ -62,8 +62,9 @@ class ROCCoreVInterface : public FEVInterface
 
 
 	// virtual specific ROC functions
-	virtual void       					    GetStatus  					(__ARGS__) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
-	virtual void       					    GetFirmwareVersion			(__ARGS__) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
+	virtual void       					    GetStatus  					(__ARGS__) { __SS__ << "TODO"; __SET_ARG_OUT__("Result", ss.str()); };  // virtual, must define in inheriting children
+	void       					    		GetFirmwareVersion			(__ARGS__) { __SET_ARG_OUT__("Result", getFirmwareVersion()); };
+	virtual std::string 					getFirmwareVersion			(void) { __SS__ << "TODO"; __SS_THROW__; return ""; }// virtual, must define in inheriting children
 
 	virtual int       					    readInjectedPulseTimestamp	(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							writeDelay					(uint16_t delay) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // virtual, must

@@ -43,7 +43,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 
 	virtual void  							GetStatus									(__ARGS__) override;
-	virtual void 							GetFirmwareVersion							(__ARGS__) override;
+	virtual std::string						getFirmwareVersion							(void) override;
 	void 									SetupForPatternDataTaking					(__ARGS__);
 
 	// clang-format on
