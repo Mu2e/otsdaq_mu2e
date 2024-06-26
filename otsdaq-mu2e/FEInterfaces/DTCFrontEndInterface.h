@@ -93,12 +93,17 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 		FILE*					fp_ = nullptr;
 
+		std::string				error_;
+
 	};  // end DetachedBufferTestThreadStruct declaration
 
 	static std::string 					getDetachedBufferTestStatus			(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 	static uint64_t 					getDetachedBufferTestReceivedCount	(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 	static void 						handleDetachedSubevent				(const DTCLib::DTC_SubEvent& subevent,
 																				std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+
+	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag, bool saveBinaryDataToFile,
+																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
 
 	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
 
@@ -119,7 +124,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	std::map<std::string /*DTC's FEMacro name*/,
 		std::pair<std::string /*ROC UID*/,
 			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
-
 
 	static void detechedBufferTestThread(
 		std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
@@ -168,6 +172,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetCFOLinkTxPLL					(__ARGS__);
 	
 	void 								SetupCFOInterface					(__ARGS__);
+	std::string							SetupCFOInterface					(int forceCFOedge, bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorOnOffSpillEmulation	(bool enable,
 																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,

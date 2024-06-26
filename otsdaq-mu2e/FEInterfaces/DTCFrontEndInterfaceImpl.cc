@@ -527,17 +527,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	);
 	
 	registerFEMacroFunction(
-		"Check Firefly Loss-of-Light",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::GetLinkLossOfLight),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Link Status"},
-					1,  // requiredUserPermissions
-					"*",
-					"Checking the Loss-of-Light reads from the I2C bus register on the Firefly for any light source."
-	);
-
-	registerFEMacroFunction(
 		"Reset CFO Link Rx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetCFOLinkRx),            // feMacroFunction
@@ -584,11 +573,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetupCFOInterface),            // feMacroFunction
 					std::vector<std::string>{
 						"Put DTC in CFO Emulation Mode (Default := false)",
+						"Also setup Jitter Attenuator (Default := false)",
 						"Set Link RX/TX Enable (Default := false)",
 						"Enable Auto-generation of Data Request Packets (Default := false)",
 						"Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)",
 					},  // namesOfInputArgs
-					std::vector<std::string>{},
+					std::vector<std::string>{"response"},
 					1,  // requiredUserPermissions
 					"*", 
 					"Select or Deselect the CFO Emulator to take priority over the Link-6 external CFO. When selected, the CFO timing link, Link-6, will be ignored."
@@ -3499,7 +3489,6 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 	}  // end create roc mask
 
-	// instantiate DTC with the appropriate ROCs enabled
 	// DTC firmware design version must match ReadDesignDate()_ReadVivadoVersion() [ ignoring ReadDesignVersionNumber() for now ]
 	// for example the string might be "Jun/13/2023 16:00   raw-data: 0x23061316" + "_22.1"
 	std::string         expectedDesignVersion = "";
@@ -3520,6 +3509,7 @@ void DTCFrontEndInterface::DTCInstantiate()
 	__FE_COUTV__(skipInit_);
 	__FE_COUT__ << "END DTC arguments..." << std::endl;
 
+	// instantiate DTC with the appropriate ROCs enabled
 	thisDTC_ = new DTCLib::DTC(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion, 
 		true /* skipInit */, //always skip init and lots ots configure setup
@@ -3600,20 +3590,69 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 {	
-	int forceCFOedge = __GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)",
-		int, 2);
+	__SET_ARG_OUT__("response", 
+		SetupCFOInterface(
+			__GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)", int, 2),
+			__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false),
+			__GET_ARG_IN__("Also setup Jitter Attenuator (Default := false)",bool,false),
+			__GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
+			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false)
+		)
+	);
+} //end SetupCFOInterface()
+
+//========================================================================
+std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
+	bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP)
+{	
+
+	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
 
+	thisDTC_->DisableCFOEmulation();
 	thisDTC_->SetExternalCFOSampleEdgeMode(forceCFOedge);
 
+	__FE_COUTV__(useCFOemulator);
 
-	if(__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false))
+	if(useCFOemulator)
+	{
+		outSs << "Setting up CFO emulator...\n\n";
 		thisDTC_->SetCFOEmulationMode();
-	else 
+			
+		if(alsoSetupJA)
+		{
+			//force JA from local osc		
+			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(0 /* select local osc */, false /* alsoResetJA */);
+			for(int i=0;i<10;++i) //wait for JA to lock before reading
+			{
+				if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+					break;
+				sleep(1);
+			}
+			outSs << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		}
+	}
+	else //using external CFO!
+	{
+		outSs << "Setting up external CFO...\n\n";
+
+		if(alsoSetupJA)
+		{
+			//force JA from RTF		
+			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
+			for(int i=0;i<10;++i) //wait for JA to lock before reading
+			{
+				if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+					break;
+				sleep(1);
+			}
+			__FE_COUT_INFO__ << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		}
+		
 		thisDTC_->ClearCFOEmulationMode();
+	}
 
 
-	bool cfoRxTxEnable = __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false);
 	__FE_COUTV__(cfoRxTxEnable);
 
 	if(cfoRxTxEnable)
@@ -3627,12 +3666,15 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 		thisDTC_->DisableTransmitCFOLink();
 	}
 
-	if(__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false))
+	__FE_COUTV__(enableAutogenDRP);
+
+	if(enableAutogenDRP)
 		thisDTC_->EnableAutogenDRP();
 	else
 		thisDTC_->DisableAutogenDRP();
 
-
+	__FE_COUT_INFO__ << outSs.str();
+	return outSs.str();
 } //end SetupCFOInterface()
 
 //========================================================================
@@ -3681,61 +3723,9 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	// 	getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 
 	if(useDetachedBufferTest)
-	{
-		__FE_COUTV__(saveBinaryDataToFile);
-		__FE_COUTV__(saveSubeventHeadersToDataFile);
-		__FE_COUTV__(doNotResetCounters);
-		__FE_COUT__ << "Initializing detached buffer test!" << __E__;
-
-		if(!bufferTestThreadStruct_) //initialize shared pointer for first time
-			bufferTestThreadStruct_ = std::make_shared<DTCFrontEndInterface::DetachedBufferTestThreadStruct>();
-
-		if(bufferTestThreadStruct_->running_)
-		{
-			__FE_COUT__ << "Found buffer test thread already running... so re-initializing" << __E__;
-
-			// start mutex scope
-			{
-				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-				bufferTestThreadStruct_->inSubeventMode_ 		= true;
-				bufferTestThreadStruct_->activeMatch_ 			= false;
-				bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-				bufferTestThreadStruct_->exitThread_ 			= false;
-				bufferTestThreadStruct_->resetStartEventTag_ 	= true;
-				bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
-			}
-			outSs << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
-				" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		}
-		else
-		{
-			__FE_COUT__  << "Launching detached Buffer Test thread..." << __E__;
-			// start mutex scope
-			{
-				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-				bufferTestThreadStruct_->inSubeventMode_ 		= true;
-				bufferTestThreadStruct_->activeMatch_ 			= false;
-				bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-				bufferTestThreadStruct_->exitThread_ 			= false;
-				bufferTestThreadStruct_->resetStartEventTag_ 	= false;
-				bufferTestThreadStruct_->thisDTC_				= thisDTC_;
-				bufferTestThreadStruct_->running_ 				= true;	
-				bufferTestThreadStruct_->doNotResetCounters_ 	= false;
-			}
-			std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
-						DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
-					bufferTestThreadStruct_)
-			.detach();
-			outSs << "Launched detached Buffer Test thread and reading data DMA-0 starting at event tag " << initialEventWindowTag << 
-				" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		}
-
-		sleep(1); //give time for buffer reading to be ready
-	}
+		initDetachedBufferTest(initialEventWindowTag,
+			 saveBinaryDataToFile, saveSubeventHeadersToDataFile, doNotResetCounters);
+		
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
 	thisDTC_->SetCFOEmulationEventWindowInterval(0);  
@@ -3797,7 +3787,7 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 		SetCFOEmulatorFixedWidthEmulation(
 			__GET_ARG_IN__("Enable CFO Emulator (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
-			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
+			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string, "0x44 clocks"),
 			__GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t),
 			__GET_ARG_IN__("Starting Event Window Tag",uint64_t),
 			__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
@@ -3837,60 +3827,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	// 	getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 	
 	if(useDetachedBufferTest)
-	{
-		__FE_COUTV__(saveBinaryDataToFile);
-		__FE_COUTV__(doNotResetCounters);
-		__FE_COUT__ << "Initializing detached buffer test!" << __E__;
-
-		if(!bufferTestThreadStruct_) //initialize shared pointer for first time
-			bufferTestThreadStruct_ = std::make_shared<DTCFrontEndInterface::DetachedBufferTestThreadStruct>();
-		
-		if(bufferTestThreadStruct_->running_)
-		{
-			__FE_COUT__ << "Found buffer test thread already running... so re-initializing" << __E__;
-			
-			// start mutex scope
-			{
-				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-				bufferTestThreadStruct_->inSubeventMode_ 		= true;
-				bufferTestThreadStruct_->activeMatch_ 			= false;
-				bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-				bufferTestThreadStruct_->exitThread_ 			= false;
-				bufferTestThreadStruct_->resetStartEventTag_ 	= true;
-				bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
-			}
-			outSs << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
-				" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		}
-		else
-		{
-			__FE_COUT__  << "Launching detached Buffer Test thread..." << __E__;
-			// start mutex scope
-			{
-				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-				bufferTestThreadStruct_->inSubeventMode_ 		= true;
-				bufferTestThreadStruct_->activeMatch_ 			= false;
-				bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
-				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
-				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
-				bufferTestThreadStruct_->exitThread_ 			= false;
-				bufferTestThreadStruct_->resetStartEventTag_ 	= false;
-				bufferTestThreadStruct_->thisDTC_				= thisDTC_;
-				bufferTestThreadStruct_->running_ 				= true;	
-				bufferTestThreadStruct_->doNotResetCounters_ 	= false;
-			}
-			std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
-						DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
-					bufferTestThreadStruct_)
-			.detach();
-			outSs << "Launched detached Buffer Test thread and reading data DMA-0 starting at event tag " << initialEventWindowTag << 
-				" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
-		}
-
-		sleep(1); //give time for buffer reading to be ready
-	}
+		initDetachedBufferTest(initialEventWindowTag,
+			 saveBinaryDataToFile, saveSubeventHeadersToDataFile, doNotResetCounters);
 
 	__FE_COUTV__(eventDuration);
 	bool foundUnits = false;
@@ -3905,10 +3843,10 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 
 	if(!foundUnits)
 	{
-		__SS__ << "No units were found in the input parameters 'Fixed-width Event Window Duration' value: " <<
+		__FE_SS__ << "No units were found in the input parameters 'Fixed-width Event Window Duration' value: " <<
 			eventDuration <<
 			". Please use units when specifying event window duration (s, ms, us, ns, and clocks are allowed). For example '1.7us' or '1675ns' would be valid." << __E__;
-		__SS_THROW__;
+		__FE_SS_THROW__;
 	}
 	std::string eventDurationSplitNumber = eventDuration.substr(0,i);
 	std::string eventDurationSplitUnits = eventDuration.substr(i);
@@ -4000,6 +3938,66 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 } //end SetCFOEmulatorFixedWidthEmulation()
 
 //==============================================================================
+void DTCFrontEndInterface::initDetachedBufferTest(
+		uint64_t initialEventWindowTag,
+		bool saveBinaryDataToFile,
+		bool saveSubeventHeadersToDataFile, bool doNotResetCounters)
+{
+	__FE_COUTV__(saveBinaryDataToFile);
+	__FE_COUTV__(doNotResetCounters);
+	__FE_COUT__ << "Initializing detached buffer test!" << __E__;
+
+	if(!bufferTestThreadStruct_) //initialize shared pointer for first time
+		bufferTestThreadStruct_ = std::make_shared<DTCFrontEndInterface::DetachedBufferTestThreadStruct>();
+	
+	if(bufferTestThreadStruct_->running_)
+	{
+		__FE_COUT__ << "Found buffer test thread already running... so re-initializing" << __E__;
+		
+		// start mutex scope
+		{
+			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+			bufferTestThreadStruct_->inSubeventMode_ 		= true;
+			bufferTestThreadStruct_->activeMatch_ 			= false;
+			bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
+			bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
+			bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
+			bufferTestThreadStruct_->exitThread_ 			= false;
+			bufferTestThreadStruct_->resetStartEventTag_ 	= true;
+			bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
+		}
+		__FE_COUT__ << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
+			" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
+	}
+	else
+	{
+		__FE_COUT__  << "Launching detached Buffer Test thread..." << __E__;
+		// start mutex scope
+		{
+			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+			bufferTestThreadStruct_->inSubeventMode_ 		= true;
+			bufferTestThreadStruct_->activeMatch_ 			= false;
+			bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
+			bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
+			bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
+			bufferTestThreadStruct_->exitThread_ 			= false;
+			bufferTestThreadStruct_->resetStartEventTag_ 	= false;
+			bufferTestThreadStruct_->thisDTC_				= thisDTC_;
+			bufferTestThreadStruct_->running_ 				= true;	
+			bufferTestThreadStruct_->doNotResetCounters_ 	= false;
+		}
+		std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
+					DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
+				bufferTestThreadStruct_)
+				.detach();
+		__FE_COUT__ << "Launched detached Buffer Test thread and reading data DMA-0 starting at event tag " << initialEventWindowTag << 
+			" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
+	}
+
+	sleep(1); //give time for buffer reading to be ready
+} //end initDetachedBufferTest()
+
+//==============================================================================
 uint64_t DTCFrontEndInterface::getDetachedBufferTestReceivedCount(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
 	if(!threadStruct->inSubeventMode_)
@@ -4020,6 +4018,8 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 		std::lock_guard<std::mutex> lock(threadStruct->lock_);
 		__COUT__ << "Have lock to read..." << __E__;
 
+		if(threadStruct->error_ != "")
+			statusSs << "Detached thread caught error:" << threadStruct->error_ << __E__;
 		statusSs << "Detached thread running:" << (threadStruct->running_ ? "true" : "false") << __E__;
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
@@ -4036,6 +4036,8 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 			statusSs << "Average Data Rate: " << 
 				((double)threadStruct->totalSubeventBytesTransferred_)/(ns/1000.0) << " MB/s" << __E__;
 		}
+		else 
+			statusSs << "Data Transfer Duration too short to establish date rate." << __E__;
 
 		statusSs << "Starting Event Window Tag:" << threadStruct->expectedEventTag_ << __E__;
 		statusSs << "Next Expected Event Window Tag:" << threadStruct->nextEventWindowTag_ << __E__;
@@ -4147,14 +4149,14 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	if(threadStruct->transferStartTime_ == std::chrono::steady_clock::time_point::min()) //init start time
 		threadStruct->transferStartTime_ = std::chrono::steady_clock::now();
 
-	threadStruct->totalSubeventBytesTransferred_ += 32; //for subevent header
+	threadStruct->totalSubeventBytesTransferred_ += sizeof(DTCLib::DTC_SubEventHeader); //for subevent header
 
 #if 1
 	//save raw subevent header
 	if(threadStruct->saveSubeventsToBinaryData_)
 	{
 		auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
-		for (int l = 0; l < 48; l+=4)
+		for (uint32_t l = 0; l < sizeof(DTCLib::DTC_SubEventHeader); l+=4)
 		{
 			if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
 			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
@@ -4334,6 +4336,7 @@ try
 		__COUT_INFO__ << "Starting detached buffer test thread looking for Event Window Tag = " << 
 			threadStruct->nextEventWindowTag_ << std::endl;
 
+		threadStruct->error_ = "";
 		threadStruct->eventsCount_ = 0;
 		threadStruct->subeventsCount_ = 0;
 		threadStruct->mismatchedEventTagsCount_ = 0;
@@ -4399,6 +4402,7 @@ try
 							}		
 						}
 
+						threadStruct->error_ = "";
 						threadStruct->eventsCount_ = 0;
 						threadStruct->subeventsCount_ = 0;
 						threadStruct->mismatchedEventTagsCount_ = 0;
@@ -4435,7 +4439,7 @@ try
 
 		if(!threadStruct->inSubeventMode_) //treat as an Event
 		{	
-		  	TLOG_DEBUG() << "get the data requested as events via ->GetData(...)";
+		  	__COUTT__ << __COUT_HDR__ << "get the data requested as events via ->GetData(...)";
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				threadStruct->activeMatch_)).size())
 			{ 
@@ -4551,7 +4555,7 @@ catch(...)
 	    threadStruct->fp_ = nullptr;
 	}
 	
-	__COUT_ERR__ << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
+	std::stringstream errSs; errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
 	threadStruct->thisDTC_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
 	threadStruct->running_ = false;
@@ -4559,12 +4563,14 @@ catch(...)
 	{throw;} 
 	catch(const std::runtime_error& e)
 	{
-		__COUT_ERR__ << "Error message: " << e.what() << __E__;
+		errSs << "Error message: " << e.what() << __E__;
 	}
 	catch(...)
 	{
-		__COUT_ERR__ << "Unknown error." << __E__;
+		errSs << "Unknown error." << __E__;
 	}
+	threadStruct->error_ += errSs.str();
+	__COUT_ERR__ << errSs.str();
 } //end detechedBufferTestThread() exception handling
 
 //========================================================================
@@ -5451,7 +5457,7 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTest(__ARGS__)
 	__FE_COUT__ << "CFO Emulator Loopback Test run" << __E__;
 
 	thisDTC_->EnableCFOLoopback();
-	thisDTC_->RunCFOEmulatorLoopbackTest();
+	thisDTC_->RunCableDelayLoopbackTest();
 
 	std::stringstream outSs;
 	outSs << "Done.";
@@ -5477,6 +5483,9 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 		thisDTC_->DisableCFOLoopback();
 		return;
 	}
+	else
+		thisDTC_->EnableCFOLoopback();
+
 
 	thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
 	
