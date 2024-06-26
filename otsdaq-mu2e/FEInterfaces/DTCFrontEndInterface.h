@@ -78,6 +78,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		bool					saveBinaryData_ = false;
 		bool					saveSubeventsToBinaryData_ = false;		
 		bool					doNotResetCounters_ = false;
+		bool                                    stopOnMismatchedEventTag_ = false; 
 
 		std::atomic<uint64_t>	eventsCount_;
 		std::atomic<uint64_t>	subeventsCount_;

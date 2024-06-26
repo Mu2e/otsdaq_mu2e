@@ -4110,21 +4110,24 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	// check the subevent tag window
 	if(threadStruct->nextEventWindowTag_ != subevent->GetEventWindowTag().GetEventWindowTag(true))
 	{
-		++(threadStruct->mismatchedEventTagsCount_);		
-		std::stringstream ostr;
-		ostr << "Mismatched event tag. Expected = " << threadStruct->nextEventWindowTag_ <<
-			" (0x" << std::hex << std::setw(4) << std::setfill('0') <<
-			threadStruct->nextEventWindowTag_ << "), Received = " << 
-			std::dec << subevent->GetEventWindowTag().GetEventWindowTag(true) <<
-			" (0x" << std::hex << std::setw(4) << std::setfill('0') <<
-			subevent->GetEventWindowTag().GetEventWindowTag(true) << ")";
-		__COUTT__ << ostr.str();
-		threadStruct->mismatchedEventTagJumps_.push_back(std::make_pair<uint64_t, uint64_t>(
-			threadStruct->nextEventWindowTag_,
-			subevent->GetEventWindowTag().GetEventWindowTag(true)
+		++(threadStruct->mismatchedEventTagsCount_);
+		    std::stringstream ostr;
+		    ostr << "Mismatched event tag. Expected = " << threadStruct->nextEventWindowTag_ <<
+		    	    " (0x" << std::hex << std::setw(4) << std::setfill('0') <<
+			    threadStruct->nextEventWindowTag_ << "), Received = " << 
+			    std::dec << subevent->GetEventWindowTag().GetEventWindowTag(true) <<
+			    " (0x" << std::hex << std::setw(4) << std::setfill('0') <<
+			    subevent->GetEventWindowTag().GetEventWindowTag(true) << ")";
+		    __COUTT__ << ostr.str();
+		    threadStruct->mismatchedEventTagJumps_.push_back(std::make_pair<uint64_t, uint64_t>(
+		            threadStruct->nextEventWindowTag_,
+			    subevent->GetEventWindowTag().GetEventWindowTag(true)
 		));
-		__SS__ << ostr.str();
-		__SS_THROW__;
+                if(threadStruct->stopOnMismatchedEventTag_)
+	        {		
+		    __SS__ << ostr.str();
+		    __SS_THROW__;
+		}
 		//to freeze TRACE
 		//TRACE_CNTL("modeM",0); // "freeze" like command line 'tmodeM 0'
 		// TRACE_CNTL("modeM",1); // "unfreeze" like command line 'tmodeM 1'
@@ -4151,7 +4154,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	if(threadStruct->saveSubeventsToBinaryData_)
 	{
 		auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
-		for (int l = 0; l < 32; l+=4)
+		for (int l = 0; l < 48; l+=4)
 		{
 			if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
 			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
@@ -4542,6 +4545,12 @@ try
 } //end detechedBufferTestThread()
 catch(...)
 {
+	if(threadStruct->fp_)
+	{
+	    fclose(threadStruct->fp_);
+	    threadStruct->fp_ = nullptr;
+	}
+	
 	__COUT_ERR__ << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
 	threadStruct->thisDTC_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
