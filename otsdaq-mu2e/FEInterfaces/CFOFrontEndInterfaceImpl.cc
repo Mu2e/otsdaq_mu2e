@@ -186,7 +186,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	);
 
 	registerFEMacroFunction(
-		"Compile, Set, & Launch On/Off Spill Template Run Plan",
+		"Compile, Set, and Launch On/Off Spill Template Run Plan",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan),                  // feMacroFunction
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
@@ -206,7 +206,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO parameters."
 	);
 	registerFEMacroFunction(
-		"Compile, Set, & Launch Fixed-width Event Window Template Run Plan",
+		"Compile, Set, and Launch Fixed-width Event Window Template Run Plan",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan),                  // feMacroFunction
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
