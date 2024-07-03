@@ -4021,6 +4021,14 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 		if(threadStruct->error_ != "")
 			statusSs << "Detached thread caught error:" << threadStruct->error_ << __E__;
 		statusSs << "Detached thread running:" << (threadStruct->running_ ? "true" : "false") << __E__;
+
+		if(threadStruct->saveBinaryData_)
+		{
+			std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+										std::to_string(clock()) + ".bin";
+			filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
+			statusSs << "Output file:" << filename << __E__;
+		}
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
 
