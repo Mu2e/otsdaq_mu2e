@@ -4557,6 +4557,14 @@ catch(...)
 	std::stringstream errSs; errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
 	threadStruct->thisDTC_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
+	//close any open file
+	if(threadStruct->fp_) 
+	{
+		__COUT__ << "Closing open Buffer Test file on error." << __E__;
+		fclose(threadStruct->fp_);
+		threadStruct->fp_ = nullptr;
+	}
+
 	threadStruct->running_ = false;
 	try
 	{throw;} 
@@ -4666,6 +4674,14 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			usleep(100 * 1000 /*100ms*/);  // sleep for exit time
 			if(!bufferTestThreadStruct_->running_) break;
 			__FE_COUT__ << "Waiting for thread to exit... #" << i << __E__;
+		}
+
+		if(bufferTestThreadStruct_->fp_)
+		{
+			__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..." << __E__;
+			
+			fclose(bufferTestThreadStruct_->fp_);
+			bufferTestThreadStruct_->fp_ = nullptr;
 		}
 
 		outSs << "Detached Buffer Test thread exited. " << __E__;
