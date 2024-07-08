@@ -2232,7 +2232,22 @@ catch(...)
 } //end detechedBufferTestThread() exception handling
 
 //========================================================================
-void CFOFrontEndInterface::CFOReset(__ARGS__) { thisCFO_->SoftReset(); }
+void CFOFrontEndInterface::CFOReset(__ARGS__) 
+{ 
+	__FE_COUT_INFO__ << "Setting up CFO for RTF, Reset and Buffer Release!" << __E__;
+
+	getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
+	sleep(1);
+	__FE_COUT_INFO__ << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+	
+	thisCFO_->CFOandDTC_Registers::ResetSERDES();
+	thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+	thisCFO_->SoftReset();
+	thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+
+	__FE_COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
+} //end CFOReset()
 
 //========================================================================
 void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
