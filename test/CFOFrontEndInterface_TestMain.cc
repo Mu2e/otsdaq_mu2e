@@ -36,7 +36,7 @@ try
 		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 0-2:   no timing markers and yes read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
 		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 3-5:  yes timing markers and yes read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
 		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 6-8:   no timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
-		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 9-11:  no timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 9-11: yes timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
 		return 0;
 	}
 
