@@ -120,6 +120,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								CFOReset						(__ARGS__);
 	void 								CFOHalt							(__ARGS__);
+	void 								EnableOrDisableClockMarkers		(__ARGS__);
 	
 	void 								WriteCFO						(__ARGS__);
 	void 								ReadCFO							(__ARGS__);

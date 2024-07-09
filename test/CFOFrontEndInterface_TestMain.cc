@@ -32,7 +32,11 @@ try
 	}
 	if(argc != 4)
 	{
-		__COUT_ERR__ << "\n\n\tUsage = Need 3 arguments: CFOFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers> <runPlanMode>\n\n" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = Need 3 arguments: CFOFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers> <runPlanMode>\n\n" << __E__;	
+		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 0-2:   no timing markers and yes read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 3-5:  yes timing markers and yes read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 6-8:   no timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 9-11:  no timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
 		return 0;
 	}
 
@@ -109,6 +113,7 @@ try
 		cfo.thisCFO_->SoftReset();
 		cfo.thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 
+		cfo.thisCFO_->EnableEmbeddedClockMarker();
 		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
@@ -193,7 +198,7 @@ try
 			0  //bool doNotResetCounters )
 		);
 	}
-	else 
+	else if(runPlanMode == 1)
 	{
 		cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
 			1, //bool enable,
@@ -206,6 +211,158 @@ try
 			0  //bool doNotResetCounters )
 		); 
 		numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+	}
+	else if(runPlanMode == 2)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			1, //bool useDetachedBufferTest,
+			"100 us", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			0, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else if(runPlanMode == 0+3)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			1, //bool useDetachedBufferTest,
+			"0x44 clocks", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			1, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else if(runPlanMode == 1+3)
+	{
+		cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
+			1, //bool enable,
+			1, //bool useDetachedBufferTest, 
+			numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
+			100, //uint64_t initialEventWindowTag,
+			1, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		); 
+		numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+	}
+	else if(runPlanMode == 2+3)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			1, //bool useDetachedBufferTest,
+			"100 us", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			1, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else if(runPlanMode == 0+6)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			0, //bool useDetachedBufferTest,
+			"0x44 clocks", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			0, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else if(runPlanMode == 1+6)
+	{
+		cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
+			1, //bool enable,
+			0, //bool useDetachedBufferTest, 
+			numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
+			100, //uint64_t initialEventWindowTag,
+			0, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		); 
+		numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+	}
+	else if(runPlanMode == 2+6)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			0, //bool useDetachedBufferTest,
+			"100 us", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			0, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else if(runPlanMode == 0+3+6)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			0, //bool useDetachedBufferTest,
+			"0x44 clocks", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			1, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else if(runPlanMode == 1+3+6)
+	{
+		cfo.CompileSetAndLaunchTemplateSuperCycleRunPlan(
+			1, //bool enable,
+			0, //bool useDetachedBufferTest, 
+			numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles, 
+			100, //uint64_t initialEventWindowTag,
+			1, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		); 
+		numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
+	}
+	else if(runPlanMode == 2+3+6)
+	{
+		cfo.CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			1, //bool enable, 
+			0, //bool useDetachedBufferTest,
+			"100 us", //std::string eventDuration, 
+			numberOfEventWindowMarkers, //uint32_t numberOfEventWindowMarkers, 
+			100, //uint64_t initialEventWindowTag,
+			0x333, //uint64_t eventWindowMode, 
+			1, //bool enableClockMarkers, 
+			0, //bool saveBinaryDataToFile,
+			0, //bool saveSubeventHeadersToDataFile,
+			0  //bool doNotResetCounters )
+		);
+	}
+	else
+	{
+		__SS__ << "Undefined CFO Test mode = " << runPlanMode << __E__;
+		__SS_THROW__;
 	}
 
 	int i=0;

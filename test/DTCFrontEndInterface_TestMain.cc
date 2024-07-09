@@ -171,8 +171,10 @@ try
         0, //bool enableClockMarkers, 
         1, //bool enableAutogenDRP, 
         0, //bool saveBinaryDataToFile,
+		"Default", //filename
         0, //bool saveSubeventHeadersToDataFile,
-        0  //bool doNotResetCounters )
+        0, //bool doNotResetCounters
+		0  //bool skipBy32 )
     );
 	// dtc.SetCFOEmulatorOnOffSpillEmulation(
 	// 	1, //bool enable,
@@ -182,8 +184,10 @@ try
     //     0, //bool enableClockMarkers, 
     //     1, //bool enableAutogenDRP, 
     //     0, //bool saveBinaryDataToFile,
+	//		"Default", //filename
     //     0, //bool saveSubeventHeadersToDataFile,
-    //     0  //bool doNotResetCounters )
+    //     0, //bool doNotResetCounters
+	//	   0  //bool skipBy32 )
 	// ); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
 
 	int i=0;

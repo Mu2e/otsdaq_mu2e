@@ -184,9 +184,12 @@ try
 
 	dtc.thisDTC_->SoftReset(); //to reset event window tag starting point handling
 	dtc.initDetachedBufferTest(100,//initialEventWindowTag,
-			false, // saveBinaryDataToFile, 
+			false, // saveBinaryDataToFile,
+			"Default", // filename 
 			false, //saveSubeventHeadersToDataFile, 
-			false); //doNotResetCounters);
+			false, //doNotResetCounters
+			false //skipBy32
+			);
     
 	int i=0;
 	bool dumpSpy = false;

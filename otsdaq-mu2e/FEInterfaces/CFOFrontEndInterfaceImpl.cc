@@ -86,6 +86,17 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	);
 
 	registerFEMacroFunction(
+		"Clock Marker Enable/Disable",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::EnableOrDisableClockMarkers),
+					std::vector<std::string>{"Enable Clock Markers (Default := false)"}, // namesOfInputArgs
+					std::vector<std::string>{}, // namesOfOutput
+					1,  // requiredUserPermissions
+					"*",  // allowedCallingFEs
+					"Enable or Disable the Mu2e Clock Marker broadcast over the CFO timing links." 
+	);
+
+	registerFEMacroFunction(
 		"CFO Halt",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::CFOHalt),
@@ -124,17 +135,17 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"\t-Loopback must be less than 10,000.\n"
 	); 
 
-	registerFEMacroFunction(
-		"Test Loopback marker",  // feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::TestMarker),  // feMacroFunction
-					std::vector<std::string>{"DTC-chain link index (0-7)"},
-					std::vector<std::string>{"Response"},  // namesOfOutput
-					1,
-					"*",
-					"This FE Macro measures the delay of a marker from ROCs. "
-					"Optionally, the delay can be measured over mutliple iterations with the <b>Loopback Test</B> Macro."
-	); 
+	// registerFEMacroFunction(
+	// 	"Test Loopback marker",  // feMacroName
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&CFOFrontEndInterface::TestMarker),  // feMacroFunction
+	// 				std::vector<std::string>{"DTC-chain link index (0-7)"},
+	// 				std::vector<std::string>{"Response"},  // namesOfOutput
+	// 				1,
+	// 				"*",
+	// 				"This FE Macro measures the delay of a marker from ROCs. "
+	// 				"Optionally, the delay can be measured over mutliple iterations with the <b>Loopback Test</B> Macro."
+	// ); 
 
 	registerFEMacroFunction(
 		"CFO Read",
@@ -1696,6 +1707,17 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(b
 } //end CompileSetAndLaunchTemplateSuperCycleRunPlan()
 
 //========================================================================
+void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
+{	
+	bool enableClockMarkers = __GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false);
+	__FE_COUTV__(enableClockMarkers);
+	if(enableClockMarkers)
+		thisCFO_->EnableEmbeddedClockMarker();
+	else
+		thisCFO_->DisableEmbeddedClockMarker();
+} //end EnableOrDisableClockMarkers()
+
+//========================================================================
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__)
 {	
 	__SET_ARG_OUT__("response", 
@@ -2245,6 +2267,8 @@ void CFOFrontEndInterface::CFOReset(__ARGS__)
 
 	thisCFO_->SoftReset();
 	thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+
+	thisCFO_->EnableEmbeddedClockMarker();
 
 	__FE_COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 } //end CFOReset()
