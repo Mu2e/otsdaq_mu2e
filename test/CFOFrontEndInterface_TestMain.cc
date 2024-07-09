@@ -365,6 +365,12 @@ try
 		__SS_THROW__;
 	}
 
+	if(runPlanMode >= 9) 
+	{
+		__COUT_INFO__ << "Not reading CFO Event Record. Thread and main exited!" << __E__;
+		return 0;
+	}
+
 	int i=0;
 	bool dumpSpy = false;
 	while(1) 
