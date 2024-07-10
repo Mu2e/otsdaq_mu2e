@@ -2258,6 +2258,7 @@ void CFOFrontEndInterface::CFOReset(__ARGS__)
 { 
 	__FE_COUT_INFO__ << "Setting up CFO for RTF, Reset and Buffer Release!" << __E__;
 
+	halt();
 	getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
 	sleep(1);
 	__FE_COUT_INFO__ << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;

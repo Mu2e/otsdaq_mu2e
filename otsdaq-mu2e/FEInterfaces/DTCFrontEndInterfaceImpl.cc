@@ -56,6 +56,38 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
 {
+	// Halt Detached Buffer Thread else if(command == "2" || command == "Halt")
+	if(bufferTestThreadStruct_) 
+	{
+		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
+
+		// start mutex scope
+		{
+			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+			bufferTestThreadStruct_->exitThread_ = true;
+		}
+
+		//check for thread to exit
+		for(int i=0;i<10;++i)
+		{
+			usleep(100 * 1000 /*100ms*/);  // sleep for exit time
+			if(!bufferTestThreadStruct_->running_) break;
+			__FE_COUT__ << "Waiting for thread to exit... #" << i << __E__;
+		}
+
+		if(bufferTestThreadStruct_->fp_)
+		{
+			__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..." << __E__;
+			
+			fclose(bufferTestThreadStruct_->fp_);
+			bufferTestThreadStruct_->fp_ = nullptr;
+		}
+
+		__FE_COUT__ << "Detached Buffer Test thread exited. " << __E__;
+		__FE_COUT__ << "Reading final status..." << __E__;
+		__FE_COUT__ << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
+	}
+
 	{
 		// uint32_t lossOfLockReadData = registerRead(0x93c8);  // read loss-of-lock counter
 		__FE_COUTV__(thisDTC_->FormatRXCDRUnlockCountCFOLink());
@@ -325,7 +357,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTest_detached),                  // feMacroFunction
 					std::vector<std::string>{
-						"Command to Start, Status (to read counters, etc.), or Halt (Default: Status)",
+						"Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: Status)",
 						"Data are SubEvents (Default: true)",
 						// "Number of [Sub]Events (Default: 1)",  // will be continuous!
 						"Starting Event Window Tag (Default: 0)",
@@ -334,6 +366,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					// "eventDuration (Default := 400)", 
 						// "doNotReadBack (bool)", 
 						"Save Binary Data to File (Default: false)",
+						"Save Binary Data Filename",
 						"Save Subevent Header to Binary File (Default: false)"
 						// "Software Generated Data Requests (bool)",
 						// "Do Not Send Heartbeats (bool)"
@@ -4355,11 +4388,19 @@ try
 
 	if(threadStruct->saveBinaryData_)
 	{
-		if(threadStruct->saveBinaryDataFilename_ == "Default")
+		if(threadStruct->saveBinaryDataFilename_ == "Default" || threadStruct->saveBinaryDataFilename_ == "")
 		{
 			std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
 										std::to_string(clock()) + ".bin";			
 			threadStruct->saveBinaryDataFilename_ = filename;
+		}
+		else //sanitize string
+		{
+			std::string tmp = "";
+			for(const auto& c : threadStruct->saveBinaryDataFilename_)
+				if(c == '/' || c == '\\') continue;
+				else tmp += c;
+			threadStruct->saveBinaryDataFilename_ = tmp;
 		}
 		__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
 									threadStruct->saveBinaryDataFilename_);
@@ -4643,7 +4684,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 
 
 	// arguments
-	std::string command = __GET_ARG_IN__("Command to Start, Status (to read counters, etc.), or Halt (Default: Status)",
+	std::string command = __GET_ARG_IN__("Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: Status)",
 		std::string, "Status");
 
 	bool dataAreSubEvents = __GET_ARG_IN__("Data are SubEvents (Default: true)", bool, true);
@@ -4651,6 +4692,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	bool activeMatch = __GET_ARG_IN__("Match Event Tags (Default: false)", bool);
 	unsigned int timestampStart = __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", unsigned int);
 	bool saveBinaryDataToFile = __GET_ARG_IN__("Save Binary Data to File (Default: false)", bool);
+	std::string saveBinaryDataFilename = __GET_ARG_IN__("Save Binary Data Filename", std::string);
 	bool saveSubeventHeadersToDataFile = __GET_ARG_IN__("Save Subevent Header to Binary File (Default: false)", bool);
 	// bool displayPayloadAtGUI = __GET_ARG_IN__("Display Payload at GUI (Default: true)", bool, true);
 
@@ -4660,13 +4702,14 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	__FE_COUTV__(activeMatch);
 	__FE_COUTV__(timestampStart);
 	__FE_COUTV__(saveBinaryDataToFile);
+	__FE_COUTV__(saveBinaryDataFilename);
 	__FE_COUTV__(saveSubeventHeadersToDataFile);
 
 
 	// print the result
 	std::stringstream outSs;
 	outSs << "Command: " << command << __E__;
-	if(command == "Start")
+	if(command == "1" || command == "Start")
 	{
 		__FE_COUT__ << "Detaching thread and reading data DMA-0 starting at event tag " << timestampStart << 
 			" (0x" << std::hex << timestampStart << ")" << __E__;
@@ -4687,6 +4730,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->activeMatch_ 			= activeMatch;
 				bufferTestThreadStruct_->expectedEventTag_ 		= timestampStart;
 				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
+				bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
 				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
 				bufferTestThreadStruct_->exitThread_ 			= false;
 				bufferTestThreadStruct_->resetStartEventTag_ 	= false;
@@ -4700,8 +4744,11 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			outSs << "Launced detached Buffer Test thread and reading data DMA-0 starting at event tag " << timestampStart << 
 				" (0x" << std::hex << timestampStart << ")" << __E__;
 		}
+		sleep(1);
+		outSs << "Reading status..." << __E__;
+		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
 	}
-	else if(command == "Status")
+	else if(command == "0" || command == "Status")
 	{
 		__FE_COUT__ << "Reading thread status..." << __E__;
 		outSs << "Reading thread status..." << __E__;
@@ -4711,7 +4758,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 
 		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
 	}
-	else if(command == "Halt")
+	else if(command == "2" || command == "Halt")
 	{
 		__FE_COUT__ << "Halting thread... " << __E__;
 

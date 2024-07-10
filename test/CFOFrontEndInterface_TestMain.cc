@@ -103,6 +103,7 @@ try
 	{
 		__COUT_INFO__ << "Setting up CFO for RTF, Reset and Buffer Release!" << __E__;
 
+		cfo.halt();
 		cfo.getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, false /* alsoResetJA */);
 		sleep(1);
     	__COUT_INFO__ << "JA Status = " << cfo.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
