@@ -437,9 +437,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::DTCCounters),
 					std::vector<std::string>{},
 					std::vector<std::string>{						
+						"Packet Counters",
 						"Link Counters",
-						"Performance Counters",
-						"Packet Counters"},
+						"Performance Counters"},
 					1,  // requiredUserPermissions
 					"*",
 					"Fetches data from all the counter registers in a human-readable format. "
@@ -3439,9 +3439,9 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {	
-	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
-	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));
 	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
+	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
+	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));	
 }  // end DTCCounters()
 
 //========================================================================
