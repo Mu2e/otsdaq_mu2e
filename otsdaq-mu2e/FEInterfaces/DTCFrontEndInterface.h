@@ -78,6 +78,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		bool					saveBinaryData_ = false;
 		bool					saveSubeventsToBinaryData_ = false;		
 		bool					doNotResetCounters_ = false;
+		bool					skipBy32_ = false;
 
 		std::atomic<uint64_t>	eventsCount_;
 		std::atomic<uint64_t>	subeventsCount_;
@@ -93,6 +94,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		FILE*					fp_ = nullptr;
 
 		std::string				error_;
+		std::string				saveBinaryDataFilename_;
 
 	};  // end DetachedBufferTestThreadStruct declaration
 
@@ -102,7 +104,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 																				std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 
 	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag, bool saveBinaryDataToFile,
-																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
+																				const std::string& filename,
+																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32);
 
 	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
 
@@ -175,13 +178,15 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorOnOffSpillEmulation	(bool enable,
 																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
-																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, bool saveSubeventHeadersToDataFile,
-																			bool doNotResetCounters);
+																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, 
+																			const std::string& filename, 
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
-																			std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
+																			const std::string& eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters);
+																			const std::string& filename, 
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32);
 
 	void 								BufferTest							(__ARGS__);
 	void 								PatternTest							(__ARGS__);

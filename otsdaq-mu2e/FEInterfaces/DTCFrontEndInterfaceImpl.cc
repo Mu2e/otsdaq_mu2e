@@ -56,6 +56,38 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
 {
+	// Halt Detached Buffer Thread else if(command == "2" || command == "Halt")
+	if(bufferTestThreadStruct_) 
+	{
+		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
+
+		// start mutex scope
+		{
+			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+			bufferTestThreadStruct_->exitThread_ = true;
+		}
+
+		//check for thread to exit
+		for(int i=0;i<10;++i)
+		{
+			usleep(100 * 1000 /*100ms*/);  // sleep for exit time
+			if(!bufferTestThreadStruct_->running_) break;
+			__FE_COUT__ << "Waiting for thread to exit... #" << i << __E__;
+		}
+
+		if(bufferTestThreadStruct_->fp_)
+		{
+			__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..." << __E__;
+			
+			fclose(bufferTestThreadStruct_->fp_);
+			bufferTestThreadStruct_->fp_ = nullptr;
+		}
+
+		__FE_COUT__ << "Detached Buffer Test thread exited. " << __E__;
+		__FE_COUT__ << "Reading final status..." << __E__;
+		__FE_COUT__ << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
+	}
+
 	{
 		// uint32_t lossOfLockReadData = registerRead(0x93c8);  // read loss-of-lock counter
 		__FE_COUTV__(thisDTC_->FormatRXCDRUnlockCountCFOLink());
@@ -325,7 +357,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BufferTest_detached),                  // feMacroFunction
 					std::vector<std::string>{
-						"Command to Start, Status (to read counters, etc.), or Halt (Default: Status)",
+						"Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: Status)",
 						"Data are SubEvents (Default: true)",
 						// "Number of [Sub]Events (Default: 1)",  // will be continuous!
 						"Starting Event Window Tag (Default: 0)",
@@ -334,6 +366,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					// "eventDuration (Default := 400)", 
 						// "doNotReadBack (bool)", 
 						"Save Binary Data to File (Default: false)",
+						"Save Binary Data Filename",
 						"Save Subevent Header to Binary File (Default: false)"
 						// "Software Generated Data Requests (bool)",
 						// "Do Not Send Heartbeats (bool)"
@@ -404,9 +437,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::DTCCounters),
 					std::vector<std::string>{},
 					std::vector<std::string>{						
+						"Packet Counters",
 						"Link Counters",
-						"Performance Counters",
-						"Packet Counters"},
+						"Performance Counters"},
 					1,  // requiredUserPermissions
 					"*",
 					"Fetches data from all the counter registers in a human-readable format. "
@@ -595,8 +628,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"Enable Clock Markers (Default := false)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
+											"For Detached Buffer Test, Save Binary Data Filename",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
-											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)"
+											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
+											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
 					1,   // requiredUserPermissions					
@@ -617,8 +652,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"Enable Clock Markers (Default := false)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
+											"For Detached Buffer Test, Save Binary Data Filename",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
-											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)"
+											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
+											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
 					1,   // requiredUserPermissions					
@@ -1561,7 +1598,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 
 	// thisDTC_->EnableCFOEmulation(); // this will enable sending requests, so do it later after configuring event 
 	thisDTC_->SetCFOEmulationMode(); //turn on DTC emulation (ignores any real CFO) 
-	thisDTC_->SetSequenceNumberDisable();
+	// thisDTC_->SetSequenceNumberDisable();
 	thisDTC_->EnableDCSReception();
 
 
@@ -1797,7 +1834,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		// These registers are needed for the EVB, but I need to check their meaning
 		// registerWrite(0x9100, 0x800404);
 		thisDTC_->EnableAutogenDRP(); //bit 23
-		thisDTC_->SetSequenceNumberDisable(); //bit 10
+		// thisDTC_->SetSequenceNumberDisable(); //bit 10
 
 		// registerWrite(0x92c0, 0x0);
 		thisDTC_->ClearEventModeTableEnable();
@@ -2180,8 +2217,10 @@ void DTCFrontEndInterface::resume(void)
 			0, //bool enableClockMarkers, 
 			1, //bool enableAutogenDRP, 
 			0, //bool saveBinaryDataToFile,
+			"Default", //filename
 			0, //bool saveSubeventHeadersToDataFile,
-			0//	bool doNotResetCounters )
+			0, //bool doNotResetCounters
+			0 //bool skipBy32 )
 		);
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
@@ -2241,8 +2280,10 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			0, //bool enableClockMarkers, 
 			1, //bool enableAutogenDRP, 
 			0, //bool saveBinaryDataToFile,
+			"Default", //filename
 			0, //bool saveSubeventHeadersToDataFile,
-			0//	bool doNotResetCounters )
+			0, //bool doNotResetCounters 
+			0  //bool skipBy32)
 		);
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
@@ -3398,9 +3439,9 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {	
-	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
-	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));
 	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
+	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
+	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));	
 }  // end DTCCounters()
 
 //========================================================================
@@ -3689,8 +3730,10 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 			__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
 			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false),
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
+			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data Filename", std::string),			
 			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
-			__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
+			__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool),
+			__GET_ARG_IN__("For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)", bool)
 		)
 	);
 } //end SetCFOEmulatorOnOffSpillEmulation()
@@ -3699,8 +3742,9 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 // OnOff spill Run Plan is represented as 235K on-spill events and 10K off-spill events
 std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
-	bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, bool saveSubeventHeadersToDataFile,
-	bool doNotResetCounters)
+	bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, 
+	const std::string& filename,
+	bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32)
 {	
 	__FE_COUTV__(enable);
 
@@ -3724,7 +3768,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 
 	if(useDetachedBufferTest)
 		initDetachedBufferTest(initialEventWindowTag,
-			 saveBinaryDataToFile, saveSubeventHeadersToDataFile, doNotResetCounters);
+			 saveBinaryDataToFile, filename, saveSubeventHeadersToDataFile, 
+			 doNotResetCounters, skipBy32);
 		
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
@@ -3739,6 +3784,13 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	__FE_COUTV__(enableClockMarkers);
 	thisDTC_->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
+	__FE_COUTV__(skipBy32);
+	if(skipBy32)
+		thisDTC_->EnableDropDataToEmulateEventBuilding();
+	else
+		thisDTC_->DisableDropDataToEmulateEventBuilding();
+
+	__FE_COUTV__(enableAutogenDRP);
 	if(enableAutogenDRP)
 		thisDTC_->EnableAutogenDRP();
 	else
@@ -3794,17 +3846,20 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 			__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
 			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false),
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
+			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data Filename", std::string),	
 			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
-			__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
+			__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool),
+			__GET_ARG_IN__("For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)", bool)
 		)
 	);
 } //end SetCFOEmulatorFixedWidthEmulation()
 
 //========================================================================
 std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable, bool useDetachedBufferTest,
-	std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
+	const std::string& eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 	uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
-	bool saveSubeventHeadersToDataFile, bool doNotResetCounters )
+	const std::string& filename,
+	bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32)
 {	
 	__FE_COUTV__(enable);
 
@@ -3828,7 +3883,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	
 	if(useDetachedBufferTest)
 		initDetachedBufferTest(initialEventWindowTag,
-			 saveBinaryDataToFile, saveSubeventHeadersToDataFile, doNotResetCounters);
+			saveBinaryDataToFile, filename, saveSubeventHeadersToDataFile, 
+			doNotResetCounters, skipBy32);
 
 	__FE_COUTV__(eventDuration);
 	bool foundUnits = false;
@@ -3922,6 +3978,13 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	__FE_COUTV__(enableClockMarkers);
 	thisDTC_->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
+	__FE_COUTV__(skipBy32);
+	if(skipBy32)
+		thisDTC_->EnableDropDataToEmulateEventBuilding();
+	else
+		thisDTC_->DisableDropDataToEmulateEventBuilding();
+
+	__FE_COUTV__(enableAutogenDRP);
 	if(enableAutogenDRP)
 		thisDTC_->EnableAutogenDRP();
 	else
@@ -3941,10 +4004,12 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 void DTCFrontEndInterface::initDetachedBufferTest(
 		uint64_t initialEventWindowTag,
 		bool saveBinaryDataToFile,
-		bool saveSubeventHeadersToDataFile, bool doNotResetCounters)
+		const std::string& saveBinaryDataFilename,
+		bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32)
 {
 	__FE_COUTV__(saveBinaryDataToFile);
 	__FE_COUTV__(doNotResetCounters);
+	__FE_COUTV__(skipBy32);
 	__FE_COUT__ << "Initializing detached buffer test!" << __E__;
 
 	if(!bufferTestThreadStruct_) //initialize shared pointer for first time
@@ -3961,10 +4026,12 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->activeMatch_ 			= false;
 			bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
+			bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
 			bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
 			bufferTestThreadStruct_->exitThread_ 			= false;
 			bufferTestThreadStruct_->resetStartEventTag_ 	= true;
 			bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
+			bufferTestThreadStruct_->skipBy32_ 				= skipBy32;
 		}
 		__FE_COUT__ << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
 			" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
@@ -3979,12 +4046,14 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->activeMatch_ 			= false;
 			bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
+			bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
 			bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
 			bufferTestThreadStruct_->exitThread_ 			= false;
 			bufferTestThreadStruct_->resetStartEventTag_ 	= false;
 			bufferTestThreadStruct_->thisDTC_				= thisDTC_;
 			bufferTestThreadStruct_->running_ 				= true;	
 			bufferTestThreadStruct_->doNotResetCounters_ 	= false;
+			bufferTestThreadStruct_->skipBy32_ 				= skipBy32;
 		}
 		std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
 					DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
@@ -4023,12 +4092,9 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 		statusSs << "Detached thread running:" << (threadStruct->running_ ? "true" : "false") << __E__;
 
 		if(threadStruct->saveBinaryData_)
-		{
-			std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
-										std::to_string(clock()) + ".bin";
-			filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
-			statusSs << "Output file:" << filename << __E__;
-		}
+			statusSs << "Output file:" << (std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+					threadStruct->saveBinaryDataFilename_) << __E__;
+
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
 
@@ -4133,8 +4199,12 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 			threadStruct->nextEventWindowTag_,
 			subevent->GetEventWindowTag().GetEventWindowTag(true)
 		));
-		__SS__ << ostr.str();
-		__SS_THROW__;
+
+		if(threadStruct->activeMatch_)
+		{
+			__SS__ << ostr.str();
+			__SS_THROW__;
+		}
 		//to freeze TRACE
 		//TRACE_CNTL("modeM",0); // "freeze" like command line 'tmodeM 0'
 		// TRACE_CNTL("modeM",1); // "unfreeze" like command line 'tmodeM 1'
@@ -4142,7 +4212,12 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 #endif
 	
 	if(threadStruct->inSubeventMode_)
-		threadStruct->nextEventWindowTag_ = subevent->GetEventWindowTag().GetEventWindowTag(true) + 1; //increment for next
+	{
+		if(threadStruct->skipBy32_)
+			threadStruct->nextEventWindowTag_ = subevent->GetEventWindowTag().GetEventWindowTag(true) + 32; //increment for next +32
+		else
+			threadStruct->nextEventWindowTag_ = subevent->GetEventWindowTag().GetEventWindowTag(true) + 1; //increment for next
+	}
 
 	// print the subevent header
 	// ostr << subevent->GetHeader()->toJson() << std::endl;
@@ -4313,15 +4388,30 @@ try
 
 	if(threadStruct->saveBinaryData_)
 	{
-		std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
-									std::to_string(clock()) + ".bin";
-		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
-		__COUTV__(filename);
-		threadStruct->fp_ = fopen(filename.c_str(), "wb");
+		if(threadStruct->saveBinaryDataFilename_ == "Default" || threadStruct->saveBinaryDataFilename_ == "")
+		{
+			std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+										std::to_string(clock()) + ".bin";			
+			threadStruct->saveBinaryDataFilename_ = filename;
+		}
+		else //sanitize string
+		{
+			std::string tmp = "";
+			for(const auto& c : threadStruct->saveBinaryDataFilename_)
+				if(c == '/' || c == '\\') continue;
+				else tmp += c;
+			threadStruct->saveBinaryDataFilename_ = tmp;
+		}
+		__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+									threadStruct->saveBinaryDataFilename_);
+		threadStruct->fp_ = fopen(
+			(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+				threadStruct->saveBinaryDataFilename_).c_str(), "wb");
 		if(!threadStruct->fp_)
 		{
 			__SS__ << "Failed to open file to save macro output '"
-						<< filename << "'..." << __E__;
+						<< (std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+							threadStruct->saveBinaryDataFilename_) << "'..." << __E__;
 			__SS_THROW__;
 		}		
 	}
@@ -4394,17 +4484,24 @@ try
 
 						if(threadStruct->saveBinaryData_)
 						{
-							std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
-														std::to_string(clock()) + ".bin";
-							filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
-							__COUTV__(filename);
-							threadStruct->fp_ = fopen(filename.c_str(), "wb");
+							if(threadStruct->saveBinaryDataFilename_ == "Default")
+							{
+								std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+															std::to_string(clock()) + ".bin";			
+								threadStruct->saveBinaryDataFilename_ = filename;
+							}
+							__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+									threadStruct->saveBinaryDataFilename_);
+							threadStruct->fp_ = fopen(
+								(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+									threadStruct->saveBinaryDataFilename_).c_str(), "wb");
 							if(!threadStruct->fp_)
 							{
 								__SS__ << "Failed to open file to save macro output '"
-											<< filename << "'..." << __E__;
+											<< (std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
+												threadStruct->saveBinaryDataFilename_) << "'..." << __E__;
 								__SS_THROW__;
-							}		
+							}	
 						}
 
 						threadStruct->error_ = "";
@@ -4446,7 +4543,7 @@ try
 		{	
 		  	__COUTT__ << __COUT_HDR__ << "get the data requested as events via ->GetData(...)";
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
-				threadStruct->activeMatch_)).size())
+				false /* EWT match */)).size())
 			{ 
 				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++ << ": Events returned by the DTC: " << events.size() << std::endl;
 				if (events.empty()) break; //impossible!
@@ -4509,7 +4606,7 @@ try
 		{
 		  	TLOG_DEBUG() << "get the data requested as events via ->GetSubEventData(...)";
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
-				threadStruct->activeMatch_)).size())
+				false /* EWT match */)).size())
 			{ 
 				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++ << ": SubEvents returned by the DTC: " << subevents.size() << std::endl;
 				
@@ -4587,7 +4684,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 
 
 	// arguments
-	std::string command = __GET_ARG_IN__("Command to Start, Status (to read counters, etc.), or Halt (Default: Status)",
+	std::string command = __GET_ARG_IN__("Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: Status)",
 		std::string, "Status");
 
 	bool dataAreSubEvents = __GET_ARG_IN__("Data are SubEvents (Default: true)", bool, true);
@@ -4595,6 +4692,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	bool activeMatch = __GET_ARG_IN__("Match Event Tags (Default: false)", bool);
 	unsigned int timestampStart = __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", unsigned int);
 	bool saveBinaryDataToFile = __GET_ARG_IN__("Save Binary Data to File (Default: false)", bool);
+	std::string saveBinaryDataFilename = __GET_ARG_IN__("Save Binary Data Filename", std::string);
 	bool saveSubeventHeadersToDataFile = __GET_ARG_IN__("Save Subevent Header to Binary File (Default: false)", bool);
 	// bool displayPayloadAtGUI = __GET_ARG_IN__("Display Payload at GUI (Default: true)", bool, true);
 
@@ -4604,13 +4702,14 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	__FE_COUTV__(activeMatch);
 	__FE_COUTV__(timestampStart);
 	__FE_COUTV__(saveBinaryDataToFile);
+	__FE_COUTV__(saveBinaryDataFilename);
 	__FE_COUTV__(saveSubeventHeadersToDataFile);
 
 
 	// print the result
 	std::stringstream outSs;
 	outSs << "Command: " << command << __E__;
-	if(command == "Start")
+	if(command == "1" || command == "Start")
 	{
 		__FE_COUT__ << "Detaching thread and reading data DMA-0 starting at event tag " << timestampStart << 
 			" (0x" << std::hex << timestampStart << ")" << __E__;
@@ -4631,6 +4730,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->activeMatch_ 			= activeMatch;
 				bufferTestThreadStruct_->expectedEventTag_ 		= timestampStart;
 				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
+				bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
 				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
 				bufferTestThreadStruct_->exitThread_ 			= false;
 				bufferTestThreadStruct_->resetStartEventTag_ 	= false;
@@ -4644,8 +4744,11 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			outSs << "Launced detached Buffer Test thread and reading data DMA-0 starting at event tag " << timestampStart << 
 				" (0x" << std::hex << timestampStart << ")" << __E__;
 		}
+		sleep(1);
+		outSs << "Reading status..." << __E__;
+		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
 	}
-	else if(command == "Status")
+	else if(command == "0" || command == "Status")
 	{
 		__FE_COUT__ << "Reading thread status..." << __E__;
 		outSs << "Reading thread status..." << __E__;
@@ -4655,7 +4758,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 
 		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
 	}
-	else if(command == "Halt")
+	else if(command == "2" || command == "Halt")
 	{
 		__FE_COUT__ << "Halting thread... " << __E__;
 
