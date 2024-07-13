@@ -66,107 +66,120 @@ unsigned int	DTCInterfaceTable::slowControlsHandlerConfig	(
 														, std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>* channelList /*= 0*/
 											) const
 {
-	/////////////////////////
+ 	/////////////////////////
 	// generate xdaq run parameter file
 
 	std::string tabStr     = "";
 	std::string commentStr = "";
+	std::string  subsystem    = "";
 
-	// loop through DTC records starting at FE Interface Table
-	std::vector<std::pair<std::string, ConfigurationTree>> feRecords =
-	    configManager->getNode("FEInterfaceTable").getChildren();
-
-	std::string  rocPluginType;
 	unsigned int numberOfDTCs = 0;
-	std::string  subsystem    = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
 
-	for(auto& fePair : feRecords)  // start main fe/DTC record loop
+	// Set the PV subsystem name
+	std::vector<std::pair<std::string, ConfigurationTree>> feSupervisorRecors =
+		configManager->getNode("FESupervisorTable").getChildren();
+
+	for(auto& feSupervPair : feSupervisorRecors)  // start main fe/DTC record loop
 	{
-		if(!fePair.second.status() ||
-		   fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
-		           .getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
-			continue;
+		subsystem = feSupervPair.second.getNode("SlowControlsMetricManagerChannelNamePreamble").getValue<std::string>();
+		__COUT__ << "PV SUBSITEM BEFORE CHECK IS: " << subsystem << __E__;
 
-		++numberOfDTCs;
+		if (subsystem.empty() || subsystem == "DEFAULT") subsystem = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
+		__COUT__ << "PV SUBSITEM NAME IS: " << subsystem << __E__;
 
-		// check each row in table
-		__COUT__ << "DTC record: " << fePair.first << __E__;
+		// loop through DTC records starting at FE Interface Table
+		std::vector<std::pair<std::string, ConfigurationTree>> feRecords =
+			feSupervPair.second.getNode("LinkToFEInterfaceTable").getChildren();
 
-		// loop through each DTC slow controls channel and make entry in EPICS file
+		std::string  rocPluginType;
+
+		for(auto& fePair : feRecords)  // start main fe/DTC record loop
 		{
-			ConfigurationTree slowControlsLink =
-			    fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
-			unsigned int numberOfDTCSlowControlsChannels =
-			    slowControlsHandler(out,
-			                        tabStr,
-			                        commentStr,
-			                        subsystem,
-			                        fePair.first,
-			                        slowControlsLink,
-			                        channelList);
+			if(!fePair.second.status() ||
+			fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
+					.getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
+				continue;
 
-			__COUT__ << "DTC '" << fePair.first << "' number of slow controls channels: "
-			         << numberOfDTCSlowControlsChannels << __E__;
-		}  // end DTC slow controls channel handling
+			++numberOfDTCs;
 
-		// loop through ROC records
-		//	use plugin type to indicate subsystem type
+			// check each row in table
+			__COUT__ << "DTC record: " << fePair.first << __E__;
 
-		ConfigurationTree DTCLink =
-		    fePair.second.getNode(feColNames_.colLinkToFETypeTable);
-		if(DTCLink.isDisconnected())
-		{
-			__COUT__ << "Disconnected DTC type table information. So assuming no ROCs."
-			         << __E__;
-			continue;
-		}
-		ConfigurationTree ROCLink = DTCLink.getNode(dtcColNames_.colLinkToROCGroupTable_);
-		if(ROCLink.isDisconnected())
-		{
-			__COUT__ << "Disconnected ROC link. So assuming no ROCs." << __E__;
-			continue;
-		}
-		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-		    ROCLink.getChildren();
-
-		unsigned int numberOfROCSlowControlsChannels;
-		for(auto& rocChildPair : rocChildren)
-		{
-			__COUT__ << "\t"
-			         << "ROC record: " << rocChildPair.first << __E__;
-			numberOfROCSlowControlsChannels = 0;
-			try
+			// loop through each DTC slow controls channel and make entry in EPICS file
 			{
-				rocPluginType =
-				    rocChildPair.second.getNode(rocColNames_.colROCInterfacePluginName_)
-				        .getValue<std::string>();
-				__COUTV__(rocPluginType);
+				ConfigurationTree slowControlsLink =
+					fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
+				unsigned int numberOfDTCSlowControlsChannels =
+					slowControlsHandler(out,
+										tabStr,
+										commentStr,
+										subsystem,
+										fePair.first,
+										slowControlsLink,
+										channelList);
 
-				std::string location = rocChildPair.first;
+				__COUT__ << "DTC '" << fePair.first << "' number of slow controls channels: "
+						<< numberOfDTCSlowControlsChannels << __E__;
+			}  // end DTC slow controls channel handling
 
-				ConfigurationTree slowControlsLink = rocChildPair.second.getNode(
-				    rocColNames_.colLinkToSlowControlsChannelTable_);
-				numberOfROCSlowControlsChannels = slowControlsHandler(out,
-				                                                      tabStr,
-				                                                      commentStr,
-				                                                      subsystem,
-				                                                      location,
-				                                                      slowControlsLink,
-				                                                      channelList);
-			}
-			catch(const std::runtime_error& e)
+			// loop through ROC records
+			//	use plugin type to indicate subsystem type
+
+			ConfigurationTree DTCLink =
+				fePair.second.getNode(feColNames_.colLinkToFETypeTable);
+			if(DTCLink.isDisconnected())
 			{
-				__COUT_ERR__ << "Ignoring ROC error: " << e.what() << __E__;
+				__COUT__ << "Disconnected DTC type table information. So assuming no ROCs."
+						<< __E__;
+				continue;
 			}
+			ConfigurationTree ROCLink = DTCLink.getNode(dtcColNames_.colLinkToROCGroupTable_);
+			if(ROCLink.isDisconnected())
+			{
+				__COUT__ << "Disconnected ROC link. So assuming no ROCs." << __E__;
+				continue;
+			}
+			std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+				ROCLink.getChildren();
 
-			__COUT__ << "\t"
-			         << "ROC '" << rocChildPair.first
-			         << "' number of slow controls channels: "
-			         << numberOfROCSlowControlsChannels << __E__;
+			unsigned int numberOfROCSlowControlsChannels;
+			for(auto& rocChildPair : rocChildren)
+			{
+				__COUT__ << "\t"
+						<< "ROC record: " << rocChildPair.first << __E__;
+				numberOfROCSlowControlsChannels = 0;
+				try
+				{
+					rocPluginType =
+						rocChildPair.second.getNode(rocColNames_.colROCInterfacePluginName_)
+							.getValue<std::string>();
+					__COUTV__(rocPluginType);
 
-		}  // end ROC record loop
-	}      // end main fe/DTC record loop
+					std::string location = rocChildPair.first;
 
+					ConfigurationTree slowControlsLink = rocChildPair.second.getNode(
+						rocColNames_.colLinkToSlowControlsChannelTable_);
+					numberOfROCSlowControlsChannels = slowControlsHandler(out,
+																		tabStr,
+																		commentStr,
+																		subsystem,
+																		location,
+																		slowControlsLink,
+																		channelList);
+				}
+				catch(const std::runtime_error& e)
+				{
+					__COUT_ERR__ << "Ignoring ROC error: " << e.what() << __E__;
+				}
+
+				__COUT__ << "\t"
+						<< "ROC '" << rocChildPair.first
+						<< "' number of slow controls channels: "
+						<< numberOfROCSlowControlsChannels << __E__;
+
+			}  // end ROC record loop
+		}      // end main fe/DTC record loop
+	}
 	return numberOfDTCs;
 }  // end slowControlsHandlerConfig()
 
