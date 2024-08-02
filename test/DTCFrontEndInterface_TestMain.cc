@@ -174,7 +174,8 @@ try
 		"Default", //filename
         0, //bool saveSubeventHeadersToDataFile,
         0, //bool doNotResetCounters
-		0  //bool skipBy32 )
+		0,  //bool skipBy32
+		0  //unint32_t packetThresholdToSave )
     );
 	// dtc.SetCFOEmulatorOnOffSpillEmulation(
 	// 	1, //bool enable,

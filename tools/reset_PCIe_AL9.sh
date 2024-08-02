@@ -15,13 +15,25 @@ RegEx='Xilinx.*704[23]'
 lspci | grep "$RegEx" && foundXi=1 || foundXi=0
 
 if [ "$foundXi" = 1 ];then
-    echo "Found DTC or CFO (Xilinx) card; removing mu2e driver;"
-    echo "first killing any processes that may be using the device."
-    pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
-    test -n "$pids" && { echo "First attempt to kill $pids (which are using /dev/mu2e?)"; kill $pids; }
-    killall -9 xdaq.exe
-    sleep 3
-    rmmod mu2e
+    TRIES=3
+    while expr $TRIES - 1 >/dev/null;do
+	echo "Found DTC or CFO (Xilinx) card; removing mu2e driver as `whoami`;"
+	echo "first killing any processes that may be using the device."
+	retries=8
+	pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
+	while [ -n "$pids" -a $retries -gt 0 ];do
+            echo "attempt to kill $pids (which are using /dev/mu2e?) - retries=$retries"; kill -9 $pids
+	    sleep 3
+	    retries=`expr $retries - 1`
+	    pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
+	done
+	killall -9 xdaq.exe
+	# killall -9 TRACE
+	sleep 3
+	rmmod mu2e
+	
+	lsmod | grep -q mu2e || break
+    done
     lsmod | grep mu2e && { echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
 
 

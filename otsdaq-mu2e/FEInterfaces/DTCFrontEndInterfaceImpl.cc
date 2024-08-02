@@ -367,7 +367,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						// "doNotReadBack (bool)", 
 						"Save Binary Data to File (Default: false)",
 						"Save Binary Data Filename",
-						"Save Subevent Header to Binary File (Default: false)"
+						"Save Subevent Header to Binary File (Default: false)",
+						"Payload Packet Threshold for Saving Event (Default: 0)"
 						// "Software Generated Data Requests (bool)",
 						// "Do Not Send Heartbeats (bool)"
 						}, 
@@ -631,7 +632,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Save Binary Data Filename",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
 											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
-											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)"
+											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)",
+											"For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
 					1,   // requiredUserPermissions					
@@ -655,7 +657,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Save Binary Data Filename",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
 											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
-											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)"
+											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)",
+											"For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
 					1,   // requiredUserPermissions					
@@ -2220,7 +2223,8 @@ void DTCFrontEndInterface::resume(void)
 			"Default", //filename
 			0, //bool saveSubeventHeadersToDataFile,
 			0, //bool doNotResetCounters
-			0 //bool skipBy32 )
+			0, //bool skipBy32
+			0  //unint32_t packetThresholdToSave )
 		);
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
@@ -2283,7 +2287,8 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			"Default", //filename
 			0, //bool saveSubeventHeadersToDataFile,
 			0, //bool doNotResetCounters 
-			0  //bool skipBy32)
+			0,  //bool skipBy32
+			0  //unint32_t packetThresholdToSave)
 		);
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
@@ -3733,7 +3738,8 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data Filename", std::string),			
 			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
 			__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool),
-			__GET_ARG_IN__("For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)", bool)
+			__GET_ARG_IN__("For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)", bool),
+			__GET_ARG_IN__("For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)",uint32_t)
 		)
 	);
 } //end SetCFOEmulatorOnOffSpillEmulation()
@@ -3744,7 +3750,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
 	bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, 
 	const std::string& filename,
-	bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32)
+	bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32, uint32_t packetThresholdToSave)
 {	
 	__FE_COUTV__(enable);
 
@@ -3769,7 +3775,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	if(useDetachedBufferTest)
 		initDetachedBufferTest(initialEventWindowTag,
 			 saveBinaryDataToFile, filename, saveSubeventHeadersToDataFile, 
-			 doNotResetCounters, skipBy32);
+			 doNotResetCounters, skipBy32, packetThresholdToSave);
 		
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
@@ -3849,7 +3855,8 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data Filename", std::string),	
 			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
 			__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool),
-			__GET_ARG_IN__("For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)", bool)
+			__GET_ARG_IN__("For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)", bool),
+			__GET_ARG_IN__("For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)",uint32_t)
 		)
 	);
 } //end SetCFOEmulatorFixedWidthEmulation()
@@ -3859,7 +3866,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	const std::string& eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 	uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
 	const std::string& filename,
-	bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32)
+	bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32, uint32_t packetThresholdToSave)
 {	
 	__FE_COUTV__(enable);
 
@@ -3884,7 +3891,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	if(useDetachedBufferTest)
 		initDetachedBufferTest(initialEventWindowTag,
 			saveBinaryDataToFile, filename, saveSubeventHeadersToDataFile, 
-			doNotResetCounters, skipBy32);
+			doNotResetCounters, skipBy32, packetThresholdToSave);
 
 	__FE_COUTV__(eventDuration);
 	bool foundUnits = false;
@@ -4005,11 +4012,13 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 		uint64_t initialEventWindowTag,
 		bool saveBinaryDataToFile,
 		const std::string& saveBinaryDataFilename,
-		bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32)
+		bool saveSubeventHeadersToDataFile, bool doNotResetCounters, 
+		bool skipBy32, uint32_t packetThresholdToSave)
 {
 	__FE_COUTV__(saveBinaryDataToFile);
 	__FE_COUTV__(doNotResetCounters);
 	__FE_COUTV__(skipBy32);
+	__FE_COUTV__(packetThresholdToSave);
 	__FE_COUT__ << "Initializing detached buffer test!" << __E__;
 
 	if(!bufferTestThreadStruct_) //initialize shared pointer for first time
@@ -4032,6 +4041,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->resetStartEventTag_ 	= true;
 			bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
 			bufferTestThreadStruct_->skipBy32_ 				= skipBy32;
+			bufferTestThreadStruct_->packetThresholdToSave_	= packetThresholdToSave;
 		}
 		__FE_COUT__ << "Found buffer test thread already running... so re-initializing and reading data starting at event tag " << initialEventWindowTag << 
 			" (0x" << std::hex << initialEventWindowTag << ")" << __E__;
@@ -4054,6 +4064,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->running_ 				= true;	
 			bufferTestThreadStruct_->doNotResetCounters_ 	= false;
 			bufferTestThreadStruct_->skipBy32_ 				= skipBy32;
+			bufferTestThreadStruct_->packetThresholdToSave_	= packetThresholdToSave;
 		}
 		std::thread([](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct) { 
 					DTCFrontEndInterface::detechedBufferTestThread(threadStruct); },
@@ -4097,6 +4108,11 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(std::shared_ptr<DT
 
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
+
+		if(threadStruct->saveBinaryData_ && threadStruct->packetThresholdToSave_ > 0)
+			statusSs << "Saved " << (threadStruct->inSubeventMode_?"subevent":"event") << 
+				" count:" << threadStruct->savedCount_ << 
+				" (data packet threshold = " << threadStruct->packetThresholdToSave_ << ")" << __E__;
 
 		statusSs << "Total Subevent Bytes Transferred (including Headers): " << 
 			threadStruct->totalSubeventBytesTransferred_ << __E__;
@@ -4232,16 +4248,45 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	threadStruct->totalSubeventBytesTransferred_ += sizeof(DTCLib::DTC_SubEventHeader); //for subevent header
 
 #if 1
+
+	bool doSaveSubevent = false;
+
 	//save raw subevent header
 	if(threadStruct->saveSubeventsToBinaryData_)
 	{
-		auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
-		for (uint32_t l = 0; l < sizeof(DTCLib::DTC_SubEventHeader); l+=4)
+		if(threadStruct->packetThresholdToSave_ > 0)
 		{
-			if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
-			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
+			//check if payload packet thershold is met
+			// iterate over the data blocks and count packets
+			uint32_t payloadPackets = 0;
+			std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent->GetDataBlocks();
+			for (unsigned int j = 0; j < dataBlocks.size(); ++j)
+			{
+				// print the data block header
+				DTCLib::DTC_DataHeaderPacket *dataHeader = dataBlocks[j].GetHeader().get();		
+				payloadPackets += (dataHeader->GetByteCount() - 16)/16;
+			} //end payload packet count
+
+			if(payloadPackets >= threadStruct->packetThresholdToSave_)
+				doSaveSubevent = true;
 		}
-	}
+		else 
+			doSaveSubevent = true;		
+
+		__COUTTV__(doSaveSubevent);	
+
+		if(doSaveSubevent)
+		{
+			++(threadStruct->savedCount_);
+
+			auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
+			for (uint32_t l = 0; l < sizeof(DTCLib::DTC_SubEventHeader); l+=4)
+			{
+				if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
+				// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
+			}
+		}
+	} //end /save raw subevent header
 
 
 	// check if there is an error on the link in the subevent header
@@ -4334,13 +4379,13 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 		if((dataHeader->GetStatus() >> 3) & 1)
 			++(threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()]);		
 		
-		// print the data block ROC fragment header raw data
+		// print the data block ROC fragment header raw data		
 		{
 			auto dataPtr = reinterpret_cast<const uint8_t*>(dataBlocks[j].GetRawBufferPointer());
 			// ostr << "Data header raw:" << std::endl;
 			for (int l = 0; l < 16; l+=4)
 			{
-				if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
+				if(doSaveSubevent && threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
 				// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 			}
 		}
@@ -4360,7 +4405,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 			// if(displayPayloadAtGUI) ostr << "Data payload:" << std::endl;
 			for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=4)
 			{
-				if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
+				if(doSaveSubevent && threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
 				// if(displayPayloadAtGUI) ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 			}
 #endif
@@ -4695,6 +4740,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	std::string saveBinaryDataFilename = __GET_ARG_IN__("Save Binary Data Filename", std::string);
 	bool saveSubeventHeadersToDataFile = __GET_ARG_IN__("Save Subevent Header to Binary File (Default: false)", bool);
 	// bool displayPayloadAtGUI = __GET_ARG_IN__("Display Payload at GUI (Default: true)", bool, true);
+	unsigned int packetThresholdToSave = __GET_ARG_IN__("Payload Packet Threshold for Saving Event (Default: 0)", unsigned int);
 
 
 	__FE_COUTV__(command);
@@ -4704,6 +4750,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	__FE_COUTV__(saveBinaryDataToFile);
 	__FE_COUTV__(saveBinaryDataFilename);
 	__FE_COUTV__(saveSubeventHeadersToDataFile);
+	__FE_COUTV__(packetThresholdToSave);
 
 
 	// print the result

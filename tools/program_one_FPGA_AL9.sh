@@ -25,14 +25,15 @@ fi
 echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG index N: ${1}" 
 echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG-N bitfile: ${2}" 
 
-vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2 
+vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2 | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(check\ for\ ERROR\ above\ and\ below\)\\\n\\\n/g
 
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Done programming bitfile to one FPGA on ${HOSTNAME}"
 
 
 #now reset
-echo -e "program_one_FPGA.sh:${LINENO} |  \t Resetting PCIe on ${HOSTNAME}..."
-source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+echo -e "program_one_FPGA.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
+ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+# source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo echo
 echo echo

@@ -96,6 +96,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::string				error_;
 		std::string				saveBinaryDataFilename_;
 
+		unsigned int 			packetThresholdToSave_;
+		std::atomic<uint64_t>	savedCount_;
+
 	};  // end DetachedBufferTestThreadStruct declaration
 
 	static std::string 					getDetachedBufferTestStatus			(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
@@ -105,7 +108,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag, bool saveBinaryDataToFile,
 																				const std::string& filename,
-																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters, bool skipBy32);
+																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters, 
+																				bool skipBy32, uint32_t packetThresholdToSave);
 
 	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
 
@@ -180,13 +184,15 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
 																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, 
 																			const std::string& filename, 
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32);
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, 
+																			bool skipBy32, uint32_t packetThresholdToSave);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
 																			const std::string& eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
 																			const std::string& filename, 
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, bool skipBy32);
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, 
+																			bool skipBy32, uint32_t packetThresholdToSave);
 
 	void 								BufferTest							(__ARGS__);
 	void 								PatternTest							(__ARGS__);
