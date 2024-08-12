@@ -18,6 +18,13 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
+	//Since ROCs are a subinterface (with a different configuration tree path), the interfaceType_ needs to be defined
+	interfaceType_ = theXDAQContextConfigTree_.getBackNode(theConfigurationPath_)
+		.getNode(FEVInterface::interfaceUID_)
+		.getNode("ROCInterfacePluginName")
+		.getValue<std::string>();
+	__FE_COUTTV__(interfaceType_);
+
 	FEVInterface::universalAddressSize_ = sizeof(uint16_t);
 	FEVInterface::universalDataSize_ = sizeof(uint16_t);
 	linkID_ =

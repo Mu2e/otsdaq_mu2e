@@ -119,7 +119,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	int         									dtc_location_in_chain_ = -1;
 	unsigned int   									roc_mask_              = 0;
-	int         									emulate_cfo_           = 0;
+	unsigned int   									roc_emulated_mask_     = 0;
+	bool         									emulate_cfo_           = true;
 	DTCLib::DTCSoftwareCFO* 						EmulatedCFO_;
 
 	std::ofstream datafile_[8];
