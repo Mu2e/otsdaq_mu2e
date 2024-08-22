@@ -34,10 +34,9 @@ find_package(artdaq_mu2e 1.05.02 REQUIRED EXPORT)
 find_package(PostgreSQL 13.2 REQUIRED)
 
  # XDAQ Extra setup
- include_directories($ENV{XDAQ_INC}/linux $ENV{XDAQ_INC})
-link_directories($ENV{XDAQ_LIB})
-link_directories($ENV{ARTDAQ_DATABASE_LIB})
- set(XDAQ_BASIC_LIB_LIST 
+ include_directories($ENV{XDAQ_ROOT}/include/linux $ENV{XDAQ_ROOT}/include)
+link_directories($ENV{XDAQ_ROOT}/lib)
+set(XDAQ_BASIC_LIB_LIST 
    xcept
    xoap
    xdaq
