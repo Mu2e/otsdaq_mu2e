@@ -14,6 +14,7 @@ project(otsdaq_mu2e VERSION 3.02.00)
 
 include(CetCMakeEnv)
 cet_cmake_env()
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 cet_set_compiler_flags(DIAGS VIGILANT
  WERROR
