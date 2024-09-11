@@ -99,8 +99,18 @@ rm -rf ${SRC}/snapshot_${SNAPSHOT}_Data/ServiceData/ConsoleSnapshots
 rm -rf ${SRC}/snapshot_${SNAPSHOT}_Data/ServiceData/LoginData/UsersData/TooltipData
 #if setup_ots exists, copy into Data
 if [ -e ${SRC}/setup_ots.sh ]; then
-    echo "setup_ots exists, so copying to USER_DATA."vi 
+    echo "setup_ots exists, so copying to USER_DATA." 
 	cp ${SRC}/setup_ots.sh ${SRC}/snapshot_${SNAPSHOT}_Data/
+fi
+#if mongodb_setup exists, copy into Data
+if [ -e ${SRC}/mongodb_setup.sh ]; then
+    echo "mongodb_setup exists, so copying to USER_DATA." 
+	cp ${SRC}/mongodb_setup.sh ${SRC}/snapshot_${SNAPSHOT}_Data/
+fi
+#if db_setup_ots exists, copy into Data
+if [ -e ${SRC}/db_setup_ots.sh ]; then
+    echo "db_setup_ots exists, so copying to USER_DATA." 
+	cp ${SRC}/db_setup_ots.sh ${SRC}/snapshot_${SNAPSHOT}_Data/
 fi
 
 
@@ -108,7 +118,7 @@ fi
 rm snapshot_${SNAPSHOT}_Data.zip  >/dev/null 2>&1
 mv NoGitData NoGitData.mv.bk.snapshot >/dev/null 2>&1; #for safety attempt to move and then restore temporary folder
 cp -r ${SRC}/snapshot_${SNAPSHOT}_Data NoGitData;
-zip -r snapshot_${SNAPSHOT}_Data.zip NoGitData; 
+zip -q -r snapshot_${SNAPSHOT}_Data.zip NoGitData; 
 rm -rf NoGitData; 
 mv NoGitData.mv.bk.snapshot NoGitData >/dev/null 2>&1; 
 #remove clean copies
@@ -120,7 +130,7 @@ else
 	rm snapshot_${SNAPSHOT}_database.zip  >/dev/null 2>&1
 	mv databases databases.mv.bk.snapshot >/dev/null 2>&1; #for safety attempt to move and then restore temporary folder
 	cp -r ${SRC}/snapshot_${SNAPSHOT}_databases databases; 
-	zip -r snapshot_${SNAPSHOT}_database.zip databases; 
+	zip -q -r snapshot_${SNAPSHOT}_database.zip databases; 
 	rm -rf databases; 
 	mv databases.mv.bk.snapshot databases >/dev/null 2>&1;
 	#remove clean copies

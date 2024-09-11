@@ -9,10 +9,10 @@
 #	./get_mu2e_snapshot_data.sh --name first_demo
 #
 
-if ! [ -e setup_ots.sh ]; then
-  kdialog --sorry "You must run this script from an OTSDAQ installation directory!"
-  exit 1
-fi
+# if ! [ -e setup_ots.sh ]; then
+  echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t You must run this script from an OTSDAQ installation directory!"
+#   exit 1
+# fi
 
 Base=$PWD
 #commenting out unique filename generation
@@ -43,7 +43,7 @@ echo
 #source setup_ots.sh
 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ********************************************************************************"
-echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ************ Gettings otsdaq snapshot Data (user settings, etc.)... ************"
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ************ Gettings otsdaq snapshot Data (user settings, etc.)... ************" 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ********************************************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t "
 
@@ -83,7 +83,7 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Downloading snapshot user data.."
 echo 
-cmd="scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
+cmd="scp mu2eshift@mu2egateway01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ${cmd}"
 echo
 
@@ -110,7 +110,7 @@ rm -rf tmp01234
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t unzip snapshot_${SNAPSHOT}_Data.zip -d tmp01234"
 
-unzip snapshot_${SNAPSHOT}_Data.zip -d tmp01234
+unzip -q snapshot_${SNAPSHOT}_Data.zip -d tmp01234  #q for quiet
 
 # bkup current user data
 echo 
@@ -137,6 +137,11 @@ echo
 chmod 755 -R tmp01234/NoGitData #make sure it can be moved
 chmod 755 -R ${USER_DATA} #make sure it can be moved
 mv tmp01234/NoGitData ${USER_DATA}
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Cleaning up archived user data from snapshot data.."
+rm -rf ${USER_DATA}/Logs
+rm -rf ${USER_DATA}/ARTDAQConfigurations
+rm -rf ${USER_DATA}/TriggerConfigurations
+rm -rf ${USER_DATA}/OutputData
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Cleaning up downloads.."

@@ -67,8 +67,8 @@ killall -9 ots_udp_hw_emulator
 # 		--keep-session-cookies \
 # 		-O get_snapshot_data.sh
 # wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
-wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
-chmod 755 get_snapshot_data.sh
+wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_data.sh -O get_mu2e_snapshot_data.sh --no-check-certificate
+chmod 755 get_mu2e_snapshot_data.sh
 	
 #download and run get_snapshot_database script
 # wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh \
@@ -78,29 +78,36 @@ chmod 755 get_snapshot_data.sh
 # 		--keep-session-cookies \
 # 		-O get_snapshot_database.sh
 # wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate	
-wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_database.sh  -O get_snapshot_database.sh --no-check-certificate	
-chmod 755 get_snapshot_database.sh
+wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_database.sh  -O get_mu2e_snapshot_database.sh --no-check-certificate	
+chmod 755 get_mu2e_snapshot_database.sh
 
 SV_DATABASE_URI=$ARTDAQ_DATABASE_URI
 export ARTDAQ_DATABASE_URI="filesystemdb://${PWD}/databases_HWDev"
-./get_snapshot_database.sh --name ${SNAPSHOT}
+./get_mu2e_snapshot_database.sh --name ${SNAPSHOT}
 export ARTDAQ_DATABASE_URI=$SV_DATABASE_URI
 
 SV_USER_DATA=$USER_DATA
 export USER_DATA="${PWD}/Data_HWDev"
-./get_snapshot_data.sh --name "${SNAPSHOT}" 
+./get_mu2e_snapshot_data.sh --name "${SNAPSHOT}" 
+mv setup_ots.sh bk.snapshot.setup_ots.sh.$(date +"%Y%m%d_%H%M%S")
+mv ${USER_DATA}/setup_ots.sh setup_ots.sh
+mv mongodb_setup.sh bk.snapshot.mongodb_setup.sh.$(date +"%Y%m%d_%H%M%S")
+mv ${USER_DATA}/mongodb_setup.sh mongodb_setup.sh
+mv db_setup_ots.sh bk.snapshot.db_setup_ots.sh.$(date +"%Y%m%d_%H%M%S")
+mv ${USER_DATA}/db_setup_ots.sh db_setup_ots.sh
+
 export USER_DATA="${PWD}/Data_shift"
-./get_snapshot_data.sh --name "${SNAPSHOT}_shift" 
+./get_mu2e_snapshot_data.sh --name "${SNAPSHOT}_shift" 
 export USER_DATA="${PWD}/Data_shift1"
-./get_snapshot_data.sh --name "${SNAPSHOT}_shift1" 
+./get_mu2e_snapshot_data.sh --name "${SNAPSHOT}_shift1" 
 export USER_DATA="${PWD}/Data_trigger"
-./get_snapshot_data.sh --name "${SNAPSHOT}_trigger" 
+./get_mu2e_snapshot_data.sh --name "${SNAPSHOT}_trigger" 
 export USER_DATA=$SV_USER_DATA
 
 
 #clean up
-rm get_snapshot_database.sh
-rm get_snapshot_data.sh
+rm get_mu2e_snapshot_database.sh
+rm get_mu2e_snapshot_data.sh
 
 #ots --wiz #just to test activate the saved groups  
 #ots  #launch normal mode and open firefox
