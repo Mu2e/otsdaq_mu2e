@@ -19,14 +19,6 @@ class ROCCoreVInterface : public FEVInterface
 
 	~ROCCoreVInterface(void);
 
-	virtual std::string 					getInterfaceType			(void) const override
-	{
-		return theXDAQContextConfigTree_.getBackNode(theConfigurationPath_)
-			.getNode(FEVInterface::interfaceUID_)
-		    .getNode("ROCInterfacePluginName")
-		    .getValue<std::string>();
-	}
-
 	// state machine
 	//----------------
 	void 									configure					(void) override;
@@ -44,7 +36,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	// write and read to registers
 	//	Philosophy: call writeRegister/readRegister/readBlock and it will choose the ROC or software emulator implementation
-	//      For each there is a "ROC" and "Emulator" version:   readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock/writeROCRegister/writeEmulatorRegister 
+	//      For each, there is a "ROC" and "Emulator" version:   readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock/writeROCRegister/writeEmulatorRegister 
 	void         							writeRegister				(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData);  // chooses ROC or Emulator version
 	DTCLib::roc_data_t 						readRegister				(DTCLib::roc_address_t address);     // chooses ROC or Emulator version
 	void 									readBlock					(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress);     // chooses ROC or Emulator version

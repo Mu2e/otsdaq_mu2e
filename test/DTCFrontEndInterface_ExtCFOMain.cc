@@ -33,7 +33,9 @@ try
 	if(argc < 3)
 	{
 		__COUT_ERR__ << "\n\n\tUsage = Need at least 2 arguments: DTCFrontEndInterface_ExtCFOMain <deviceIndex> <numberOfEventWindowMarkers>\n\n" << __E__;
-		__COUT_ERR__ << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n\n" << __E__;
+		__COUT_INFO__ << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n"
+			<< "\n\n\t\tUsage = <numberOfEventWindowMarkers> -1:   JA Reset and Loopback \n"
+			<< "\n\n\t\tUsage = <numberOfEventWindowMarkers> -2:   JA Reset and Passthrough \n";
 		return 0;
 	}
 
@@ -146,7 +148,18 @@ try
 		__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
 		return 0;
 	}
-
+	if(numberOfEventWindowMarkers == uint32_t(-5))
+	{
+		dtc.getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, true /* alsoResetJA */);
+		for(int i=0;i<10;++i) //wait for JA to lock before reading
+		{
+			if(dtc.getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
+		__COUT_INFO__ << "JA Status = " << dtc.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		return 0;
+	}
 
     __COUT_INFO__ << "DTC version = " << dtc.thisDTC_->ReadDesignDate() << __E__;
 	__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength() << __E__;
@@ -183,12 +196,13 @@ try
 	__COUT_INFO__ << "ROC Setup:\n" << reply << __E__;
 
 	dtc.thisDTC_->SoftReset(); //to reset event window tag starting point handling
-	dtc.initDetachedBufferTest(100,//initialEventWindowTag,
+	dtc.initDetachedBufferTest(100, //initialEventWindowTag,
 			false, // saveBinaryDataToFile,
 			"Default", // filename 
 			false, //saveSubeventHeadersToDataFile, 
 			false, //doNotResetCounters
-			false //skipBy32
+			false, //skipBy32
+			0  //packetThresholdToSave
 			);
     
 	int i=0;

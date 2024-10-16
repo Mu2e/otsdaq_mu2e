@@ -28,14 +28,15 @@ echo -e "program_both_DTCs.sh:${LINENO} |  \t JTAG-0 bitfile: ${BITFILE0}"
 echo -e "program_both_DTCs.sh:${LINENO} |  \t JTAG-1 bitfile: ${BITFILE1}" 
 echo
 echo -e "program_both_DTCs.sh:${LINENO} |  \t vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1}" 
-vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1} 
+vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1} | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
 echo
 echo -e "program_both_DTCs.sh:${LINENO} |  \t Done programming bitfile to both DTCs on ${HOSTNAME}"
 
 
 #now reset
-echo -e "program_both_DTCs.sh:${LINENO} |  \t Resetting PCIe on ${HOSTNAME}..."
-source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+echo -e "program_both_DTCs.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
+ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+# source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo echo
 echo echo

@@ -32,11 +32,13 @@ try
 	}
 	if(argc != 4)
 	{
-		__COUT_ERR__ << "\n\n\tUsage = Need 3 arguments: CFOFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers> <runPlanMode>\n\n" << __E__;	
-		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 0-2:   no timing markers and yes read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
-		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 3-5:  yes timing markers and yes read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
-		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 6-8:   no timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
-		__COUT_ERR__ << "\n\n\tUsage = <runPlanMode> 9-11: yes timing markers and  no read CFO recrords -- 0:1.7us, 1:supercycles 2:100us" << __E__;		
+		__COUT_ERR__ << "\n\n\tUsage = Need 3 arguments: CFOFrontEndInterface_TestMain <deviceIndex> <numberOfEventWindowMarkers> <runPlanMode>\n\n." << __E__;	
+		__COUT_INFO__ << "\n\n\t\tUsage = <numberOfEventWindowMarkers> -1:   CFO Reset \n"		
+			<< "\n\n\t\tUsage = <numberOfEventWindowMarkers> -2:   JA Reset \n"		
+			<< "\n\n\t\tUsage = <runPlanMode> 0-2:   no timing markers and yes read CFO records -- 0:1.7us, 1:supercycles 2:100us\n"		
+			<< "\n\n\t\tUsage = <runPlanMode> 3-5:  yes timing markers and yes read CFO records -- 0:1.7us, 1:supercycles 2:100us\n"		
+			<< "\n\n\t\tUsage = <runPlanMode> 6-8:   no timing markers and  no read CFO records -- 0:1.7us, 1:supercycles 2:100us\n"		
+			<< "\n\n\t\tUsage = <runPlanMode> 9-11: yes timing markers and  no read CFO records -- 0:1.7us, 1:supercycles 2:100us\n";		
 		return 0;
 	}
 
@@ -115,14 +117,19 @@ try
 		cfo.thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 
 		cfo.thisCFO_->EnableEmbeddedClockMarker();
-		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
+		__COUT_INFO__ << "CFO Reset called!" << __E__;
 		return 0;
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-2))
 	{
-		__COUT_INFO__ << "Attempting Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "JA Reset and Attempting Buffer Release ONLY!" << __E__;
+		cfo.halt();
+		cfo.getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */, true /* alsoResetJA */);
+		sleep(1);
+    	__COUT_INFO__ << "JA Status = " << cfo.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		
 		cfo.thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
-		__COUT_INFO__ << "ReleaseAllBuffers called!" << __E__;
+		__COUT_INFO__ << "JA Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-3))

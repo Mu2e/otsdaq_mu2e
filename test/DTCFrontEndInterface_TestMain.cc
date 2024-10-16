@@ -139,14 +139,14 @@ try
 
 		if(sz == -1) //disabled
 			reply = dtc.SetupROCs(
-				DTCLib::DTC_Link_ID(i-3), //]DTCLib::DTC_Link_ID rocLinkIndex,
+				DTCLib::DTC_Link_ID(i-3), //DTCLib::DTC_Link_ID rocLinkIndex,
 				0, 1, 1, //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
 				DTCLib::DTC_ROC_Emulation_Type(0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),// DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 				0// uint32_t size
 			);
 		else
 			reply = dtc.SetupROCs(
-				DTCLib::DTC_Link_ID(i-3), //]DTCLib::DTC_Link_ID rocLinkIndex,
+				DTCLib::DTC_Link_ID(i-3), //DTCLib::DTC_Link_ID rocLinkIndex,
 				1, 1, 1, //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
 				DTCLib::DTC_ROC_Emulation_Type(0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),// DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 				atoi(argv[i])// uint32_t size
@@ -174,7 +174,8 @@ try
 		"Default", //filename
         0, //bool saveSubeventHeadersToDataFile,
         0, //bool doNotResetCounters
-		0  //bool skipBy32 )
+		0,  //bool skipBy32
+		0  //unint32_t packetThresholdToSave )
     );
 	// dtc.SetCFOEmulatorOnOffSpillEmulation(
 	// 	1, //bool enable,

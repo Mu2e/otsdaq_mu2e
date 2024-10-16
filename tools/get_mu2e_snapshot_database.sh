@@ -9,10 +9,10 @@
 #	./get_mu2e_snapshot_database.sh --name a
 #
 
-if ! [ -e setup_ots.sh ]; then
+# if ! [ -e setup_ots.sh ]; then #do not require the file to exist because getting the snapshot might create the file! Just warn user.
 	echo -e `date +"%h%y %T"` "get_snapshot_data.sh [${LINENO}]  \t You must run this script from an OTSDAQ installation directory!"
-  exit 1
-fi
+#   exit 1
+# fi
 
 Base=$PWD
 #commenting out unique filename generation
@@ -83,7 +83,7 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *******
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Downloading snapshot database.."
 echo 
 echo
-cmd="scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_database.zip ."
+cmd="scp mu2eshift@mu2egateway01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_database.zip ."
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t ${cmd}"
 echo
 
@@ -107,7 +107,7 @@ chmod 755 -R tmpd1234 #make sure it can be deleted
 rm -rf tmpd1234
 echo 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t unzip snapshot_${SNAPSHOT}_database.zip -d tmpd1234"
-unzip snapshot_${SNAPSHOT}_database.zip -d tmpd1234
+unzip -q snapshot_${SNAPSHOT}_database.zip -d tmpd1234 #q for quiet
 
 # bkup current database
 echo 
