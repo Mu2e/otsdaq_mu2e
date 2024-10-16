@@ -1570,14 +1570,6 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 		__SS_THROW__;
 	}
 
-	// std::ifstream file(binFilename, std::ios::binary | std::ios::ate);
-	// if (file.eof())
-	// {
-	// 	__SS__ << ("Output File (" + binFilename + ") didn't open. Does it exist?") << __E__;
-	// 	__SS_THROW__;
-		
-	// }
-
 	std::string binaryContents;
 	std::fseek(fp, 0, SEEK_END);
 	binaryContents.resize(std::ftell(fp));
@@ -1585,22 +1577,8 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 	std::fread(&binaryContents[0], 1, binaryContents.size(), fp);
 	std::fclose(fp);
 
-	// mu2e_databuff_t inputData;
-	// auto inputSize = file.tellg();
-	// uint64_t dmaSize = static_cast<uint64_t>(inputSize) + 8;
-	// file.seekg(0, std::ios::beg);
-	// memcpy(&inputData[0], &dmaSize, sizeof(uint64_t));
-	// file.read(reinterpret_cast<char*>(&inputData[8]), inputSize);
-	// file.close();
-	
-
 	//set the file in hardware:
 	thisCFO_->SetRunPlanData(binaryContents, 0 /* address */);
-
-	// thisCFO_->GetDevice()->begin_dcs_transaction();
-	// thisCFO_->GetDevice()->write_data(DTC_DMA_Engine_DCS, //CFO_DMA_Engine_RunPlan, 
-	// 	inputData, sizeof(inputData));
-	// thisCFO_->GetDevice()->end_dcs_transaction();
 
 	std::stringstream resultSs;
 	resultSs << "Downloaded to CFO binary run plan file: " << binFilename << __E__;
