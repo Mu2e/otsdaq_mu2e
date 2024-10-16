@@ -9,7 +9,7 @@
 #	./get_mu2e_snapshot_database.sh --name a
 #
 
-# if ! [ -e setup_ots.sh ]; then
+# if ! [ -e setup_ots.sh ]; then #do not require the file to exist because getting the snapshot might create the file! Just warn user.
 	echo -e `date +"%h%y %T"` "get_snapshot_data.sh [${LINENO}]  \t You must run this script from an OTSDAQ installation directory!"
 #   exit 1
 # fi
