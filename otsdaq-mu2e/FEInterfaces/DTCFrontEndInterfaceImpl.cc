@@ -4048,7 +4048,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
 			bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
-			bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
+			bufferTestThreadStruct_->saveSubeventHeadersToBinaryData_ = saveSubeventHeadersToDataFile;
 			bufferTestThreadStruct_->exitThread_ 			= false;
 			bufferTestThreadStruct_->resetStartEventTag_ 	= true;
 			bufferTestThreadStruct_->doNotResetCounters_ 	= doNotResetCounters;
@@ -4069,7 +4069,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->expectedEventTag_ 		= initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
 			bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
-			bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
+			bufferTestThreadStruct_->saveSubeventHeadersToBinaryData_ = saveSubeventHeadersToDataFile;
 			bufferTestThreadStruct_->exitThread_ 			= false;
 			bufferTestThreadStruct_->resetStartEventTag_ 	= false;
 			bufferTestThreadStruct_->thisDTC_				= thisDTC_;
@@ -4261,44 +4261,39 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 
 #if 1
 
-	bool doSaveSubevent = false;
+	bool doSaveSubevent = threadStruct->saveBinaryData_;
+	if(threadStruct->packetThresholdToSave_ > 0)
+	{
+		//check if payload packet thershold is met
+		// iterate over the data blocks and count packets
+		uint32_t payloadPackets = 0;
+		std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent->GetDataBlocks();
+		for (unsigned int j = 0; j < dataBlocks.size(); ++j)
+		{
+			// print the data block header
+			DTCLib::DTC_DataHeaderPacket *dataHeader = dataBlocks[j].GetHeader().get();		
+			payloadPackets += (dataHeader->GetByteCount() - 16)/16;
+		} //end payload packet count
+
+		if(payloadPackets < threadStruct->packetThresholdToSave_)
+			doSaveSubevent = false;
+	}
+
+	__COUTTV__(doSaveSubevent);		
+	__COUTTV__(threadStruct->saveSubeventHeadersToBinaryData_);
 
 	//save raw subevent header
-	if(threadStruct->saveSubeventsToBinaryData_)
+	if(threadStruct->saveSubeventHeadersToBinaryData_ && doSaveSubevent)
 	{
-		if(threadStruct->packetThresholdToSave_ > 0)
+		++(threadStruct->savedCount_);
+
+		auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
+		for (uint32_t l = 0; l < sizeof(DTCLib::DTC_SubEventHeader); l+=4)
 		{
-			//check if payload packet thershold is met
-			// iterate over the data blocks and count packets
-			uint32_t payloadPackets = 0;
-			std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent->GetDataBlocks();
-			for (unsigned int j = 0; j < dataBlocks.size(); ++j)
-			{
-				// print the data block header
-				DTCLib::DTC_DataHeaderPacket *dataHeader = dataBlocks[j].GetHeader().get();		
-				payloadPackets += (dataHeader->GetByteCount() - 16)/16;
-			} //end payload packet count
-
-			if(payloadPackets >= threadStruct->packetThresholdToSave_)
-				doSaveSubevent = true;
+			if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
+			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 		}
-		else 
-			doSaveSubevent = true;		
-
-		__COUTTV__(doSaveSubevent);	
-
-		if(doSaveSubevent)
-		{
-			++(threadStruct->savedCount_);
-
-			auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetHeader());
-			for (uint32_t l = 0; l < sizeof(DTCLib::DTC_SubEventHeader); l+=4)
-			{
-				if(threadStruct->fp_) fwrite(&dataPtr[l],sizeof(uint32_t), 1, threadStruct->fp_);
-				// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
-			}
-		}
-	} //end /save raw subevent header
+	} //end save raw subevent header
 
 
 	// check if there is an error on the link in the subevent header
@@ -4370,6 +4365,8 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 	
 	// iterate over the data blocks
 	std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent->GetDataBlocks();
+	__COUTTV__(dataBlocks.size());
+	__COUTTV__(doSaveSubevent);
 	for (unsigned int j = 0; j < dataBlocks.size(); ++j)
 	{
 		// print the data block header
@@ -4414,6 +4411,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(const DTCLib::DTC_SubEvent& su
 #if 1
 			auto dataPtr = reinterpret_cast<const uint8_t*>(dataBlocks[j].GetData());
 
+			__COUTTV__(dataHeader->GetByteCount() - 16);
 			// if(displayPayloadAtGUI) ostr << "Data payload:" << std::endl;
 			for (int l = 0; l < dataHeader->GetByteCount() - 16; l+=4)
 			{
@@ -4646,6 +4644,7 @@ try
 					// DTCLib::DTC_EventHeader *eventHeader = event->GetHeader();
 					std::vector<DTCLib::DTC_SubEvent> subevents = event->GetSubEvents();
 
+					__COUTTV__(subevents.size());
 					for(auto& subevent : subevents) 					
 						handleDetachedSubevent(subevent, threadStruct);				
 				}			
@@ -4790,7 +4789,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->expectedEventTag_ 		= timestampStart;
 				bufferTestThreadStruct_->saveBinaryData_ 		= saveBinaryDataToFile;
 				bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
-				bufferTestThreadStruct_->saveSubeventsToBinaryData_ = saveSubeventHeadersToDataFile;
+				bufferTestThreadStruct_->saveSubeventHeadersToBinaryData_ = saveSubeventHeadersToDataFile;
 				bufferTestThreadStruct_->exitThread_ 			= false;
 				bufferTestThreadStruct_->resetStartEventTag_ 	= false;
 				bufferTestThreadStruct_->thisDTC_				= thisDTC_;
