@@ -31,6 +31,9 @@ echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t for exam
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t\t reset_mu2e_ots_snapshot.sh --name a"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t or to see potential names..."
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t\t\t reset_mu2e_ots_snapshot.sh --list"
+echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t"
 
 #return  >/dev/null 2>&1 #return is used if script is sourced
 
@@ -39,6 +42,15 @@ echo
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Extracting parameters..."
 echo
 
+if [[ "$1" == "--list" ]]; then
+	echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Listing existing snapshots (format = snapshot_<name>_Data/database.zip):"
+	ssh mu2eshift@mu2egateway01 "ls -lrta /mu2e/DataFiles/UserSnapshots/"
+	echo
+	echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Existing snapshots above are in format = snapshot_<name>_Data/database.zip"
+	echo
+	return  >/dev/null 2>&1 #return is used if script is sourced
+	exit  #exit is used if script is run ./reset...
+fi
 
 if [[ "$1"  == "--name" && "x$2" != "x" ]]; then
 	SNAPSHOT="$2"
