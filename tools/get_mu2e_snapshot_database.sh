@@ -92,7 +92,7 @@ ${cmd} 2> "$errlog"
 if [[ -s "$errlog" ]]; then
     error=`cat "$errlog"`
     # File exists and has a size greater than zero                                                                                                                                  
-    echo "THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
+    echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
     echo $error
     rm $errlog
     exit
