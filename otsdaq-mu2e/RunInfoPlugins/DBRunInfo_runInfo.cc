@@ -85,6 +85,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 
 		//extract run condition from runInfoConditions
 		std::string condition = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
+		StringMacros::sanitizeForSQL(condition);
 
 		snprintf(buffer,
 				sizeof(buffer),
@@ -196,13 +197,15 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 		//extract configuraiton name and version from runInfoConditions
 		std::string runConfiguration = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
-		runConfiguration = runConfiguration.substr(0, runConfiguration.find(')'));
+		runConfiguration = runConfiguration.substr(0, runConfiguration.find(')'));		
 
 		std::string runConfigurationVersion = runConfiguration.substr(runConfiguration.find('(') + 1);
 		boost::trim_right(runConfigurationVersion);
+		StringMacros::sanitizeForSQL(runConfigurationVersion);
 
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find('('));
 		boost::trim_right(runConfiguration);
+		StringMacros::sanitizeForSQL(runConfiguration);
 
 		//extract context name and version from runInfoConditions
 		std::string runContext = runInfoConditions.substr(runInfoConditions.find("Context := ") + sizeof("Context := ") - 1);
@@ -210,9 +213,11 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 		std::string runContextVersion = runContext.substr(runContext.find('(') + 1);
 		boost::trim_right(runContextVersion);
+		StringMacros::sanitizeForSQL(runContextVersion);
 
 		runContext = runContext.substr(0, runContext.find('('));
 		boost::trim_right(runContext);
+		StringMacros::sanitizeForSQL(runContext);
 
 		//insert a new row in the run_configuration table
 		__COUT__ << "Insert new run info in the run_configuration database table, run configuration is: "
@@ -377,6 +382,8 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 			runTransitionType = 5;
 			transitionDescription = "'Configeure to Running - Start'";
 		}
+		
+		StringMacros::sanitizeForSQL(transitionDescription); //in case transitionDescription is used instead of int
 
 		PGresult* res;
 		char      buffer[1024];
