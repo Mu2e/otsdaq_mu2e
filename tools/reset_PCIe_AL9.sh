@@ -13,6 +13,7 @@ echo "SCRIPT_DIR: ${SCRIPT_DIR}"
 RegEx='Xilinx.*704[23]'
 
 lspci | grep "$RegEx" && foundXi=1 || foundXi=0
+lsmod | grep -E 'mu2e|TRACE' && foundXi=1   # only if both are false do we skip
 
 if [ "$foundXi" = 1 ];then
     TRIES=3
