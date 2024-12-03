@@ -4455,7 +4455,7 @@ try
 			for(const auto& c : threadStruct->saveBinaryDataFilename_)
 				if(c == '/' || c == '\\') continue;
 				else tmp += c;
-			threadStruct->saveBinaryDataFilename_ = tmp;
+			threadStruct->saveBinaryDataFilename_ = threadStruct->thisDTC_->getDeviceUID() + "_" + tmp;
 		}
 		__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
 									threadStruct->saveBinaryDataFilename_);
@@ -4940,7 +4940,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 	FILE *fp = nullptr;
 	if(saveBinaryDataToFile)
 	{
-		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
+		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + getInterfaceUID() + "_" + filename;
 		__FE_COUTV__(filename);
 		fp = fopen(filename.c_str(), "wb");
 		if(!fp)
