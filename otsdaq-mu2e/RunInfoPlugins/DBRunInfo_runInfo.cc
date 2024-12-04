@@ -10,12 +10,8 @@
 using namespace ots;
 
 //==============================================================================
-DBRunInfo::DBRunInfo(
-    std::string              interfaceUID)
-	// ,
-    // const ConfigurationTree& theXDAQContextConfigTree,
-    // const std::string&       configurationPath)
-    : RunInfoVInterface(interfaceUID)//, theXDAQContextConfigTree, configurationPath)  
+DBRunInfo::DBRunInfo(std::string interfaceUID)
+    : RunInfoVInterface(interfaceUID) 
 {
 	dbname_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE")? getenv("OTSDAQ_RUNINFO_DATABASE") : "run_info");
 	dbhost_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_HOST")? getenv("OTSDAQ_RUNINFO_DATABASE_HOST") : "");
@@ -25,21 +21,30 @@ DBRunInfo::DBRunInfo(
 	dbSchema_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA") : "test");
 
 	//open db connection
-	openDbConnection();
-}
+	openDbConnection();	
+} //end constructor()
 
 //==============================================================================
-DBRunInfo::~DBRunInfo(void) { ; }
+DBRunInfo::~DBRunInfo(void) { if(runInfoDbConn_) PQfinish(runInfoDbConn_); }
 
 //==============================================================================
 void DBRunInfo::openDbConnection()
 {
+	__COUT__ << "Opening Run Info db connection at " << dbhost_ << ":" << dbport_ << __E__;
 	//open db connection
 	char runInfoDbConnInfo [1024];
 	sprintf(runInfoDbConnInfo, "dbname=%s host=%s port=%s  \
-		user=%s password=%s", dbname_, dbhost_, dbport_, dbuser_, dbpwd_);
+		user=%s password=%s connect_timeout=10", dbname_, dbhost_, dbport_, dbuser_, dbpwd_);
 	runInfoDbConn_ = PQconnectdb(runInfoDbConnInfo);
-}
+
+	 if (PQstatus(runInfoDbConn_) != CONNECTION_OK) 
+	 {
+        __SS__ << "Connection failed: " << PQerrorMessage(runInfoDbConn_) << std::endl;
+        PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
+        __SS_THROW__;
+    }
+	__COUT__ << "Run Info db connection opened successfully at " << dbhost_ << ":" << dbport_ << __E__;
+} //end openDbConnection()
 
 //==============================================================================
 unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
@@ -56,14 +61,14 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
 		__COUT__ << "Unable to connect to the run_info database inserting run condition\n" << __E__;
-		PQfinish(runInfoDbConn_);
+		PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
 
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
 			__COUT__ << "Unable to connect for the second time to the run_info database inserting the run condition!\n" << __E__;
-			PQfinish(runInfoDbConn_);
+			PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
 		}
 		else
 		{
@@ -78,7 +83,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 	}
 
 	// write run condition into db
-	if(runInfoDbConnStatus_ == 1)
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
 		char      buffer[4194304];
@@ -168,14 +173,14 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
 		__COUT__ << "Unable to connect to the run_info database for insert new run number and info!\n" << __E__;
-		PQfinish(runInfoDbConn_);
+		PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
 
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
 			__COUT__ << "Unable to connect for the second time to the run_info database to update the transition!\n" << __E__;
-			PQfinish(runInfoDbConn_);
+			PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
 		}
 		else
 		{
@@ -190,7 +195,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 	}
 
 	// write run info into db
-	if(runInfoDbConnStatus_ == 1)
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
 		char      buffer[1024];
@@ -314,14 +319,14 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
 		__COUT__ << "Unable to connect to the run_info database to update the transition!\n" << __E__;
-		PQfinish(runInfoDbConn_);
+		PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
 		
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
 			__COUT__ << "Unable to connect for the second time to the run_info database to update the transition!\n" << __E__;
-			PQfinish(runInfoDbConn_);
+			PQfinish(runInfoDbConn_); runInfoDbConn_ = nullptr;
 		}
 		else
 		{
@@ -336,7 +341,7 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 	}
 
 	// Insert the transition and time into db
-	if(runInfoDbConnStatus_ == 1)
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		int runTransitionType;
 		std::string transitionDescription = "";
