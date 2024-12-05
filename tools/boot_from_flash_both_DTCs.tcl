@@ -16,3 +16,4 @@ refresh_hw_device [lindex [get_hw_devices] 0]
 close_hw_target
 
 disconnect_hw_server
+close_hw_manager
