@@ -14,8 +14,8 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 {
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
-	__MCOUT_INFO__("ROCPolarFireCoreInterface instantiated with link: "
-	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+	__COUT_INFO__ << "ROCPolarFireCoreInterface instantiated with link: "
+	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	
 
@@ -101,14 +101,14 @@ void ROCPolarFireCoreInterface::configure(void) try
 		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
 		return;
 	}
-	 __MCOUT_INFO__("......... Clear DCS FIFOs" << __E__);
+	 __FE_COUT_INFO__ << "......... Clear DCS FIFOs" << __E__;
 	// this->writeRegister(0,1);
 	//this->writeRegister(0,0);  // MT: in DracMonitor, write ANY to addr 0 to issue TOP_SERDES reset. Self-clearing.  
 
 	// setup needToResetAlignment using rising edge of register 22
 	// (i.e., force synchronization of ROC clock with 40MHz system clock)
-	__MCOUT_INFO__("......... setup to synchronize ROC clock with 40 MHz clock edge"
-	               << __E__);
+	__FE_COUT_INFO__ << "......... setup to synchronize ROC clock with 40 MHz clock edge"
+	               << __E__;
 	//this->writeRegister(22, 0);
 	//this->writeRegister(22, 1);
 	//this->writeRegister(4, 1); // MT: in DracMonitor, DCS_ALIGNMENT is addr 4.  Self-clearing
@@ -116,9 +116,9 @@ void ROCPolarFireCoreInterface::configure(void) try
 
 	this->writeDelay(delay_);
 
-	__MCOUT_INFO__("........."
+	__FE_COUT_INFO__ << "........."
 	               << " Set delay = " << delay_ << ", readback = " << this->readDelay()
-	               << "... ");
+	               << "... " << __E__;
 
 	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
 
@@ -129,7 +129,7 @@ void ROCPolarFireCoreInterface::configure(void) try
 	{
 		val = this->readRegister(6);
 
-		//__MCOUT_INFO__(i << " read register 6 = " << val << __E__);
+		//__FE_COUT_INFO__ << i << " read register 6 = " << val << __E__;
 		if(val != 4860)
 		{
 			__FE_SS__ << "Bad read not 4860! val = " << val << __E__;
@@ -137,7 +137,7 @@ void ROCPolarFireCoreInterface::configure(void) try
 		}
 
 		val = this->readDelay();
-		//__MCOUT_INFO__(i << " read register 7 = " << val << __E__);
+		//__FE_COUT_INFO__ << i << " read register 7 = " << val << __E__;
 		if(val != delay_)
 		{
 			__FE_SS__ << "Bad read not " << delay_ << "! val = " << val << __E__;
@@ -145,12 +145,12 @@ void ROCPolarFireCoreInterface::configure(void) try
 		}
 	}
 
-	__MCOUT_INFO__("......... reset DTC link loss counter ... ");
+	__FE_COUT_INFO__ << "......... reset DTC link loss counter ... " << __E__;
 	resetDTCLinkLossCounter();
 }  // end configure()
 catch(const std::runtime_error& e)
 {
-	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
+	__FE_COUT__ << "Error caught: " << e.what() << __E__;
 	throw;
 }
 catch(...)

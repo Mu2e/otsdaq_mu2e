@@ -218,7 +218,7 @@ void CAPTANSignalGenerator::stop(void)
 
 	if(stopIndex > numberOfCAPTANPulses)
 	{
-		//    __MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
+		__FE_COUT_INFO__ << " loopback DONE" << __E__;
 
 		// Run Stop Sequence Commands
 

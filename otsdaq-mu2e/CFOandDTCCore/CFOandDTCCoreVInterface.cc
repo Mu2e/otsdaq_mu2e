@@ -632,7 +632,7 @@ void CFOandDTCCoreVInterface::HardReset(__ARGS__) { getCFOandDTCRegisters()->Har
 //	{
 //		//	__FE_COUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140)
 //		//<< std::dec << __E__;
-//		//	__MOUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) <<
+//		//	__COUT__ << "DTC links OK = 0x" << std::hex << registerRead(0x9140) <<
 //		// std::dec << __E__;
 //
 //		return 1;
@@ -641,7 +641,7 @@ void CFOandDTCCoreVInterface::HardReset(__ARGS__) { getCFOandDTCRegisters()->Har
 //	{
 //		//	__FE_COUT__ << "DTC links not OK = 0x" << std::hex <<
 //		// registerRead(0x9140) << std::dec << __E__;
-//		//	__MOUT__ << "DTC links not OK = 0x" << std::hex << registerRead(0x9140)
+//		//	__COUT__ << "DTC links not OK = 0x" << std::hex << registerRead(0x9140)
 //		//<< std::dec << __E__;
 //
 //		return 0;

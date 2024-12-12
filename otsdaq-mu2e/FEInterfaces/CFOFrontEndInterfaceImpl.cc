@@ -532,8 +532,8 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 		//--------read delay value
 		unsigned int delay = registerRead(0x9360);
 
-		//__MCOUT_INFO__("LOOPBACK iteration " << std::dec << n << " gives " << delay <<
-		//__E__);
+		//__COUT_INFO__ << "LOOPBACK iteration " << std::dec << n << " gives " << delay <<
+		//__E__;
 
 		if(delay < 10000 && n > 5)
 		{  // skip the first events since the ROC is
@@ -618,11 +618,11 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 
 	for(unsigned int n = (min_distribution_ - 5); n < (max_distribution_ + 5); n++)
 	{
-		__MCOUT_INFO__(" delay [ " << n << " ] = " << loopback_distribution_[n] << __E__);
+		__COUT_INFO__ << " delay [ " << n << " ] = " << loopback_distribution_[n] << __E__;
 	}
 
-	__MCOUT_INFO__(" average = " << average_loopback_ << " ns, RMS = " << rms_loopback_
-	                             << " ns, failures = " << failed_loopback_ << __E__);
+	__COUT_INFO__ << " average = " << average_loopback_ << " ns, RMS = " << rms_loopback_
+	                             << " ns, failures = " << failed_loopback_ << __E__;
 
 	__FE_COUT__ << __E__;
 
@@ -727,7 +727,7 @@ void CFOFrontEndInterface::configure(void)
 		{
 			// only configure the clock/crystal the first loop through...
 
-			__MCOUT_INFO__("Step " << config_step << ": CFO reset clock..." << __E__);
+			__FE_COUT_INFO__ << "Step " << config_step << ": CFO reset clock..." << __E__;
 
 			__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
 			thisCFO_->SetSERDESOscillatorFrequency(0x09502F90);
@@ -768,8 +768,8 @@ void CFOFrontEndInterface::configure(void)
 		}
 		else
 		{
-			__MCOUT_INFO__("Step " << config_step << ": CFO do NOT reset clock..."
-			                       << __E__);
+			__FE_COUT_INFO__ << "Step " << config_step << ": CFO do NOT reset clock..."
+			                       << __E__;
 		}
 	}
 	else if((config_step % number_of_dtc_config_steps) == 3)
@@ -777,7 +777,7 @@ void CFOFrontEndInterface::configure(void)
 		// after DTC jitter attenuator OK, config CFO SERDES PLLs and TX
 		if(reset_tx == 1)
 		{
-			__MCOUT_INFO__("Step " << config_step << ": CFO reset TX..." << __E__);
+			__FE_COUT_INFO__ << "Step " << config_step << ": CFO reset TX..." << __E__;
 
 			__FE_COUT__ << "CFO reset serdes PLLs " << __E__;
 			thisCFO_->ResetAllSERDESPlls();
@@ -793,15 +793,15 @@ void CFOFrontEndInterface::configure(void)
 		}
 		else
 		{
-			__MCOUT_INFO__("Step " << config_step << "CFO do NOT reset TX..." << __E__);
+			__FE_COUT_INFO__ << "Step " << config_step << "CFO do NOT reset TX..." << __E__;
 		}
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
-		__MCOUT_INFO__("Step " << config_step
+		__FE_COUT_INFO__ << "Step " << config_step
 		                       << ": CFO enable Event start characters, SERDES Tx "
 		                          "and Rx, and event window interval"
-		                       << __E__);
+		                       << __E__;
 
 		__FE_COUT__ << "CFO reset serdes RX " << __E__;
 		thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -837,8 +837,6 @@ void CFOFrontEndInterface::configure(void)
 		if(thisCFO_->ReadSERDESRXCDRLock(CFOLib::CFO_Link_ID::CFO_Link_0))
 		{
 			__FE_COUT_INFO__ << "CFO links OK \n" << thisCFO_->FormatSERDESRXCDRLock() << __E__;
-			// __MCOUT_INFO__("CFO links OK = 0x" << std::hex << registerRead(0x9140)
-			//                                    << std::dec << __E__);
 
 			if(number_of_system_configs < 0)
 			{
@@ -848,8 +846,6 @@ void CFOFrontEndInterface::configure(void)
 		else
 		{
 			__FE_COUT_INFO__ << "CFO links not OK \n" << thisCFO_->FormatSERDESRXCDRLock() << __E__;
-			// __MCOUT_INFO__("CFO links not OK = 0x" << std::hex << registerRead(0x9140)
-			//                                        << std::dec << __E__);
 		}
 		__FE_COUT__ << __E__;
 	}
@@ -1198,8 +1194,8 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 
 	if(startIndex > numberOfMeasurements)  // finish
 	{
-		__MCOUT_INFO__("-------------------------" << __E__);
-		__MCOUT_INFO__("FULL SYSTEM loopback DONE" << __E__);
+		__FE_COUT_INFO__ << "-------------------------" << __E__;
+		__FE_COUT_INFO__ << "FULL SYSTEM loopback DONE" << __E__;
 
 		for(int nChain = 0; nChain < numberOfChains; nChain++)
 		{
@@ -1207,19 +1203,19 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 			{
 				for(int nROC = 0; nROC < numberOfROCsPerDTC; nROC++)
 				{
-					__MCOUT_INFO__("chain "
+					__FE_COUT_INFO__ << "chain "
 					               << nChain << " - DTC " << nDTC << " - ROC " << nROC
 					               << " = " << std::dec << delay[nChain][nDTC][nROC]
 					               << " ns +/- " << delay_rms[nChain][nDTC][nROC] << " ("
-					               << delay_failed[nChain][nDTC][nROC] << ")" << __E__);
+					               << delay_failed[nChain][nDTC][nROC] << ")" << __E__;
 				}
 			}
 		}
 
 		float diff = delay[0][1][0] - delay[0][0][0];
 
-		__MCOUT_INFO__("DTC1_ROC0 - DTC0_ROC0 = " << diff << __E__);
-		__MCOUT_INFO__("-------------------------" << __E__);
+		__FE_COUT_INFO__ << "DTC1_ROC0 - DTC0_ROC0 = " << diff << __E__;
+		__FE_COUT_INFO__ << "-------------------------" << __E__;
 
 		__FE_COUT__ << "LOOPBACK: CFO reset serdes RX " << __E__;
 		registerWrite(0x9118, 0x000000ff);
@@ -1264,14 +1260,14 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		}
 	}
 
-	//	__MOUT__ 	<< "loopback index = " << startIndex;
-	__MCOUT_INFO__(" Looping back DTC" << activeDTC << " ROC" << activeROC << __E__);
+	//	__COUT__ 	<< "loopback index = " << startIndex;
+	__FE_COUT_INFO__ << " Looping back DTC" << activeDTC << " ROC" << activeROC << __E__;
 
 	int chainIndex = 0;
 
 	while((chainIndex < numberOfChains))
 	{
-		//__MCOUT__( "LOOPBACK: on DTC " << link[chainIndex] <<__E__);
+		//__COUT__ << "LOOPBACK: on DTC " << link[chainIndex] <<__E__;
 		MeasureLoopback(link[chainIndex]);
 
 		delay[chainIndex][activeDTC][activeROC]        = average_loopback_;
@@ -1370,7 +1366,7 @@ void CFOFrontEndInterface::stop(void)
 
 		__FE_COUT__ << __E__;
 
-		//__MCOUT_INFO__("iter file1  file2  diff" << __E__);
+		//__FE_COUT_INFO__ << "iter file1  file2  diff" << __E__;
 
 		int distribution[1001] = {};
 
@@ -1407,14 +1403,14 @@ void CFOFrontEndInterface::stop(void)
 					if(timestamp_diff[i] > max_distribution)
 					{
 						max_distribution = timestamp_diff[i];
-						__COUT__ << i << " new max    " << timestamp_source1[i] << "   "
+						__FE_COUT__ << i << " new max    " << timestamp_source1[i] << "   "
 						         << timestamp_source2[i] << "   " << timestamp_diff[i]
 						         << __E__;
 					}
 
 					if(timestamp_diff[i] < min_distribution)
 					{
-						__COUT__ << i << " new min    " << timestamp_source1[i] << "   "
+						__FE_COUT__ << i << " new min    " << timestamp_source1[i] << "   "
 						         << timestamp_source2[i] << "   " << timestamp_diff[i]
 						         << __E__;
 
@@ -1449,16 +1445,16 @@ void CFOFrontEndInterface::stop(void)
 		//    __FE_COUT__ << "LOOPBACK: max_distribution_: " << max_distribution_ <<
 		//    __E__;
 
-		__MCOUT_INFO__("--------------------------------------------" << __E__);
-		__MCOUT_INFO__("--CAPTAN timestamp difference distribution--" << __E__);
+		__FE_COUT_INFO__ << "--------------------------------------------" << __E__;
+		__FE_COUT_INFO__ << "--CAPTAN timestamp difference distribution--" << __E__;
 		for(int n = (min_distribution - 5); n < (max_distribution + 5); n++)
 		{
 			int display = n - offset;
-			__MCOUT_INFO__(" diff [ " << display << " ] = " << distribution[n] << __E__);
+			__FE_COUT_INFO__ << " diff [ " << display << " ] = " << distribution[n] << __E__;
 		}
-		__MCOUT_INFO__("--------------------------------------------" << __E__);
+		__FE_COUT_INFO__ << "--------------------------------------------" << __E__;
 
-		__MCOUT_INFO__("Average = " << average << " ... RMS = " << rms << __E__);
+		__FE_COUT_INFO__ << "Average = " << average << " ... RMS = " << rms << __E__;
 
 		return;
 	}
