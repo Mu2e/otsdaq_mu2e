@@ -624,7 +624,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation),                  // feMacroFunction
 					std::vector<std::string>{"Enable CFO Emulator (Default := false)",
 											"Number of 1.4s super cycle repetitions (0 := infinite)",
-											"Starting Event Window Tag",
+											"Starting Event Window Tag (Default: 0)",
 											"Enable Auto-generation of Data Request Packets (Default := false)",
 											"Enable Clock Markers (Default := false)",
 											"Use Detached Buffer Test (Default := false)",
@@ -648,7 +648,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Enable CFO Emulator (Default := false)",
 											"Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",
 											"Number of Event Window Markers to generate (0 := infinite)",
-											"Starting Event Window Tag",
+											"Starting Event Window Tag (Default: 0)",
 											"Event Window Mode (Default := 1)",
 											"Enable Auto-generation of Data Request Packets (Default := false)",
 											"Enable Clock Markers (Default := false)",
@@ -1354,8 +1354,8 @@ try
 	// 	if((config_jitter_attenuator == 1 || emulate_cfo_ == 1) &&
 	// 	   config_step < number_of_dtc_config_steps)
 	// 	{
-	// 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-	// 		                       << " configure Jitter Attenuator..." << __E__);
+	// 		__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+	// 		                       << " configure Jitter Attenuator..." << __E__;
 
 	// 		// It's needed only after a powercycle
 	// 		configureJitterAttenuator();
@@ -1365,16 +1365,16 @@ try
 	// 	}
 	// 	else
 	// 	{
-	// 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-	// 		                       << " do NOT configure Jitter Attenuator..." << __E__);
+	// 		__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+	// 		                       << " do NOT configure Jitter Attenuator..." << __E__;
 	// 	}
 	// }
 	// else if((config_step % number_of_dtc_config_steps) == 3)
 	// {
 	// 	if(emulate_cfo_ == 1)
 	// 	{
-	// 		__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-	// 		                       << " enable CFO emulation and internal clock");
+	// 		__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+	// 		                       << " enable CFO emulation and internal clock" << __E__;
 
 	// 		int dataToWrite = 0x40808404;
 	// 		registerWrite(0x9100, dataToWrite);  // This disable retransmission + set the
@@ -1396,8 +1396,8 @@ try
 	// else if((config_step % number_of_dtc_config_steps) == 4) {}
 	// else if((config_step % number_of_dtc_config_steps) == 5)
 	// {
-	// 	__MCOUT_INFO__("Step " << config_step << ": " << device_name_
-	// 	                       << " enable markers, Tx, Rx" << __E__);
+	// 	__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_
+	// 	                       << " enable markers, Tx, Rx" << __E__;
 
 	// 	// enable markers, tx and rx
 
@@ -1419,8 +1419,8 @@ try
 	// 	// put DTC CFO link output into loopback mode
 	// 	__FE_COUT__ << "DTC set CFO link output loopback mode ENABLE" << __E__;
 
-	// 	__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configure ROCs"
-	// 	                       << __E__);
+	// 	__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_ << " configure ROCs"
+	// 	                       << __E__;
 
 	// 	bool doConfigureROCs = false;
 	// 	try
@@ -1443,10 +1443,10 @@ try
 	// {
 	// 	if(emulate_cfo_ == 1)
 	// 	{
-	// 		__MCOUT_INFO__("Step " << config_step
+	// 		__FE_COUT_INFO__ << "Step " << config_step
 	// 		                       << ": CFO emulation enable Event start characters "
 	// 		                          "and event window interval"
-	// 		                       << __E__);
+	// 		                       << __E__;
 
 	// 		__FE_COUT__ << "CFO emulation:  set Event Window interval" << __E__;
 	// 		registerWrite(0x91f0, 0x00000000);  // for NO markers, write these
@@ -1456,16 +1456,16 @@ try
 
 	// 		__FE_COUT__ << "CFO emulation:  set heartbeat interval " << __E__;
 	// 	}
-	// 	__MCOUT_INFO__("Step " << config_step << ": " << device_name_ << " configured"
-	// 	                       << __E__);
+	// 	__FE_COUT_INFO__ << "Step " << config_step << ": " << device_name_ << " configured"
+	// 	                       << __E__;
 
 	// 	__FE_COUTV__(getIterationIndex());
 	// 	__FE_COUTV__(getSubIterationIndex());
 
 	// 	if(checkLinkStatus() == 1)
 	// 	{
-	// 		__MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex
-	// 		                            << registerRead(0x9140) << std::dec << __E__);
+	// 		__FE_COUT_INFO__ << device_name_ << " links OK 0x" << std::hex
+	// 		                            << registerRead(0x9140) << std::dec << __E__;
 
 	// 		// usleep(500000 ); //500ms/
 	// 		sleep(1);
@@ -1475,21 +1475,21 @@ try
 	// 		{
 	// 			isLastTimeThroughConfigure = true;
 	// 			// do a final DTC Reset
-	// 			//__MCOUT_INFO__("Last step in configuration; doing DTCSoftReset" << __E__);
+	// 			//__FE_COUT_INFO__ << "Last step in configuration; doing DTCSoftReset" << __E__;
 	// 			// DTCSoftReset();
 	// 		}
 	// 	}
 	// 	else if(config_step > max_number_of_tries)
 	// 	{
 	// 		isLastTimeThroughConfigure = true;
-	// 		__MCOUT_INFO__(device_name_ << " after " << max_number_of_tries
+	// 		__FE_COUT_INFO__ << device_name_ << " after " << max_number_of_tries
 	// 		                            << " tries, links not OK 0x" << std::hex
-	// 		                            << registerRead(0x9140) << std::dec << __E__);
+	// 		                            << registerRead(0x9140) << std::dec << __E__;
 	// 	}
 	// 	else
 	// 	{
-	// 		__MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex
-	// 		                            << registerRead(0x9140) << std::dec << __E__);
+	// 		__FE_COUT_INFO__ << device_name_ << " links not OK 0x" << std::hex
+	// 		                            << registerRead(0x9140) << std::dec << __E__;
 	// 	}
 
 	// 	__FE_COUTV__(isLastTimeThroughConfigure);
@@ -1498,7 +1498,7 @@ try
 	// 		sleep(2);
 	// 		// write anything to reset
 	// 		// 0x93c8 is RX CDR Unlock counter (32-bit)
-	// 		__MCOUT_INFO__("LAST STEP!! Reset Loss-of-Lock Counter() on DTC");
+	// 		__FE_COUT_INFO__ << "LAST STEP!! Reset Loss-of-Lock Counter() on DTC" << __E__;
 
 	// 		registerWrite(0x93c8, 0);
 
@@ -2171,9 +2171,9 @@ void DTCFrontEndInterface::stop(void)
 	// 	int i = 0;
 	// 	for(auto& roc : rocs_)
 	// 	{
-	// 		__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost "
+	// 		__FE_COUT_INFO__ << ".... ROC" << roc.second->getLinkID() << "-DTC link lost "
 	// 		                          << roc.second->readDTCLinkLossCounter()
-	// 		                          << " times");
+	// 		                          << " times" << __E__;
 	// 		datafile_[i].close();
 	// 		i++;
 	// 	}
@@ -2383,7 +2383,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	// 	return;
 	// }
 
-	// __MCOUT_INFO__(device_name_ << " Ignoring loopback for now..." << __E__);
+	// __FE_COUT_INFO__ << device_name_ << " Ignoring loopback for now..." << __E__;
 	// return;  // for now ignore loopback mode
 
 	// const int numberOfChains = 1;
@@ -2417,25 +2417,25 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 	// if(loopbackIndex > totalNumberOfMeasurements)  // finish
 	// {
-	// 	__MCOUT_INFO__(device_name_ << " loopback DONE" << __E__);
+	// 	__FE_COUT_INFO__ << device_name_ << " loopback DONE" << __E__;
 
 	// 	if(checkLinkStatus() == 1)
 	// 	{
-	// 		//      __MCOUT_INFO__(device_name_ << " links OK 0x" << std::hex <<
-	// 		//      registerRead(0x9140) << std::dec << __E__);
+	// 		//      __FE_COUT_INFO__ << device_name_ << " links OK 0x" << std::hex <<
+	// 		//      registerRead(0x9140) << std::dec << __E__;
 	// 	}
 	// 	else
 	// 	{
-	// 		//      __MCOUT_INFO__(device_name_ << " links not OK 0x" << std::hex <<
-	// 		//      registerRead(0x9140) << std::dec << __E__);
+	// 		//      __FE_COUT_INFO__ << device_name_ << " links not OK 0x" << std::hex <<
+	// 		//      registerRead(0x9140) << std::dec << __E__;
 	// 	}
 
 	// 	if(0)
 	// 		for(auto& roc : rocs_)
 	// 		{
-	// 			__MCOUT_INFO__(".... ROC" << roc.second->getLinkID() << "-DTC link lost "
+	// 			__FE_COUT_INFO__ << ".... ROC" << roc.second->getLinkID() << "-DTC link lost "
 	// 			                          << roc.second->readDTCLinkLossCounter()
-	// 			                          << " times");
+	// 			                          << " times";
 	// 		}
 
 	// 	registerWrite(0x9100, initial_9100_);
@@ -3743,7 +3743,7 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 			__GET_ARG_IN__("Enable CFO Emulator (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",uint32_t),			
 			__GET_ARG_IN__("Number of 1.4s super cycle repetitions (0 := infinite)",uint32_t),
-			__GET_ARG_IN__("Starting Event Window Tag",uint64_t),
+			__GET_ARG_IN__("Starting Event Window Tag (Default: 0)",uint64_t),
 			__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
 			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false),
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
@@ -3859,7 +3859,7 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
 			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string, "0x44 clocks"),
 			__GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t),
-			__GET_ARG_IN__("Starting Event Window Tag",uint64_t),
+			__GET_ARG_IN__("Starting Event Window Tag (Default: 0)",uint64_t),
 			__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
 			__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
 			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false),

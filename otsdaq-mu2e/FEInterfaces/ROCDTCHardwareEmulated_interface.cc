@@ -15,8 +15,8 @@ ROCDTCHardwareEmulated::ROCDTCHardwareEmulated(
 {
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
-	__MCOUT_INFO__("ROCDTCHardwareEmulated instantiated with link: "
-	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__);
+	__COUT_INFO__ << "ROCDTCHardwareEmulated instantiated with link: "
+	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__;
 }  // end constructor()
 
 //==========================================================================================
@@ -108,7 +108,7 @@ void ROCDTCHardwareEmulated::configure(void) try
 }  // end configure()
 catch(const std::runtime_error& e)
 {
-	__FE_MOUT__ << "Error caught: " << e.what() << __E__;
+	__FE_COUT__ << "Error caught: " << e.what() << __E__;
 	throw;
 }
 catch(...)
