@@ -2316,6 +2316,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		__FE_SS_THROW__;
 	}
 
+	thisDTC_->SoftReset(); //reset counters
 	return;
 
 	// /////////////////////////////
