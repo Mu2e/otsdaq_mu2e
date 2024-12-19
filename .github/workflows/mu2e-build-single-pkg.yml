@@ -1,0 +1,18 @@
+name: Build Single Pkg Workflow
+
+on:
+  push:
+    branches: 
+      - develop
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+  pull_request:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+
+  build_single_pkg:
+    name: build single pkg
+    uses: Mu2e/.github/.github/workflows/mu2e-build-single-pkg.yml@stable
