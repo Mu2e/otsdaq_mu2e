@@ -287,7 +287,7 @@ if [ $opt_no_kmod -eq 1 ];then
     spack add trace~kmod
 fi
 
-spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} %gcc@13.1.0
+spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
 
 # Add EMACS
 spack add cairo+X+fc+ft ${arch_opt}
