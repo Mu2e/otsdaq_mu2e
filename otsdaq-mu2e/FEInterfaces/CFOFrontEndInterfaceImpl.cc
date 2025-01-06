@@ -1125,6 +1125,12 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
+	if(getIterationIndex() == 0 && getSubIterationIndex() == 0)
+	{
+		next_starting_event_window_tag_ = 0; //reset next event window tag
+		__FE_COUTV__(next_starting_event_window_tag_);
+	}
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Start the loopback!" << __E__;
@@ -1584,12 +1590,29 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 //========================================================================
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__)
 {	
+	uint64_t startTag = __GET_ARG_IN__("Starting Event Window Tag (Default: 0)",uint64_t,-1);
+	if(startTag == (uint64_t)-1) //if DEFAULT, then continue from next tag position
+	{
+		__FE_COUTV__(next_starting_event_window_tag_);
+		startTag = next_starting_event_window_tag_;
+	}
+	//else take user input
+
+	__FE_COUTV__(startTag);
+
+	uint32_t numberOfCycles = __GET_ARG_IN__("Number of 1.4s super cycle repetitions (0 := infinite)",uint32_t);
+	__FE_COUTV__(numberOfCycles);
+
+	//setup next tag calculation
+	next_starting_event_window_tag_ += numberOfCycles * numberOfCycles;
+	__FE_COUTV__(next_starting_event_window_tag_);
+
 	__SET_ARG_OUT__("response", 
 		CompileSetAndLaunchTemplateSuperCycleRunPlan(
 			__GET_ARG_IN__("Enable CFO Run Plan Execution (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",uint32_t),			
-			__GET_ARG_IN__("Number of 1.4s super cycle repetitions (0 := infinite)",uint32_t),
-			__GET_ARG_IN__("Starting Event Window Tag (Default: 0)",uint64_t),
+			numberOfCycles,
+			startTag,
 			__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
 			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
@@ -1712,13 +1735,30 @@ void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 //========================================================================
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__)
 {	
+	uint64_t startTag = __GET_ARG_IN__("Starting Event Window Tag (Default: 0)",uint64_t,-1);
+	if(startTag == (uint64_t)-1) //if DEFAULT, then continue from next tag position
+	{
+		__FE_COUTV__(next_starting_event_window_tag_);
+		startTag = next_starting_event_window_tag_;
+	}
+	//else take user input
+
+	__FE_COUTV__(startTag);
+
+	uint32_t numberOfEvents= __GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t);
+	__FE_COUTV__(numberOfEvents);
+
+	//setup next tag calculation
+	next_starting_event_window_tag_ += numberOfEvents;
+	__FE_COUTV__(next_starting_event_window_tag_);
+	
 	__SET_ARG_OUT__("response", 
 		CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			__GET_ARG_IN__("Enable CFO Run Plan Execution (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
 			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
-			__GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",uint32_t),
-			__GET_ARG_IN__("Starting Event Window Tag (Default: 0)",uint64_t),
+			numberOfEvents,
+			startTag,
 			__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
 			__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
 			__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),

@@ -90,21 +90,16 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
   private:
 
-	void initDetachedBufferTest(
-		uint64_t initialEventWindowTag,
-		bool saveBinaryDataToFile,
-		bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
-	static void detechedBufferTestThread(
-		std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag,
+																			bool saveBinaryDataToFile,
+																			bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
+	static void 						detechedBufferTestThread			(std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 
 	
-	void 								registerFEMacros			(void);
+	void 								registerFEMacros					(void);
 	
-	// CFOLib::CFO_Registers* 				thisCFO_;
-	int									timing_chain_first_substep_	   = -1;
-	//int                    configure_clock_ = 0;
-
-	// float        						average_loopback_;
+	int									timing_chain_first_substep_	   		= -1;
+	uint64_t							next_starting_event_window_tag_		= 0;
 
   public:
 
@@ -113,22 +108,22 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	// void 								FlashLEDs						(__ARGS__);	
 	// void 								GetFirmwareVersion				(__ARGS__);
 	// void 								GetStatus						(__ARGS__);
-	void 								GetCounters						(__ARGS__);
+	void 								GetCounters							(__ARGS__);
 	// void 								GetFPGATemperature				(__ARGS__);
 	// void								SelectJitterAttenuatorSource	(__ARGS__);
 
 
-	void 								CFOReset						(__ARGS__);
-	void 								CFOHalt							(__ARGS__);
-	void 								EnableOrDisableClockMarkers		(__ARGS__);
-	
-	void 								WriteCFO						(__ARGS__);
-	void 								ReadCFO							(__ARGS__);
-	void 								ResetRunplan					(__ARGS__);
-	void 								CompileRunplan					(__ARGS__);
-	void 								SetRunplan						(__ARGS__);
-	std::string							SetRunplan						(const std::string& binFilename);
-	void 								LaunchRunplan					(__ARGS__);
+	void 								CFOReset							(__ARGS__);
+	void 								CFOHalt								(__ARGS__);
+	void 								EnableOrDisableClockMarkers			(__ARGS__);
+
+	void 								WriteCFO							(__ARGS__);
+	void 								ReadCFO								(__ARGS__);
+	void 								ResetRunplan						(__ARGS__);
+	void 								CompileRunplan						(__ARGS__);
+	void 								SetRunplan							(__ARGS__);
+	std::string							SetRunplan							(const std::string& binFilename);
+	void 								LaunchRunplan						(__ARGS__);
 	void 								CompileSetAndLaunchTemplateSuperCycleRunPlan	(__ARGS__);
 	std::string							CompileSetAndLaunchTemplateSuperCycleRunPlan	(bool enable,
 																						bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
@@ -139,9 +134,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 																						std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																						uint64_t eventWindowMode, bool enableClockMarkers, bool saveBinaryDataToFile,
 																						bool saveSubeventHeadersToDataFile,	bool doNotResetCounters);
-	void 								ConfigureForTimingChain			(__ARGS__);
-	void								LoopbackTest					(__ARGS__);
-	void 								TestMarker						(__ARGS__);
+	void 								ConfigureForTimingChain				(__ARGS__);
+	void								LoopbackTest						(__ARGS__);
+	void 								TestMarker							(__ARGS__);
 };
 
 // clang-format on
