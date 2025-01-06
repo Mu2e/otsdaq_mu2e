@@ -333,8 +333,11 @@ echo # This script is intended to be sourced.
 sh -c "[ \`ps \$\$ | grep bash | wc -l\` -gt 0 ] || { echo 'Please switch to the bash shell before running ots.'; exit; }" || exit
 export SPACK_DISABLE_LOCAL_CONFIG=true
 source $spackdir/share/spack/setup-env.sh
-spack env activate ${env_to_activate}
 
+spack load --first gcc@13.1.0
+spack compiler find
+
+spack env activate ${env_to_activate}
 if [ -d $Base/local/install ]; then
   export PATH=$Base/local/install/bin:\$PATH
   export LD_LIBRARY_PATH=$Base/local/install/lib:\$LD_LIBRARY_PATH
