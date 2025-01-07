@@ -424,6 +424,7 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 		__SS_THROW__;
 	}
 	
+	__COUT__ << "done with the run_info database for updating the transition!" << __E__;
 } //end updateRunInfo()
 
 
