@@ -113,7 +113,7 @@ exec 2> >(tee "$Base/log/$stderr_file")
 
 # Get all the information we'll need to decide which exact flavor of the software to install
 notag=0
-if [ -z "${tag:-}" ]; then 
+if [ -z "${tag:-}" ]; then
   tag=develop;
   notag=1;
 fi
