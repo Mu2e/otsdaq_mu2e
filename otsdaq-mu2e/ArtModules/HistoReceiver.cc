@@ -18,9 +18,9 @@ namespace ots {
       object->Add((TH1 *)readObject); 
     }
   }
-  
+
   void HistoReceiver::readPacket(TDirectory *dir, std::string* buf){
-  
+
     TBufferFile   message(TBuffer::kWrite);         // prepare message
     message.WriteBuf(buf->data(), buf->size()); // copy buffer
     message.SetReadMode();
@@ -32,7 +32,7 @@ namespace ots {
     do {
       message.ReadStdString(directoryNameStdString);
       TString directoryName(directoryNameStdString);
-      
+
       //__COUT__ << "[HistoReceiver::readPacket] Moving in dir: "<< directoryNameStdString << std::endl;
 
       TDirectory* subdir = dir;
