@@ -2070,7 +2070,7 @@ void CFOFrontEndInterface::handleDetachedSubevent(const CFOLib::CFO_Event& subev
 	threadStruct->totalSubeventBytesTransferred_ += sizeof(CFOLib::CFO_EventRecord); //for subevent header
 
 #if 1
-	//save binary CFO event record data	
+	//save binary CFO event record data
 	{
 		auto dataPtr = reinterpret_cast<const uint8_t*>(subevent->GetRawBufferPointer());
 		for (uint32_t l = 0; l < sizeof(CFOLib::CFO_EventRecord); l+=4)
