@@ -15,7 +15,7 @@ namespace ots {
       subdir->WriteTObject(readObject);
     }else{
       //      __COUT__ << "[HistoReceiver::addHistogram] updating hist: "<< object->GetName() << std::endl;
-      object->Add((TH1 *)readObject); 
+      object->Add((TH1 *)readObject);
     }
   }
 
