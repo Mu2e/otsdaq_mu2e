@@ -12,22 +12,9 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  check_whitespace_pr:
-    if: ${{ github.event_name == 'pull_request' }}
-    name: Check Git Whitespace
-    uses: Mu2e/.github/.github/workflows/git-whitespace.yml@stable
-    with: 
-      against-ref: ${{ github.base_ref }}
-
-  check_whitespace_push:
-    if: ${{ github.event_name == 'push' }}  
-    name: Check Git whitespace
-    uses: Mu2e/.github/.github/workflows/git-whitespace.yml@stable
-    with: 
-      against-ref: ${{ github.event.before }}
-
   check_whitespace_dispatch:
     if : ${{ github.event_name == 'workflow_dispatch' }}
     name: Check Git whitespace
     uses: Mu2e/.github/.github/workflows/git-whitespace.yml@stable
+    with:
+      against-ref: ${{ github.event_name == 'pull_request' && github.base_ref || github.event_name == 'push' && github.event.before || 0 }}
