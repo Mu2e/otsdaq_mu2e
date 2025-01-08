@@ -16,4 +16,4 @@ jobs:
     name: Check Git whitespace
     uses: Mu2e/.github/.github/workflows/git-whitespace.yml@stable
     with:
-      against-ref: ${{ github.event_name == 'pull_request' && github.base_ref || github.event_name == 'push' && github.event.before || 0 }}
+      against-ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || 0 }}
