@@ -41,7 +41,7 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 	// use isFirstAppInContext to only run once per context, for example to avoid
 	//	generating files on local disk multiple times.
 	isFirstAppInContext_ = configManager->isOwnerFirstAppInContext();
-	
+
 	channelListHasChanged_ = false;
 	
 	//__COUTV__(isFirstAppInContext);
