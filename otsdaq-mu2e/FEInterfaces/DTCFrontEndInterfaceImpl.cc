@@ -112,53 +112,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	// clang-format off
 
-	// registerFEMacroFunction(
-	// 	"Get Firmware Version",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::GetFirmwareVersion),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-	// 				1,  //"allUsers:0 | TDAQ:255");
-	// 				"*",
-	// 				"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
-	// );
-					
-	// registerFEMacroFunction(
-	// 	"Flash_LEDs",  // feMacroName
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::FlashLEDs),  // feMacroFunction
-	// 				std::vector<std::string>{},
-	// 				std::vector<std::string>{},  // namesOfOutputArgs
-	// 				1,  // requiredUserPermissions
-	// 				"*", // allowedCallingFEs
-	// 				"Flashes the LEDs, for example to help find the target FPGA in a multi-FPGA deployment."
-	// );
-
-	// registerFEMacroFunction(
-	// 	"Get Status",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::GetStatus),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Status"},
-	// 				1,  // requiredUserPermissions
-	// 				"*", // allowedCallingFEs
-	// 				"Reads and displays all registers in a human-readable format."
-	// );
-
-	// registerFEMacroFunction(
-	// 	"Get Simple Status",
-	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
-	// 				&DTCFrontEndInterface::GetSimpleStatus),            // feMacroFunction
-	// 				std::vector<std::string>{},  // namesOfInputArgs
-	// 				std::vector<std::string>{"Status"},
-	// 				1,  // requiredUserPermissions
-	// 				"*", // allowedCallingFEs
-	// 				"Similar to <b>Get Status</b>, this FE Macro fetches data from a select few registers. "
-	// 				"Registers <b>DTC Control, ROC Emulation Enable, Link Enable, SERDES Reset, and SERDES Reset Done</b> are displayed in a human-readable format."
-	// );
-
-
-
 	registerFEMacroFunction(
 		"ROC Setup",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -509,18 +462,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"It also includes the number of EVB RX packet errors, and number of times the Jitter Attenuator lost the RX Recovered clock and "
 					"lost the RX External clock since last reset."
 	);
-					
-	registerFEMacroFunction(
-		"Reset ALL (CFO/ROC/EVB) DTC Links",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::ResetDTCLinks),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1,   // requiredUserPermissions 
-					"*", 
-					"This FE Macro resets the SERDES TX/RX links and then the SERDES."
-	);
-
+				
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS <<
 		" steps. So choose 1 step at a time, 0-" << CONFIG_DTC_TIMING_CHAIN_STEPS-1 << 
@@ -560,6 +502,33 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"CFO packets will be transmitted instead to the next DTC (Normal operation). "
 	);
 	
+
+	registerFEMacroFunction(
+		"Enable/Disable DTC Link",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::EnableDTCLink),
+						std::vector<std::string>{"Target Link (Default = -1 := all links)",
+				        						"Set Link RX/TX Enable (Default := false)"
+											},
+						std::vector<std::string>{"Result"},
+					1,   // requiredUserPermissions
+					"*",
+					"This FE Macro enables/disables a target DTC Link 0-7 (i.e., 0-5 ROCs, 6 CFO, 7 EVB)."					
+	);	
+	
+	registerFEMacroFunction(
+		"Reset ALL (CFO/ROC/EVB) DTC Links",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetDTCLinks),
+					std::vector<std::string>{},
+					std::vector<std::string>{},
+					1,   // requiredUserPermissions 
+					"*", 
+					"This FE Macro resets the SERDES TX/RX links and then the SERDES."
+	);
+
+	//------------------
+
 	registerFEMacroFunction(
 		"Reset CFO Link Rx",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -568,7 +537,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					1,  // requiredUserPermissions
 					"*",
-					"Reset the SERDES RX interface."
+					"Reset the CFO SERDES RX interface."
 	);
 	registerFEMacroFunction(
 		"Reset CFO Link Tx",
@@ -578,7 +547,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},
 					1,  // requiredUserPermissions
 					"*",
-					"Reset the CFO SERDES RX interface."
+					"Reset the CFO SERDES TX interface."
 	);
 	registerFEMacroFunction(
 		"Reset CFO Link Rx PLL",
@@ -600,6 +569,42 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*", 
 					"Reset the CFO SERDES TX PLL."
 	);
+
+	//------------------
+	
+	registerFEMacroFunction(
+		"Reset EVB Link Rx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetEVBLinkRx),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,  // requiredUserPermissions
+					"*",
+					"Reset the EVB SERDES RX interface."
+	);
+	registerFEMacroFunction(
+		"Reset EVB Link Tx",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetEVBLinkTx),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,  // requiredUserPermissions
+					"*",
+					"Reset the EVB SERDES RX interface."
+	);
+	registerFEMacroFunction(
+		"Reset EVB Link Rx/Tx PLL",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::ResetEVBLinkRxTxPLL),            // feMacroFunction
+					std::vector<std::string>{},  // namesOfInputArgs
+					std::vector<std::string>{},
+					1,  // requiredUserPermissions
+					"*", 
+					"Reset the EVB SERDES RX/TX PLL."
+	);
+
+
+	//------------------
 
 	registerFEMacroFunction(
 		"CFO Interface (Emulation) Setup",
@@ -3235,7 +3240,7 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	// readData          = //registerRead(0x9308);
 		
 	uint32_t    val   = thisDTC_->ReadJitterAttenuatorSelect().to_ulong();//(readData >> 4) & 3;
-	std::string JAsrc = val == 0 ? "from CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
+	std::string JAsrc = val == 0 ? "from emulated CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
 
 	__SET_ARG_OUT__(
 	    "Upstream Rx Lock Loss Count",
@@ -3406,11 +3411,21 @@ std::string DTCFrontEndInterface::SetupROCs(DTCLib::DTC_Link_ID rocLinkIndex,
 	__FE_COUTV__(rocTimingEnable);
 	__FE_COUTV__(rocEmulationEnable);
 
+	if(rocLinkIndex > 5 && rocLinkIndex != DTC_Link_ID(-1))
+	{
+		__FE_SS__ << "Illegal Target ROC input: " << rocLinkIndex << __E__;
+		__FE_SS_THROW__;
+	}
 
-	if(rocRxTxEnable)
-		thisDTC_->EnableLink(rocLinkIndex);
-	else
-		thisDTC_->DisableLink(rocLinkIndex);
+
+	for(DTC_Link_ID link = (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):rocLinkIndex);
+			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
+	{
+		if(rocRxTxEnable)
+			thisDTC_->EnableLink(link);
+		else
+			thisDTC_->DisableLink(link);
+	}
 
 	if(rocTimingEnable)
 		thisDTC_->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, true);
@@ -3419,10 +3434,14 @@ std::string DTCFrontEndInterface::SetupROCs(DTCLib::DTC_Link_ID rocLinkIndex,
 		
 	__FE_COUTV__(rocEmulationType);
 
-	if(rocEmulationEnable)
-		thisDTC_->EnableROCEmulator(rocLinkIndex, rocEmulationType);
-	else
-		thisDTC_->DisableROCEmulator(rocLinkIndex, rocEmulationType);
+	for(DTC_Link_ID link = (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):rocLinkIndex);
+			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
+	{
+		if(rocEmulationEnable)
+			thisDTC_->EnableROCEmulator(link, rocEmulationType);
+		else
+			thisDTC_->DisableROCEmulator(link, rocEmulationType);
+	}
 
 	// To change the size of the event, need to write to each ROC emulator
 	// 0x91B0 (b0-10 roc0, b16-26 roc1), 0x91B4 (b0-10 roc2, b16-26 roc3), 0x91B8 (b0-10
@@ -3438,7 +3457,10 @@ std::string DTCFrontEndInterface::SetupROCs(DTCLib::DTC_Link_ID rocLinkIndex,
 		__FE_SS_THROW__;
 	}
 
-	thisDTC_->SetROCEmulationNumPackets(rocLinkIndex,wsize);
+
+	for(DTC_Link_ID link = (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):rocLinkIndex);
+			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
+		thisDTC_->SetROCEmulationNumPackets(rocLinkIndex,wsize);
 	
 	return thisDTC_->FormattedRegDump(20,thisDTC_->formattedROCEmulationFunctions_);
 
@@ -3596,6 +3618,27 @@ void DTCFrontEndInterface::DTCInstantiate()
 } //end DTCInstantiate()
 
 //========================================================================
+void DTCFrontEndInterface::EnableDTCLink(__ARGS__)
+{	
+	DTCLib::DTC_Link_ID linkIndex = DTCLib::DTC_Link_ID(__GET_ARG_IN__("Target Link (Default = -1 := all links)", uint8_t, -1 /* ALL */));
+	bool enable = __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false);
+	
+	__FE_COUTV__(linkIndex);
+	__FE_COUTV__(enable);
+
+	for(DTC_Link_ID link = (linkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):linkIndex);
+			link <=  (linkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(7):linkIndex); ++link )
+	{
+		if(enable)
+			thisDTC_->EnableLink(link);
+		else
+			thisDTC_->DisableLink(link);
+	}
+
+	__SET_ARG_OUT__("Result",  thisDTC_->FormatLinkEnable());
+} //end EnableDTCLink()
+
+//========================================================================
 void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
 {	
 	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
@@ -3620,8 +3663,7 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 		}
 	}
 	else
-		configureForTimingChain(stepIndex);
-	
+		configureForTimingChain(stepIndex);	
 
 } //end ConfigureForTimingChain()
 
@@ -3645,6 +3687,22 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 {	
 	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
 } //end ResetCFOLinkTxPLL()
+
+//========================================================================
+void DTCFrontEndInterface::ResetEVBLinkRx(__ARGS__)
+{	
+	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
+} //end ResetEVBLinkRx()
+//========================================================================
+void DTCFrontEndInterface::ResetEVBLinkTx(__ARGS__)
+{	
+	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
+} //end ReseResetEVBLinkTxtEVBRx()
+//========================================================================
+void DTCFrontEndInterface::ResetEVBLinkRxTxPLL(__ARGS__)
+{	
+	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_EVB_TXRX);
+} //end ResetEVBLinkRxTxPLL()
 
 //========================================================================
 void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)

@@ -230,7 +230,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 		"Jitter Attenuator Setup",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOandDTCCoreVInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)", 
+				        std::vector<std::string>{"Source Clock (0 is from emulated CFO, 1 is from RJ45)", 
 												"DoNotSet",
 												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
@@ -520,12 +520,12 @@ void CFOandDTCCoreVInterface::GetFPGATemperature(__ARGS__)
 void CFOandDTCCoreVInterface::SelectJitterAttenuatorSource(__ARGS__)
 {
 	uint32_t select = __GET_ARG_IN__(
-	    "Source Clock (0 is from CFO, 1 is from RJ45)", uint32_t);
+	    "Source Clock (0 is from emulated CFO, 1 is from RJ45)", uint32_t);
 	select %= 4;
 	__FE_COUTV__((unsigned int)select);
 
 	// choose jitter attenuator input select (reg 0x9308, bits 5:4)
-	//  0 is Upstream Control Link Rx Recovered Clock
+	//  0 is emulated CFO
 	//  1 is RJ45 Upstream Clock
 	//  2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
 
