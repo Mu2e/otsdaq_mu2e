@@ -367,13 +367,13 @@ void CFOandDTCCoreVInterface::FlashLEDs(__ARGS__)
 //========================================================================
 void CFOandDTCCoreVInterface::GetStatus(__ARGS__)
 {	
-	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(20, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
+	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(130, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
 } //end GetStatus()
 
 //========================================================================
 void CFOandDTCCoreVInterface::GetSimpleStatus(__ARGS__)
 {	
-	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(20, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
+	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(130, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
 } //end GetSimpleStatus()
 
 //========================================================================

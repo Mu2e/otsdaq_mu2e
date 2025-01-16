@@ -223,7 +223,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 							// "Software Generated Data Requests (bool)",
 							// "Do Not Send Heartbeats (bool)"
 							}, 
-						std::vector<std::string>{"response"},
+						std::vector<std::string>{"Result"},
 						1, // requiredUserPermissions
 						"*",
 						"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
@@ -247,7 +247,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 							// "Software Generated Data Requests (bool)",
 							// "Do Not Send Heartbeats (bool)"
 							}, 
-						std::vector<std::string>{"response"},
+						std::vector<std::string>{"Result"},
 						1, // requiredUserPermissions
 						"*",
 						"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
@@ -325,7 +325,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						// "Software Generated Data Requests (bool)",
 						// "Do Not Send Heartbeats (bool)"
 						}, 
-					std::vector<std::string>{"response"},
+					std::vector<std::string>{"Result"},
 					1, // requiredUserPermissions
 					"*",
 					"Read a specified number of events from the Data DMA channel-0, and attempt to validate data."
@@ -391,8 +391,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::DTCCounters),
 					std::vector<std::string>{},
 					std::vector<std::string>{						
-						"Packet Counters",
-						"Link Counters",
+						"Protocol Counters", 
 						"Performance Counters"},
 					1,  // requiredUserPermissions
 					"*",
@@ -572,35 +571,61 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	//------------------
 	
+	// registerFEMacroFunction(
+	// 	"Reset EVB Link Rx",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&DTCFrontEndInterface::ResetEVBLinkRx),            // feMacroFunction
+	// 				std::vector<std::string>{},  // namesOfInputArgs
+	// 				std::vector<std::string>{},
+	// 				1,  // requiredUserPermissions
+	// 				"*",
+	// 				"Reset the EVB SERDES RX interface."
+	// );
+	// registerFEMacroFunction(
+	// 	"Reset EVB Link Tx",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&DTCFrontEndInterface::ResetEVBLinkTx),            // feMacroFunction
+	// 				std::vector<std::string>{},  // namesOfInputArgs
+	// 				std::vector<std::string>{},
+	// 				1,  // requiredUserPermissions
+	// 				"*",
+	// 				"Reset the EVB SERDES RX interface."
+	// );
+	// registerFEMacroFunction(
+	// 	"Reset EVB Link Rx/Tx PLL",
+	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
+	// 				&DTCFrontEndInterface::ResetEVBLinkRxTxPLL),            // feMacroFunction
+	// 				std::vector<std::string>{},  // namesOfInputArgs
+	// 				std::vector<std::string>{},
+	// 				1,  // requiredUserPermissions
+	// 				"*", 
+	// 				"Reset the EVB SERDES RX/TX PLL."
+	// );
+
 	registerFEMacroFunction(
-		"Reset EVB Link Rx",
+		"Get DTC ID and Hardware EVB Info",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::ResetEVBLinkRx),            // feMacroFunction
+					&DTCFrontEndInterface::GetDTCIdAndEVBInfo),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{},
-					1,  // requiredUserPermissions
-					"*",
-					"Reset the EVB SERDES RX interface."
-	);
-	registerFEMacroFunction(
-		"Reset EVB Link Tx",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::ResetEVBLinkTx),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{},
-					1,  // requiredUserPermissions
-					"*",
-					"Reset the EVB SERDES RX interface."
-	);
-	registerFEMacroFunction(
-		"Reset EVB Link Rx/Tx PLL",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::ResetEVBLinkRxTxPLL),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{},
+					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
 					"*", 
-					"Reset the EVB SERDES RX/TX PLL."
+					"Read the fields of the DTC ID and EVB Info register."
+	);
+
+	registerFEMacroFunction(
+		"Set DTC ID and Hardware EVB Info",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&DTCFrontEndInterface::SetDTCIdAndEVBInfo),            // feMacroFunction
+					std::vector<std::string>{"DTC ID",
+						"EVB Mode", "EVB Partition ID",
+						"EVB MAC Address Last Byte", 
+						"EVB Number of DTCs in Cluster",
+						"EVB Cluster Base DTC MAC Address"},  // namesOfInputArgs
+					std::vector<std::string>{"Result"},
+					1,  // requiredUserPermissions
+					"*", 
+					"Read the fields of the DTC ID and EVB Info register."
 	);
 
 
@@ -617,7 +642,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Enable Auto-generation of Data Request Packets (Default := false)",
 						"Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)",
 					},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
+					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
 					"*", 
 					"Select or Deselect the CFO Emulator to take priority over the Link-6 external CFO. When selected, the CFO timing link, Link-6, will be ignored."
@@ -640,7 +665,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)",
 											"For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)"
 											},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
+					std::vector<std::string>{"Result"},
 					1,   // requiredUserPermissions					
 					"*",
 					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
@@ -665,7 +690,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: false)",
 											"For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)"
 											},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
+					std::vector<std::string>{"Result"},
 					1,   // requiredUserPermissions					
 					"*",
 					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
@@ -676,7 +701,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SoftwareDataRequest),            // feMacroFunction
 					std::vector<std::string>{"Event Window Tag"},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
+					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
 					"*", 
 					"Send a software DR from the DTC."
@@ -1832,7 +1857,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
 			// [6-0]
-			thisDTC_->SetEVBBufferInfo(dtcEventBuilderReg_NumBuff,
+			thisDTC_->SetEVBClusterInfo(//dtcEventBuilderReg_NumBuff,
 				dtcEventBuilderReg_StartNode,
 				dtcEventBuilderReg_NumNodes);
 			// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
@@ -3462,7 +3487,7 @@ std::string DTCFrontEndInterface::SetupROCs(DTCLib::DTC_Link_ID rocLinkIndex,
 			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
 		thisDTC_->SetROCEmulationNumPackets(rocLinkIndex,wsize);
 	
-	return thisDTC_->FormattedRegDump(20,thisDTC_->formattedROCEmulationFunctions_);
+	return thisDTC_->FormattedRegDump(0,thisDTC_->formattedROCEmulationFunctions_);
 
 }  // end SetEmulatedROCEventFragmentSize()
 
@@ -3475,9 +3500,8 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {	
-	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
-	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
-	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));	
+	__SET_ARG_OUT__("Protocol Counters", thisDTC_->FormattedRegDump(130, thisDTC_->formattedPacketCounterFunctions_));	
+	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(130, thisDTC_->formattedPerformanceCounterFunctions_));	
 }  // end DTCCounters()
 
 //========================================================================
@@ -3505,7 +3529,7 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::GetLinkErrors(__ARGS__)
 {	
-	__SET_ARG_OUT__("Link Errors", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESErrorFunctions_));
+	__SET_ARG_OUT__("Link Errors", thisDTC_->FormattedRegDump(0, thisDTC_->formattedSERDESErrorFunctions_));
 } //end GetLinkErrors()
 
 // //========================================================================
@@ -3689,25 +3713,63 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 } //end ResetCFOLinkTxPLL()
 
 //========================================================================
-void DTCFrontEndInterface::ResetEVBLinkRx(__ARGS__)
+void DTCFrontEndInterface::GetDTCIdAndEVBInfo(__ARGS__)
 {	
-	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
-} //end ResetEVBLinkRx()
+	__SET_ARG_OUT__("Result",
+		thisDTC_->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +		
+		thisDTC_->FormatEVBNumberOfDestinationNodes());
+} //end GetDTCIdAndEVBInfo()
+
 //========================================================================
-void DTCFrontEndInterface::ResetEVBLinkTx(__ARGS__)
+void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 {	
-	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
-} //end ReseResetEVBLinkTxtEVBRx()
-//========================================================================
-void DTCFrontEndInterface::ResetEVBLinkRxTxPLL(__ARGS__)
-{	
-	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_EVB_TXRX);
-} //end ResetEVBLinkRxTxPLL()
+	uint8_t DTCid = __GET_ARG_IN__("DTC ID",uint8_t);
+	uint8_t evbMode = __GET_ARG_IN__("EVB Mode",uint8_t);
+	uint8_t evbPartition = __GET_ARG_IN__("EVB Partition ID",uint8_t);
+	uint8_t evbMAC = __GET_ARG_IN__("EVB MAC Address Last Byte",uint8_t);
+	
+	__FE_COUTV__((int)DTCid);
+	__FE_COUTV__((int)evbMode);
+	__FE_COUTV__((int)evbPartition);
+	__FE_COUTV__((int)evbMAC);	
+
+	thisDTC_->SetEVBInfo(DTCid, evbMode, 
+		evbPartition, evbMAC);
+
+	uint8_t NumOfDTCs = __GET_ARG_IN__("EVB Number of DTCs in Cluster",uint8_t);
+	uint8_t evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address",uint8_t);
+	
+	__FE_COUTV__((int)NumOfDTCs);
+	__FE_COUTV__((int)evbBaseAddress);
+	thisDTC_->SetEVBClusterInfo(evbBaseAddress, NumOfDTCs);
+
+	thisDTC_->SoftReset(); //to invalidate destination address cycles, now need the first Event Window Marker to synchronize
+
+	__SET_ARG_OUT__("Result",
+		thisDTC_->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +		
+		thisDTC_->FormatEVBNumberOfDestinationNodes());
+} //end SetDTCIdAndEVBInfo()
+
+// //========================================================================
+// void DTCFrontEndInterface::ResetEVBLinkRx(__ARGS__)
+// {	
+// 	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
+// } //end ResetEVBLinkRx()
+// //========================================================================
+// void DTCFrontEndInterface::ResetEVBLinkTx(__ARGS__)
+// {	
+// 	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
+// } //end ReseResetEVBLinkTxtEVBRx()
+// //========================================================================
+// void DTCFrontEndInterface::ResetEVBLinkRxTxPLL(__ARGS__)
+// {	
+// 	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_EVB_TXRX);
+// } //end ResetEVBLinkRxTxPLL()
 
 //========================================================================
 void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 {	
-	__SET_ARG_OUT__("response", 
+	__SET_ARG_OUT__("Result", 
 		SetupCFOInterface(
 			__GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)", int, 2),
 			__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false),
@@ -3797,7 +3859,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 {	
-	__SET_ARG_OUT__("response", 
+	__SET_ARG_OUT__("Result", 
 		SetCFOEmulatorOnOffSpillEmulation(
 			__GET_ARG_IN__("Enable CFO Emulator (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",uint32_t),			
@@ -3883,7 +3945,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 } //end SetCFOEmulatorOnOffSpillEmulation()
 
 //========================================================================
-void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) {
+void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) 
+{
 
 	uint64_t when = __GET_ARG_IN__("Event Window Tag",uint64_t);
 	//uint8_t link  = __GET_ARG_IN__("LinkIndex", uint8_t);
@@ -3892,16 +3955,17 @@ void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) {
         //                                DTCLib::DTC_EventWindowTag(when), 
         //                                true, false); // link, EVT, quiet, debug
 
-        thisDTC_->EnableSoftwareDRP();
-        thisDTC_->SetSoftwareDataRequest(DTCLib::DTC_EventWindowTag(when));
+	thisDTC_->EnableSoftwareDRP();
+	thisDTC_->SetSoftwareDataRequest(DTCLib::DTC_EventWindowTag(when));
 
-        std::stringstream outSs;
+	std::stringstream outSs;
 	outSs << "Sent software DR for EVT " << std::hex << when << __E__;
-	__SET_ARG_OUT__("response",  outSs.str());
+	__SET_ARG_OUT__("Result",  outSs.str());
 
 } // end SoftwareDataRequest()
 
-void DTCFrontEndInterface::PunchedClock(__ARGS__) {
+void DTCFrontEndInterface::PunchedClock(__ARGS__) 
+{
         auto enable = __GET_ARG_IN__("Enable (Default := true)", bool, true);
         if (enable) thisDTC_->SetPunchEnable();
         else        thisDTC_->ClearPunchEnable();
@@ -3912,7 +3976,7 @@ void DTCFrontEndInterface::PunchedClock(__ARGS__) {
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 {	
-	__SET_ARG_OUT__("response", 
+	__SET_ARG_OUT__("Result", 
 		SetCFOEmulatorFixedWidthEmulation(
 			__GET_ARG_IN__("Enable CFO Emulator (Default := false)",bool,false),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
@@ -4074,7 +4138,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	thisDTC_->EnableCFOEmulation();
 
 	outSs << "Launched CFO Emulator!" << __E__;
-	return outSs.str(); //__SET_ARG_OUT__("response", outSs.str());
+	return outSs.str(); //__SET_ARG_OUT__("Result", outSs.str());
 	
 } //end SetCFOEmulatorFixedWidthEmulation()
 
@@ -4920,7 +4984,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 
 	std::cout << "Untruncated output: \n" << outSs.str() << __E__; //for no truncation!
 
-	__SET_ARG_OUT__("response", outSs.str());
+	__SET_ARG_OUT__("Result", outSs.str());
 } //end BufferTest_detached()
 
 //========================================================================
@@ -5290,7 +5354,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 
 	std::cout << "Untruncated output: \n" << outSs.str() << __E__; //for no truncation!
 
-	__SET_ARG_OUT__("response", outSs.str());
+	__SET_ARG_OUT__("Result", outSs.str());
 	// delete cfo;
 } //end BufferTest()
 
@@ -5682,7 +5746,7 @@ void DTCFrontEndInterface::PatternTest(__ARGS__)
 
 	std::cout << "Untruncated output: \n" << outSs.str() << __E__; //for no truncation!
 
-	__SET_ARG_OUT__("response", outSs.str());
+	__SET_ARG_OUT__("Result", outSs.str());
 	// delete cfo;
 } //end PatternTest()
 

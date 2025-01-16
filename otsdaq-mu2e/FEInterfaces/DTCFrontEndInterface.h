@@ -178,9 +178,13 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetCFOLinkTx						(__ARGS__);
 	void 								ResetCFOLinkRxPLL					(__ARGS__);
 	void 								ResetCFOLinkTxPLL					(__ARGS__);
-	void 								ResetEVBLinkRx						(__ARGS__);
-	void 								ResetEVBLinkTx						(__ARGS__);
-	void 								ResetEVBLinkRxTxPLL					(__ARGS__);
+
+	void 								GetDTCIdAndEVBInfo					(__ARGS__);
+	void 								SetDTCIdAndEVBInfo					(__ARGS__);
+
+	// void 								ResetEVBLinkRx						(__ARGS__);
+	// void 								ResetEVBLinkTx						(__ARGS__);
+	// void 								ResetEVBLinkRxTxPLL					(__ARGS__);
 		
 	void 								SetupCFOInterface					(__ARGS__);
 	std::string							SetupCFOInterface					(int forceCFOedge, bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP);
