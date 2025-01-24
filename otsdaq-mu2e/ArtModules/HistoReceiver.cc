@@ -33,7 +33,7 @@ namespace ots {
       message.ReadStdString(directoryNameStdString);
       TString directoryName(directoryNameStdString);
 
-      //__COUT__ << "[HistoReceiver::readPacket] Moving in dir: "<< directoryNameStdString << std::endl;
+      __COUT__ << "[HistoReceiver::readPacket] Moving in dir: "<< directoryNameStdString << std::endl;
 
       TDirectory* subdir = dir;
       TString     dirStr;
@@ -62,5 +62,6 @@ namespace ots {
       // 	__COUT__ << "[HistoReceiver::readPacket] nn[10] = " << std::string(nn) << std::endl;
       // }
     }while(directoryNameStdString != "");
+    buf = nullptr;
   }
 }

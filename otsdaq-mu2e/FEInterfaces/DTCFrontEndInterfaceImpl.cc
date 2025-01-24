@@ -1986,6 +1986,17 @@ void DTCFrontEndInterface::halt(void)
 {
 	const std::string transitionStr = "Halting";
 
+	if(bufferTestThreadStruct_) 
+	{
+		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
+
+		// start mutex scope
+		{
+			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+			bufferTestThreadStruct_->exitThread_ = true;
+		}
+	}
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
@@ -4446,7 +4457,7 @@ try
 	{
 		if(threadStruct->saveBinaryDataFilename_ == "Default" || threadStruct->saveBinaryDataFilename_ == "")
 		{
-			std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+			std::string filename = "macroOutput_" + std::to_string(time(0)) + "_" +
 										std::to_string(clock()) + ".bin";			
 			threadStruct->saveBinaryDataFilename_ = filename;
 		}
@@ -4542,9 +4553,18 @@ try
 						{
 							if(threadStruct->saveBinaryDataFilename_ == "Default")
 							{
-								std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
+								std::string filename = "macroOutput_" + std::to_string(time(0)) + "_" +
 															std::to_string(clock()) + ".bin";			
 								threadStruct->saveBinaryDataFilename_ = filename;
+							}
+							else //sanitize string
+							{
+								std::string tmp = "";
+								for(const auto& c : threadStruct->saveBinaryDataFilename_)
+									if(c == '/' || c == '\\') continue;
+									else tmp += c;
+								threadStruct->saveBinaryDataFilename_ = 
+									threadStruct->thisDTC_->getDeviceUID() + "_" + tmp;
 							}
 							__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" + 
 									threadStruct->saveBinaryDataFilename_);
@@ -4601,11 +4621,23 @@ try
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				false /* EWT match */)).size())
 			{ 
+				if(threadStruct->exitThread_) 
+				{
+					__COUT__ << "exitThread received in Buffer Test" << __E__;
+					break;
+				}
+
 				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++ << ": Events returned by the DTC: " << events.size() << std::endl;
 				if (events.empty()) break; //impossible!
 				
 				for(auto& eventPtr : events) 
-				{
+				{					
+					if(threadStruct->exitThread_) 
+					{
+						__COUT__ << "exitThread received in Buffer Test" << __E__;
+						break;
+					}
+
 					if (eventPtr == nullptr) 
 					{
 						__COUT_ERR__ << "Error: Null pointer!" << std::endl;
@@ -4664,13 +4696,25 @@ try
 		  	TLOG_DEBUG() << "get the data requested as events via ->GetSubEventData(...)";
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_), 
 				false /* EWT match */)).size())
-			{ 
+			{ 				
+				if(threadStruct->exitThread_) 
+				{
+					__COUT__ << "exitThread received in Buffer Test" << __E__;
+					break;
+				}
+
 				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++ << ": SubEvents returned by the DTC: " << subevents.size() << std::endl;
 				
 				if (subevents.empty()) continue; //impossible!
 				
 				for(auto& subeventPtr : subevents) 	
 				{
+					if(threadStruct->exitThread_) 
+					{
+						__COUT__ << "exitThread received in Buffer Test" << __E__;
+						break;
+					}
+					
 					if (subeventPtr == nullptr) 
 					{
 						__COUT_ERR__ << "Error: Subevent Null pointer!" << std::endl;
