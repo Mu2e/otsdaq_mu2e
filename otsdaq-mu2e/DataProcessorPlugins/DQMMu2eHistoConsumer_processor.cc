@@ -125,7 +125,7 @@ void DQMMu2eHistoConsumer::fastRead(void) {
   }
   // std::cout << "[DQMMu2eHistoConsumer::fastRead] reading BUFFER..." << std::endl;
   histReceiver_.readPacket(DQMHistosBase::myDirectory_, dataP_);
-  
+  DataConsumer::setReadSubBuffer<std::string, std::map<std::string, std::string>>();
 }
 
 DEFINE_OTS_PROCESSOR(DQMMu2eHistoConsumer)
