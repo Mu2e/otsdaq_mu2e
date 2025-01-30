@@ -253,12 +253,11 @@ for upstream in ${upstreams[@]}; do
     
     for envdir in `find $upstream -type d -wholename '*/var/spack/environments' 2>/dev/null`; do
         echo "Looking for mu2e environments in $envdir"
-        for environment in $envdir/tdaq-*;do
-            if ! [ -d $environment ]; then continue; fi
-            environment_dir=`realpath $environment`
-            echo "Adding environment $environment_dir to include-concrete list"
-            concrete_include_cmd="$concrete_include_cmd --include-concrete $environment_dir"
-        done
+        environment=`ls -td tdaq-*|head -1`
+        if ! [ -d $environment ]; then continue; fi
+        environment_dir=`realpath $environment`
+        echo "Adding environment $environment_dir to include-concrete list"
+        concrete_include_cmd="$concrete_include_cmd --include-concrete $environment_dir"
     done
 
 done
