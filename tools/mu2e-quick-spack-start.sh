@@ -29,6 +29,8 @@ prompted for this location.
 --develop     Install the develop version of the software (may be unstable!)
 --tag         Install a specific tag of otsdaq
 --spackdir    Install Spack in this directory (or use existing installation)
+--all-packages Install all packages including Offline and otsdaq-mu2e-trigger
+--trigger     Synonym for --all-packages
 -a            Artdaq version number (e.g. 31300 for v3_13_00)
 -a            Otsdaq version number (e.g. 20800 for v2_08_00)
 -s            Use specific qualifiers when building ots
@@ -80,6 +82,7 @@ while [ -n "${1-}" ];do
             -arch)      eval $op1arg; arch=$1; shift;;
             -no-kmod)   opt_no_kmod=1;;
             -all-packages) opt_all_packages=1;;
+	    -trigger)   opt_all_packages=1;;
             -no-view)   opt_no_view=1;;
             *)          echo "Unknown option -$op"; do_help=1;;
         esac
@@ -250,12 +253,11 @@ for upstream in ${upstreams[@]}; do
     
     for envdir in `find $upstream -type d -wholename '*/var/spack/environments' 2>/dev/null`; do
         echo "Looking for mu2e environments in $envdir"
-        for environment in $envdir/tdaq-*;do
-            if ! [ -d $environment ]; then continue; fi
-            environment_dir=`realpath $environment`
-            echo "Adding environment $environment_dir to include-concrete list"
-            concrete_include_cmd="$concrete_include_cmd --include-concrete $environment_dir"
-        done
+        environment="tdaq-${demo_version}"
+        if ! [ -d $environment ]; then continue; fi
+        environment_dir=`realpath $environment`
+        echo "Adding environment $environment_dir to include-concrete list"
+        concrete_include_cmd="$concrete_include_cmd --include-concrete $environment_dir"
     done
 
 done

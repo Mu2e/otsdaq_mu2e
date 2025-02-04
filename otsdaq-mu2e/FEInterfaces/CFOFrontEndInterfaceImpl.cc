@@ -2449,4 +2449,4 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 } //end loopbackTest()
 
 
-// DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
+// DEFINE_OTS_INTERFACE(CFOFrontEndInterface)  
