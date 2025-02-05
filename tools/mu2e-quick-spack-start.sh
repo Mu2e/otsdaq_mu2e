@@ -124,7 +124,7 @@ fi
 rm CMakeLists.txt*
 wget https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e/$tag/CMakeLists.txt
 demo_version=v`grep "project" $Base/CMakeLists.txt|grep -oE "VERSION [^)]*"|awk '{print $2}'|sed 's/\./_/g'`
-echo "ots Version is $demo_version"
+echo "Mu2e TDAQ Version is $demo_version"
 if [[ $notag -eq 1 ]] && [[ $opt_develop -eq 0 ]]; then
   tag=$demo_version
 
