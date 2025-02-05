@@ -46,9 +46,21 @@ uint16_t ROCPolarFireCoreInterface::readEmulatorRegister(uint16_t address)
 		return 4860;
 	else if(address == 7)
 		return delay_;
-	return -1;
+	return emulatorRegisters_[address];
 }  // end readEmulatorRegister()
 
+//==================================================================================================
+void ROCPolarFireCoreInterface::writeEmulatorRegister(uint16_t address, DTCLib::roc_data_t writeData)
+{
+	__FE_COUT__ << "Calling write emulator ROC register: link number " << std::dec
+	            << linkID_ << ", address = " << address << ", writeData = " << writeData << __E__;
+	if(address == 6)
+		; //4860;
+	else if(address == 7)
+		; // delay_;
+	else 
+		emulatorRegisters_[address] = writeData;
+}  // end readEmulatorRegister()
 
 //==================================================================================================
 void ROCPolarFireCoreInterface::readEmulatorBlock(std::vector<DTCLib::roc_data_t>& 	data,

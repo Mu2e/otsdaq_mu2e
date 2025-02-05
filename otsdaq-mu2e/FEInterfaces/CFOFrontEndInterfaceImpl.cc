@@ -1488,11 +1488,19 @@ void CFOFrontEndInterface::WriteCFO(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__((unsigned int)writeData);
 
-	int errorCode = getDevice()->write_register( address, 100, writeData);
-	if (errorCode != 0)
+	if(emulatorMode_)
 	{
-		__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
-		__SS_THROW__;
+		__FE_COUTS__(10) << "CFO Emulator write [" << address << "] = " << writeData << __E__;
+		emulatorRegisters_[address] = writeData;
+	}
+	else
+	{
+		int errorCode = getDevice()->write_register( address, 100, writeData);
+		if (errorCode != 0)
+		{
+			__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+			__SS_THROW__;
+		}
 	}
 	// registerWrite(address, writeData);  
 } //end WriteCFO()
@@ -1504,16 +1512,25 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	dtc_data_t readData;// = registerRead(address);  
 	
-	int errorCode = getDevice()->read_register(address, 100, &readData);
-	if (errorCode != 0)
+	if(emulatorMode_)
 	{
-		__FE_SS__ << "Error reading register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
-		__SS_THROW__;
+		readData = emulatorRegisters_[address];
+		__FE_COUTS__(10) << "CFO Emulator read " << readData << " from [" << address << "] = " << __E__;
+	}
+	else
+	{
+		int errorCode = getDevice()->read_register(address, 100, &readData);
+		if (errorCode != 0)
+		{
+			__FE_SS__ << "Error reading register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
+			__SS_THROW__;
+		}
 	}
 	
-	char readDataStr[100];
-	sprintf(readDataStr,"0x%X",readData);
-	__SET_ARG_OUT__("readData",readDataStr);
+	std::stringstream ss;
+	ss << "Read " << std::dec << readData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << readData <<
+		" from address 0x" << std::setw(4) << address << ".";
+	__SET_ARG_OUT__("readData", ss.str());
 } //end ReadCFO()
 
 //========================================================================

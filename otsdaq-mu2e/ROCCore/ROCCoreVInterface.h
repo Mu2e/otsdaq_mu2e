@@ -77,6 +77,8 @@ class ROCCoreVInterface : public FEVInterface
 	inline DTCLib::DTC_Link_ID				getLinkID					(void) { return linkID_; }
 
 	bool         									emulatorMode_;
+	std::map<DTCLib::roc_address_t /* address */, 
+			DTCLib::roc_data_t /* value */> 				emulatorRegisters_;
 	DTCLib::DTC* 									thisDTC_;
 
   protected:

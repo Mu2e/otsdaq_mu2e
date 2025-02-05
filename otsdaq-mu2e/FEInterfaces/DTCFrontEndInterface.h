@@ -49,8 +49,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// hardware access
 	//----------------
-	virtual mu2edev* 					getDevice					(void) override {return thisDTC_->GetDevice();};
-	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override {return thisDTC_;};
+	virtual mu2edev* 					getDevice					(void) override { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_->GetDevice();};
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_;};
+	inline DTCLib::DTC* 				getDTC						(void) 			{ if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_;};
 
 	// DTC specific items
 	//----------------
