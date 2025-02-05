@@ -19,12 +19,10 @@ env_opts_var=`basename $0 | sed 's/\.sh$//' | tr 'a-z-' 'A-Z_'`_OPTS
 USAGE="\
    usage: `basename $0` [options] [demo_root]
 examples: `basename $0` .
-          `basename $0` --run-ots
           `basename $0` --debug
           `basename $0` --tag v2_08_04
 If the \"demo_root\" optional parameter is not supplied, the user will be
 prompted for this location.
---run-ots     runs otsdaq
 --debug       perform a debug build
 --develop     Install the develop version of the software (may be unstable!)
 --tag         Install a specific tag of mu2e-tdaq-suite
@@ -71,7 +69,6 @@ while [ -n "${1-}" ];do
             s*)         eval $op1arg; squalifier=$1; shift;;
             w*)         eval $op1chr; opt_w=`expr $opt_w + 1`;;
             -debug)     opt_debug=--debug;;
-            -run-ots)  opt_run_ots=--run-ots;;
             -develop) opt_develop=1;;
             -tag)       eval $reqarg; tag=$1; shift;;
             -spackdir)  eval $op1arg; spackdir=$1; shift;;
