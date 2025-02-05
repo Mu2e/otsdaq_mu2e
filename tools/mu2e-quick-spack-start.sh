@@ -27,12 +27,12 @@ prompted for this location.
 --run-ots     runs otsdaq
 --debug       perform a debug build
 --develop     Install the develop version of the software (may be unstable!)
---tag         Install a specific tag of otsdaq
+--tag         Install a specific tag of mu2e-tdaq-suite
 --spackdir    Install Spack in this directory (or use existing installation)
 --all-packages Install all packages including Offline and otsdaq-mu2e-trigger
 --trigger     Synonym for --all-packages
 -a            Artdaq version number (e.g. 31300 for v3_13_00)
--a            Otsdaq version number (e.g. 20800 for v2_08_00)
+-o            Otsdaq version number (e.g. 20800 for v2_08_00)
 -s            Use specific qualifiers when building ots
 -v            Be more verbose
 -x            set -x this script
