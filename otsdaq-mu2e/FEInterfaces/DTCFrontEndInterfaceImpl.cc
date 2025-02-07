@@ -40,16 +40,6 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 		emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
 	__FE_COUTV__(emulate_cfo_);
 
-	// if(emulatorMode_)
-	// {
-	// 	__FE_COUT__ << "Emulator DTC mode starting up..." << __E__;
-	// 	createROCs();
-	// 	registerFEMacros();
-	// 	//Note: thisDTC_ is left null!
-	// 	return;
-	// }
-	// // else not emulator mode
-
 	DTCInstantiate();
 
 }  // end constructor()
@@ -930,64 +920,13 @@ void DTCFrontEndInterface::createROCs(void)
 				// setup other members of ROCCore (for interface plug-in compatibility,
 				// left out of constructor)
 
-				// __COUTV__(tmpRoc.emulatorMode_);
-				// tmpRoc.emulatorMode_ = emulatorMode_;
-				// __COUTV__(tmpRoc.emulatorMode_);
-
-				// if(emulatorMode_)
-				// {
-				// 	__FE_COUT__ << "Creating ROC in emulator mode..." << __E__;
-
-				// 	// try
-				// 	{
-				// 		// all ROCs support emulator mode
-
-				// 		//						// verify ROCCoreVEmulator class
-				// 		// functionality  with	dynamic_cast
-				// 		// ROCCoreVEmulator&  tmpEmulator =
-				// 		// dynamic_cast<ROCCoreVEmulator&>(
-				// 		//						    tmpRoc);  //
-				// 		// dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
-
-				// 		// start emulator thread
-				// 		std::thread(
-				// 		    [](ROCCoreVInterface* rocEmulator) {
-				// 			    __COUT__ << "Starting ROC emulator thread..." << __E__;
-				// 			    ROCCoreVInterface::emulatorThread(rocEmulator);
-				// 		    },
-				// 		    &tmpRoc)
-				// 		    .detach();
-				// 	}
-				// 	//					catch(const std::bad_cast& e)
-				// 	//					{
-				// 	//						__SS__ << "Cast to ROCCoreVEmulator failed!
-				// 	// Verify  the	emulator "							  "plugin
-				// 	// inherits
-				// 	// from	 ROCCoreVEmulator."
-				// 	//						       << __E__;
-				// 	//						ss << "Failed to instantiate plugin named '"
-				// 	//<<  roc.first
-				// 	//						   << "' of type '"
-				// 	//						   <<
-				// 	// roc.second.getNode("ROCInterfacePluginName")
-				// 	//							  .getValue<std::string>()
-				// 	//						   << "' due to the following error: \n"
-				// 	//						   << e.what() << __E__;
-				// 	//
-				// 	//						__SS_THROW__;
-				// 	//					}
-				// }
-				// else
-				// {
-					tmpRoc.thisDTC_ = thisDTC_;
-				// }
+				tmpRoc.thisDTC_ = thisDTC_;
 
 				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
 				    roc.first, &tmpRoc));
 				tmpVFE.release();  // release the FEVInterface unique_ptr, so we are left
 						   // with just one
 
-				// __COUTV__(rocs_[roc.first]->emulatorMode_);
 			}
 			catch(const cet::exception& e)
 			{
@@ -3287,20 +3226,12 @@ void DTCFrontEndInterface::WriteDTC(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__((unsigned int)writeData);
 
-	// if(emulatorMode_)
-	// {
-	// 	__FE_COUTS__(10) << "DTC Emulator write [" << address << "] = " << writeData << __E__;
-	// 	emulatorRegisters_[address] = writeData;
-	// }
-	// else
-	// {
-		int errorCode = getDevice()->write_register( address, 100, writeData);
-		if (errorCode != 0)
-		{
-			__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0') << std::setw(4) << address << ". Error code = " << errorCode;
-			__SS_THROW__;
-		}
-	// }
+	int errorCode = getDevice()->write_register( address, 100, writeData);
+	if (errorCode != 0)
+	{
+		__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0') << std::setw(4) << address << ". Error code = " << errorCode;
+		__SS_THROW__;
+	}
 
 	std::stringstream ss;
 	ss << "Wrote " << std::dec << writeData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << writeData <<
@@ -3313,22 +3244,14 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 {
 	uint32_t address = __GET_ARG_IN__("address", uint32_t);
 	__FE_COUTV__((unsigned int)address);
-	uint32_t readData;// = registerRead(address);
+	uint32_t readData;
 
-	// if(emulatorMode_)
-	// {
-	// 	readData = emulatorRegisters_[address];
-	// 	__FE_COUTS__(10) << "DTC Emulator read " << readData << " from [" << address << "] = " << __E__;
-	// }
-	// else
-	// {
-		int errorCode = getDevice()->read_register(address, 100, &readData);
-		if (errorCode != 0)
-		{
-			__FE_SS__ << "Error reading register 0x" << std::hex << address << " " << errorCode;
-			__SS_THROW__;
-		}
-	// }
+	int errorCode = getDevice()->read_register(address, 100, &readData);
+	if (errorCode != 0)
+	{
+		__FE_SS__ << "Error reading register 0x" << std::hex << address << " " << errorCode;
+		__SS_THROW__;
+	}
 
 	// converted to dec and hex display in FEVInterfacesManager handling of FE Macros
 	std::stringstream ss;

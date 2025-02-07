@@ -99,12 +99,7 @@ void ROCDTCHardwareEmulated::resetDTCLinkLossCounter()
 //==================================================================================================
 void ROCDTCHardwareEmulated::configure(void) try
 {
-	// if(emulatorMode_)
-	// {
-	// 	__FE_COUT__ << "Emulator ROC configuring..." << __E__;
-	// 	return;
-	// }
-
+	__FE_COUT__ << "configure()" << __E__;
 }  // end configure()
 catch(const std::runtime_error& e)
 {
