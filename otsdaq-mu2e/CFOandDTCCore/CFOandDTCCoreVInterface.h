@@ -74,8 +74,6 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	int         						deviceIndex_		         	= -1; //PCIe index
 	bool        						configure_clock_    			= false;
 	bool      							emulatorMode_					= false;
-	std::map<uint32_t /* address */, 
-		uint32_t /* value */> 			emulatorRegisters_;
 	bool 								skipInit_						= true;
 	std::string							operatingMode_ 					= "";
 

@@ -40,26 +40,32 @@ ROCPolarFireCoreInterface::~ROCPolarFireCoreInterface(void)
 //==================================================================================================
 uint16_t ROCPolarFireCoreInterface::readEmulatorRegister(uint16_t address)
 {
-	__FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec
-	            << linkID_ << ", address = " << address << __E__;
-	if(address == 6)
-		return 4860;
-	else if(address == 7)
-		return delay_;
-	return emulatorRegisters_[address];
+	__FE_SS__ << "Deprecated! Use mu2esim in mu2e-pcie-utils" << __E__;
+	__FE_SS_THROW__;
+
+	// __FE_COUT__ << "Calling read emulator ROC register: link number " << std::dec
+	//             << linkID_ << ", address = " << address << __E__;
+	// if(address == 6)
+	// 	return 4860;
+	// else if(address == 7)
+	// 	return delay_;
+	// return emulatorRegisters_[address];
 }  // end readEmulatorRegister()
 
 //==================================================================================================
 void ROCPolarFireCoreInterface::writeEmulatorRegister(uint16_t address, DTCLib::roc_data_t writeData)
 {
-	__FE_COUT__ << "Calling write emulator ROC register: link number " << std::dec
-	            << linkID_ << ", address = " << address << ", writeData = " << writeData << __E__;
-	if(address == 6)
-		; //4860;
-	else if(address == 7)
-		; // delay_;
-	else 
-		emulatorRegisters_[address] = writeData;
+	__FE_SS__ << "Deprecated! Use mu2esim in mu2e-pcie-utils" << __E__;
+	__FE_SS_THROW__;
+
+	// __FE_COUT__ << "Calling write emulator ROC register: link number " << std::dec
+	//             << linkID_ << ", address = " << address << ", writeData = " << writeData << __E__;
+	// if(address == 6)
+	// 	; //4860;
+	// else if(address == 7)
+	// 	; // delay_;
+	// else 
+	// 	emulatorRegisters_[address] = writeData;
 }  // end readEmulatorRegister()
 
 //==================================================================================================
@@ -108,11 +114,11 @@ void ROCPolarFireCoreInterface::resetDTCLinkLossCounter()
 //==================================================================================================
 void ROCPolarFireCoreInterface::configure(void) try
 {
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
-		return;
-	}
+	// if(emulatorMode_)
+	// {
+	// 	__FE_COUT__ << "Emulator ROC configuring..." << __E__;
+	// 	return;
+	// }
 	 __FE_COUT_INFO__ << "......... Clear DCS FIFOs" << __E__;
 	// this->writeRegister(0,1);
 	//this->writeRegister(0,0);  // MT: in DracMonitor, write ANY to addr 0 to issue TOP_SERDES reset. Self-clearing.  

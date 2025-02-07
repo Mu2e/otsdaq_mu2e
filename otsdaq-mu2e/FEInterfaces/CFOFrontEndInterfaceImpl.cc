@@ -1488,20 +1488,20 @@ void CFOFrontEndInterface::WriteCFO(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__((unsigned int)writeData);
 
-	if(emulatorMode_)
-	{
-		__FE_COUTS__(10) << "CFO Emulator write [" << address << "] = " << writeData << __E__;
-		emulatorRegisters_[address] = writeData;
-	}
-	else
-	{
+	// if(emulatorMode_)
+	// {
+	// 	__FE_COUTS__(10) << "CFO Emulator write [" << address << "] = " << writeData << __E__;
+	// 	emulatorRegisters_[address] = writeData;
+	// }
+	// else
+	// {
 		int errorCode = getDevice()->write_register( address, 100, writeData);
 		if (errorCode != 0)
 		{
 			__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
 			__SS_THROW__;
 		}
-	}
+	// }
 	// registerWrite(address, writeData);  
 } //end WriteCFO()
 
@@ -1512,20 +1512,20 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	__FE_COUTV__((unsigned int)address);
 	dtc_data_t readData;// = registerRead(address);  
 	
-	if(emulatorMode_)
-	{
-		readData = emulatorRegisters_[address];
-		__FE_COUTS__(10) << "CFO Emulator read " << readData << " from [" << address << "] = " << __E__;
-	}
-	else
-	{
+	// if(emulatorMode_)
+	// {
+	// 	readData = emulatorRegisters_[address];
+	// 	__FE_COUTS__(10) << "CFO Emulator read " << readData << " from [" << address << "] = " << __E__;
+	// }
+	// else
+	// {
 		int errorCode = getDevice()->read_register(address, 100, &readData);
 		if (errorCode != 0)
 		{
 			__FE_SS__ << "Error reading register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
 			__SS_THROW__;
 		}
-	}
+	// }
 	
 	std::stringstream ss;
 	ss << "Read " << std::dec << readData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << readData <<
