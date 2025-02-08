@@ -180,7 +180,7 @@ void ROCCoreVInterface::universalRead(char* address, char* returnValue)
 //		- writeValue will be a [universalDataSize_] byte long char array
 void ROCCoreVInterface::universalWrite(char* address, char* writeValue)
 {
-	__FE_COUT__(20) << "ROC WRITE" << __E__;
+	__FE_COUTS__(20) << "ROC WRITE" << __E__;
 
 	writeRegister(*((DTCLib::roc_address_t*)address), *((DTCLib::roc_data_t*) writeValue));		
 }  // end universalWrite()
