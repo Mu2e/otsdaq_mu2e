@@ -45,8 +45,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// hardware access
 	//----------------
-	virtual mu2edev* 					getDevice					(void) override {return thisCFO_->GetDevice();};
-	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override {return thisCFO_;};
+	virtual mu2edev* 					getDevice					(void) override { if(!thisCFO_) { __SS__ << "thisCFO_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisCFO_->GetDevice();};
+	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override { if(!thisCFO_) { __SS__ << "thisCFO_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisCFO_;};
 
 	float 								delay[8][6][8];
 	float 								delay_rms[8][6][8];

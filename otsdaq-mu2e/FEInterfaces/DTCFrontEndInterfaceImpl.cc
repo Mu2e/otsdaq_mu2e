@@ -40,15 +40,6 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 		emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
 	__FE_COUTV__(emulate_cfo_);
 
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator DTC mode starting up..." << __E__;
-		createROCs();
-		registerFEMacros();
-		return;
-	}
-	// else not emulator mode
-
 	DTCInstantiate();
 
 }  // end constructor()
@@ -56,45 +47,53 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 //==========================================================================================
 DTCFrontEndInterface::~DTCFrontEndInterface(void)
 {
-	// Halt Detached Buffer Thread else if(command == "2" || command == "Halt")
-	if(bufferTestThreadStruct_)
+	try
 	{
-		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
-
-		// start mutex scope
+		// Halt Detached Buffer Thread else if(command == "2" || command == "Halt")
+		if(bufferTestThreadStruct_)
 		{
-			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-			bufferTestThreadStruct_->exitThread_ = true;
+			__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
+
+			// start mutex scope
+			{
+				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+				bufferTestThreadStruct_->exitThread_ = true;
+			}
+
+			//check for thread to exit
+			for(int i=0;i<10;++i)
+			{
+				usleep(100 * 1000 /*100ms*/);  // sleep for exit time
+				if(!bufferTestThreadStruct_->running_) break;
+				__FE_COUT__ << "Waiting for thread to exit... #" << i << __E__;
+			}
+
+			if(bufferTestThreadStruct_->fp_)
+			{
+				__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..." << __E__;
+
+				fclose(bufferTestThreadStruct_->fp_);
+				bufferTestThreadStruct_->fp_ = nullptr;
+			}
+
+			__FE_COUT__ << "Detached Buffer Test thread exited. " << __E__;
+			__FE_COUT__ << "Reading final status..." << __E__;
+			__FE_COUT__ << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
 		}
 
-		//check for thread to exit
-		for(int i=0;i<10;++i)
+		if(thisDTC_)
 		{
-			usleep(100 * 1000 /*100ms*/);  // sleep for exit time
-			if(!bufferTestThreadStruct_->running_) break;
-			__FE_COUT__ << "Waiting for thread to exit... #" << i << __E__;
+			// uint32_t lossOfLockReadData = registerRead(0x93c8);	// read loss-of-lock counter
+			__FE_COUTV__(thisDTC_->FormatRXCDRUnlockCountCFOLink());
 		}
 
-		if(bufferTestThreadStruct_->fp_)
-		{
-			__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..." << __E__;
-
-			fclose(bufferTestThreadStruct_->fp_);
-			bufferTestThreadStruct_->fp_ = nullptr;
-		}
-
-		__FE_COUT__ << "Detached Buffer Test thread exited. " << __E__;
-		__FE_COUT__ << "Reading final status..." << __E__;
-		__FE_COUT__ << DTCFrontEndInterface::getDetachedBufferTestStatus(bufferTestThreadStruct_);
+		// destroy ROCs before DTC destruction
+		rocs_.clear();
 	}
-
+	catch(...)
 	{
-		// uint32_t lossOfLockReadData = registerRead(0x93c8);	// read loss-of-lock counter
-		__FE_COUTV__(thisDTC_->FormatRXCDRUnlockCountCFOLink());
+		__FE_COUT_WARN__ << "Exception caught on destruction." << __E__;
 	}
-
-	// destroy ROCs before DTC destruction
-	rocs_.clear();
 
 
 	if(thisDTC_)
@@ -921,64 +920,13 @@ void DTCFrontEndInterface::createROCs(void)
 				// setup other members of ROCCore (for interface plug-in compatibility,
 				// left out of constructor)
 
-				__COUTV__(tmpRoc.emulatorMode_);
-				tmpRoc.emulatorMode_ = emulatorMode_;
-				__COUTV__(tmpRoc.emulatorMode_);
-
-				if(emulatorMode_)
-				{
-					__FE_COUT__ << "Creating ROC in emulator mode..." << __E__;
-
-					// try
-					{
-						// all ROCs support emulator mode
-
-						//						// verify ROCCoreVEmulator class
-						// functionality  with	dynamic_cast
-						// ROCCoreVEmulator&  tmpEmulator =
-						// dynamic_cast<ROCCoreVEmulator&>(
-						//						    tmpRoc);  //
-						// dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
-
-						// start emulator thread
-						std::thread(
-						    [](ROCCoreVInterface* rocEmulator) {
-							    __COUT__ << "Starting ROC emulator thread..." << __E__;
-							    ROCCoreVInterface::emulatorThread(rocEmulator);
-						    },
-						    &tmpRoc)
-						    .detach();
-					}
-					//					catch(const std::bad_cast& e)
-					//					{
-					//						__SS__ << "Cast to ROCCoreVEmulator failed!
-					// Verify  the	emulator "							  "plugin
-					// inherits
-					// from	 ROCCoreVEmulator."
-					//						       << __E__;
-					//						ss << "Failed to instantiate plugin named '"
-					//<<  roc.first
-					//						   << "' of type '"
-					//						   <<
-					// roc.second.getNode("ROCInterfacePluginName")
-					//							  .getValue<std::string>()
-					//						   << "' due to the following error: \n"
-					//						   << e.what() << __E__;
-					//
-					//						__SS_THROW__;
-					//					}
-				}
-				else
-				{
-					tmpRoc.thisDTC_ = thisDTC_;
-				}
+				tmpRoc.thisDTC_ = thisDTC_;
 
 				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
 				    roc.first, &tmpRoc));
 				tmpVFE.release();  // release the FEVInterface unique_ptr, so we are left
 						   // with just one
 
-				__COUTV__(rocs_[roc.first]->emulatorMode_);
 			}
 			catch(const cet::exception& e)
 			{
@@ -1110,7 +1058,7 @@ try
 
 	//	// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
 	//	// EVB Local MAC Index [7-0]
-	//	thisDTC_->SetEVBInfo(dtcEventBuilderReg_DTCID,
+	//	getDTC()->SetEVBInfo(dtcEventBuilderReg_DTCID,
 	//		dtcEventBuilderReg_Mode,
 	//		dtcEventBuilderReg_PartitionID,
 	//		dtcEventBuilderReg_MACIndex);
@@ -1122,7 +1070,7 @@ try
 
 	//	// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
 	//	// [6-0]
-	//	thisDTC_->SetEVBBufferInfo(dtcEventBuilderReg_NumBuff,
+	//	getDTC()->SetEVBBufferInfo(dtcEventBuilderReg_NumBuff,
 	//		dtcEventBuilderReg_StartNode,
 	//		dtcEventBuilderReg_NumNodes);
 	//	// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
@@ -1572,9 +1520,9 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	//	- configure ROCs
 
 
-	thisDTC_->DisableCFOEmulation();
-	thisDTC_->SetCFOEmulationMode(); //turn on DTC emulation (ignores any real CFO)
-	thisDTC_->DisableLink(DTCLib::DTC_Link_CFO);
+	getDTC()->DisableCFOEmulation();
+	getDTC()->SetCFOEmulationMode(); //turn on DTC emulation (ignores any real CFO)
+	getDTC()->DisableLink(DTCLib::DTC_Link_CFO);
 
 	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 	//	So solution:
@@ -1599,14 +1547,14 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		//For DTC - 0 ==> CFO Control Link
 		//For DTC - 1 ==> RTF copper clock
 		//For DTC - 2 ==> FPGA FMC
-		thisDTC_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */); // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
+		getDTC()->SetJitterAttenuatorSelect(select, true /* alsoResetJA */); // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
 	}
 	else
 		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
 
 
-	thisDTC_->SoftReset();
-	thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+	getDTC()->SoftReset();
+	getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 
 	// setup ROCs and check if any ROCs should be DTC-hardware emulated ROCs
 	{
@@ -1649,14 +1597,14 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	}  // end check if any ROCs should be DTC-hardware emulated ROCs
 
 
-	// thisDTC_->EnableCFOEmulation(); // this will enable sending requests, so do it later after configuring event
-	thisDTC_->EnableDCSReception();
+	// getDTC()->EnableCFOEmulation(); // this will enable sending requests, so do it later after configuring event
+	getDTC()->EnableDCSReception();
 
     // If this is a CRV ROC, enable the punched clock by default
 	if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
     {
 		__FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
-	    thisDTC_->SetPunchEnable();
+	    getDTC()->SetPunchEnable();
 	}
 
 
@@ -1666,7 +1614,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
     // of the Event Header in built events." from docdb 4097
     try
 	{
-		thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
+		getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
 
 		uint32_t dtcEventBuilderReg_DTCID =
 			getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
@@ -1683,7 +1631,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 
 		// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
 		// EVB Local MAC Index [7-0]
-		thisDTC_->SetEVBInfo(dtcEventBuilderReg_DTCID,
+		getDTC()->SetEVBInfo(dtcEventBuilderReg_DTCID,
 			dtcEventBuilderReg_Mode,
 			dtcEventBuilderReg_PartitionID,
 			dtcEventBuilderReg_MACIndex);
@@ -1696,12 +1644,12 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 
 	//in 13-Oct-2023 tests with Rick, reseting the serdes PLL brought the ROC tx back up
 	// for(size_t i=0;i<DTCLib::DTC_PLLs.size();++i)
-	//	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLLs[i]);
+	//	getDTC()->ResetSERDESPLL(DTCLib::DTC_PLLs[i]);
 
-	// thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	// thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	// getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	// getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 
-	thisDTC_->SoftReset(); // soft reset to clear lock counters
+	getDTC()->SoftReset(); // soft reset to clear lock counters
 
 
 	//at this point should have stable ROC links, and be ready for DCS-based configure of ROCs:
@@ -1720,7 +1668,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	    for(auto& roc : rocs_)
 		{
 			// make sure the roc link is ready before configuring
-			if(!thisDTC_->WaitForLinkReady(roc.second->getLinkID(), 1000 /*us*/, 2.0 /*seconds*/))
+			if(!getDTC()->WaitForLinkReady(roc.second->getLinkID(), 1000 /*us*/, 2.0 /*seconds*/))
 			{
 				__FE_SS__  << "ROC " << roc.first << " on link " << roc.second->getLinkID() << " was not ready after 2s. Aborting ROC configuration.";
 				__FE_SS_THROW__;
@@ -1815,7 +1763,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
 			// EVB Local MAC Index [7-0]
-			thisDTC_->SetEVBInfo(dtcEventBuilderReg_DTCID,
+			getDTC()->SetEVBInfo(dtcEventBuilderReg_DTCID,
 				dtcEventBuilderReg_Mode,
 				dtcEventBuilderReg_PartitionID,
 				dtcEventBuilderReg_MACIndex);
@@ -1827,7 +1775,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
 			// [6-0]
-			thisDTC_->SetEVBBufferInfo(dtcEventBuilderReg_NumBuff,
+			getDTC()->SetEVBBufferInfo(dtcEventBuilderReg_NumBuff,
 				dtcEventBuilderReg_StartNode,
 				dtcEventBuilderReg_NumNodes);
 			// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
@@ -1844,15 +1792,15 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 		// These registers are needed for the EVB, but I need to check their meaning
 		// registerWrite(0x9100, 0x800404);
-		thisDTC_->EnableAutogenDRP(); //bit 23
-		// thisDTC_->SetSequenceNumberDisable(); //bit 10
+		getDTC()->EnableAutogenDRP(); //bit 23
+		// getDTC()->SetSequenceNumberDisable(); //bit 10
 
 		// registerWrite(0x92c0, 0x0);
-		thisDTC_->ClearEventModeTableEnable();
-		thisDTC_->SetEventModeLookupByteSelect(0);
+		getDTC()->ClearEventModeTableEnable();
+		getDTC()->SetEventModeLookupByteSelect(0);
 
 		// registerWrite(0x9114, 0xc1c1);
-		thisDTC_->EnableLink(DTCLib::DTC_Link_EVB);
+		getDTC()->EnableLink(DTCLib::DTC_Link_EVB);
 
 		// registerWrite(0x96C8, 0x555555D5);	//10G configurable preamble world
 		// registerWrite(0x96CC, 0x78555555);	//10G configurable idle world
@@ -1888,8 +1836,8 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	{
 		case 0:
 			//put DTC in known state with DTC reset and control clear
-			thisDTC_->SoftReset();
-			thisDTC_->ClearControlRegister();
+			getDTC()->SoftReset();
+			getDTC()->ClearControlRegister();
 
 			indicateIterationWork();
 			break;
@@ -1918,7 +1866,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 					//For DTC - 0 ==> CFO Control Link
 					//For DTC - 1 ==> RTF copper clock
 					//For DTC - 2 ==> FPGA FMC
-					thisDTC_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
+					getDTC()->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
 				}
 				else
 					__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
@@ -1948,31 +1896,31 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 
 				__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
 							<< dtcHwEmulateROCmask << std::dec << __E__;
-				thisDTC_->SetROCEmulatorMask(dtcHwEmulateROCmask);
+				getDTC()->SetROCEmulatorMask(dtcHwEmulateROCmask);
 				// registerWrite(0x9110, dtcHwEmulateROCmask);
 				__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
 			}  // end check if any ROCs should be DTC-hardware emulated ROCs
 
 			//enable ROC links w/CFO link
 			__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_ << __E__;
-			thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
-			thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
+			getDTC()->EnableLink(DTCLib::DTC_Link_CFO);
+			getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
 			for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
 			{
 				if((roc_mask_ >> i) & 1)
-					thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[i]);
+					getDTC()->EnableLink(DTCLib::DTC_ROC_Links[i]);
 				else
-					thisDTC_->DisableLink(DTCLib::DTC_ROC_Links[i]);
+					getDTC()->DisableLink(DTCLib::DTC_ROC_Links[i]);
 			}
 
-			// thisDTC_->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
-			thisDTC_->EnableDCSReception();
+			// getDTC()->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+			getDTC()->EnableDCSReception();
 
 			__FE_COUT__ << "DTC reset links" << __E__;
-			// thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
-			thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			// getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
+			getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			getDTC()->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 			break;
 		default:
 			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -2001,7 +1949,7 @@ void DTCFrontEndInterface::halt(void)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
 
-		thisDTC_->DisableCFOEmulation(); //stop Event Window Marker generation
+		getDTC()->DisableCFOEmulation(); //stop Event Window Marker generation
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
@@ -2010,7 +1958,7 @@ void DTCFrontEndInterface::halt(void)
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
-		thisDTC_->DisableCFOLoopback();
+		getDTC()->DisableCFOLoopback();
 	}
 	else
 	{
@@ -2051,7 +1999,7 @@ void DTCFrontEndInterface::pause(void)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
 
-		thisDTC_->DisableCFOEmulation(); //stop Event Window Marker generation
+		getDTC()->DisableCFOEmulation(); //stop Event Window Marker generation
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
@@ -2060,7 +2008,7 @@ void DTCFrontEndInterface::pause(void)
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
-		thisDTC_->DisableCFOLoopback();
+		getDTC()->DisableCFOLoopback();
 	}
 	else
 	{
@@ -2090,7 +2038,7 @@ void DTCFrontEndInterface::stop(void)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
 
-		thisDTC_->DisableCFOEmulation(); //stop Event Window Marker generation
+		getDTC()->DisableCFOEmulation(); //stop Event Window Marker generation
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
@@ -2099,7 +2047,7 @@ void DTCFrontEndInterface::stop(void)
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
-		thisDTC_->DisableCFOLoopback();
+		getDTC()->DisableCFOLoopback();
 	}
 	else
 	{
@@ -2327,7 +2275,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		__FE_SS_THROW__;
 	}
 
-	thisDTC_->SoftReset(); //reset counters
+	getDTC()->SoftReset(); //reset counters
 	return;
 
 	// /////////////////////////////
@@ -2589,7 +2537,7 @@ bool DTCFrontEndInterface::running(void)
 	// unsigned int number	       = -1;  // largest number of events?
 	// unsigned int timestampStart = 0;
 
-	// auto device = thisDTC_->GetDevice();
+	// auto device = getDTC()->GetDevice();
 	// // auto initTime = device->GetDeviceTime();
 	// device->ResetDeviceTime();
 	// // auto afterInit = std::chrono::steady_clock::now();
@@ -2625,7 +2573,7 @@ bool DTCFrontEndInterface::running(void)
 	//	bool	 forceNoDebugMode = true;
 
 	//	DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
-	//	    new DTCLib::DTCSoftwareCFO(thisDTC_,
+	//	    new DTCLib::DTCSoftwareCFO(getDTC(),
 	//				       useSWCFOEmulator,
 	//				       debugPacketCount,
 	//				       debugType,
@@ -2677,7 +2625,7 @@ bool DTCFrontEndInterface::running(void)
 	//	bool	 forceNoDebugMode = true;
 
 	//	DTCLib::DTCSoftwareCFO* EmulatedCFO_ =
-	//	    new DTCLib::DTCSoftwareCFO(thisDTC_,
+	//	    new DTCLib::DTCSoftwareCFO(getDTC(),
 	//				       useSWCFOEmulator,
 	//				       debugPacketCount,
 	//				       debugType,
@@ -2806,9 +2754,14 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 		if(rocLinkIndex == roc.second->getLinkID())
 		{
-			// readData = roc.second->readRegister(address);
-
-			readData = thisDTC_->ReadROCRegister(rocLinkIndex, address, 300);
+			if(emulatorMode_)
+			{
+				readData = roc.second->readRegister(address);
+			}
+			else
+			{
+				readData = getDTC()->ReadROCRegister(rocLinkIndex, address, 300);
+			}
 
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%X", readData);
@@ -2901,7 +2854,7 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 
 	bool acknowledge_request = false;
 
-	thisDTC_->WriteExtROCRegister(
+	getDTC()->WriteExtROCRegister(
 	    rocLinkIndex, block, address, writeData, acknowledge_request, 0);
 
 	for(auto& argOut : argsOut)
@@ -2936,7 +2889,7 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 		{
 			DTCLib::roc_data_t readData;
 
-			readData = thisDTC_->ReadExtROCRegister(rocLinkIndex, block, address);
+			readData = getDTC()->ReadExtROCRegister(rocLinkIndex, block, address);
 
 			std::string readDataString = "";
 			readDataString = BinaryStringMacros::binaryNumberToHexString(readData);
@@ -3199,7 +3152,7 @@ void DTCFrontEndInterface::ResetLossOfLockCounter(__ARGS__)
 {
 	// write anything to reset
 	// 0x93c8 is RX CDR Unlock counter (32-bit)
-	thisDTC_->ClearRXCDRUnlockCount(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+	getDTC()->ClearRXCDRUnlockCount(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 	// registerWrite(0x93c8, 0);
 
 	// now check
@@ -3209,7 +3162,7 @@ void DTCFrontEndInterface::ResetLossOfLockCounter(__ARGS__)
 	// sprintf(readDataStr, "%d", readData);
 	// __SET_ARG_OUT__("Upstream Rx Lock Loss Count", readDataStr);
 	__SET_ARG_OUT__("Upstream Rx Lock Loss Count",
-		thisDTC_->FormatRXCDRUnlockCountCFOLink());
+		getDTC()->FormatRXCDRUnlockCountCFOLink());
 }  // end ResetLossOfLockCounter()
 
 //========================================================================
@@ -3217,7 +3170,7 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 {
 	// 0x93c8 is RX CDR Unlock counter (32-bit)
 	uint32_t readData = //registerRead(0x93c8);
-		thisDTC_->ReadRXCDRUnlockCount(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+		getDTC()->ReadRXCDRUnlockCount(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 
 	char readDataStr[100];
 	sprintf(readDataStr, "%d", readData);
@@ -3227,7 +3180,7 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	bool isUpstreamLocked = 1;
 	for(int i = 0; i < 5; ++i) //read 5x for multiple samples in case of instability
 	{
-		isUpstreamLocked &= thisDTC_->ReadSERDESRXCDRLock(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+		isUpstreamLocked &= getDTC()->ReadSERDESRXCDRLock(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 		// readData = registerRead(0x9140);
 		// isUpstreamLocked &=
 		//     (readData >> 6) & 1;  //& to force unlocked for any unlocked reading
@@ -3238,14 +3191,14 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	// 0x9128 bit-6 is RX PLL
 	// readData		    = registerRead(0x9128);
 	bool isUpstreamPLLLocked = //(readData >> 6) & 1;
-		thisDTC_->ReadSERDESPLLLocked(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+		getDTC()->ReadSERDESPLLLocked(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 
 	// Jitter attenuator has configurable "Free Running" mode
 	// LOL == Loss of Lock, LOS == Loss of Signal (4-inputs to jitter attenuator)
 	// 0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
 	// readData	     = //registerRead(0x9308);
 
-	uint32_t    val	  = thisDTC_->ReadJitterAttenuatorSelect().to_ulong();//(readData >> 4) & 3;
+	uint32_t    val	  = getDTC()->ReadJitterAttenuatorSelect().to_ulong();//(readData >> 4) & 3;
 	std::string JAsrc = val == 0 ? "from CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
 
 	__SET_ARG_OUT__(
@@ -3261,7 +3214,7 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
 {
 	std::stringstream outss;
-	outss << thisDTC_->FormatRXCDRLockStatus() << "\n\n" << thisDTC_->FormatLinkEnable();
+	outss << getDTC()->FormatRXCDRLockStatus() << "\n\n" << getDTC()->FormatLinkEnable();
 	__SET_ARG_OUT__("Lock Status", "\n" + outss.str());
 }  // end GetLinkLockStatus()
 
@@ -3284,7 +3237,6 @@ void DTCFrontEndInterface::WriteDTC(__ARGS__)
 	ss << "Wrote " << std::dec << writeData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << writeData <<
 		" to address 0x" << std::setw(4) << address << ".";
 	__SET_ARG_OUT__("Status", ss.str());  // readDataStr);
-
 }  // end WriteDTC()
 
 //========================================================================
@@ -3292,7 +3244,7 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 {
 	uint32_t address = __GET_ARG_IN__("address", uint32_t);
 	__FE_COUTV__((unsigned int)address);
-	uint32_t readData;// = registerRead(address);
+	uint32_t readData;
 
 	int errorCode = getDevice()->read_register(address, 100, &readData);
 	if (errorCode != 0)
@@ -3301,8 +3253,6 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 		__SS_THROW__;
 	}
 
-	// char readDataStr[100];
-	// sprintf(readDataStr,"0x%X",readData);
 	// converted to dec and hex display in FEVInterfacesManager handling of FE Macros
 	std::stringstream ss;
 	ss << "Read " << std::dec << readData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << readData <<
@@ -3419,21 +3369,21 @@ std::string DTCFrontEndInterface::SetupROCs(DTCLib::DTC_Link_ID rocLinkIndex,
 
 
 	if(rocRxTxEnable)
-		thisDTC_->EnableLink(rocLinkIndex);
+		getDTC()->EnableLink(rocLinkIndex);
 	else
-		thisDTC_->DisableLink(rocLinkIndex);
+		getDTC()->DisableLink(rocLinkIndex);
 
 	if(rocTimingEnable)
-		thisDTC_->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, true);
+		getDTC()->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, true);
 	else
-		thisDTC_->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, false);
+		getDTC()->SetCFO40MHzClockMarkerEnable(rocLinkIndex < 6 ? DTC_ROC_Links[rocLinkIndex]:DTC_Link_ALL, false);
 
 	__FE_COUTV__(rocEmulationType);
 
 	if(rocEmulationEnable)
-		thisDTC_->EnableROCEmulator(rocLinkIndex, rocEmulationType);
+		getDTC()->EnableROCEmulator(rocLinkIndex, rocEmulationType);
 	else
-		thisDTC_->DisableROCEmulator(rocLinkIndex, rocEmulationType);
+		getDTC()->DisableROCEmulator(rocLinkIndex, rocEmulationType);
 
 	// To change the size of the event, need to write to each ROC emulator
 	// 0x91B0 (b0-10 roc0, b16-26 roc1), 0x91B4 (b0-10 roc2, b16-26 roc3), 0x91B8 (b0-10
@@ -3449,9 +3399,9 @@ std::string DTCFrontEndInterface::SetupROCs(DTCLib::DTC_Link_ID rocLinkIndex,
 		__FE_SS_THROW__;
 	}
 
-	thisDTC_->SetROCEmulationNumPackets(rocLinkIndex,wsize);
+	getDTC()->SetROCEmulationNumPackets(rocLinkIndex,wsize);
 
-	return thisDTC_->FormattedRegDump(20,thisDTC_->formattedROCEmulationFunctions_);
+	return getDTC()->FormattedRegDump(20,getDTC()->formattedROCEmulationFunctions_);
 
 }  // end SetEmulatedROCEventFragmentSize()
 
@@ -3464,9 +3414,9 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {
-	__SET_ARG_OUT__("Packet Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPacketCounterFunctions_));
-	__SET_ARG_OUT__("Link Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESCounterFunctions_));
-	__SET_ARG_OUT__("Performance Counters", thisDTC_->FormattedRegDump(20, thisDTC_->formattedPerformanceCounterFunctions_));
+	__SET_ARG_OUT__("Packet Counters", getDTC()->FormattedRegDump(20, getDTC()->formattedPacketCounterFunctions_));
+	__SET_ARG_OUT__("Link Counters", getDTC()->FormattedRegDump(20, getDTC()->formattedSERDESCounterFunctions_));
+	__SET_ARG_OUT__("Performance Counters", getDTC()->FormattedRegDump(20, getDTC()->formattedPerformanceCounterFunctions_));
 }  // end DTCCounters()
 
 //========================================================================
@@ -3475,7 +3425,7 @@ void DTCFrontEndInterface::readRxDiagFIFO(__ARGS__)
 	DTCLib::DTC_Link_ID LinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("LinkIndex", uint8_t));
 
-	__SET_ARG_OUT__("Diagnostic RX FIFO", thisDTC_->FormatRXDiagFifo(DTCLib::DTC_ROC_Links[LinkIndex]));
+	__SET_ARG_OUT__("Diagnostic RX FIFO", getDTC()->FormatRXDiagFifo(DTCLib::DTC_ROC_Links[LinkIndex]));
 
 
 } //end readRxDiagFIFO()
@@ -3486,7 +3436,7 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 	DTCLib::DTC_Link_ID LinkIndex =
 	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("LinkIndex", uint8_t));
 
-	__SET_ARG_OUT__("Diagnostic TX FIFO", thisDTC_->FormatTXDiagFifo(DTCLib::DTC_ROC_Links[LinkIndex]));
+	__SET_ARG_OUT__("Diagnostic TX FIFO", getDTC()->FormatTXDiagFifo(DTCLib::DTC_ROC_Links[LinkIndex]));
 
 
 } //end readTxDiagFIFO()
@@ -3494,7 +3444,7 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::GetLinkErrors(__ARGS__)
 {
-	__SET_ARG_OUT__("Link Errors", thisDTC_->FormattedRegDump(20, thisDTC_->formattedSERDESErrorFunctions_));
+	__SET_ARG_OUT__("Link Errors", getDTC()->FormattedRegDump(20, getDTC()->formattedSERDESErrorFunctions_));
 } //end GetLinkErrors()
 
 // //========================================================================
@@ -3523,6 +3473,8 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 	DTCLib::DTC_SimMode mode =
 	    emulate_cfo_ ? DTCLib::DTC_SimMode_NoCFO : DTCLib::DTC_SimMode_Disabled;
+	if(emulatorMode_) 
+		mode = DTCLib::DTC_SimMode_Performance; //This is simple ROC emulator style simulation
 
 	unsigned dtc_class_roc_mask = 0;
 	// create roc mask for DTC
@@ -3582,16 +3534,16 @@ void DTCFrontEndInterface::DTCInstantiate()
 	// instantiate DTC with the appropriate ROCs enabled
 	thisDTC_ = new DTCLib::DTC(
 	    mode, deviceIndex_, dtc_class_roc_mask, expectedDesignVersion,
-		true /* skipInit */, //always skip init and lots ots configure setup
+		mode != DTCLib::DTC_SimMode_Performance /* skipInit */, //always skip init for real hardware, and use ots configure setup; allow init for simulation
 		"" /* simMemoryFile */,
 		getInterfaceUID());
 
 	try //attempt to print out firmware version to the log
 	{
-		std::string designVersion = thisDTC_->ReadDesignVersion();
+		std::string designVersion = getDTC()->ReadDesignVersion();
 		__FE_COUTV__(designVersion);
 	} catch (...) {} //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
-	__FE_COUT__ << "Linux Kernel Driver Version: " << thisDTC_->GetDevice()->get_driver_version() << __E__;
+	__FE_COUT__ << "Linux Kernel Driver Version: " << getDevice()->get_driver_version() << __E__;
 
 	createROCs();
 	registerFEMacros();
@@ -3609,9 +3561,9 @@ void DTCFrontEndInterface::DTCInstantiate()
 //========================================================================
 void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
 {
-	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-	thisDTC_->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+	getDTC()->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 } //end ResetDTCLinks()
 
 //========================================================================
@@ -3639,22 +3591,22 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::ResetCFOLinkRx(__ARGS__)
 {
-	thisDTC_->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+	getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 } //end ResetCFOLinkRx()
 //========================================================================
 void DTCFrontEndInterface::ResetCFOLinkTx(__ARGS__)
 {
-	thisDTC_->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
+	getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
 } //end ReseResetCFOLinkTxtCFORx()
 //========================================================================
 void DTCFrontEndInterface::ResetCFOLinkRxPLL(__ARGS__)
 {
-	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
+	getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
 } //end ResetCFOLinkRxPLL()
 //========================================================================
 void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 {
-	thisDTC_->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
+	getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_TX);
 } //end ResetCFOLinkTxPLL()
 
 //========================================================================
@@ -3679,15 +3631,15 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
 	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
 
-	thisDTC_->DisableCFOEmulation();
-	thisDTC_->SetExternalCFOSampleEdgeMode(forceCFOedge);
+	getDTC()->DisableCFOEmulation();
+	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge);
 
 	__FE_COUTV__(useCFOemulator);
 
 	if(useCFOemulator)
 	{
 		outSs << "Setting up CFO emulator...\n\n";
-		thisDTC_->SetCFOEmulationMode();
+		getDTC()->SetCFOEmulationMode();
 
 		if(alsoSetupJA)
 		{
@@ -3719,7 +3671,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
 			__FE_COUT_INFO__ << "JA Status = " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 		}
 
-		thisDTC_->ClearCFOEmulationMode();
+		getDTC()->ClearCFOEmulationMode();
 	}
 
 
@@ -3727,21 +3679,21 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int forceCFOedge,
 
 	if(cfoRxTxEnable)
 	{
-		thisDTC_->EnableReceiveCFOLink();
-		thisDTC_->EnableTransmitCFOLink();
+		getDTC()->EnableReceiveCFOLink();
+		getDTC()->EnableTransmitCFOLink();
 	}
 	else
 	{
-		thisDTC_->DisableReceiveCFOLink();
-		thisDTC_->DisableTransmitCFOLink();
+		getDTC()->DisableReceiveCFOLink();
+		getDTC()->DisableTransmitCFOLink();
 	}
 
 	__FE_COUTV__(enableAutogenDRP);
 
 	if(enableAutogenDRP)
-		thisDTC_->EnableAutogenDRP();
+		getDTC()->EnableAutogenDRP();
 	else
-		thisDTC_->DisableAutogenDRP();
+		getDTC()->DisableAutogenDRP();
 
 	__FE_COUT_INFO__ << outSs.str();
 	return outSs.str();
@@ -3780,8 +3732,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 
 	std::stringstream outSs;
 
-	thisDTC_->DisableCFOEmulation();
-	thisDTC_->DisableAutogenDRP();
+	getDTC()->DisableCFOEmulation();
+	getDTC()->DisableAutogenDRP();
 	if(!enable) //do not need to apply parameters if disabling
 	{
 		outSs << "Halted CFO Emulator!" << __E__;
@@ -3789,7 +3741,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 	}
 	//else enabling, so apply parameters, then enable
 
-	thisDTC_->SoftReset(); //to reset event window tag starting point handling
+	getDTC()->SoftReset(); //to reset event window tag starting point handling
 
 	//ASSUME release buffers is handled by the reading code
 	// // release of all the buffers
@@ -3803,33 +3755,33 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(bool enable,
 
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
-	thisDTC_->SetCFOEmulationEventWindowInterval(0);
+	getDTC()->SetCFOEmulationEventWindowInterval(0);
 
 	__FE_COUTV__(numberOfSuperCycles);
-	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfSuperCycles);
+	getDTC()->SetCFOEmulationNumHeartbeats(numberOfSuperCycles);
 
 	__FE_COUTV__(initialEventWindowTag);
-	thisDTC_->SetCFOEmulationTimestamp(DTCLib::DTC_EventWindowTag(initialEventWindowTag));
+	getDTC()->SetCFOEmulationTimestamp(DTCLib::DTC_EventWindowTag(initialEventWindowTag));
 
 	__FE_COUTV__(enableClockMarkers);
-	thisDTC_->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+	getDTC()->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
 	__FE_COUTV__(skipBy32);
 	if(skipBy32)
-		thisDTC_->EnableDropDataToEmulateEventBuilding();
+		getDTC()->EnableDropDataToEmulateEventBuilding();
 	else
-		thisDTC_->DisableDropDataToEmulateEventBuilding();
+		getDTC()->DisableDropDataToEmulateEventBuilding();
 
 	__FE_COUTV__(enableAutogenDRP);
 	if(enableAutogenDRP)
-		thisDTC_->EnableAutogenDRP();
+		getDTC()->EnableAutogenDRP();
 	else
-		thisDTC_->DisableAutogenDRP();
+		getDTC()->DisableAutogenDRP();
 
-	thisDTC_->EnableReceiveCFOLink(); //enable forwarding if CFO timing link to ROCs
+	getDTC()->EnableReceiveCFOLink(); //enable forwarding if CFO timing link to ROCs
 
 	__COUTT__ << "Enabling CFO Emulation!" << __E__;
-	thisDTC_->EnableCFOEmulation();
+	getDTC()->EnableCFOEmulation();
 
 	outSs << "Launched CFO Emulator!" << __E__;
 	return outSs.str();
@@ -3841,12 +3793,12 @@ void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) {
 	uint64_t when = __GET_ARG_IN__("Event Window Tag",uint64_t);
 	//uint8_t link	= __GET_ARG_IN__("LinkIndex", uint8_t);
 
-	//thisDTC_->SendDataRequestPacket(DTCLib::DTC_Link_ID(link),
+	//getDTC()->SendDataRequestPacket(DTCLib::DTC_Link_ID(link),
 	//				  DTCLib::DTC_EventWindowTag(when),
 	//				  true, false); // link, EVT, quiet, debug
 
-	thisDTC_->EnableSoftwareDRP();
-	thisDTC_->SetSoftwareDataRequest(DTCLib::DTC_EventWindowTag(when));
+	getDTC()->EnableSoftwareDRP();
+	getDTC()->SetSoftwareDataRequest(DTCLib::DTC_EventWindowTag(when));
 
 	std::stringstream outSs;
 	outSs << "Sent software DR for EVT " << std::hex << when << __E__;
@@ -3856,8 +3808,8 @@ void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__) {
 
 void DTCFrontEndInterface::PunchedClock(__ARGS__) {
 	auto enable = __GET_ARG_IN__("Enable (Default := true)", bool, true);
-	if (enable) thisDTC_->SetPunchEnable();
-	else	    thisDTC_->ClearPunchEnable();
+	if (enable) getDTC()->SetPunchEnable();
+	else	    getDTC()->ClearPunchEnable();
 } // end PunchedClock()
 
 //========================================================================
@@ -3896,8 +3848,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 
 	std::stringstream outSs;
 
-	thisDTC_->DisableCFOEmulation();
-	thisDTC_->DisableAutogenDRP();
+	getDTC()->DisableCFOEmulation();
+	getDTC()->DisableAutogenDRP();
 	if(!enable) //do not need to apply parameters if disabling
 	{
 		outSs << "Halted CFO Emulator!" << __E__;
@@ -3905,7 +3857,7 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	}
 	//else enabling, so apply parameters, then enable
 
-	thisDTC_->SoftReset(); //to reset event window tag starting point handling
+	getDTC()->SoftReset(); //to reset event window tag starting point handling
 
 	//ASSUME release buffers is handled by the reading code
 	// // release of all the buffers
@@ -3995,36 +3947,36 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(bool enable,
 	}
 
 	__FE_COUTV__(eventDurationInClocks);
-	thisDTC_->SetCFOEmulationEventWindowInterval(eventDurationInClocks);
+	getDTC()->SetCFOEmulationEventWindowInterval(eventDurationInClocks);
 
 	__FE_COUTV__(numberOfEventWindowMarkers);
-	thisDTC_->SetCFOEmulationNumHeartbeats(numberOfEventWindowMarkers);
+	getDTC()->SetCFOEmulationNumHeartbeats(numberOfEventWindowMarkers);
 
 	__FE_COUTV__(initialEventWindowTag);
-	thisDTC_->SetCFOEmulationTimestamp(DTCLib::DTC_EventWindowTag(initialEventWindowTag));
+	getDTC()->SetCFOEmulationTimestamp(DTCLib::DTC_EventWindowTag(initialEventWindowTag));
 
 	__FE_COUTV__(eventWindowMode);
-	thisDTC_->SetCFOEmulationEventMode(eventWindowMode);
+	getDTC()->SetCFOEmulationEventMode(eventWindowMode);
 
 	__FE_COUTV__(enableClockMarkers);
-	thisDTC_->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
+	getDTC()->SetCFO40MHzClockMarkerEnable(DTCLib::DTC_Link_ID::DTC_Link_ALL,enableClockMarkers);
 
 	__FE_COUTV__(skipBy32);
 	if(skipBy32)
-		thisDTC_->EnableDropDataToEmulateEventBuilding();
+		getDTC()->EnableDropDataToEmulateEventBuilding();
 	else
-		thisDTC_->DisableDropDataToEmulateEventBuilding();
+		getDTC()->DisableDropDataToEmulateEventBuilding();
 
 	__FE_COUTV__(enableAutogenDRP);
 	if(enableAutogenDRP)
-		thisDTC_->EnableAutogenDRP();
+		getDTC()->EnableAutogenDRP();
 	else
-		thisDTC_->DisableAutogenDRP();
+		getDTC()->DisableAutogenDRP();
 
-	thisDTC_->EnableReceiveCFOLink();  //enable forwarding if CFO timing link to ROCs
+	getDTC()->EnableReceiveCFOLink();  //enable forwarding if CFO timing link to ROCs
 
 	__COUTT__ << "Enabling CFO Emulation!" << __E__;
-	thisDTC_->EnableCFOEmulation();
+	getDTC()->EnableCFOEmulation();
 
 	outSs << "Launched CFO Emulator!" << __E__;
 	return outSs.str(); //__SET_ARG_OUT__("response", outSs.str());
@@ -4467,7 +4419,10 @@ try
 			for(const auto& c : threadStruct->saveBinaryDataFilename_)
 				if(c == '/' || c == '\\') continue;
 				else tmp += c;
-			threadStruct->saveBinaryDataFilename_ = threadStruct->thisDTC_->getDeviceUID() + "_" + tmp;
+			if(threadStruct->thisDTC_)
+				threadStruct->saveBinaryDataFilename_ = threadStruct->thisDTC_->getDeviceUID() + "_" + tmp;
+			else
+				threadStruct->saveBinaryDataFilename_ = "SIM_" + tmp;
 		}
 		__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" +
 									threadStruct->saveBinaryDataFilename_);
@@ -4484,7 +4439,8 @@ try
 	}
 	//start with clean release
 	// getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
-	threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+	if(threadStruct->thisDTC_)
+		threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 	__COUTT__ << "ReleaseAllBuffers called!" << __E__;
 
 	std::vector<std::unique_ptr<DTCLib::DTC_Event>> events;
@@ -4563,8 +4519,10 @@ try
 								for(const auto& c : threadStruct->saveBinaryDataFilename_)
 									if(c == '/' || c == '\\') continue;
 									else tmp += c;
-								threadStruct->saveBinaryDataFilename_ =
-									threadStruct->thisDTC_->getDeviceUID() + "_" + tmp;
+								if(threadStruct->thisDTC_)
+									threadStruct->saveBinaryDataFilename_ = threadStruct->thisDTC_->getDeviceUID() + "_" + tmp;
+								else
+									threadStruct->saveBinaryDataFilename_ = "SIM_" + tmp;
 							}
 							__COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" +
 									threadStruct->saveBinaryDataFilename_);
@@ -4610,14 +4568,16 @@ try
 				}
 
 				//release buffers for restart
-				threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+				if(threadStruct->thisDTC_)
+					threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 			}
 
 		} //done with check for starting event window tag
 
 		if(!threadStruct->inSubeventMode_) //treat as an Event
 		{
-			__COUTT__ << __COUT_HDR__ << "get the data requested as events via ->GetData(...)";
+			__COUTT__ << __COUT_HDR__ << "get the data requested as events via ->GetData(...)";		
+
 			while((events = threadStruct->thisDTC_->GetData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
 				false /* EWT match */)).size())
 			{
@@ -4693,7 +4653,8 @@ try
 		}
 		else //Treat as Subevent
 		{
-			TLOG_DEBUG() << "get the data requested as events via ->GetSubEventData(...)";
+			TLOG_DEBUG() << "get the data requested as subevents via ->GetSubEventData(...)";
+
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
 				false /* EWT match */)).size())
 			{
@@ -4753,7 +4714,8 @@ try
 catch(...)
 {
 	std::stringstream errSs; errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
-	threadStruct->thisDTC_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+	if(threadStruct->thisDTC_)
+		threadStruct->thisDTC_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
 	//close any open file
 	if(threadStruct->fp_)
@@ -4962,7 +4924,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 	DTCLib::DTC_EventWindowTag eventTag = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 
 	// // create the emulated CFO instance
-	// DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(thisDTC_,
+	// DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(getDTC(),
 	//															useCFOinDTCEmulator,
 	//															debugPacketCount,
 	//															debugType,
@@ -5003,7 +4965,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 			ii < numberOfEvents; ++ii)
 		{
 			// get the data
-			std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = thisDTC_->GetData(eventTag + ii, activeMatch);
+			std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = getDTC()->GetData(eventTag + ii, activeMatch);
 			ostr << "Read " << std::dec << ii << ": Events returned by the DTC: " << events.size() << std::endl;
 			if (!events.empty())
 			{
@@ -5122,7 +5084,7 @@ void DTCFrontEndInterface::BufferTest(__ARGS__)
 			}
 
 			// get the data
-			std::vector<std::unique_ptr<DTCLib::DTC_SubEvent>> subevents = thisDTC_->GetSubEventData(eventTag + ii, activeMatch);
+			std::vector<std::unique_ptr<DTCLib::DTC_SubEvent>> subevents = getDTC()->GetSubEventData(eventTag + ii, activeMatch);
 			numberOfSubEventsReceived += subevents.size();
 			ostr << "Read " << std::dec << ii << ": SubEvents returned by the DTC: " << subevents.size() << ". Total received so far: " <<
 				numberOfSubEventsReceived << std::endl;
@@ -5336,7 +5298,7 @@ void DTCFrontEndInterface::PatternTest(__ARGS__)
 	DTCLib::DTC_EventWindowTag eventTag = DTCLib::DTC_EventWindowTag(static_cast<uint64_t>(timestampStart));
 
 	// // create the emulated CFO instance
-	// DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(thisDTC_,
+	// DTCLib::DTCSoftwareCFO* cfo = new DTCLib::DTCSoftwareCFO(getDTC(),
 	//															useCFOinDTCEmulator,
 	//															debugPacketCount,
 	//															debugType,
@@ -5387,7 +5349,7 @@ void DTCFrontEndInterface::PatternTest(__ARGS__)
 			ii < numberOfEvents; ++ii)
 		{
 			// get the data
-			std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = thisDTC_->GetData(eventTag + ii, activeMatch);
+			std::vector<std::unique_ptr<DTCLib::DTC_Event>> events = getDTC()->GetData(eventTag + ii, activeMatch);
 			ostr << "Read " << ii << ": Events returned by the DTC: " << events.size() << std::endl;
 			if (!events.empty())
 			{
@@ -5508,7 +5470,7 @@ void DTCFrontEndInterface::PatternTest(__ARGS__)
 			ii < numberOfSubEvents; ++ii)
 		{
 			// get the data
-			std::vector<std::unique_ptr<DTCLib::DTC_SubEvent>> subevents = thisDTC_->GetSubEventData(eventTag + ii, activeMatch);
+			std::vector<std::unique_ptr<DTCLib::DTC_SubEvent>> subevents = getDTC()->GetSubEventData(eventTag + ii, activeMatch);
 			numberOfSubEventsReceived += subevents.size();
 			ostr << "Read " << ii << ": SubEvents returned by the DTC: " << subevents.size() << ". Total received so far: " << numberOfSubEventsReceived << std::endl;
 			if (subevents.empty()) continue;
@@ -5677,8 +5639,8 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTest(__ARGS__)
 {
 	__FE_COUT__ << "CFO Emulator Loopback Test run" << __E__;
 
-	thisDTC_->EnableCFOLoopback();
-	thisDTC_->RunCableDelayLoopbackTest();
+	getDTC()->EnableCFOLoopback();
+	getDTC()->RunCableDelayLoopbackTest();
 
 	std::stringstream outSs;
 	outSs << "Done.";
@@ -5694,21 +5656,21 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 	__COUTV__(setAsPassthrough);
 	__COUTV__(ROC_Link);
 
-	thisDTC_->EnableLink(DTCLib::DTC_Link_CFO);
-	thisDTC_->DisableLink(DTCLib::DTC_Link_EVB);
+	getDTC()->EnableLink(DTCLib::DTC_Link_CFO);
+	getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
 	for(size_t i=0;i<DTCLib::DTC_ROC_Links.size();++i)
-		thisDTC_->DisableLink(DTCLib::DTC_ROC_Links[i]);
+		getDTC()->DisableLink(DTCLib::DTC_ROC_Links[i]);
 
 	if(setAsPassthrough)
 	{
-		thisDTC_->DisableCFOLoopback();
+		getDTC()->DisableCFOLoopback();
 		return;
 	}
 	else
-		thisDTC_->EnableCFOLoopback();
+		getDTC()->EnableCFOLoopback();
 
 
-	thisDTC_->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
+	getDTC()->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
 
 
 } //end ManualLoopbackSetup()
@@ -5754,8 +5716,8 @@ void DTCFrontEndInterface::loopbackTest(int step)
 	{
 		// 0x9100 set bit 28 = 1
 		__FE_COUT__ << "DTC" << active_DTC << "loopback mode ENABLE" << __E__;
-		thisDTC_->DisableCFOLoopback();
-		// thisDTC_->EnableCFOLoopback();
+		getDTC()->DisableCFOLoopback();
+		// getDTC()->EnableCFOLoopback();
 	}
 	else
 	{
@@ -5763,14 +5725,14 @@ void DTCFrontEndInterface::loopbackTest(int step)
 		__FE_COUT__ << "active DTC = " << active_DTC
 			    << " is NOT this DTC = " << dtc_location_in_chain_
 				<< "... pass signal through" << __E__;
-		thisDTC_->EnableCFOLoopback();
-		// thisDTC_->DisableCFOLoopback();
+		getDTC()->EnableCFOLoopback();
+		// getDTC()->DisableCFOLoopback();
 	}
 	// enable the links of the DTC
 	DTCLib::DTC_Link_ID link = static_cast<DTCLib::DTC_Link_ID>(active_ROC);
-	thisDTC_->EnableReceiveCFOLink();
-	thisDTC_->EnableTransmitCFOLink();
-	thisDTC_->EnableLink(link, DTCLib::DTC_LinkEnableMode(true, true)); // enable Tx and Rx
+	getDTC()->EnableReceiveCFOLink();
+	getDTC()->EnableTransmitCFOLink();
+	getDTC()->EnableLink(link, DTCLib::DTC_LinkEnableMode(true, true)); // enable Tx and Rx
 
 	indicateIterationWork();
 } //end loopbackTest()

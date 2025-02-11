@@ -105,15 +105,7 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
 	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << writeData << __E__;
 
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator mode write." << __E__;
-		std::lock_guard<std::mutex> lock(workLoopMutex_);
-		return writeEmulatorRegister(address, writeData);
-	}
-	else
-		return writeROCRegister(address, writeData);
-
+	return writeROCRegister(address, writeData);
 }  // end writeRegister()
 
 //==================================================================================================
@@ -121,16 +113,8 @@ DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address
 {
 	__FE_COUT__ << "Calling read ROC register: link number = " << std::dec << linkID_
 	            << ", address = " << address << __E__;
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator mode read." << __E__;
-		std::lock_guard<std::mutex> lock(workLoopMutex_);
-		return readEmulatorRegister(address);
-	}
-	else
-		return readROCRegister(address);
-
+	
+	return readROCRegister(address);
 }  // end readRegister()
 catch(...)
 {
@@ -155,15 +139,7 @@ void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
 	            << ", address = " << address << ", wordCount = " << wordCount
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator mode read block." << __E__;
-		std::lock_guard<std::mutex> lock(workLoopMutex_);
-		return readEmulatorBlock(data, address, wordCount, incrementAddress);
-	}
-	else
-		return readROCBlock(data, address, wordCount, incrementAddress);
-
+	return readROCBlock(data, address, wordCount, incrementAddress);
 }  // end readBlock()
 
 //==================================================================================================
@@ -177,15 +153,7 @@ void ROCCoreVInterface::writeBlock(const std::vector<DTCLib::roc_data_t>& writeD
 	            << ", incrementAddress = " << incrementAddress 
 	            << ", requestAck = " << requestAck << __E__;
 
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator mode write block." << __E__;
-		std::lock_guard<std::mutex> lock(workLoopMutex_);
-		return writeEmulatorBlock(writeData, address, incrementAddress, requestAck);
-	}
-	else
-		return writeROCBlock(writeData, address, incrementAddress, requestAck);
-
+	return writeROCBlock(writeData, address, incrementAddress, requestAck);
 }  // end readBlock()
 
 
@@ -199,19 +167,9 @@ void ROCCoreVInterface::writeBlock(const std::vector<DTCLib::roc_data_t>& writeD
 //		- expects exception thrown on failure/timeout
 void ROCCoreVInterface::universalRead(char* address, char* returnValue)
 {
-	// __FE_COUT__ << "ROC READ" << __E__;
-
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator read " << __E__;
-
-		for(unsigned int i = 0; i < universalDataSize_; ++i)
-			returnValue[i] = (0xE0 | i) + rand() % 100;
-		return;
-	}
+	__FE_COUTS__(20) << "ROC READ" << __E__;
 
 	(*((DTCLib::roc_data_t*)returnValue)) = readRegister(*((DTCLib::roc_address_t*) address));
-
 }  // end universalRead()
 
 //=====================================================================================
@@ -222,15 +180,9 @@ void ROCCoreVInterface::universalRead(char* address, char* returnValue)
 //		- writeValue will be a [universalDataSize_] byte long char array
 void ROCCoreVInterface::universalWrite(char* address, char* writeValue)
 {
-	// __FE_COUT__ << "ROC WRITE" << __E__;
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator write " << __E__;
-		return;
-	}
+	__FE_COUTS__(20) << "ROC WRITE" << __E__;
 
-	writeRegister(*((DTCLib::roc_address_t*)address), *((DTCLib::roc_data_t*) writeValue));
-		
+	writeRegister(*((DTCLib::roc_address_t*)address), *((DTCLib::roc_data_t*) writeValue));		
 }  // end universalWrite()
 
 //==================================================================================================
@@ -243,7 +195,6 @@ void ROCCoreVInterface::writeROCRegister(uint16_t address, uint16_t data_to_writ
 	bool acknowledge_request = false;
 
 	thisDTC_->WriteROCRegister(linkID_, address, data_to_write, acknowledge_request, 0);
-
 }  // end writeROCRegister()
 
 //==================================================================================================

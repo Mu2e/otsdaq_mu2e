@@ -303,7 +303,7 @@ void CFOandDTCCoreVInterface::universalRead(char* address, char* returnValue)
 
 	if(emulatorMode_)
 	{
-		__FE_COUT__ << "Emulator read " << __E__;
+		__FE_COUT__ << "Emulator universal read " << __E__;
 
 		for(unsigned int i = 0; i < universalDataSize_; ++i)
 			returnValue[i] = (0xF0 | i) + rand() % 100;
@@ -331,7 +331,7 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 	// __FE_COUT__ << "DTC WRITE" << __E__;
 	if(emulatorMode_)
 	{
-		__FE_COUT__ << "Emulator write " << __E__;
+		__FE_COUT__ << "Emulator universal write " << __E__;
 		return;
 	}
 

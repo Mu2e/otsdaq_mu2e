@@ -1494,7 +1494,7 @@ void CFOFrontEndInterface::WriteCFO(__ARGS__)
 		__FE_SS__ << "Error writing register 0x" << std::hex << static_cast<uint32_t>(address) << " " << errorCode;
 		__SS_THROW__;
 	}
-	// registerWrite(address, writeData);  
+
 } //end WriteCFO()
 
 //========================================================================
@@ -1502,8 +1502,8 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 {	
 	dtc_address_t address = __GET_ARG_IN__("address", dtc_address_t);
 	__FE_COUTV__((unsigned int)address);
-	dtc_data_t readData;// = registerRead(address);  
-	
+	dtc_data_t readData;
+
 	int errorCode = getDevice()->read_register(address, 100, &readData);
 	if (errorCode != 0)
 	{
@@ -1511,9 +1511,10 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 		__SS_THROW__;
 	}
 	
-	char readDataStr[100];
-	sprintf(readDataStr,"0x%X",readData);
-	__SET_ARG_OUT__("readData",readDataStr);
+	std::stringstream ss;
+	ss << "Read " << std::dec << readData << " 0x" << std::hex << std::setfill('0') << std::setw(8) << readData <<
+		" from address 0x" << std::setw(4) << address << ".";
+	__SET_ARG_OUT__("readData", ss.str());
 } //end ReadCFO()
 
 //========================================================================
