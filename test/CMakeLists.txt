@@ -3,7 +3,7 @@
 cet_make_exec(NAME DTCFrontEndInterface_TestMain
   LIBRARIES
     otsdaq::FECore
-	  otsdaq_mu2e::DTCFrontEndInterface
+	  otsdaq-mu2e::DTCFrontEndInterface
     ${XDAQ_BASIC_LIB_LIST}
     config # From XDAQ
     b2innub # From XDAQ
@@ -19,7 +19,7 @@ cet_make_exec(NAME DTCFrontEndInterface_TestMain
 cet_make_exec(NAME CFOFrontEndInterface_TestMain
   LIBRARIES
     otsdaq::FECore
-	  otsdaq_mu2e::CFOFrontEndInterface
+	  otsdaq-mu2e::CFOFrontEndInterface
     ${XDAQ_BASIC_LIB_LIST}
     config # From XDAQ
     b2innub # From XDAQ
@@ -35,7 +35,7 @@ cet_make_exec(NAME CFOFrontEndInterface_TestMain
 cet_make_exec(NAME DTCFrontEndInterface_ExtCFOMain
   LIBRARIES
     otsdaq::FECore
-	  otsdaq_mu2e::DTCFrontEndInterface
+	  otsdaq-mu2e::DTCFrontEndInterface
     ${XDAQ_BASIC_LIB_LIST}
     config # From XDAQ
     b2innub # From XDAQ
