@@ -1879,14 +1879,25 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 				            << select << __E__;
 			}
 
-			__FE_COUTV__(select);
-			//For DTC - 0 ==> CFO Control Link
-			//For DTC - 1 ==> RTF copper clock
-			//For DTC - 2 ==> FPGA FMC
-			getDTC()->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
-		}
-		else
-			__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+			// getDTC()->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
+			getDTC()->EnableDCSReception();
+
+
+			// If this is a CRV ROC, enable the punched clock by default
+			if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+			 {
+			    __FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
+			    getDTC()->SetPunchEnable();
+			}
+
+			__FE_COUT__ << "DTC reset links" << __E__;
+			// getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
+			getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			getDTC()->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+			break;
+		default:
+			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 	}
 		indicateIterationWork();
 		break;
