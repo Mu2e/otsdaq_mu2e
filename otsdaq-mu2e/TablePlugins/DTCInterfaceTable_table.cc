@@ -20,30 +20,26 @@ using namespace ots;
 
 //==============================================================================
 DTCInterfaceTable::DTCInterfaceTable(void)
-    : TableBase("DTCInterfaceTable")
-    , SlowControlsTableBase("DTCInterfaceTable")
+    : TableBase("DTCInterfaceTable"), SlowControlsTableBase("DTCInterfaceTable")
 {
 }
 
 //==============================================================================
-DTCInterfaceTable::~DTCInterfaceTable(void)
-{
-}
+DTCInterfaceTable::~DTCInterfaceTable(void) {}
 
 //==============================================================================
 // init
 //	Generates EPICS PV config file
 void DTCInterfaceTable::init(ConfigurationManager* configManager)
 {
-	
 	lastConfigManager_ = configManager;
-	
+
 	// use isFirstAppInContext to only run once per context, for example to avoid
 	//	generating files on local disk multiple times.
 	isFirstAppInContext_ = configManager->isOwnerFirstAppInContext();
 
 	channelListHasChanged_ = false;
-	
+
 	//__COUTV__(isFirstAppInContext);
 	if(!isFirstAppInContext_)
 		return;
@@ -60,44 +56,48 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 
 //==============================================================================
 // Configuruing and start of slowControlsHandler function
-unsigned int	DTCInterfaceTable::slowControlsHandlerConfig	(
-														  std::stringstream& out
-														, ConfigurationManager* configManager
-														, std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>* channelList /*= 0*/
-											) const
+unsigned int DTCInterfaceTable::slowControlsHandlerConfig(
+    std::stringstream&    out,
+    ConfigurationManager* configManager,
+    std::vector<std::pair<std::string /*channelName*/, std::vector<std::string>>>*
+        channelList /*= 0*/
+) const
 {
- 	/////////////////////////
+	/////////////////////////
 	// generate xdaq run parameter file
 
 	std::string tabStr     = "";
 	std::string commentStr = "";
-	std::string  subsystem    = "";
+	std::string subsystem  = "";
 
 	unsigned int numberOfDTCs = 0;
 
 	// Set the PV subsystem name
 	std::vector<std::pair<std::string, ConfigurationTree>> feSupervisorRecors =
-		configManager->getNode("FESupervisorTable").getChildren();
+	    configManager->getNode("FESupervisorTable").getChildren();
 
 	for(auto& feSupervPair : feSupervisorRecors)  // start main fe/DTC record loop
 	{
-		subsystem = feSupervPair.second.getNode("SlowControlsMetricManagerChannelNamePreamble").getValue<std::string>();
+		subsystem =
+		    feSupervPair.second.getNode("SlowControlsMetricManagerChannelNamePreamble")
+		        .getValue<std::string>();
 		__COUT__ << "PV SUBSITEM BEFORE CHECK IS: " << subsystem << __E__;
 
-		if (subsystem.empty() || subsystem == "DEFAULT") subsystem = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
+		if(subsystem.empty() || subsystem == "DEFAULT")
+			subsystem = std::string("TDAQ_") + __ENV__("MU2E_OWNER");
 		__COUT__ << "PV SUBSITEM NAME IS: " << subsystem << __E__;
 
 		// loop through DTC records starting at FE Interface Table
 		std::vector<std::pair<std::string, ConfigurationTree>> feRecords =
-			feSupervPair.second.getNode("LinkToFEInterfaceTable").getChildren();
+		    feSupervPair.second.getNode("LinkToFEInterfaceTable").getChildren();
 
-		std::string  rocPluginType;
+		std::string rocPluginType;
 
 		for(auto& fePair : feRecords)  // start main fe/DTC record loop
 		{
 			if(!fePair.second.status() ||
-			fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
-					.getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
+			   fePair.second.getNode(feColNames_.colFEInterfacePluginName_)
+			           .getValue<std::string>() != DTC_FE_PLUGIN_TYPE)
 				continue;
 
 			++numberOfDTCs;
@@ -108,64 +108,68 @@ unsigned int	DTCInterfaceTable::slowControlsHandlerConfig	(
 			// loop through each DTC slow controls channel and make entry in EPICS file
 			{
 				ConfigurationTree slowControlsLink =
-					fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
+				    fePair.second.getNode(feColNames_.colLinkToSlowControlsChannelTable_);
 				unsigned int numberOfDTCSlowControlsChannels =
-					slowControlsHandler(out,
-										tabStr,
-										commentStr,
-										subsystem,
-										fePair.first,
-										slowControlsLink,
-										channelList);
+				    slowControlsHandler(out,
+				                        tabStr,
+				                        commentStr,
+				                        subsystem,
+				                        fePair.first,
+				                        slowControlsLink,
+				                        channelList);
 
-				__COUT__ << "DTC '" << fePair.first << "' number of slow controls channels: "
-						<< numberOfDTCSlowControlsChannels << __E__;
+				__COUT__ << "DTC '" << fePair.first
+				         << "' number of slow controls channels: "
+				         << numberOfDTCSlowControlsChannels << __E__;
 			}  // end DTC slow controls channel handling
 
 			// loop through ROC records
 			//	use plugin type to indicate subsystem type
 
 			ConfigurationTree DTCLink =
-				fePair.second.getNode(feColNames_.colLinkToFETypeTable);
+			    fePair.second.getNode(feColNames_.colLinkToFETypeTable);
 			if(DTCLink.isDisconnected())
 			{
-				__COUT__ << "Disconnected DTC type table information. So assuming no ROCs."
-						<< __E__;
+				__COUT__
+				    << "Disconnected DTC type table information. So assuming no ROCs."
+				    << __E__;
 				continue;
 			}
-			ConfigurationTree ROCLink = DTCLink.getNode(dtcColNames_.colLinkToROCGroupTable_);
+			ConfigurationTree ROCLink =
+			    DTCLink.getNode(dtcColNames_.colLinkToROCGroupTable_);
 			if(ROCLink.isDisconnected())
 			{
 				__COUT__ << "Disconnected ROC link. So assuming no ROCs." << __E__;
 				continue;
 			}
 			std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-				ROCLink.getChildren();
+			    ROCLink.getChildren();
 
 			unsigned int numberOfROCSlowControlsChannels;
 			for(auto& rocChildPair : rocChildren)
 			{
 				__COUT__ << "\t"
-						<< "ROC record: " << rocChildPair.first << __E__;
+				         << "ROC record: " << rocChildPair.first << __E__;
 				numberOfROCSlowControlsChannels = 0;
 				try
 				{
-					rocPluginType =
-						rocChildPair.second.getNode(rocColNames_.colROCInterfacePluginName_)
-							.getValue<std::string>();
+					rocPluginType = rocChildPair.second
+					                    .getNode(rocColNames_.colROCInterfacePluginName_)
+					                    .getValue<std::string>();
 					__COUTV__(rocPluginType);
 
 					std::string location = rocChildPair.first;
 
 					ConfigurationTree slowControlsLink = rocChildPair.second.getNode(
-						rocColNames_.colLinkToSlowControlsChannelTable_);
-					numberOfROCSlowControlsChannels = slowControlsHandler(out,
-																		tabStr,
-																		commentStr,
-																		subsystem,
-																		location,
-																		slowControlsLink,
-																		channelList);
+					    rocColNames_.colLinkToSlowControlsChannelTable_);
+					numberOfROCSlowControlsChannels =
+					    slowControlsHandler(out,
+					                        tabStr,
+					                        commentStr,
+					                        subsystem,
+					                        location,
+					                        slowControlsLink,
+					                        channelList);
 				}
 				catch(const std::runtime_error& e)
 				{
@@ -173,9 +177,9 @@ unsigned int	DTCInterfaceTable::slowControlsHandlerConfig	(
 				}
 
 				__COUT__ << "\t"
-						<< "ROC '" << rocChildPair.first
-						<< "' number of slow controls channels: "
-						<< numberOfROCSlowControlsChannels << __E__;
+				         << "ROC '" << rocChildPair.first
+				         << "' number of slow controls channels: "
+				         << numberOfROCSlowControlsChannels << __E__;
 
 			}  // end ROC record loop
 		}      // end main fe/DTC record loop
@@ -189,7 +193,8 @@ std::string DTCInterfaceTable::setFilePath() const { return SLOWCONTROL_PV_FILE_
 
 //==============================================================================
 // return status structures
-std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* cfgMgr) const
+std::string DTCInterfaceTable::getStructureStatusAsJSON(
+    ConfigurationManager* cfgMgr) const
 {
 	//Steps:
 	//	Get all FE Supervisors
@@ -204,15 +209,15 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* c
 	std::stringstream json;
 
 	const XDAQContextTable* contextTable = cfgMgr->__GET_CONFIG__(XDAQContextTable);
-	const std::vector<XDAQContextTable::XDAQContext>& contexts = contextTable->getContexts();
+	const std::vector<XDAQContextTable::XDAQContext>& contexts =
+	    contextTable->getContexts();
 
+	const std::string COL_NAME_feGroupLink  = "LinkToFEInterfaceTable";
+	const std::string COL_NAME_fePlugin     = "FEInterfacePluginName";
+	const std::string COL_NAME_feTypeLink   = "LinkToFETypeTable";
+	const std::string COL_NAME_rocGroupLink = "LinkToROCGroupTable";
 
-	const std::string COL_NAME_feGroupLink 	= "LinkToFEInterfaceTable";
-	const std::string COL_NAME_fePlugin    	= "FEInterfacePluginName";
-	const std::string COL_NAME_feTypeLink  	= "LinkToFETypeTable";
-	const std::string COL_NAME_rocGroupLink	= "LinkToROCGroupTable";
-
-	const std::string PLUGIN_TYPE_dtc  		= "DTCFrontEndInterface";
+	const std::string PLUGIN_TYPE_dtc = "DTCFrontEndInterface";
 
 	__COUTV__(contexts.size());
 
@@ -221,73 +226,82 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON (ConfigurationManager* c
 	bool firstApp = true;
 	for(auto& context : contexts)
 	{
-		for(auto& app : context.applications_) //App loop
+		for(auto& app : context.applications_)  //App loop
 		{
-			if(XDAQContextTable::FETypeClassNames_.find(app.class_) == XDAQContextTable::FETypeClassNames_.end())
+			if(XDAQContextTable::FETypeClassNames_.find(app.class_) ==
+			   XDAQContextTable::FETypeClassNames_.end())
 				continue;
 
-			__COUTV__(app.applicationUID_); //all FE Supervisors
+			__COUTV__(app.applicationUID_);  //all FE Supervisors
 
 			bool parentEnabled = (context.status_ && app.status_);
 
-			ConfigurationTree appNode = cfgMgr->getNode(
-				ConfigurationManager::XDAQ_APPLICATION_TABLE_NAME + "/" +
-				app.applicationUID_);
+			ConfigurationTree appNode =
+			    cfgMgr->getNode(ConfigurationManager::XDAQ_APPLICATION_TABLE_NAME + "/" +
+			                    app.applicationUID_);
 
-			std::vector<std::pair<std::string, ConfigurationTree>> feChildren = 
-				appNode.getNode(XDAQContextTable::colApplication_.colLinkToSupervisorTable_).
-					getNode(COL_NAME_feGroupLink).getChildren();
+			std::vector<std::pair<std::string, ConfigurationTree>> feChildren =
+			    appNode
+			        .getNode(XDAQContextTable::colApplication_.colLinkToSupervisorTable_)
+			        .getNode(COL_NAME_feGroupLink)
+			        .getChildren();
 
-			if(!firstApp) json << ", ";
+			if(!firstApp)
+				json << ", ";
 			firstApp = false;
 
-			json << "{\"name\": \"" << context.contextUID_ << "_" << app.applicationUID_  << "\" ";
-			json << ", \"enabled\": \"" << (parentEnabled?"1":"0") << "\"";
+			json << "{\"name\": \"" << context.contextUID_ << "_" << app.applicationUID_
+			     << "\" ";
+			json << ", \"enabled\": \"" << (parentEnabled ? "1" : "0") << "\"";
 			json << ", \"dtcs\": [";
 
 			bool firstDTC = true;
 
-			for(const auto& interface : feChildren) //DTC loop
+			for(const auto& interface : feChildren)  //DTC loop
 			{
 				if(interface.second.getNode(COL_NAME_fePlugin).getValue<std::string>() !=
-					PLUGIN_TYPE_dtc)
+				   PLUGIN_TYPE_dtc)
 					continue;
 
-				__COUTV__(interface.first); //all DTCs
+				__COUTV__(interface.first);  //all DTCs
 				__COUTV__(parentEnabled);
 				__COUTV__(interface.second.status());
 
-				if(!firstDTC) json << ", ";
+				if(!firstDTC)
+					json << ", ";
 				firstDTC = false;
 
 				json << "{\"name\": \"" << interface.first << "\" ";
-				json << ", \"parentApp\": \"" << 
-					context.address_ << ":" << context.port_ << "/" <<
-					context.contextUID_ << "/" <<
-					app.applicationUID_ << "\"";
-				json << ", \"parentEnabled\": \"" << (parentEnabled?"1":"0") << "\"";
-				json << ", \"enabled\": \"" << (interface.second.status()?"1":"0") << "\"";
+				json << ", \"parentApp\": \"" << context.address_ << ":" << context.port_
+				     << "/" << context.contextUID_ << "/" << app.applicationUID_ << "\"";
+				json << ", \"parentEnabled\": \"" << (parentEnabled ? "1" : "0") << "\"";
+				json << ", \"enabled\": \"" << (interface.second.status() ? "1" : "0")
+				     << "\"";
 				json << ", \"rocs\": [";
 
-				std::vector<std::pair<std::string, ConfigurationTree>> dtcChildren = 
-					interface.second.getNode(COL_NAME_feTypeLink + "/" + COL_NAME_rocGroupLink).getChildren();
+				std::vector<std::pair<std::string, ConfigurationTree>> dtcChildren =
+				    interface.second
+				        .getNode(COL_NAME_feTypeLink + "/" + COL_NAME_rocGroupLink)
+				        .getChildren();
 
 				bool firstROC = true;
-				for(const auto& roc : dtcChildren) //ROC loop
+				for(const auto& roc : dtcChildren)  //ROC loop
 				{
-					if(!firstROC) json << ", ";
+					if(!firstROC)
+						json << ", ";
 					firstROC = false;
 
 					json << "{\"name\": \"" << roc.first << "\" ";
-					json << ", \"enabled\": \"" << (roc.second.status()?"1":"0") << "\"";
-					json << "}"; //close ROC structure
-				} //end ROC loop
-				json << "]}"; //end ROC array
-			} //end DTC loop
-			json << "]}"; //end DTC array
-		} //end primary application loop
-	} //end primary context loop
-	json << "]}"; //end primary application structure
+					json << ", \"enabled\": \"" << (roc.second.status() ? "1" : "0")
+					     << "\"";
+					json << "}";  //close ROC structure
+				}                 //end ROC loop
+				json << "]}";     //end ROC array
+			}                     //end DTC loop
+			json << "]}";         //end DTC array
+		}                         //end primary application loop
+	}                             //end primary context loop
+	json << "]}";                 //end primary application structure
 	__COUTV__(json.str());
 	return json.str();
 }  // end getStructureStatusAsJSON()

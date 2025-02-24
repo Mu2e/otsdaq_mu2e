@@ -5,7 +5,7 @@ echo "setup otsdaq on $HOSTNAME"
 #export KRB5CCNAME=FILE:/tmp/krb5cc_otsdaq_develop_daq
 source /home/mu2edaq/sync_demo/ots/setup_ots.sh
 
-Reset=`tput sgr0`         # Reset all  
+Reset=`tput sgr0`         # Reset all
 
 echo -e "${Reset}===> start otsdaq on $HOSTNAME${Reset}"
 

@@ -2,7 +2,7 @@
 
 # usage: --name <snapshot name>
 #
-#   snapshot 
+#   snapshot
 #		e.g. a, b, or c
 #
 #  example run:
@@ -16,7 +16,7 @@
 
 Base=$PWD
 #commenting out unique filename generation
-# no need to keep more than one past log for standard users 
+# no need to keep more than one past log for standard users
 #alloutput_file=$( date | awk -v "SCRIPTNAME=$(basename $0)" '{print SCRIPTNAME"_"$1"_"$2"_"$3"_"$4".script"}' )
 #stderr_file=$( date | awk -v "SCRIPTNAME=$(basename $0)" '{print SCRIPTNAME"_"$1"_"$2"_"$3"_"$4"_stderr.script"}' )
 #exec  > >(tee "$Base/log/$alloutput_file")
@@ -36,7 +36,7 @@ fi
 
 
 echo -e `date +"%h%y %T"` "get_snapshot_data.sh [${LINENO}]  \t SNAPSHOT \t= $SNAPSHOT"
-echo		
+echo
 
 #source setup_ots.sh
 
@@ -49,12 +49,12 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t "
 if [ "x$ARTDAQ_DATABASE_URI" == "x" ]; then
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Error."
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Environment variable ARTDAQ_DATABASE_URI not setup!"
-	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t To setup, use 'export ARTDAQ_DATABASE_URI=filesystemdb://<path to database>'" 
+	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t To setup, use 'export ARTDAQ_DATABASE_URI=filesystemdb://<path to database>'"
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t            e.g. filesystemdb:///home/rrivera/databases/filesystemdb/test_db"
-	echo 
-	echo 
 	echo
-	exit    
+	echo
+	echo
+	exit
 fi
 
 #Steps:
@@ -78,10 +78,10 @@ do
 done
 
 # download snapshot database
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Downloading snapshot database.."
-echo 
+echo
 echo
 cmd="scp mu2eshift@mu2egateway01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_database.zip ."
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t ${cmd}"
@@ -91,7 +91,7 @@ errlog=.tmp_scp_error.txt
 ${cmd} 2> "$errlog"
 if [[ -s "$errlog" ]]; then
     error=`cat "$errlog"`
-    # File exists and has a size greater than zero                                                                                                                                  
+    # File exists and has a size greater than zero
     echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
     echo $error
     rm $errlog
@@ -105,15 +105,15 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Unzipping snapshot database.."
 chmod 755 -R tmpd1234 #make sure it can be deleted
 rm -rf tmpd1234
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t unzip snapshot_${SNAPSHOT}_database.zip -d tmpd1234"
 unzip -q snapshot_${SNAPSHOT}_database.zip -d tmpd1234 #q for quiet
 
 # bkup current database
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Backing up current database.."
-echo 
+echo
 
 chmod 755 -R ${ADU_PATH}.bak #make sure it can be deleted
 chmod 755 -R ${ADU_PATH} #make sure it can be moved
@@ -124,10 +124,10 @@ echo
 mv ${ADU_PATH} ${ADU_PATH}.bak
 
 # move download user data into position
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Installing snapshot database as database.."
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}"
 echo
 
@@ -139,20 +139,20 @@ elif [ -d tmpd1234/databases/filesystemdb/XDAQContextTable ]; then
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb ${ADU_PATH}"
 	mv tmpd1234/databases/filesystemdb ${ADU_PATH}
 else
-	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}"	
+	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}"
 	mv tmpd1234/databases/filesystemdb/test_db ${ADU_PATH}
 fi
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t Cleaning up downloads.."
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t rm -rf tmpd1234; rm -rf snapshot_${SNAPSHOT}_database.zip"
 echo
 rm -rf tmpd1234; rm -rf snapshot_${SNAPSHOT}_database.zip
 
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t *****************************************************"
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t otsdaq snapshot database installed!"
 echo
 echo

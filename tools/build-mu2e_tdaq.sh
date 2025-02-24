@@ -62,7 +62,7 @@ OS=`uname`
 if [ "${OS}" = "Linux" ]
 then
     flvr=slf`lsb_release -r | sed -e 's/[[:space:]]//g' | cut -f2 -d":" | cut -f1 -d"."`
-else 
+else
   echo "ERROR: unrecognized operating system ${OS}"
   exit 1
 fi
@@ -78,7 +78,7 @@ blddir=${working_dir}/build
 # start with clean directories
 rm -rf ${blddir}
 rm -rf ${srcdir}
-rm -rf $WORKSPACE/copyBack 
+rm -rf $WORKSPACE/copyBack
 # now make the dfirectories
 mkdir -p ${srcdir} || exit 1
 mkdir -p ${blddir} || exit 1
@@ -99,7 +99,7 @@ echo
 cp ${WORKSPACE}/mu2e-otsdaq/tools/mu2e_tdaq_software-cfg-* .
 ./buildFW -t -b ${basequal} -s ${squal} ${blddir} ${build_type} mu2e_tdaq_software-1.00.00 || \
  { mv ${blddir}/*.log  $WORKSPACE/copyBack/
-   exit 1 
+   exit 1
  }
 
 source ${blddir}/setups

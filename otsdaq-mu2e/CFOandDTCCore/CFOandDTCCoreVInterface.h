@@ -4,11 +4,11 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <string>
 #include <mutex>
-#include "dtcInterfaceLib/mu2edev.h"
+#include <string>
 #include "cfoInterfaceLib/CFO.h"
 #include "dtcInterfaceLib/CFOandDTC_Registers.h"
+#include "dtcInterfaceLib/mu2edev.h"
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
@@ -27,10 +27,10 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	virtual ~CFOandDTCCoreVInterface(void);
 
 	// specialized handling of slow controls
-	//----------------		
+	//----------------
 	void 								outputEpicsPVFile			(ConfigurationManager* configManager);
-	
-  
+
+
   public:
 
 	static std::string					CONFIG_MODE_HARDWARE_DEV;
@@ -68,7 +68,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	// void 								turnOffLED					(void);  // turn off LED on visible side of timing card
 
   protected:
-	
+
 	void 								registerCFOandDTCFEMacros	(void);
 
 	int         						deviceIndex_		         	= -1; //PCIe index
@@ -83,26 +83,25 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	bool 								artdaqMode_ = false; // true to prevent run data file generation
 
 
-  public: 
+  public:
 	void 								SoftReset							(__ARGS__);
 	void 								HardReset							(__ARGS__);
 
 	void								GetFirmwareVersion					(__ARGS__);
-	void 								ResetPCIe							(__ARGS__);	
-	void 								FlashLEDs							(__ARGS__);	
+	void 								ResetPCIe							(__ARGS__);
+	void 								FlashLEDs							(__ARGS__);
 	void 								GetStatus							(__ARGS__);
 	void 								GetSimpleStatus						(__ARGS__);
 	void 								GetLinkLossOfLight					(__ARGS__);
 	void 								GetFireflyTemperature				(__ARGS__);
 	void 								GetFPGATemperature					(__ARGS__);
 	void								SelectJitterAttenuatorSource		(__ARGS__);
-	
+
 		// void								ResetLinkRx					(__ARGS__);
 	// void								ShutdownLinkTx				(__ARGS__);
 	// void								StartupLinkTx				(__ARGS__);
 	// void								ShutdownFireflyTx			(__ARGS__);
 	// void								StartupFireflyTx			(__ARGS__);
-
 
 	// clang-format on
 };

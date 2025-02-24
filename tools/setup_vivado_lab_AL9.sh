@@ -4,7 +4,7 @@ source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 SCRIPT_DIR="$(
     cd "$(dirname "$(readlink "${BASH_SOURCE[0]}" || printf %s "${BASH_SOURCE[0]}")")"
-    pwd -P 
+    pwd -P
 )"
 
 HOSTNAME="$(hostname -f)"
