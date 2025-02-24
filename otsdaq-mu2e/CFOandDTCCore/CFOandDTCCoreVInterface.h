@@ -4,11 +4,11 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <string>
 #include <mutex>
-#include "dtcInterfaceLib/mu2edev.h"
+#include <string>
 #include "cfoInterfaceLib/CFO.h"
 #include "dtcInterfaceLib/CFOandDTC_Registers.h"
+#include "dtcInterfaceLib/mu2edev.h"
 //#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
@@ -102,7 +102,6 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	// void								StartupLinkTx				(__ARGS__);
 	// void								ShutdownFireflyTx			(__ARGS__);
 	// void								StartupFireflyTx			(__ARGS__);
-
 
 	// clang-format on
 };
