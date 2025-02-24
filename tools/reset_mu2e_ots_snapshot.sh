@@ -1,11 +1,11 @@
 #!/bin/bash
 # reset_mu2e_ots_snapshot.sh
-#	Launches the specified otsdaq snapshot from the Mu2e NFS server. 
+#	Launches the specified otsdaq snapshot from the Mu2e NFS server.
 #	Your username must be on the k5login for mu2eshift.
 #
 # usage: --name <snapshot name>
 #
-#   snapshot 
+#   snapshot
 #		e.g. a, b, or c
 #
 #  example run: (if not compiled, use ./reset_mu2e_ots_snapshot.sh)
@@ -63,12 +63,12 @@ fi
 
 
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t SNAPSHOT name \t= $SNAPSHOT"
-echo		
+echo
 
 ots --killall
 killall -9 ots_udp_hw_emulator
 
-# echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Redmine login required to gain access to tutorial downloads, please enter credentials." 
+# echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Redmine login required to gain access to tutorial downloads, please enter credentials."
 # source "${OTSDAQ_DIR}"/tools/redmine_login.sh
 
 #download and run get_snapshot_data script
@@ -82,7 +82,7 @@ killall -9 ots_udp_hw_emulator
 wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_data.sh -O get_snapshot_data.sh --no-check-certificate
 chmod 755 get_snapshot_data.sh
 ./get_snapshot_data.sh --name ${SNAPSHOT}
-	
+
 #download and run get_snapshot_database script
 # wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh \
 # 		--no-check-certificate \
@@ -90,8 +90,8 @@ chmod 755 get_snapshot_data.sh
 # 		--save-cookies=${REDMINE_LOGIN_COOKIEF} \
 # 		--keep-session-cookies \
 # 		-O get_snapshot_database.sh
-# wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate	
-wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_database.sh  -O get_snapshot_database.sh --no-check-certificate	
+# wget https://cdcvs.fnal.gov/redmine/projects/mu2e-otsdaq/repository/revisions/develop/raw/tools/get_mu2e_snapshot_database.sh -O get_snapshot_database.sh --no-check-certificate
+wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/get_mu2e_snapshot_database.sh  -O get_snapshot_database.sh --no-check-certificate
 chmod 755 get_snapshot_database.sh
 ./get_snapshot_database.sh --name ${SNAPSHOT}
 
@@ -99,15 +99,9 @@ chmod 755 get_snapshot_database.sh
 rm get_snapshot_database.sh
 rm get_snapshot_data.sh
 
-#ots --wiz #just to test activate the saved groups  
+#ots --wiz #just to test activate the saved groups
 #ots  #launch normal mode and open firefox
 
 echo
 echo
 echo -e `date +"%h%y %T"` "reset_mu2e_ots_snapshot.sh [${LINENO}]  \t Snapshot reset script complete."
-
-
-
-
-
-

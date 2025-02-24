@@ -2,9 +2,9 @@
 #source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
-SCRIPT_DIR="$( 
+SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
- pwd -P 
+ pwd -P
 )"
 HOSTNAME="$(hostname -f)"
 
@@ -35,7 +35,7 @@ if [ "$foundXi" = 1 ];then
         # for p in ${array[@]}; do
         #     echo $p
         # done
-        
+
         echo "1" > /sys/bus/pci/devices/0000:${array[0]}/remove
 
     done <<EOF
@@ -68,8 +68,7 @@ echo "PCIe Device 1 firmware version on ${HOSTNAME}:"
 my_cntl -d 1 read 0x9004 #device 1
 echo
 
-cd - >/dev/null 2>&1 
+cd - >/dev/null 2>&1
 echo
 echo "Done with ${HOSTNAME} PCIe reset script!"
 echo
-

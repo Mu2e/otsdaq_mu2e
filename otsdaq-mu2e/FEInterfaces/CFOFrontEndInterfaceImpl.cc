@@ -85,7 +85,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",  // allowedCallingFEs
-					"Executes a soft reset of the CFO by setting the reset bit (31) to true on the <b>CFO Control Register</b> (0x9100)." 
+					"Executes a soft reset of the CFO by setting the reset bit (31) to true on the <b>CFO Control Register</b> (0x9100)."
 	);
 
 	registerFEMacroFunction(
@@ -96,7 +96,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",  // allowedCallingFEs
-					"Enable or Disable the Mu2e Clock Marker broadcast over the CFO timing links." 
+					"Enable or Disable the Mu2e Clock Marker broadcast over the CFO timing links."
 	);
 
 	registerFEMacroFunction(
@@ -126,17 +126,17 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{ // namesOfInputArgs
-						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)", 
+						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
 						"Target Link (-1 for all, Default := -1)"},
 					std::vector<std::string>{"Response"},  // namesOfOutput
 					1,
-					"*", 
+					"*",
 					"Similar to <b>Test Loopback marker</b>, this FE Macro repeatedly measures the delay of markers from ROCs for a specified link. "
 					"The average delay is returned given the number of iterations (loopbacks), link, and delay (sleep between iterations). "
 					"This FE Macro is useful for Event Window synchronization.\n\n"
 					"Constraints:\n"
 					"\t-Loopback must be less than 10,000.\n"
-	); 
+	);
 
 	// registerFEMacroFunction(
 	// 	"Test Loopback marker",  // feMacroName
@@ -148,7 +148,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	// 				"*",
 	// 				"This FE Macro measures the delay of a marker from ROCs. "
 	// 				"Optionally, the delay can be measured over mutliple iterations with the <b>Loopback Test</B> Macro."
-	// ); 
+	// );
 
 	registerFEMacroFunction(
 		"CFO Read",
@@ -157,11 +157,11 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
 					1,  // requiredUserPermissions
-					"*", 
+					"*",
 					"Read from the CFO Memory Map.\n\n"
 					"Parameters:\n"
 					"\taddress (uint16_t): Address in Memory Map.\n"
-	); 
+	);
 
 	registerFEMacroFunction(
 		"Reset Runplan",
@@ -169,7 +169,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::ResetRunplan),                  // feMacroFunction
 					std::vector<std::string>{}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Resets the Event Building run plan by setting the reset bit (27) to true on the <b>CFO Control Register</b>."
 	);
@@ -180,11 +180,11 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::CompileRunplan),                  // feMacroFunction
 					std::vector<std::string>{"Input Text File", "Output Binary File"},//"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
-					1,    // requiredUserPermissions	
+					1,    // requiredUserPermissions
 					"*" /* allowedCallingFEs */,
 					"This FE Macro compiles the CFO run plan to a binary file. You must compile before running <b>Set Runplan</b> "
 					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
-					); 
+					);
 
 	registerFEMacroFunction(
 		"Set Runplan",
@@ -192,10 +192,10 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::SetRunplan),                  // feMacroFunction
 					std::vector<std::string>{"Binary Run File"},         // namesOfInputArgs
 					std::vector<std::string>{"Result"},
-					1,   // requiredUserPermissions	
+					1,   // requiredUserPermissions
 					"*", /* allowedCallingFEs */
 					"Download the binary run plan to the CFO. <b>You must first compile your run plan</b>.\n\n\n\n" /* feMacroTooltip */
-					"Paramters:\n" 
+					"Paramters:\n"
 					"\tBinary Run File (string): Path to the binary run plan. Default: srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n"
 	);
 
@@ -213,7 +213,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Compile & Set a Template CFO Run Plan. Disabling turns off output of CFO Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO parameters."
@@ -234,7 +234,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Compile & Set a Template CFO Run Plan. Disabling turns off output of CFO Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO parameters."
@@ -246,20 +246,20 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::LaunchRunplan),                  // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1,   // requiredUserPermissions	 
+					1,   // requiredUserPermissions
 					"*" /* allowedCallingFEs */,
 					"Launchs the Event Building run plan. You must <b>Compile Runplan</b> and <b>Set Runplan</b> before launching. " /* feMacroTooltip */
 					"You do not need to compile and set the same runplan more than once. Use <b>Reset Runplan</b> and <b>Launch Runplan</b> thereafter."
 	);
-	
+
 	registerFEMacroFunction(
 		"Configure for Timing Chain",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::ConfigureForTimingChain),                  // feMacroFunction
 					std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
 					std::vector<std::string>{},
-					1, 
-					"*", 
+					1,
+					"*",
 					"This FE Macro configures the CFO for DTC chain synchronization."
 	);  // requiredUserPermissions
 

@@ -61,14 +61,14 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 		CFOLib::CFO* 			thisCFO_;
 
-		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;		
-		bool					saveBinaryData_ = false;		
+		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;
+		bool					saveBinaryData_ = false;
 		bool					doNotResetCounters_ = false;
 
 		std::atomic<uint64_t>	subeventsCount_;
 		std::atomic<uint64_t>	mismatchedEventTagsCount_;
 		std::vector<std::pair<uint64_t, uint64_t>>	mismatchedEventTagJumps_;
-	
+
 		uint64_t				totalSubeventBytesTransferred_;
 		std::chrono::time_point<std::chrono::steady_clock>
 							transferStartTime_, transferEndTime_;
@@ -76,17 +76,17 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 		FILE*					fp_ = nullptr;
 
 		std::string				error_;
-		
+
 	};  // end DetachedBufferTestThreadStruct declaration
 
 	static std::string 					getDetachedBufferTestStatus			(std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 	static uint64_t 					getDetachedBufferTestReceivedCount	(std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 	static void 						handleDetachedSubevent				(const CFOLib::CFO_Event& subevent,
 																				std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
-	
+
 	std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
 
-  	
+
 
   private:
 
@@ -95,9 +95,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 																			bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
 	static void 						detechedBufferTestThread			(std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 
-	
+
 	void 								registerFEMacros					(void);
-	
+
 	int									timing_chain_first_substep_	   		= -1;
 	uint64_t							next_starting_event_window_tag_		= 0;
 
@@ -105,7 +105,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	CFOLib::CFO* 						thisCFO_;
 
-	// void 								FlashLEDs						(__ARGS__);	
+	// void 								FlashLEDs						(__ARGS__);
 	// void 								GetFirmwareVersion				(__ARGS__);
 	// void 								GetStatus						(__ARGS__);
 	void 								GetCounters							(__ARGS__);

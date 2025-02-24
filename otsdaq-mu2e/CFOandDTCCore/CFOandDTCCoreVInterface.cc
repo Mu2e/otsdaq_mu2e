@@ -155,11 +155,11 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 				&CFOandDTCCoreVInterface::ResetPCIe),            // feMacroFunction
 	// 				std::vector<std::string>{},  // namesOfInputArgs
 	// 				std::vector<std::string>{"Status"}, // namesOfOutputArgs
-	// 				1,  // requiredUserPermissions 
+	// 				1,  // requiredUserPermissions
 	// 				"*",
 	// 				"Reset the PCIe interface allocated for this FPGA."
 	// );
-					
+
 	registerFEMacroFunction(
 		"Flash LEDs",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -170,7 +170,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					"*", // allowedCallingFEs
 					"Flashes the LEDs, for example to help find the target FPGA in a multi-FPGA deployment."
 	);
-    
+
 	registerFEMacroFunction(
 		"Get Status",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -193,7 +193,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					"Similar to <b>Get Status</b>, this FE Macro fetches data from a select few registers. "
 					"Registers <b>DTC Control, ROC Emulation Enable, Link Enable, SERDES Reset, and SERDES Reset Done</b> are displayed in a human-readable format."
 	);
-	
+
 	registerFEMacroFunction(
 		"Check Firefly Temperature",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -216,15 +216,15 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 					"Checking the Loss-of-Light reads from the I2C bus register on the Firefly for any light source."
 	);
 
-	
+
 	registerFEMacroFunction(
 		"Check FPGA Temperature",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOandDTCCoreVInterface::GetFPGATemperature),            // feMacroFunction
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Temperature"},
-					1, 
-					"*", 
+					1,
+					"*",
 					"Get the temperature of the FPGA in degrees Celesius. "
 					"A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor."
 	);
@@ -233,12 +233,12 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 		"Jitter Attenuator Setup",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOandDTCCoreVInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)", 
+				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)",
 												"DoNotSet",
 												"AlsoResetJA"},
 						std::vector<std::string>{"Register Write Results"},
-					1,  // requiredUserPermissions 
-					"*", 
+					1,  // requiredUserPermissions
+					"*",
 					"Select the source of the jitter attenuator: a local oscilator on the DTC or the RTF.\n"
 					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>. "
 	);
@@ -250,13 +250,13 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 			        std::vector<std::string>{"Link to Reset (0-7, 6/CFO, 7/EVB)"},
 	// 					std::vector<std::string>{"Register Write Results"},
 	// 				1);  // requiredUserPermissions
-					
+
 	// registerFEMacroFunction(
 	// 	"Shutdown Link Tx",
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
 	// 				&CFOandDTCCoreVInterface::ShutdownLinkTx),
 	// 			        std::vector<std::string>{"Link to Shutdown (0-7, 6/CFO, 7/EVB)"},
-	// 				std::vector<std::string>{						
+	// 				std::vector<std::string>{
 	// 					"Reset Status",
 	// 					"Link Reset Register"},
 	// 				1);  // requiredUserPermissions
@@ -265,7 +265,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
 	// 				&CFOandDTCCoreVInterface::StartupLinkTx),
 	// 				std::vector<std::string>{"Link to Startup (0-7, 6/CFO, 7/EVB)"},
-	// 				std::vector<std::string>{						
+	// 				std::vector<std::string>{
 	// 					"Reset Status",
 	// 					"Link Reset Register"},
 	// 				1);  // requiredUserPermissions
@@ -275,7 +275,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
 	// 				&CFOandDTCCoreVInterface::ShutdownFireflyTx),
 	// 				std::vector<std::string>{"Link to Shutdown (0-7, 6/CFO, 7/EVB)"},
-	// 				std::vector<std::string>{						
+	// 				std::vector<std::string>{
 	// 					"Shutdown Status"},
 	// 				1);  // requiredUserPermissions
 	// registerFEMacroFunction(
@@ -283,7 +283,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
 	// 				&CFOandDTCCoreVInterface::StartupFireflyTx),
 	// 				std::vector<std::string>{"Link to Startup (0-7, 6/CFO, 7/EVB)"},
-	// 				std::vector<std::string>{						
+	// 				std::vector<std::string>{
 	// 					"Startup Status"},
 	// 				1);  // requiredUserPermissions
 

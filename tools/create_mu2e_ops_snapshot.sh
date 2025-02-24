@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# create_mu2e_ops_snapshot.sh 
+# create_mu2e_ops_snapshot.sh
 #	Creates snapshot of all Data and databases folder for ops by making zip files with transfers to mu2e NFS
 #	After this script, others users can pull the snapshot to clone a 'golden' setup
 # 	or experts can pull the sanpshot to try to reproduce problems.
@@ -10,7 +10,7 @@
 # NOTE!!! <snapshot name> must be unique, or snapshot will ask if you want to overwrite!
 #
 # usage: --name <snapshot name>
-# 
+#
 #   snapshot name could be anything that defines the user data/databases moment you are capturing
 #		e.g. a, b, or c
 #		e.g. postGlobalRun2
@@ -23,13 +23,13 @@ echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t Do not so
 echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t"
 echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t\t for example..."
 echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t\t\t create_mu2e_ops_snapshot.sh --name a"
-		
+
 echo
 echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t Extracting parameters..."
 echo
 
 SRC=${PWD}
-		
+
 
 if [[ "$1"  == "--name" && "x$2" != "x" ]]; then
 	SNAPSHOT="$2"
@@ -58,7 +58,7 @@ echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t DATA     
 UDATA="${SRC}/Data_trigger"
 echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t DATA     \t= $UDATA"
 
-wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/create_mu2e_ots_snapshot.sh  -O create_mu2e_ots_snapshot.sh --no-check-certificate	
+wget https://github.com/Mu2e/otsdaq_mu2e/raw/develop/tools/create_mu2e_ots_snapshot.sh  -O create_mu2e_ots_snapshot.sh --no-check-certificate
 chmod 755 create_mu2e_ots_snapshot.sh
 
 UDATA="${SRC}/Data_HWDev"
@@ -89,7 +89,3 @@ rm create_mu2e_ots_snapshot.sh
 echo
 echo -e `date +"%h%y %T"` "create_mu2e_ops_snapshot.sh [${LINENO}]  \t Done handling ops snapshot of UserData and UserDatabases!"
 echo
-
-
-
-	

@@ -24,7 +24,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	virtual ~DTCFrontEndInterface(void);
 
 	void 								DTCInstantiate();
-	
+
 	// specialized ROC handling slow controls
 	//----------------
 	virtual void 						configureSlowControls		(void) override;
@@ -75,9 +75,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 		bool					inSubeventMode_ = false;
 		bool					activeMatch_ = false;
-		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;		
+		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;
 		bool					saveBinaryData_ = false;
-		bool					saveSubeventHeadersToBinaryData_ = false;		
+		bool					saveSubeventHeadersToBinaryData_ = false;
 		bool					doNotResetCounters_ = false;
 		bool					skipBy32_ = false;
 
@@ -86,8 +86,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t>	mismatchedEventTagsCount_;
 		std::vector<std::pair<uint64_t, uint64_t>>	mismatchedEventTagJumps_;
 
-		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_, 
-			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;		
+		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_,
+			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;
 		uint64_t				totalSubeventBytesTransferred_;
 		std::chrono::time_point<std::chrono::steady_clock>
 							transferStartTime_, transferEndTime_;
@@ -109,7 +109,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag, bool saveBinaryDataToFile,
 																				const std::string& filename,
-																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters, 
+																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters,
 																				bool skipBy32, uint32_t packetThresholdToSave);
 
 	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
@@ -149,13 +149,13 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
     void 								WriteExternalROCRegister			(__ARGS__);
 	void                             	ReadExternalROCRegister        		(__ARGS__);
 	void 								DTCHighRateBlockCheck				(__ARGS__);
-	
+
 	void 								DTCHighRateDCSCheck					(__ARGS__);
 	void 								RunROCFEMacro						(__ARGS__);
 	void 								DTCSendHeartbeatAndDataRequest		(__ARGS__);
 	void								ResetLossOfLockCounter				(__ARGS__);
 	void								ReadLossOfLockCounter				(__ARGS__);
-	void								GetLinkLockStatus					(__ARGS__);	
+	void								GetLinkLockStatus					(__ARGS__);
 	void								SelectJitterAttenuatorSource		(__ARGS__);
 	void								WriteDTC							(__ARGS__);
 	void								ReadDTC								(__ARGS__);
@@ -178,22 +178,22 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								ResetCFOLinkTx						(__ARGS__);
 	void 								ResetCFOLinkRxPLL					(__ARGS__);
 	void 								ResetCFOLinkTxPLL					(__ARGS__);
-	
+
 	void 								SetupCFOInterface					(__ARGS__);
 	std::string							SetupCFOInterface					(int forceCFOedge, bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorOnOffSpillEmulation	(bool enable,
 																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
-																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile, 
-																			const std::string& filename, 
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, 
+																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
+																			const std::string& filename,
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters,
 																			bool skipBy32, uint32_t packetThresholdToSave);
 	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
 																			const std::string& eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
-																			const std::string& filename, 
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters, 
+																			const std::string& filename,
+																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters,
 																			bool skipBy32, uint32_t packetThresholdToSave);
 
 	void 								BufferTest							(__ARGS__);
