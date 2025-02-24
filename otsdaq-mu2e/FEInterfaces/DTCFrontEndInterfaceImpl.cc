@@ -1695,13 +1695,28 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		}  //end roc configure loop
 	}
 
+	bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
+	try
+	{
+		EnableSoftwareDataRequestMode =
+		    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+	}
+	catch(...)
+	{
+		;
+	}  //ignore exceptions;
+	if(EnableSoftwareDataRequestMode)
+		__FE_COUT__ << "Enabling Software Data Request Mode..." << __E__;
+	else
+		__FE_COUT__ << "Enabling Auto-generation of Data Requests..." << __E__;
+
 	//enable CFO emulator
 	emulate_cfo_ = true;
-	SetupCFOInterface(0,             //int forceCFOedge,
-	                  emulate_cfo_,  //bool useCFOemulator,
-	                  false,         //bool alsoSetupJA,
-	                  true,          //bool cfoRxTxEnable,
-	                  true);         //bool enableAutogenDRP);
+	SetupCFOInterface(0,                                //int forceCFOedge,
+	                  emulate_cfo_,                     //bool useCFOemulator,
+	                  false,                            //bool alsoSetupJA,
+	                  true,                             //bool cfoRxTxEnable,
+	                  !EnableSoftwareDataRequestMode);  //bool enableAutogenDRP);
 
 }  // end configureHardwareDevMode()
 
@@ -1811,7 +1826,28 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 		// These registers are needed for the EVB, but I need to check their meaning
 		// registerWrite(0x9100, 0x800404);
-		getDTC()->EnableAutogenDRP();  //bit 23
+
+		bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
+		try
+		{
+			EnableSoftwareDataRequestMode =
+			    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+		}
+		catch(...)
+		{
+			;
+		}  //ignore exceptions;
+
+		if(EnableSoftwareDataRequestMode)
+		{
+			__FE_COUT__ << "Enabling Software Data Request Mode." << __E__;
+			getDTC()->DisableAutogenDRP();  //bit 23
+		}
+		else
+		{
+			__FE_COUT__ << "Enabling Auto-generation of Data Requests." << __E__;
+			getDTC()->EnableAutogenDRP();  //bit 23
+		}
 		// getDTC()->SetSequenceNumberDisable(); //bit 10
 
 		// registerWrite(0x92c0, 0x0);
@@ -1879,25 +1915,14 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 				            << select << __E__;
 			}
 
-			// getDTC()->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
-			getDTC()->EnableDCSReception();
-
-
-			// If this is a CRV ROC, enable the punched clock by default
-			if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
-			 {
-			    __FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
-			    getDTC()->SetPunchEnable();
-			}
-
-			__FE_COUT__ << "DTC reset links" << __E__;
-			// getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
-			getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			getDTC()->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
-			break;
-		default:
-			__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
+			__FE_COUTV__(select);
+			//For DTC - 0 ==> CFO Control Link
+			//For DTC - 1 ==> RTF copper clock
+			//For DTC - 2 ==> FPGA FMC
+			getDTC()->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
+		}
+		else
+			__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
 	}
 		indicateIterationWork();
 		break;

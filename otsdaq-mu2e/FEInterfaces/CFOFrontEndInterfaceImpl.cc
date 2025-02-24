@@ -263,6 +263,19 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"This FE Macro configures the CFO for DTC chain synchronization."
 	);  // requiredUserPermissions
 
+	registerFEMacroFunction(
+		"GR4 Super Orchestration",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::GR4SuperOrchestration),                  // feMacroFunction
+					std::vector<std::string>{"Do CRV ROC Reset",
+											"Do Calo ROC Reset",
+											"Do Calo ROC Writes"
+											},  // namesOfInputArgs
+					std::vector<std::string>{"response"},
+					1,   // requiredUserPermissions					
+					"*",
+					"To assist with throttling Event Window Marker rates during Global Run 4."
+	);
 	// clang-format on
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
@@ -644,6 +657,8 @@ void CFOFrontEndInterface::configure(void)
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
+	skipInit_ = true;
+
 	// if(regWriteMonitorStream_.is_open())
 	// {
 	// 	regWriteMonitorStream_ << "Timestamp: " << std::dec << time(0) <<
@@ -912,7 +927,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+		//thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -1488,6 +1503,15 @@ bool CFOFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
 	{
+		if(next_starting_event_window_tag_ == 0 &&
+		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+		{
+			__FE_COUT_INFO__ << "Sleeping for the GR4SuperOrchestration..." << __E__;
+			sleep(5);
+			__FE_COUT_INFO__ << "Start the GR4SuperOrchestration!" << __E__;
+			GR4SuperOrchestration(true, true, true);
+			__FE_COUT_INFO__ << "End the GR4SuperOrchestration!" << __E__;
+		}
 		break;
 	}
 
@@ -1533,6 +1557,212 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	   << ".";
 	__SET_ARG_OUT__("readData", ss.str());
 }  //end ReadCFO()
+
+//========================================================================
+void CFOFrontEndInterface::GR4SuperOrchestration(__ARGS__)
+{
+	__FE_COUT__ << "GR4SuperOrchestration" << __E__;
+
+	bool doCRVReset   = __GET_ARG_IN__("Do CRV ROC Reset", bool);
+	bool doCaloReset  = __GET_ARG_IN__("Do Calo ROC Reset", bool);
+	bool doCaloWrites = __GET_ARG_IN__("Do Calo ROC Writes", bool);
+	__FE_COUTV__(doCRVReset);
+	__FE_COUTV__(doCaloReset);
+	__FE_COUTV__(doCaloWrites);
+
+	GR4SuperOrchestration(doCRVReset, doCaloReset, doCaloWrites);
+}  //end GR4SuperOrchestration()
+
+//========================================================================
+void CFOFrontEndInterface::GR4SuperOrchestration(bool doCRVReset,
+                                                 bool doCaloReset,
+                                                 bool doCaloWrites)
+{
+	// ROC FEMacro - Soft Reset
+	if(doCRVReset)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("Target ROC (Default = -1 := all ROCs)", (unsigned int)0);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ07DTC1",                 //const std::string& targetInterfaceID,
+		    "ROC FEMacro - Soft Reset",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC FEMacro - Setup for ADCs Data Taking
+	if(doCaloReset)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("Target ROC (Default = -1 := all ROCs)", (unsigned int)-1);
+		__SET_ARG_IN__("Set Threshold? [bool, Default := 0]", (unsigned int)1);
+		__SET_ARG_IN__("Threshold [units of adccounts, Default := 2300]",
+		               (unsigned int)2250);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC FEMacro - Setup for ADCs Data Taking",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC FEMacro - Setup for ADCs Data Taking
+	if(doCaloReset)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("Target ROC (Default = -1 := all ROCs)", (unsigned int)-1);
+		__SET_ARG_IN__("Set Threshold? [bool, Default := 0]", (unsigned int)1);
+		__SET_ARG_IN__("Threshold [units of adccounts, Default := 2300]",
+		               (unsigned int)2250);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC FEMacro - Setup for ADCs Data Taking",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC Write
+	if(doCaloWrites)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("rocLinkIndex", (unsigned int)0);
+		__SET_ARG_IN__("address", (unsigned int)123);
+		__SET_ARG_IN__("writeData", (unsigned int)6000);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC Write
+	if(doCaloWrites)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("rocLinkIndex", (unsigned int)1);
+		__SET_ARG_IN__("address", (unsigned int)123);
+		__SET_ARG_IN__("writeData", (unsigned int)6000);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC Write
+	if(doCaloWrites)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("rocLinkIndex", (unsigned int)2);
+		__SET_ARG_IN__("address", (unsigned int)123);
+		__SET_ARG_IN__("writeData", (unsigned int)6000);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC Write
+	if(doCaloWrites)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("rocLinkIndex", (unsigned int)3);
+		__SET_ARG_IN__("address", (unsigned int)123);
+		__SET_ARG_IN__("writeData", (unsigned int)6000);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC Write
+	if(doCaloWrites)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("rocLinkIndex", (unsigned int)3);
+		__SET_ARG_IN__("address", (unsigned int)100);
+		__SET_ARG_IN__("writeData", (unsigned int)1268);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	// ROC Write
+	if(doCaloWrites)
+	{
+		std::vector<frontEndMacroArg_t> argsOut;
+		std::vector<frontEndMacroArg_t> argsIn;
+		__SET_ARG_IN__("rocLinkIndex", (unsigned int)1);
+		__SET_ARG_IN__("address", (unsigned int)100);
+		__SET_ARG_IN__("writeData", (unsigned int)1233);
+
+		__FE_COUTV__(StringMacros::vectorToString(argsIn));
+		runFrontEndMacro(
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
+		__FE_COUTV__(StringMacros::vectorToString(argsOut));
+	}
+
+	CompileSetAndLaunchTemplateFixedWidthRunPlan(
+	    1,  //__GET_ARG_IN__("Enable CFO Run Plan Execution (Default := false)",bool,false),
+	    0,        //__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
+	    "100us",  //__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
+	    1001,     //numberOfEvents,
+	    next_starting_event_window_tag_,  //startTag,
+	    1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
+	    0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
+	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
+	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
+	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
+	);
+	next_starting_event_window_tag_ += 1001;
+}  //end GR4SuperOrchestration()
 
 //========================================================================
 void CFOFrontEndInterface::ResetRunplan(__ARGS__)
@@ -1629,7 +1859,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__
 	__FE_COUTV__(numberOfCycles);
 
 	//setup next tag calculation
-	next_starting_event_window_tag_ += numberOfCycles * numberOfCycles;
+	next_starting_event_window_tag_ = startTag + numberOfCycles * numberOfCycles;
 	__FE_COUTV__(next_starting_event_window_tag_);
 
 	__SET_ARG_OUT__(
@@ -1792,7 +2022,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	__FE_COUTV__(numberOfEvents);
 
 	//setup next tag calculation
-	next_starting_event_window_tag_ += numberOfEvents;
+	next_starting_event_window_tag_ = startTag + numberOfEvents;
 	__FE_COUTV__(next_starting_event_window_tag_);
 
 	__SET_ARG_OUT__(
@@ -1858,15 +2088,20 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 		std::string       tabStr, commentStr;
 		OUT << "SET_TAG " << initialEventWindowTag << __E__;
 
-		if(numberOfEventWindowMarkers > 0)
-			OUT << "LOOP " << numberOfEventWindowMarkers << __E__;
+		if(numberOfEventWindowMarkers > 1)
+			OUT << "LOOP " << numberOfEventWindowMarkers - 1 << __E__;
 		else
 			OUT << "LABEL" << __E__;  //for infinite loop
 
 		PUSHTAB;
-		OUT << "HEARTBEAT event_mode= " << eventWindowMode << __E__;
-		OUT << "MARKER" << __E__;
 
+		if(numberOfEventWindowMarkers !=
+		   1)  //0 count means infinite (1 should be only null)
+			OUT << "HEARTBEAT event_mode= " << eventWindowMode << __E__;
+		else
+			OUT << "HEARTBEAT event_mode= " << 0 << " // null heartbeat!"
+			    << __E__;  //null
+		OUT << "MARKER" << __E__;
 		{  //apply fixed width duration
 			__FE_COUTV__(eventDuration);
 			bool   foundUnits = false;
@@ -1901,8 +2136,18 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 		OUT << "INC_TAG //increment event window tag" << __E__;
 		POPTAB;
 
-		if(numberOfEventWindowMarkers > 0)
-			OUT << "DO_LOOP" << __E__ << "END" << __E__;
+		if(numberOfEventWindowMarkers > 1)
+		{
+			OUT << "DO_LOOP" << __E__;
+
+			if(numberOfEventWindowMarkers > 0)
+			{
+				OUT << "HEARTBEAT event_mode= " << 0 << " // null heartbeat!"
+				    << __E__;  //null
+				OUT << "MARKER" << __E__;
+			}
+			OUT << "END" << __E__;
+		}
 		else
 			OUT << "GOTO_LABEL" << __E__;  //for infinite loop
 
@@ -2411,6 +2656,7 @@ catch(...)
 void CFOFrontEndInterface::CFOReset(__ARGS__)
 {
 	__FE_COUT_INFO__ << "Setting up CFO for RTF, Reset and Buffer Release!" << __E__;
+	next_starting_event_window_tag_ = 0;  //reset
 
 	halt();
 	getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */,
