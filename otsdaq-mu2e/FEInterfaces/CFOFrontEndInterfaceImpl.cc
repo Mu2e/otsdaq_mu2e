@@ -272,7 +272,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"Do Calo ROC Writes"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"response"},
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"To assist with throttling Event Window Marker rates during Global Run 4."
 	);
