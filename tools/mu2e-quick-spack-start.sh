@@ -297,9 +297,9 @@ function checkout_package()
 	pkg=$1
 	if ! [ -d $pkg ]; then
 		if [ $opt_w -eq 0 ];then
-			git clone https://github.com/Mu2e/${pkg//-/_}.git $pkg
+			git clone https://github.com/Mu2e/$pkg.git $pkg
 	    else
-			git clone git@github.com:Mu2e/${pkg//-/_}.git $pkg
+			git clone git@github.com:Mu2e/$pkg.git $pkg
 		fi
 	else
 		cd $pkg
