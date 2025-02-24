@@ -1717,7 +1717,6 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	                  false,                            //bool alsoSetupJA,
 	                  true,                             //bool cfoRxTxEnable,
 	                  !EnableSoftwareDataRequestMode);  //bool enableAutogenDRP);
-
 }  // end configureHardwareDevMode()
 
 //==============================================================================
@@ -1820,7 +1819,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		}
 		catch(...)
 		{
-			__FE_COUT_INFO__ << "Ignoring missing event building configuration values."
+			__FE_COUT_INFO__ << "Ignoring EVB setup exception, likely missing event "
+			                    "building configuration values."
 			                 << __E__;
 		}
 
