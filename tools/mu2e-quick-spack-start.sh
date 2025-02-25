@@ -114,7 +114,7 @@ if [ -z "${tag:-}" ]; then
 fi
 
 rm CMakeLists.txt*
-wget https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e/$tag/CMakeLists.txt
+wget https://raw.githubusercontent.com/Mu2e/otsdaq-mu2e/$tag/CMakeLists.txt
 demo_version=v`grep "project" $Base/CMakeLists.txt|grep -oE "VERSION [^)]*"|awk '{print $2}'|sed 's/\./_/g'`
 echo "Mu2e TDAQ Version is $demo_version"
 if [[ $notag -eq 1 ]] && [[ $opt_develop -eq 0 ]]; then
@@ -122,7 +122,7 @@ if [[ $notag -eq 1 ]] && [[ $opt_develop -eq 0 ]]; then
 
   # 06-Mar-2017, KAB: re-fetch the product_deps file based on the tag
   mv CMakeLists.txt CMakeLists.txt.orig
-  wget https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e/$tag/CMakeLists.txt
+  wget https://raw.githubusercontent.com/Mu2e/otsdaq-mu2e/$tag/CMakeLists.txt
   demo_version=v`grep "project" $Base/CMakeLists.txt|grep -oE "VERSION [^)]*"|awk '{print $2}'|sed 's/\./_/g'`
   tag=$demo_version
 fi
