@@ -184,6 +184,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"a CSV file."
 	);
 
+	registerFEMacroFunction(
+		"Headers Format test",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+				&DTCFrontEndInterface::HeaderFormatTest),
+				std::vector<std::string>{},
+				std::vector<std::string>{"setRegister"},
+				1,
+				"*",
+				"Use this FE Macro to test the header format using emulated CFO Heartbeat packets."
+	);
+
 	// Until further subsystem ROC development starts up, ignore the external block register access of core ROC firmware template established for the ROC dev cards.
 	if(0) // unregistering of "temporarily" unused macros
 	{
@@ -294,16 +305,6 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"This FE Macro reinstantiates the DTC interface class."
 		);
 
-		registerFEMacroFunction(
-			"Headers Format test",
-				static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::HeaderFormatTest),
-					std::vector<std::string>{},
-					std::vector<std::string>{"setRegister"},
-					1,
-					"*",
-					"Use this FE Macro to test the header format using emulated CFO Heartbeat packets."
-		);
 	} // end unregistering of "temporarily" unused macros
 
 	registerFEMacroFunction(
@@ -497,9 +498,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					1,    // requiredUserPermissions
 					"*",
 					"Sets the DTC in loopback mode. This is accomplished by disabling all links except for <b>ROC_Link</b>. "
-					"If <b>setAsPassThrough</b> is enabled, the DTC Control Register bit 28 is set to low (default). "
-					"This means the CFO Link SERDES output is routed back to the source. "
-					"CFO packets will be transmitted instead to the next DTC (Normal operation). "
+					"If <b>setAsPassThrough</b> is enabled, CFO markers will be transmitted to the next DTC (Normal operation). "
+					"If <b>setAsPassThrough</b> is disabled, the CFO Link SERDES output is routed back to the source. "
+					"The loopback functionality is managed through the DTC Control Register bit 28."
 	);
 	
 
@@ -1925,7 +1926,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 
 		indicateIterationWork();
 		break;
-	case 1: {
+	case 1: 
 		//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 		//	So solution:
 		//		- only configure JA one time ever after cold start
@@ -1953,7 +1954,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		}
 		else
 			__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
-	}
+	
 		indicateIterationWork();
 		break;
 	case 2:
@@ -6160,6 +6161,39 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 	getDTC()->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
 
 }  //end ManualLoopbackSetup()
+
+//========================================================================
+/// Dummy function
+void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
+{
+	//Dummy function
+	__COUT__ << "Start..." << __E__;
+	sleep(15);
+	__COUT__ << "End." << __E__;
+} //end HeaderFormatTest()
+
+
+//========================================================================
+/// Dummy function
+void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
+{
+	//Dummy function
+	__COUT__ << "Start..." << __E__;
+	sleep(15);
+	__COUT__ << "End." << __E__;
+} //end HeaderFormatTest()
+
+
+//========================================================================
+/// Dummy function
+void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
+{
+	//Dummy function
+	__COUT__ << "Start..." << __E__;
+	sleep(15);
+	__COUT__ << "End." << __E__;
+} //end HeaderFormatTest()
+
 
 //========================================================================
 void DTCFrontEndInterface::loopbackTest(int step)

@@ -943,7 +943,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		//thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+		// thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
