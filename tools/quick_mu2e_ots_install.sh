@@ -14,7 +14,7 @@
 USER=$(whoami)
 FOR_USER=$(stat -c "%U" $PWD)
 FOR_GROUP=$(stat -c "%G" $PWD)
-	
+
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  "
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t ~~ quick_mu2e_ots_install ~~ "
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  "
@@ -31,23 +31,23 @@ if [ $USER == "root" ]; then
 
 	#install ots dependencies
 	yum install -y libuuid-devel openssl-devel python-devel elfutils-libelf-devel
-	
+
 	#install cvmfs
 	yum install -y https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
 	yum clean all
 	yum install -y cvmfs cvmfs-config-default
-	
+
 	mkdir /etc
 	mkdir /etc/cvmfs
 	mkdir /etc/cvmfs/default.d
-	
+
 	rm -rf /etc/cvmfs/default.d/70-artdaq.conf
 	echo "CVMFS_REPOSITORIES=fermilab.opensciencegrid.org" >> /etc/cvmfs/default.d/70-artdaq.conf
 	echo "CVMFS_HTTP_PROXY=DIRECT" >> /etc/cvmfs/default.d/70-artdaq.conf
-	
+
 	#refresh cvmfs
 	cvmfs_config setup
-	#Check if CernVM-FS mounts the specified repositories by (restart if failure): 
+	#Check if CernVM-FS mounts the specified repositories by (restart if failure):
 	cvmfs_config probe || service autofs restart
 
 fi
@@ -63,25 +63,25 @@ cd ots
 
 #update all
 REPO_DIR="$(find srcs/ -maxdepth 1 -iname 'otsdaq*')"
-		
+
 for p in ${REPO_DIR[@]}; do
 	if [ -d $p ]; then
 		if [ -d $p/.git ]; then
-		
+
 			bp=$(basename $p)
-						
+
 			echo -e "UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
-			
+
 			cd $p
 			if [ $bp == "otsdaq_mu2e_config" ]; then
 				git checkout .  #get all Data and databases
 			elif [ $bp == "otsdaq_utilities" ]; then
-			    git checkout WebGUI 
+			    git checkout WebGUI
 			fi
 			git pull
 			cd -
 		fi
-	fi	   
+	fi
 done
 
 #setup qualifiers
@@ -96,27 +96,27 @@ source setup_ots.sh
 
 #update all (need to do again, after setup, or else ninja does not do mrbsetenv correctly(?))
 REPO_DIR="$(find srcs/ -maxdepth 1 -iname 'otsdaq*')"
-		
+
 for p in ${REPO_DIR[@]}; do
 	if [ -d $p ]; then
 		if [ -d $p/.git ]; then
-		
+
 			bp=$(basename $p)
-						
+
 			echo -e "UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
-			
+
 			cd $p
 			if [ $bp == "otsdaq_utilities" ]; then
-			    git checkout WebGUI 
+			    git checkout WebGUI
 			fi
 			git pull
 			cd -
 		fi
-	fi	   
+	fi
 done
 
 #clean ninja compile
-mz 
+mz
 
 
 if [ $USER == "root" ]; then
@@ -143,9 +143,3 @@ echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t\t ots                     ###
 
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t *******************************"
 echo -e "quick_mu2e_ots_install.sh [${LINENO}]  \t *******************************"
-
-
-
-
-
-

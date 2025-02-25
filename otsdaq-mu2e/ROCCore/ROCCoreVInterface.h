@@ -14,8 +14,8 @@ class ROCCoreVInterface : public FEVInterface
   public:
 	ROCCoreVInterface(
 		const std::string&       					rocUID,
-        const ConfigurationTree& 					theXDAQContextConfigTree,
-        const std::string&       					interfaceConfigurationPath);
+		const ConfigurationTree& 					theXDAQContextConfigTree,
+		const std::string&       					interfaceConfigurationPath);
 
 	~ROCCoreVInterface(void);
 
@@ -36,7 +36,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	// write and read to registers
 	//	Philosophy: call writeRegister/readRegister/readBlock and it will choose the ROC or software emulator implementation
-	//      For each, there is a "ROC" and "Emulator" version:   readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock/writeROCRegister/writeEmulatorRegister 
+	//      For each, there is a "ROC" and "Emulator" version:   readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock/writeROCRegister/writeEmulatorRegister
 	void         							writeRegister				(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData);  // chooses ROC or Emulator version
 	DTCLib::roc_data_t 						readRegister				(DTCLib::roc_address_t address);     // chooses ROC or Emulator version
 	void 									readBlock					(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t wordCount, bool incrementAddress);     // chooses ROC or Emulator version
@@ -60,7 +60,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	virtual int       					    readInjectedPulseTimestamp	(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							writeDelay					(uint16_t delay) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // virtual, must
-	                						                			              // define in inheriting children
+																					  // define in inheriting children
 	virtual int								readDelay					(void) { __SS__ << "TODO"; __SS_THROW__; };  // 5ns steps // virtual, must define in inheriting children
 
 	virtual int								readDTCLinkLossCounter		(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
@@ -76,7 +76,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	inline DTCLib::DTC_Link_ID				getLinkID					(void) { return linkID_; }
 
-	bool         									emulatorMode_;
+	// bool         									emulatorMode_; // Deprecated! Use mu2esim in mu2e-pcie-utils
 	DTCLib::DTC* 									thisDTC_;
 
   protected:
@@ -89,8 +89,8 @@ class ROCCoreVInterface : public FEVInterface
 	virtual bool 							emulatorWorkLoop			(void)
 	{
 		__COUT__ << "This is an empty emulator work loop! this function should be overridden "
-		          "by the derived class."
-		       << __E__;
+				  "by the derived class."
+			   << __E__;
 		//__SS_THROW__;
 
 		return false;
@@ -102,7 +102,7 @@ class ROCCoreVInterface : public FEVInterface
 
 		bool stillWorking = true;
 		while(!roc->emulatorWorkLoopExit_ && stillWorking)
-		{		  
+		{
 		  //__COUT__ << "Calling emulator Work Loop..." << __E__;
 
 			{
@@ -114,10 +114,10 @@ class ROCCoreVInterface : public FEVInterface
 				stillWorking = roc->emulatorWorkLoop();
 			}
 
-			
+
 			usleep(roc->emulatorWorkLoopPeriod_ /*microseconds*/);
 
-			
+
 		}
 		__COUT__ << "Exited emulator Work Loop." << __E__;
 

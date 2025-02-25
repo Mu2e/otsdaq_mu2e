@@ -15,8 +15,8 @@ ROCDTCHardwareEmulated::ROCDTCHardwareEmulated(
 {
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
-	__COUT_INFO__ << "ROCDTCHardwareEmulated instantiated with link: "
-	               << linkID_ << " and EventWindowDelayOffset = " << delay_ << __E__;
+	__COUT_INFO__ << "ROCDTCHardwareEmulated instantiated with link: " << linkID_
+	              << " and EventWindowDelayOffset = " << delay_ << __E__;
 }  // end constructor()
 
 //==========================================================================================
@@ -37,14 +37,14 @@ uint16_t ROCDTCHardwareEmulated::readEmulatorRegister(uint16_t address)
 	else if(address == 7)
 		return delay_;
 	else
-		return address + (time(NULL)&0xF);
+		return address + (time(NULL) & 0xF);
 	return -1;
 }  // end readEmulatorRegister
 //==================================================================================================
-void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<DTCLib::roc_data_t>& 	data,
-                                             DTCLib::roc_address_t  	   	address,
-                                             uint16_t               		numberOfReads,
-                                             bool                   		incrementAddress)
+void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<DTCLib::roc_data_t>& data,
+                                               DTCLib::roc_address_t            address,
+                                               uint16_t numberOfReads,
+                                               bool     incrementAddress)
 {
 	__FE_COUT__ << "Calling read emulator BLOCK: link number " << std::dec << linkID_
 	            << ", address = " << address << ", numberOfReads = " << numberOfReads
@@ -57,24 +57,29 @@ void ROCDTCHardwareEmulated::readEmulatorBlock(std::vector<DTCLib::roc_data_t>& 
 }  // end readEmulatorBlock
 
 //==================================================================================================
-void ROCDTCHardwareEmulated::universalBlockRead(char* address, char* returnValue, unsigned int numberOfBytes)
+void ROCDTCHardwareEmulated::universalBlockRead(char*        address,
+                                                char*        returnValue,
+                                                unsigned int numberOfBytes)
 {
-	uint16_t numberOfReads = numberOfBytes/sizeof(uint16_t);
-	bool incrementAddress = true;
+	uint16_t                        numberOfReads    = numberOfBytes / sizeof(uint16_t);
+	bool                            incrementAddress = true;
 	std::vector<DTCLib::roc_data_t> data;
-	readROCBlock(data,*((DTCLib::roc_address_t*)address),numberOfReads,incrementAddress);
+	readROCBlock(
+	    data, *((DTCLib::roc_address_t*)address), numberOfReads, incrementAddress);
 
-	std::memcpy(&data[0],returnValue,numberOfBytes);
+	std::memcpy(&data[0], returnValue, numberOfBytes);
 	__SS__;
-	for(unsigned int i = 0 ; i < numberOfReads; ++i)
+	for(unsigned int i = 0; i < numberOfReads; ++i)
 		ss << std::hex << std::setfill('0') << std::setw(2) << data[i] << __E__;
 	__FE_COUT__ << ss.str();
-	
+
 }  // end universalBlockRead()
 
-
 //==================================================================================================
-int ROCDTCHardwareEmulated::readInjectedPulseTimestamp() { return this->readRegister(12); }
+int ROCDTCHardwareEmulated::readInjectedPulseTimestamp()
+{
+	return this->readRegister(12);
+}
 
 //==================================================================================================
 void ROCDTCHardwareEmulated::writeDelay(uint16_t delay)
@@ -97,14 +102,10 @@ void ROCDTCHardwareEmulated::resetDTCLinkLossCounter()
 }
 
 //==================================================================================================
-void ROCDTCHardwareEmulated::configure(void) try
+void ROCDTCHardwareEmulated::configure(void)
+try
 {
-	if(emulatorMode_)
-	{
-		__FE_COUT__ << "Emulator ROC configuring..." << __E__;
-		return;
-	}
-
+	__FE_COUT__ << "configure()" << __E__;
 }  // end configure()
 catch(const std::runtime_error& e)
 {
@@ -114,12 +115,17 @@ catch(const std::runtime_error& e)
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
-	try	{ throw; } //one more try to printout extra info
-	catch(const std::exception &e)
+	try
+	{
+		throw;
+	}  //one more try to printout extra info
+	catch(const std::exception& e)
 	{
 		ss << "Exception message: " << e.what();
 	}
-	catch(...){}
+	catch(...)
+	{
+	}
 	__FE_SS_THROW__;
 }  // end configure() catch
 

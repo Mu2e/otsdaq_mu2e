@@ -19,4 +19,3 @@ done
 wait
 
 echo "Collection complete"
-

@@ -19,20 +19,18 @@ env_opts_var=`basename $0 | sed 's/\.sh$//' | tr 'a-z-' 'A-Z_'`_OPTS
 USAGE="\
    usage: `basename $0` [options] [demo_root]
 examples: `basename $0` .
-          `basename $0` --run-ots
           `basename $0` --debug
           `basename $0` --tag v2_08_04
 If the \"demo_root\" optional parameter is not supplied, the user will be
 prompted for this location.
---run-ots     runs otsdaq
 --debug       perform a debug build
 --develop     Install the develop version of the software (may be unstable!)
---tag         Install a specific tag of otsdaq
+--tag         Install a specific tag of mu2e-tdaq-suite
 --spackdir    Install Spack in this directory (or use existing installation)
 --all-packages Install all packages including Offline and otsdaq-mu2e-trigger
 --trigger     Synonym for --all-packages
 -a            Artdaq version number (e.g. 31300 for v3_13_00)
--a            Otsdaq version number (e.g. 20800 for v2_08_00)
+-o            Otsdaq version number (e.g. 20800 for v2_08_00)
 -s            Use specific qualifiers when building ots
 -v            Be more verbose
 -x            set -x this script
@@ -71,7 +69,6 @@ while [ -n "${1-}" ];do
             s*)         eval $op1arg; squalifier=$1; shift;;
             w*)         eval $op1chr; opt_w=`expr $opt_w + 1`;;
             -debug)     opt_debug=--debug;;
-            -run-ots)  opt_run_ots=--run-ots;;
             -develop) opt_develop=1;;
             -tag)       eval $reqarg; tag=$1; shift;;
             -spackdir)  eval $op1arg; spackdir=$1; shift;;
@@ -94,7 +91,7 @@ eval "set -- $args \"\$@\""; unset args aa
 
 test -n "${do_help-}" -o $# -ge 2 && echo "$USAGE" && exit
 
-if [[ -n "${tag:-}" ]] && [[ $opt_develop -eq 1 ]]; then 
+if [[ -n "${tag:-}" ]] && [[ $opt_develop -eq 1 ]]; then
     echo "The \"--tag\" and \"--develop\" options are incompatible - please specify only one."
     exit
 fi
@@ -116,7 +113,7 @@ exec 2> >(tee "$Base/log/$stderr_file")
 
 # Get all the information we'll need to decide which exact flavor of the software to install
 notag=0
-if [ -z "${tag:-}" ]; then 
+if [ -z "${tag:-}" ]; then
   tag=develop;
   notag=1;
 fi
@@ -124,7 +121,7 @@ fi
 rm CMakeLists.txt*
 wget https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e/$tag/CMakeLists.txt
 demo_version=v`grep "project" $Base/CMakeLists.txt|grep -oE "VERSION [^)]*"|awk '{print $2}'|sed 's/\./_/g'`
-echo "ots Version is $demo_version"
+echo "Mu2e TDAQ Version is $demo_version"
 if [[ $notag -eq 1 ]] && [[ $opt_develop -eq 0 ]]; then
   tag=$demo_version
 
@@ -234,7 +231,7 @@ for upstream in ${upstreams[@]}; do
         upstreamdir=`dirname $upstreamdir`
         upstreamdir=`realpath $upstreamdir`
         upstreamname=`echo $upstreamdir|sed 's|/__spack[^/]*||g;s|/spack/opt/spack||g'`
-    
+
         if ! [ -d $upstreamdir/.spack-db ]; then
             echo "No Spack instance found at $upstream!"
             continue
@@ -243,14 +240,14 @@ for upstream in ${upstreams[@]}; do
         if ! [ -f $spackdir/etc/spack/upstreams.yaml ]; then
             echo "upstreams:" > $spackdir/etc/spack/upstreams.yaml
         fi
-    
+
         if [ `grep -c $upstreamdir $spackdir/etc/spack/upstreams.yaml` -eq 0 ]; then
             # Only add upstream if not already present
             echo "  upstream${upstreamname//\//-}:" >>$spackdir/etc/spack/upstreams.yaml
             echo "    install_tree: $upstreamdir" >>$spackdir/etc/spack/upstreams.yaml
         fi
     done
-    
+
     for envdir in `find $upstream -type d -wholename '*/var/spack/environments' 2>/dev/null`; do
         echo "Looking for mu2e environments in $envdir"
         environment="tdaq-${demo_version}"
@@ -300,9 +297,9 @@ function checkout_package()
 	pkg=$1
 	if ! [ -d $pkg ]; then
 		if [ $opt_w -eq 0 ];then
-			git clone https://github.com/Mu2e/${pkg//-/_}.git $pkg
+			git clone https://github.com/Mu2e/$pkg.git $pkg
 	    else
-			git clone git@github.com:Mu2e/${pkg//-/_}.git $pkg
+			git clone git@github.com:Mu2e/$pkg.git $pkg
 		fi
 	else
 		cd $pkg
@@ -410,13 +407,13 @@ cd $Base
 
 export USER_DATA="$Base/Data"
 export ARTDAQ_DATABASE_URI="filesystemdb://$Base/databases/filesystemdb/test_db"
-        
+
 
 ########################################
 ########################################
 ## END Setup USER_DATA and databases
 ########################################
-########################################	
+########################################
 
 spack concretize --force && spack install -j $BUILD_J
 installStatus=$?
@@ -442,7 +439,7 @@ fi
 
 if [ $installStatus -eq 0 ]; then
     echo "mu2e-tdaq-suite has been installed correctly. Use 'source setup_ots.sh' to setup your otsdaq software, then follow the instructions or visit the project redmine page for more info: https://github.com/art-daq/otsdaq/wiki"
-    echo	
+    echo
     echo "In the future, when you open a new terminal, just use 'source setup_ots.sh' to setup your ots installation."
     echo
 else

@@ -1,17 +1,26 @@
-#include "otsdaq/NetworkUtilities/TCPSendClient.h"
 #include <TDirectory.h>
+#include <TGraph.h>
+#include <TH1.h>
+#include <TObject.h>
 #include <string>
 #include <vector>
+#include "otsdaq/NetworkUtilities/TCPSendClient.h"
 
-namespace ots {
+namespace ots
+{
 
-  class HistoReceiver {
+class HistoReceiver
+{
   public:
-    void addHistogram(TObject*readObject, TDirectory*subdir);
-    void readPacket(TDirectory *dir, std::string* buf);
-
-  };
-}
-
-
-
+	enum
+	{
+		kAdd,
+		kReplace
+	};
+	void addHistogram(TH1* h, TDirectory* subdir, int mode);
+	void addGraph(TGraph* g, TDirectory* subdir, int mode);
+	void addObject(TObject* h, TDirectory* subdir, int mode);
+	void readPacket(TDirectory* dir, std::string* buf);
+	int  parseMode(std::string mode);
+};
+}  // namespace ots

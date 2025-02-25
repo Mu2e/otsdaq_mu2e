@@ -2,7 +2,7 @@
 
 userinput=$1
 # the next "unsets" the command line input, so as not to pass it along unwittinging somewhere else
-shift        
+shift
 
 if [ x$userinput == "x" ]; then
   echo "================================================="
@@ -28,7 +28,7 @@ echo "setup otsdaq on $HOSTNAME"
 #export KRB5CCNAME=FILE:/tmp/krb5cc_otsdaq_develop_daq
 source /home/${basepath}/ots/setup_ots.sh ${userinput}
 
-Reset=`tput sgr0`         # Reset all  
+Reset=`tput sgr0`         # Reset all
 
 echo -e "${Reset}===> start otsdaq on $HOSTNAME${Reset}"
 

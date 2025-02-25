@@ -3,7 +3,7 @@
 # Downloads otsdaq_demo as an MRB-controlled repository
 
 unsetup_all >/dev/null 2>&1
-		
+
 git_status=`git status 2>/dev/null`
 git_sts=$?
 if [ $git_sts -eq 0 ];then
@@ -66,7 +66,7 @@ eval "set -- $args \"\$@\""; unset args aa
 
 test -n "${do_help-}" -o $# -ge 2 && echo "$USAGE" && exit
 
-if [[ -n "${tag:-}" ]] && [[ $opt_develop -eq 1 ]]; then 
+if [[ -n "${tag:-}" ]] && [[ $opt_develop -eq 1 ]]; then
     echo "The \"--tag\" and \"--develop\" options are incompatible - please specify only one."
     exit
 fi
@@ -186,7 +186,7 @@ fi
 
 # Get all the information we'll need to decide which exact flavor of the software to install
 notag=0
-if [ -z "${tag:-}" ]; then 
+if [ -z "${tag:-}" ]; then
   if [[ $opt_develop -eq 0 ]];then
     tag=stable
   else
@@ -213,7 +213,7 @@ utilities_version=`grep "^otsdaq_utilities\s" $Base/download/product_deps | awk 
 defaultQuals=`grep "defaultqual" $Base/download/product_deps|awk '{print $2}'`
 defaultE=`echo $defaultQuals|cut -f1 -d:`
 defaultS=`echo $defaultQuals|cut -f2 -d:`
-if [ -n "${equalifier-}" ]; then 
+if [ -n "${equalifier-}" ]; then
 	equalifier="e${equalifier}";
 else
 	equalifier=$defaultE
@@ -269,7 +269,7 @@ mrb uc
 
 
 cd $Base
-  
+
 ln -s srcs/otsdaq_mu2e_config/setup_ots.sh
 
 # Build artdaq_demo
@@ -278,13 +278,13 @@ mrbsetenv
 export CETPKG_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` + 1))
 mrb build    # VERBOSE=1
 installStatus=$?
-		
+
 echo
 echo
 
 if [ $installStatus -eq 0 ]; then
     echo "otsdaq-demo has been installed correctly. Use 'source setup_ots.sh' to setup your otsdaq software, then follow the instructions or visit the project redmine page for more info: https://github.com/art-daq/otsdaq/wiki"
-    echo	
+    echo
 	echo "In the future, when you open a new terminal, just use 'source setup_ots.sh' to setup your ots installation."
 	echo
 else
@@ -297,4 +297,3 @@ endtime=`date`
 
 echo "Install start time: $starttime"
 echo "Install end time:   $endtime"
-

@@ -1,9 +1,9 @@
 source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
-SCRIPT_DIR="$( 
+SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
- pwd -P 
+ pwd -P
 )"
 HOSTNAME="$(hostname -f)"
 
@@ -22,8 +22,8 @@ else
 	exit  #exit is used if script is run
 fi
 
-echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG index N: ${1}" 
-echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG-N bitfile: ${2}" 
+echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG index N: ${1}"
+echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG-N bitfile: ${2}"
 
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
