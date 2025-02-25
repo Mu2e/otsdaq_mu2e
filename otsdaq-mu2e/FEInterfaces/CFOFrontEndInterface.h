@@ -119,7 +119,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								WriteCFO							(__ARGS__);
 	void 								ReadCFO								(__ARGS__);
-	
+
 	void 								GR4SuperOrchestration				(__ARGS__);
 	void 								GR4SuperOrchestration				(bool doCRVReset, bool doCaloReset, bool doCaloWrites);
 
