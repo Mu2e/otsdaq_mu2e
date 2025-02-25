@@ -264,9 +264,9 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	);  // requiredUserPermissions
 
 	registerFEMacroFunction(
-		"GR4 Super Orchestration",
+		"Super Orchestration",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::GR4SuperOrchestration),                  // feMacroFunction
+					&CFOFrontEndInterface::SuperOrchestration),                  // feMacroFunction
 					std::vector<std::string>{"Do CRV ROC Reset",
 											"Do Calo ROC Reset",
 											"Do Calo ROC Writes"
@@ -656,8 +656,6 @@ void CFOFrontEndInterface::configure(void)
 {
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
-
-	skipInit_ = true;
 
 	// if(regWriteMonitorStream_.is_open())
 	// {
@@ -1504,13 +1502,13 @@ bool CFOFrontEndInterface::running(void)
 	while(WorkLoop::continueWorkLoop_)
 	{
 		if(next_starting_event_window_tag_ == 0 &&
-		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 		{
-			__FE_COUT_INFO__ << "Sleeping for the GR4SuperOrchestration..." << __E__;
+			__FE_COUT_INFO__ << "Sleeping for the Super Orchestration..." << __E__;
 			sleep(5);
-			__FE_COUT_INFO__ << "Start the GR4SuperOrchestration!" << __E__;
-			GR4SuperOrchestration(true, true, true);
-			__FE_COUT_INFO__ << "End the GR4SuperOrchestration!" << __E__;
+			__FE_COUT_INFO__ << "Start the Super Orchestration!" << __E__;
+			SuperOrchestration(true, true, true);
+			__FE_COUT_INFO__ << "End the Super Orchestration!" << __E__;
 		}
 		break;
 	}
@@ -1559,9 +1557,9 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 }  //end ReadCFO()
 
 //========================================================================
-void CFOFrontEndInterface::GR4SuperOrchestration(__ARGS__)
+void CFOFrontEndInterface::SuperOrchestration(__ARGS__)
 {
-	__FE_COUT__ << "GR4SuperOrchestration" << __E__;
+	__FE_COUT__ << "Super Orchestration" << __E__;
 
 	bool doCRVReset   = __GET_ARG_IN__("Do CRV ROC Reset", bool);
 	bool doCaloReset  = __GET_ARG_IN__("Do Calo ROC Reset", bool);
@@ -1570,14 +1568,34 @@ void CFOFrontEndInterface::GR4SuperOrchestration(__ARGS__)
 	__FE_COUTV__(doCaloReset);
 	__FE_COUTV__(doCaloWrites);
 
-	GR4SuperOrchestration(doCRVReset, doCaloReset, doCaloWrites);
-}  //end GR4SuperOrchestration()
+	SuperOrchestration(doCRVReset, doCaloReset, doCaloWrites);
+}  //end SuperOrchestration()
 
 //========================================================================
-void CFOFrontEndInterface::GR4SuperOrchestration(bool doCRVReset,
+void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
                                                  bool doCaloReset,
                                                  bool doCaloWrites)
 {
+
+	// acquire enabled DTCs by priority
+	std::vector<std::string> dtcs =
+	    getNode("DTCInterfaceTable").getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
+	__CFG_COUTV__(StringMacros::vectorToString(dtcs));
+	for(const auto& dtc : dtcs)
+	{
+		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+	    	 getNode("DTCInterfaceTable").getNode(dtc).getNode("LinkToROCGroupTable").getChildren();
+
+		// for each ROC
+		for(auto& roc : rocChildren)
+			if(roc.second.isEnabled())
+			{			
+				std::string rocType = roc.second.getNode("ROCInterfacePluginName").getValue<std::string>();
+				__FE_COUT__ << "ROC Name: " << dtc << "/" << roc.first << 
+					":" << rocType << __E__;
+			}
+	} //end DTC example loop
+
 	// ROC FEMacro - Soft Reset
 	if(doCRVReset)
 	{
@@ -1762,7 +1780,7 @@ void CFOFrontEndInterface::GR4SuperOrchestration(bool doCRVReset,
 	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
 	);
 	next_starting_event_window_tag_ += 1001;
-}  //end GR4SuperOrchestration()
+}  //end SuperOrchestration()
 
 //========================================================================
 void CFOFrontEndInterface::ResetRunplan(__ARGS__)
