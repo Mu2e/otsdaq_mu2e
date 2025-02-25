@@ -264,6 +264,28 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	);  // requiredUserPermissions
 
 	registerFEMacroFunction(
+		"Super Orchestration Start",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::SuperOrchestrationStart),                  // feMacroFunction
+					std::vector<std::string>{"Number of Event Window Markers (Default: 10)"}, // namesOfInputArgs
+					std::vector<std::string>{}, // namesOfOutput
+					1,   // requiredUserPermissions					
+					"*",
+					"Start Super Orchestration while in a run."
+	);
+	
+	registerFEMacroFunction(
+		"Super Orchestration End",
+			static_cast<FEVInterface::frontEndMacroFunction_t>(
+					&CFOFrontEndInterface::SuperOrchestrationEnd),                  // feMacroFunction
+					std::vector<std::string>{}, // namesOfInputArgs
+					std::vector<std::string>{}, // namesOfOutput
+					1,   // requiredUserPermissions					
+					"*",
+					"End Super Orchestration while in a run."
+	);
+
+	registerFEMacroFunction(
 		"Super Orchestration",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SuperOrchestration),                  // feMacroFunction
@@ -1501,6 +1523,13 @@ bool CFOFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
 	{
+		if(!theSuperParameters_.go)
+		{
+			__FE_COUT__ << "Not running the Super Orchestration loop!" << __E__;
+			sleep(3);
+			continue;
+		}
+
 		if(next_starting_event_window_tag_ == 0 &&
 		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 		{
@@ -1510,9 +1539,10 @@ bool CFOFrontEndInterface::running(void)
 			SuperOrchestration(true, true, true);
 			__FE_COUT_INFO__ << "End the Super Orchestration!" << __E__;
 		}
-		break;
+		
+		
 	}
-
+	__FE_COUT_INFO__ << "End running." << __E__;
 	return false;
 }  //end running()
 
@@ -1557,6 +1587,25 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 }  //end ReadCFO()
 
 //========================================================================
+///makes it START
+void CFOFrontEndInterface::SuperOrchestrationStart(__ARGS__)
+{
+	theSuperParameters_.numberOfEventWindows = __GET_ARG_IN__("Number of Event Window Markers (Default: 10)",uint64_t,10);
+	theSuperParameters_.go = true;
+
+	__FE_COUTV__(theSuperParameters_.numberOfEventWindows);
+	__FE_COUTV__(theSuperParameters_.go);
+} //end SuperOrchestrationStart()
+
+//========================================================================
+///makes it END
+void CFOFrontEndInterface::SuperOrchestrationEnd(__ARGS__)
+{	
+	theSuperParameters_.go = false;
+	__FE_COUTV__(theSuperParameters_.go);
+} //end SuperOrchestrationEnd()
+
+//========================================================================
 void CFOFrontEndInterface::SuperOrchestration(__ARGS__)
 {
 	__FE_COUT__ << "Super Orchestration" << __E__;
@@ -1573,21 +1622,39 @@ void CFOFrontEndInterface::SuperOrchestration(__ARGS__)
 
 //========================================================================
 void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
+<<<<<<< Updated upstream
                                               bool doCaloReset,
                                               bool doCaloWrites)
 {
+=======
+											bool doCaloReset,
+											bool doCaloWrites)
+{
+
+
+>>>>>>> Stashed changes
 	// acquire enabled DTCs by priority
+	ConfigurationTree dtcTable = Configurable::getConfigurationManager()->getNode("DTCInterfaceTable");
 	std::vector<std::string> dtcs =
+<<<<<<< Updated upstream
 	    getNode("DTCInterfaceTable")
 	        .getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
+=======
+	    dtcTable.getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
+
+>>>>>>> Stashed changes
 	__CFG_COUTV__(StringMacros::vectorToString(dtcs));
 	for(const auto& dtc : dtcs)
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+<<<<<<< Updated upstream
 		    getNode("DTCInterfaceTable")
 		        .getNode(dtc)
 		        .getNode("LinkToROCGroupTable")
 		        .getChildren();
+=======
+	    	dtcTable.getNode(dtc).getNode("LinkToROCGroupTable").getChildren();
+>>>>>>> Stashed changes
 
 		// for each ROC
 		for(auto& roc : rocChildren)
@@ -1775,7 +1842,7 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 	    1,  //__GET_ARG_IN__("Enable CFO Run Plan Execution (Default := false)",bool,false),
 	    0,        //__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
 	    "100us",  //__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
-	    1001,     //numberOfEvents,
+	    theSuperParameters_.numberOfEventWindows,     //numberOfEvents,
 	    next_starting_event_window_tag_,  //startTag,
 	    1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
 	    0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
@@ -1783,7 +1850,7 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
 	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
 	);
-	next_starting_event_window_tag_ += 1001;
+	next_starting_event_window_tag_ += theSuperParameters_.numberOfEventWindows;
 }  //end SuperOrchestration()
 
 //========================================================================
