@@ -91,11 +91,6 @@ eval "set -- $args \"\$@\""; unset args aa
 
 test -n "${do_help-}" -o $# -ge 2 && echo "$USAGE" && exit
 
-if [[ -n "${tag:-}" ]] && [[ $opt_develop -eq 1 ]]; then
-    echo "The \"--tag\" and \"--develop\" options are incompatible - please specify only one."
-    exit
-fi
-
 if [ "x$SPACK_ROOT" == "x$spackdir" ]; then
   echo "Using pre-existing Spack installation $SPACK_ROOT.\nIf this is not correct, hit Ctrl-C and run 'unset SPACK_ROOT'."
   sleep 5
