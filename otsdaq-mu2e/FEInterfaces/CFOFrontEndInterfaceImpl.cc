@@ -1573,28 +1573,32 @@ void CFOFrontEndInterface::SuperOrchestration(__ARGS__)
 
 //========================================================================
 void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
-                                                 bool doCaloReset,
-                                                 bool doCaloWrites)
+                                              bool doCaloReset,
+                                              bool doCaloWrites)
 {
-
 	// acquire enabled DTCs by priority
 	std::vector<std::string> dtcs =
-	    getNode("DTCInterfaceTable").getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
+	    getNode("DTCInterfaceTable")
+	        .getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
 	__CFG_COUTV__(StringMacros::vectorToString(dtcs));
 	for(const auto& dtc : dtcs)
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-	    	 getNode("DTCInterfaceTable").getNode(dtc).getNode("LinkToROCGroupTable").getChildren();
+		    getNode("DTCInterfaceTable")
+		        .getNode(dtc)
+		        .getNode("LinkToROCGroupTable")
+		        .getChildren();
 
 		// for each ROC
 		for(auto& roc : rocChildren)
 			if(roc.second.isEnabled())
-			{			
-				std::string rocType = roc.second.getNode("ROCInterfacePluginName").getValue<std::string>();
-				__FE_COUT__ << "ROC Name: " << dtc << "/" << roc.first << 
-					":" << rocType << __E__;
+			{
+				std::string rocType =
+				    roc.second.getNode("ROCInterfacePluginName").getValue<std::string>();
+				__FE_COUT__ << "ROC Name: " << dtc << "/" << roc.first << ":" << rocType
+				            << __E__;
 			}
-	} //end DTC example loop
+	}  //end DTC example loop
 
 	// ROC FEMacro - Soft Reset
 	if(doCRVReset)
