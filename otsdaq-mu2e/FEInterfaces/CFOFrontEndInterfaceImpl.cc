@@ -1622,39 +1622,19 @@ void CFOFrontEndInterface::SuperOrchestration(__ARGS__)
 
 //========================================================================
 void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
-<<<<<<< Updated upstream
                                               bool doCaloReset,
                                               bool doCaloWrites)
 {
-=======
-											bool doCaloReset,
-											bool doCaloWrites)
-{
-
-
->>>>>>> Stashed changes
 	// acquire enabled DTCs by priority
 	ConfigurationTree dtcTable = Configurable::getConfigurationManager()->getNode("DTCInterfaceTable");
 	std::vector<std::string> dtcs =
-<<<<<<< Updated upstream
-	    getNode("DTCInterfaceTable")
-	        .getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
-=======
 	    dtcTable.getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
 
->>>>>>> Stashed changes
 	__CFG_COUTV__(StringMacros::vectorToString(dtcs));
 	for(const auto& dtc : dtcs)
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-<<<<<<< Updated upstream
-		    getNode("DTCInterfaceTable")
-		        .getNode(dtc)
-		        .getNode("LinkToROCGroupTable")
-		        .getChildren();
-=======
 	    	dtcTable.getNode(dtc).getNode("LinkToROCGroupTable").getChildren();
->>>>>>> Stashed changes
 
 		// for each ROC
 		for(auto& roc : rocChildren)
