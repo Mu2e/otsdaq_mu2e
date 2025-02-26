@@ -1,4 +1,4 @@
-#include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
+xh#include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
@@ -269,18 +269,18 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::SuperOrchestrationStart),                  // feMacroFunction
 					std::vector<std::string>{"Number of Event Window Markers (Default: 10)"}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Start Super Orchestration while in a run."
 	);
-	
+
 	registerFEMacroFunction(
 		"Super Orchestration End",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SuperOrchestrationEnd),                  // feMacroFunction
 					std::vector<std::string>{}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"End Super Orchestration while in a run."
 	);
