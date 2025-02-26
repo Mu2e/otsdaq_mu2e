@@ -269,18 +269,18 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::SuperOrchestrationStart),                  // feMacroFunction
 					std::vector<std::string>{"Number of Event Window Markers (Default: 10)"}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Start Super Orchestration while in a run."
 	);
-	
+
 	registerFEMacroFunction(
 		"Super Orchestration End",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::SuperOrchestrationEnd),                  // feMacroFunction
 					std::vector<std::string>{}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"End Super Orchestration while in a run."
 	);
@@ -943,7 +943,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		// thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+		//thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;

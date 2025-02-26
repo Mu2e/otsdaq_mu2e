@@ -6172,29 +6172,6 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 	__COUT__ << "End." << __E__;
 } //end HeaderFormatTest()
 
-
-//========================================================================
-/// Dummy function
-void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
-{
-	//Dummy function
-	__COUT__ << "Start..." << __E__;
-	sleep(15);
-	__COUT__ << "End." << __E__;
-} //end HeaderFormatTest()
-
-
-//========================================================================
-/// Dummy function
-void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
-{
-	//Dummy function
-	__COUT__ << "Start..." << __E__;
-	sleep(15);
-	__COUT__ << "End." << __E__;
-} //end HeaderFormatTest()
-
-
 //========================================================================
 void DTCFrontEndInterface::loopbackTest(int step)
 {
