@@ -1,4 +1,4 @@
-xh#include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
+#include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
