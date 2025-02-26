@@ -5,22 +5,57 @@
 
 namespace ots
 {
-void HistoReceiver::addHistogram(TObject* readObject, TDirectory* subdir)
+void HistoReceiver::addHistogram(TH1* h, TDirectory* subdir, int mode)
 {
-	//    __COUT__ << "[HistoReceiver::addHistogram] searching hist: "<< readObject->GetName() << std::endl;
-	TH1* object = (TH1*)subdir->FindObjectAny(readObject->GetName());  // find in memory
-	// TLOG(TLVL_DEBUG) << "subdir = "  << subdir->GetName();
-	// TLOG(TLVL_DEBUG) << "hname  = "  << readObject->GetName();
-	// TLOG(TLVL_DEBUG) << "object = "  << object;
-	if(object == nullptr)
+	TH1* h_out = (TH1*)subdir->FindObjectAny(h->GetName());  // find in memory
+	if(h_out == nullptr)
+		subdir->WriteTObject(h);
+	else
 	{
-		// __COUT__ << "[HistoReceiver::addHistogram] saving new hist: "<< readObject->GetName() << std::endl;
-		subdir->WriteTObject(readObject);
+		// __COUT__ << "[HistoReceiver::" << __func__ << "] Updating histogram "<< h->GetName() << std::endl;
+		if(mode == kAdd)
+		{
+			h_out->Add(h);
+		}
+		else if(mode == kReplace)
+		{
+			h_out->Reset();
+			h_out->Add(h);
+		}
+	}
+}
+void HistoReceiver::addGraph(TGraph* g, TDirectory* subdir, int mode)
+{
+	TGraph* g_out = (TGraph*)subdir->FindObjectAny(g->GetName());  // find in memory
+	if(g_out == nullptr)
+		subdir->WriteTObject(g);
+	else
+	{
+		// __COUT__ << "[HistoReceiver::" << __func__ << "] Updating graph "<< h->GetName() << std::endl;
+		// FIXME: Add graph replacement/addition logic
+		const int npoints = g->GetN();
+		g_out->Set(0);
+		for(int ipoint = 0; ipoint < npoints; ++ipoint)
+			g_out->AddPoint(g->GetX()[ipoint], g->GetY()[ipoint]);
+	}
+}
+
+void HistoReceiver::addObject(TObject* readObject, TDirectory* subdir, int mode)
+{
+	if(readObject->InheritsFrom(TH1::Class()))
+	{
+		TH1* h = (TH1*)readObject;
+		addHistogram(h, subdir, mode);
+	}
+	else if(readObject->InheritsFrom(TGraph::Class()))
+	{
+		TGraph* g = (TGraph*)readObject;
+		addGraph(g, subdir, mode);
 	}
 	else
 	{
-		//      __COUT__ << "[HistoReceiver::addHistogram] updating hist: "<< object->GetName() << std::endl;
-		object->Add((TH1*)readObject);
+		__COUT__ << "[HistoReceiver::" << __func__ << "] Unknown object type with name "
+		         << readObject->GetName() << std::endl;
 	}
 }
 
@@ -32,11 +67,19 @@ void HistoReceiver::readPacket(TDirectory* dir, std::string* buf)
 	message.SetBufferOffset(0);  // move pointer
 
 	std::string directoryNameStdString;
-	//__COUT__ << "[HistoReceiver::readPacket] starts..." << std::endl;
 
 	do
 	{
 		message.ReadStdString(directoryNameStdString);
+		// check if the plotting mode was defined
+		int mode(kAdd);
+		if(directoryNameStdString.find(":") != std::string::npos)
+		{
+			mode = parseMode(
+			    directoryNameStdString.substr(directoryNameStdString.find(":") + 1));
+			directoryNameStdString =
+			    directoryNameStdString.substr(0, directoryNameStdString.find(":"));
+		}
 		TString directoryName(directoryNameStdString);
 
 		__COUT__ << "[HistoReceiver::readPacket] Moving in dir: "
@@ -50,15 +93,15 @@ void HistoReceiver::readPacket(TDirectory* dir, std::string* buf)
 			subdir = subdir->mkdir(dirStr.Data(), "", kTRUE);
 		}
 
-		//now let's add the histograms
+		//now let's add the plottables
 		TObject* readObject = nullptr;
 		do
 		{
 			auto lengthBefore = message.Length();
-			readObject        = (TH1*)message.ReadObjectAny(TH1::Class());
+			readObject        = (TObject*)message.ReadObjectAny(TObject::Class());
 			if(readObject != nullptr)
 			{
-				addHistogram(readObject, subdir);
+				addObject(readObject, subdir, mode);
 			}
 			else
 			{
@@ -76,4 +119,14 @@ void HistoReceiver::readPacket(TDirectory* dir, std::string* buf)
 	} while(directoryNameStdString != "");
 	buf = nullptr;
 }
+
+int HistoReceiver::parseMode(std::string mode)
+{
+	if(mode == "replace")
+		return kReplace;
+	if(mode == "add")
+		return kAdd;
+	return kAdd;  //default to adding
+}
+
 }  // namespace ots

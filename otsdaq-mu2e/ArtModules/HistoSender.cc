@@ -58,4 +58,21 @@ void HistoSender::sendHistograms(std::map<std::string, std::vector<TH1*>>& hists
 	sender_.sendPacket(buffer_.Buffer(), buffer_.Length());
 	buffer_.Reset();
 }
+
+void HistoSender::sendGraphs(std::map<std::string, std::vector<TGraph*>>& graphs)
+{
+	TBufferFile buffer_(TBufferFile::kWrite);
+	buffer_.SetWriteMode();
+	for(auto iter : graphs)
+	{
+		std::string dirName = iter.first;
+		buffer_.WriteStdString(dirName);
+		for(size_t i = 0; i < iter.second.size(); ++i)
+		{
+			buffer_.WriteObject(iter.second[i]);
+		}
+	}
+	sender_.sendPacket(buffer_.Buffer(), buffer_.Length());
+	buffer_.Reset();
+}
 }  // namespace ots

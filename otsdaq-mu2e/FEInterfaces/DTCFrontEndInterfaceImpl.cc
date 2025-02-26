@@ -1695,14 +1695,28 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		}  //end roc configure loop
 	}
 
+	bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
+	try
+	{
+		EnableSoftwareDataRequestMode =
+		    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+	}
+	catch(...)
+	{
+		;
+	}  //ignore exceptions;
+	if(EnableSoftwareDataRequestMode)
+		__FE_COUT__ << "Enabling Software Data Request Mode..." << __E__;
+	else
+		__FE_COUT__ << "Enabling Auto-generation of Data Requests..." << __E__;
+
 	//enable CFO emulator
 	emulate_cfo_ = true;
-	SetupCFOInterface(0,             //int forceCFOedge,
-	                  emulate_cfo_,  //bool useCFOemulator,
-	                  false,         //bool alsoSetupJA,
-	                  true,          //bool cfoRxTxEnable,
-	                  true);         //bool enableAutogenDRP);
-
+	SetupCFOInterface(0,                                //int forceCFOedge,
+	                  emulate_cfo_,                     //bool useCFOemulator,
+	                  false,                            //bool alsoSetupJA,
+	                  true,                             //bool cfoRxTxEnable,
+	                  !EnableSoftwareDataRequestMode);  //bool enableAutogenDRP);
 }  // end configureHardwareDevMode()
 
 //==============================================================================
@@ -1805,13 +1819,35 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		}
 		catch(...)
 		{
-			__FE_COUT_INFO__ << "Ignoring missing event building configuration values."
+			__FE_COUT_INFO__ << "Ignoring EVB setup exception, likely missing event "
+			                    "building configuration values."
 			                 << __E__;
 		}
 
 		// These registers are needed for the EVB, but I need to check their meaning
 		// registerWrite(0x9100, 0x800404);
-		getDTC()->EnableAutogenDRP();  //bit 23
+
+		bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
+		try
+		{
+			EnableSoftwareDataRequestMode =
+			    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+		}
+		catch(...)
+		{
+			;
+		}  //ignore exceptions;
+
+		if(EnableSoftwareDataRequestMode)
+		{
+			__FE_COUT__ << "Enabling Software Data Request Mode." << __E__;
+			getDTC()->DisableAutogenDRP();  //bit 23
+		}
+		else
+		{
+			__FE_COUT__ << "Enabling Auto-generation of Data Requests." << __E__;
+			getDTC()->EnableAutogenDRP();  //bit 23
+		}
 		// getDTC()->SetSequenceNumberDisable(); //bit 10
 
 		// registerWrite(0x92c0, 0x0);

@@ -103,6 +103,14 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
   public:
 
+
+	//=======================
+	struct SuperOrchestrationParams
+	{
+		uint64_t numberOfEventWindows = 10;
+		bool go = false;
+	}; //end SuperOrchestrationParams struct
+
 	CFOLib::CFO* 						thisCFO_;
 
 	// void 								FlashLEDs						(__ARGS__);
@@ -119,6 +127,13 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								WriteCFO							(__ARGS__);
 	void 								ReadCFO								(__ARGS__);
+
+	void 								SuperOrchestrationStart				(__ARGS__);
+	void 								SuperOrchestrationEnd				(__ARGS__);
+	void 								SuperOrchestration					(__ARGS__);
+	void 								SuperOrchestration					(bool doCRVReset, bool doCaloReset, bool doCaloWrites);
+	SuperOrchestrationParams			theSuperParameters_;
+
 	void 								ResetRunplan						(__ARGS__);
 	void 								CompileRunplan						(__ARGS__);
 	void 								SetRunplan							(__ARGS__);
