@@ -367,11 +367,11 @@ alias  kx='ots -k'
 # When using upstream spack-mpd
 #alias  mb='date; start_time=\$(date +%s); spack find | grep gcc; spack mpd build -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g | sed s/\\\[padded-to-255-chars\\\]//g | sed s/\\\/tdaq-v......../\\\/tdaq-v_\ \ \ /g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
 #alias  ml='date; start_time=\$(date +%s); spack find | grep gcc; spack mpd build -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g | sed s/\\\[padded-to-255-chars\\\]//g | sed s/\\\/tdaq-v......../\\\/tdaq-v_\ \ \ /g | tee m.txt; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"; less m.txt'
-#alias  mz='date; start_time=\$(date +%s); spack concretize --force; spack mpd build --clean -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
+#alias  mz='date; start_time=\$(date +%s); spack concretize --force --deprecated; spack mpd build --clean -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
 # When using the fork of spack-mpd
 alias  mb='date; start_time=\$(date +%s); spack find | grep gcc; spack mpd build -G Ninja -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g | sed s/\\\[padded-to-255-chars\\\]//g | sed s/\\\/tdaq-v......../\\\/tdaq-v_\ \ \ /g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
 alias  ml='date; start_time=\$(date +%s); spack find | grep gcc; spack mpd build -G Ninja -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g | sed s/\\\[padded-to-255-chars\\\]//g | sed s/\\\/tdaq-v......../\\\/tdaq-v_\ \ \ /g | tee m.txt; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"; less m.txt'
-alias  mz='date; start_time=\$(date +%s); spack concretize --force; spack mpd build -G Ninja --clean -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
+alias  mz='date; start_time=\$(date +%s); spack concretize --force --deprecated; spack mpd build -G Ninja --clean -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
 
 
 echo
@@ -412,7 +412,7 @@ export ARTDAQ_DATABASE_URI="filesystemdb://$Base/databases/filesystemdb/test_db"
 ########################################
 ########################################
 
-spack concretize --force && spack install -j $BUILD_J
+spack concretize --force --deprecated && spack install -j $BUILD_J
 installStatus=$?
 
 if [[ ${opt_develop:-0} -eq 1 ]];then
@@ -424,7 +424,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
 	spack install cetmodules@3.26.00 # Needed for now
 	spack env activate tdaq-develop
 	spack add cetmodules@3.26.00
-	spack concretize --force
+	spack concretize --force --deprecated
 	spack install
 	# spack mpd build # Upstream
     spack mpd build -G Ninja # Fork
