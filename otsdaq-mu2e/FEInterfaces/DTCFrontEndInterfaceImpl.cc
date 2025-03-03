@@ -2834,33 +2834,43 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	DTCLib::roc_data_t readData = -999;
 
+	bool found = false;
+	std::string result = "";
 	for(auto& roc : rocs_)
 	{
 		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
 		            << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == roc.second->getLinkID())
+		if(rocLinkIndex == DTC_Link_ALL || 
+			rocLinkIndex == roc.second->getLinkID())
 		{
+			found = true;
 			if(emulatorMode_)
 			{
 				readData = roc.second->readRegister(address);
 			}
 			else
 			{
-				readData = getDTC()->ReadROCRegister(rocLinkIndex, address, 300);
+				readData = getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
 			}
 
 			char readDataStr[100];
-			sprintf(readDataStr, "0x%X", readData);
-			__SET_ARG_OUT__("readData", readDataStr);
-			//__SET_ARG_OUT__("readData", readData);
-
-			// for(auto &argOut:argsOut)
+			sprintf(readDataStr, "0x%x", readData);
+			if(result.size()) result += ", ";
+			if(rocLinkIndex == DTC_Link_ALL) result += "(" + 
+				std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) + 
+					") ";
+			result += readDataStr;
+			
 			__FE_COUT__ << "readData"
-			            << ": " << std::hex << readData << std::dec << __E__;
-			__FE_COUT__ << "End of Data";
-			return;
+			            << ": 0x" << std::hex << readData << std::dec << __E__;			
 		}
+	}
+
+	if(found)
+	{
+		__SET_ARG_OUT__("readData", result);
+		return;
 	}
 
 	__FE_SS__ << "ROC link ID " << rocLinkIndex
@@ -2868,7 +2878,6 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 	             "ROC is enabled at link "
 	          << rocLinkIndex << "." << __E__;
 	__FE_SS_THROW__;
-
 }  // end ReadROC()
 
 //==============================================================================
@@ -2893,22 +2902,25 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 
 	__FE_COUT__ << "ROCs size = " << rocs_.size() << __E__;
 
+	bool found = false;
 	for(auto& roc : rocs_)
 	{
 		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
 		            << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == roc.second->getLinkID())
+		if(rocLinkIndex == DTC_Link_ALL || 
+			rocLinkIndex == roc.second->getLinkID())
 		{
+			found = true;
 			roc.second->writeRegister(address, writeData);
 
 			for(auto& argOut : argsOut)
 				__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
-
-			return;
 		}
 	}
 
+	if(found) return;
+	
 	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
 	__FE_SS_THROW__;
 }  // end WriteROC()
