@@ -1,4 +1,6 @@
 #!/bin/sh
+# Note to setup vivado lab:
+#   source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 lockfile="/tmp/mu2e.lock"
 # Attempt to create the lock file atomically using ln
@@ -21,7 +23,6 @@ fi
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
 
-#source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
