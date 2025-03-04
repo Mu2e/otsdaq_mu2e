@@ -289,6 +289,7 @@ try
 catch(const std::runtime_error& e)
 {
 	//Note: __COUT_ERR__ will truncate large error messages (with stack traces, etc.)
+	__COUT_ERR__ << "Exception caught:\n\n" << e.what();
 	std::cout << "Exception caught:\n\n" << e.what();
 }
 catch(...)
