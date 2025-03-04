@@ -896,9 +896,9 @@ void CFOFrontEndInterface::configure(void)
 	__FE_COUT__
 	    << "\n"
 	    << thisCFO_->FormattedRegDump(
-	           120,
+	           130,
 	           thisCFO_->formattedDumpFunctions_);  // spit out link status at every step
-	indicateIterationWork();                        // I still need to be touched
+	indicateIterationWork();  // indicate still more configure transition work to do
 	return;
 }  //end configure()
 
@@ -2751,8 +2751,8 @@ void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
 //========================================================================
 void CFOFrontEndInterface::GetCounters(__ARGS__)
 {
-	__SET_ARG_OUT__("Status",
-	                thisCFO_->FormattedRegDump(20, thisCFO_->formattedCounterFunctions_));
+	__SET_ARG_OUT__(
+	    "Status", thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
 }  //end GetCounters()
 
 //========================================================================
