@@ -19,4 +19,4 @@ cet_build_plugin(CAPTANSignalGenerator otsdaq::FEInterface LIBRARIES REG otsdaq-
 install_headers()
 install_source()
 
- 
+

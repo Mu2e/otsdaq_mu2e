@@ -32,10 +32,10 @@ class ROCDTCHardwareEmulated : public ROCCoreVInterface
 	virtual void 							writeEmulatorRegister	(DTCLib::roc_address_t address, DTCLib::roc_data_t data_to_write) override { }
 	virtual uint16_t						readEmulatorRegister	(DTCLib::roc_address_t address) override;
 
-	virtual void 							readEmulatorBlock		(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t numberOfReads, bool incrementAddress) override; 
+	virtual void 							readEmulatorBlock		(std::vector<DTCLib::roc_data_t>& data, DTCLib::roc_address_t address, uint16_t numberOfReads, bool incrementAddress) override;
 
 	virtual void 							universalBlockRead		(char* address, char* returnValue, unsigned int numberOfBytes) override;
-	
+
 
 	// specific ROC functions
 	virtual int  							readInjectedPulseTimestamp			(void) override;

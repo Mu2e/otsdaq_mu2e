@@ -7,7 +7,7 @@ using namespace ots;
 ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
                                      const ConfigurationTree& theXDAQContextConfigTree,
                                      const std::string&       theConfigurationPath)
-    : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)	
+    : FEVInterface(rocUID, theXDAQContextConfigTree, theConfigurationPath)
     , thisDTC_(0)
     , delay_(getSelfNode().getNode("EventWindowDelayOffset").getValue<unsigned int>())
     , emulatorWorkLoopPeriod_(1 * 1000 * 1000 /*1 sec in microseconds*/)
@@ -20,25 +20,25 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 
 	//Since ROCs are a subinterface (with a different configuration tree path), the interfaceType_ needs to be defined
 	interfaceType_ = theXDAQContextConfigTree_.getBackNode(theConfigurationPath_)
-		.getNode(FEVInterface::interfaceUID_)
-		.getNode("ROCInterfacePluginName")
-		.getValue<std::string>();
+	                     .getNode(FEVInterface::interfaceUID_)
+	                     .getNode("ROCInterfacePluginName")
+	                     .getValue<std::string>();
 	__FE_COUTTV__(interfaceType_);
 
 	FEVInterface::universalAddressSize_ = sizeof(uint16_t);
-	FEVInterface::universalDataSize_ = sizeof(uint16_t);
+	FEVInterface::universalDataSize_    = sizeof(uint16_t);
 	linkID_ =
 	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());
 
-	__FE_COUT_INFO__ << "ROCCoreVInterface instantiated with link: " << linkID_
-	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
-	
+	__FE_COUT__ << "ROCCoreVInterface instantiated with link: " << linkID_
+	            << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	//enforce ROC firmware design version check, if exists in config
-	std::string         expectedDesignVersion = "";
+	std::string expectedDesignVersion = "";
 	try
 	{
-		expectedDesignVersion = getSelfNode().getNode("ExpectedFirmwareVersion").getValue(); 
+		expectedDesignVersion =
+		    getSelfNode().getNode("ExpectedFirmwareVersion").getValue();
 	}
 	catch(const std::runtime_error& e)
 	{
@@ -49,31 +49,28 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 	{
 		std::string designVersionReadback = getFirmwareVersion();
 		__FE_COUTV__(designVersionReadback);
-		
+
 		if(expectedDesignVersion != designVersionReadback)
 		{
-			__FE_SS__ << "ROC firmware design version '" << designVersionReadback << 
-				"' does not match required version '" << expectedDesignVersion << __E__;
+			__FE_SS__ << "ROC firmware design version '" << designVersionReadback
+			          << "' does not match required version '" << expectedDesignVersion
+			          << __E__;
 			__FE_SS_THROW__;
 		}
 	}
-		
 
-
-
-	registerFEMacroFunction("Get ROC Status",
-	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
-	                            &ROCCoreVInterface::GetStatus),
-	                        std::vector<std::string>{}, //inputs parameters
-	                        std::vector<std::string>{"Result"}, //output parameters
-	                        1);  // requiredUserPermissions
+	registerFEMacroFunction(
+	    "Get ROC Status",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(&ROCCoreVInterface::GetStatus),
+	    std::vector<std::string>{},          //inputs parameters
+	    std::vector<std::string>{"Result"},  //output parameters
+	    1);                                  // requiredUserPermissions
 	registerFEMacroFunction("Get ROC Firmware Version",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
 	                            &ROCCoreVInterface::GetFirmwareVersion),
-	                        std::vector<std::string>{}, //inputs parameters
-	                        std::vector<std::string>{"Result"}, //output parameters
+	                        std::vector<std::string>{},          //inputs parameters
+	                        std::vector<std::string>{"Result"},  //output parameters
 	                        1);  // requiredUserPermissions
-
 
 	__FE_COUT__ << "Constructed." << __E__;
 }  // end constructor()
@@ -109,25 +106,31 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
 }  // end writeRegister()
 
 //==================================================================================================
-DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address) try
+DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address)
+try
 {
 	__FE_COUT__ << "Calling read ROC register: link number = " << std::dec << linkID_
 	            << ", address = " << address << __E__;
-	
+
 	return readROCRegister(address);
 }  // end readRegister()
 catch(...)
 {
 	__SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
-	try	{ throw; } //one more try to printout extra info
-	catch(const std::exception &e)
+	try
+	{
+		throw;
+	}  //one more try to printout extra info
+	catch(const std::exception& e)
 	{
 		ss << "Exception message: " << e.what();
 	}
-	catch(...){}
+	catch(...)
+	{
+	}
 	__FE_COUT_ERR__ << ss.str();
 	throw;
-} // end readRegister() catch
+}  // end readRegister() catch
 
 //==================================================================================================
 void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
@@ -144,18 +147,17 @@ void ROCCoreVInterface::readBlock(std::vector<DTCLib::roc_data_t>& data,
 
 //==================================================================================================
 void ROCCoreVInterface::writeBlock(const std::vector<DTCLib::roc_data_t>& writeData,
-                                  DTCLib::roc_address_t            address,
-                                  bool                             incrementAddress,
-                                  bool                             requestAck /* = true */)
+                                   DTCLib::roc_address_t                  address,
+                                   bool incrementAddress,
+                                   bool requestAck /* = true */)
 {
 	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
 	            << ", address = " << address << ", wordCount = " << writeData.size()
-	            << ", incrementAddress = " << incrementAddress 
+	            << ", incrementAddress = " << incrementAddress
 	            << ", requestAck = " << requestAck << __E__;
 
 	return writeROCBlock(writeData, address, incrementAddress, requestAck);
 }  // end readBlock()
-
 
 //==========================================================================================
 // universalRead
@@ -169,7 +171,8 @@ void ROCCoreVInterface::universalRead(char* address, char* returnValue)
 {
 	__FE_COUTS__(20) << "ROC READ" << __E__;
 
-	(*((DTCLib::roc_data_t*)returnValue)) = readRegister(*((DTCLib::roc_address_t*) address));
+	(*((DTCLib::roc_data_t*)returnValue)) =
+	    readRegister(*((DTCLib::roc_address_t*)address));
 }  // end universalRead()
 
 //=====================================================================================
@@ -182,7 +185,7 @@ void ROCCoreVInterface::universalWrite(char* address, char* writeValue)
 {
 	__FE_COUTS__(20) << "ROC WRITE" << __E__;
 
-	writeRegister(*((DTCLib::roc_address_t*)address), *((DTCLib::roc_data_t*) writeValue));		
+	writeRegister(*((DTCLib::roc_address_t*)address), *((DTCLib::roc_data_t*)writeValue));
 }  // end universalWrite()
 
 //==================================================================================================
@@ -220,10 +223,10 @@ uint16_t ROCCoreVInterface::readROCRegister(uint16_t address)
 }  // end readROCRegister()
 
 //==================================================================================================
-void ROCCoreVInterface::readROCBlock(std::vector<DTCLib::roc_data_t>& 	data,
-                                             DTCLib::roc_address_t  	   	address,
-                                             uint16_t               		numberOfReads,
-                                             bool                   		incrementAddress)
+void ROCCoreVInterface::readROCBlock(std::vector<DTCLib::roc_data_t>& data,
+                                     DTCLib::roc_address_t            address,
+                                     uint16_t                         numberOfReads,
+                                     bool                             incrementAddress)
 {
 	__FE_COUT__ << "Calling read ROC block: link number " << std::dec << linkID_
 	            << ", address = " << address << ", numberOfReads = " << numberOfReads
@@ -235,27 +238,26 @@ void ROCCoreVInterface::readROCBlock(std::vector<DTCLib::roc_data_t>& 	data,
 
 	if(data.size() != numberOfReads)
 	{
-		__FE_SS__ << "ROC block read failed, expecting " << numberOfReads 
-			<< " words, and read " << data.size() << " words." << __E__;
-		__FE_SS_THROW__;		
+		__FE_SS__ << "ROC block read failed, expecting " << numberOfReads
+		          << " words, and read " << data.size() << " words." << __E__;
+		__FE_SS_THROW__;
 	}
-	
+
 }  // end readROCBlock()
 
 //==================================================================================================
-void ROCCoreVInterface::writeROCBlock(const std::vector<DTCLib::roc_data_t>& 	writeData,
-											DTCLib::roc_address_t      				address,
-											bool                   					incrementAddress,
-											bool                             		requestAck /* = true */)
+void ROCCoreVInterface::writeROCBlock(const std::vector<DTCLib::roc_data_t>& writeData,
+                                      DTCLib::roc_address_t                  address,
+                                      bool incrementAddress,
+                                      bool requestAck /* = true */)
 {
 	__FE_COUT__ << "Calling write ROC block: link number " << std::dec << linkID_
 	            << ", address = " << address << ", numberOfWrites = " << writeData.size()
 	            << ", incrementAddress = " << incrementAddress << __E__;
 
-	thisDTC_->WriteROCBlock(linkID_, address, writeData, 
-		false /* requestAck */, 
-		incrementAddress, 0);
-	
+	thisDTC_->WriteROCBlock(
+	    linkID_, address, writeData, false /* requestAck */, incrementAddress, 0);
+
 }  // end writeROCBlock()
 
 ////==================================================================================================
@@ -313,7 +315,8 @@ void ROCCoreVInterface::highRateCheckThread(ROCCoreVInterface* roc,
                                             unsigned int       loops,
                                             unsigned int       baseAddress,
                                             unsigned int       correctRegisterValue0,
-                                            unsigned int       correctRegisterValue1) try
+                                            unsigned int       correctRegisterValue1)
+try
 {
 	__COUT__ << roc->interfaceUID_ << "Starting the high rate check... " << __E__;
 	srand(time(NULL));
@@ -332,8 +335,7 @@ void ROCCoreVInterface::highRateCheckThread(ROCCoreVInterface* roc,
 		{
 			r = rand() % 100;
 			__COUT__ << roc->interfaceUID_ << i << "\t of " << loops << "\tx " << r
-			                             << " :\t read register " << baseAddress + j
-			                             << __E__;
+			         << " :\t read register " << baseAddress + j << __E__;
 
 			for(int rr = 0; rr < r; rr++)
 			{
@@ -352,19 +354,24 @@ void ROCCoreVInterface::highRateCheckThread(ROCCoreVInterface* roc,
 			}
 		}
 
-	__COUT__ << roc->interfaceUID_ << "Completed high rate check. Number of reads: " << cnt
-	                             << ", firstRegCnt=" << cnts[0]
-	                             << ", secondRegcnt=" << cnts[1] << __E__;
+	__COUT__ << roc->interfaceUID_
+	         << "Completed high rate check. Number of reads: " << cnt
+	         << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1] << __E__;
 }  // end highRateCheckThread()
 catch(...)
 {
 	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
-	try	{ throw; } //one more try to printout extra info
-	catch(const std::exception &e)
+	try
+	{
+		throw;
+	}  //one more try to printout extra info
+	catch(const std::exception& e)
 	{
 		ss << "Exception message: " << e.what();
 	}
-	catch(...){}
+	catch(...)
+	{
+	}
 	__COUTV__(ss.str());
 }  // end highRateCheckThread() catch
 
@@ -400,7 +407,8 @@ void ROCCoreVInterface::highRateBlockCheckThread(ROCCoreVInterface* roc,
                                                  unsigned int       loops,
                                                  unsigned int       baseAddress,
                                                  unsigned int       correctRegisterValue0,
-                                                 unsigned int correctRegisterValue1) try
+                                                 unsigned int       correctRegisterValue1)
+try
 {
 	__COUT__ << roc->interfaceUID_ << "Starting the high rate block check... " << __E__;
 	srand(time(NULL));
@@ -419,8 +427,7 @@ void ROCCoreVInterface::highRateBlockCheckThread(ROCCoreVInterface* roc,
 		{
 			r = rand() % 100;
 			__COUT__ << roc->interfaceUID_ << i << "\t of " << loops << "\tx " << r
-			                             << " :\t read register " << baseAddress + j
-			                             << __E__;
+			         << " :\t read register " << baseAddress + j << __E__;
 
 			roc->readBlock(val, baseAddress + j, r, 0);
 
@@ -449,23 +456,29 @@ void ROCCoreVInterface::highRateBlockCheckThread(ROCCoreVInterface* roc,
 		}
 
 	__COUT__ << roc->interfaceUID_
-	          << "Completed high rate block check. Number of reads: " << cnt
-	          << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1] << __E__;
+	         << "Completed high rate block check. Number of reads: " << cnt
+	         << ", firstRegCnt=" << cnts[0] << ", secondRegcnt=" << cnts[1] << __E__;
 }  // end highRateBlockCheckThread()
 catch(...)
 {
 	__SS__ << roc->interfaceUID_ << "Error caught. Check printouts!" << __E__;
-	try	{ throw; } //one more try to printout extra info
-	catch(const std::exception &e)
+	try
+	{
+		throw;
+	}  //one more try to printout extra info
+	catch(const std::exception& e)
 	{
 		ss << "Exception message: " << e.what();
 	}
-	catch(...){}
+	catch(...)
+	{
+	}
 	__COUTV__(ss.str());
 }  // end highRateBlockCheckThread() catch
 
 //==================================================================================================
-void ROCCoreVInterface::configure(void) try
+void ROCCoreVInterface::configure(void)
+try
 {
 	//	// __COUT_INFO__ << "......... Clear DCS FIFOs" << __E__;
 	//	// this->writeRegister(0,1);
@@ -526,12 +539,17 @@ catch(const std::runtime_error& e)
 catch(...)
 {
 	__FE_SS__ << "Unknown error caught. Check printouts!" << __E__;
-	try	{ throw; } //one more try to printout extra info
-	catch(const std::exception &e)
+	try
+	{
+		throw;
+	}  //one more try to printout extra info
+	catch(const std::exception& e)
 	{
 		ss << "Exception message: " << e.what();
 	}
-	catch(...){}
+	catch(...)
+	{
+	}
 	__FE_SS_THROW__;
 }
 

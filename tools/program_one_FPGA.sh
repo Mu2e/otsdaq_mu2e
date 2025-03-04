@@ -1,9 +1,9 @@
 source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
-SCRIPT_DIR="$( 
+SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
- pwd -P 
+ pwd -P
 )"
 HOSTNAME="$(hostname -f)"
 
@@ -22,10 +22,10 @@ else
 	exit  #exit is used if script is run
 fi
 
-echo "JTAG index N: ${1}" 
-echo "JTAG-N bitfile: ${2}" 
+echo "JTAG index N: ${1}"
+echo "JTAG-N bitfile: ${2}"
 
-vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2 
+vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2
 
 echo "Done programming bitfile to one FPGA on ${HOSTNAME}"
 

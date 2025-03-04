@@ -1,10 +1,32 @@
 #!/bin/sh
-#source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
+# Note to setup vivado lab:
+#   source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
+
+lockfile="/tmp/mu2e.lock"
+# Attempt to create the lock file atomically using ln
+if ! ln -s "$$" "$lockfile" 2>/dev/null; then
+    # Check if the existing lock file contains a valid PID
+    if [ -f "$lockfile" ]; then
+        pid=$(readlink "$lockfile")
+        if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+            echo "Script is already running with PID $pid."
+            exit 0
+        fi
+    fi
+    # If stale, remove it and try again
+    rm -f "$lockfile"
+    if ! ln -s "$$" "$lockfile" 2>/dev/null; then
+        echo "Failed to acquire lock."
+        exit 1
+    fi
+fi
+# Ensure lock file is removed on exit
+trap 'rm -f "$lockfile"' EXIT
 
 
-SCRIPT_DIR="$( 
+SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
- pwd -P 
+ pwd -P
 )"
 HOSTNAME="$(hostname -f)"
 
@@ -13,7 +35,6 @@ echo "SCRIPT_DIR: ${SCRIPT_DIR}"
 RegEx='Xilinx.*704[23]'
 
 lspci | grep "$RegEx" && foundXi=1 || foundXi=0
-lsmod | grep -E 'mu2e|TRACE' && foundXi=1   # only if both are false do we skip
 
 if [ "$foundXi" = 1 ];then
     TRIES=3
@@ -32,7 +53,7 @@ if [ "$foundXi" = 1 ];then
 	# killall -9 TRACE
 	sleep 3
 	rmmod mu2e
-	
+
 	lsmod | grep -q mu2e || break
     done
     lsmod | grep mu2e && { echo "FAILURE - mu2e kernel module failed to unload!"; exit 1; }
@@ -49,7 +70,7 @@ if [ "$foundXi" = 1 ];then
         # for p in ${array[@]}; do
         #     echo $p
         # done
-        
+
         echo "1" > /sys/bus/pci/devices/0000:${array[0]}/remove
 
     done <<EOF
@@ -82,8 +103,7 @@ echo "PCIe Device 1 firmware version on ${HOSTNAME}:"
 my_cntl -d 1 read 0x9004 #device 1
 echo
 
-cd - >/dev/null 2>&1 
+cd - >/dev/null 2>&1
 echo
 echo "Done with ${HOSTNAME} PCIe reset script!"
 echo
-
