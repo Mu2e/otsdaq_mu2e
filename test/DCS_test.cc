@@ -34,85 +34,81 @@ try
 		}
 	}
 	std::stringstream usage;
-	usage   << "\n\n\tUsage = Need at least 4 arguments: DCS_test <DTC device index> "
-		       "<w/r/s> <target ROC link> <ROC address> <for write, ROC data>\n\n"
-		    << __E__;
-	usage	<< "\n\n\t\t 2 arguments for ROC setup (s, or se for emulated ROC), 4 arguments for ROC reads (r) and 5 arguments for ROC writes (w).\n\n"
-		    << __E__;
-			
+	usage << "\n\n\tUsage = Need at least 4 arguments: DCS_test <DTC device index> "
+	         "<w/r/s> <target ROC link> <ROC address> <for write, ROC data>\n\n"
+	      << __E__;
+	usage << "\n\n\t\t 2 arguments for ROC setup (s, or se for emulated ROC), 4 "
+	         "arguments for ROC reads (r) and 5 arguments for ROC writes (w).\n\n"
+	      << __E__;
 
-	uint32_t deviceIndex                = atoi(argv[1]);
-	std::string rwOp               		= argv[2];
-	int roc_link	 					= -1; //atoi(argv[3]);
-	std::string roc_addr   	            = "0"; //atoi(argv[4]);
-	std::string roc_wdata   	        = "0"; 
+	uint32_t    deviceIndex = atoi(argv[1]);
+	std::string rwOp        = argv[2];
+	int         roc_link    = -1;   //atoi(argv[3]);
+	std::string roc_addr    = "0";  //atoi(argv[4]);
+	std::string roc_wdata   = "0";
 
-	bool rocSetup = false;
+	bool rocSetup         = false;
 	bool rocEmulatorSetup = false;
-	bool rocRead = false;
-	bool rocWrite = false;
+	bool rocRead          = false;
+	bool rocWrite         = false;
 
 	if(rwOp == "s" || rwOp == "S")
 	{
-		if(argc < 3) //show usage
+		if(argc < 3)  //show usage
 		{
 			__COUT_ERR__ << "Missing arguments for ROC Setup!\n\n" << usage.str();
 			return 0;
 		}
-		__COUT_INFO__ << "SETUP ROC Operation selected! DTC=" <<
-			deviceIndex << " ROC=" << roc_link << __E__;
+		__COUT_INFO__ << "SETUP ROC Operation selected! DTC=" << deviceIndex
+		              << " ROC=" << roc_link << __E__;
 		rocSetup = true;
-	}	
+	}
 	else if(rwOp == "se" || rwOp == "SE")
 	{
-		if(argc < 3) //show usage
+		if(argc < 3)  //show usage
 		{
-			__COUT_ERR__ << "Missing arguments for Emulated ROC Setup!\n\n" << usage.str();
+			__COUT_ERR__ << "Missing arguments for Emulated ROC Setup!\n\n"
+			             << usage.str();
 			return 0;
 		}
-		__COUT_INFO__ << "SETUP Emulated ROC Operation selected! DTC=" <<
-			deviceIndex << " ROC=" << roc_link << __E__;
+		__COUT_INFO__ << "SETUP Emulated ROC Operation selected! DTC=" << deviceIndex
+		              << " ROC=" << roc_link << __E__;
 		rocEmulatorSetup = true;
 	}
 	else if(rwOp == "r" || rwOp == "R")
-	{		
-		if(argc < 5) //show usage
+	{
+		if(argc < 5)  //show usage
 		{
 			__COUT_ERR__ << "Missing arguments for READ!\n\n" << usage.str();
 			return 0;
-		}		
+		}
 		roc_link = atoi(argv[3]);
 		roc_addr = argv[4];
-		__COUT_INFO__ << "READ ROC Operation selected! DTC=" <<
-			deviceIndex << " ROC=" << roc_link << 
-			" addr=" << roc_addr << __E__;
+		__COUT_INFO__ << "READ ROC Operation selected! DTC=" << deviceIndex
+		              << " ROC=" << roc_link << " addr=" << roc_addr << __E__;
 		rocRead = true;
 	}
 	else if(rwOp == "w" || rwOp == "W")
 	{
-		if(argc < 6) //show usage
+		if(argc < 6)  //show usage
 		{
 			__COUT_ERR__ << "Missing arguments for WRITE!\n\n" << usage.str();
 			return 0;
-		}		
-		roc_link = atoi(argv[3]);
-		roc_addr = argv[4];
+		}
+		roc_link  = atoi(argv[3]);
+		roc_addr  = argv[4];
 		roc_wdata = argv[5];
 
-		__COUT_INFO__ << "WRITE ROC Operation selected! DTC=" <<
-			deviceIndex << " ROC=" << roc_link << 
-			" addr=" << roc_addr << 
-			" data=" << roc_wdata << __E__;
+		__COUT_INFO__ << "WRITE ROC Operation selected! DTC=" << deviceIndex
+		              << " ROC=" << roc_link << " addr=" << roc_addr
+		              << " data=" << roc_wdata << __E__;
 		rocWrite = true;
 	}
-	else 
+	else
 	{
-		__COUT_ERR__ << "Invalid operation '" << rwOp << "'\n\n" << 
-			usage.str();
+		__COUT_ERR__ << "Invalid operation '" << rwOp << "'\n\n" << usage.str();
 		return 0;
 	}
-
-
 
 	//==============================================================================
 	// Define environment variables
@@ -156,10 +152,12 @@ try
 	////////////////////////////////////////////////////
 
 	// // Variables
-	std::string supervisorContextUID_     = "calo_01_FEContext";
-	std::string supervisorApplicationUID_ = "Calo01FEContext"; //not is misnomer, should be 'Calo01FESupervisor'
+	std::string supervisorContextUID_ = "calo_01_FEContext";
+	std::string supervisorApplicationUID_ =
+	    "Calo01FEContext";  //not is misnomer, should be 'Calo01FESupervisor'
 	std::string feUID_ =
-	    deviceIndex == 0 ? "caloDTC0" : "caloDTC1";  //caloDTC0 for Device0 and caloDTC1 for Device1
+	    deviceIndex == 0 ? "caloDTC0"
+	                     : "caloDTC1";  //caloDTC0 for Device0 and caloDTC1 for Device1
 	std::string theConfigurationPath_ =
 	    supervisorContextUID_ + "/LinkToApplicationTable/" + supervisorApplicationUID_ +
 	    "/LinkToSupervisorTable/LinkToFEInterfaceTable/" + feUID_ + "/LinkToFETypeTable";
@@ -170,15 +168,15 @@ try
 	{
 		//need to activate configure group
 		cfgMgr.restoreActiveTableGroups(
-			true,  //bool                                throwErrors /*=false*/,
-			"",    //const std::string&                  pathToActiveGroupsFile /*=""*/,
-			ConfigurationManager::LoadGroupType::
-				ALL_TYPES  //ConfigurationManager::LoadGroupType onlyLoadIfBackboneOrContext /*= ConfigurationManager::LoadGroupType::ALL_TYPES */,
-						//std::string*                        accumulatedWarnings /*=0*/)
+		    true,  //bool                                throwErrors /*=false*/,
+		    "",    //const std::string&                  pathToActiveGroupsFile /*=""*/,
+		    ConfigurationManager::LoadGroupType::
+		        ALL_TYPES  //ConfigurationManager::LoadGroupType onlyLoadIfBackboneOrContext /*= ConfigurationManager::LoadGroupType::ALL_TYPES */,
+		    //std::string*                        accumulatedWarnings /*=0*/)
 		);
 	}
-	cfgMgr.loadTableGroup("MC2CaloContext",TableGroupKey(21),true);
-	cfgMgr.loadTableGroup("MC2CaloConfig",TableGroupKey(26),true);
+	cfgMgr.loadTableGroup("MC2CaloContext", TableGroupKey(21), true);
+	cfgMgr.loadTableGroup("MC2CaloConfig", TableGroupKey(26), true);
 
 	// std::string name = cfgMgr.getNode(ConfigurationManager::XDAQ_CONTEXT_TABLE_NAME).getBackNode(theConfigurationPath_)
 	// 	    .getNode("FEInterfacePluginName")
@@ -201,43 +199,43 @@ try
 	if(rocSetup)
 	{
 		dtc.SetupCFOInterface(0,      //int forceCFOedge,
-	                      true,   //bool useCFOemulator,
-	                      true,   //bool alsoSetupJA,
-	                      true,   //bool cfoRxTxEnable,
-	                      true);  //bool enableAutogenDRP);
+		                      true,   //bool useCFOemulator,
+		                      true,   //bool alsoSetupJA,
+		                      true,   //bool cfoRxTxEnable,
+		                      true);  //bool enableAutogenDRP);
 
 		std::string reply = dtc.SetupROCs(
-			DTCLib::DTC_Link_ID(roc_link),  //DTCLib::DTC_Link_ID rocLinkIndex,
-			1,	//bool rocRxTxEnable
-			0,	//bool rocTimingEnable
-			0,  //bool rocEmulationEnable
-			DTCLib::DTC_ROC_Emulation_Type(
-				0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),  // DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
-			0  // uint32_t size
-		);		
+		    DTCLib::DTC_Link_ID(roc_link),  //DTCLib::DTC_Link_ID rocLinkIndex,
+		    1,                              //bool rocRxTxEnable
+		    0,                              //bool rocTimingEnable
+		    0,                              //bool rocEmulationEnable
+		    DTCLib::DTC_ROC_Emulation_Type(
+		        0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),  // DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
+		    0                                                          // uint32_t size
+		);
 		__COUT_INFO__ << "result: \n" << reply << __E__;
 	}
 	else if(rocEmulatorSetup)
 	{
 		dtc.SetupCFOInterface(0,      //int forceCFOedge,
-	                      true,   //bool useCFOemulator,
-	                      true,   //bool alsoSetupJA,
-	                      true,   //bool cfoRxTxEnable,
-	                      true);  //bool enableAutogenDRP);
+		                      true,   //bool useCFOemulator,
+		                      true,   //bool alsoSetupJA,
+		                      true,   //bool cfoRxTxEnable,
+		                      true);  //bool enableAutogenDRP);
 
 		std::string reply = dtc.SetupROCs(
-			DTCLib::DTC_Link_ID(roc_link),  //DTCLib::DTC_Link_ID rocLinkIndex,
-			1,	//bool rocRxTxEnable
-			0,	//bool rocTimingEnable
-			1,  //bool rocEmulationEnable
-			DTCLib::DTC_ROC_Emulation_Type(
-				0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),  // DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
-			16  // uint32_t size
-		);		
+		    DTCLib::DTC_Link_ID(roc_link),  //DTCLib::DTC_Link_ID rocLinkIndex,
+		    1,                              //bool rocRxTxEnable
+		    0,                              //bool rocTimingEnable
+		    1,                              //bool rocEmulationEnable
+		    DTCLib::DTC_ROC_Emulation_Type(
+		        0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),  // DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
+		    16                                                         // uint32_t size
+		);
 		__COUT_INFO__ << "result: " << reply << __E__;
 	}
 	else if(rocRead)
-	{	
+	{
 		std::vector<FEVInterface::frontEndMacroArg_t> argsOut;
 		std::vector<FEVInterface::frontEndMacroArg_t> argsIn;
 		__SET_ARG_IN__("rocLinkIndex", roc_link);
@@ -246,19 +244,19 @@ try
 		__COUTV__(StringMacros::vectorToString(argsIn));
 		dtc.runSelfFrontEndMacro(
 		    "ROC Read",  //const std::string& feMacroName,
-		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsIn,      //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
 		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
-		if(roc_link != -1) //treat as number from one ROC
+		if(roc_link != -1)  //treat as number from one ROC
 		{
-			uint32_t readData = __GET_ARG_OUT__("readData",uint32_t);	
+			uint32_t readData = __GET_ARG_OUT__("readData", uint32_t);
 
-			__COUT_INFO__ << "---> read data = " << std::dec << readData << " (0x" << 
-				std::hex <<  readData << ")" << __E__;
+			__COUT_INFO__ << "---> read data = " << std::dec << readData << " (0x"
+			              << std::hex << readData << ")" << __E__;
 		}
-		else //treat as string from all ROCs
+		else  //treat as string from all ROCs
 		{
-			std::string readData = __GET_ARG_OUT__("readData",std::string);	
+			std::string readData = __GET_ARG_OUT__("readData", std::string);
 
 			__COUT_INFO__ << "---> read data = " << readData << __E__;
 		}
@@ -279,13 +277,11 @@ try
 
 		__COUT_INFO__ << "result: " << __E__;
 	}
-	else 
+	else
 	{
-		__COUT_ERR__ << "Invalid operation '" << rwOp << "'\n\n" << 
-			usage.str();
+		__COUT_ERR__ << "Invalid operation '" << rwOp << "'\n\n" << usage.str();
 		return 0;
 	}
-	
 
 	__COUT_INFO__ << "test complete!" << __E__;
 	return 0;

@@ -374,15 +374,19 @@ void CFOandDTCCoreVInterface::FlashLEDs(__ARGS__)
 
 //========================================================================
 void CFOandDTCCoreVInterface::GetStatus(__ARGS__)
-{	
-	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(130, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
-} //end GetStatus()
+{
+	__SET_ARG_OUT__("Status",
+	                getCFOandDTCRegisters()->FormattedRegDump(
+	                    130, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
+}  //end GetStatus()
 
 //========================================================================
 void CFOandDTCCoreVInterface::GetSimpleStatus(__ARGS__)
-{	
-	__SET_ARG_OUT__("Status", getCFOandDTCRegisters()->FormattedRegDump(130, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
-} //end GetSimpleStatus()
+{
+	__SET_ARG_OUT__("Status",
+	                getCFOandDTCRegisters()->FormattedRegDump(
+	                    130, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
+}  //end GetSimpleStatus()
 
 //========================================================================
 void CFOandDTCCoreVInterface::GetLinkLossOfLight(__ARGS__)

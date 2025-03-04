@@ -893,7 +893,11 @@ void CFOFrontEndInterface::configure(void)
 		__FE_COUT__ << __E__;
 	}
 
-	__FE_COUT__ << "\n" << thisCFO_->FormattedRegDump(130, thisCFO_->formattedDumpFunctions_);  // spit out link status at every step
+	__FE_COUT__
+	    << "\n"
+	    << thisCFO_->FormattedRegDump(
+	           130,
+	           thisCFO_->formattedDumpFunctions_);  // spit out link status at every step
 	indicateIterationWork();  // indicate still more configure transition work to do
 	return;
 }  //end configure()
@@ -2746,9 +2750,10 @@ void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
 
 //========================================================================
 void CFOFrontEndInterface::GetCounters(__ARGS__)
-{	
-	__SET_ARG_OUT__("Status", thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
-} //end GetCounters()
+{
+	__SET_ARG_OUT__(
+	    "Status", thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
+}  //end GetCounters()
 
 //========================================================================
 void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)

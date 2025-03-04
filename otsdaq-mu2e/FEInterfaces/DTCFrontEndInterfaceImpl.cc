@@ -1839,9 +1839,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
 			// [6-0]
-			getDTC()->SetEVBClusterInfo(//dtcEventBuilderReg_NumBuff,
-				dtcEventBuilderReg_StartNode,
-				dtcEventBuilderReg_NumNodes);
+			getDTC()->SetEVBClusterInfo(  //dtcEventBuilderReg_NumBuff,
+			    dtcEventBuilderReg_StartNode,
+			    dtcEventBuilderReg_NumNodes);
 			// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
 			//				      dtcEventBuilderReg_StartNode << 8 |
 			//				      dtcEventBuilderReg_NumNodes;
@@ -1926,7 +1926,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 
 		indicateIterationWork();
 		break;
-	case 1: 
+	case 1:
 		//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 		//	So solution:
 		//		- only configure JA one time ever after cold start
@@ -1954,11 +1954,11 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		}
 		else
 			__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
-	
+
 		indicateIterationWork();
 		break;
 	case 2:
-			
+
 		// check if any ROCs should be DTC-hardware emulated ROCs
 		{
 			std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
@@ -2001,7 +2001,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 
 		// getDTC()->SetROCDCSResponseTimer(1000); //Register removed as of Dec 2023 //set ROC DCS timeout (if 0, the DTC will hang forever when a ROC does not respond)
 		getDTC()->EnableDCSReception();
-		getDTC()->DisableCFOLoopback(); //allow passthrough of markers to next DTC
+		getDTC()->DisableCFOLoopback();  //allow passthrough of markers to next DTC
 
 		__FE_COUT__ << "DTC reset links" << __E__;
 		// getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_CFO_RX);
@@ -2834,15 +2834,14 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	DTCLib::roc_data_t readData = -999;
 
-	bool found = false;
+	bool        found  = false;
 	std::string result = "";
 	for(auto& roc : rocs_)
 	{
 		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
 		            << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == DTC_Link_ALL || 
-			rocLinkIndex == roc.second->getLinkID())
+		if(rocLinkIndex == DTC_Link_ALL || rocLinkIndex == roc.second->getLinkID())
 		{
 			found = true;
 			if(emulatorMode_)
@@ -2851,19 +2850,22 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 			}
 			else
 			{
-				readData = getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
+				readData =
+				    getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
 			}
 
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%x", readData);
-			if(result.size()) result += ", ";
-			if(rocLinkIndex == DTC_Link_ALL) result += "(" + 
-				std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) + 
-					") ";
+			if(result.size())
+				result += ", ";
+			if(rocLinkIndex == DTC_Link_ALL)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ") ";
 			result += readDataStr;
-			
+
 			__FE_COUT__ << "readData"
-			            << ": 0x" << std::hex << readData << std::dec << __E__;			
+			            << ": 0x" << std::hex << readData << std::dec << __E__;
 		}
 	}
 
@@ -2908,8 +2910,7 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
 		            << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == DTC_Link_ALL || 
-			rocLinkIndex == roc.second->getLinkID())
+		if(rocLinkIndex == DTC_Link_ALL || rocLinkIndex == roc.second->getLinkID())
 		{
 			found = true;
 			roc.second->writeRegister(address, writeData);
@@ -2919,8 +2920,9 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 		}
 	}
 
-	if(found) return;
-	
+	if(found)
+		return;
+
 	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
 	__FE_SS_THROW__;
 }  // end WriteROC()
@@ -3314,9 +3316,11 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	// LOL == Loss of Lock, LOS == Loss of Signal (4-inputs to jitter attenuator)
 	// 0x9308 bit-0 is reset, input select bit-5:4, bit-8 is LOL, bit-11:9 (input LOS)
 	// readData          = //registerRead(0x9308);
-		
-	uint32_t    val   = getDTC()->ReadJitterAttenuatorSelect().to_ulong();//(readData >> 4) & 3;
-	std::string JAsrc = val == 0 ? "from emulated CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
+
+	uint32_t val =
+	    getDTC()->ReadJitterAttenuatorSelect().to_ulong();  //(readData >> 4) & 3;
+	std::string JAsrc =
+	    val == 0 ? "from emulated CFO" : (val == 1 ? "from RJ45" : "from FMC/SFP+");
 
 	__SET_ARG_OUT__(
 	    "Upstream Rx Lock Loss Count",
@@ -3448,11 +3452,12 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		if(!found)
 		{
 			__FE_SS__ << "Fatal error - ROC link index '" << rocLinkIndex
-			          << "' not found in DTC's instantiated rocs! Here is the list of ROC links: ";			
+			          << "' not found in DTC's instantiated rocs! Here is the list of "
+			             "ROC links: ";
 			for(auto& roc : rocs_)
 				ss << roc.second->getLinkID() << ", ";
 			ss << __E__;
-			__FE_SS_THROW__;			
+			__FE_SS_THROW__;
 		}
 	}
 	else  //individual target defined by feMacroIt pair
@@ -3515,9 +3520,10 @@ std::string DTCFrontEndInterface::SetupROCs(
 		__FE_SS_THROW__;
 	}
 
-
-	for(DTC_Link_ID link = (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):rocLinkIndex);
-			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
+	for(DTC_Link_ID link =
+	        (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0) : rocLinkIndex);
+	    link <= (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5) : rocLinkIndex);
+	    ++link)
 	{
 		if(rocRxTxEnable)
 			getDTC()->EnableLink(link);
@@ -3534,8 +3540,10 @@ std::string DTCFrontEndInterface::SetupROCs(
 
 	__FE_COUTV__(rocEmulationType);
 
-	for(DTC_Link_ID link = (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):rocLinkIndex);
-			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
+	for(DTC_Link_ID link =
+	        (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0) : rocLinkIndex);
+	    link <= (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5) : rocLinkIndex);
+	    ++link)
 	{
 		if(rocEmulationEnable)
 			getDTC()->EnableROCEmulator(link, rocEmulationType);
@@ -3560,12 +3568,13 @@ std::string DTCFrontEndInterface::SetupROCs(
 		__FE_SS_THROW__;
 	}
 
+	for(DTC_Link_ID link =
+	        (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0) : rocLinkIndex);
+	    link <= (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5) : rocLinkIndex);
+	    ++link)
+		getDTC()->SetROCEmulationNumPackets(rocLinkIndex, wsize);
 
-	for(DTC_Link_ID link = (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):rocLinkIndex);
-			link <=  (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5):rocLinkIndex); ++link )
-		getDTC()->SetROCEmulationNumPackets(rocLinkIndex,wsize);
-	
-	return getDTC()->FormattedRegDump(0,getDTC()->formattedROCEmulationFunctions_);
+	return getDTC()->FormattedRegDump(0, getDTC()->formattedROCEmulationFunctions_);
 
 }  // end SetEmulatedROCEventFragmentSize()
 
@@ -3577,9 +3586,13 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 
 //========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
-{	
-	__SET_ARG_OUT__("Protocol Counters", getDTC()->FormattedRegDump(130, getDTC()->formattedPacketCounterFunctions_));	
-	__SET_ARG_OUT__("Performance Counters", getDTC()->FormattedRegDump(130, getDTC()->formattedPerformanceCounterFunctions_));	
+{
+	__SET_ARG_OUT__(
+	    "Protocol Counters",
+	    getDTC()->FormattedRegDump(130, getDTC()->formattedPacketCounterFunctions_));
+	__SET_ARG_OUT__(
+	    "Performance Counters",
+	    getDTC()->FormattedRegDump(130, getDTC()->formattedPerformanceCounterFunctions_));
 }  // end DTCCounters()
 
 //========================================================================
@@ -3606,9 +3619,11 @@ void DTCFrontEndInterface::readTxDiagFIFO(__ARGS__)
 
 //========================================================================
 void DTCFrontEndInterface::GetLinkErrors(__ARGS__)
-{	
-	__SET_ARG_OUT__("Link Errors", getDTC()->FormattedRegDump(0, getDTC()->formattedSERDESErrorFunctions_));
-} //end GetLinkErrors()
+{
+	__SET_ARG_OUT__(
+	    "Link Errors",
+	    getDTC()->FormattedRegDump(0, getDTC()->formattedSERDESErrorFunctions_));
+}  //end GetLinkErrors()
 
 // //========================================================================
 // void DTCFrontEndInterface::ROCDestroy(__ARGS__)
@@ -3734,15 +3749,17 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 //========================================================================
 void DTCFrontEndInterface::EnableDTCLink(__ARGS__)
-{	
-	DTCLib::DTC_Link_ID linkIndex = DTCLib::DTC_Link_ID(__GET_ARG_IN__("Target Link (Default = -1 := all links)", uint8_t, -1 /* ALL */));
+{
+	DTCLib::DTC_Link_ID linkIndex = DTCLib::DTC_Link_ID(
+	    __GET_ARG_IN__("Target Link (Default = -1 := all links)", uint8_t, -1 /* ALL */));
 	bool enable = __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false);
-	
+
 	__FE_COUTV__(linkIndex);
 	__FE_COUTV__(enable);
 
-	for(DTC_Link_ID link = (linkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0):linkIndex);
-			link <=  (linkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(7):linkIndex); ++link )
+	for(DTC_Link_ID link = (linkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0) : linkIndex);
+	    link <= (linkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(7) : linkIndex);
+	    ++link)
 	{
 		if(enable)
 			getDTC()->EnableLink(link);
@@ -3750,8 +3767,8 @@ void DTCFrontEndInterface::EnableDTCLink(__ARGS__)
 			getDTC()->DisableLink(link);
 	}
 
-	__SET_ARG_OUT__("Result",  getDTC()->FormatLinkEnable());
-} //end EnableDTCLink()
+	__SET_ARG_OUT__("Result", getDTC()->FormatLinkEnable());
+}  //end EnableDTCLink()
 
 //========================================================================
 void DTCFrontEndInterface::ResetDTCLinks(__ARGS__)
@@ -3805,55 +3822,55 @@ void DTCFrontEndInterface::ResetCFOLinkTxPLL(__ARGS__)
 
 //========================================================================
 void DTCFrontEndInterface::GetDTCIdAndEVBInfo(__ARGS__)
-{	
+{
 	__SET_ARG_OUT__("Result",
-		getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +		
-		getDTC()->FormatEVBNumberOfDestinationNodes());
-} //end GetDTCIdAndEVBInfo()
+	                getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
+	                    getDTC()->FormatEVBNumberOfDestinationNodes());
+}  //end GetDTCIdAndEVBInfo()
 
 //========================================================================
 void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
-{	
-	uint8_t DTCid = __GET_ARG_IN__("DTC ID",uint8_t);
-	uint8_t evbMode = __GET_ARG_IN__("EVB Mode",uint8_t);
-	uint8_t evbPartition = __GET_ARG_IN__("EVB Partition ID",uint8_t);
-	uint8_t evbMAC = __GET_ARG_IN__("EVB MAC Address Last Byte",uint8_t);
-	
+{
+	uint8_t DTCid        = __GET_ARG_IN__("DTC ID", uint8_t);
+	uint8_t evbMode      = __GET_ARG_IN__("EVB Mode", uint8_t);
+	uint8_t evbPartition = __GET_ARG_IN__("EVB Partition ID", uint8_t);
+	uint8_t evbMAC       = __GET_ARG_IN__("EVB MAC Address Last Byte", uint8_t);
+
 	__FE_COUTV__((int)DTCid);
 	__FE_COUTV__((int)evbMode);
 	__FE_COUTV__((int)evbPartition);
-	__FE_COUTV__((int)evbMAC);	
+	__FE_COUTV__((int)evbMAC);
 
-	getDTC()->SetEVBInfo(DTCid, evbMode, 
-		evbPartition, evbMAC);
+	getDTC()->SetEVBInfo(DTCid, evbMode, evbPartition, evbMAC);
 
-	uint8_t NumOfDTCs = __GET_ARG_IN__("EVB Number of DTCs in Cluster",uint8_t);
-	uint8_t evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address",uint8_t);
-	
+	uint8_t NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t);
+	uint8_t evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address", uint8_t);
+
 	__FE_COUTV__((int)NumOfDTCs);
 	__FE_COUTV__((int)evbBaseAddress);
 	getDTC()->SetEVBClusterInfo(evbBaseAddress, NumOfDTCs);
 
-	getDTC()->SoftReset(); //to invalidate destination address cycles, now need the first Event Window Marker to synchronize
+	getDTC()
+	    ->SoftReset();  //to invalidate destination address cycles, now need the first Event Window Marker to synchronize
 
 	__SET_ARG_OUT__("Result",
-		getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +		
-		getDTC()->FormatEVBNumberOfDestinationNodes());
-} //end SetDTCIdAndEVBInfo()
+	                getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
+	                    getDTC()->FormatEVBNumberOfDestinationNodes());
+}  //end SetDTCIdAndEVBInfo()
 
 // //========================================================================
 // void DTCFrontEndInterface::ResetEVBLinkRx(__ARGS__)
-// {	
+// {
 // 	getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
 // } //end ResetEVBLinkRx()
 // //========================================================================
 // void DTCFrontEndInterface::ResetEVBLinkTx(__ARGS__)
-// {	
+// {
 // 	getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_EVB);
 // } //end ReseResetEVBLinkTxtEVBRx()
 // //========================================================================
 // void DTCFrontEndInterface::ResetEVBLinkRxTxPLL(__ARGS__)
-// {	
+// {
 // 	getDTC()->ResetSERDESPLL(DTCLib::DTC_PLL_ID::DTC_PLL_EVB_TXRX);
 // } //end ResetEVBLinkRxTxPLL()
 
@@ -4072,7 +4089,7 @@ void DTCFrontEndInterface::SoftwareDataRequest(__ARGS__)
 
 	std::stringstream outSs;
 	outSs << "Sent software DR for EVT " << std::hex << when << __E__;
-	__SET_ARG_OUT__("Result",  outSs.str());
+	__SET_ARG_OUT__("Result", outSs.str());
 
 }  // end SoftwareDataRequest()
 
@@ -4282,9 +4299,9 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
 	getDTC()->EnableCFOEmulation();
 
 	outSs << "Launched CFO Emulator!" << __E__;
-	return outSs.str(); //__SET_ARG_OUT__("Result", outSs.str());
-	
-} //end SetCFOEmulatorFixedWidthEmulation()
+	return outSs.str();  //__SET_ARG_OUT__("Result", outSs.str());
+
+}  //end SetCFOEmulatorFixedWidthEmulation()
 
 //==============================================================================
 void DTCFrontEndInterface::initDetachedBufferTest(
@@ -5300,7 +5317,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	std::cout << "Untruncated output: \n" << outSs.str() << __E__;  //for no truncation!
 
 	__SET_ARG_OUT__("Result", outSs.str());
-} //end BufferTest_detached()
+}  //end BufferTest_detached()
 
 //========================================================================
 void DTCFrontEndInterface::BufferTest(__ARGS__)
@@ -6204,19 +6221,18 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 		try
 		{
 			runFrontEndMacro(
-				"DTC_0",                 //const std::string& targetInterfaceID,
-				"ROC FEMacro - Get ROC Status",  //const std::string& feMacroName,
-				argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-				argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
-			
+			    "DTC_0",                         //const std::string& targetInterfaceID,
+			    "ROC FEMacro - Get ROC Status",  //const std::string& feMacroName,
+			    argsIn,  //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+			    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+
 			result += StringMacros::vectorToString(argsOut) + "\n\n";
 		}
 		catch(const std::exception& e)
 		{
 			result += e.what() + std::string("\n\n");
 		}
-		
-		
+
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
 
@@ -6229,10 +6245,10 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 		try
 		{
 			runFrontEndMacro(
-				"DTC_1",                 //const std::string& targetInterfaceID,
-				"ROC FEMacro - Get ROC Status",  //const std::string& feMacroName,
-				argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-				argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+			    "DTC_1",                         //const std::string& targetInterfaceID,
+			    "ROC FEMacro - Get ROC Status",  //const std::string& feMacroName,
+			    argsIn,  //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+			    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 			result += StringMacros::vectorToString(argsOut) + "\n\n";
 		}
@@ -6240,30 +6256,32 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 		{
 			result += e.what() + std::string("\n\n");
 		}
-				
+
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
 
 	{
 		std::vector<frontEndMacroArg_t> argsOut;
 		std::vector<frontEndMacroArg_t> argsIn;
-		
+
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		try
 		{
 			runFrontEndMacro(
-				"DTC_1",                 //const std::string& targetInterfaceID,
-				"Get Firmware Version",  //const std::string& feMacroName,
-				argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-				argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+			    "DTC_1",                 //const std::string& targetInterfaceID,
+			    "Get Firmware Version",  //const std::string& feMacroName,
+			    argsIn,  //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+			    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
-			result += StringMacros::decodeURIComponent(StringMacros::vectorToString(argsOut)) + "\n\n";
+			result +=
+			    StringMacros::decodeURIComponent(StringMacros::vectorToString(argsOut)) +
+			    "\n\n";
 		}
 		catch(const std::exception& e)
 		{
 			result += e.what() + std::string("\n\n");
 		}
-				
+
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
 
@@ -6272,15 +6290,15 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 		std::vector<frontEndMacroArg_t> argsIn;
 		__SET_ARG_IN__("rocLinkIndex", (unsigned int)1);
 		__SET_ARG_IN__("address", (unsigned int)3);
-		
+
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		try
 		{
 			runFrontEndMacro(
-				"DTC_1",                 //const std::string& targetInterfaceID,
-				"ROC Read",  //const std::string& feMacroName,
-				argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-				argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+			    "DTC_1",     //const std::string& targetInterfaceID,
+			    "ROC Read",  //const std::string& feMacroName,
+			    argsIn,  //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+			    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 			result += StringMacros::vectorToString(argsOut) + "\n\n";
 		}
@@ -6288,13 +6306,13 @@ void DTCFrontEndInterface::HeaderFormatTest(__ARGS__)
 		{
 			result += e.what() + std::string("\n\n");
 		}
-				
+
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
 
-	__SET_ARG_OUT__("setRegister",result);	
+	__SET_ARG_OUT__("setRegister", result);
 	__COUT__ << "End." << __E__;
-} //end HeaderFormatTest()
+}  //end HeaderFormatTest()
 
 //========================================================================
 void DTCFrontEndInterface::loopbackTest(int step)

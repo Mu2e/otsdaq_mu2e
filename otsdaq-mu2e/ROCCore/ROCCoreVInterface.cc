@@ -31,7 +31,7 @@ ROCCoreVInterface::ROCCoreVInterface(const std::string&       rocUID,
 	    DTCLib::DTC_Link_ID(getSelfNode().getNode("linkID").getValue<unsigned int>());
 
 	__FE_COUT__ << "ROCCoreVInterface instantiated with link: " << linkID_
-	                 << " and EventWindowDelayOffset = " << delay_ << __E__;
+	            << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	//enforce ROC firmware design version check, if exists in config
 	std::string expectedDesignVersion = "";
