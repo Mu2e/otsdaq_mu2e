@@ -176,7 +176,7 @@ try
 		);
 	}
 	cfgMgr.loadTableGroup("MC2CaloContext", TableGroupKey(21), true);
-	cfgMgr.loadTableGroup("MC2CaloConfig", TableGroupKey(26), true);
+	cfgMgr.loadTableGroup("MC2TestConfig", TableGroupKey(std::string("0")), true);
 
 	// std::string name = cfgMgr.getNode(ConfigurationManager::XDAQ_CONTEXT_TABLE_NAME).getBackNode(theConfigurationPath_)
 	// 	    .getNode("FEInterfacePluginName")
@@ -289,6 +289,7 @@ try
 catch(const std::runtime_error& e)
 {
 	//Note: __COUT_ERR__ will truncate large error messages (with stack traces, etc.)
+	__COUT_ERR__ << "Exception caught:\n\n" << e.what();
 	std::cout << "Exception caught:\n\n" << e.what();
 }
 catch(...)
