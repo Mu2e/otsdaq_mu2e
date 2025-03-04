@@ -176,7 +176,7 @@ try
 		);
 	}
 	cfgMgr.loadTableGroup("MC2CaloContext", TableGroupKey(21), true);
-	cfgMgr.loadTableGroup("MC2TestConfig", TableGroupKey(0), true);
+	cfgMgr.loadTableGroup("MC2TestConfig", TableGroupKey(int(0)), true);
 
 	// std::string name = cfgMgr.getNode(ConfigurationManager::XDAQ_CONTEXT_TABLE_NAME).getBackNode(theConfigurationPath_)
 	// 	    .getNode("FEInterfacePluginName")
