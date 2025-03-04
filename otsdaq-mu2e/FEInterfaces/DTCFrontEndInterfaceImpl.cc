@@ -509,7 +509,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::EnableDTCLink),
 						std::vector<std::string>{"Target Link (Default = -1 := all links)",
-				        						"Set Link RX/TX Enable (Default := false)"
+											"Set Link RX/TX Enable (Default := false)"
 											},
 						std::vector<std::string>{"Result"},
 					1,   // requiredUserPermissions
