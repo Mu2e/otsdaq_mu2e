@@ -234,7 +234,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 							"Save Binary Data to File (Default: false)"
 							// "Software Generated Data Requests (bool)",
 							// "Do Not Send Heartbeats (bool)"
-							}, 
+							},
 						std::vector<std::string>{"Result"},
 						1, // requiredUserPermissions
 						"*",
@@ -258,7 +258,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 							"Save Binary Data to File (Default: false)"
 							// "Software Generated Data Requests (bool)",
 							// "Do Not Send Heartbeats (bool)"
-							}, 
+							},
 						std::vector<std::string>{"Result"},
 						1, // requiredUserPermissions
 						"*",
@@ -326,7 +326,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Payload Packet Threshold for Saving Event (Default: 0)"
 						// "Software Generated Data Requests (bool)",
 						// "Do Not Send Heartbeats (bool)"
-						}, 
+						},
 					std::vector<std::string>{"Result"},
 					1, // requiredUserPermissions
 					"*",
@@ -392,8 +392,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::DTCCounters),
 					std::vector<std::string>{},
-					std::vector<std::string>{						
-						"Protocol Counters", 
+					std::vector<std::string>{
+						"Protocol Counters",
 						"Performance Counters"},
 					1,  // requiredUserPermissions
 					"*",
@@ -463,7 +463,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"It also includes the number of EVB RX packet errors, and number of times the Jitter Attenuator lost the RX Recovered clock and "
 					"lost the RX External clock since last reset."
 	);
-				
+
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS <<
 		" steps. So choose 1 step at a time, 0-" << CONFIG_DTC_TIMING_CHAIN_STEPS-1 <<
@@ -502,7 +502,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"If <b>setAsPassThrough</b> is disabled, the CFO Link SERDES output is routed back to the source. "
 					"The loopback functionality is managed through the DTC Control Register bit 28."
 	);
-	
+
 
 	registerFEMacroFunction(
 		"Enable/Disable DTC Link",
@@ -514,17 +514,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"Result"},
 					1,   // requiredUserPermissions
 					"*",
-					"This FE Macro enables/disables a target DTC Link 0-7 (i.e., 0-5 ROCs, 6 CFO, 7 EVB)."					
-	);	
-	
+					"This FE Macro enables/disables a target DTC Link 0-7 (i.e., 0-5 ROCs, 6 CFO, 7 EVB)."
+	);
+
 	registerFEMacroFunction(
 		"Reset ALL (CFO/ROC/EVB) DTC Links",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ResetDTCLinks),
 					std::vector<std::string>{},
 					std::vector<std::string>{},
-					1,   // requiredUserPermissions 
-					"*", 
+					1,   // requiredUserPermissions
+					"*",
 					"This FE Macro resets the SERDES TX/RX links and then the SERDES."
 	);
 
@@ -572,7 +572,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	);
 
 	//------------------
-	
+
 	// registerFEMacroFunction(
 	// 	"Reset EVB Link Rx",
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -600,7 +600,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	// 				std::vector<std::string>{},  // namesOfInputArgs
 	// 				std::vector<std::string>{},
 	// 				1,  // requiredUserPermissions
-	// 				"*", 
+	// 				"*",
 	// 				"Reset the EVB SERDES RX/TX PLL."
 	// );
 
@@ -611,7 +611,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
-					"*", 
+					"*",
 					"Read the fields of the DTC ID and EVB Info register."
 	);
 
@@ -621,12 +621,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetDTCIdAndEVBInfo),            // feMacroFunction
 					std::vector<std::string>{"DTC ID",
 						"EVB Mode", "EVB Partition ID",
-						"EVB MAC Address Last Byte", 
+						"EVB MAC Address Last Byte",
 						"EVB Number of DTCs in Cluster",
 						"EVB Cluster Base DTC MAC Address"},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
-					"*", 
+					"*",
 					"Read the fields of the DTC ID and EVB Info register."
 	);
 
@@ -668,7 +668,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO emulator parameters."
@@ -693,7 +693,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 											"For Detached Buffer Test, Payload Packet Threshold for Saving Event (Default: 0)"
 											},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
-					1,   // requiredUserPermissions					
+					1,   // requiredUserPermissions
 					"*",
 					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO emulator parameters."
@@ -3877,8 +3877,8 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 // clang-format off
 //========================================================================
 void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
-{	
-	__SET_ARG_OUT__("Result", 
+{
+	__SET_ARG_OUT__("Result",
 		SetupCFOInterface(
 			__GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)", int, 2),
 			__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false),
@@ -3975,8 +3975,8 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 // clang-format off
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
-{	
-	__SET_ARG_OUT__("Result", 
+{
+	__SET_ARG_OUT__("Result",
 		SetCFOEmulatorOnOffSpillEmulation(
 			__GET_ARG_IN__("Enable CFO Emulator (Default := true)",bool,true),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",uint32_t),
@@ -4107,8 +4107,8 @@ void DTCFrontEndInterface::PunchedClock(__ARGS__)
 // clang-format off
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
-{	
-	__SET_ARG_OUT__("Result", 
+{
+	__SET_ARG_OUT__("Result",
 		SetCFOEmulatorFixedWidthEmulation(
 			__GET_ARG_IN__("Enable CFO Emulator (Default := true)",bool,true),
 			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
