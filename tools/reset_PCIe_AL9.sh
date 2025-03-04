@@ -1,5 +1,27 @@
 #!/bin/sh
-#source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
+# Note to setup vivado lab:
+#   source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
+
+lockfile="/tmp/mu2e.lock"
+# Attempt to create the lock file atomically using ln
+if ! ln -s "$$" "$lockfile" 2>/dev/null; then
+    # Check if the existing lock file contains a valid PID
+    if [ -f "$lockfile" ]; then
+        pid=$(readlink "$lockfile")
+        if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+            echo "Script is already running with PID $pid."
+            exit 0
+        fi
+    fi
+    # If stale, remove it and try again
+    rm -f "$lockfile"
+    if ! ln -s "$$" "$lockfile" 2>/dev/null; then
+        echo "Failed to acquire lock."
+        exit 1
+    fi
+fi
+# Ensure lock file is removed on exit
+trap 'rm -f "$lockfile"' EXIT
 
 
 SCRIPT_DIR="$(
@@ -13,7 +35,6 @@ echo "SCRIPT_DIR: ${SCRIPT_DIR}"
 RegEx='Xilinx.*704[23]'
 
 lspci | grep "$RegEx" && foundXi=1 || foundXi=0
-lsmod | grep -E 'mu2e|TRACE' && foundXi=1   # only if both are false do we skip
 
 if [ "$foundXi" = 1 ];then
     TRIES=3
