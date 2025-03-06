@@ -25,6 +25,7 @@ If the \"demo_root\" optional parameter is not supplied, the user will be
 prompted for this location.
 --debug       perform a debug build
 --develop     Install the develop version of the software (may be unstable!)
+--dev-only    Do not install the suite in an environment (use with upstreams!)
 --tag         Install a specific tag of mu2e-tdaq-suite
 --spackdir    Install Spack in this directory (or use existing installation)
 --all-packages Install all packages including Offline and otsdaq-mu2e-trigger
@@ -54,7 +55,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0
 while [ -n "${1-}" ];do
 	if expr "x${1-}" : 'x-' >/dev/null;then
 		op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -70,6 +71,7 @@ while [ -n "${1-}" ];do
 			w*)         eval $op1chr; opt_w=`expr $opt_w + 1`;;
 			-debug)     opt_debug=--debug;;
 			-develop) opt_develop=1;;
+            -dev-only)   opt_dev_only=1;;
 			-tag)       eval $reqarg; tag=$1; shift;;
 			-spackdir)  eval $op1arg; spackdir=$1; shift;;
 			-no-extra-products)  opt_skip_extra_products=1;;
@@ -268,28 +270,30 @@ if [ $? -ne 0 ];then
 fi
 spack compiler find
 
-spack env create ${concrete_include_cmd} $view_opt tdaq-${demo_version}
-spack env activate tdaq-${demo_version}
-env_to_activate="tdaq-${demo_version}"
-ln -s $spackdir/var/spack/environments/tdaq-${demo_version}
+if [ ${opt_dev_only:-0} -eq 0 ];then
+    spack env create ${concrete_include_cmd} $view_opt tdaq-${demo_version}
+    spack env activate tdaq-${demo_version}
+    env_to_activate="tdaq-${demo_version}"
+    ln -s $spackdir/var/spack/environments/tdaq-${demo_version}
 
-if ! [ -d srcs ];then
-  rm srcs >/dev/null 2>&1
-  ln -s $spackdir/var/spack/environments/tdaq-${demo_version} srcs
-fi
+    if ! [ -d srcs ];then
+        rm srcs >/dev/null 2>&1
+        ln -s $spackdir/var/spack/environments/tdaq-${demo_version} srcs
+    fi
 
-if [ $opt_no_kmod -eq 1 ];then
-	spack add trace~kmod
-else
-	spack add trace+kmod
-fi
+    if [ $opt_no_kmod -eq 1 ];then
+    	spack add trace~kmod
+    else
+	    spack add trace+kmod
+    fi
 
-spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
+    spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
 
-# Add EMACS
-if [ $opt_no_emacs -eq 0 ]; then
-spack add cairo+X+fc+ft ${arch_opt}
-spack add emacs@29.3%gcc@13.1.0+X toolkit=athena ${arch_opt}
+    # Add EMACS
+    if [ $opt_no_emacs -eq 0 ]; then
+        spack add cairo+X+fc+ft ${arch_opt}
+        spack add emacs@29.3%gcc@13.1.0+X toolkit=athena ${arch_opt}
+    fi
 fi
 
 function checkout_package()
@@ -415,18 +419,23 @@ export ARTDAQ_DATABASE_URI="filesystemdb://$Base/databases/filesystemdb/test_db"
 ########################################
 ########################################
 
-spack concretize --force --deprecated && spack install -j $BUILD_J
-installStatus=$?
+if [ ${opt_dev_only:-0} -eq 0 ];then
+    spack concretize --force --deprecated && spack install -j $BUILD_J
+    installStatus=$?
+fi
 
 if [[ ${opt_develop:-0} -eq 1 ]];then
 	spack env deactivate
 	# spack mpd init # Upstream
 	spack mpd init -r site -u $Base/spack-repos/mpd # Fork
-	# spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
-	spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 # Fork
-	spack install cetmodules@3.26.00
-	spack env activate tdaq-develop
-	spack add cetmodules@3.26.00 # Needed for now
+    if [ ${opt_dev_only:-0} -eq 0 ];then
+	    # spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
+	    spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 # Fork
+    else
+	    # spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
+	    spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
+	fi
+    spack env activate tdaq-develop
 	spack add canvas-root-io cxxstd=20 # Needed for now
 	spack concretize --force --deprecated
 	spack install
