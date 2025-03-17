@@ -264,7 +264,7 @@ cd $Base
 BUILD_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` + 1))
 spack load --first gcc@13.1.0 >/dev/null 2>&1
 if [ $? -ne 0 ];then
-  spack install -j $BUILD_J gcc@13.1.0 ${arch_opt} +binutils
+  spack install --deprecated -j $BUILD_J gcc@13.1.0 ${arch_opt} +binutils
   installStatus=$?
   spack load gcc@13.1.0
 fi
