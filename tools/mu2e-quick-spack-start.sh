@@ -42,6 +42,8 @@ prompted for this location.
 --arch        Set architechture for build (ex. linux-almalinux9-x86_64_v3)
 --no-kmod     Do not build TRACE kernel module (for Docker builds)
 --no-view     Do not create a Spack environment view
+--no-emacs    Do not attempt to install emacs
+--no-auto-upstream Do not search /mu2e/spack_areas for upstreams
 --all-packages Used with --develop, will fetch all subdetector repos
 "
 
@@ -55,7 +57,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_no_auto_upstream=0;
 while [ -n "${1-}" ];do
 	if expr "x${1-}" : 'x-' >/dev/null;then
 		op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -81,6 +83,7 @@ while [ -n "${1-}" ];do
 			-arch)      eval $op1arg; arch=$1; shift;;
 			-no-kmod)   opt_no_kmod=1;;
 			-no-emacs)  opt_no_emacs=1;;
+                        -no-auto-upstream) opt_no_auto_upstream=1;;
 			-all-packages) opt_all_packages=1;;
 		-trigger)   opt_all_packages=1;;
 			-no-view)   opt_no_view=1;;
@@ -221,6 +224,16 @@ if [ $opt_padding -eq 1 ];then
 fi
 
 concrete_include_cmd=
+
+# Auto-add upstreams from /mu2e
+if [ $opt_no_auto_upstream -eq 0 ] && [ -d /mu2e/spack_areas ];then
+  art=`ls -d /mu2e/spack_areas/art-suite-*|tail -1`
+  artdaq=`ls -d /mu2e/spack_areas/artdaq-*|tail -1`
+  ots=`ls -d /mu2e/spack_areas/ots-*|tail -1`
+  mu2e=`ls -d /mu2e/spack_areas/mu2e-tdaq-*|tail -1`
+
+  upstreams+=($mu2e $ots $artdaq $art)
+fi
 
 for upstream in ${upstreams[@]}; do
 	for upstreamdir in `find $upstream -type f -wholename '*/.spack-db/index.json' 2>/dev/null`; do
