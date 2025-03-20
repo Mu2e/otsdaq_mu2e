@@ -420,7 +420,7 @@ export ARTDAQ_DATABASE_URI="filesystemdb://$Base/databases/filesystemdb/test_db"
 ########################################
 
 if [ ${opt_dev_only:-0} -eq 0 ];then
-    spack concretize --force --deprecated && spack install -j $BUILD_J
+    spack concretize --force --deprecated && spack install --deprecated -j $BUILD_J
     installStatus=$?
 fi
 
@@ -438,7 +438,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
     spack env activate tdaq-develop
 	spack add canvas-root-io cxxstd=20 # Needed for now
 	spack concretize --force --deprecated
-	spack install
+	spack install --deprecated
 	# spack mpd build # Upstream
 	spack mpd build -G Ninja # Fork
 	cd $Base/build
