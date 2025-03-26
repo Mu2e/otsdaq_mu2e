@@ -162,9 +162,11 @@ if ! [ -d $spackdir ];then
     $(
     cd ${spackdir%/spack}
     git clone https://github.com/FNALssi/spack.git -b fnal-develop
+    cd $spackdir && git checkout e18ecaaa780b863b2104e2971d3320c97ebf3b65
         )
 else
-    cd $spackdir && git pull && cd $Base
+    #cd $spackdir && git pull && cd $Base
+    cd $spackdir && git fetch -a && git checkout e18ecaaa780b863b2104e2971d3320c97ebf3b65 && cd $Base
 fi
 
 cat >setup-env.sh <<-EOF
@@ -174,7 +176,8 @@ EOF
 source setup-env.sh
 
 if ! [ -d fermi-spack-tools ]; then
-    git clone https://github.com/eflumerf/fermi-spack-tools.git
+    git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
+    #git clone https://github.com/eflumerf/fermi-spack-tools.git # Fork
 else
     cd fermi-spack-tools && git pull && cd ..
 fi
