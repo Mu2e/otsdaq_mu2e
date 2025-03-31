@@ -452,9 +452,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
     fi
     spack env activate tdaq-develop
-    spack add canvas-root-io cxxstd=20 # Needed for now
-    spack concretize --force --deprecated
-    spack install --deprecated
+    spack concretize --force --deprecated && spack install --deprecated
     # spack mpd build # Upstream
     spack mpd build -G Ninja # Fork
     cd $Base/build
