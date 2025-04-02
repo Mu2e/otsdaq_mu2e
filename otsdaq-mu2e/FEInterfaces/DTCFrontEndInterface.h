@@ -203,7 +203,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 																			const std::string& filename,
 																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters,
 																			bool skipBy32, uint32_t packetThresholdToSave);
-
+	void                                SetCFOEmulatorWideband              (__ARGS__);
 	void 								BufferTest							(__ARGS__);
 	void 								PatternTest							(__ARGS__);
 	void 								BufferTest_detached					(__ARGS__);

@@ -698,6 +698,20 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Enable/Disable the CFO Emulator. Disabling turns off output of emulated Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
 					"Enabling turns on emulated Event Window generation and timing markers based on the CFO emulator parameters."
 	);
+
+	registerFEMacroFunction(
+        "CFO Emulator Wideband",  // feMacroName
+            static_cast<FEVInterface::frontEndMacroFunction_t>(
+                    &DTCFrontEndInterface::SetCFOEmulatorWideband),  // feMacroFunction
+                    std::vector<std::string>{},  // namesOfInputArgs (no inputs required)
+                    std::vector<std::string>{"response"},  // namesOfOutputArgs
+                    1,  // requiredUserPermissions
+                    "*", // allowedCallingFEs
+                    "Runs the CFO Emulator with fixed parameters: 100 us window duration, "
+                    "1 millions EWTs, and other standard Wideband settings. "
+                    "For use with the OTS Iterator."
+    );
+
 	registerFEMacroFunction(
 		"DTC Software Data Request",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -4302,6 +4316,41 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
 	return outSs.str();  //__SET_ARG_OUT__("Result", outSs.str());
 
 }  //end SetCFOEmulatorFixedWidthEmulation()
+
+//==============================================================================
+void DTCFrontEndInterface::SetCFOEmulatorWideband(__ARGS__)
+{
+    // Set standard predefined parameters for the Wideband configuration
+    bool enable = true;                             // Enable CFO Emulator
+    bool useDetachedBufferTest = false;             // Don't use detached buffer test
+    std::string eventDuration = "100us";            // 100 us event window duration
+    uint32_t numberOfEventWindowMarkers = 1000000;  // 1 million event windows
+    uint64_t initialEventWindowTag = 1;             // Start with EWT 1
+    uint64_t eventWindowMode = 1;                   // Standard event window mode
+    bool enableClockMarkers = false;                // No clock markers
+    bool enableAutogenDRP = true;                   // Auto-generate data request packets
+    bool saveBinaryDataToFile = false;              // Don't save binary data
+    std::string filename = "Default";               // Default filename
+    bool saveSubeventHeadersToDataFile = false;     // Don't save subevent headers
+    bool resetCounters = false;                     // Don't reset counters
+    bool skipBy32 = false;                          // Don't skip by 32
+    uint32_t packetThresholdToSave = 0;             // No packet threshold
+    
+    // Call CFO emulator with fixed parameters
+    std::string result = SetCFOEmulatorFixedWidthEmulation(
+        enable, useDetachedBufferTest, eventDuration, 
+        numberOfEventWindowMarkers, initialEventWindowTag,
+        eventWindowMode, enableClockMarkers, enableAutogenDRP, 
+        saveBinaryDataToFile, filename,
+        saveSubeventHeadersToDataFile, resetCounters, 
+        skipBy32, packetThresholdToSave
+    );
+    
+    // Return result 
+    __SET_ARG_OUT__("response", "CFO Emulator Wideband: " + result);
+}
+
+
 
 //==============================================================================
 void DTCFrontEndInterface::initDetachedBufferTest(
