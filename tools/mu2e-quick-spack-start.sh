@@ -307,8 +307,12 @@ if [ ${opt_dev_only:-0} -eq 0 ];then
 
     # Add EMACS
     if [ $opt_no_emacs -eq 0 ]; then
-        spack add cairo+X+fc+ft ${arch_opt}
-        spack add emacs@29.3%gcc@13.1.0+X toolkit=athena ${arch_opt}
+        spack add emacs gui=x11 %gcc@13.1.0 ${arch_opt}
+    fi
+else
+    # Add EMACS
+    if [ $opt_no_emacs -eq 0 ]; then
+        spack install emacs gui=x11 %gcc@13.1.0 ${arch_opt}
     fi
 fi
 
