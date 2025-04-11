@@ -25,6 +25,7 @@ If the \"demo_root\" optional parameter is not supplied, the user will be
 prompted for this location.
 --debug       perform a debug build
 --develop     Install the develop version of the software (may be unstable!)
+--dev-only    Do not install the suite in an environment (use with upstreams!)
 --tag         Install a specific tag of mu2e-tdaq-suite
 --spackdir    Install Spack in this directory (or use existing installation)
 --all-packages Install all packages including Offline and otsdaq-mu2e-trigger
@@ -41,6 +42,8 @@ prompted for this location.
 --arch        Set architechture for build (ex. linux-almalinux9-x86_64_v3)
 --no-kmod     Do not build TRACE kernel module (for Docker builds)
 --no-view     Do not create a Spack environment view
+--no-emacs    Do not attempt to install emacs
+--no-auto-upstream Do not search /mu2e/spack_areas for upstreams
 --all-packages Used with --develop, will fetch all subdetector repos
 "
 
@@ -54,7 +57,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_no_auto_upstream=0;
 while [ -n "${1-}" ];do
     if expr "x${1-}" : 'x-' >/dev/null;then
         op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -70,6 +73,7 @@ while [ -n "${1-}" ];do
             w*)         eval $op1chr; opt_w=`expr $opt_w + 1`;;
             -debug)     opt_debug=--debug;;
             -develop) opt_develop=1;;
+            -dev-only)   opt_dev_only=1;;
             -tag)       eval $reqarg; tag=$1; shift;;
             -spackdir)  eval $op1arg; spackdir=$1; shift;;
             -no-extra-products)  opt_skip_extra_products=1;;
@@ -78,8 +82,10 @@ while [ -n "${1-}" ];do
             -padding)   opt_padding=1;;
             -arch)      eval $op1arg; arch=$1; shift;;
             -no-kmod)   opt_no_kmod=1;;
+            -no-emacs)  opt_no_emacs=1;;
+                        -no-auto-upstream) opt_no_auto_upstream=1;;
             -all-packages) opt_all_packages=1;;
-	    -trigger)   opt_all_packages=1;;
+        -trigger)   opt_all_packages=1;;
             -no-view)   opt_no_view=1;;
             *)          echo "Unknown option -$op"; do_help=1;;
         esac
@@ -156,9 +162,11 @@ if ! [ -d $spackdir ];then
     $(
     cd ${spackdir%/spack}
     git clone https://github.com/FNALssi/spack.git -b fnal-develop
+    cd $spackdir && git checkout e18ecaaa780b863b2104e2971d3320c97ebf3b65
         )
 else
-    cd $spackdir && git pull && cd $Base
+    #cd $spackdir && git pull && cd $Base
+    cd $spackdir && git fetch -a && git checkout e18ecaaa780b863b2104e2971d3320c97ebf3b65 && cd $Base
 fi
 
 cat >setup-env.sh <<-EOF
@@ -168,7 +176,8 @@ EOF
 source setup-env.sh
 
 if ! [ -d fermi-spack-tools ]; then
-    git clone https://github.com/eflumerf/fermi-spack-tools.git
+    git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
+    #git clone https://github.com/eflumerf/fermi-spack-tools.git # Fork
 else
     cd fermi-spack-tools && git pull && cd ..
 fi
@@ -219,6 +228,16 @@ fi
 
 concrete_include_cmd=
 
+# Auto-add upstreams from /mu2e
+if [ $opt_no_auto_upstream -eq 0 ] && [ -d /mu2e/spack_areas ];then
+  art=`ls -d /mu2e/spack_areas/art-suite-*|tail -1`
+  artdaq=`ls -d /mu2e/spack_areas/artdaq-*|tail -1`
+  ots=`ls -d /mu2e/spack_areas/ots-*|tail -1`
+  mu2e=`ls -d /mu2e/spack_areas/mu2e-tdaq-*|tail -1`
+
+  upstreams+=($mu2e $ots $artdaq $art)
+fi
+
 for upstream in ${upstreams[@]}; do
     for upstreamdir in `find $upstream -type f -wholename '*/.spack-db/index.json' 2>/dev/null`; do
         echo "Getting real directory for upstream database $upstreamdir"
@@ -261,48 +280,52 @@ cd $Base
 BUILD_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` + 1))
 spack load --first gcc@13.1.0 >/dev/null 2>&1
 if [ $? -ne 0 ];then
-  spack install -j $BUILD_J gcc@13.1.0 ${arch_opt} +binutils
+  spack install --deprecated -j $BUILD_J gcc@13.1.0 ${arch_opt} +binutils
   installStatus=$?
   spack load gcc@13.1.0
 fi
 spack compiler find
 
-spack env create ${concrete_include_cmd} $view_opt tdaq-${demo_version}
-spack env activate tdaq-${demo_version}
-env_to_activate="tdaq-${demo_version}"
-ln -s $spackdir/var/spack/environments/tdaq-${demo_version}
+if [ ${opt_dev_only:-0} -eq 0 ];then
+    spack env create ${concrete_include_cmd} $view_opt tdaq-${demo_version}
+    spack env activate tdaq-${demo_version}
+    env_to_activate="tdaq-${demo_version}"
+    ln -s $spackdir/var/spack/environments/tdaq-${demo_version}
 
-if ! [ -d srcs ];then
-  rm srcs >/dev/null 2>&1
-  ln -s $spackdir/var/spack/environments/tdaq-${demo_version} srcs
+    if ! [ -d srcs ];then
+        rm srcs >/dev/null 2>&1
+        ln -s $spackdir/var/spack/environments/tdaq-${demo_version} srcs
+    fi
+
+    if [ $opt_no_kmod -eq 1 ];then
+        spack add trace~kmod
+    else
+        spack add trace+kmod
+    fi
+
+    spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
+
+    # Add EMACS
+    if [ $opt_no_emacs -eq 0 ]; then
+        spack add cairo+X+fc+ft ${arch_opt}
+        spack add emacs@29.3%gcc@13.1.0+X toolkit=athena ${arch_opt}
+    fi
 fi
-
-if [ $opt_no_kmod -eq 1 ];then
-    spack add trace~kmod
-else
-	spack add trace+kmod
-fi
-
-spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
-
-# Add EMACS
-spack add cairo+X+fc+ft ${arch_opt}
-spack add emacs@29.3%gcc@13.1.0+X toolkit=athena ${arch_opt}
 
 function checkout_package()
 {
-	pkg=$1
-	if ! [ -d $pkg ]; then
-		if [ $opt_w -eq 0 ];then
-			git clone https://github.com/Mu2e/$pkg.git $pkg
-	    else
-			git clone git@github.com:Mu2e/$pkg.git $pkg
-		fi
-	else
-		cd $pkg
-		git pull
-		cd ..
-	fi
+    pkg=$1
+    if ! [ -d $pkg ]; then
+        if [ $opt_w -eq 0 ];then
+            git clone https://github.com/Mu2e/$pkg.git $pkg
+        else
+            git clone git@github.com:Mu2e/$pkg.git $pkg
+        fi
+    else
+        cd $pkg
+        git pull
+        cd ..
+    fi
 }
 
 if [[ ${opt_develop:-0} -eq 1 ]];then
@@ -316,7 +339,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
     done
     if [[ ${opt_all_packages:-0} -eq 1 ]]; then
         for pkg in Offline mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-tracker otsdaq-mu2e-trigger;do
-	        checkout_package $pkg
+            checkout_package $pkg
         done
     fi
     cd $Base
@@ -412,25 +435,29 @@ export ARTDAQ_DATABASE_URI="filesystemdb://$Base/databases/filesystemdb/test_db"
 ########################################
 ########################################
 
-spack concretize --force --deprecated && spack install -j $BUILD_J
-installStatus=$?
+if [ ${opt_dev_only:-0} -eq 0 ];then
+    spack concretize --force --deprecated && spack install --deprecated -j $BUILD_J
+    installStatus=$?
+fi
 
 if [[ ${opt_develop:-0} -eq 1 ]];then
-	spack env deactivate
-	# spack mpd init # Upstream
+    spack env deactivate
+    # spack mpd init # Upstream
     spack mpd init -r site -u $Base/spack-repos/mpd # Fork
-	# spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
-	spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 # Fork
-	spack install cetmodules@3.26.00 # Needed for now
-	spack env activate tdaq-develop
-	spack add cetmodules@3.26.00
-	spack concretize --force --deprecated
-	spack install
-	# spack mpd build # Upstream
+    if [ ${opt_dev_only:-0} -eq 0 ];then
+        # spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
+        spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 # Fork
+    else
+        # spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
+        spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
+    fi
+    spack env activate tdaq-develop
+    spack concretize --force --deprecated && spack install --deprecated
+    # spack mpd build # Upstream
     spack mpd build -G Ninja # Fork
     cd $Base/build
     ninja install
-	installStatus=$?
+    installStatus=$?
     cd $Base
 fi
 

@@ -3,7 +3,7 @@ cet_make_library(LIBRARY_NAME ROCCore
 SOURCE ROCCoreVInterface.cc
 		 LIBRARIES PUBLIC
 		  	otsdaq::FECore
-			  mu2e_pcie_utils::DTCInterface
+			  mu2e-pcie-utils::DTCInterface
 )
 
 install_headers()

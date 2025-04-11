@@ -377,7 +377,7 @@ void CFOandDTCCoreVInterface::GetStatus(__ARGS__)
 {
 	__SET_ARG_OUT__("Status",
 	                getCFOandDTCRegisters()->FormattedRegDump(
-	                    20, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
+	                    130, getCFOandDTCRegisters()->getFormattedDumpFunctions()));
 }  //end GetStatus()
 
 //========================================================================
@@ -385,7 +385,7 @@ void CFOandDTCCoreVInterface::GetSimpleStatus(__ARGS__)
 {
 	__SET_ARG_OUT__("Status",
 	                getCFOandDTCRegisters()->FormattedRegDump(
-	                    20, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
+	                    130, getCFOandDTCRegisters()->getFormattedSimpleDumpFunctions()));
 }  //end GetSimpleStatus()
 
 //========================================================================
@@ -540,7 +540,7 @@ void CFOandDTCCoreVInterface::SelectJitterAttenuatorSource(__ARGS__)
 	__FE_COUTV__((unsigned int)select);
 
 	// choose jitter attenuator input select (reg 0x9308, bits 5:4)
-	//  0 is Upstream Control Link Rx Recovered Clock
+	//  0 is emulated CFO for DTC, and self-oscillator for CFO
 	//  1 is RJ45 Upstream Clock
 	//  2 is Timing Card Selectable (SFP+ or FPGA) Input Clock
 

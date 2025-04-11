@@ -14,8 +14,8 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 {
 	INIT_MF("." /*directory used is USER_DATA/LOG/.*/);
 
-	__COUT_INFO__ << "ROCPolarFireCoreInterface instantiated with link: " << linkID_
-	              << " and EventWindowDelayOffset = " << delay_ << __E__;
+	__COUT__ << "ROCPolarFireCoreInterface instantiated with link: " << linkID_
+	         << " and EventWindowDelayOffset = " << delay_ << __E__;
 
 	registerFEMacroFunction("Setup for Pattern Data Taking",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
