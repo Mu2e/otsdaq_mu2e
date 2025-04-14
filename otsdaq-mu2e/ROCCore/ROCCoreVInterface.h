@@ -77,6 +77,7 @@ class ROCCoreVInterface : public FEVInterface
 	inline DTCLib::DTC_Link_ID				getLinkID					(void) { return linkID_; }
 
 	// bool         									emulatorMode_; // Deprecated! Use mu2esim in mu2e-pcie-utils
+	bool         									emulatedInDTC_ = false; 
 	DTCLib::DTC* 									thisDTC_;
 
   protected:
