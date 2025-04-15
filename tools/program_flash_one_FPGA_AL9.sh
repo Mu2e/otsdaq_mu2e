@@ -35,7 +35,8 @@ echo "JTAG-N mcs file: ${MCS_FILE_N}"
 echo "JTAG-N target flash: ${FLASH_PART_N}"
 
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_flash_one_FPGA.tcl -tclargs ${1} ${MCS_FILE_N} ${FLASH_PART_N} 2>&1 \
-    | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g
+    | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
+    | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
 
 #now reset
 echo "Resetting PCIe on ${HOSTNAME}..."

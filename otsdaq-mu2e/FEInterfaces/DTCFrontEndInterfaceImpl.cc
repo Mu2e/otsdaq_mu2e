@@ -958,7 +958,14 @@ void DTCFrontEndInterface::createROCs(void)
 				// setup other members of ROCCore (for interface plug-in compatibility,
 				// left out of constructor)
 
-				tmpRoc.thisDTC_ = thisDTC_;
+				uint8_t roc_link_i = static_cast<uint8_t>(tmpRoc.getLinkID());
+				bool    enabled    = ((roc_mask_ >> roc_link_i) & 1);
+				bool    emulated   = ((roc_emulated_mask_ >> roc_link_i) & 1);
+				__FE_COUT__ << "roc[" << roc_link_i << "] enabled " << enabled
+				            << " emulated " << emulated << __E__;
+
+				tmpRoc.thisDTC_       = thisDTC_;
+				tmpRoc.emulatedInDTC_ = emulated;
 
 				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
 				    roc.first, &tmpRoc));
