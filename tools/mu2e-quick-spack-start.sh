@@ -161,12 +161,14 @@ fi
 if ! [ -d $spackdir ];then
     $(
     cd ${spackdir%/spack}
-    git clone https://github.com/FNALssi/spack.git -b fnal-develop
-    cd $spackdir && git checkout e18ecaaa780b863b2104e2971d3320c97ebf3b65
+    git clone https://github.com/Mu2e/spack.git -b Mu2e-TDAQ
         )
 else
     #cd $spackdir && git pull && cd $Base
-    cd $spackdir && git fetch -a && git checkout e18ecaaa780b863b2104e2971d3320c97ebf3b65 && cd $Base
+    if [ `git remote -v|grep -c Mu2e` -eq 0 ];then
+	   git remote set-url origin https://github.com/Mu2e/spack.git
+    fi
+    cd $spackdir && git fetch -a && git checkout Mu2e-TDAQ && cd $Base
 fi
 
 cat >setup-env.sh <<-EOF
@@ -177,9 +179,9 @@ source setup-env.sh
 
 if ! [ -d fermi-spack-tools ]; then
     git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
-    #git clone https://github.com/eflumerf/fermi-spack-tools.git # Fork
+    cd fermi-spack-tools && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf; cd $Base
 else
-    cd fermi-spack-tools && git pull && cd ..
+    cd fermi-spack-tools && git fetch -a && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf ; cd $Base
 fi
 if ! [ -d spack-mpd ]; then
     # git clone https://github.com/FNALssi/spack-mpd.git # Upstream
@@ -203,8 +205,10 @@ if [ $repo_found -eq 0 ]; then
     echo "Adding repos: fnal_art scd_recipes artdaq-spack mu2e-spack"
     mkdir spack-repos;cd spack-repos
     git clone https://github.com/FNALssi/fnal_art.git
+    cd fnal_art && git checkout ddeec355456e3bca5e4a743ce5d4906fa74a51b6 ; cd ..
     spack repo add ./fnal_art
     git clone https://github.com/marcmengel/scd_recipes.git
+    cd scd_recipes && git checkout e9c8cc8af792008c3c85724cc8ae3ee0662233d6 ; cd ..
     spack repo add ./scd_recipes
     git clone https://github.com/art-daq/artdaq-spack.git
     spack repo add ./artdaq-spack
