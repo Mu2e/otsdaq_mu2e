@@ -399,7 +399,7 @@ try
 		__SS_THROW__;
 	}
 
-	if(runPlanMode >= 9)
+	if(runPlanMode >= 9 || !cfo.bufferTestThreadStruct_)
 	{
 		__COUT_INFO__ << "Not reading CFO Event Record. Thread and main exited!" << __E__;
 		return 0;
