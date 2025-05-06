@@ -53,11 +53,11 @@ vivado_lab -mode batch -source ${SCRIPT_DIR}/program_flash_both_DTCs.tcl -tclarg
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
     | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
 
-#now reset
-echo "Resetting PCIe on ${HOSTNAME}..."
-source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+# #now reset
+# echo "Resetting PCIe on ${HOSTNAME}..."
+# source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo echo
 echo echo
-echo "===> Done with ${HOSTNAME} mcs flash program and PCIe reset!"
+echo "===> Done with ${HOSTNAME} mcs flash program!" # and PCIe reset!"
 echo echo
