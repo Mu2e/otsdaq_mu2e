@@ -17,6 +17,26 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 	~ROCPolarFireCoreInterface(void);
 
+	enum CaloTrkRegisters
+	{
+		ROC_ADDRESS_ACTION_DONE             = 128,
+		ROC_ADDRESS_ACTION_STATUS         	= 132,
+		ROC_ADDRESS_ACTION_COMMAND	      	= 384,
+	};
+
+	enum CaloTrkActions
+	{
+		ROC_ACTION_READ_SPI             	= 7,
+		ROC_ACTION_WRITE_SPI             	= 8,
+		ROC_ACTION_WRITE_DIR             	= 9,
+		
+		ROC_ACTION_PROG_INDEX             	= 4,
+		ROC_ACTION_PROG_ADDR             	= 5,
+		ROC_ACTION_PROG_AUTO             	= 6,
+	};
+
+	std::mutex 								actionLock_; /// protect/lock this link/ROC from starting more than one action
+
 	// state machine
 	//----------------
 	void 									configure				(void) override;
@@ -43,9 +63,19 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 
 	virtual void  							GetStatus									(__ARGS__) override;
-	virtual std::string						getFirmwareVersion							(void) override;
+	virtual std::string						getFirmwareVersion							(void) override;	
 	void 									SetupForPatternDataTaking					(__ARGS__);
 
+	bool									isActionDone								(void); /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
+	void 									readSPIFlashBlock							(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords);
+	void 									writeSPIDirectory							(const std::vector<uint32_t>& imageAddresses);
+	void 									writeSPIFlashBlock							(const std::vector<uint16_t>& writeData, uint32_t startAddress);
+	void 									programFromSPIByIndex						(uint8_t index);
+	void 									programFromSPIByAddress						(uint32_t startAddress);
+	void 									autoProgramFromSPI							(void);
+	
+
+	
 	// clang-format on
 };
 

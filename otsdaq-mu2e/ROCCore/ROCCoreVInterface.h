@@ -35,7 +35,7 @@ class ROCCoreVInterface : public FEVInterface
 	//----------------
 
 	// write and read to registers
-	//	Philosophy: call writeRegister/readRegister/readBlock and it will choose the ROC or software emulator implementation
+	//	Philosophy: call writeRegister/readRegister/readBlock/writeBlock and it will choose the ROC or software emulator implementation
 	//      For each, there is a "ROC" and "Emulator" version:   readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock/writeROCRegister/writeEmulatorRegister
 	void         							writeRegister				(DTCLib::roc_address_t address, DTCLib::roc_data_t writeData);  // chooses ROC or Emulator version
 	DTCLib::roc_data_t 						readRegister				(DTCLib::roc_address_t address);     // chooses ROC or Emulator version
@@ -75,6 +75,11 @@ class ROCCoreVInterface : public FEVInterface
 	static void 							highRateBlockCheckThread	(ROCCoreVInterface* roc, unsigned int loops, unsigned int baseAddress, unsigned int correctRegisterValue0, unsigned int correctRegisterValue1);
 
 	inline DTCLib::DTC_Link_ID				getLinkID					(void) { return linkID_; }
+
+	// hardware access
+	//----------------
+	virtual mu2edev* 					getDevice					(void) { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_->GetDevice();};	
+	inline DTCLib::DTC* 				getDTC						(void) { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_;};
 
 	// bool         									emulatorMode_; // Deprecated! Use mu2esim in mu2e-pcie-utils
 	bool         									emulatedInDTC_ = false;
