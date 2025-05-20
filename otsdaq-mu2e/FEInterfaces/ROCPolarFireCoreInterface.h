@@ -20,6 +20,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	enum CaloTrkRegisters
 	{
 		ROC_ADDRESS_ACTION_DONE             = 128,
+		ROC_ADDRESS_ACTION_READ_SIZE       	= 129,
 		ROC_ADDRESS_ACTION_STATUS         	= 132,
 		ROC_ADDRESS_ACTION_COMMAND	      	= 384,
 	};
@@ -69,13 +70,15 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 	bool									isActionDone								(DTCLib::roc_data_t* readStatus = nullptr, bool releaseLockOnDone = false) override; /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
 	void 									readSPIFlashBlock							(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords) override;
-	void 									writeSPIDirectory							(const std::vector<uint32_t>& imageAddresses, bool waitForDone = true) override;
+	void 									writeSPIFlashDirectory						(const std::vector<uint32_t>& imageAddresses, bool waitForDone = true) override;
 	void 									writeSPIFlashBlock							(const std::vector<uint16_t>& writeData, uint32_t startAddress, bool waitForDone = true) override;
 	void 									eraseSPIFlashBlock							(uint32_t eraseSize, uint32_t startAddress, bool waitForDone = true) override;
 	void 									programFromSPIByIndex						(uint8_t index, bool waitForDone = true) override;
 	void 									programFromSPIByAddress						(uint32_t startAddress, bool waitForDone = true) override;
 	void 									autoProgramFromSPI							(bool waitForDone = true) override;
 	
+	void 									ReadSPIFlashBlock							(__ARGS__);
+	void 									WriteSPIFlashDirectory						(__ARGS__);
 
 	
 	// clang-format on

@@ -726,13 +726,13 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ProgramROCs),		 // feMacroFunction
 					std::vector<std::string>{
+						//First, only write the bitfile, manually readback .. do not reprogram yet!
 						"Target Link (Default := none, -1 := all)", 
 						"Target Mask (Default := 0, b111111 := all)", 
 						"Path to Directory map file (Default := do not use)",
-						"Verify Directory map "
+						"Verify Directory map ",
 						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
-						"Image Index (Default := -1, if -1 use address)",
-						"Image Address (Default := -1)",
+						"Image Index (Default := 0)",
 						"Verify (Default := false)",
 						"Do not program from Image Index (only write to image, Default := false)",
 						},  // namesOfInputArgs
@@ -6435,14 +6435,15 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 {
 	uint8_t link = __GET_ARG_IN__("Target Link (Default := use mask, -1 := all)",uint8_t,7); //7 == none, -1 == all
 	uint8_t mask = __GET_ARG_IN__("Target Link (Default := 0, b111111 := all)",uint8_t,0);
-	std::string image = __GET_ARG_IN__("Image Index or Path to Bitfile",std::string);
+	uint8_t imageIndex = __GET_ARG_IN__("Image Index (Default := 0)",uint8_t);
+	std::string bitfilePath = __GET_ARG_IN__("Path to Bitfile (Default := do not write bitfile, only program from Image Index)", std::string);
 	bool verify = __GET_ARG_IN__("Verify (Default := false)",bool);
-	uint32_t startAddress = __GET_ARG_IN__("Index Start Address (Default := 0)",uint32_t);
-	__FE_COUTV__(link);
-	__FE_COUTV__(mask);
-	__FE_COUTV__(image);
+	uint32_t startAddress = 0x2010000;// __GET_ARG_IN__("Index Start Address (Default := 0)",uint32_t);
+	__FE_COUTV__((int)link);
+	__FE_COUTV__((int)mask);
+	__FE_COUTV__(imageIndex);
 	__FE_COUTV__(verify);	
-	__FE_COUTV__(startAddress);
+	// __FE_COUTV__(startAddress);
 
 	std::vector<std::string /* ROC UID */> targetROCs;
 	for(auto& roc : rocs_)
@@ -6464,25 +6465,11 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			(int)link << ", mask = " << (int)mask << __E__;
 		__FE_SS_THROW__;
 	}
-
 	
-	std::string fullpath = "";
-	uint8_t imageIndex = -1;
-	if(image.size() > 3)
-		fullpath = image;
-	else
-	{
-		imageIndex = atoi(image.c_str());
-		__FE_COUTV__(imageIndex);
-		if(imageIndex > 15)
-		{
-			__FE_SS__ << "Illegal image index: " << 
-				imageIndex << " extracted from '" << image << ".'" << __E__;
-			__FE_SS_THROW__;
-		}
-	}
+	std::string contents, fullpath;
+	if(bitfilePath != "Default" && bitfilePath != "")
+		fullpath = bitfilePath;
 
-	std::string contents;
 	if(fullpath != "")
 	{
 		__COUTV__(fullpath);
@@ -6520,7 +6507,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	//then check for erase done
 	{
 		bool allDone = true;
-		DTCLib::roc_data_t readStatus;
+		// DTCLib::roc_data_t readStatus;
 		std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
 		size_t attempt = 0;
 		do 
@@ -6530,18 +6517,18 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			{		
 				if(doneMap[roc]) continue; //skip those done
 
-				doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
+				doneMap[roc] = rocs_.at(roc)->isActionDone(nullptr /*&readStatus*/, //erase does not give status
 					true /* releaseLockOnDone */);
 				if(!doneMap[roc]) allDone = false;
 				else 
 				{
-					if(readStatus)
-					{
-						__FE_SS__ << "At roc '" << roc << "' link=" << 
-							rocs_.at(roc)->getLinkID() << 
-							", Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
-						__FE_SS_THROW__;
-					}
+					// if(readStatus)
+					// {
+					// 	__FE_SS__ << "At roc '" << roc << "' link=" << 
+					// 		rocs_.at(roc)->getLinkID() << 
+					// 		", Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
+					// 	__FE_SS_THROW__;
+					// }
 					__FE_COUT__ << roc << " link=" << 
 							rocs_.at(roc)->getLinkID() << 
 							", done with erase SPI block." << __E__;					
@@ -6560,10 +6547,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
 	__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
-	for(size_t i = 0; i < contents.size(); i += 1000)
+	// return; //block writing bitfile
+
+	for(size_t i = 0; i < contents.size(); i += 1024)
 	{
 		size_t writeSize = contents.size() - i;
-		if(writeSize > 1000) writeSize = 1000;
+		if(writeSize > 1024) writeSize = 1024;
 		__FE_COUTV__(i);
 
 		{
@@ -6578,7 +6567,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			{		
 				__FE_COUTV__(roc);
 				__FE_COUTV__(rocs_.at(roc)->getLinkID());
-				rocs_.at(roc)->writeSPIFlashBlock(writeData,startAddress,
+				rocs_.at(roc)->writeSPIFlashBlock(writeData,startAddress + i,
 					false /* waitForDone */);
 			} //end launch of ROC erase SPI block loop
 		}
@@ -6627,6 +6616,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 		__FE_COUT__ << "Write chunk done at offset=" << i << 
 			" and size=" << writeSize << " / " << contents.size() << __E__;
+
+		return; //debug, stop after first write
 	} //end write bitfile loop
 
 	// h. If verify read back the all flash sector using action 7, in blocks of 128 bytes
@@ -6681,6 +6672,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		} //end launch of ROC erase SPI block loop
 	} //end verify
 
+	return; //block programming
 	// 3) start programming the fpga with action 4 (index)
 	//first launch program
 	__FE_COUT__ << "Start programing from SPI..." << __E__;

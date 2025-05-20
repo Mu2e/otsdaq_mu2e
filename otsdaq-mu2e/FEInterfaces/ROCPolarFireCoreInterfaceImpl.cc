@@ -29,9 +29,18 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
 	                            &ROCPolarFireCoreInterface::ReadSPIFlashBlock),
 	                        std::vector<std::string>{"Start Address", "Number of Bytes"},  //inputs parameters
-	                        std::vector<std::string>{},  //output parameters
+	                        std::vector<std::string>{"Result"},  //output parameters
 	                        1);                          // requiredUserPermissions
 
+
+	registerFEMacroFunction("Write SPI Flash Directory",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCPolarFireCoreInterface::WriteSPIFlashDirectory),
+	                        std::vector<std::string>{"Path to Directory Map file"},  //inputs parameters
+	                        std::vector<std::string>{"Result"},  //output parameters
+	                        1);                          // requiredUserPermissions
+
+							
 }  // end constructor()
 
 //==========================================================================================
@@ -304,8 +313,33 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 		// getDevice()->begin_dcs_transaction(); //block other DCS transactions while getting status
 		writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
 
+		//wait for action to complete
+		size_t i = 0;
+		while(!isActionDone())
+		{
+			if(i > 5*100 /* 5 seconds */)
+			{
+				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
+				__FE_SS__ << "Timeout waiting for SPI flash block read action!" << __E__;
+				__FE_SS_THROW__;
+			}
+			usleep(1000*10 /* 10 ms */);
+		}
+		__FE_COUT__ << "Action done, reading status..." << __E__;
+
+		//check read count, it will be different by 4
+		size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
+		__FE_COUTV__(readCount); 
+		if(readCount - 4 != numberOfWords/2) //readCount == 4096)
+		{
+			__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x" << std::hex << readCount <<
+				" expected 0x" << numberOfWords/2 + 4 << __E__ << "Consider emptying manually by reading 0x" <<
+				readCount - 4 << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND << __E__;;
+			__FE_SS_THROW__;
+		}
+
 		//now read back 
-		readBlock(tmpReadData, ROC_ACTION_READ_SPI, numberOfWords/2, false /* incrementAddress */);
+		readBlock(tmpReadData, ROC_ADDRESS_ACTION_COMMAND, readCount - 4, false /* incrementAddress */);
 		// getDevice()->end_dcs_transaction(); //re-allow other transactions
 	} //end action lock
 
@@ -314,6 +348,9 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 	//now append data to input data vector
     readData.insert(readData.end(), tmpReadData.begin(), tmpReadData.end());
 	__FE_COUTV__(readData.size());
+
+	size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
+	__FE_COUTV__(readCount); 
 	
 } //end readSPIFlashBlock()
 
@@ -325,7 +362,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 /// 
 /// The RETURN_STATUS register will return a fail count, ie how many times the image index 
 /// read back from the SPI is not equal to what was written.
-void ROCPolarFireCoreInterface::writeSPIDirectory(const std::vector<uint32_t>& imageAddresses, bool waitForDone /* = true */)
+void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_t>& imageAddresses, bool waitForDone /* = true */)
 {
 	__FE_COUTV__(imageAddresses.size());
 	if(imageAddresses.size() > 16)
@@ -388,7 +425,7 @@ void ROCPolarFireCoreInterface::writeSPIDirectory(const std::vector<uint32_t>& i
 		__FE_SS_THROW__;
 	}
 
-} //end writeSPIDirectory()
+} //end writeSPIFlashDirectory()
 
 //==================================================================================================
 /// The programming words contain 1kB of data from the bitstream file. Multiple 
@@ -426,8 +463,8 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		0 //MSBs		
 	};
 
-	for(size_t i = 0; i < commandData.size(); ++i)
-		commandData.push_back(DTCLib::roc_data_t(commandData[i]));
+	for(size_t i = 0; i < writeData.size(); ++i)
+		commandData.push_back(DTCLib::roc_data_t(writeData[i]));
 
 	__FE_COUTTV__(StringMacros::vectorToString(commandData));
 	__FE_COUTV__(commandData.size());
@@ -465,6 +502,8 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 
 
 //==================================================================================================
+///	Erases in blocks of 64KB (automatically in hardware calculates ceiling)
+/// Note: erase does not give status
 void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t startAddress, bool waitForDone /* = true */)
 {
 	__FE_COUTV__(eraseSize);
@@ -495,7 +534,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 		}
 	}
 	
-	DTCLib::roc_data_t readStatus;
+	// DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
 		__FE_COUTT__ << "Have ROC action lock" << __E__;
@@ -514,15 +553,15 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 		}
 		__FE_COUT__ << "Action done, reading status..." << __E__;
 
-		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
+		// readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 	} //end action lock
 
-	__FE_COUTV__(readStatus);
-	if(readStatus)
-	{
-		__FE_SS__ << "Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
-		__FE_SS_THROW__;
-	}
+	// __FE_COUTV__(readStatus);
+	// if(readStatus)
+	// {
+	// 	__FE_SS__ << "Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
+	// 	__FE_SS_THROW__;
+	// }
 
 } //end eraseSPIFlashBlock()
 
@@ -674,16 +713,67 @@ void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */
 //==================================================================================================
 void ROCPolarFireCoreInterface::ReadSPIFlashBlock(__ARGS__)
 {
-	__COUT_INFO__ << "ReadSPIFlashBlock()" << __E__;
+	__FE_COUT__ << "ReadSPIFlashBlock()" << __E__;
 
 	uint32_t startAddress = __GET_ARG_IN__("Start Address",uint32_t);
 	uint32_t numberOfBytes = __GET_ARG_IN__("Number of Bytes",uint32_t);
 
-	//For future, to get link ID of this ROC:
 	__FE_COUTV__(startAddress);
 	__FE_COUTV__(numberOfBytes);
 
-	__COUT_INFO__ << "end ReadSPIFlashBlock()" << __E__;
+	std::vector<uint16_t> readData;
+	readSPIFlashBlock(readData,startAddress,numberOfBytes/2);
 
-	// __SET_ARG_OUT__("readValue",GetTemperature(channelnumber));
+	std::stringstream outss;
+	outss << "\nRead " << readData.size()*2 << " bytes:" << __E__;
+	for(size_t i = 0; i < readData.size(); i+=2)
+	{
+		if(i%16 == 0) outss << "0x";
+		if(i%2 == 0) outss << " ";
+		if(i%4 == 0) outss << "    ";
+		outss << std::hex << std::setw(4) << std::setfill('0') << readData[i+1];
+		outss << std::hex << std::setw(4) << std::setfill('0') << readData[i];
+		if(i%16 == 14) outss << "\n";
+	}
+	__FE_COUTTV__(StringMacros::vectorToString(readData));
+
+	__SET_ARG_OUT__("Result",outss.str());
+	__FE_COUT__ << "end ReadSPIFlashBlock()" << __E__;
 }  //end ReadSPIFlashBlock()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::WriteSPIFlashDirectory(__ARGS__)
+{
+	__FE_COUT__ << "WriteSPIFlashDirectory()" << __E__;
+	std::string fullpath = __GET_ARG_IN__("Path to Directory Map file",std::string);
+	__FE_COUTV__(fullpath);
+
+	std::vector<uint32_t> writeData;
+	{
+		__COUTV__(fullpath);
+
+		char line[100];
+		std::FILE* fp = std::fopen(fullpath.c_str(), "r");
+		if(!fp)
+		{
+			__FE_SS__ << "Could not open file at " << fullpath << ". Error: " << errno << " - "
+				<< strerror(errno) << __E__;
+			__FE_SS_THROW__;
+		}
+
+		//each line is 32-bit address
+		while(fgets(line,100,fp))
+		{
+			uint32_t value = std::stoi(line, nullptr, 16);
+			__FE_COUT__ << value << " 0x" << std::hex << value << __E__;
+			writeData.push_back(value);  
+		}
+		fclose(fp);
+	}
+	
+	__FE_COUTV__(StringMacros::vectorToString(writeData));
+	writeSPIFlashDirectory(writeData);
+
+
+	__FE_COUT__ << "end WriteSPIFlashDirectory()" << __E__;
+}  //end WriteSPIFlashDirectory()

@@ -68,7 +68,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	virtual bool							isActionDone				(DTCLib::roc_data_t* readStatus = nullptr, bool releaseLockOnDone = false) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
 	virtual void 							readSPIFlashBlock			(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
-	virtual void 							writeSPIDirectory			(const std::vector<uint32_t>& imageAddresses, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
+	virtual void 							writeSPIFlashDirectory		(const std::vector<uint32_t>& imageAddresses, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							writeSPIFlashBlock			(const std::vector<uint16_t>& writeData, uint32_t startAddress, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							eraseSPIFlashBlock			(uint32_t eraseSize, uint32_t startAddress, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							programFromSPIByIndex		(uint8_t index, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
