@@ -24,6 +24,14 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 	                        std::vector<std::string>{},  //output parameters
 	                        1);                          // requiredUserPermissions
 
+
+	registerFEMacroFunction("Read SPI Flash Block",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCPolarFireCoreInterface::ReadSPIFlashBlock),
+	                        std::vector<std::string>{"Start Address", "Number of Bytes"},  //inputs parameters
+	                        std::vector<std::string>{},  //output parameters
+	                        1);                          // requiredUserPermissions
+
 }  // end constructor()
 
 //==========================================================================================
@@ -662,3 +670,20 @@ void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */
 		__FE_SS_THROW__;
 	}
 } //end autoProgramFromSPI()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::ReadSPIFlashBlock(__ARGS__)
+{
+	__COUT_INFO__ << "ReadSPIFlashBlock()" << __E__;
+
+	uint32_t startAddress = __GET_ARG_IN__("Start Address",uint32_t);
+	uint32_t numberOfBytes = __GET_ARG_IN__("Number of Bytes",uint32_t);
+
+	//For future, to get link ID of this ROC:
+	__FE_COUTV__(startAddress);
+	__FE_COUTV__(numberOfBytes);
+
+	__COUT_INFO__ << "end ReadSPIFlashBlock()" << __E__;
+
+	// __SET_ARG_OUT__("readValue",GetTemperature(channelnumber));
+}  //end ReadSPIFlashBlock()

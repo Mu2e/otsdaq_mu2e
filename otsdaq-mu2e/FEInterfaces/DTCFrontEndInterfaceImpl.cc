@@ -720,15 +720,19 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"Punched Clock Enable/Disable."
 	);
 
+
 	registerFEMacroFunction(
 		"Program ROCs",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ProgramROCs),		 // feMacroFunction
 					std::vector<std::string>{
-						"Target Link (Default := none, -1 := all)",
-						"Target Mask (Default := 0, b111111 := all)",
-						"Path to Bitfile (Default := do not write bitfile, only program)",
-						"Image Index (Default := 1)",
+						"Target Link (Default := none, -1 := all)", 
+						"Target Mask (Default := 0, b111111 := all)", 
+						"Path to Directory map file (Default := do not use)",
+						"Verify Directory map "
+						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
+						"Image Index (Default := -1, if -1 use address)",
+						"Image Address (Default := -1)",
 						"Verify (Default := false)",
 						"Do not program from Image Index (only write to image, Default := false)",
 						},  // namesOfInputArgs
@@ -6409,6 +6413,9 @@ void DTCFrontEndInterface::loopbackTest(int step)
 /// 	a. Use action 9 using file entries
 /// 
 /// 2) Program_flash(image_index, filename,n times, verify)
+///		0. Readback current SPI Flash directory index map
+///		1. If map path given, verify they match, else if not given use existing map as address lookup		
+///		11. If map given and no match, then write given map, and verify again, then error if no match
 /// 	a. Read file, calculate length in bytes
 /// 	b. Erase flash calling action 3 (address from the flash_map.txt, length)
 /// 	c. Poll register 128 until equal 0x8000
