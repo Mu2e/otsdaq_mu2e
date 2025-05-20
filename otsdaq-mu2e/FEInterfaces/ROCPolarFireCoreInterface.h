@@ -30,6 +30,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 		ROC_ACTION_WRITE_SPI             	= 8,
 		ROC_ACTION_WRITE_DIR             	= 9,
 		
+		ROC_ACTION_ERASE_ADDR             	= 3,
 		ROC_ACTION_PROG_INDEX             	= 4,
 		ROC_ACTION_PROG_ADDR             	= 5,
 		ROC_ACTION_PROG_AUTO             	= 6,
@@ -66,13 +67,14 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	virtual std::string						getFirmwareVersion							(void) override;	
 	void 									SetupForPatternDataTaking					(__ARGS__);
 
-	bool									isActionDone								(void); /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
-	void 									readSPIFlashBlock							(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords);
-	void 									writeSPIDirectory							(const std::vector<uint32_t>& imageAddresses);
-	void 									writeSPIFlashBlock							(const std::vector<uint16_t>& writeData, uint32_t startAddress);
-	void 									programFromSPIByIndex						(uint8_t index);
-	void 									programFromSPIByAddress						(uint32_t startAddress);
-	void 									autoProgramFromSPI							(void);
+	bool									isActionDone								(DTCLib::roc_data_t* readStatus = nullptr, bool releaseLockOnDone = false) override; /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
+	void 									readSPIFlashBlock							(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords) override;
+	void 									writeSPIDirectory							(const std::vector<uint32_t>& imageAddresses, bool waitForDone = true) override;
+	void 									writeSPIFlashBlock							(const std::vector<uint16_t>& writeData, uint32_t startAddress, bool waitForDone = true) override;
+	void 									eraseSPIFlashBlock							(uint32_t eraseSize, uint32_t startAddress, bool waitForDone = true) override;
+	void 									programFromSPIByIndex						(uint8_t index, bool waitForDone = true) override;
+	void 									programFromSPIByAddress						(uint32_t startAddress, bool waitForDone = true) override;
+	void 									autoProgramFromSPI							(bool waitForDone = true) override;
 	
 
 	

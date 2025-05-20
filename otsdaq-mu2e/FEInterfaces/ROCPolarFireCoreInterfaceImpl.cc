@@ -241,10 +241,23 @@ void ROCPolarFireCoreInterface::SetupForPatternDataTaking(__ARGS__)
 //==================================================================================================
 /// BUSY/DONE from register 128, bit[15]: 0 indicates that the microprocessor is 
 /// still busy and the function is not done, 1 that the microprocessor is done
-bool ROCPolarFireCoreInterface::isActionDone()
+bool ROCPolarFireCoreInterface::isActionDone(DTCLib::roc_data_t* readStatus /* = nullptr */, bool releaseLockOnDone /* = false */)
 {
 	DTCLib::roc_data_t readValue = readRegister(ROC_ADDRESS_ACTION_DONE);
-	return (readValue >> 15) & 1;
+	bool done = (readValue >> 15) & 1;
+	__FE_COUTV__(done);
+	if(done && readStatus) //check status also
+	{
+		__FE_COUT__ << "Action done, reading status..." << __E__;
+		*readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
+		__FE_COUTV__(*readStatus);
+	}
+	if(done && releaseLockOnDone)
+	{
+		actionLock_.unlock();
+		__FE_COUTT__ << "Released ROC action lock" << __E__;
+	}
+	return done;
 } //end isActionDone()
 
 //==================================================================================================
@@ -304,7 +317,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 /// 
 /// The RETURN_STATUS register will return a fail count, ie how many times the image index 
 /// read back from the SPI is not equal to what was written.
-void ROCPolarFireCoreInterface::writeSPIDirectory(const std::vector<uint32_t>& imageAddresses)
+void ROCPolarFireCoreInterface::writeSPIDirectory(const std::vector<uint32_t>& imageAddresses, bool waitForDone /* = true */)
 {
 	__FE_COUTV__(imageAddresses.size());
 	if(imageAddresses.size() > 16)
@@ -385,7 +398,7 @@ void ROCPolarFireCoreInterface::writeSPIDirectory(const std::vector<uint32_t>& i
 /// happened.
 ///
 /// Note: should be called in thread because it could take a long time
-void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& writeData, uint32_t startAddress)
+void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& writeData, uint32_t startAddress, bool waitForDone /* = true */)
 {
 	__FE_COUTV__(writeData.size());
 	if(writeData.size() > 512)
@@ -442,10 +455,73 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 
 } //end writeSPIFlashBlock()
 
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t startAddress, bool waitForDone /* = true */)
+{
+	__FE_COUTV__(eraseSize);
+	__FE_COUTV__(startAddress);
+
+	std::vector<DTCLib::roc_data_t> commandData = {ROC_ACTION_ERASE_ADDR,
+		//1st command word, is a 32-bit parameter passed via the second (16LSB) and third (16MSB) command words
+		DTCLib::roc_data_t(startAddress), //LSBs
+		DTCLib::roc_data_t(startAddress >> 16), //MSBs
+		//2nd command word, is a 32-bit parameter passed via the fourth (16LSB) and fifth (16MSB) command words
+		DTCLib::roc_data_t(eraseSize), //LSBs
+		DTCLib::roc_data_t(eraseSize >> 16), //MSBs
+	};
+
+	__FE_COUTTV__(StringMacros::vectorToString(commandData));
+	if(!waitForDone)
+	{
+		if(actionLock_.try_lock()) 
+		{
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+			return;
+		}
+		else
+		{
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+	
+	DTCLib::roc_data_t readStatus;
+	{ //start action lock
+		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
+		__FE_COUTT__ << "Have ROC action lock" << __E__;
+		writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+
+		//wait for action to complete
+		size_t i = 0;
+		while(!isActionDone())
+		{
+			if(i > 5*100 /* 5 seconds */)
+			{
+				__FE_SS__ << "Timeout waiting for SPI flash erase action!" << __E__;
+				__FE_SS_THROW__;
+			}
+			usleep(1000*10 /* 10 ms */);
+		}
+		__FE_COUT__ << "Action done, reading status..." << __E__;
+
+		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
+	} //end action lock
+
+	__FE_COUTV__(readStatus);
+	if(readStatus)
+	{
+		__FE_SS__ << "Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
+		__FE_SS_THROW__;
+	}
+
+} //end eraseSPIFlashBlock()
+
 //==================================================================================================
 /// The RETURN_STATUS register contain the error returned by the IAP programming. 
 /// It is 0x0 if no error.
-void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index)
+void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index, bool waitForDone /* = true */)
 {
 	std::vector<DTCLib::roc_data_t> commandData = {ROC_ACTION_PROG_INDEX,
 		//1st command word, is a 32-bit parameter passed via the second (16LSB) and third (16MSB) command words
@@ -493,7 +569,7 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index)
 //==================================================================================================
 /// The RETURN_STATUS register contain the error returned by the IAP programming. 
 /// It is 0x0 if no error.
-void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress)
+void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress, bool waitForDone /* = true */)
 {
 	std::vector<DTCLib::roc_data_t> commandData = {ROC_ACTION_PROG_ADDR,
 		//1st command word, is a 32-bit parameter passed via the second (16LSB) and third (16MSB) command words
@@ -541,7 +617,7 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress)
 //==================================================================================================
 /// The RETURN_STATUS register contain the error returned by the IAP programming. 
 /// It is 0x0 if no error.
-void ROCPolarFireCoreInterface::autoProgramFromSPI()
+void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */)
 {
 
 	std::vector<DTCLib::roc_data_t> commandData = {ROC_ACTION_PROG_ADDR,
