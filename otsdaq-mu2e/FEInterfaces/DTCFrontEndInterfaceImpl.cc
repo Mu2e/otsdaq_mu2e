@@ -732,8 +732,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Path to Directory map file (Default := do not use)",
 						"Verify Directory map ",
 						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
+						"Do not write Bitfile (Default := false)",
+						"Verify with Bitfile Readback (Default := false)",
 						"Image Index (Default := 0)",
-						"Verify (Default := false)",
 						"Do not program from Image Index (only write to image, Default := false)",
 						},  // namesOfInputArgs
 					std::vector<std::string>{},
@@ -6437,11 +6438,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	uint8_t mask = __GET_ARG_IN__("Target Link (Default := 0, b111111 := all)",uint8_t,0);
 	uint8_t imageIndex = __GET_ARG_IN__("Image Index (Default := 0)",uint8_t);
 	std::string bitfilePath = __GET_ARG_IN__("Path to Bitfile (Default := do not write bitfile, only program from Image Index)", std::string);
-	bool verify = __GET_ARG_IN__("Verify (Default := false)",bool);
+	bool doNotWrite = __GET_ARG_IN__("Do not write Bitfile (Default := false)",bool);
+	bool verify = __GET_ARG_IN__("Verify with Bitfile Readback (Default := false)",bool);
 	uint32_t startAddress = 0x2010000;// __GET_ARG_IN__("Index Start Address (Default := 0)",uint32_t);
 	__FE_COUTV__((int)link);
 	__FE_COUTV__((int)mask);
 	__FE_COUTV__(imageIndex);
+	__FE_COUTV__(doNotWrite);	
 	__FE_COUTV__(verify);	
 	// __FE_COUTV__(startAddress);
 
@@ -6494,89 +6497,22 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	// b. Erase flash calling action 3 (address from the dlash_map.txt, length)
 	
 	//first launch erase
-	__FE_COUT__ << "Start erasing SPI..." << __E__;
-	for(auto& roc : targetROCs) 
-	{		
-		__FE_COUTV__(roc);
-		__FE_COUTV__(rocs_.at(roc)->getLinkID());
-		rocs_.at(roc)->eraseSPIFlashBlock(contents.size(),startAddress,
-			false /* waitForDone */);
-	} //end launch of ROC erase SPI block loop
-
-	__FE_COUT__ << "Checking that erase is done..." << __E__;
-	//then check for erase done
+	if(!doNotWrite && contents.size())
 	{
-		bool allDone = true;
-		// DTCLib::roc_data_t readStatus;
-		std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
-		size_t attempt = 0;
-		do 
-		{
-			allDone = true;
-			for(auto& roc : targetROCs) 
-			{		
-				if(doneMap[roc]) continue; //skip those done
+		__FE_COUT__ << "Start erasing SPI..." << __E__;
+		for(auto& roc : targetROCs) 
+		{		
+			__FE_COUTV__(roc);
+			__FE_COUTV__(rocs_.at(roc)->getLinkID());
+			rocs_.at(roc)->eraseSPIFlashBlock(contents.size(),startAddress,
+				false /* waitForDone */);
+		} //end launch of ROC erase SPI block loop
 
-				doneMap[roc] = rocs_.at(roc)->isActionDone(nullptr /*&readStatus*/, //erase does not give status
-					true /* releaseLockOnDone */);
-				if(!doneMap[roc]) allDone = false;
-				else 
-				{
-					// if(readStatus)
-					// {
-					// 	__FE_SS__ << "At roc '" << roc << "' link=" << 
-					// 		rocs_.at(roc)->getLinkID() << 
-					// 		", Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
-					// 	__FE_SS_THROW__;
-					// }
-					__FE_COUT__ << roc << " link=" << 
-							rocs_.at(roc)->getLinkID() << 
-							", done with erase SPI block." << __E__;					
-				}
-			} //end launch of ROC erase SPI block loop
-
-			if(!allDone) usleep(1000*500 /* 500 ms */);
-			else if(++attempt > 20 /* 10 s */)
-			{
-				__FE_SS__ << "Timeout waiting for SPI flash erase action!" << __E__;
-				__FE_SS_THROW__;
-			}
-		}
-		while(!allDone);
-	} //end check for erase done
-
-	// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
-	__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
-	// return; //block writing bitfile
-
-	for(size_t i = 0; i < contents.size(); i += 1024)
-	{
-		size_t writeSize = contents.size() - i;
-		if(writeSize > 1024) writeSize = 1024;
-		__FE_COUTV__(i);
-
-		{
-			std::vector<uint16_t> writeData;
-			for(size_t j = 0; j < writeSize; j += 2)
-			{ 
-				writeData.push_back(contents[j]); 
-				writeData.back() |= (contents[j+1] << 8); 
-			}
-
-			for(auto& roc : targetROCs) 
-			{		
-				__FE_COUTV__(roc);
-				__FE_COUTV__(rocs_.at(roc)->getLinkID());
-				rocs_.at(roc)->writeSPIFlashBlock(writeData,startAddress + i,
-					false /* waitForDone */);
-			} //end launch of ROC erase SPI block loop
-		}
-
-		__FE_COUT__ << "Checking that write is done..." << __E__;
-		//then check for writing done
+		__FE_COUT__ << "Checking that erase is done..." << __E__;
+		//then check for erase done
 		{
 			bool allDone = true;
-			DTCLib::roc_data_t readStatus;
+			// DTCLib::roc_data_t readStatus;
 			std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
 			size_t attempt = 0;
 			do 
@@ -6586,42 +6522,126 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				{		
 					if(doneMap[roc]) continue; //skip those done
 
-					doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
+					doneMap[roc] = rocs_.at(roc)->isActionDone(nullptr /*&readStatus*/, //erase does not give status
 						true /* releaseLockOnDone */);
 					if(!doneMap[roc]) allDone = false;
 					else 
 					{
-						if(readStatus)
-						{
-							__FE_SS__ << "At roc '" << roc << "' link=" << 
-								rocs_.at(roc)->getLinkID() << 
-								", Non-zero status received after SPI flash write action: 0x" << std::hex << readStatus << __E__;
-							__FE_SS_THROW__;
-						}
+						// if(readStatus)
+						// {
+						// 	__FE_SS__ << "At roc '" << roc << "' link=" << 
+						// 		rocs_.at(roc)->getLinkID() << 
+						// 		", Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
+						// 	__FE_SS_THROW__;
+						// }
 						__FE_COUT__ << roc << " link=" << 
 								rocs_.at(roc)->getLinkID() << 
-								", done with write SPI block." << __E__;					
+								", done with erase SPI block." << __E__;					
 					}
 				} //end launch of ROC erase SPI block loop
 
 				if(!allDone) usleep(1000*500 /* 500 ms */);
 				else if(++attempt > 20 /* 10 s */)
 				{
-					__FE_SS__ << "Timeout waiting for SPI flash write action!" << __E__;
+					__FE_SS__ << "Timeout waiting for SPI flash erase action!" << __E__;
 					__FE_SS_THROW__;
 				}
 			}
 			while(!allDone);
 		} //end check for erase done
 
-		__FE_COUT__ << "Write chunk done at offset=" << i << 
-			" and size=" << writeSize << " / " << contents.size() << __E__;
+		// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
+		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
+		// return; //block writing bitfile
 
-		return; //debug, stop after first write
-	} //end write bitfile loop
+		for(size_t i = 0; i < contents.size(); i += 1024)
+		{
+			size_t writeSize = contents.size() - i;
+			if(writeSize > 1024) writeSize = 1024;
+			__FE_COUTV__(i);
+
+			{
+				std::vector<uint16_t> writeData;
+				for(size_t j = 0; j < writeSize; j += 2)
+				{ 
+					writeData.push_back(uint16_t(contents[i + j]) & 0xFF); 
+					writeData.back() |= (contents[i + j + 1] << 8); 
+				}
+
+				if(TTEST(32))
+				{
+					std::stringstream outss;	
+					for(auto& val : writeData)
+						outss << std::hex << " 0x" << val;
+					__FE_COUTV__(outss.str());
+				}
+
+				for(auto& roc : targetROCs) 
+				{		
+					__FE_COUTV__(roc);
+					__FE_COUTV__(rocs_.at(roc)->getLinkID());
+					rocs_.at(roc)->writeSPIFlashBlock(writeData,startAddress + i,
+						false /* waitForDone */);
+				} //end launch of ROC erase SPI block loop
+			}
+
+			__FE_COUT__ << "Checking that write is done..." << __E__;
+			//then check for writing done
+			{
+				bool allDone = true;
+				DTCLib::roc_data_t readStatus;
+				std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
+				size_t attempt = 0;
+				do 
+				{
+					allDone = true;
+					for(auto& roc : targetROCs) 
+					{		
+						if(doneMap[roc]) continue; //skip those done
+
+						doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
+							true /* releaseLockOnDone */);
+						if(!doneMap[roc]) allDone = false;
+						else 
+						{
+							if(readStatus)
+							{
+								__FE_SS__ << "At roc '" << roc << "' link=" << 
+									rocs_.at(roc)->getLinkID() << 
+									", Non-zero status received after SPI flash write action: 0x" << std::hex << readStatus << __E__;
+								__FE_SS_THROW__;
+							}
+							__FE_COUT__ << roc << " link=" << 
+									rocs_.at(roc)->getLinkID() << 
+									", done with write SPI block." << __E__;					
+						}
+					} //end launch of ROC erase SPI block loop
+
+					if(!allDone) usleep(1000*500 /* 500 ms */);
+					else if(++attempt > 20 /* 10 s */)
+					{
+						__FE_SS__ << "Timeout waiting for SPI flash write action!" << __E__;
+						__FE_SS_THROW__;
+					}
+				}
+				while(!allDone);
+			} //end check for erase done
+
+			__FE_COUT__ << "Write chunk done at offset=" << i << 
+				" and size=" << writeSize << " / " << contents.size() << __E__;
+
+			if (i > 4000)
+				break; //debug, stop after first write
+		} //end write bitfile loop
+	}
+	else 
+		__FE_COUT__ << "Skipping erase and write action." << __E__;
+
+	
+	// return; //for debug
 
 	// h. If verify read back the all flash sector using action 7, in blocks of 128 bytes
-	if(verify)
+	if(verify && contents.size())
 	{
 		__FE_COUT__ << "Start reading back SPI... " << 
 			contents.size() << " bytes" << __E__;
@@ -6640,10 +6660,27 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 				//append to readData
 				rocs_.at(roc)->readSPIFlashBlock(readData, 
-					startAddress, readSize);
+					startAddress + i, readSize);
+			
+				//partial word verify loop
+				for(size_t j = i; j < i + readSize; j += 2)
+				{
+					if(uint8_t(contents[j]) != uint8_t(readData[j/2]) || 
+						uint8_t(contents[j+1]) != uint8_t(readData[j/2] >> 8) )
+					{
+						__FE_SS__ << "At roc '" << roc << "' link=" << 
+							rocs_.at(roc)->getLinkID() << 
+							", Bitfile readback mismatch at offset=" << j << " + size=" << readSize <<
+							" / " << contents.size() << ", expected 0x" << std::hex << std::setw(2) << std::setfill('0') <<
+							(uint16_t(contents[j+1]) & 0xFF) << (uint16_t(contents[j]) & 0xFF) << ", got 0x" << 
+							(uint16_t(readData[j/2] >> 8)  & 0xFF) << (uint16_t(readData[j/2]) & 0xFF) << __E__;
+						__FE_SS_THROW__;
+					}					
+				} //end partial verify loop
+			
 			} //end read check
 
-			// now verify
+			// now verify size
 			if(readData.size()*2 != contents.size())
 			{
 				__FE_SS__ << "At roc '" << roc << "' link=" << 
@@ -6651,21 +6688,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					", Bitfile readback mismatch size, expected " << 
 					contents.size() << ", got " << readData.size()*2 << __E__;
 				__FE_SS_THROW__;
-			}			
-			for(size_t i = 0; i < contents.size(); i += 2)
-			{
-				if(contents[i] != uint8_t(readData[i/2]) || 
-					contents[i+1] != uint8_t(readData[i/2] >> 8) )
-				{
-					__FE_SS__ << "At roc '" << roc << "' link=" << 
-						rocs_.at(roc)->getLinkID() << 
-						", Bitfile readback mismatch at offset=" << i << 
-						" / " << contents.size() << ", expected 0x" << std::hex << 
-						uint16_t(contents[i+1]) << uint16_t(contents[i]) << ", got 0x" << 
-						uint16_t(readData[i/2] >> 8) << uint16_t(readData[i/2]) << __E__;
-					__FE_SS_THROW__;
-				}					
-			} //end verify loop
+			}					
 
 			__FE_COUT__ << "At roc '" << roc << "' link=" << 
 				rocs_.at(roc)->getLinkID() << ", SPI data verified." << __E__;

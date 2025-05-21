@@ -40,6 +40,13 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 	                        std::vector<std::string>{"Result"},  //output parameters
 	                        1);                          // requiredUserPermissions
 
+
+	registerFEMacroFunction("Erase SPI Flash Block",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCPolarFireCoreInterface::EraseSPIFlashBlock),
+	                        std::vector<std::string>{"Start Address", "Number of Bytes"},  //inputs parameters
+	                        std::vector<std::string>{""},  //output parameters
+	                        1);                          // requiredUserPermissions
 							
 }  // end constructor()
 
@@ -278,28 +285,28 @@ bool ROCPolarFireCoreInterface::isActionDone(DTCLib::roc_data_t* readStatus /* =
 } //end isActionDone()
 
 //==================================================================================================
-/// This function returns the number of words found in the SPI flash at startAddr via a 
-/// DTC block read of Nwords/2 from register 384, since each block read word concatenates
-/// two 8-bit words read from consecutive addresses.
+/// This function returns a vector with size equal to the number of words found in the SPI flash at startAddr via a 
+/// DTC block read of Nbytes/2 from register 384, since each block read word concatenates
+/// two bytes read from consecutive addresses.
 /// 
 /// Note: The maximum allowed number of words to read is 254
-void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords)
+void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfBytes)
 {
-	if(numberOfWords > 254)
+	if(numberOfBytes > 254)
 	{
-		__FE_SS__ << "Illegal number of words requested for read SPI flash action: " << numberOfWords << __E__;
+		__FE_SS__ << "Illegal number of bytes requested for read SPI flash action: " << numberOfBytes << __E__;
 		__FE_SS_THROW__;
 	}
 
 	__FE_COUTV__(startAddress);
-	__FE_COUTV__(numberOfWords);
+	__FE_COUTV__((int)numberOfBytes);
 
 	std::vector<DTCLib::roc_data_t> commandData = {ROC_ACTION_READ_SPI,
 		//1st command word, is a 32-bit parameter passed via the second (16LSB) and third (16MSB) command words
 		DTCLib::roc_data_t(startAddress), //LSBs
 		DTCLib::roc_data_t(startAddress >> 16), //MSBs
 		//2nd command word, is a 32-bit parameter passed via the fourth (16LSB) and fifth (16MSB) command words
-		numberOfWords, //LSBs
+		numberOfBytes, //LSBs
 		0 //MSBs
 	};
 	
@@ -330,10 +337,10 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 		//check read count, it will be different by 4
 		size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
 		__FE_COUTV__(readCount); 
-		if(readCount - 4 != numberOfWords/2) //readCount == 4096)
+		if(readCount - 4 != numberOfBytes/2) //readCount == 4096)
 		{
 			__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x" << std::hex << readCount <<
-				" expected 0x" << numberOfWords/2 + 4 << __E__ << "Consider emptying manually by reading 0x" <<
+				" expected 0x" << numberOfBytes/2 + 4 << __E__ << "Consider emptying manually by reading 0x" <<
 				readCount - 4 << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND << __E__;;
 			__FE_SS_THROW__;
 		}
@@ -722,13 +729,18 @@ void ROCPolarFireCoreInterface::ReadSPIFlashBlock(__ARGS__)
 	__FE_COUTV__(numberOfBytes);
 
 	std::vector<uint16_t> readData;
-	readSPIFlashBlock(readData,startAddress,numberOfBytes/2);
+	readSPIFlashBlock(readData,startAddress,numberOfBytes);
 
 	std::stringstream outss;
-	outss << "\nRead " << readData.size()*2 << " bytes:" << __E__;
+	outss << "\nRead " << readData.size()*2 << " bytes (requested " << 
+		numberOfBytes << " bytes) from address 0x" << std::hex << startAddress << ":" << __E__;
 	for(size_t i = 0; i < readData.size(); i+=2)
 	{
-		if(i%16 == 0) outss << "0x";
+		if(i%16 == 0) 
+		{
+			outss << "0x" << std::hex << std::setw(8) << std::setfill('0') << startAddress + i;
+			outss << ": 0x";
+		}
 		if(i%2 == 0) outss << " ";
 		if(i%4 == 0) outss << "    ";
 		outss << std::hex << std::setw(4) << std::setfill('0') << readData[i+1];
@@ -777,3 +789,20 @@ void ROCPolarFireCoreInterface::WriteSPIFlashDirectory(__ARGS__)
 
 	__FE_COUT__ << "end WriteSPIFlashDirectory()" << __E__;
 }  //end WriteSPIFlashDirectory()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::EraseSPIFlashBlock(__ARGS__)
+{
+	__FE_COUT__ << "EraseSPIFlashBlock()" << __E__;
+
+	uint32_t startAddress = __GET_ARG_IN__("Start Address",uint32_t);
+	uint32_t numberOfBytes = __GET_ARG_IN__("Number of Bytes",uint32_t);
+
+	__FE_COUTV__(startAddress);
+	__FE_COUTV__(numberOfBytes);
+
+	std::vector<uint16_t> readData;
+	eraseSPIFlashBlock(numberOfBytes,startAddress);
+
+	__FE_COUT__ << "end eraseSPIFlashBlock()" << __E__;
+}  //end EraseSPIFlashBlock()

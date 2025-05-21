@@ -69,7 +69,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	void 									SetupForPatternDataTaking					(__ARGS__);
 
 	bool									isActionDone								(DTCLib::roc_data_t* readStatus = nullptr, bool releaseLockOnDone = false) override; /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
-	void 									readSPIFlashBlock							(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfWords) override;
+	void 									readSPIFlashBlock							(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfBytes) override;
 	void 									writeSPIFlashDirectory						(const std::vector<uint32_t>& imageAddresses, bool waitForDone = true) override;
 	void 									writeSPIFlashBlock							(const std::vector<uint16_t>& writeData, uint32_t startAddress, bool waitForDone = true) override;
 	void 									eraseSPIFlashBlock							(uint32_t eraseSize, uint32_t startAddress, bool waitForDone = true) override;
@@ -79,6 +79,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	
 	void 									ReadSPIFlashBlock							(__ARGS__);
 	void 									WriteSPIFlashDirectory						(__ARGS__);
+	void 									EraseSPIFlashBlock							(__ARGS__);
 
 	
 	// clang-format on
