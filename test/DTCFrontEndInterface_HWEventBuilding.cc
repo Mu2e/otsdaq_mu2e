@@ -47,7 +47,7 @@ try
 	std::string hostname = __ENV__("HOSTNAME");
 	__COUTV__(hostname);
 	std::vector<std::string> split, split2;
-	StringMacros::getVectorFromString(hostname,split,{'.'});	
+	StringMacros::getVectorFromString(hostname,split,{'.'});
 	StringMacros::getVectorFromString(split[0],split2,{'-'});
 	__COUTV__(split2.back());
 	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex;
@@ -208,14 +208,14 @@ try
 
 		__COUT_INFO__ << "Test Stat: 0x" << std::hex << 
 			dtc.getDTC()->ReadEVBStats(
-				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs) << 
+				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs) <<
 				" 0x" <<  dtc.getDTC()->ReadEVBStats(
 				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0) <<
 				" 0x" <<  dtc.getDTC()->ReadEVBStats(
 				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0) <<
 				" 0x" <<  dtc.getDTC()->ReadEVBStats(
 				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0) << __E__;
-		
+
 		lastVal = dtc.getDTC()->ReadEVBStats(
 				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0);
 
@@ -248,7 +248,7 @@ try
 	} //end loop
 
 
-	return 0;					  
+	return 0;
 
 	//setup ROCs
 	std::string reply;
