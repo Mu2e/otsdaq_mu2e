@@ -26,10 +26,11 @@ try
 	}
 	if(argc < 3)
 	{
-		__COUT_ERR__
-		    << "\n\n\tUsage = Need at least 2 arguments: DTCFrontEndInterface_HWEventBuilding "
-		       "<deviceIndex> <numberOfEventWindowMarkers> <baseDTCAddress> <numOfDTCs>\n\n"
-		    << __E__;
+		__COUT_ERR__ << "\n\n\tUsage = Need at least 2 arguments: "
+		                "DTCFrontEndInterface_HWEventBuilding "
+		                "<deviceIndex> <numberOfEventWindowMarkers> <baseDTCAddress> "
+		                "<numOfDTCs>\n\n"
+		             << __E__;
 		__COUT_INFO__
 		    << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n"
 		    << "\n\n\t\tUsage = <numberOfEventWindowMarkers> -1:   JA Reset and Loopback "
@@ -41,14 +42,14 @@ try
 
 	uint32_t deviceIndex                = atoi(argv[1]);
 	uint32_t numberOfEventWindowMarkers = atoi(argv[2]);
-	uint32_t baseDTCAddress 			= atoi(argv[3]);
-	uint32_t numOfDTCs					= atoi(argv[4]);
+	uint32_t baseDTCAddress             = atoi(argv[3]);
+	uint32_t numOfDTCs                  = atoi(argv[4]);
 
 	std::string hostname = __ENV__("HOSTNAME");
 	__COUTV__(hostname);
 	std::vector<std::string> split, split2;
-	StringMacros::getVectorFromString(hostname,split,{'.'});
-	StringMacros::getVectorFromString(split[0],split2,{'-'});
+	StringMacros::getVectorFromString(hostname, split, {'.'});
+	StringMacros::getVectorFromString(split[0], split2, {'-'});
 	__COUTV__(split2.back());
 	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex;
 	__COUTV__(macAddress);
@@ -189,42 +190,51 @@ try
 	{
 		// void SetEVBInfo(uint8_t dtcid, uint8_t mode, uint8_t partitionId, uint8_t macByte);
 		// void SetEVBClusterInfo(uint8_t baseDTCAddress, uint8_t numOfDTCs);
-		dtc.thisDTC_->SetEVBInfo((1<<7) | macAddress, 0 /* mode */, 0x99 /* partitionId */, macAddress);
+		dtc.thisDTC_->SetEVBInfo(
+		    (1 << 7) | macAddress, 0 /* mode */, 0x99 /* partitionId */, macAddress);
 		dtc.thisDTC_->SetEVBClusterInfo(baseDTCAddress, numOfDTCs);
-		dtc.SetupCFOInterface(0,      //int forceCFOedge,
-							false,  //bool useCFOemulator,
-							true,   //bool alsoSetupJA,
-							true,   //bool cfoRxTxEnable,
-							false);  //bool enableAutogenDRP);
+		dtc.SetupCFOInterface(0,       //int forceCFOedge,
+		                      false,   //bool useCFOemulator,
+		                      true,    //bool alsoSetupJA,
+		                      true,    //bool cfoRxTxEnable,
+		                      false);  //bool enableAutogenDRP);
 
 		if(numberOfEventWindowMarkers == 1)
 			dtc.thisDTC_->EnableLink(DTC_Link_EVB);
 		if(numberOfEventWindowMarkers == 0)
 			dtc.thisDTC_->DisableLink(DTC_Link_EVB);
-		dtc.thisDTC_->SoftReset();         //to reset event window tag starting point handling
+		dtc.thisDTC_->SoftReset();  //to reset event window tag starting point handling
 
-		__COUT_INFO__ << "DTC's EVB Cluster Info = " << dtc.thisDTC_->FormatEVBClusterInfo()
-					<< __E__;
+		__COUT_INFO__ << "DTC's EVB Cluster Info = "
+		              << dtc.thisDTC_->FormatEVBClusterInfo() << __E__;
 
-		__COUT_INFO__ << "Test Stat: 0x" << std::hex << 
-			dtc.getDTC()->ReadEVBStats(
-				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs) <<
-				" 0x" <<  dtc.getDTC()->ReadEVBStats(
-				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0) <<
-				" 0x" <<  dtc.getDTC()->ReadEVBStats(
-				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0) <<
-				" 0x" <<  dtc.getDTC()->ReadEVBStats(
-				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0) << __E__;
+		__COUT_INFO__ << "Test Stat: 0x" << std::hex
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs)
+		              << " 0x"
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs,
+		                                            0)
+		              << " 0x"
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs,
+		                                            0)
+		              << " 0x"
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs,
+		                                            0)
+		              << __E__;
 
 		lastVal = dtc.getDTC()->ReadEVBStats(
-				DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0);
+		    DTC_EVBStatsType_RxMissingPacketCount, (deviceIndex + 1) % numOfDTCs, 0);
 
 		std::cout << "0x" << std::hex << lastVal << "\t" << std::flush;
 		uint32_t newVal;
-		for(int i=0;i<1000;++i)
+		for(int i = 0; i < 1000; ++i)
 		{
 			usleep(1000);
-			newVal = dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,(deviceIndex+1)%numOfDTCs,0);
+			newVal = dtc.getDTC()->ReadEVBStats(
+			    DTC_EVBStatsType_RxMissingPacketCount, (deviceIndex + 1) % numOfDTCs, 0);
 			if(lastVal == newVal)
 			{
 				std::cout << "." << std::flush;
@@ -238,15 +248,16 @@ try
 	lastVal = 0;
 	while(1)
 	{
-		for(uint32_t i=0; i<=lastVal; ++i)
+		for(uint32_t i = 0; i <= lastVal; ++i)
 			std::cout << "...";
 		std::cout << std::flush;
-		lastVal = (lastVal + 1)%8;
+		lastVal = (lastVal + 1) % 8;
 		sleep(3);
 		std::cout << time(0) << __E__;
-		std::cout << dtc.getDTC()->FormattedRegDump(130, dtc.getDTC()->formattedHWEventBuildingFunctions_) << __E__;
-	} //end loop
-
+		std::cout << dtc.getDTC()->FormattedRegDump(
+		                 130, dtc.getDTC()->formattedHWEventBuildingFunctions_)
+		          << __E__;
+	}  //end loop
 
 	return 0;
 
