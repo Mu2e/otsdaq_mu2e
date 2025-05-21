@@ -621,7 +621,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::SetDTCIdAndEVBInfo),            // feMacroFunction
 					std::vector<std::string>{"DTC ID",
 						"EVB Mode", "EVB Partition ID",
-						"EVB MAC Address Last Byte",
+						"EVB Self MAC Address Last Byte",
 						"EVB Number of DTCs in Cluster",
 						"EVB Cluster Base DTC MAC Address"},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
@@ -3832,7 +3832,7 @@ void DTCFrontEndInterface::GetDTCIdAndEVBInfo(__ARGS__)
 {
 	__SET_ARG_OUT__("Result",
 	                getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
-	                    getDTC()->FormatEVBNumberOfDestinationNodes());
+	                    getDTC()->FormatEVBClusterInfo());
 }  //end GetDTCIdAndEVBInfo()
 
 //========================================================================
@@ -3862,7 +3862,7 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 
 	__SET_ARG_OUT__("Result",
 	                getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
-	                    getDTC()->FormatEVBNumberOfDestinationNodes());
+	                    getDTC()->FormatEVBClusterInfo());
 }  //end SetDTCIdAndEVBInfo()
 
 // //========================================================================
