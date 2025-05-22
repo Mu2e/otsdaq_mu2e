@@ -730,14 +730,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Target Link (Default := none, -1 := all)", 
 						"Target Mask (Default := 0, b111111 := all)", 
 						"Path to Directory map file (Default := do not use)",
-						"Verify Directory map ",
-						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
-						"Do not write Bitfile (Default := false)",
-						"Verify with Bitfile Readback (Default := false)",
+						"Write Directory map to SPI Flash (Default := false)",
+						"Verify Directory map (Default := false)",
 						"Image Index (Default := 0)",
-						"Do not program from Image Index (only write to image, Default := false)",
+						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
+						"Do not write Bitfile to SPI Flash (Default := false)",
+						"Verify with Bitfile Readback (Default := false)",						
+						"Program from Image Index (Default := false)",
 						},  // namesOfInputArgs
-					std::vector<std::string>{},
+					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
 					"*",
 					"Program one or many ROCs with an indexed image in the SPI, or the bitfile at a specified filepath."
@@ -6436,18 +6437,29 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 {
 	uint8_t link = __GET_ARG_IN__("Target Link (Default := use mask, -1 := all)",uint8_t,7); //7 == none, -1 == all
 	uint8_t mask = __GET_ARG_IN__("Target Link (Default := 0, b111111 := all)",uint8_t,0);
+	std::string mapPath = __GET_ARG_IN__("Path to Directory map file (Default := do not use)",std::string);
+	bool writeMap = __GET_ARG_IN__("Write Directory map to SPI Flash (Default := false)",bool);
+	bool verifyMap = __GET_ARG_IN__("Verify Directory map (Default := false)",bool);
 	uint8_t imageIndex = __GET_ARG_IN__("Image Index (Default := 0)",uint8_t);
 	std::string bitfilePath = __GET_ARG_IN__("Path to Bitfile (Default := do not write bitfile, only program from Image Index)", std::string);
-	bool doNotWrite = __GET_ARG_IN__("Do not write Bitfile (Default := false)",bool);
+	bool write = __GET_ARG_IN__("Write Bitfile to SPI Flash (Default := false)",bool);
 	bool verify = __GET_ARG_IN__("Verify with Bitfile Readback (Default := false)",bool);
-	uint32_t startAddress = 0x2010000;// __GET_ARG_IN__("Index Start Address (Default := 0)",uint32_t);
+	bool program = __GET_ARG_IN__("Program from Image Index (Default := false)",bool);
+	
 	__FE_COUTV__((int)link);
 	__FE_COUTV__((int)mask);
+	__FE_COUTV__(mapPath);
+	__FE_COUTV__(writeMap);	
+	__FE_COUTV__(verifyMap);	
 	__FE_COUTV__(imageIndex);
-	__FE_COUTV__(doNotWrite);	
+	__FE_COUTV__(bitfilePath);	
+	__FE_COUTV__(write);	
 	__FE_COUTV__(verify);	
-	// __FE_COUTV__(startAddress);
+	__FE_COUTV__(program);	
 
+	std::stringstream resultsSs; 
+	resultsSs << __E__;
+	
 	std::vector<std::string /* ROC UID */> targetROCs;
 	for(auto& roc : rocs_)
 	{
@@ -6468,6 +6480,101 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			(int)link << ", mask = " << (int)mask << __E__;
 		__FE_SS_THROW__;
 	}
+
+	//handle directory map
+	std::vector<uint32_t> mapWriteData;
+	if(mapPath != "Default" && mapPath != "")
+	{		
+		__COUTV__(mapPath);
+
+		char line[100];
+		std::FILE* fp = std::fopen(mapPath.c_str(), "r");
+		if(!fp)
+		{
+			__FE_SS__ << "Could not open file at " << mapPath << ". Error: " << errno << " - "
+				<< strerror(errno) << __E__;
+			__FE_SS_THROW__;
+		}
+
+		//each line is 32-bit address
+		while(fgets(line,100,fp))
+		{
+			uint32_t value = std::stoi(line, nullptr, 16);
+			__FE_COUT__ << value << " 0x" << std::hex << value << __E__;
+			mapWriteData.push_back(value);  
+		}
+		fclose(fp);
+
+		__FE_COUTV__(StringMacros::vectorToString(mapWriteData));
+		if(writeMap)
+		{
+			__FE_COUT__ << "WriteSPIFlashDirectory" << __E__;
+			for(auto& roc : targetROCs) 
+			{		
+				__FE_COUTV__(roc);
+				__FE_COUTV__(rocs_.at(roc)->getLinkID());
+				rocs_.at(roc)->writeSPIFlashDirectory(mapWriteData);
+			} //end roc loop to write map
+			__FE_COUT__ << "end WriteSPIFlashDirectory" << __E__;
+		}
+		else 
+			__FE_COUT__ << "skip WriteSPIFlashDirectory" << __E__;
+
+		if(verifyMap)
+		{
+			for(auto& roc : targetROCs) 
+			{		
+				__FE_COUTV__(roc);
+				__FE_COUTV__(rocs_.at(roc)->getLinkID());
+
+				std::vector<uint16_t> readData;
+				rocs_.at(roc)->readSPIFlashBlock(readData,0 /* directory map location */, 16*4 /* max map location */);
+
+				size_t i = 0;
+				for(; i < mapWriteData.size(); ++i)
+				{
+					if(readData[i*2] != uint16_t(mapWriteData[i]) || 
+						readData[i*2 + 1] != uint16_t(mapWriteData[i]>>16))
+					{
+						__FE_SS__ << roc << " link=" << 
+								rocs_.at(roc)->getLinkID() << 
+								", Mismatch in Directory Map! Expected 0x " << 
+							std::hex << std::setw(4) << std::setfill('0') << 
+							uint16_t(mapWriteData[i]) << " " << uint16_t(mapWriteData[i]>>16) <<
+							" and read: 0x" <<
+							std::hex << std::setw(4) << std::setfill('0') << 
+							readData[i*2] << " " << readData[i*2 + 1] << __E__; 
+						__FE_SS_THROW__;
+					}
+				}
+				i *= 2; //jumpt to 16-bit indices
+				for(; i < 16 * 2; ++i)
+					if(readData[i] != uint16_t(-1))
+					{
+						__FE_SS__ << roc << " link=" << 
+								rocs_.at(roc)->getLinkID() << 
+								", Mismatch in Directory Map! Expected no further addresses (i.e., -1) and read: 0x" <<
+							std::hex << std::setw(4) << std::setfill('0') << readData[i];
+						__FE_SS_THROW__;
+					}
+
+				resultsSs << roc << " link=" << 
+								rocs_.at(roc)->getLinkID() << 
+								", Directory map verified." << __E__;
+			} //end roc loop to verify map
+		}
+	} //end directory map handling
+
+	if(imageIndex >= mapWriteData.size())
+	{
+		__FE_SS__ << "Illegal image index, must be less than Directory size: " << 
+			imageIndex << " must be < " << mapWriteData.size() << __E__;
+		__FE_SS_THROW__;
+	}
+	uint32_t startAddress = mapWriteData[imageIndex];
+
+	__FE_COUT__ << "startAddress = " << startAddress << " 0x" <<
+		std::hex << std::setw(8) << std::setfill('0') << startAddress << __E__;
 	
 	std::string contents, fullpath;
 	if(bitfilePath != "Default" && bitfilePath != "")
@@ -6492,12 +6599,15 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		std::fclose(fp);
 
 		__FE_COUTV__(contents.size());
+
+		resultsSs << "Loaded file '" << fullpath << "' of size=" <<
+						contents.size() << __E__;
 	}
 
 	// b. Erase flash calling action 3 (address from the dlash_map.txt, length)
 	
 	//first launch erase
-	if(!doNotWrite && contents.size())
+	if(write && contents.size())
 	{
 		__FE_COUT__ << "Start erasing SPI..." << __E__;
 		for(auto& roc : targetROCs) 
@@ -6630,9 +6740,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			__FE_COUT__ << "Write chunk done at offset=" << i << 
 				" and size=" << writeSize << " / " << contents.size() << __E__;
 
-			if (i > 4000)
-				break; //debug, stop after first write
+			// if (i > 4000)
+			// 	break; //debug, stop after first write
 		} //end write bitfile loop
+
+		resultsSs << "Write of bitfile to address 0x" <<
+			std::hex << std::setw(8) << std::setfill('0') << 
+			startAddress << __E__;
 	}
 	else 
 		__FE_COUT__ << "Skipping erase and write action." << __E__;
@@ -6692,9 +6806,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 			__FE_COUT__ << "At roc '" << roc << "' link=" << 
 				rocs_.at(roc)->getLinkID() << ", SPI data verified." << __E__;
+
+			resultsSs << "At roc '" << roc << "' link=" << 
+				rocs_.at(roc)->getLinkID() << ", SPI data verified." << __E__;
 		} //end launch of ROC erase SPI block loop
 	} //end verify
 
+	__SET_ARG_OUT__("Result",resultsSs.str());
 	return; //block programming
 	// 3) start programming the fpga with action 4 (index)
 	//first launch program

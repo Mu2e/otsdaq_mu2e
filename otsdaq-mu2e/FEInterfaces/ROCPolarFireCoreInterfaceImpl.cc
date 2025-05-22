@@ -399,6 +399,14 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_
 		commandData.push_back(0); //MSBs
 	}
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
+
+	if(TTEST(1))
+	{
+		std::stringstream outss;
+		for(auto& val : commandData)
+			outss << " 0x" << std::hex << std::setw(4) << std::setfill('0') << val;
+		__COUTTV__(outss.str());
+	}
 	
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
