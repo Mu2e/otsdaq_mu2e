@@ -985,7 +985,7 @@ void DTCFrontEndInterface::createROCs(void)
 				uint8_t roc_link_i = static_cast<uint8_t>(tmpRoc.getLinkID());
 				bool    enabled    = ((roc_mask_ >> roc_link_i) & 1);
 				bool    emulated   = ((roc_emulated_mask_ >> roc_link_i) & 1);
-				__FE_COUT__ << "roc[" << roc_link_i << "] enabled " << enabled
+				__FE_COUT__ << "roc[" << (int)roc_link_i << "] enabled " << enabled
 				            << " emulated " << emulated << __E__;
 
 				tmpRoc.thisDTC_       = thisDTC_;
@@ -6451,7 +6451,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	__FE_COUTV__(mapPath);
 	__FE_COUTV__(writeMap);	
 	__FE_COUTV__(verifyMap);	
-	__FE_COUTV__(imageIndex);
+	__FE_COUTV__((int)imageIndex);
 	__FE_COUTV__(bitfilePath);	
 	__FE_COUTV__(write);	
 	__FE_COUTV__(verify);	
@@ -6614,12 +6614,14 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		{		
 			__FE_COUTV__(roc);
 			__FE_COUTV__(rocs_.at(roc)->getLinkID());
+			if(0)
 			rocs_.at(roc)->eraseSPIFlashBlock(contents.size(),startAddress,
 				false /* waitForDone */);
 		} //end launch of ROC erase SPI block loop
 
 		__FE_COUT__ << "Checking that erase is done..." << __E__;
 		//then check for erase done
+		if(0)
 		{
 			bool allDone = true;
 			// DTCLib::roc_data_t readStatus;
@@ -6650,12 +6652,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					}
 				} //end launch of ROC erase SPI block loop
 
-				if(!allDone) usleep(1000*500 /* 500 ms */);
-				else if(++attempt > 20 /* 10 s */)
+				if(!allDone && ++attempt > 120 /* 60 s */)
 				{
-					__FE_SS__ << "Timeout waiting for SPI flash erase action!" << __E__;
+					__FE_SS__ << "Timeout waiting for SPI flash erase action! Check for more info with ROC Read to 128." << __E__;
 					__FE_SS_THROW__;
 				}
+				else if(!allDone) usleep(1000*500 /* 500 ms */);
 			}
 			while(!allDone);
 		} //end check for erase done
@@ -6696,6 +6698,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			}
 
 			__FE_COUT__ << "Checking that write is done..." << __E__;
+			return;
 			//then check for writing done
 			{
 				bool allDone = true;
@@ -6727,12 +6730,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						}
 					} //end launch of ROC erase SPI block loop
 
-					if(!allDone) usleep(1000*500 /* 500 ms */);
-					else if(++attempt > 20 /* 10 s */)
+					if(!allDone && ++attempt > 120*30 /* 30 mins */)
 					{
-						__FE_SS__ << "Timeout waiting for SPI flash write action!" << __E__;
+						__FE_SS__ << "Timeout waiting for SPI flash write action! Check for more info with ROC Read to 128." << __E__;
 						__FE_SS_THROW__;
 					}
+					else if(!allDone) usleep(1000*500 /* 500 ms */);
 				}
 				while(!allDone);
 			} //end check for erase done
@@ -6740,8 +6743,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			__FE_COUT__ << "Write chunk done at offset=" << i << 
 				" and size=" << writeSize << " / " << contents.size() << __E__;
 
-			// if (i > 4000)
-			// 	break; //debug, stop after first write
+			if (i > 4000)
+				break; //debug, stop after first write
 		} //end write bitfile loop
 
 		resultsSs << "Write of bitfile to address 0x" <<
@@ -6843,8 +6846,20 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			{		
 				if(doneMap[roc]) continue; //skip those done
 
-				doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
-					true /* releaseLockOnDone */);
+				try
+				{					
+					doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
+						true /* releaseLockOnDone */);
+				}
+				catch(...)
+				{
+					__FE_COUT__ << "At roc '" << roc << "' link=" << 
+							rocs_.at(roc)->getLinkID() << ", Caught exception... ignorning while FPGA down." << __E__;
+					sleep(1);
+					getDTC()->SoftReset();
+					doneMap[roc] = false;
+				}
+				
 				if(!doneMap[roc]) allDone = false;
 				else 
 				{
@@ -6864,12 +6879,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				}
 			} //end launch of ROC erase SPI block loop
 
-			if(!allDone) usleep(1000*500 /* 500 ms */);
-			else if(++attempt > 20 /* 10 s */)
+			if(!allDone && ++attempt > 120*1 /* 1 mins */)
 			{
-				__FE_SS__ << "Timeout waiting for SPI program action!" << __E__;
+				__FE_SS__ << "Timeout waiting for SPI flash program action! Check for more info with ROC Read to 128." << __E__;
 				__FE_SS_THROW__;
 			}
+			else if(!allDone) usleep(1000*500 /* 500 ms */);
 		}
 		while(!allDone);
 	} //end check for program done

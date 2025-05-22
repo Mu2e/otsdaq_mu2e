@@ -45,7 +45,14 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
 	                            &ROCPolarFireCoreInterface::EraseSPIFlashBlock),
 	                        std::vector<std::string>{"Start Address", "Number of Bytes"},  //inputs parameters
-	                        std::vector<std::string>{""},  //output parameters
+	                        std::vector<std::string>{},  //output parameters
+	                        1);                          // requiredUserPermissions
+
+	registerFEMacroFunction("Force Clear Action Lock",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &ROCPolarFireCoreInterface::ForceClearActionLock),
+	                        std::vector<std::string>{},  //inputs parameters
+	                        std::vector<std::string>{},  //output parameters
 	                        1);                          // requiredUserPermissions
 							
 }  // end constructor()
@@ -269,7 +276,8 @@ bool ROCPolarFireCoreInterface::isActionDone(DTCLib::roc_data_t* readStatus /* =
 {
 	DTCLib::roc_data_t readValue = readRegister(ROC_ADDRESS_ACTION_DONE);
 	bool done = (readValue >> 15) & 1;
-	__FE_COUTV__(done);
+	__FE_COUT__ << "done=" << done << " " << StringMacros::stackTrace() << __E__;;
+
 	if(done && readStatus) //check status also
 	{
 		__FE_COUT__ << "Action done, reading status..." << __E__;
@@ -327,7 +335,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 			if(i > 5*100 /* 5 seconds */)
 			{
 				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for SPI flash block read action!" << __E__;
+				__FE_SS__ << "Timeout waiting for SPI flash block read action! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -407,6 +415,20 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_
 			outss << " 0x" << std::hex << std::setw(4) << std::setfill('0') << val;
 		__COUTTV__(outss.str());
 	}
+	if(!waitForDone)
+	{
+		if(actionLock_.try_lock()) 
+		{
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+			return;
+		}
+		else
+		{
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+			__FE_SS_THROW__;
+		}
+	}
 	
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
@@ -422,7 +444,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_
 			if(i > 5*100 /* 5 seconds */)
 			{
 				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for SPI flash directory write action!" << __E__;
+				__FE_SS__ << "Timeout waiting for SPI flash directory write action! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -467,7 +489,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		__FE_SS_THROW__;
 	}
 
-	__FE_COUTV__(startAddress);
+	__FE_COUT__ << "startAddress " << startAddress << " 0x" << std::hex << std::setw(8) << std::setfill('0') << startAddress << __E__;
 
 	std::vector<DTCLib::roc_data_t> commandData = {ROC_ACTION_WRITE_SPI,
 		//1st command word, is a 32-bit parameter passed via the second (16LSB) and third (16MSB) command words
@@ -482,7 +504,34 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		commandData.push_back(DTCLib::roc_data_t(writeData[i]));
 
 	__FE_COUTTV__(StringMacros::vectorToString(commandData));
+	if(TTEST(1))
+	{
+		std::stringstream outss;
+		for(auto &val : commandData)
+			outss << " 0x" << std::hex << std::setw(4) << std::setfill('0') << val;
+		outss << __E__;
+		__FE_COUTTV__(outss.str());
+		for(size_t i = commandData.size()-1; i > 0; --i)
+			outss << " 0x" << std::hex << std::setw(4) << std::setfill('0') << commandData[i];
+		outss << __E__;
+		__FE_COUTTV__(outss.str());
+	}
 	__FE_COUTV__(commandData.size());
+
+	if(!waitForDone)
+	{
+		if(actionLock_.try_lock()) 
+		{
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+			return;
+		}
+		else
+		{
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+			__FE_SS_THROW__;
+		}
+	}
 	
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
@@ -496,7 +545,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		{
 			if(i > 5*100 /* 5 seconds */)
 			{
-				__FE_SS__ << "Timeout waiting for SPI flash write action!" << __E__;
+				__FE_SS__ << "Timeout waiting for SPI flash write action! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -534,6 +583,14 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 	};
 
 	__FE_COUTTV__(StringMacros::vectorToString(commandData));
+	if(TTEST(1))
+	{
+		std::stringstream outss;
+		for(auto &val : commandData)
+			outss << " 0x" << std::hex << std::setw(4) << std::setfill('0') << val;
+		outss << __E__;
+		__FE_COUTTV__(outss.str());
+	}
 	if(!waitForDone)
 	{
 		if(actionLock_.try_lock()) 
@@ -561,7 +618,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 		{
 			if(i > 5*100 /* 5 seconds */)
 			{
-				__FE_SS__ << "Timeout waiting for SPI flash erase action!" << __E__;
+				__FE_SS__ << "Timeout waiting for SPI flash erase action! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -595,6 +652,21 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index, bool waitFo
 	};
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
 	
+	if(!waitForDone)
+	{
+		if(actionLock_.try_lock()) 
+		{
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+			return;
+		}
+		else
+		{
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
@@ -609,7 +681,7 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index, bool waitFo
 			if(i > 5*100 /* 5 seconds */)
 			{
 				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for action to program from SPI flash by index!" << __E__;
+				__FE_SS__ << "Timeout waiting for action to program from SPI flash by index! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -643,6 +715,21 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress, b
 	};
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
 	
+	if(!waitForDone)
+	{
+		if(actionLock_.try_lock()) 
+		{
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+			return;
+		}
+		else
+		{
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
@@ -657,7 +744,7 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress, b
 			if(i > 5*100 /* 5 seconds */)
 			{
 				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for action to program from SPI flash by index!" << __E__;
+				__FE_SS__ << "Timeout waiting for action to program from SPI flash by index! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -692,6 +779,21 @@ void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */
 	};
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
 	
+	if(!waitForDone)
+	{
+		if(actionLock_.try_lock()) 
+		{
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+			return;
+		}
+		else
+		{
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
@@ -706,7 +808,7 @@ void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */
 			if(i > 5*100 /* 5 seconds */)
 			{
 				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for action to program from SPI flash by index!" << __E__;
+				__FE_SS__ << "Timeout waiting for action to program from SPI flash by index! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000*10 /* 10 ms */);
@@ -813,4 +915,14 @@ void ROCPolarFireCoreInterface::EraseSPIFlashBlock(__ARGS__)
 	eraseSPIFlashBlock(numberOfBytes,startAddress);
 
 	__FE_COUT__ << "end eraseSPIFlashBlock()" << __E__;
+}  //end EraseSPIFlashBlock()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::ForceClearActionLock(__ARGS__)
+{
+	__FE_COUT__ << "ForceClearActionLock()" << __E__;
+
+	actionLock_.unlock();
+
+	__FE_COUT__ << "end ForceClearActionLock()" << __E__;
 }  //end EraseSPIFlashBlock()
