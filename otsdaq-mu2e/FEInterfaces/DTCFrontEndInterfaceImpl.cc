@@ -6812,8 +6812,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		} //end launch of ROC erase SPI block loop
 	} //end verify
 
-	__SET_ARG_OUT__("Result",resultsSs.str());
-	return; //block programming
+	if(!program)
+	{
+		__SET_ARG_OUT__("Result",resultsSs.str());
+		return; //block programming
+	}
+
 	// 3) start programming the fpga with action 4 (index)
 	//first launch program
 	__FE_COUT__ << "Start programing from SPI..." << __E__;
@@ -6853,6 +6857,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					}
 					__FE_COUT__ << roc << " link=" << 
 							rocs_.at(roc)->getLinkID() << 
+							", done with program from SPI action." << __E__;
+					resultsSs << roc << " link=" << 
+							rocs_.at(roc)->getLinkID() << 
 							", done with program from SPI action." << __E__;					
 				}
 			} //end launch of ROC erase SPI block loop
@@ -6866,6 +6873,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		}
 		while(!allDone);
 	} //end check for program done
+
+	__SET_ARG_OUT__("Result",resultsSs.str());
+	__FE_COUT__ << "Done with all program actions!" << __E__;
+
 }  //end ProgramROCs()
 
 // DEFINE_OTS_INTERFACE(DTCFrontEndInterface)
