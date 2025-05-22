@@ -734,7 +734,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Verify Directory map (Default := false)",
 						"Image Index (Default := 0)",
 						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
-						"Do not write Bitfile to SPI Flash (Default := false)",
+						"Write Bitfile to SPI Flash (Default := false)",
 						"Verify with Bitfile Readback (Default := false)",						
 						"Program from Image Index (Default := false)",
 						},  // namesOfInputArgs
