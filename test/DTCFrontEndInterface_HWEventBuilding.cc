@@ -1,11 +1,6 @@
-// #include <otsdaq_demo/otsdaq-demo/FEInterfaces/FEWROtsUDPFSSRInterface.h>
-// #include
-//<otsdaq_demo/otsdaq-demo/UserConfigurationDataFormats/FEWROtsUDPFSSRInterfaceConfiguration.h>
 #include "otsdaq/ConfigurationInterface/ConfigurationManager.h"
 #include "otsdaq/FECore/FEVInterfacesManager.h"
-// #include "otsdaq/TableDataFormats/TableGroupKey.h"
 
-// #include "otsdaq-demo/FEInterfaces/FEWOtsGenericInterface.h"
 #include "otsdaq/FECore/FEVInterface.h"
 
 #include <iostream>
@@ -15,7 +10,6 @@
 #include "otsdaq/FECore/MakeInterface.h"
 #include "otsdaq/TableCore/MakeTable.h"
 
-// #include "otsdaq-components/FEInterfaces/FEWOtsUDPFSSRInterface.h"
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
 
 using namespace ots;
@@ -23,7 +17,7 @@ using namespace ots;
 int main(int argc, char* argv[])
 try
 {
-	__COUT_INFO__ << "DTCFrontEndInterface Test main()";
+	__COUT_INFO__ << "DTCFrontEndInterface HW Event Building main()";
 
 	__COUTV__(argc);
 	for(int i = 0; i < argc; ++i)
@@ -32,22 +26,37 @@ try
 	}
 	if(argc < 3)
 	{
-		__COUT_ERR__
-		    << "\n\n\tUsage = Need at least 2 arguments: DTCFrontEndInterface_TestMain "
-		       "<deviceIndex> <numberOfEventWindowMarkers>\n\n"
-		    << __E__;
-		__COUT_ERR__
-		    << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n\n"
-		    << __E__;
+		__COUT_ERR__ << "\n\n\tUsage = Need at least 2 arguments: "
+		                "DTCFrontEndInterface_HWEventBuilding "
+		                "<deviceIndex> <numberOfEventWindowMarkers> <baseDTCAddress> "
+		                "<numOfDTCs>\n\n"
+		             << __E__;
+		__COUT_INFO__
+		    << "\n\n\t\t 3+ aruments will apply ROC emulator data generation size.\n"
+		    << "\n\n\t\tUsage = <numberOfEventWindowMarkers> -1:   JA Reset and Loopback "
+		       "\n"
+		    << "\n\n\t\tUsage = <numberOfEventWindowMarkers> -2:   JA Reset and "
+		       "Passthrough \n";
 		return 0;
 	}
 
 	uint32_t deviceIndex                = atoi(argv[1]);
 	uint32_t numberOfEventWindowMarkers = atoi(argv[2]);
+	uint32_t baseDTCAddress             = atoi(argv[3]);
+	uint32_t numOfDTCs                  = atoi(argv[4]);
+
+	std::string hostname = __ENV__("HOSTNAME");
+	__COUTV__(hostname);
+	std::vector<std::string> split, split2;
+	StringMacros::getVectorFromString(hostname, split, {'.'});
+	StringMacros::getVectorFromString(split[0], split2, {'-'});
+	__COUTV__(split2.back());
+	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex;
+	__COUTV__(macAddress);
 
 	//==============================================================================
 	// Define environment variables
-	//	Note: normally these environment variables are set by ots script
+	//	Note: normally these environment variables are set by StartOTS.sh
 
 	// These are needed by
 	// otsdaq/otsdaq/ConfigurationDataFormats/ConfigurationInfoReader.cc [207]
@@ -106,9 +115,17 @@ try
 
 	if(numberOfEventWindowMarkers == uint32_t(-1))
 	{
-		__COUT_INFO__ << "Attempting Reset and Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up DTC with external CFO for Loopback!" << __E__;
 
-		dtc.thisDTC_->DisableCFOEmulation();
+		dtc.thisDTC_->DisableCFOEmulation();  //enable external CFO
+		dtc.thisDTC_->EnableCFOLoopback();    //loopback at this DTC
+
+		dtc.SetupCFOInterface(0,      //int forceCFOedge,
+		                      false,  //bool useCFOemulator,
+		                      true,   //bool alsoSetupJA,
+		                      true,   //bool cfoRxTxEnable,
+		                      true);  //bool enableAutogenDRP);
+
 		dtc.thisDTC_->SoftReset();
 		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
@@ -116,9 +133,19 @@ try
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-2))
 	{
-		__COUT_INFO__ << "Attempting Buffer Release ONLY!" << __E__;
+		__COUT_INFO__ << "Setting up DTC with external CFO for Passhthrough!" << __E__;
+		dtc.thisDTC_->DisableCFOEmulation();  //enable external CFO
+		dtc.thisDTC_->DisableCFOLoopback();   //passhtrough CFO control link at this DTC
+
+		dtc.SetupCFOInterface(0,      //int forceCFOedge,
+		                      false,  //bool useCFOemulator,
+		                      true,   //bool alsoSetupJA,
+		                      true,   //bool cfoRxTxEnable,
+		                      true);  //bool enableAutogenDRP);
+
+		dtc.thisDTC_->SoftReset();
 		dtc.thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
-		__COUT_INFO__ << "ReleaseAllBuffers called!" << __E__;
+		__COUT_INFO__ << "Reset and ReleaseAllBuffers called!" << __E__;
 		return 0;
 	}
 	if(numberOfEventWindowMarkers == uint32_t(-3))
@@ -137,10 +164,102 @@ try
 		              << __E__;
 		return 0;
 	}
+	if(numberOfEventWindowMarkers == uint32_t(-5))
+	{
+		dtc.getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */,
+		                                                       true /* alsoResetJA */);
+		for(int i = 0; i < 10; ++i)  //wait for JA to lock before reading
+		{
+			if(dtc.getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+				break;
+			sleep(1);
+		}
+		__COUT_INFO__ << "JA Status = "
+		              << dtc.getCFOandDTCRegisters()->FormatJitterAttenuatorCSR()
+		              << __E__;
+		return 0;
+	}
 
 	__COUT_INFO__ << "DTC version = " << dtc.thisDTC_->ReadDesignDate() << __E__;
 	__COUT_INFO__ << "DTC DMA sizes = " << dtc.thisDTC_->FormatDMATransferLength()
 	              << __E__;
+	__COUT_INFO__ << "DTC MAC Address = " << macAddress << __E__;
+
+	uint32_t lastVal;
+	if(numberOfEventWindowMarkers != 2)
+	{
+		// void SetEVBInfo(uint8_t dtcid, uint8_t mode, uint8_t partitionId, uint8_t macByte);
+		// void SetEVBClusterInfo(uint8_t baseDTCAddress, uint8_t numOfDTCs);
+		dtc.thisDTC_->SetEVBInfo(
+		    (1 << 7) | macAddress, 0 /* mode */, 0x99 /* partitionId */, macAddress);
+		dtc.thisDTC_->SetEVBClusterInfo(baseDTCAddress, numOfDTCs);
+		dtc.SetupCFOInterface(0,       //int forceCFOedge,
+		                      false,   //bool useCFOemulator,
+		                      true,    //bool alsoSetupJA,
+		                      true,    //bool cfoRxTxEnable,
+		                      false);  //bool enableAutogenDRP);
+
+		if(numberOfEventWindowMarkers == 1)
+			dtc.thisDTC_->EnableLink(DTC_Link_EVB);
+		if(numberOfEventWindowMarkers == 0)
+			dtc.thisDTC_->DisableLink(DTC_Link_EVB);
+		dtc.thisDTC_->SoftReset();  //to reset event window tag starting point handling
+
+		__COUT_INFO__ << "DTC's EVB Cluster Info = "
+		              << dtc.thisDTC_->FormatEVBClusterInfo() << __E__;
+
+		__COUT_INFO__ << "Test Stat: 0x" << std::hex
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs)
+		              << " 0x"
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs,
+		                                            0)
+		              << " 0x"
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs,
+		                                            0)
+		              << " 0x"
+		              << dtc.getDTC()->ReadEVBStats(DTC_EVBStatsType_RxMissingPacketCount,
+		                                            (deviceIndex + 1) % numOfDTCs,
+		                                            0)
+		              << __E__;
+
+		lastVal = dtc.getDTC()->ReadEVBStats(
+		    DTC_EVBStatsType_RxMissingPacketCount, (deviceIndex + 1) % numOfDTCs, 0);
+
+		std::cout << "0x" << std::hex << lastVal << "\t" << std::flush;
+		uint32_t newVal;
+		for(int i = 0; i < 1000; ++i)
+		{
+			usleep(1000);
+			newVal = dtc.getDTC()->ReadEVBStats(
+			    DTC_EVBStatsType_RxMissingPacketCount, (deviceIndex + 1) % numOfDTCs, 0);
+			if(lastVal == newVal)
+			{
+				std::cout << "." << std::flush;
+				continue;
+			}
+			lastVal = newVal;
+			std::cout << "0x" << std::hex << newVal << "\t" << std::flush;
+		}
+	}
+
+	lastVal = 0;
+	while(1)
+	{
+		for(uint32_t i = 0; i <= lastVal; ++i)
+			std::cout << "...";
+		std::cout << std::flush;
+		lastVal = (lastVal + 1) % 8;
+		sleep(3);
+		std::cout << time(0) << __E__;
+		std::cout << dtc.getDTC()->FormattedRegDump(
+		                 130, dtc.getDTC()->formattedHWEventBuildingFunctions_)
+		          << __E__;
+	}  //end loop
+
+	return 0;
 
 	//setup ROCs
 	std::string reply;
@@ -151,7 +270,7 @@ try
 
 		if(sz == -1)  //disabled
 			reply = dtc.SetupROCs(
-			    DTCLib::DTC_Link_ID(i - 3),  //DTCLib::DTC_Link_ID rocLinkIndex,
+			    DTCLib::DTC_Link_ID(i - 3),  //]DTCLib::DTC_Link_ID rocLinkIndex,
 			    0,
 			    1,
 			    1,  //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
@@ -161,7 +280,7 @@ try
 			);
 		else
 			reply = dtc.SetupROCs(
-			    DTCLib::DTC_Link_ID(i - 3),  //DTCLib::DTC_Link_ID rocLinkIndex,
+			    DTCLib::DTC_Link_ID(i - 3),  //]DTCLib::DTC_Link_ID rocLinkIndex,
 			    1,
 			    1,
 			    1,  //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
@@ -172,41 +291,15 @@ try
 	}
 	__COUT_INFO__ << "ROC Setup:\n" << reply << __E__;
 
-	dtc.SetupCFOInterface(0,      //int forceCFOedge,
-	                      true,   //bool useCFOemulator,
-	                      true,   //bool alsoSetupJA,
-	                      true,   //bool cfoRxTxEnable,
-	                      true);  //bool enableAutogenDRP);
-
-	dtc.SetCFOEmulatorFixedWidthEmulation(
-	    1,                           //bool enable,
-	    1,                           //bool useDetachedBufferTest,
-	    "0x44 clocks",               //std::string eventDuration,
-	    numberOfEventWindowMarkers,  //uint32_t numberOfEventWindowMarkers,
-	    0,                           //uint64_t initialEventWindowTag,
-	    1,                           //uint64_t eventWindowMode,
-	    0,                           //bool enableClockMarkers,
-	    1,                           //bool enableAutogenDRP,
-	    0,                           //bool saveBinaryDataToFile,
-	    "Default",                   //filename
-	    0,                           //bool saveSubeventHeadersToDataFile,
-	    0,                           //bool doNotResetCounters
-	    0,                           //bool skipBy32
-	    0                            //unint32_t packetThresholdToSave )
+	dtc.thisDTC_->SoftReset();         //to reset event window tag starting point handling
+	dtc.initDetachedBufferTest(100,    //initialEventWindowTag,
+	                           false,  // saveBinaryDataToFile,
+	                           "Default",  // filename
+	                           false,      //saveSubeventHeadersToDataFile,
+	                           false,      //doNotResetCounters
+	                           false,      //skipBy32
+	                           0           //packetThresholdToSave
 	);
-	// dtc.SetCFOEmulatorOnOffSpillEmulation(
-	// 	1, //bool enable,
-	// 	1, //bool useDetachedBufferTest,
-	// 	numberOfEventWindowMarkers, //uint32_t numberOfSuperCycles,
-	// 	0, //uint64_t initialEventWindowTag,
-	//     0, //bool enableClockMarkers,
-	//     1, //bool enableAutogenDRP,
-	//     0, //bool saveBinaryDataToFile,
-	//		"Default", //filename
-	//     0, //bool saveSubeventHeadersToDataFile,
-	//     0, //bool doNotResetCounters
-	//	   0  //bool skipBy32 )
-	// ); numberOfEventWindowMarkers *= 245000; //set event cout expectation for check below (235K on-spill + 10K off-spill per cycle)
 
 	int  i       = 0;
 	bool dumpSpy = false;
@@ -248,12 +341,6 @@ try
 	sleep(1);
 	if(dtc.bufferTestThreadStruct_->running_)
 		sleep(1);  //give 1 more second for thread
-
-	std::cout << "time(0) = " << time(0) << '\n' << std::flush;
-	__COUT_INFO__ << "\n"
-	              << DTCFrontEndInterface::getDetachedBufferTestStatus(
-	                     dtc.bufferTestThreadStruct_)
-	              << __E__;
 
 	if(dumpSpy)
 		dtc.getDevice()->spy(
