@@ -323,39 +323,60 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 	
 	std::vector<uint16_t> tmpReadData;
 	{ //start action lock
-		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
-		__FE_COUTT__ << "Have ROC action lock" << __E__;
-		// getDevice()->begin_dcs_transaction(); //block other DCS transactions while getting status
-		writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
 
-		//wait for action to complete
-		size_t i = 0;
-		while(!isActionDone())
+		if(actionLock_.try_lock()) 
 		{
-			if(i > 5*100 /* 5 seconds */)
-			{
-				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for SPI flash block read action! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
-				__FE_SS_THROW__;
-			}
-			usleep(1000*10 /* 10 ms */);
+			__FE_COUTT__ << "Have ROC action lock" << __E__;
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
-
-		//check read count, it will be different by 4
-		size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
-		__FE_COUTV__(readCount); 
-		if(readCount - 4 != numberOfBytes/2) //readCount == 4096)
+		else
 		{
-			__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x" << std::hex << readCount <<
-				" expected 0x" << numberOfBytes/2 + 4 << __E__ << "Consider emptying manually by reading 0x" <<
-				readCount - 4 << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND << __E__;;
+			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
 			__FE_SS_THROW__;
 		}
 
-		//now read back 
-		readBlock(tmpReadData, ROC_ADDRESS_ACTION_COMMAND, readCount - 4, false /* incrementAddress */);
-		// getDevice()->end_dcs_transaction(); //re-allow other transactions
+		try
+		{	
+			// std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
+			// __FE_COUTT__ << "Have ROC action lock" << __E__;
+			// getDevice()->begin_dcs_transaction(); //block other DCS transactions while getting status
+			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
+
+			//wait for action to complete
+			size_t i = 0;
+			while(!isActionDone())
+			{
+				if(i > 5*100 /* 5 seconds */)
+				{
+					// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
+					__FE_SS__ << "Timeout waiting for SPI flash block read action! Check for more info with ROC Read to " << ROC_ADDRESS_ACTION_DONE << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000*10 /* 10 ms */);
+			}
+			__FE_COUT__ << "Action done, reading status..." << __E__;
+
+			//check read count, it will be different by 4
+			size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
+			__FE_COUTV__(readCount); 
+			if(readCount - 4 != numberOfBytes/2) //readCount == 4096)
+			{
+				__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x" << std::hex << readCount <<
+					" expected 0x" << numberOfBytes/2 + 4 << __E__ << "Consider emptying manually by reading 0x" <<
+					readCount - 4 << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND << __E__;;
+				__FE_SS_THROW__;
+			}
+
+			//now read back 
+			readBlock(tmpReadData, ROC_ADDRESS_ACTION_COMMAND, readCount - 4, false /* incrementAddress */);
+			// getDevice()->end_dcs_transaction(); //re-allow other transactions		
+		}
+		catch(const std::exception& e)
+		{
+			__FE_COUT__ << "Caught exception, releasing action lock..." << __E__;
+			actionLock_.unlock();
+			throw;
+		}
+		actionLock_.unlock();
 	} //end action lock
 
 	__FE_COUTV__(tmpReadData.size());
@@ -925,4 +946,14 @@ void ROCPolarFireCoreInterface::ForceClearActionLock(__ARGS__)
 	actionLock_.unlock();
 
 	__FE_COUT__ << "end ForceClearActionLock()" << __E__;
+}  //end EraseSPIFlashBlock()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::forceClearActionLock()
+{
+	__FE_COUT__ << "forceClearActionLock()" << __E__;
+
+	actionLock_.unlock();
+
+	__FE_COUT__ << "end forceClearActionLock()" << __E__;
 }  //end EraseSPIFlashBlock()
