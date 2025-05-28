@@ -76,6 +76,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	void 									programFromSPIByIndex						(uint8_t index, bool waitForDone = true) override;
 	void 									programFromSPIByAddress						(uint32_t startAddress, bool waitForDone = true) override;
 	void 									autoProgramFromSPI							(bool waitForDone = true) override;
+	void 									forceClearActionLock						(void) override;
 	
 	void 									ReadSPIFlashBlock							(__ARGS__);
 	void 									WriteSPIFlashDirectory						(__ARGS__);
