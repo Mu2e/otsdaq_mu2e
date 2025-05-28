@@ -6625,15 +6625,14 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		for(auto& roc : targetROCs) 
 		{		
 			__FE_COUTV__(roc);
-			__FE_COUTV__(rocs_.at(roc)->getLinkID());
-			if(0)
+			__FE_COUTV__(rocs_.at(roc)->getLinkID());			
 			rocs_.at(roc)->eraseSPIFlashBlock(contents.size(),startAddress,
 				false /* waitForDone */);
 		} //end launch of ROC erase SPI block loop
 
 		__FE_COUT__ << "Checking that erase is done..." << __E__;
 		//then check for erase done
-		if(0)
+		// if(0)
 		{
 			bool allDone = true;
 			// DTCLib::roc_data_t readStatus;
@@ -6678,6 +6677,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
 		// return; //block writing bitfile
 
+		
+		std::chrono::time_point<std::chrono::steady_clock> transferStartTime = 
+			std::chrono::steady_clock::now();
+
 		for(size_t i = 0; i < contents.size(); i += 1024)
 		{
 			size_t writeSize = contents.size() - i;
@@ -6714,7 +6717,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			//then check for writing done
 			{
 				bool allDone = true;
-				DTCLib::roc_data_t readStatus;
+				DTCLib::roc_data_t readStatus = 0;
 				std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
 				size_t attempt = 0;
 				do 
@@ -6726,7 +6729,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 						doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
 							true /* releaseLockOnDone */);
-						if(!doneMap[roc]) allDone = false;
+						// rocs_.at(roc)->forceClearActionLock();
+						if(!doneMap[roc]) 
+						{
+							allDone = false;
+							__FE_COUTS__(10) << "Waiting..." << attempt << __E__;
+						}
 						else 
 						{
 							if(readStatus)
@@ -6742,18 +6750,33 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						}
 					} //end launch of ROC erase SPI block loop
 
-					if(!allDone && ++attempt > 120*30 /* 30 mins */)
+					if(!allDone && ++attempt > 120*300 /* 3 mins */)
 					{
 						__FE_SS__ << "Timeout waiting for SPI flash write action! Check for more info with ROC Read to 128." << __E__;
 						__FE_SS_THROW__;
 					}
-					else if(!allDone) usleep(1000*500 /* 500 ms */);
+					else if(!allDone) usleep(1000*5 /* 5 ms */);
 				}
 				while(!allDone);
 			} //end check for erase done
 
-			__FE_COUT__ << "Write chunk done at offset=" << i << 
-				" and size=" << writeSize << " / " << contents.size() << __E__;
+			if(writeSize)
+				__FE_COUT__ << "Write chunk #" << int(i/writeSize) << " done at offset=" << i << 
+					" and size=" << writeSize << " / " << contents.size() << __E__;
+
+			long long ns =
+				std::chrono::duration_cast<std::chrono::nanoseconds>(
+					std::chrono::steady_clock::now() - transferStartTime)
+					.count();
+			if(ns > 1000)  //prevent divide by 0
+			{
+				__FE_COUT__ << "Data Transfer Duration: " << ns / 1000.0 / 1000.0 << " ms"
+						<< __E__;
+				__FE_COUT__ << "Average Data Rate: "
+						<< ((double)(i + writeSize)) /
+								(ns / 1000.0)
+						<< " MB/s" << __E__;
+			}
 
 			// if (i > 4000)
 			// 	break; //debug, stop after first write
