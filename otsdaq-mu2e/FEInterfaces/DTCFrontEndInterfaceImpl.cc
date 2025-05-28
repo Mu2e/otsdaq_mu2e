@@ -737,7 +737,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Write Bitfile to SPI Flash (Default := false)",
 						"For Debug, force Write size (Default := do not force)",
 						"Verify with Bitfile Readback (Default := false)",						
-						"Program from Image Index (Default := false)",
+						"Do program from Image Index (Default := false)",
 						},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
@@ -6445,7 +6445,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	std::string bitfilePath = __GET_ARG_IN__("Path to Bitfile (Default := do not write bitfile, only program from Image Index)", std::string);
 	bool write = __GET_ARG_IN__("Write Bitfile to SPI Flash (Default := false)",bool);
 	bool verify = __GET_ARG_IN__("Verify with Bitfile Readback (Default := false)",bool);
-	bool program = __GET_ARG_IN__("Program from Image Index (Default := false)",bool);
+	bool program = __GET_ARG_IN__("Do program from Image Index (Default := false)",bool);
 	uint32_t debugForceSize = __GET_ARG_IN__("For Debug, force Write size (Default := do not force)",uint32_t);
 	
 	__FE_COUTV__((int)link);
@@ -6873,6 +6873,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		bool allDone = true;
 		DTCLib::roc_data_t readStatus;
 		std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
+		std::map<std::string /* ROC UIC */, bool /* done */> lostConnectionMap;
 		size_t attempt = 0;
 		do 
 		{
@@ -6880,11 +6881,17 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			for(auto& roc : targetROCs) 
 			{		
 				if(doneMap[roc]) continue; //skip those done
-
+				
 				try
 				{					
 					doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
 						true /* releaseLockOnDone */);
+					if(lostConnectionMap[roc]) //if previously lost connection, consider it back!
+					{
+						__FE_COUT__ << "At roc '" << roc << "' link=" << 
+							rocs_.at(roc)->getLinkID() << ", back after connection lost! Marking done!" << __E__;
+						doneMap[roc] = true;					
+					}
 				}
 				catch(...)
 				{
@@ -6893,6 +6900,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					sleep(1);
 					getDTC()->SoftReset();
 					doneMap[roc] = false;
+					lostConnectionMap[roc] = true; //mark connection lost
 				}
 				
 				if(!doneMap[roc]) allDone = false;
