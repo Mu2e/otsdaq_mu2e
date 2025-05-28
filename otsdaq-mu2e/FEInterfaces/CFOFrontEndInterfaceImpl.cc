@@ -127,7 +127,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{ // namesOfInputArgs
 						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
-						"Target Link (-1 for all, Default := -1)"},
+						"Target Link (-1 for all, Default := -1)",
+						"Target ROC (-1 for all, Default := -1)"},
 					std::vector<std::string>{"Response"},  // namesOfOutput
 					1,
 					"*",
@@ -354,6 +355,8 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	    3);
 	int targetLink =
 	    __GET_ARG_IN__("Target Link (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
+	int targetROC =
+	    __GET_ARG_IN__("Target ROC (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
 
 	__FE_COUTV__(numberOfLoopbacksExp);
 	__FE_COUTV__(targetLink);
@@ -379,10 +382,16 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	uint16_t retries = 10;
 	while(!cableDelayMeasureAnyDone && retries-- > 0)
 	{
-		usleep(1000);
+		usleep(1000*500 /* 500 ms */);
 		for(uint16_t link = 0; link < 8; ++link)
+		{
+		    if(targetLink != uint8_t(-1) && link != targetLink) continue;
+			__FE_COUTV__(link);
 			for(uint16_t roc = 0; roc < 6; ++roc)
 			{
+				if(targetROC != uint8_t(-1)  && roc != targetROC) continue;
+				__FE_COUTV__(roc);
+
 				//measuredDelay is in units of 5/8 ns
 				measuredDelay = thisCFO_->ReadCableDelayMeasurement(
 				    CFOLib::CFO_Link_ID(link), roc, cableDelayMeasureDone);
@@ -403,8 +412,10 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 					ostr << "CFO-Link=" << link << " ROC=" << roc
 					     << " delay=" << measuredDelay * 5.0 / 8.0 << std::hex << "ns 0x"
 					     << measuredDelay << __E__;
-			}  //end delay measure loop
-	}
+			}  //end ROC delay measure loop
+		} //end DTC loop
+		__COUTT__ << "Loopback try cableDelayMeasureAnyDone=" << cableDelayMeasureAnyDone << " retries=" << retries << __E__;
+	} //end main loop
 	if(retries == 0)
 		ostr << "Loopback Timeout!" << __E__;
 
