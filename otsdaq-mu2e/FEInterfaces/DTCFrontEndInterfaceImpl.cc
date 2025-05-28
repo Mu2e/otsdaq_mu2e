@@ -735,6 +735,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Image Index (Default := 0)",
 						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
 						"Write Bitfile to SPI Flash (Default := false)",
+						"For Debug, force Write size (Default := do not force)",
 						"Verify with Bitfile Readback (Default := false)",						
 						"Program from Image Index (Default := false)",
 						},  // namesOfInputArgs
@@ -6445,6 +6446,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	bool write = __GET_ARG_IN__("Write Bitfile to SPI Flash (Default := false)",bool);
 	bool verify = __GET_ARG_IN__("Verify with Bitfile Readback (Default := false)",bool);
 	bool program = __GET_ARG_IN__("Program from Image Index (Default := false)",bool);
+	uint32_t debugForceSize = __GET_ARG_IN__("For Debug, force Write size (Default := do not force)",uint32_t);
 	
 	__FE_COUTV__((int)link);
 	__FE_COUTV__((int)mask);
@@ -6455,7 +6457,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	__FE_COUTV__(bitfilePath);	
 	__FE_COUTV__(write);	
 	__FE_COUTV__(verify);	
-	__FE_COUTV__(program);	
+	__FE_COUTV__(program);
+	__FE_COUTV__(debugForceSize);	
 
 	std::stringstream resultsSs; 
 	resultsSs << __E__;
@@ -6558,6 +6561,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						__FE_SS_THROW__;
 					}
 
+				__FE_COUT__ << roc << " link=" << 
+								rocs_.at(roc)->getLinkID() << 
+								", Directory map verified." << __E__;
 				resultsSs << roc << " link=" << 
 								rocs_.at(roc)->getLinkID() << 
 								", Directory map verified." << __E__;
@@ -6606,6 +6612,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// b. Erase flash calling action 3 (address from the dlash_map.txt, length)
 	
+	if(debugForceSize && contents.size() > debugForceSize)
+	{
+		__FE_COUT__ << "Forcing size to " << debugForceSize << __E__;
+		contents.resize(debugForceSize); //force for debuggin
+	}
+
 	//first launch erase
 	if(write && contents.size())
 	{
@@ -6698,7 +6710,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			}
 
 			__FE_COUT__ << "Checking that write is done..." << __E__;
-			return;
+			// return;
 			//then check for writing done
 			{
 				bool allDone = true;
@@ -6743,8 +6755,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			__FE_COUT__ << "Write chunk done at offset=" << i << 
 				" and size=" << writeSize << " / " << contents.size() << __E__;
 
-			if (i > 4000)
-				break; //debug, stop after first write
+			// if (i > 4000)
+			// 	break; //debug, stop after first write
 		} //end write bitfile loop
 
 		resultsSs << "Write of bitfile to address 0x" <<
