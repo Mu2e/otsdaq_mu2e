@@ -382,14 +382,16 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	uint16_t retries = 10;
 	while(!cableDelayMeasureAnyDone && retries-- > 0)
 	{
-		usleep(1000*500 /* 500 ms */);
+		usleep(1000 * 500 /* 500 ms */);
 		for(uint16_t link = 0; link < 8; ++link)
 		{
-		    if(targetLink != uint8_t(-1) && link != targetLink) continue;
+			if(targetLink != uint8_t(-1) && link != targetLink)
+				continue;
 			__FE_COUTV__(link);
 			for(uint16_t roc = 0; roc < 6; ++roc)
 			{
-				if(targetROC != uint8_t(-1)  && roc != targetROC) continue;
+				if(targetROC != uint8_t(-1) && roc != targetROC)
+					continue;
 				__FE_COUTV__(roc);
 
 				//measuredDelay is in units of 5/8 ns
@@ -413,9 +415,10 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 					     << " delay=" << measuredDelay * 5.0 / 8.0 << std::hex << "ns 0x"
 					     << measuredDelay << __E__;
 			}  //end ROC delay measure loop
-		} //end DTC loop
-		__COUTT__ << "Loopback try cableDelayMeasureAnyDone=" << cableDelayMeasureAnyDone << " retries=" << retries << __E__;
-	} //end main loop
+		}      //end DTC loop
+		__COUTT__ << "Loopback try cableDelayMeasureAnyDone=" << cableDelayMeasureAnyDone
+		          << " retries=" << retries << __E__;
+	}  //end main loop
 	if(retries == 0)
 		ostr << "Loopback Timeout!" << __E__;
 
