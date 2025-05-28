@@ -74,6 +74,7 @@ class ROCCoreVInterface : public FEVInterface
 	virtual void 							programFromSPIByIndex		(uint8_t index, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							programFromSPIByAddress		(uint32_t startAddress, bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 	virtual void 							autoProgramFromSPI			(bool waitForDone = true) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
+	virtual void 							forceClearActionLock		(void) { __SS__ << "TODO"; __SS_THROW__; };  // virtual, must define in inheriting children
 
 	// ROC debugging functions
 	void 									registerFEMacros			(void);
