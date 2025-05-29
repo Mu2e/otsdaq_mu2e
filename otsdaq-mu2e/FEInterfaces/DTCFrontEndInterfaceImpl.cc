@@ -6411,13 +6411,13 @@ void DTCFrontEndInterface::loopbackTest(int step)
 
 //========================================================================
 /// Macro needed by OTS:
-/// 
+///
 /// 1) Write directory of flash (file flash_map.txt)
 /// 	a. Use action 9 using file entries
-/// 
+///
 /// 2) Program_flash(image_index, filename,n times, verify)
 ///		0. Readback current SPI Flash directory index map
-///		1. If map path given, verify they match, else if not given use existing map as address lookup		
+///		1. If map path given, verify they match, else if not given use existing map as address lookup
 ///		11. If map given and no match, then write given map, and verify again, then error if no match
 /// 	a. Read file, calculate length in bytes
 /// 	b. Erase flash calling action 3 (address from the flash_map.txt, length)
@@ -6428,11 +6428,11 @@ void DTCFrontEndInterface::loopbackTest(int step)
 /// 	g. Repeat from d until the end of the file
 /// 	h. If verify read back the all flash sector using action 7, in blocks of 128 bytes
 /// 	i. Check against the file
-/// 
-/// Note: COULD TAKE 1 HOUR
-/// 
+///
+/// Note: COULD TAKE 1 HOUR (in May 2025 HEERC tests, takes about 15 minutes)
+///
 /// 3) start programming the fpga with action 4 (index)
-/// 
+///
 /// 4) readback function (index, size in byte, output file name) reads the flash sector using action 7 and writes in the file
 void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 {
@@ -6447,7 +6447,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	bool verify = __GET_ARG_IN__("Verify with Bitfile Readback (Default := false)",bool);
 	bool program = __GET_ARG_IN__("Do program from Image Index (Default := false)",bool);
 	uint32_t debugForceSize = __GET_ARG_IN__("For Debug, force Write size (Default := do not force)",uint32_t);
-	
+
 	__FE_COUTV__((int)link);
 	__FE_COUTV__((int)mask);
 	__FE_COUTV__(mapPath);
@@ -6462,7 +6462,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	std::stringstream resultsSs;
 	resultsSs << __E__;
-	
+
 	std::vector<std::string /* ROC UID */> targetROCs;
 	for(auto& roc : rocs_)
 	{
@@ -6470,7 +6470,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			(link < 7 && //link target match
 				DTCLib::DTC_Link_ID(link) == roc.second->getLinkID()) ||
 			(link == 7 && //use mask
-			 	(1 << roc.second->getLinkID()) & mask))
+				(1 << roc.second->getLinkID()) & mask))
 		{
 			targetROCs.push_back(roc.first);
 			__FE_COUTV__(roc.first);
@@ -6581,7 +6581,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	__FE_COUT__ << "startAddress = " << startAddress << " 0x" <<
 		std::hex << std::setw(8) << std::setfill('0') << startAddress << __E__;
-	
+
 	std::string contents, fullpath;
 	if(bitfilePath != "Default" && bitfilePath != "")
 		fullpath = bitfilePath;
@@ -6782,10 +6782,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		} //end write bitfile loop
 
 		resultsSs << "Write of bitfile to address 0x" <<
-			std::hex << std::setw(8) << std::setfill('0') << 
+			std::hex << std::setw(8) << std::setfill('0') <<
 			startAddress << __E__;
 	}
-	else 
+	else
 		__FE_COUT__ << "Skipping erase and write action." << __E__;
 
 
