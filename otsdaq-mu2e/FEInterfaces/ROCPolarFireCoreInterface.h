@@ -83,7 +83,6 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	void 									EraseSPIFlashBlock							(__ARGS__);
 	void 									ForceClearActionLock						(__ARGS__);
 
-
 	// clang-format on
 };
 
