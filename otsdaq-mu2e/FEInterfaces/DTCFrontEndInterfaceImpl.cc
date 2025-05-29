@@ -727,8 +727,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ProgramROCs),		 // feMacroFunction
 					std::vector<std::string>{
 						//First, only write the bitfile, manually readback .. do not reprogram yet!
-						"Target Link (Default := none, -1 := all)", 
-						"Target Mask (Default := 0, b111111 := all)", 
+						"Target Link (Default := none, -1 := all)",
+						"Target Mask (Default := 0, b111111 := all)",
 						"Path to Directory map file (Default := do not use)",
 						"Write Directory map to SPI Flash (Default := false)",
 						"Verify Directory map (Default := false)",
@@ -736,7 +736,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Path to Bitfile (Default := do not write bitfile, only program from Image Index)",
 						"Write Bitfile to SPI Flash (Default := false)",
 						"For Debug, force Write size (Default := do not force)",
-						"Verify with Bitfile Readback (Default := false)",						
+						"Verify with Bitfile Readback (Default := false)",
 						"Do program from Image Index (Default := false)",
 						},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
@@ -6611,7 +6611,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	}
 
 	// b. Erase flash calling action 3 (address from the dlash_map.txt, length)
-	
+
 	if(debugForceSize && contents.size() > debugForceSize)
 	{
 		__FE_COUT__ << "Forcing size to " << debugForceSize << __E__;
@@ -6637,17 +6637,17 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			// DTCLib::roc_data_t readStatus;
 			std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
 			size_t attempt = 0;
-			do 
+			do
 			{
 				allDone = true;
-				for(auto& roc : targetROCs) 
-				{		
+				for(auto& roc : targetROCs)
+				{
 					if(doneMap[roc]) continue; //skip those done
 
 					doneMap[roc] = rocs_.at(roc)->isActionDone(nullptr /*&readStatus*/, //erase does not give status
 						true /* releaseLockOnDone */);
 					if(!doneMap[roc]) allDone = false;
-					else 
+					else
 					{
 						//Erase action does not have status...
 						// if(readStatus)
@@ -6677,7 +6677,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
 		// return; //block writing bitfile
 
-		std::chrono::time_point<std::chrono::steady_clock> transferStartTime = 
+		std::chrono::time_point<std::chrono::steady_clock> transferStartTime =
 			std::chrono::steady_clock::now();
 
 		for(size_t i = 0; i < contents.size(); i += 1024)
@@ -6796,7 +6796,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	{
 		__FE_COUT__ << "Start reading back SPI... " <<
 			contents.size() << " bytes" << __E__;
-		
+
 		for(auto& roc : targetROCs)
 		{
 			__FE_COUTV__(roc);
@@ -6812,7 +6812,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				//append to readData
 				rocs_.at(roc)->readSPIFlashBlock(readData,
 					startAddress + i, readSize);
-			
+
 				//partial word verify loop
 				for(size_t j = i; j < i + readSize; j += 2)
 				{
@@ -6828,7 +6828,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						__FE_SS_THROW__;
 					}
 				} //end partial verify loop
-			
+
 			} //end read check
 
 			// now verify size
@@ -6874,7 +6874,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
 		std::map<std::string /* ROC UIC */, bool /* done */> lostConnectionMap;
 		size_t attempt = 0;
-		do 
+		do
 		{
 			allDone = true;
 			for(auto& roc : targetROCs)
@@ -6882,7 +6882,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				if(doneMap[roc]) continue; //skip those done
 
 				try
-				{				
+				{
 					doneMap[roc] = rocs_.at(roc)->isActionDone(&readStatus,
 						true /* releaseLockOnDone */);
 					if(lostConnectionMap[roc]) //if previously lost connection, consider it back!
