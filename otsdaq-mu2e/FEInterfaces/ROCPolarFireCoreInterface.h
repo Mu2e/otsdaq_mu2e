@@ -30,7 +30,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 		ROC_ACTION_READ_SPI             	= 7,
 		ROC_ACTION_WRITE_SPI             	= 8,
 		ROC_ACTION_WRITE_DIR             	= 9,
-		
+
 		ROC_ACTION_ERASE_ADDR             	= 3,
 		ROC_ACTION_PROG_INDEX             	= 4,
 		ROC_ACTION_PROG_ADDR             	= 5,
@@ -65,7 +65,7 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 
 
 	virtual void  							GetStatus									(__ARGS__) override;
-	virtual std::string						getFirmwareVersion							(void) override;	
+	virtual std::string						getFirmwareVersion							(void) override;
 	void 									SetupForPatternDataTaking					(__ARGS__);
 
 	bool									isActionDone								(DTCLib::roc_data_t* readStatus = nullptr, bool releaseLockOnDone = false) override; /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
@@ -77,13 +77,13 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	void 									programFromSPIByAddress						(uint32_t startAddress, bool waitForDone = true) override;
 	void 									autoProgramFromSPI							(bool waitForDone = true) override;
 	void 									forceClearActionLock						(void) override;
-	
+
 	void 									ReadSPIFlashBlock							(__ARGS__);
 	void 									WriteSPIFlashDirectory						(__ARGS__);
 	void 									EraseSPIFlashBlock							(__ARGS__);
 	void 									ForceClearActionLock						(__ARGS__);
 
-	
+
 	// clang-format on
 };
 

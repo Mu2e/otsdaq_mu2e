@@ -54,7 +54,7 @@ ROCPolarFireCoreInterface::ROCPolarFireCoreInterface(
 	                        std::vector<std::string>{},  //inputs parameters
 	                        std::vector<std::string>{},  //output parameters
 	                        1);                          // requiredUserPermissions
-							
+
 }  // end constructor()
 
 //==========================================================================================
@@ -270,7 +270,7 @@ void ROCPolarFireCoreInterface::SetupForPatternDataTaking(__ARGS__)
 }  //end SetupForPatternDataTaking()
 
 //==================================================================================================
-/// BUSY/DONE from register 128, bit[15]: 0 indicates that the microprocessor is 
+/// BUSY/DONE from register 128, bit[15]: 0 indicates that the microprocessor is
 /// still busy and the function is not done, 1 that the microprocessor is done
 bool ROCPolarFireCoreInterface::isActionDone(DTCLib::roc_data_t* readStatus /* = nullptr */, bool releaseLockOnDone /* = false */)
 {
@@ -293,10 +293,10 @@ bool ROCPolarFireCoreInterface::isActionDone(DTCLib::roc_data_t* readStatus /* =
 } //end isActionDone()
 
 //==================================================================================================
-/// This function returns a vector with size equal to the number of words found in the SPI flash at startAddr via a 
+/// This function returns a vector with size equal to the number of words found in the SPI flash at startAddr via a
 /// DTC block read of Nbytes/2 from register 384, since each block read word concatenates
 /// two bytes read from consecutive addresses.
-/// 
+///
 /// Note: The maximum allowed number of words to read is 254
 void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readData, uint32_t startAddress, uint8_t numberOfBytes)
 {
@@ -317,14 +317,14 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 		numberOfBytes, //LSBs
 		0 //MSBs
 	};
-	
+
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
 	__FE_COUTV__(readData.size());
-	
+
 	std::vector<uint16_t> tmpReadData;
 	{ //start action lock
 
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 		}
@@ -335,7 +335,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 		}
 
 		try
-		{	
+		{
 			// std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
 			// __FE_COUTT__ << "Have ROC action lock" << __E__;
 			// getDevice()->begin_dcs_transaction(); //block other DCS transactions while getting status
@@ -357,7 +357,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 
 			//check read count, it will be different by 4
 			size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
-			__FE_COUTV__(readCount); 
+			__FE_COUTV__(readCount);
 			if(readCount - 4 != numberOfBytes/2) //readCount == 4096)
 			{
 				__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x" << std::hex << readCount <<
@@ -366,9 +366,9 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 				__FE_SS_THROW__;
 			}
 
-			//now read back 
+			//now read back
 			readBlock(tmpReadData, ROC_ADDRESS_ACTION_COMMAND, readCount - 4, false /* incrementAddress */);
-			// getDevice()->end_dcs_transaction(); //re-allow other transactions		
+			// getDevice()->end_dcs_transaction(); //re-allow other transactions	
 		}
 		catch(const std::exception& e)
 		{
@@ -386,17 +386,17 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 	__FE_COUTV__(readData.size());
 
 	size_t readCount = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) & 0x7ff; //only low 11-bits are size (12 is empty, 14 is full)
-	__FE_COUTV__(readCount); 
-	
+	__FE_COUTV__(readCount);
+
 } //end readSPIFlashBlock()
 
 //==================================================================================================
-/// 32 programming words = each pair of programming words contain a programming image 
-/// index to be written to increasing SPI address starting from 0x0 (ie image 0 descriptor 
+/// 32 programming words = each pair of programming words contain a programming image
+/// index to be written to increasing SPI address starting from 0x0 (ie image 0 descriptor
 /// pointer to address 0, image 1 descriptor pointer to address 4…)
+///
 /// 
-/// 
-/// The RETURN_STATUS register will return a fail count, ie how many times the image index 
+/// The RETURN_STATUS register will return a fail count, ie how many times the image index
 /// read back from the SPI is not equal to what was written.
 void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_t>& imageAddresses, bool waitForDone /* = true */)
 {
@@ -438,7 +438,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_
 	}
 	if(!waitForDone)
 	{
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
@@ -450,7 +450,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_
 			__FE_SS_THROW__;
 		}
 	}
-	
+
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
@@ -486,18 +486,18 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_
 } //end writeSPIFlashDirectory()
 
 //==================================================================================================
-/// The programming words contain 1kB of data from the bitstream file. Multiple 
-/// “load of image” commands are needed to pass the full bitstream file, whose 
+/// The programming words contain 1kB of data from the bitstream file. Multiple
+/// “load of image” commands are needed to pass the full bitstream file, whose
 /// name is passes via an OTSDAQ Macromaker function. It is up to the DTC to manage
 /// the start writing address for each block. The last block may have Nwords < 512
 /// and less programming words.
-/// 
-/// 
-/// The RETURN_STATUS register will return a “chunk” fail mask. The 1 kB of data is 
-/// passed to the Flash SPI in 8 chunks of 128 bit each. After each chunk, the SPI is 
-/// read back and compared to the written data. The fail mask will contain 1 in bit(i) 
-/// is the i-th chunk verification failed. It is up to the DTC to decide whether to 
-/// resend the whole 1 kB data or 1kB starting from the address where the first failure 
+///
+///
+/// The RETURN_STATUS register will return a “chunk” fail mask. The 1 kB of data is
+/// passed to the Flash SPI in 8 chunks of 128 bit each. After each chunk, the SPI is
+/// read back and compared to the written data. The fail mask will contain 1 in bit(i)
+/// is the i-th chunk verification failed. It is up to the DTC to decide whether to
+/// resend the whole 1 kB data or 1kB starting from the address where the first failure
 /// happened.
 ///
 /// Note: should be called in thread because it could take a long time
@@ -518,7 +518,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		DTCLib::roc_data_t(startAddress >> 16), //MSBs
 		//2nd command word, is a 32-bit parameter passed via the fourth (16LSB) and fifth (16MSB) command words
 		DTCLib::roc_data_t(writeData.size()), //LSBs
-		0 //MSBs		
+		0 //MSBs
 	};
 
 	for(size_t i = 0; i < writeData.size(); ++i)
@@ -541,7 +541,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 
 	if(!waitForDone)
 	{
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
@@ -553,7 +553,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 			__FE_SS_THROW__;
 		}
 	}
-	
+
 	DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
@@ -614,7 +614,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 	}
 	if(!waitForDone)
 	{
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
@@ -626,7 +626,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 			__FE_SS_THROW__;
 		}
 	}
-	
+
 	// DTCLib::roc_data_t readStatus;
 	{ //start action lock
 		std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
@@ -659,7 +659,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize, uint32_t 
 } //end eraseSPIFlashBlock()
 
 //==================================================================================================
-/// The RETURN_STATUS register contain the error returned by the IAP programming. 
+/// The RETURN_STATUS register contain the error returned by the IAP programming.
 /// It is 0x0 if no error.
 void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index, bool waitForDone /* = true */)
 {
@@ -672,10 +672,10 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index, bool waitFo
 		0 //MSBs
 	};
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
-	
+
 	if(!waitForDone)
 	{
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
@@ -722,7 +722,7 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index, bool waitFo
 } //end programFromSPIByIndex()
 
 //==================================================================================================
-/// The RETURN_STATUS register contain the error returned by the IAP programming. 
+/// The RETURN_STATUS register contain the error returned by the IAP programming.
 /// It is 0x0 if no error.
 void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress, bool waitForDone /* = true */)
 {
@@ -735,10 +735,10 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress, b
 		0 //MSBs
 	};
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
-	
+
 	if(!waitForDone)
 	{
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
@@ -785,7 +785,7 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress, b
 } //end programFromSPIByAddress()
 
 //==================================================================================================
-/// The RETURN_STATUS register contain the error returned by the IAP programming. 
+/// The RETURN_STATUS register contain the error returned by the IAP programming.
 /// It is 0x0 if no error.
 void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */)
 {
@@ -799,10 +799,10 @@ void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */
 		0 //MSBs
 	};
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
-	
+
 	if(!waitForDone)
 	{
-		if(actionLock_.try_lock()) 
+		if(actionLock_.try_lock())
 		{
 			__FE_COUTT__ << "Have ROC action lock" << __E__;
 			writeBlock(commandData,ROC_ADDRESS_ACTION_COMMAND,false /* incrementAddress */);
@@ -867,7 +867,7 @@ void ROCPolarFireCoreInterface::ReadSPIFlashBlock(__ARGS__)
 		numberOfBytes << " bytes) from address 0x" << std::hex << startAddress << ":" << __E__;
 	for(size_t i = 0; i < readData.size(); i+=2)
 	{
-		if(i%16 == 0) 
+		if(i%16 == 0)
 		{
 			outss << "0x" << std::hex << std::setw(8) << std::setfill('0') << startAddress + i;
 			outss << ": 0x";
@@ -909,11 +909,11 @@ void ROCPolarFireCoreInterface::WriteSPIFlashDirectory(__ARGS__)
 		{
 			uint32_t value = std::stoi(line, nullptr, 16);
 			__FE_COUT__ << value << " 0x" << std::hex << value << __E__;
-			writeData.push_back(value);  
+			writeData.push_back(value); 
 		}
 		fclose(fp);
 	}
-	
+
 	__FE_COUTV__(StringMacros::vectorToString(writeData));
 	writeSPIFlashDirectory(writeData);
 
