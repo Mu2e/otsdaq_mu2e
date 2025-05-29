@@ -368,7 +368,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 
 			//now read back
 			readBlock(tmpReadData, ROC_ADDRESS_ACTION_COMMAND, readCount - 4, false /* incrementAddress */);
-			// getDevice()->end_dcs_transaction(); //re-allow other transactions	
+			// getDevice()->end_dcs_transaction(); //re-allow other transactions
 		}
 		catch(const std::exception& e)
 		{
@@ -395,7 +395,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 /// index to be written to increasing SPI address starting from 0x0 (ie image 0 descriptor
 /// pointer to address 0, image 1 descriptor pointer to address 4…)
 ///
-/// 
+///
 /// The RETURN_STATUS register will return a fail count, ie how many times the image index
 /// read back from the SPI is not equal to what was written.
 void ROCPolarFireCoreInterface::writeSPIFlashDirectory(const std::vector<uint32_t>& imageAddresses, bool waitForDone /* = true */)
@@ -863,7 +863,7 @@ void ROCPolarFireCoreInterface::ReadSPIFlashBlock(__ARGS__)
 	readSPIFlashBlock(readData,startAddress,numberOfBytes);
 
 	std::stringstream outss;
-	outss << "\nRead " << readData.size()*2 << " bytes (requested " << 
+	outss << "\nRead " << readData.size()*2 << " bytes (requested " <<
 		numberOfBytes << " bytes) from address 0x" << std::hex << startAddress << ":" << __E__;
 	for(size_t i = 0; i < readData.size(); i+=2)
 	{
@@ -909,7 +909,7 @@ void ROCPolarFireCoreInterface::WriteSPIFlashDirectory(__ARGS__)
 		{
 			uint32_t value = std::stoi(line, nullptr, 16);
 			__FE_COUT__ << value << " 0x" << std::hex << value << __E__;
-			writeData.push_back(value); 
+			writeData.push_back(value);
 		}
 		fclose(fp);
 	}
