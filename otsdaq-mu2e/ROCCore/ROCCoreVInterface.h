@@ -88,7 +88,7 @@ class ROCCoreVInterface : public FEVInterface
 
 	// hardware access
 	//----------------
-	virtual mu2edev* 					getDevice					(void) { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_->GetDevice();};	
+	virtual mu2edev* 					getDevice					(void) { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_->GetDevice();};
 	inline DTCLib::DTC* 				getDTC						(void) { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_;};
 
 	// bool         									emulatorMode_; // Deprecated! Use mu2esim in mu2e-pcie-utils
