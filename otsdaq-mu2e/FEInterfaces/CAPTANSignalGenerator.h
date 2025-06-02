@@ -32,6 +32,14 @@ class CAPTANSignalGenerator : public FEVInterface,
 	virtual void universalRead(char* address, char* readValue) override;
 	virtual void universalWrite(char* address, char* writeValue) override;
 
+	void getFirmwareVersion(__ARGS__);
+	void getPulsePeriod(__ARGS__);
+	void setPulsePeriod(__ARGS__);
+	void getTriggerMode(__ARGS__);
+	void setTriggerMode(__ARGS__);
+	void setTriggerMode(uint64_t triggerMode);
+	void setupBurstMode(__ARGS__);
+
   private:
   public:  // FEMacro 'varTest' generated, Oct-11-2018 11:36:28, by 'admin' using
 	       // MacroMaker.
