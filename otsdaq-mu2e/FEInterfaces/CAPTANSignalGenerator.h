@@ -39,8 +39,24 @@ class CAPTANSignalGenerator : public FEVInterface,
 	void setTriggerMode(__ARGS__);
 	void setTriggerMode(uint64_t triggerMode);
 	void setupBurstMode(__ARGS__);
+	// void ReadRTF(uint64_t macroAddress, char* data);
 
   private:
+	enum RTF_Register : uint64_t
+	{
+		// READ ONLY REGISTERS
+		FirmwareVersion 			= 0x0,
+		ManualModeStatus 			= 0x1,
+		TriggerPeriod 				= 0x2,
+		ClockSourcePLL 				= 0x3,
+		PLLCounterLossLock200MHz	= 0x4,
+		PLLCounterLossLockRF0		= 0x5,
+
+		// WRITE ONLY REGISTERS
+		ManualMode			= 0x9,
+		BurstCount 	  		= 0xA,
+		TriggerFrequency 	= 0xB,
+	};
   public:  // FEMacro 'varTest' generated, Oct-11-2018 11:36:28, by 'admin' using
 	       // MacroMaker.
 	void varTest(__ARGS__);
