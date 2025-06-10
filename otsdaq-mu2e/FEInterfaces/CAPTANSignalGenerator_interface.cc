@@ -4,7 +4,6 @@
 #include "otsdaq/Macros/CoutMacros.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq/MessageFacility/MessageFacility.h"
-#include "otsdaq/Macros/BinaryStringMacros.h"
 
 using namespace ots;
 
@@ -441,9 +440,27 @@ void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
 	uint64_t macroAddress = RTF_Register::FirmwareVersion;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
 	universalRead(address, data);
+	memcpy(&macroArgs["firmwareVersionHex"], data, 8);
 
-	memcpy(&macroArgs["firmwareVersion"], data, 8);
-	__SET_ARG_OUT__("Firmware Version", macroArgs["firmwareVersion"]);
+	uint64_t macroData = macroArgs["firmwareVersionHex"];
+    std::vector<std::string> mapMonth = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    uint64_t yearHex   = (macroData >> 40) & 0xFFFF;
+    uint64_t monthHex  = (macroData >> 32) & 0xFF;
+    uint64_t month_    = ((monthHex & 0xF0) >> 4) * 10 + (monthHex & 0x0F);
+    uint64_t dayHex    = (macroData >> 24) & 0xFF;
+    uint64_t hourHex   = (macroData >> 16) & 0xFF;
+    
+    std::stringstream ss;
+    ss << "RTF-";
+    ss << std::hex << mapMonth.at(month_ - 1) << "/";
+    ss << std::hex << dayHex << "/";
+    ss << std::hex << yearHex << "  ";
+    ss << std::hex << hourHex << ":00  ";
+    ss << "raw-data: 0x" << std::hex << macroArgs["firmwareVersionHex"];
+	
+	std::string firmwareVersion = ss.str();
+	__FE_COUTV__(firmwareVersion);
+	__SET_ARG_OUT__("Firmware Version", ss.str());
 
 	delete[] address;  // free the memory
 	delete[] data;     // free the memory
