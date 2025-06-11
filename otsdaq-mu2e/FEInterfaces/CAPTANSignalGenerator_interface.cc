@@ -56,79 +56,73 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	registerFEMacroFunction(
 	    "Get Firmware Version",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::getFirmwareVersion), 	// feMacroFunction
-	    std::vector<std::string>{},        				 	// namesOfInputArgs
-	    std::vector<std::string>{"Firmware Version Date"},	// namesOfOutputArgs
-	    1,                                             	 	// requiredUserPermissions
-		"*",
-		"Get RTF firmware version."
-	);                                              
-	
+	        &CAPTANSignalGenerator::getFirmwareVersion),    // feMacroFunction
+	    std::vector<std::string>{},                         // namesOfInputArgs
+	    std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
+	    1,                                                  // requiredUserPermissions
+	    "*",
+	    "Get RTF firmware version.");
+
 	registerFEMacroFunction(
 	    "Get Pulse Period",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::getPulsePeriod), 	 // feMacroFunction
-	    std::vector<std::string>{},        				 // namesOfInputArgs
-	    std::vector<std::string>{"Pulse Period (us)",	 // namesOfOutputArgs
-								"Low Pulse Width (Clock Cycle := 10 ns)"},
-	    1,                                               // requiredUserPermissions
-		"*",
-		"Returns the clock period of the pulse trigger in microseconds. "
-		"The 'Low Pulse Width' is the number of clock cycles the trigger stays low. "
-		"The amount of time the pulse is high is hard coded in firmware (10 clock cycles)."
-	);
+	        &CAPTANSignalGenerator::getPulsePeriod),   // feMacroFunction
+	    std::vector<std::string>{},                    // namesOfInputArgs
+	    std::vector<std::string>{"Pulse Period (us)",  // namesOfOutputArgs
+	                             "Low Pulse Width (Clock Cycle := 10 ns)"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Returns the clock period of the pulse trigger in microseconds. "
+	    "The 'Low Pulse Width' is the number of clock cycles the trigger stays low. "
+	    "The amount of time the pulse is high is hard coded in firmware (10 clock "
+	    "cycles).");
 
 	registerFEMacroFunction(
 	    "Get Pulse Gen Mode",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::getManualMode), 	 // feMacroFunction
-	    std::vector<std::string>{},        				 // namesOfInputArgs
-	    std::vector<std::string>{"Pulse Gen Mode"},		 // namesOfOutputArgs
-	    1,                                               // requiredUserPermissions
-		"*",
-		"Reads the mode of the pulse generator. "
-		"When mode = 1, the RTF pauses all pulses. "
-		"When mode = 0, the RTF runs continuous pulses."
-	);
+	        &CAPTANSignalGenerator::getManualMode),  // feMacroFunction
+	    std::vector<std::string>{},                  // namesOfInputArgs
+	    std::vector<std::string>{"Pulse Gen Mode"},  // namesOfOutputArgs
+	    1,                                           // requiredUserPermissions
+	    "*",
+	    "Reads the mode of the pulse generator. "
+	    "When mode = 1, the RTF pauses all pulses. "
+	    "When mode = 0, the RTF runs continuous pulses.");
 
 	registerFEMacroFunction(
 	    "Set Pulse Gen Mode",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::setManualMode), 	 // feMacroFunction
-	    std::vector<std::string>{"Pulse Gen Mode"},		 // namesOfInputArgs
-	    std::vector<std::string>{},  					 // namesOfOutputArgs
-	    1,                                               // requiredUserPermissions
-		"*",
-		"Sets the mode of the pulse generator. "
-		"When mode = 1, the RTF pauses all pulses. "
-		"When mode = 0, the RTF runs continuous pulses."
-	);
+	        &CAPTANSignalGenerator::setManualMode),  // feMacroFunction
+	    std::vector<std::string>{"Pulse Gen Mode"},  // namesOfInputArgs
+	    std::vector<std::string>{},                  // namesOfOutputArgs
+	    1,                                           // requiredUserPermissions
+	    "*",
+	    "Sets the mode of the pulse generator. "
+	    "When mode = 1, the RTF pauses all pulses. "
+	    "When mode = 0, the RTF runs continuous pulses.");
 
 	registerFEMacroFunction(
 	    "Set Burst Mode",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::setupBurstMode), 	 // feMacroFunction
-	    std::vector<std::string>{"Burst Count"},		 // namesOfInputArgs
-	    std::vector<std::string>{},  					 // namesOfOutputArgs
-	    1,                                               // requiredUserPermissions	
-		"*",
-		"Creates a burst of pulses. "
-		"The RTF stops all pulses after the last count. "
-		"Set manual mode to 0 to run continous pulses."
-	);
+	        &CAPTANSignalGenerator::setupBurstMode),  // feMacroFunction
+	    std::vector<std::string>{"Burst Count"},      // namesOfInputArgs
+	    std::vector<std::string>{},                   // namesOfOutputArgs
+	    1,                                            // requiredUserPermissions
+	    "*",
+	    "Creates a burst of pulses. "
+	    "The RTF stops all pulses after the last count. "
+	    "Set manual mode to 0 to run continous pulses.");
 
 	registerFEMacroFunction(
 	    "Set Pulse Period",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::setPulsePeriod), 	 // feMacroFunction
-	    std::vector<std::string>{
-			"Trigger Period (s, ms, us, ns, and clocks allowed) [clocks := 10ns]"
-			},		 									 // namesOfInputArgs
-	    std::vector<std::string>{},  					 // namesOfOutputArgs
-	    1,                                               // requiredUserPermissions	
-		"*",
-		"Sets the pulse generator’s trigger period."
-	);
+	        &CAPTANSignalGenerator::setPulsePeriod),  // feMacroFunction
+	    std::vector<std::string>{"Trigger Period (s, ms, us, ns, and clocks allowed) "
+	                             "[clocks := 10ns]"},  // namesOfInputArgs
+	    std::vector<std::string>{},                    // namesOfOutputArgs
+	    1,                                             // requiredUserPermissions
+	    "*",
+	    "Sets the pulse generator’s trigger period.");
 
 	universalAddressSize_ = 8;
 	universalDataSize_    = 8;
@@ -452,8 +446,8 @@ void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
 	std::map<std::string, uint64_t> macroArgs;
-	char* address = new char[universalAddressSize_]{0};
-	std::string readBuffer, sendBuffer;
+	char*                           address = new char[universalAddressSize_]{0};
+	std::string                     readBuffer, sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::FirmwareVersion;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
@@ -464,27 +458,38 @@ void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
 	uint64_t macroData;
 	memcpy(&macroData, readBuffer.substr(2).data(), universalDataSize_);
 
-    std::vector<std::string> mapMonth = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-    uint64_t yearHex   = (macroData >> 40) & 0xFFFF;
-    uint64_t monthHex  = (macroData >> 32) & 0xFF;
-    uint64_t month_    = ((monthHex & 0xF0) >> 4) * 10 + (monthHex & 0x0F);
-    uint64_t dayHex    = (macroData >> 24) & 0xFF;
-    uint64_t hourHex   = (macroData >> 16) & 0xFF;
+	std::vector<std::string> mapMonth = {"Jan",
+	                                     "Feb",
+	                                     "Mar",
+	                                     "Apr",
+	                                     "May",
+	                                     "Jun",
+	                                     "Jul",
+	                                     "Aug",
+	                                     "Sep",
+	                                     "Oct",
+	                                     "Nov",
+	                                     "Dec"};
+	uint64_t                 yearHex  = (macroData >> 40) & 0xFFFF;
+	uint64_t                 monthHex = (macroData >> 32) & 0xFF;
+	uint64_t                 month_   = ((monthHex & 0xF0) >> 4) * 10 + (monthHex & 0x0F);
+	uint64_t                 dayHex   = (macroData >> 24) & 0xFF;
+	uint64_t                 hourHex  = (macroData >> 16) & 0xFF;
 
-    std::stringstream ss;
-    ss << "RTF-";
-    ss << std::hex << mapMonth.at(month_ - 1) << "/";
-    ss << std::hex << std::setfill('0') << std::setw(2) << dayHex << "/";
-    ss << std::hex << yearHex << "  ";
-    ss << std::hex << hourHex << ":00  ";
-    ss << "raw-data: 0x" << std::hex << macroData;
+	std::stringstream ss;
+	ss << "RTF-";
+	ss << std::hex << mapMonth.at(month_ - 1) << "/";
+	ss << std::hex << std::setfill('0') << std::setw(2) << dayHex << "/";
+	ss << std::hex << yearHex << "  ";
+	ss << std::hex << hourHex << ":00  ";
+	ss << "raw-data: 0x" << std::hex << macroData;
 
 	std::string firmwareVersion = ss.str();
 	__FE_COUTV__(firmwareVersion);
 	__SET_ARG_OUT__("Firmware Version Date", ss.str());
 
 	delete[] address;  // free the memory
-} // end getFirmwareVersion()
+}  // end getFirmwareVersion()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::getPulsePeriod(__ARGS__)
@@ -494,7 +499,7 @@ void ots::CAPTANSignalGenerator::getPulsePeriod(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	char* address = new char[universalAddressSize_]{0};
+	char*       address = new char[universalAddressSize_]{0};
 	std::string readBuffer, sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::TriggerPeriod;
@@ -505,19 +510,21 @@ void ots::CAPTANSignalGenerator::getPulsePeriod(__ARGS__)
 
 	uint64_t lowPulseWidth;
 	memcpy(&lowPulseWidth, readBuffer.substr(2).data(), universalDataSize_);
-	__FE_COUT__ << "Low Pulse Width " << lowPulseWidth << " clock cycles (clock cycle := 10 ns)" << __E__;
+	__FE_COUT__ << "Low Pulse Width " << lowPulseWidth
+	            << " clock cycles (clock cycle := 10 ns)" << __E__;
 
 	uint64_t scaleMicrosecond = 1000;
-	uint64_t highPulseWidth = 10;
-	uint64_t clockPeriod_ = 10;
-	uint64_t pulsePeriod = (lowPulseWidth + highPulseWidth) * clockPeriod_ / scaleMicrosecond;
+	uint64_t highPulseWidth   = 10;
+	uint64_t clockPeriod_     = 10;
+	uint64_t pulsePeriod =
+	    (lowPulseWidth + highPulseWidth) * clockPeriod_ / scaleMicrosecond;
 	__FE_COUT__ << "Pulse Period = " << lowPulseWidth << " us" << __E__;
 
 	__SET_ARG_OUT__("Pulse Period (us)", pulsePeriod);
 	__SET_ARG_OUT__("Low Pulse Width (Clock Cycle := 10 ns)", lowPulseWidth);
 
-	delete[] address;  		// free the memory
-} // end getPulsePeriod()
+	delete[] address;  // free the memory
+}  // end getPulsePeriod()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::setPulsePeriod(__ARGS__)
@@ -527,19 +534,21 @@ void ots::CAPTANSignalGenerator::setPulsePeriod(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	std::string pulsePeriod = __GET_ARG_IN__("Trigger Period (s, ms, us, ns, and clocks allowed) [clocks := 10ns]", std::string);
+	std::string pulsePeriod = __GET_ARG_IN__(
+	    "Trigger Period (s, ms, us, ns, and clocks allowed) [clocks := 10ns]",
+	    std::string);
 
 	__FE_COUTV__(pulsePeriod);
 	bool   foundUnits = false;
 	size_t i;
 	for(i = 0; i < pulsePeriod.size(); ++i)
-		if(pulsePeriod[i] == 's' || pulsePeriod[i] == 'm' ||
-		   pulsePeriod[i] == 'u' || pulsePeriod[i] == 'n' || pulsePeriod[i] == 'c')
+		if(pulsePeriod[i] == 's' || pulsePeriod[i] == 'm' || pulsePeriod[i] == 'u' ||
+		   pulsePeriod[i] == 'n' || pulsePeriod[i] == 'c')
 		{
 			foundUnits = true;
 			break;
 		}
-	
+
 	if(!foundUnits)
 	{
 		__FE_SS__
@@ -574,7 +583,7 @@ void ots::CAPTANSignalGenerator::setPulsePeriod(__ARGS__)
 	__FE_COUTV__(timeValue);
 	if(timeValue < value)
 		timeValue = value;
-	
+
 	const uint64_t FPGAClock_ = 10;  //period of FPGA clock in ns
 	__FE_COUTV__(FPGAClock_);
 	__FE_COUTV__(value);
@@ -616,16 +625,16 @@ void ots::CAPTANSignalGenerator::setPulsePeriod(__ARGS__)
 		__FE_SS__ << "The event duration input parameter can not evaluate to less than "
 		             "11 clocks (110ns). The input value '"
 		          << pulsePeriodSplitNumber << " " << pulsePeriodSplitUnits
-		          << "' evaluates to " << pulsePeriodInClocks << "clocks < 110."
-		          << __E__;
+		          << "' evaluates to " << pulsePeriodInClocks << "clocks < 110." << __E__;
 		__FE_SS_THROW__;
 	}
 
 	uint64_t highPulseWidth = 10;
-	pulsePeriodInClocks = pulsePeriodInClocks - highPulseWidth; // offset for when trigger is high 
+	pulsePeriodInClocks =
+	    pulsePeriodInClocks - highPulseWidth;  // offset for when trigger is high
 
-	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
+	char*       address = new char[universalAddressSize_]{0};
+	char*       data    = new char[universalDataSize_]{0};
 	std::string sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::TriggerFrequency;
@@ -642,7 +651,7 @@ void ots::CAPTANSignalGenerator::setPulsePeriod(__ARGS__)
 
 	delete[] address;  // free the memory
 	delete[] data;     // free the memory
-} // end setPulsePeriod()
+}  // end setPulsePeriod()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::setupBurstMode(__ARGS__)
@@ -652,8 +661,8 @@ void ots::CAPTANSignalGenerator::setupBurstMode(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
+	char*       address = new char[universalAddressSize_]{0};
+	char*       data    = new char[universalDataSize_]{0};
 	std::string sendBuffer;
 
 	uint64_t mode = 1;
@@ -670,7 +679,7 @@ void ots::CAPTANSignalGenerator::setupBurstMode(__ARGS__)
 
 	delete[] address;  // free the memory
 	delete[] data;     // free the memory
-} // end setupBurstMode()
+}  // end setupBurstMode()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::getManualMode(__ARGS__)
@@ -680,7 +689,7 @@ void ots::CAPTANSignalGenerator::getManualMode(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	char* address = new char[universalAddressSize_]{0};
+	char*       address = new char[universalAddressSize_]{0};
 	std::string readBuffer, sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::ManualModeStatus;
@@ -697,7 +706,7 @@ void ots::CAPTANSignalGenerator::getManualMode(__ARGS__)
 	__SET_ARG_OUT__("Pulse Gen Mode", macroData);
 
 	delete[] address;  // free the memory
-} // end getManualMode()
+}  // end getManualMode()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::setManualMode(__ARGS__)
@@ -711,22 +720,20 @@ void ots::CAPTANSignalGenerator::setManualMode(__ARGS__)
 
 	if(manualMode != 0 && manualMode != 1)
 	{
-		__FE_SS__
-		    << "Pulse Gen Mode must be 0 or 1 to be a valid input parameter. "
-		       "Mode' value: "
-		    << manualMode
-		    << __E__;
+		__FE_SS__ << "Pulse Gen Mode must be 0 or 1 to be a valid input parameter. "
+		             "Mode' value: "
+		          << manualMode << __E__;
 		__FE_SS_THROW__;
 	}
 
 	setManualMode(manualMode);
-} // end setManualMode()
+}  // end setManualMode()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::setManualMode(uint64_t manualMode)
 {
-	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
+	char*       address = new char[universalAddressSize_]{0};
+	char*       data    = new char[universalDataSize_]{0};
 	std::string sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::ManualMode;
@@ -735,7 +742,7 @@ void ots::CAPTANSignalGenerator::setManualMode(uint64_t manualMode)
 
 	OtsUDPFirmwareCore::writeAdvanced(sendBuffer, address, data, 1 /*size*/);
 	OtsUDPHardware::write(sendBuffer);  // data request
-} // end setManualMode()
+}  // end setManualMode()
 
 //==============================================================================
 // varTest
