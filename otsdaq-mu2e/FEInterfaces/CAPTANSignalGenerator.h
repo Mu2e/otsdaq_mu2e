@@ -35,11 +35,10 @@ class CAPTANSignalGenerator : public FEVInterface,
 	void getFirmwareVersion(__ARGS__);
 	void getPulsePeriod(__ARGS__);
 	void setPulsePeriod(__ARGS__);
-	void getTriggerMode(__ARGS__);
-	void setTriggerMode(__ARGS__);
-	void setTriggerMode(uint64_t triggerMode);
+	void getManualMode(__ARGS__);
+	void setManualMode(__ARGS__);
+	void setManualMode(uint64_t manualMode);
 	void setupBurstMode(__ARGS__);
-	// void ReadRTF(uint64_t macroAddress, char* data);
 
   private:
 	enum RTF_Register : uint64_t
