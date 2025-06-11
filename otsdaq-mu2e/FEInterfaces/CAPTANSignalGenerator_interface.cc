@@ -56,10 +56,10 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	registerFEMacroFunction(
 	    "Get Firmware Version",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &CAPTANSignalGenerator::getFirmwareVersion), // feMacroFunction
-	    std::vector<std::string>{},        				 // namesOfInputArgs
-	    std::vector<std::string>{"Firmware Version"},	 // namesOfOutputArgs
-	    1,                                             	 // requiredUserPermissions
+	        &CAPTANSignalGenerator::getFirmwareVersion), 	// feMacroFunction
+	    std::vector<std::string>{},        				 	// namesOfInputArgs
+	    std::vector<std::string>{"Firmware Version Date"},	// namesOfOutputArgs
+	    1,                                             	 	// requiredUserPermissions
 		"*",
 		"Get RTF firmware version."
 	);                                              
@@ -474,14 +474,14 @@ void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
     std::stringstream ss;
     ss << "RTF-";
     ss << std::hex << mapMonth.at(month_ - 1) << "/";
-    ss << std::hex << dayHex << "/";
+    ss << std::hex << std::setfill('0') << std::setw(2) << dayHex << "/";
     ss << std::hex << yearHex << "  ";
     ss << std::hex << hourHex << ":00  ";
     ss << "raw-data: 0x" << std::hex << macroData;
 
 	std::string firmwareVersion = ss.str();
 	__FE_COUTV__(firmwareVersion);
-	__SET_ARG_OUT__("Firmware Version", ss.str());
+	__SET_ARG_OUT__("Firmware Version Date", ss.str());
 
 	delete[] address;  // free the memory
 } // end getFirmwareVersion()
