@@ -32,6 +32,7 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
                                 .getNode("FirmwareVersion")
                                 .getValue<unsigned int>())
 {
+	/*
 	// registration of FEMacro 'varTest2' generated, Oct-11-2018 02:28:57, by
 	// 'admin' using MacroMaker.
 	registerFEMacroFunction(
@@ -51,7 +52,7 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    std::vector<std::string>{"myOtherArg"},        // namesOfInputArgs
 	    std::vector<std::string>{"myArg", "outArg1"},  // namesOfOutputArgs
 	    1);                                            // requiredUserPermissions
-
+	*/
 	registerFEMacroFunction(
 	    "Get Firmware Version",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -443,15 +444,6 @@ void ots::CAPTANSignalGenerator::universalWrite(char* address, char* writeValue)
 }  // end universalWrite()
 
 //==============================================================================
-// void ots::CAPTANSignalGenerator::ReadRTF(uint64_t macroAddress, char* data)
-// {
-// 	char* address = new char[universalAddressSize_]{0};
-// 	memcpy(address, &macroAddress, sizeof(macroAddress));
-// 	universalRead(address, data);
-// 	delete[] address;
-// }
-
-//==============================================================================
 void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
@@ -461,35 +453,37 @@ void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
 
 	std::map<std::string, uint64_t> macroArgs;
 	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
-	
+	std::string readBuffer, sendBuffer;
+
 	uint64_t macroAddress = RTF_Register::FirmwareVersion;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
-	universalRead(address, data);
-	memcpy(&macroArgs["firmwareVersionHex"], data, 8);
 
-	uint64_t macroData = macroArgs["firmwareVersionHex"];
+	OtsUDPFirmwareCore::readAdvanced(sendBuffer, address, 1 /*size*/);
+	OtsUDPHardware::read(sendBuffer, readBuffer);  // data reply
+
+	uint64_t macroData;
+	memcpy(&macroData, readBuffer.substr(2).data(), universalDataSize_);
+
     std::vector<std::string> mapMonth = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     uint64_t yearHex   = (macroData >> 40) & 0xFFFF;
     uint64_t monthHex  = (macroData >> 32) & 0xFF;
     uint64_t month_    = ((monthHex & 0xF0) >> 4) * 10 + (monthHex & 0x0F);
     uint64_t dayHex    = (macroData >> 24) & 0xFF;
     uint64_t hourHex   = (macroData >> 16) & 0xFF;
-    
+
     std::stringstream ss;
     ss << "RTF-";
     ss << std::hex << mapMonth.at(month_ - 1) << "/";
     ss << std::hex << dayHex << "/";
     ss << std::hex << yearHex << "  ";
     ss << std::hex << hourHex << ":00  ";
-    ss << "raw-data: 0x" << std::hex << macroArgs["firmwareVersionHex"];
-	
+    ss << "raw-data: 0x" << std::hex << macroData;
+
 	std::string firmwareVersion = ss.str();
 	__FE_COUTV__(firmwareVersion);
 	__SET_ARG_OUT__("Firmware Version", ss.str());
 
 	delete[] address;  // free the memory
-	delete[] data;     // free the memory
 } // end getFirmwareVersion()
 
 //==============================================================================
@@ -500,31 +494,29 @@ void ots::CAPTANSignalGenerator::getPulsePeriod(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	std::map<std::string, uint64_t> macroArgs;
 	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
-	
+	std::string readBuffer, sendBuffer;
+
 	uint64_t macroAddress = RTF_Register::TriggerPeriod;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
-	universalRead(address, data);
+
+	OtsUDPFirmwareCore::readAdvanced(sendBuffer, address, 1 /*size*/);
+	OtsUDPHardware::read(sendBuffer, readBuffer);  // data reply
 
 	uint64_t lowPulseWidth;
-	memcpy(&lowPulseWidth, data, 8);
-    macroArgs["Low Pulse Width (Clock Cycle := 10 ns)"] = lowPulseWidth;
+	memcpy(&lowPulseWidth, readBuffer.substr(2).data(), universalDataSize_);
 	__FE_COUT__ << "Low Pulse Width " << lowPulseWidth << " clock cycles (clock cycle := 10 ns)" << __E__;
 
 	uint64_t scaleMicrosecond = 1000;
 	uint64_t highPulseWidth = 10;
 	uint64_t clockPeriod_ = 10;
 	uint64_t pulsePeriod = (lowPulseWidth + highPulseWidth) * clockPeriod_ / scaleMicrosecond;
-	macroArgs["Pulse Period (us)"] = pulsePeriod;
 	__FE_COUT__ << "Pulse Period = " << lowPulseWidth << " us" << __E__;
 
-	__SET_ARG_OUT__("Pulse Period (us)", macroArgs["Pulse Period (us)"]);
-	__SET_ARG_OUT__("Low Pulse Width (Clock Cycle := 10 ns)", macroArgs["Low Pulse Width (Clock Cycle := 10 ns)"]);
+	__SET_ARG_OUT__("Pulse Period (us)", pulsePeriod);
+	__SET_ARG_OUT__("Low Pulse Width (Clock Cycle := 10 ns)", lowPulseWidth);
 
 	delete[] address;  		// free the memory
-	delete[] data;     		// free the memory
 } // end getPulsePeriod()
 
 //==============================================================================
@@ -618,28 +610,39 @@ void ots::CAPTANSignalGenerator::setPulsePeriod(__ARGS__)
 		__FE_SS_THROW__;
 	}
 
-	std::map<std::string, uint64_t> macroArgs;
+	__FE_COUTV__(pulsePeriodInClocks);
+	if(pulsePeriodInClocks < 11)
+	{
+		__FE_SS__ << "The event duration input parameter can not evaluate to less than "
+		             "11 clocks (110ns). The input value '"
+		          << pulsePeriodSplitNumber << " " << pulsePeriodSplitUnits
+		          << "' evaluates to " << pulsePeriodInClocks << "clocks < 110."
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
+	uint64_t highPulseWidth = 10;
+	pulsePeriodInClocks = pulsePeriodInClocks - highPulseWidth; // offset for when trigger is high 
+
 	char* address = new char[universalAddressSize_]{0};
 	char* data = new char[universalDataSize_]{0};
+	std::string sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::TriggerFrequency;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
 
-	// if(!StringMacros::getNumber(pulsePeriodInClocks, data))
-	// {
-	// 	__FE_SS_THROW__;
-	// }
-
-	uint64_t highPulseWidth = 10;
-	pulsePeriodInClocks = pulsePeriodInClocks - highPulseWidth; // offset for when trigger is high 
-	__FE_COUTV__(pulsePeriodInClocks);
+	__FE_COUT__ << "Sending: ";
+	for(unsigned int i = 0; i < universalAddressSize_; ++i)
+		printf("%2.2X", (unsigned char)address[i]);
+	std::cout << __E__;
 
 	memcpy(data, &pulsePeriodInClocks, 8);
-	universalWrite(address, data);
+	OtsUDPFirmwareCore::writeAdvanced(sendBuffer, address, data, 1 /*size*/);
+	OtsUDPHardware::write(sendBuffer);  // data request
 
 	delete[] address;  // free the memory
 	delete[] data;     // free the memory
-} // end setManualMode()
+} // end setPulsePeriod()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::setupBurstMode(__ARGS__)
@@ -649,9 +652,9 @@ void ots::CAPTANSignalGenerator::setupBurstMode(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	std::map<std::string, uint64_t> macroArgs;
 	char* address = new char[universalAddressSize_]{0};
 	char* data = new char[universalDataSize_]{0};
+	std::string sendBuffer;
 
 	uint64_t mode = 1;
 	setManualMode(mode);
@@ -659,9 +662,11 @@ void ots::CAPTANSignalGenerator::setupBurstMode(__ARGS__)
 	uint64_t macroAddress = RTF_Register::BurstCount;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
 
-	macroArgs["totalPulses"] = __GET_ARG_IN__("Burst Count", uint64_t);
-	memcpy(data, &macroArgs["totalPulses"], 8);
-	universalWrite(address, data);
+	uint64_t totalPulses = __GET_ARG_IN__("Burst Count", uint64_t);
+	memcpy(data, &totalPulses, universalDataSize_);
+
+	OtsUDPFirmwareCore::writeAdvanced(sendBuffer, address, data, 1 /*size*/);
+	OtsUDPHardware::write(sendBuffer);  // data request
 
 	delete[] address;  // free the memory
 	delete[] data;     // free the memory
@@ -675,20 +680,24 @@ void ots::CAPTANSignalGenerator::getManualMode(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	std::map<std::string, uint64_t> macroArgs;
 	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
+	std::string readBuffer, sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::ManualModeStatus;
 	memcpy(address, &macroAddress, sizeof(macroAddress));
-	universalRead(address, data);
 
-	memcpy(&macroArgs["ManualMode"], data, 8);
-	__SET_ARG_OUT__("ManualMode", macroArgs["Manual Mode"]);
+	OtsUDPFirmwareCore::readAdvanced(sendBuffer, address, 1 /*size*/);
+	OtsUDPHardware::read(sendBuffer, readBuffer);  // data reply
+
+	__FE_COUT__ << "Result SIZE: " << readBuffer.size() << __E__;
+
+	uint64_t macroData;
+	memcpy(&macroData, readBuffer.substr(2).data(), universalDataSize_);
+
+	__SET_ARG_OUT__("Manual Mode", macroData);
 
 	delete[] address;  // free the memory
-	delete[] data;     // free the memory
-} // end getTriggerMode()
+} // end getManualMode()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::setManualMode(__ARGS__)
@@ -698,19 +707,9 @@ void ots::CAPTANSignalGenerator::setManualMode(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	std::map<std::string, uint64_t> macroArgs;
-	char* address = new char[universalAddressSize_]{0};
-	char* data = new char[universalDataSize_]{0};
-	
-	uint64_t macroAddress = RTF_Register::ManualMode;
-	memcpy(address, &macroAddress, sizeof(macroAddress));
-	macroArgs["ManualMode"] = __GET_ARG_IN__("Manual Mode", uint64_t);
+	uint64_t manualMode = __GET_ARG_IN__("Manual Mode", uint64_t);
 
-	memcpy(data, &macroArgs["ManualMode"], 8);
-	universalWrite(address, data);
-
-	delete[] address;  // free the memory
-	delete[] data;     // free the memory
+	setManualMode(manualMode);
 } // end setManualMode()
 
 //==============================================================================
@@ -718,11 +717,14 @@ void ots::CAPTANSignalGenerator::setManualMode(uint64_t manualMode)
 {
 	char* address = new char[universalAddressSize_]{0};
 	char* data = new char[universalDataSize_]{0};
+	std::string sendBuffer;
 
 	uint64_t macroAddress = RTF_Register::ManualMode;
-	memcpy(address, &macroAddress, 8);
-	memcpy(data, &manualMode, 8);
-	universalWrite(address, data);
+	memcpy(address, &macroAddress, universalAddressSize_);
+	memcpy(data, &manualMode, universalDataSize_);
+
+	OtsUDPFirmwareCore::writeAdvanced(sendBuffer, address, data, 1 /*size*/);
+	OtsUDPHardware::write(sendBuffer);  // data request
 } // end setManualMode()
 
 //==============================================================================

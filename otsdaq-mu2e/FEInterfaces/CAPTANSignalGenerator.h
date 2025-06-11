@@ -52,9 +52,9 @@ class CAPTANSignalGenerator : public FEVInterface,
 		PLLCounterLossLockRF0		= 0x5,
 
 		// WRITE ONLY REGISTERS
-		ManualMode			= 0x9,
-		BurstCount 	  		= 0xA,
-		TriggerFrequency 	= 0xB,
+		ManualMode					= 0x9,
+		BurstCount 	  				= 0xA,
+		TriggerFrequency 			= 0xB,
 	};
   public:  // FEMacro 'varTest' generated, Oct-11-2018 11:36:28, by 'admin' using
 	       // MacroMaker.
