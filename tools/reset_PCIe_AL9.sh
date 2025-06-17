@@ -1,25 +1,30 @@
-#!/bin/sh
+#!/bin/bash
 # Note to setup vivado lab:
 #   source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 lockfile="/tmp/mu2e.lock"
 # Attempt to create the lock file atomically using ln
-if ! ln -s "$$" "$lockfile" 2>/dev/null; then
+retried=0
+while ! ln -s "$$" "$lockfile" 2>/dev/null; do
     # Check if the existing lock file contains a valid PID
-    if [ -f "$lockfile" ]; then
+    if [ -L "$lockfile" ]; then
         pid=$(readlink "$lockfile")
-        if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
-            echo "Script is already running with PID $pid."
+	possible_parent=`ps aux | grep -E '[0-9] bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|awk '{print$2}'`
+	if [ -n "$pid"  ] && kill -0 "$pid" 2>/dev/null; then
+	    if [ -n "$possible_parent" -a "$possible_parent" = $pid ];then
+		echo lock set by valid non-read_dtc_temps parent
+		break
+	    fi
+	    echo "Script is already running with PID $pid and not valid parent"
             exit 0
         fi
     fi
-    # If stale, remove it and try again
+    # must be stale , remove and try again
+    test $retried -gt 0 && { echo "Failed to acquire lock."; exit 1; }
+    echo 'Stale lock encountered - removing and retrying'
     rm -f "$lockfile"
-    if ! ln -s "$$" "$lockfile" 2>/dev/null; then
-        echo "Failed to acquire lock."
-        exit 1
-    fi
-fi
+    retried=$(($retried+1))
+done
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
 

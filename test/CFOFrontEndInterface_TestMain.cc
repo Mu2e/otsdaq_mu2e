@@ -54,7 +54,7 @@ try
 
 	//==============================================================================
 	// Define environment variables
-	//	Note: normally these environment variables are set by StartOTS.sh
+	//	Note: normally these environment variables are set by ots script
 
 	// These are needed by
 	// otsdaq/otsdaq/ConfigurationDataFormats/ConfigurationInfoReader.cc [207]
@@ -399,7 +399,7 @@ try
 		__SS_THROW__;
 	}
 
-	if(runPlanMode >= 9)
+	if(runPlanMode >= 9 || !cfo.bufferTestThreadStruct_)
 	{
 		__COUT_INFO__ << "Not reading CFO Event Record. Thread and main exited!" << __E__;
 		return 0;
