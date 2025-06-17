@@ -50,14 +50,14 @@ echo "JTAG-1 target flash: ${FLASH_PART1}"
 
 # echo "Loading this mcs file to both DTCs: $1"
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_flash_both_DTCs.tcl -tclargs ${MCS_FILE0} ${FLASH_PART0} ${MCS_FILE1} ${FLASH_PART1} 2>&1 \
-    | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g
-# vivado_lab -mode batch -source program_flash_both_DTCs.tcl -tclargs $1
+    | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
+    | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
 
-#now reset
-echo "Resetting PCIe on ${HOSTNAME}..."
-source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+# #now reset
+# echo "Resetting PCIe on ${HOSTNAME}..."
+# source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo echo
 echo echo
-echo "===> Done with ${HOSTNAME} mcs flash program and PCIe reset!"
+echo "===> Done with ${HOSTNAME} mcs flash program!" # and PCIe reset!"
 echo echo
