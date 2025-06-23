@@ -4902,6 +4902,8 @@ try
 					                 "Event Window Tag = "
 					              << threadStruct->nextEventWindowTag_ << std::endl;
 
+					__COUTV__(threadStruct->saveBinaryDataFilename_);
+
 					//reset counts and (re)open file
 					if(!threadStruct->doNotResetCounters_)
 					{
@@ -4914,7 +4916,8 @@ try
 
 						if(threadStruct->saveBinaryData_)
 						{
-							if(threadStruct->saveBinaryDataFilename_ == "Default")
+							if(threadStruct->saveBinaryDataFilename_ == "Default" ||
+							   threadStruct->saveBinaryDataFilename_ == "")
 							{
 								std::string filename = "macroOutput_" +
 								                       std::to_string(time(0)) + "_" +
