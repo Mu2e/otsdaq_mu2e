@@ -51,7 +51,7 @@ try
 	StringMacros::getVectorFromString(hostname, split, {'.'});
 	StringMacros::getVectorFromString(split[0], split2, {'-'});
 	__COUTV__(split2.back());
-	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex;
+	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex; // + (1 - deviceIndex); //from +deviceIndex
 	__COUTV__(macAddress);
 
 	//==============================================================================
@@ -192,7 +192,8 @@ try
 		// void SetEVBClusterInfo(uint8_t baseDTCAddress, uint8_t numOfDTCs);
 		dtc.thisDTC_->SetEVBInfo(
 		    (1 << 7) | macAddress, 0 /* mode */, 0x99 /* partitionId */, macAddress);
-		dtc.thisDTC_->SetEVBClusterInfo(baseDTCAddress, numOfDTCs);
+		dtc.thisDTC_->SetEVBStartNode(baseDTCAddress);
+		dtc.thisDTC_->SetEVBNumberOfDestinationNodes(numOfDTCs);
 		dtc.SetupCFOInterface(0,       //int forceCFOedge,
 		                      false,   //bool useCFOemulator,
 		                      true,    //bool alsoSetupJA,
