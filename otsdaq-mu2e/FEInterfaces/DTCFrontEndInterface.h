@@ -215,6 +215,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								CFOEmulatorLoopbackTest				(__ARGS__);
 	void 								ManualLoopbackSetup					(__ARGS__);
 
+	void 								ProgramROCs							(__ARGS__);
+
 	// clang-format on
 };
 }  // namespace ots
