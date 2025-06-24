@@ -19,7 +19,15 @@ cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG
   ROOT::RIO
 )
  
-cet_make_library(LIBRARY_NAME CFOFrontEndInterface SOURCE CFOFrontEndInterfaceImpl.cc LIBRARIES PUBLIC otsdaq-mu2e::CFOandDTCCore mu2e-pcie-utils::CFOInterface )
+cet_make_library(LIBRARY_NAME CFOFrontEndInterface SOURCE CFOFrontEndInterfaceImpl.cc
+  LIBRARIES PUBLIC
+  otsdaq-mu2e::CFOandDTCCore
+  mu2e-pcie-utils::CFOInterface
+  ROOT::Hist
+  ROOT::Core
+  ROOT::RIO
+  ROOT::Tree
+)
 cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::CFOFrontEndInterface )
 
 # cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::CFOandDTCCore mu2e-pcie-utils::CFOInterface )
