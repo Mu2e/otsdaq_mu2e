@@ -393,7 +393,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	TTree* tree = nullptr;
 	TFile* f    = nullptr;
 	if(writeFile) {
-	  f = new TFile(fileName.c_str(), "RECREATE");
+	  f = new TFile((std::string(__ENV__("OTSDAQ_DATA")) + "/" + fileName).c_str(), "RECREATE");
 	  f->cd();
 	  tree = new TTree("loopback", "Loopback test results");
 	  tree->Branch("dtc_id"     , &dtc_id     );
@@ -403,9 +403,75 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	}
 
 	// store results
-	std::map<int, double> roc_time;
-	std::map<int, double> roc_counts; //number of tests performed
-	std::map<int, TGraph*> roc_graph; //graph of test results, if writing out results
+	struct roc_result_t {
+	  double time = 0.;
+	  int counts = 0;
+	  TGraph* graph = nullptr;
+
+	  roc_result_t() {}
+	  roc_result_t(int dtc, int roc) {
+	    graph = new TGraph();
+	    graph->SetName(std::format("g_d{}_r{}", dtc, roc).c_str());
+	    graph->SetTitle(std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", dtc, roc).c_str());
+	    graph->SetMarkerStyle(20); // default to being more visible when drawn
+	  }
+
+	  // add a data point
+	  void add_point(const int test, const double delay) {
+	    time += delay;
+	    ++counts;
+	    graph->AddPoint(test, delay);
+	  }
+
+	  // check if info is set
+	  bool is_valid() {
+	    if(!graph || counts <= 0) return false;
+	    const int npoints = graph->GetN();
+	    if(npoints <= 0) return false;
+	    if(npoints != counts) return false;
+	    return true;
+	  }
+
+	  // get summary info for the results
+	  double get_time() {
+	    if(!is_valid()) return -1.;
+	    return time / counts;
+	  }
+	  double variance() {
+	    if(!is_valid()) return -1.;
+	    double variance = 0.;
+	    const double mean = time / counts;
+	    for(int ipoint = 0; ipoint < counts; ++ipoint) {
+	      variance += std::pow(graph->GetY()[ipoint] - mean, 2);
+	    }
+	    variance /= counts;
+	    return variance;
+	  }
+	  double get_unc() {
+	    if(!is_valid()) return -1.;
+	    const double var = variance();
+	    if(var <= 0.) return -1.;
+	    return std::sqrt(var / counts);
+	  }
+	  double get_min() {
+	    if(!is_valid()) return -1.;
+	    double min_val = 1.e10;
+	    for(int ipoint = 0; ipoint < counts; ++ipoint) {
+	      min_val = std::min(graph->GetY()[ipoint], min_val);
+	    }
+	    return min_val;
+	  }
+	  double get_max() {
+	    if(!is_valid()) return -1.;
+	    double max_val = -1.e10;
+	    for(int ipoint = 0; ipoint < counts; ++ipoint) {
+	      max_val = std::max(graph->GetY()[ipoint], max_val);
+	    }
+	    return max_val;
+	  }
+	};
+
+	std::map<int, roc_result_t> roc_results; // roc measurement data
 
 	// units the delay is reported in are 5/8 ns
 	const double delay_unit = 5. / 8.;
@@ -438,15 +504,10 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 		      const int map_index = link * 100 + roc;
 		      //ensure the map entries are zeroed at first
 		      if(itest == 0) {
-			roc_time  [map_index] = 0.;
-			roc_counts[map_index] = 0;
-			roc_graph [map_index] = new TGraph();
-			roc_graph [map_index]->SetName(std::format("g_d{}_r{}", link, roc).c_str());
-			roc_graph [map_index]->SetTitle(std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", link, roc).c_str());
-			roc_graph [map_index]->SetMarkerStyle(20); // default to being more visible when drawn
+			roc_results[map_index] = roc_result_t(link, roc);
 		      }
 
-		      //measuredDelay is in units of 5/8 ns
+		      // retrieve the measurement result
 		      measuredDelay = delay_unit * thisCFO_->ReadCableDelayMeasurement(CFOLib::CFO_Link_ID(link), roc, cableDelayMeasureDone);
 
 		      // a delay was measured
@@ -461,9 +522,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			  }
 			  doneLink                 = link;
 			  __FE_COUTV__(doneLink);
-			  roc_time    [map_index] += measuredDelay;
-			  ++roc_counts[map_index];
-			  roc_graph   [map_index]->AddPoint(itest, measuredDelay);
+			  roc_results [map_index].add_point(itest, measuredDelay);
 			}
 
 		      __FE_COUT__ << "Link=" << link << " ROC=" << roc
@@ -488,20 +547,22 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	} //end tests loop
 
 	// write out the tree data if requested
-	for(auto entry : roc_time) {
+	for(auto entry : roc_results) {
 	  const int map_index = entry.first;
-	  const int counts = roc_counts[map_index];
+	  auto results = entry.second;
+	  const int counts = results.counts;
 	  dtc_id = map_index / 100;
 	  roc_id = map_index % 100;
-	  output_time = (counts > 0) ? entry.second / counts : -1.;
-	  output_unc  = (counts > 0) ? 5. / std::sqrt(counts) : -1.;
+	  output_time = results.get_time();
+	  output_unc  = results.get_unc();
 	  if(counts > 0) {
 	    ostr << "CFO-Link=" << dtc_id << " ROC=" << roc_id
-		 << " delay "<<std::format("{:8.3f} +- {:5.3f} ({:3} responses)", output_time, output_unc, counts)
-		 << __E__;	
+		 << " delay "<< std::format("{:8.3f} +- {:5.3f}, range = {:4.1f} ({:4} responses)",
+					    output_time, output_unc, results.get_max() - results.get_min(), counts)
+		 << __E__;
 	    if(writeFile) {
 	      tree->Fill();
-	      roc_graph[map_index]->Write();
+	      results.graph->Write();
 	    }
 	  }
 	}
