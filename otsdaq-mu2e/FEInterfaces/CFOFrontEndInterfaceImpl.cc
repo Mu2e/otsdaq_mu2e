@@ -575,9 +575,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			__COUTT__ << "Loopback try cableDelayMeasureAnyDone="
 			          << cableDelayMeasureAnyDone << " retries=" << retries << __E__;
 		}  //end result check loop
-		// if(retries == 0)
-		//   ostr << "Loopback Timeout!" << __E__;
-	}  //end tests loop
+		   // if(retries == 0)
+		   //   ostr << "Loopback Timeout!" << __E__;
+	}      //end tests loop
 
 	// write out the tree data if requested
 	for(auto entry : roc_results)
