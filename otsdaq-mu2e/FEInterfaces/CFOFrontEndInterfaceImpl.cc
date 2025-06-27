@@ -7,8 +7,8 @@
 
 // ROOT includes
 #include "TFile.h"
-#include "TTree.h"
 #include "TGraph.h"
+#include "TTree.h"
 
 using namespace ots;
 
@@ -360,25 +360,25 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	    "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
 	    uint32_t,
 	    3);
-	const int numberOfLoopbackTests = __GET_ARG_IN__(
-	    "Number of Loopback tests (Default := 1)",
-	    uint32_t,
-	    1);
+	const int numberOfLoopbackTests =
+	    __GET_ARG_IN__("Number of Loopback tests (Default := 1)", uint32_t, 1);
 	const int targetLink =
 	    __GET_ARG_IN__("Target Link (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
 	const int targetROC =
 	    __GET_ARG_IN__("Target ROC (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
-	const bool        writeFile = __GET_ARG_IN__("Write ROOT file (Default := false)", bool, false);
-	const std::string fileName  = __GET_ARG_IN__("ROOT file name (Default := CFO_loopback.root)",
-						     std::string, "CFO_loopback.root");
+	const bool writeFile =
+	    __GET_ARG_IN__("Write ROOT file (Default := false)", bool, false);
+	const std::string fileName =
+	    __GET_ARG_IN__("ROOT file name (Default := CFO_loopback.root)",
+	                   std::string,
+	                   "CFO_loopback.root");
 
 	__FE_COUTV__(numberOfLoopbacksExp);
 	__FE_COUTV__(targetLink);
 
 	ostr << "Number of Loopback Markers to Send: " << (1 << numberOfLoopbacksExp)
 	     << __E__;
-	ostr << "Number of Loopback Tests to Perform: " << numberOfLoopbackTests
-	     << __E__;
+	ostr << "Number of Loopback Tests to Perform: " << numberOfLoopbackTests << __E__;
 	ostr << "Target CFO Chain/Link: "
 	     << (targetLink == uint8_t(-1) ? "All" : (std::to_string(targetLink))) << __E__;
 
@@ -388,187 +388,227 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 		thisCFO_->DisableEmbeddedClockMarker();
 
 	// setup output data if requested
-	int dtc_id, roc_id;
+	int    dtc_id, roc_id;
 	double output_time, output_unc;
 	TTree* tree = nullptr;
 	TFile* f    = nullptr;
-	if(writeFile) {
-	  f = new TFile((std::string(__ENV__("OTSDAQ_DATA")) + "/" + fileName).c_str(), "RECREATE");
-	  f->cd();
-	  tree = new TTree("loopback", "Loopback test results");
+	if(writeFile)
+	{
+		f = new TFile((std::string(__ENV__("OTSDAQ_DATA")) + "/" + fileName).c_str(),
+		              "RECREATE");
+		f->cd();
+		tree = new TTree("loopback", "Loopback test results");
+		// clang-format off
 	  tree->Branch("dtc_id"     , &dtc_id     );
 	  tree->Branch("roc_id"     , &roc_id     );
 	  tree->Branch("output_time", &output_time);
 	  tree->Branch("output_unc" , &output_unc );
+		// clang-format on
 	}
 
-	// store results
-	struct roc_result_t {
-	  double time = 0.;
-	  int counts = 0;
-	  TGraph* graph = nullptr;
+	// store the measurement results
+	struct roc_result_t
+	{
+		double  time   = 0.;
+		int     counts = 0;
+		TGraph* graph  = nullptr;
 
-	  roc_result_t() {}
-	  roc_result_t(int dtc, int roc) {
-	    graph = new TGraph();
-	    graph->SetName(std::format("g_d{}_r{}", dtc, roc).c_str());
-	    graph->SetTitle(std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", dtc, roc).c_str());
-	    graph->SetMarkerStyle(20); // default to being more visible when drawn
-	  }
+		roc_result_t() {}
+		roc_result_t(int dtc, int roc)
+		{
+			graph = new TGraph();
+			graph->SetName(std::format("g_d{}_r{}", dtc, roc).c_str());
+			graph->SetTitle(
+			    std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", dtc, roc)
+			        .c_str());
+			graph->SetMarkerStyle(20);  // default to being more visible when drawn
+		}
 
-	  // add a data point
-	  void add_point(const int test, const double delay) {
-	    time += delay;
-	    ++counts;
-	    graph->AddPoint(test, delay);
-	  }
+		// add a data point
+		void add_point(const int test, const double delay)
+		{
+			time += delay;
+			++counts;
+			graph->AddPoint(test, delay);
+		}
 
-	  // check if info is set
-	  bool is_valid() {
-	    if(!graph || counts <= 0) return false;
-	    const int npoints = graph->GetN();
-	    if(npoints <= 0) return false;
-	    if(npoints != counts) return false;
-	    return true;
-	  }
+		// check if info is set
+		bool is_valid()
+		{
+			if(!graph || counts <= 0)
+				return false;
+			const int npoints = graph->GetN();
+			if(npoints <= 0)
+				return false;
+			if(npoints != counts)
+				return false;
+			return true;
+		}
 
-	  // get summary info for the results
-	  double get_time() {
-	    if(!is_valid()) return -1.;
-	    return time / counts;
-	  }
-	  double variance() {
-	    if(!is_valid()) return -1.;
-	    double variance = 0.;
-	    const double mean = time / counts;
-	    for(int ipoint = 0; ipoint < counts; ++ipoint) {
-	      variance += std::pow(graph->GetY()[ipoint] - mean, 2);
-	    }
-	    variance /= counts;
-	    return variance;
-	  }
-	  double get_unc() {
-	    if(!is_valid()) return -1.;
-	    const double var = variance();
-	    if(var <= 0.) return -1.;
-	    return std::sqrt(var / counts);
-	  }
-	  double get_min() {
-	    if(!is_valid()) return -1.;
-	    double min_val = 1.e10;
-	    for(int ipoint = 0; ipoint < counts; ++ipoint) {
-	      min_val = std::min(graph->GetY()[ipoint], min_val);
-	    }
-	    return min_val;
-	  }
-	  double get_max() {
-	    if(!is_valid()) return -1.;
-	    double max_val = -1.e10;
-	    for(int ipoint = 0; ipoint < counts; ++ipoint) {
-	      max_val = std::max(graph->GetY()[ipoint], max_val);
-	    }
-	    return max_val;
-	  }
+		// get summary info for the results
+		double get_time()
+		{
+			if(!is_valid())
+				return -1.;
+			return time / counts;
+		}
+		double variance()
+		{
+			if(!is_valid())
+				return -1.;
+			double       variance = 0.;
+			const double mean     = time / counts;
+			for(int ipoint = 0; ipoint < counts; ++ipoint)
+			{
+				variance += std::pow(graph->GetY()[ipoint] - mean, 2);
+			}
+			variance /= counts;
+			return variance;
+		}
+		double get_unc()
+		{
+			if(!is_valid())
+				return -1.;
+			const double var = variance();
+			if(var <= 0.)
+				return -1.;
+			return std::sqrt(var / counts);
+		}
+		double get_min()
+		{
+			if(!is_valid())
+				return -1.;
+			double min_val = 1.e10;
+			for(int ipoint = 0; ipoint < counts; ++ipoint)
+			{
+				min_val = std::min(graph->GetY()[ipoint], min_val);
+			}
+			return min_val;
+		}
+		double get_max()
+		{
+			if(!is_valid())
+				return -1.;
+			double max_val = -1.e10;
+			for(int ipoint = 0; ipoint < counts; ++ipoint)
+			{
+				max_val = std::max(graph->GetY()[ipoint], max_val);
+			}
+			return max_val;
+		}
 	};
 
-	std::map<int, roc_result_t> roc_results; // roc measurement data
+	std::map<int, roc_result_t> roc_results;  // roc measurement data
 
 	// units the delay is reported in are 5/8 ns
 	const double delay_unit = 5. / 8.;
 
-	for(int itest = 0; itest < numberOfLoopbackTests; ++itest) { // perform the test multiple times for more accurate measurement
-	  thisCFO_->SetCableDelayMeasureExponentialCount(numberOfLoopbacksExp);
-	  thisCFO_->RunCableDelayLoopbackTest();
+	for(int itest = 0; itest < numberOfLoopbackTests; ++itest)
+	{  // perform the test multiple times for more accurate measurement
+		thisCFO_->SetCableDelayMeasureExponentialCount(numberOfLoopbacksExp);
+		thisCFO_->RunCableDelayLoopbackTest();
 
-	  //wait until done with loopback test to return final measurement
-	  bool     cableDelayMeasureAnyDone = false;
-	  bool     cableDelayMeasureDone;
-	  uint16_t doneLink = -1;
-	  uint32_t measuredDelay;
-	  uint16_t retries = 1;
-	  const float wait_time = 1000. * 10.; // 10 ms
-	  while(!cableDelayMeasureAnyDone && retries-- > 0)
-	    {
-	      usleep(wait_time);
-	      for(int link = 0; link < 8; ++link)
+		//wait until done with loopback test to return final measurement
+		bool        cableDelayMeasureAnyDone = false;
+		bool        cableDelayMeasureDone;
+		uint16_t    doneLink = -1;
+		uint32_t    measuredDelay;
+		uint16_t    retries   = 1;
+		const float wait_time = 1000. * 10.;  // 10 ms
+		while(!cableDelayMeasureAnyDone && retries-- > 0)
 		{
-		  if(targetLink != uint8_t(-1) && link != targetLink)
-		    continue;
-		  __FE_COUTV__(link);
-		  for(uint16_t roc = 0; roc < 6; ++roc)
-		    {
-		      if(targetROC != uint8_t(-1) && roc != targetROC)
-			continue;
-		      __FE_COUTV__(roc);
-
-		      const int map_index = link * 100 + roc;
-		      //ensure the map entries are zeroed at first
-		      if(itest == 0) {
-			roc_results[map_index] = roc_result_t(link, roc);
-		      }
-
-		      // retrieve the measurement result
-		      measuredDelay = delay_unit * thisCFO_->ReadCableDelayMeasurement(CFOLib::CFO_Link_ID(link), roc, cableDelayMeasureDone);
-
-		      // a delay was measured
-		      if(cableDelayMeasureDone)
+			usleep(wait_time);
+			for(int link = 0; link < 8; ++link)
 			{
-			  if(!cableDelayMeasureAnyDone) {
-			    cableDelayMeasureAnyDone = true;
-			    usleep(wait_time); //sleep after the first is found to ensure all respond, then re-check
-			    ++retries;
-			    link = -1;
-			    break;
-			  }
-			  doneLink                 = link;
-			  __FE_COUTV__(doneLink);
-			  roc_results [map_index].add_point(itest, measuredDelay);
-			}
+				if(targetLink != uint8_t(-1) && link != targetLink)
+					continue;
+				__FE_COUTV__(link);
+				for(uint16_t roc = 0; roc < 6; ++roc)
+				{
+					if(targetROC != uint8_t(-1) && roc != targetROC)
+						continue;
+					__FE_COUTV__(roc);
 
-		      __FE_COUT__ << "Link=" << link << " ROC=" << roc
-				  << " retriesLeft=" << retries
-				  << " done=" << cableDelayMeasureDone
-				  << " delay=" << measuredDelay << std::hex
-				  << "ns 0x" << measuredDelay << __E__;
+					const int map_index = link * 100 + roc;
+					//ensure the map entries are zeroed at first
+					if(itest == 0)
+					{
+						roc_results[map_index] = roc_result_t(link, roc);
+					}
 
-		      // if(cableDelayMeasureDone)
-		      //   {
-		      //     ostr << "CFO-Link=" << link << " ROC=" << roc
-		      // 	 << " delay "<<std::format("{:8.3f}", measuredDelay) << std::hex << " ns 0x"
-		      // 	 << measuredDelay << __E__;
-		      //   }
-		    }  //end ROC delay measure loop
-		}      //end DTC loop
-	      __COUTT__ << "Loopback try cableDelayMeasureAnyDone=" << cableDelayMeasureAnyDone
-			<< " retries=" << retries << __E__;
-	    }  //end result check loop
-	  // if(retries == 0)
-	  //   ostr << "Loopback Timeout!" << __E__;
-	} //end tests loop
+					// retrieve the measurement result
+					measuredDelay =
+					    delay_unit *
+					    thisCFO_->ReadCableDelayMeasurement(
+					        CFOLib::CFO_Link_ID(link), roc, cableDelayMeasureDone);
+
+					// a delay was measured
+					if(cableDelayMeasureDone)
+					{
+						if(!cableDelayMeasureAnyDone)
+						{
+							cableDelayMeasureAnyDone = true;
+							usleep(
+							    wait_time);  //sleep after the first is found to ensure all respond, then re-check
+							++retries;
+							link = -1;
+							break;
+						}
+						doneLink = link;
+						__FE_COUTV__(doneLink);
+						roc_results[map_index].add_point(itest, measuredDelay);
+					}
+
+					__FE_COUT__
+					    << "Link=" << link << " ROC=" << roc << " retriesLeft=" << retries
+					    << " done=" << cableDelayMeasureDone << " delay=" << measuredDelay
+					    << std::hex << "ns 0x" << measuredDelay << __E__;
+
+					// if(cableDelayMeasureDone)
+					//   {
+					//     ostr << "CFO-Link=" << link << " ROC=" << roc
+					// 	 << " delay "<<std::format("{:8.3f}", measuredDelay) << std::hex << " ns 0x"
+					// 	 << measuredDelay << __E__;
+					//   }
+				}  //end ROC delay measure loop
+			}      //end DTC loop
+			__COUTT__ << "Loopback try cableDelayMeasureAnyDone="
+			          << cableDelayMeasureAnyDone << " retries=" << retries << __E__;
+		}  //end result check loop
+		// if(retries == 0)
+		//   ostr << "Loopback Timeout!" << __E__;
+	}  //end tests loop
 
 	// write out the tree data if requested
-	for(auto entry : roc_results) {
-	  const int map_index = entry.first;
-	  auto results = entry.second;
-	  const int counts = results.counts;
-	  dtc_id = map_index / 100;
-	  roc_id = map_index % 100;
-	  output_time = results.get_time();
-	  output_unc  = results.get_unc();
-	  if(counts > 0) {
-	    ostr << "CFO-Link=" << dtc_id << " ROC=" << roc_id
-		 << " delay "<< std::format("{:8.3f} +- {:5.3f}, range = {:4.1f} ({:4} responses)",
-					    output_time, output_unc, results.get_max() - results.get_min(), counts)
-		 << __E__;
-	    if(writeFile) {
-	      tree->Fill();
-	      results.graph->Write();
-	    }
-	  }
+	for(auto entry : roc_results)
+	{
+		const int map_index = entry.first;
+		auto      results   = entry.second;
+		const int counts    = results.counts;
+		dtc_id              = map_index / 100;
+		roc_id              = map_index % 100;
+		output_time         = results.get_time();
+		output_unc          = results.get_unc();
+		if(counts > 0)
+		{
+			ostr << "CFO-Link=" << dtc_id << " ROC=" << roc_id << " delay "
+			     << std::format("{:8.3f} +- {:5.3f}, range = {:4.1f} ({:4} responses)",
+			                    output_time,
+			                    output_unc,
+			                    results.get_max() - results.get_min(),
+			                    counts)
+			     << __E__;
+			if(writeFile)
+			{
+				tree->Fill();
+				results.graph->Write();
+			}
+		}
 	}
-	if(writeFile) {
-	  tree->Write();
-	  f->Close();
+	if(writeFile)
+	{
+		tree->Write();
+		f->Close();
 	}
 	// sleep(1); //wait until done with loopback test to return clock markers
 
