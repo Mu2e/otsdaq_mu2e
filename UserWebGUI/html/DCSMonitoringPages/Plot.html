@@ -524,8 +524,20 @@
 			//=====================================================================================
 			function showGraphPeriod(period /*days*/)
 			{
-				var actualTime = Math.floor(Date.now())/1000;
-				var startTime = actualTime - period*24*3600;
+				var actualTime;
+				var startTime;
+				if (period == 0)
+				{
+					var layout = document.getElementById('plot')._fullLayout;
+					const xRange = layout.xaxis.range;
+					actualTime = Math.floor(new Date(xRange[1]))/1000;
+					startTime = Math.floor(new Date(xRange[0]))/1000;
+				}
+				else
+				{
+					actualTime = Math.floor(Date.now())/1000;
+					startTime = actualTime - period*24*3600;
+				}
 				drawGraph(0,startTime, actualTime);
 			} //end showGraphPeriod()
 
@@ -552,7 +564,8 @@
 				<button class='timeButton' onclick='showGraphPeriod(1)'>1 day</button>
 				<button class='timeButton' onclick='showGraphPeriod(7)'>1 week</button>
 				<button class='timeButton' onclick='showGraphPeriod(15)'>2 weeks</button>
-				<label><input type="checkbox" id="autoupdate" onclick="generateUID()"> Auto update</label>
+				<button class='timeButton' onclick='showGraphPeriod(0)'>update on range</button>
+				<label><input type="checkbox" id="autoupdate" onclick="generateUID()">   Auto update</label>
 			</div>
 			<div class="bottomContainer">
 				<div class="plotContainer" id="plot"></div>
