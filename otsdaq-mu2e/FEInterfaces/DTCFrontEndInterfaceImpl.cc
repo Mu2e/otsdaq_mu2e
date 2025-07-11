@@ -1803,7 +1803,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		// uint32_t dtcEventBuilderReg_DTCInfo = 0;
 
 		// uint32_t dtcEventBuilderReg_NumBuff   = 0;
-		uint32_t dtcEventBuilderReg_DeadTime   = 0;
+		uint32_t dtcEventBuilderReg_DeadTime  = 0;
 		uint32_t dtcEventBuilderReg_StartNode = 0;
 		uint32_t dtcEventBuilderReg_NumNodes  = 0;
 		// uint32_t dtcEventBuilderReg_Configuration = 0;
@@ -1819,9 +1819,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			dtcEventBuilderReg_MACIndex =
 			    getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
 
-			dtcEventBuilderReg_DeadTime = //dtcEventBuilderReg_NumBuff =
+			dtcEventBuilderReg_DeadTime =  //dtcEventBuilderReg_NumBuff =
 			    // getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
-				getSelfNode().getNode("EventBuilderDeadTime").getValue<uint32_t>();
+			    getSelfNode().getNode("EventBuilderDeadTime").getValue<uint32_t>();
 			dtcEventBuilderReg_StartNode =
 			    getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
 			dtcEventBuilderReg_NumNodes =
@@ -1850,7 +1850,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
 			// [6-0]
-			getDTC()->SetEVBClusterInfo(dtcEventBuilderReg_DeadTime,  //dtcEventBuilderReg_NumBuff,
+			getDTC()->SetEVBClusterInfo(
+			    dtcEventBuilderReg_DeadTime,  //dtcEventBuilderReg_NumBuff,
 			    dtcEventBuilderReg_StartNode,
 			    dtcEventBuilderReg_NumNodes);
 			// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
@@ -3854,14 +3855,14 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 
 	getDTC()->SetEVBInfo(DTCid, evbMode, evbPartition, evbMAC);
 
-	uint16_t deadTime      = __GET_ARG_IN__("EVB Dead Time in Cluster", uint16_t);
-	uint8_t NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t);
-	uint8_t evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address", uint8_t);
-	
+	uint16_t deadTime       = __GET_ARG_IN__("EVB Dead Time in Cluster", uint16_t);
+	uint8_t  NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t);
+	uint8_t  evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address", uint8_t);
+
 	__FE_COUTV__(deadTime);
 	__FE_COUTV__((int)NumOfDTCs);
 	__FE_COUTV__((int)evbBaseAddress);
-	getDTC()->SetEVBClusterInfo(deadTime,evbBaseAddress, NumOfDTCs);
+	getDTC()->SetEVBClusterInfo(deadTime, evbBaseAddress, NumOfDTCs);
 
 	getDTC()
 	    ->SoftReset();  //to invalidate destination address cycles, now need the first Event Window Marker to synchronize

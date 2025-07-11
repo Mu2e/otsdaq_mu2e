@@ -51,7 +51,8 @@ try
 	StringMacros::getVectorFromString(hostname, split, {'.'});
 	StringMacros::getVectorFromString(split[0], split2, {'-'});
 	__COUTV__(split2.back());
-	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex; // + (1 - deviceIndex); //from +deviceIndex
+	uint32_t macAddress = atoi(split2.back().c_str()) * 2 +
+	                      deviceIndex;  // + (1 - deviceIndex); //from +deviceIndex
 	__COUTV__(macAddress);
 
 	//==============================================================================
