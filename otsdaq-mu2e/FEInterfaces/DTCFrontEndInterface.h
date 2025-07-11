@@ -213,7 +213,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
     void                                PunchedClock                        (__ARGS__);
 
 	void 								CFOEmulatorLoopbackTest				(__ARGS__);
+	void 								CFOEmulatorLoopbackTests			(__ARGS__);
 	void 								ManualLoopbackSetup					(__ARGS__);
+
+	void 								ProgramROCs							(__ARGS__);
 
 	// clang-format on
 };
