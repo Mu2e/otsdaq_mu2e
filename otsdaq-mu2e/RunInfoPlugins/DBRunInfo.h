@@ -22,7 +22,10 @@ class DBRunInfo : public RunInfoVInterface
 	                                   RunInfoVInterface::RunStopType runStopType);
 
 	//start queryFilter with 'AND' to fiter more the selection
-	virtual std::vector<std::vector<std::string>> getRunRecords(unsigned int startTime, unsigned int endTime, const std::string& queryFilter = "");
+	virtual std::vector<std::vector<std::string>> getRunRecords(
+	    unsigned int       startTime,
+	    unsigned int       endTime,
+	    const std::string& queryFilter = "");
 
   private:
 	const char* dbname_;

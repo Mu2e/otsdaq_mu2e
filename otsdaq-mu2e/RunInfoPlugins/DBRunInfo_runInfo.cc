@@ -504,7 +504,8 @@ void DBRunInfo::updateRunInfo(unsigned int                   runNumber,
 }  //end updateRunInfo()
 
 //==============================================================================
-std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
+std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
+    unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
 {
 	__COUT__ << "getRunRecords() reached" << __E__;
 	std::vector<std::vector<std::string>> runRecords;
@@ -513,7 +514,8 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(unsigned int star
 
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to the run_info database to select run recors" << __E__;
+		__COUT__ << "Unable to connect to the run_info database to select run recors"
+		         << __E__;
 		PQfinish(runInfoDbConn_);
 		runInfoDbConn_ = nullptr;
 
@@ -521,13 +523,16 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(unsigned int star
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
-			__COUT__ << "Unable to connect for the second time to the run_info database to select run recors" << __E__;
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to select run recors"
+			         << __E__;
 			PQfinish(runInfoDbConn_);
 			runInfoDbConn_ = nullptr;
 		}
 		else
 		{
-			__COUT__ << "Connected to the run_info database to select run recors" << __E__;
+			__COUT__ << "Connected to the run_info database to select run recors"
+			         << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
@@ -540,41 +545,42 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(unsigned int star
 	// write run info into db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
-		PGresult* 	res;
-		char      	buffer[1024];
+		PGresult*   res;
+		char        buffer[1024];
 		std::string row;
 
 		snprintf(buffer,
 		         sizeof(buffer),
 		         "SELECT run_configuration.run_number as run_numrber"
-				 ", run_configuration.commit_time as run_time"
-				 ", run_type.run_type_description as run_type"
-				 ", run_configuration.artdaq_partition"
-				 ", run_configuration.host_name"
-				 ", run_configuration.condition_id"
-				 ", run_configuration.configuration_name"
-				 ", run_configuration.configuration_version"
-				 ", run_configuration.context_name"
-				 ", run_configuration.context_version"
-				 ", run_configuration.online_software_version"
-				 ", run_configuration.shifter_note"
-				 " FROM %s.run_configuration, %s.run_type"
-				 " WHERE run_configuration.run_type = run_type.run_type_id"
-				 " AND run_configuration.commit_time < TO_TIMESTAMP(\'%d\')"
-				 " AND run_configuration.commit_time >= TO_TIMESTAMP(\'%d\')"
-				 " %s;"
-				, dbSchema_, dbSchema_ 
-				, startTime
-				, endTime
-				, queryFilter.c_str());
+		         ", run_configuration.commit_time as run_time"
+		         ", run_type.run_type_description as run_type"
+		         ", run_configuration.artdaq_partition"
+		         ", run_configuration.host_name"
+		         ", run_configuration.condition_id"
+		         ", run_configuration.configuration_name"
+		         ", run_configuration.configuration_version"
+		         ", run_configuration.context_name"
+		         ", run_configuration.context_version"
+		         ", run_configuration.online_software_version"
+		         ", run_configuration.shifter_note"
+		         " FROM %s.run_configuration, %s.run_type"
+		         " WHERE run_configuration.run_type = run_type.run_type_id"
+		         " AND run_configuration.commit_time < TO_TIMESTAMP(\'%d\')"
+		         " AND run_configuration.commit_time >= TO_TIMESTAMP(\'%d\')"
+		         " %s;",
+		         dbSchema_,
+		         dbSchema_,
+		         startTime,
+		         endTime,
+		         queryFilter.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__
-			    << "getRunRecords() SELECT FROM 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: "
-			    << PQresultErrorMessage(res) << __E__;
+			__SS__ << "getRunRecords() SELECT FROM 'run_configuration' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
