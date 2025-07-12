@@ -5,6 +5,11 @@
 
 // #include <fstream>
 
+// ROOT includes
+#include "TFile.h"
+#include "TGraph.h"
+#include "TH1.h"
+
 using namespace ots;
 
 #undef __MF_SUBJECT__
@@ -490,6 +495,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	);
 
 	registerFEMacroFunction(
+				"Loopback CFO Emulator Multi Test Run",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+										   &DTCFrontEndInterface::CFOEmulatorLoopbackTests),
+				std::vector<std::string>{"numberOfTests", "Write ROOT file (Default := false)", "ROOT file name (Default := loopback.root)"},
+				std::vector<std::string>{"Average", "Maximum", "Minimum"},
+				1,    // requiredUserPermissions
+				"*",
+				"Executes many loopback tests at the DTC's CFO emulator, and broadcasts loopback markers to all ROCs, and returns the average result."
+				);
+
+	registerFEMacroFunction(
 		"Loopback Manual Setup",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ManualLoopbackSetup),
@@ -622,6 +638,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"DTC ID",
 						"EVB Mode", "EVB Partition ID",
 						"EVB Self MAC Address Last Byte",
+						"EVB Dead Time in Cluster",
 						"EVB Number of DTCs in Cluster",
 						"EVB Cluster Base DTC MAC Address"},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
@@ -1826,7 +1843,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		uint32_t dtcEventBuilderReg_MACIndex    = 0;
 		// uint32_t dtcEventBuilderReg_DTCInfo = 0;
 
-		uint32_t dtcEventBuilderReg_NumBuff   = 0;
+		// uint32_t dtcEventBuilderReg_NumBuff   = 0;
+		uint32_t dtcEventBuilderReg_DeadTime  = 0;
 		uint32_t dtcEventBuilderReg_StartNode = 0;
 		uint32_t dtcEventBuilderReg_NumNodes  = 0;
 		// uint32_t dtcEventBuilderReg_Configuration = 0;
@@ -1842,8 +1860,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			dtcEventBuilderReg_MACIndex =
 			    getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
 
-			dtcEventBuilderReg_NumBuff =
-			    getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
+			dtcEventBuilderReg_DeadTime =  //dtcEventBuilderReg_NumBuff =
+			    // getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
+			    getSelfNode().getNode("EventBuilderDeadTime").getValue<uint32_t>();
 			dtcEventBuilderReg_StartNode =
 			    getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
 			dtcEventBuilderReg_NumNodes =
@@ -1853,7 +1872,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			__FE_COUTV__(dtcEventBuilderReg_Mode);
 			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
 			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
-			__FE_COUTV__(dtcEventBuilderReg_NumBuff);
+			// __FE_COUTV__(dtcEventBuilderReg_NumBuff);
+			__FE_COUTV__(dtcEventBuilderReg_DeadTime);
 			__FE_COUTV__(dtcEventBuilderReg_StartNode);
 			__FE_COUTV__(dtcEventBuilderReg_NumNodes);
 
@@ -1871,7 +1891,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
 			// [6-0]
-			getDTC()->SetEVBClusterInfo(  //dtcEventBuilderReg_NumBuff,
+			getDTC()->SetEVBClusterInfo(
+			    dtcEventBuilderReg_DeadTime,  //dtcEventBuilderReg_NumBuff,
 			    dtcEventBuilderReg_StartNode,
 			    dtcEventBuilderReg_NumNodes);
 			// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
@@ -3875,12 +3896,14 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 
 	getDTC()->SetEVBInfo(DTCid, evbMode, evbPartition, evbMAC);
 
-	uint8_t NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t);
-	uint8_t evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address", uint8_t);
+	uint16_t deadTime       = __GET_ARG_IN__("EVB Dead Time in Cluster", uint16_t);
+	uint8_t  NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t);
+	uint8_t  evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address", uint8_t);
 
+	__FE_COUTV__(deadTime);
 	__FE_COUTV__((int)NumOfDTCs);
 	__FE_COUTV__((int)evbBaseAddress);
-	getDTC()->SetEVBClusterInfo(evbBaseAddress, NumOfDTCs);
+	getDTC()->SetEVBClusterInfo(deadTime, evbBaseAddress, NumOfDTCs);
 
 	getDTC()
 	    ->SoftReset();  //to invalidate destination address cycles, now need the first Event Window Marker to synchronize
@@ -6208,10 +6231,88 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTest(__ARGS__)
 	getDTC()->EnableCFOLoopback();
 	getDTC()->RunCableDelayLoopbackTest();
 
-	std::stringstream outSs;
-	outSs << "Done.";
-	__SET_ARG_OUT__("Result", outSs.str());
+	// std::stringstream outSs;
+	// outSs << ;
+
+	__SET_ARG_OUT__("Result", getDTC()->FormatCFOEmulationLoopbackDelayMeasure());
+
+	//to get loopback value
+	//uint32_t loopbackValue = getDTC()->ReadCFOEmulationLoopbackDelayMeasure();
+
 }  //end CFOEmulatorLoopbackTest()
+
+//========================================================================
+void DTCFrontEndInterface::CFOEmulatorLoopbackTests(__ARGS__)
+{
+	__FE_COUT__ << "CFO Emulator Loopback Test runs" << __E__;
+	const int  numberOfTests = __GET_ARG_IN__("numberOfTests", int);
+	const bool writeFile =
+	    __GET_ARG_IN__("Write ROOT file (Default := false)", bool, false);
+	const std::string fileName = __GET_ARG_IN__(
+	    "ROOT file name (Default := loopback.root)", std::string, "loopback.root");
+
+	double delay_sum = 0.;
+	double max_value(0), min_value(1.e10);
+	// double results[numberOfTests], tests[numberOfTests];
+	std::vector<double> results(numberOfTests), tests(numberOfTests);
+	for(int itest = 0; itest < numberOfTests; ++itest)
+	{
+		getDTC()->EnableCFOLoopback();
+		getDTC()->RunCableDelayLoopbackTest();
+		// const DTCLib::RegisterFormatter loopbackValue = getDTC()->FormatCFOEmulationLoopbackDelayMeasure();
+		// const uint32_t loopbackValue = (getDTC()->FormatCFOEmulationLoopbackDelayMeasure().value & (~(1 << 31))) * 5. / 8.;
+		const double loopbackValue =
+		    getDTC()->ReadCFOEmulationLoopbackDelayMeasure() * 5. / 8.;
+		delay_sum += loopbackValue;
+		if(max_value < loopbackValue)
+			max_value = loopbackValue;
+		if(min_value > loopbackValue)
+			min_value = loopbackValue;
+
+		// For plotting results
+		tests[itest]   = itest;
+		results[itest] = loopbackValue;
+		printf("Test %3i: Result = %.2f\n", itest, results[itest]);
+	}
+
+	// Save distributions if requested
+	if(writeFile)
+	{
+		TFile* f = new TFile(fileName.c_str(), "RECREATE");
+		f->cd();
+		const double xmin = (max_value > min_value)
+		                        ? min_value - 0.05 * (max_value - min_value)
+		                        : min_value * 0.99;
+		const double xmax = (max_value > min_value)
+		                        ? max_value + 0.05 * (max_value - min_value)
+		                        : min_value * 1.01;
+		TH1*         h_results =
+		    new TH1F("hLoopbacks", "Loop-back time;loop-back [ns];", 100, xmin, xmax);
+		for(int itest = 0; itest < numberOfTests; ++itest)
+		{
+			h_results->Fill(results[itest]);
+		}
+		TGraph* g = new TGraph(numberOfTests, tests.data(), results.data());
+		g->SetTitle("Loop-back time;Test;Loop-back [ns]");
+		g->SetName("gLoopbacks");
+		g->SetLineWidth(2);
+		g->SetLineColor(kRed);
+		g->SetMarkerStyle(20);
+		g->SetMarkerSize(0.8);
+		g->SetMarkerColor(kRed);
+		g->Write();
+		h_results->Write();
+		// f->Add(h_results);
+		// f->Add(g);
+		// f->Write();
+		f->Close();
+	}
+
+	const double result = (numberOfTests > 0) ? delay_sum / numberOfTests : 0.;
+	__SET_ARG_OUT__("Average", std::format("{:.2f} ns", result));
+	__SET_ARG_OUT__("Maximum", std::format("{:.2f} ns", max_value));
+	__SET_ARG_OUT__("Minimum", std::format("{:.2f} ns", min_value));
+}  //end CFOEmulatorLoopbackTests()
 
 //========================================================================
 void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
