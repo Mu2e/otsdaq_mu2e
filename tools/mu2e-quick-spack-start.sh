@@ -459,6 +459,11 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
     fi
     spack env activate tdaq-develop
+    if ! spack find mu2e-trig-config >/dev/null 2>&1; then
+        echo "Adding mu2e-trig-config to tdaq-develop environment..."
+        spack add mu2e-trig-config
+    fi
+
     spack concretize --force --deprecated && spack install --deprecated
     # spack mpd build # Upstream
     spack mpd build -G Ninja # Fork
