@@ -514,7 +514,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to the run_info database to select run recors"
+		__COUT__ << "Unable to connect to the run_info database to select run records"
 		         << __E__;
 		PQfinish(runInfoDbConn_);
 		runInfoDbConn_ = nullptr;
@@ -524,25 +524,25 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
 			__COUT__ << "Unable to connect for the second time to the run_info database "
-			            "to select run recors"
+			            "to select run records"
 			         << __E__;
 			PQfinish(runInfoDbConn_);
 			runInfoDbConn_ = nullptr;
 		}
 		else
 		{
-			__COUT__ << "Connected to the run_info database to select run recors"
+			__COUT__ << "Connected to the run_info database to select run records"
 			         << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
 	else
 	{
-		__COUT__ << "Connected to the run_info database to select run recors" << __E__;
+		__COUT__ << "Connected to the run_info database to select run records" << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
 
-	// write run info into db
+	// select run info from db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult*   res;
@@ -608,7 +608,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		}
 		else
 		{
-			// __SS__ << "getRunRecords() RETRIVE RUN RECORS FROM 'run_configuration' DATABASE TABLE "
+			// __SS__ << "getRunRecords() RETRIVE RUN RECORDS FROM 'run_configuration' DATABASE TABLE "
 			//           "FAILED!!! PQ ERROR: "
 			//        << PQresultErrorMessage(res) << __E__;
 			// PQclear(res);
@@ -620,5 +620,110 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 
 	return runRecords;
 }  //end updateRunInfo()
+
+//==============================================================================
+std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t conditionID)
+{
+	__COUT__ << "getRunConditionByID() reached" << __E__;
+	std::vector<std::vector<std::string>> conditionRecords;
+
+	int runInfoDbConnStatus_ = 0;
+
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		__COUT__
+		    << "Unable to connect to the run_info database to select run condition record"
+		    << __E__;
+		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
+
+		//Try to open again the db connection
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to select run condition record"
+			         << __E__;
+			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
+		}
+		else
+		{
+			__COUT__
+			    << "Connected to the run_info database to select run condition record"
+			    << __E__;
+			runInfoDbConnStatus_ = 1;
+		}
+	}
+	else
+	{
+		__COUT__ << "Connected to the run_info database to select run condition record"
+		         << __E__;
+		runInfoDbConnStatus_ = 1;
+	}
+
+	// select run info from db
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
+	{
+		PGresult*   res;
+		char        buffer[1024];
+		std::string row;
+
+		snprintf(buffer,
+		         sizeof(buffer),
+		         "SELECT run_condition.condition"
+		         ", run_condition.commit_time"
+		         " FROM %s.run_condition"
+		         " WHERE run_condition.condition_id = \'%ld\';",
+		         dbSchema_,
+		         conditionID);
+
+		res = PQexec(runInfoDbConn_, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "getRunRecords() SELECT FROM 'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << __E__;
+		if(PQntuples(res) >= 1)
+		{
+			/* first, print out the attribute names */
+			int nFields = PQnfields(res);
+			conditionRecords.resize(PQntuples(res));
+
+			/* next, print out the rows */
+			for(int i = 0; i < PQntuples(res); i++)
+			{
+				conditionRecords[i].resize(nFields);
+				for(int j = 0; j < nFields; j++)
+				{
+					conditionRecords[i][j] = PQgetvalue(res, i, j);
+					row.append(PQgetvalue(res, i, j));
+					row.append(" ");
+				}
+				row.append("\n");
+			}
+			__COUT__ << "Run condition record retrived" << __E__;
+		}
+		else
+		{
+			__SS__ << "getRunConditionByID() RETRIVE RUN CONDITION RECORD FROM "
+			          "'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		PQclear(res);
+	}
+
+	return conditionRecords;
+}  //end getRunConditionByID()
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)
