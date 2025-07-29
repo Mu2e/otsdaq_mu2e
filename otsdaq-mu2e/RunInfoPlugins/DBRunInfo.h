@@ -27,6 +27,9 @@ class DBRunInfo : public RunInfoVInterface
 	    unsigned int       endTime,
 	    const std::string& queryFilter = "");
 
+	virtual std::vector<std::vector<std::string>> getRunConditionByID(
+	    uint64_t conditionID);
+
   private:
 	const char* dbname_;
 	const char* dbhost_;
