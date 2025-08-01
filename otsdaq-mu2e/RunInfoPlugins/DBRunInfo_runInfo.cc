@@ -546,33 +546,53 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult*   res;
-		char        buffer[1024];
+		char        buffer[2048];
 		std::string row;
 
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "SELECT run_configuration.run_number as run_numrber"
-		         ", run_configuration.commit_time as run_time"
-		         ", run_type.run_type_description as run_type"
-		         ", run_configuration.artdaq_partition"
-		         ", run_configuration.host_name"
-		         ", run_configuration.condition_id"
-		         ", run_configuration.configuration_name"
-		         ", run_configuration.configuration_version"
-		         ", run_configuration.context_name"
-		         ", run_configuration.context_version"
-		         ", run_configuration.online_software_version"
-		         ", run_configuration.shifter_note"
-		         " FROM %s.run_configuration, %s.run_type"
-		         " WHERE run_configuration.run_type = run_type.run_type_id"
-		         " AND run_configuration.commit_time < TO_TIMESTAMP(\'%d\')"
-		         " AND run_configuration.commit_time >= TO_TIMESTAMP(\'%d\')"
-		         " %s;",
-		         dbSchema_,
-		         dbSchema_,
-		         startTime,
-		         endTime,
-		         queryFilter.c_str());
+		snprintf(
+		    buffer,
+		    sizeof(buffer),
+		    "SELECT run_configuration.run_number as run_numrber"
+		    ", run_configuration.commit_time as run_time"
+		    ", run_type.run_type_description as run_type"
+		    ", run_configuration.artdaq_partition"
+		    ", run_configuration.host_name"
+		    ", run_configuration.condition_id"
+		    ", run_configuration.configuration_name"
+		    ", run_configuration.configuration_version"
+		    ", run_configuration.context_name"
+		    ", run_configuration.context_version"
+		    ", run_configuration.online_software_version"
+		    ", run_configuration.shifter_note"
+		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Start' THEN "
+		    "run_transition.transition_time END) AS start_time"
+		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Stop' THEN "
+		    "run_transition.transition_time END) AS stop_time"
+		    " FROM %s.run_configuration, %s.run_type, %s.run_transition, "
+		    "%s.transition_type"
+		    " WHERE run_configuration.run_type = run_type.run_type_id"
+		    " AND run_configuration.run_number = run_transition.run_number"
+		    " AND run_transition.transition_type = transition_type.transition_id"
+		    " AND (transition_type.transition_description LIKE '%%Start' OR "
+		    "transition_type.transition_description LIKE '%%Stop')"
+		    " AND run_configuration.commit_time BETWEEN TO_TIMESTAMP(\'%d\') AND "
+		    "TO_TIMESTAMP(\'%d\')"
+		    " %s"
+		    " GROUP BY"
+		    "	run_configuration.run_number, run_type.run_type_description"
+		    " HAVING"
+		    "	COUNT(DISTINCT CASE"
+		    "		WHEN transition_type.transition_description LIKE '%%Start' THEN "
+		    "'Start'"
+		    "		WHEN transition_type.transition_description LIKE '%%Stop' THEN 'Stop'"
+		    "	END) = 2;",
+		    dbSchema_,
+		    dbSchema_,
+		    dbSchema_,
+		    dbSchema_,
+		    startTime,
+		    endTime,
+		    queryFilter.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -585,7 +605,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 			__SS_THROW__;
 		}
 
-		__COUT__ << "PQntuples(res) " << PQntuples(res) << __E__;
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << buffer << __E__;
 		if(PQntuples(res) >= 1)
 		{
 			/* first, print out the attribute names */
