@@ -200,8 +200,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				"Use this FE Macro to test the header format using emulated CFO Heartbeat packets."
 	);
 
-	// Until further subsystem ROC development starts up, ignore the external block register access of core ROC firmware template established for the ROC dev cards.
-	if(0) // unregistering of "temporarily" unused macros
+	if(1)
 	{
 		registerFEMacroFunction(
 			"ROC_Write_ExtRegister",  // feMacroName
@@ -219,10 +218,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						std::vector<std::string>{"readData"},
 						1);  // requiredUserPermissions
 
+	}
 
-
-
-
+	// Until further subsystem ROC development starts up, ignore the external block register access of core ROC firmware template established for the ROC dev cards.
+	if(0) // unregistering of "temporarily" unused macros
+	{
 
 		registerFEMacroFunction(
 			"Buffer Test",
@@ -2897,16 +2897,38 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		if(rocLinkIndex == DTC_Link_ALL || rocLinkIndex == roc.second->getLinkID())
 		{
 			found = true;
-			if(emulatorMode_)
-			{
-				readData = roc.second->readRegister(address);
+			try //give user feedback on ROC status if exception caught
+			{				
+				if(emulatorMode_)
+				{
+					readData = roc.second->readRegister(address);
+				}
+				else
+				{
+					readData =
+						getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
+				}
 			}
-			else
+			catch(...)
 			{
-				readData =
-				    getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
+				__SS__ << "Error during ROC read of link " << roc.second->getLinkID()
+					<< " - check that the ROC is enabled and ready; here is the DTC ROC setup: " <<
+					getDTC()->FormattedRegDump(0, getDTC()->formattedROCEmulationFunctions_) << __E__;
+				try
+				{
+					throw;
+				}
+				catch(const std::runtime_error& e)
+				{
+					ss << "\nHere was the error: " << e.what() << __E__;
+				}
+				catch(const std::exception& e)
+				{
+					ss << "\nHere was the error: " << e.what() << __E__;
+				}
+				__SS_THROW__;
 			}
-
+			
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%x", readData);
 			if(result.size())
@@ -4421,6 +4443,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->resetStartEventTag_    = false;
 			bufferTestThreadStruct_->thisDTC_               = thisDTC_;
 			bufferTestThreadStruct_->running_               = true;
+			bufferTestThreadStruct_->error_                	= "";
 			bufferTestThreadStruct_->doNotResetCounters_    = false;
 			bufferTestThreadStruct_->skipBy32_              = skipBy32;
 			bufferTestThreadStruct_->packetThresholdToSave_ = packetThresholdToSave;
@@ -4576,6 +4599,12 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 		for(size_t i = 0; i < threadStruct->rocFragmentErrorsCount_.size(); ++i)
 			statusSs << "\t Roc-" << i << " Fragment Errors count:"
 			         << threadStruct->rocFragmentErrorsCount_[i] << __E__;
+
+		if(threadStruct->error_ != "")
+		{
+			__SS__ << "Error identified in the detached buffer status: " << statusSs.str();
+			__SS_THROW__;
+		}
 	}
 	__COUT__ << "Done getting detached buffer test status..." << __E__;
 
@@ -4757,8 +4786,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	{
 		// print the data block header
 		DTCLib::DTC_DataHeaderPacket* dataHeader = dataBlocks[j].GetHeader().get();
-		__COUTT__ << dataHeader->toJSON() << __E__;
-
+		__COUTS__(2) << dataHeader->toJSON() << __E__;
 		++(threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]);
 
 		// ~~~	The Data Header Packet Status 8-bit field is defined as follows ~~~
@@ -4810,6 +4838,12 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 			}
 #endif
 		}
+
+		__COUTT__ << "Link-" << dataHeader->GetLinkID() << 
+			" Fragment #" << threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()] << "\n"
+			" Timeout #" << threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()] << "\n"
+			" Empty #" << threadStruct->rocPayloadEmptyCount_[dataHeader->GetLinkID()] << "\n"
+			<< dataHeader->toJSON() << __E__;
 	}  //end Data Block ROC fragment loop
 
 	// ostr << std::endl << std::endl;
@@ -5294,6 +5328,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->resetStartEventTag_ = false;
 				bufferTestThreadStruct_->thisDTC_            = thisDTC_;
 				bufferTestThreadStruct_->running_            = true;
+				bufferTestThreadStruct_->error_            	 = "";
 			}
 			std::thread(
 			    [](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
@@ -5302,7 +5337,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			    },
 			    bufferTestThreadStruct_)
 			    .detach();
-			outSs << "Launced detached Buffer Test thread and reading data DMA-0 "
+			outSs << "Launched detached Buffer Test thread and reading data DMA-0 "
 			         "starting at event tag "
 			      << timestampStart << " (0x" << std::hex << timestampStart << ")"
 			      << __E__;
@@ -5358,8 +5393,16 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 
 		outSs << "Detached Buffer Test thread exited. " << __E__;
 		outSs << "Reading final status..." << __E__;
-		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(
-		    bufferTestThreadStruct_);
+		try
+		{			
+			outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(
+				bufferTestThreadStruct_);
+		}
+		catch(const std::runtime_error& e)
+		{
+			__FE_COUT_WARN__ << "Ignoring buffer status error during HALT: " << e.what() << __E__;
+		}
+		
 	}
 	else
 	{

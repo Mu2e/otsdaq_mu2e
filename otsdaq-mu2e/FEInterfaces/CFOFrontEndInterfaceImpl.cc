@@ -2623,6 +2623,12 @@ std::string CFOFrontEndInterface::getDetachedBufferTestStatus(
 				         << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second
 				         << ")" << std::dec << __E__;
 		}
+
+		if(threadStruct->error_ != "")
+		{
+			__SS__ << "Error identified in the detached buffer status: " << statusSs.str();
+			__SS_THROW__;
+		}
 	}
 	__COUT__ << "Done getting detached buffer test status..." << __E__;
 
