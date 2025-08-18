@@ -106,15 +106,6 @@ ROCTimingPaddlesInterface::ROCTimingPaddlesInterface(
 	    1  // requiredUserPermissions
 	);
 
-	registerFEMacroFunction(
-	    "varTest",
-	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &ROCTimingPaddlesInterface::varTest),
-	    std::vector<std::string>{},                                // inputs parameters
-	    std::vector<std::string>{"Plotly_Plot1", "Plotly_Plot2"},  // output parameters
-	    1  // requiredUserPermissions
-	);
-
 	registerFEMacroFunction("Read Rx FIFO",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
 	                            &ROCTimingPaddlesInterface::ReadRxFIFO),
@@ -232,93 +223,6 @@ catch(...)
 
 //==================================================================================================
 bool ROCTimingPaddlesInterface::running(void) { return false; }
-
-//==================================================================================================
-void ROCTimingPaddlesInterface::varTest(__ARGS__)
-{
-	std::vector<uint16_t> eventHistAddrsFD   = {25, 26, 27, 28, 29};
-	std::vector<uint16_t> eventHistAddrsTest = {20, 15, 14, 13, 9};
-	std::string           data = StringMacros::vectorToString(eventHistAddrsFD, ",");
-	std::string dataTest       = StringMacros::vectorToString(eventHistAddrsTest, ",");
-	data                       = "[" + data + "]";
-	dataTest                   = "[" + dataTest + "]";
-
-	std::string histogramTemplate = R"({
-        "data" : [{
-                "x": [-2, -1, 0, 1, 2],
-				"y": <LOOPBACK>,
-                "type": "bar",
-                "name": "Loopback Markers",
-                "opacity": 0.75
-            },
-            {
-				"x": [-2, -1, 0, 1, 2],
-                "y": <CLOCK>,
-                "type": "bar",
-                "name": "Clock Markers",
-                "opacity": 0.75
-            },
-			{
-				"x": [-2, -1, 0, 1, 2],
-                "y": <EVENT>,
-                "type": "bar",
-                "name": "Event Markers",
-                "opacity": 0.75
-            }],
-        "layout" : {
-                "title" : { "text" : "Awesome Histogram"},
-                "xaxis" : { "title" : {"text" : "Bin"}, "titlefont": { "size" : 10 }, "showticklabels" : true },
-                "yaxis" : { "title" : {"text" : "Count"}, "titlefont": { "size" : 10 }, "zeroline" : true }
-            }
-    })";
-
-	std::string histogramTemplateTest = R"({
-        "data" : [{
-                "x": [-2, -1, 0, 1, 2],
-				"y": <LOOPBACK>,
-                "type": "bar",
-                "name": "Loopback Markers",
-                "opacity": 0.75
-            },
-            {
-				"x": [-2, -1, 0, 1, 2],
-                "y": <CLOCK>,
-                "type": "bar",
-                "name": "Clock Markers",
-                "opacity": 0.75
-            },
-			{
-				"x": [-2, -1, 0, 1, 2],
-                "y": [1,3,4,6,9],
-				"mode": "lines+markers",
-				"type": "scatter",
-                "name": "Event Markers",
-                "opacity": 0.75
-            }],
-        "layout" : {
-                "title" : { "text" : "Dummy Data Test #2"},
-                "xaxis" : { "title" : {"text" : "Bin"}, "titlefont": { "size" : 10 }, "showticklabels" : true },
-                "yaxis" : { "title" : {"text" : "Count"}, "titlefont": { "size" : 10 }, "zeroline" : true }
-            }
-    })";
-
-	histogramTemplate =
-	    std::regex_replace(histogramTemplate, std::regex("<LOOPBACK>"), data);
-	histogramTemplate =
-	    std::regex_replace(histogramTemplate, std::regex("<CLOCK>"), data);
-	histogramTemplate =
-	    std::regex_replace(histogramTemplate, std::regex("<EVENT>"), data);
-
-	histogramTemplateTest =
-	    std::regex_replace(histogramTemplateTest, std::regex("<LOOPBACK>"), data);
-	histogramTemplateTest =
-	    std::regex_replace(histogramTemplateTest, std::regex("<CLOCK>"), dataTest);
-	// histogramTemplateTest = std::regex_replace(histogramTemplateTest, std::regex("<EVENT>"), dataTest);
-
-	__COUT_INFO__ << histogramTemplate << __E__;
-	__SET_ARG_OUT__("Plotly_Plot1", histogramTemplate);
-	__SET_ARG_OUT__("Plotly_Plot2", histogramTemplateTest);
-}
 
 //==================================================================================================
 void ROCTimingPaddlesInterface::Configure(__ARGS__)

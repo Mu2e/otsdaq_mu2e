@@ -39,7 +39,6 @@ class ROCTimingPaddlesInterface : public ROCPolarFireCoreInterface
     void BERT                       (__ARGS__);
     void ReadRxFIFO                 (__ARGS__);
     void ReadTxFIFO                 (__ARGS__);
-    void varTest                    (__ARGS__);
 
     std::string readBuffer(uint32_t loc_addr);
     std::array<std::string, 4> ReadMarkerHistograms(void);
