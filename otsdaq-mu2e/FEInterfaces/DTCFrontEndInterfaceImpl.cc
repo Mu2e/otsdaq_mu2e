@@ -2897,8 +2897,8 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		if(rocLinkIndex == DTC_Link_ALL || rocLinkIndex == roc.second->getLinkID())
 		{
 			found = true;
-			try //give user feedback on ROC status if exception caught
-			{				
+			try  //give user feedback on ROC status if exception caught
+			{
 				if(emulatorMode_)
 				{
 					readData = roc.second->readRegister(address);
@@ -2906,14 +2906,17 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 				else
 				{
 					readData =
-						getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
+					    getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
 				}
 			}
 			catch(...)
 			{
 				__SS__ << "Error during ROC read of link " << roc.second->getLinkID()
-					<< " - check that the ROC is enabled and ready; here is the DTC ROC setup: " <<
-					getDTC()->FormattedRegDump(0, getDTC()->formattedROCEmulationFunctions_) << __E__;
+				       << " - check that the ROC is enabled and ready; here is the DTC "
+				          "ROC setup: "
+				       << getDTC()->FormattedRegDump(
+				              0, getDTC()->formattedROCEmulationFunctions_)
+				       << __E__;
 				try
 				{
 					throw;
@@ -2928,7 +2931,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 				}
 				__SS_THROW__;
 			}
-			
+
 			char readDataStr[100];
 			sprintf(readDataStr, "0x%x", readData);
 			if(result.size())
@@ -4443,7 +4446,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->resetStartEventTag_    = false;
 			bufferTestThreadStruct_->thisDTC_               = thisDTC_;
 			bufferTestThreadStruct_->running_               = true;
-			bufferTestThreadStruct_->error_                	= "";
+			bufferTestThreadStruct_->error_                 = "";
 			bufferTestThreadStruct_->doNotResetCounters_    = false;
 			bufferTestThreadStruct_->skipBy32_              = skipBy32;
 			bufferTestThreadStruct_->packetThresholdToSave_ = packetThresholdToSave;
@@ -4602,7 +4605,8 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 
 		if(threadStruct->error_ != "")
 		{
-			__SS__ << "Error identified in the detached buffer status: " << statusSs.str();
+			__SS__ << "Error identified in the detached buffer status: "
+			       << statusSs.str();
 			__SS_THROW__;
 		}
 	}
@@ -4839,11 +4843,15 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 #endif
 		}
 
-		__COUTT__ << "Link-" << dataHeader->GetLinkID() << 
-			" Fragment #" << threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()] << "\n"
-			" Timeout #" << threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()] << "\n"
-			" Empty #" << threadStruct->rocPayloadEmptyCount_[dataHeader->GetLinkID()] << "\n"
-			<< dataHeader->toJSON() << __E__;
+		__COUTT__ << "Link-" << dataHeader->GetLinkID() << " Fragment #"
+		          << threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]
+		          << "\n"
+		             " Timeout #"
+		          << threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()]
+		          << "\n"
+		             " Empty #"
+		          << threadStruct->rocPayloadEmptyCount_[dataHeader->GetLinkID()] << "\n"
+		          << dataHeader->toJSON() << __E__;
 	}  //end Data Block ROC fragment loop
 
 	// ostr << std::endl << std::endl;
@@ -5328,7 +5336,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->resetStartEventTag_ = false;
 				bufferTestThreadStruct_->thisDTC_            = thisDTC_;
 				bufferTestThreadStruct_->running_            = true;
-				bufferTestThreadStruct_->error_            	 = "";
+				bufferTestThreadStruct_->error_              = "";
 			}
 			std::thread(
 			    [](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
@@ -5394,15 +5402,15 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 		outSs << "Detached Buffer Test thread exited. " << __E__;
 		outSs << "Reading final status..." << __E__;
 		try
-		{			
+		{
 			outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(
-				bufferTestThreadStruct_);
+			    bufferTestThreadStruct_);
 		}
 		catch(const std::runtime_error& e)
 		{
-			__FE_COUT_WARN__ << "Ignoring buffer status error during HALT: " << e.what() << __E__;
+			__FE_COUT_WARN__ << "Ignoring buffer status error during HALT: " << e.what()
+			                 << __E__;
 		}
-		
 	}
 	else
 	{

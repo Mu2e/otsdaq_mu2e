@@ -2626,7 +2626,8 @@ std::string CFOFrontEndInterface::getDetachedBufferTestStatus(
 
 		if(threadStruct->error_ != "")
 		{
-			__SS__ << "Error identified in the detached buffer status: " << statusSs.str();
+			__SS__ << "Error identified in the detached buffer status: "
+			       << statusSs.str();
 			__SS_THROW__;
 		}
 	}

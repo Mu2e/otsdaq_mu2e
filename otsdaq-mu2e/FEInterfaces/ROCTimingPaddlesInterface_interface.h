@@ -3,8 +3,10 @@
 
 #include "otsdaq-mu2e/FEInterfaces/ROCPolarFireCoreInterface.h"
 
-namespace ots {
-class ROCTimingPaddlesInterface : public ROCPolarFireCoreInterface {
+namespace ots
+{
+class ROCTimingPaddlesInterface : public ROCPolarFireCoreInterface
+{
 	// clang-format off
   public:
     ROCTimingPaddlesInterface(const std::string&       rocUID,
