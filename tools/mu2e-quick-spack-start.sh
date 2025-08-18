@@ -368,11 +368,11 @@ if [ -d $Base/local/install ]; then
   export PATH=$Base/local/install/bin:\$PATH
   export LD_LIBRARY_PATH=$Base/local/install/lib:\$LD_LIBRARY_PATH
   export CET_PLUGIN_PATH=$Base/local/install/lib:\$CET_PLUGIN_PATH
-  export FHICL_FILE_PATH=$Base/local/install/fcl:$FHICL_FILE_PATH
-  export MU2E_SEARCH_PATH=$MU2E_SEARCH_PATH:/cvmfs/mu2e.opensciencegrid.org/DataFiles
-  export MU2E_SEARCH_PATH=$Base/local/install/fcl:$MU2E_SEARCH_PATH
-  export MU2E_SEARCH_PATH=$Base/local/install/share/:$MU2E_SEARCH_PATH
-  export ROOT_INCLUDE_PATH=$Base/srcs:$ROOT_INCLUDE_PATH
+  export FHICL_FILE_PATH=$Base/local/install/fcl:\$FHICL_FILE_PATH
+  export MU2E_SEARCH_PATH=\$MU2E_SEARCH_PATH:/cvmfs/mu2e.opensciencegrid.org/DataFiles
+  export MU2E_SEARCH_PATH=$Base/local/install/fcl:\$MU2E_SEARCH_PATH
+  export MU2E_SEARCH_PATH=$Base/local/install/share/:\$MU2E_SEARCH_PATH
+  export ROOT_INCLUDE_PATH=$Base/srcs:\$ROOT_INCLUDE_PATH
 fi
 
 k5user=\`klist|grep "Default principal"|cut -d: -f2|sed 's/@.*//;s/ //'\`
