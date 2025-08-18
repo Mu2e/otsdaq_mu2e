@@ -283,8 +283,9 @@ void ROCTimingPaddlesInterface::varTest(__ARGS__) {
             },
 			{
 				"x": [-2, -1, 0, 1, 2],
-                "y": ,
-                "type": "bar",
+                "y": [1,3,4,6,9],
+				"mode": "lines+markers",
+				"type": "scatter",
                 "name": "Event Markers",
                 "opacity": 0.75
             }],
