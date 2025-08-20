@@ -10,7 +10,7 @@ cet_make_library(LIBRARY_NAME DTCFrontEndInterface SOURCE DTCFrontEndInterfaceIm
   otsdaq-mu2e::CFOandDTCCore
   ROOT::Hist
   ROOT::Core
-  ROOT::RIO
+
 )
 cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG
   otsdaq-mu2e::DTCFrontEndInterface
@@ -35,7 +35,7 @@ cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-m
    
 cet_build_plugin(CAPTANSignalGenerator otsdaq::FEInterface LIBRARIES REG otsdaq-components::DAQHardware )
 
-# cet_build_plugin(ROCTrackerInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::ROCPolarFireCoreInterface )
+cet_build_plugin(ROCTimingPaddlesInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::ROCPolarFireCoreInterface )
 
 install_headers()
 install_source()
