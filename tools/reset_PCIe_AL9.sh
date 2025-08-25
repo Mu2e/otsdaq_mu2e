@@ -55,6 +55,7 @@ if [ "$foundXi" = 1 ];then
 	    pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
 	done
 	killall -9 xdaq.exe
+	killall -9 boardreader
 	# killall -9 TRACE
 	sleep 3
 	rmmod mu2e
