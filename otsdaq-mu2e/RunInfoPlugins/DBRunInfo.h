@@ -21,6 +21,15 @@ class DBRunInfo : public RunInfoVInterface
 	virtual void         updateRunInfo(unsigned int                   runNumber,
 	                                   RunInfoVInterface::RunStopType runStopType);
 
+	//start queryFilter with 'AND' to fiter more the selection
+	virtual std::vector<std::vector<std::string>> getRunRecords(
+	    unsigned int       startTime,
+	    unsigned int       endTime,
+	    const std::string& queryFilter = "");
+
+	virtual std::vector<std::vector<std::string>> getRunConditionByID(
+	    uint64_t conditionID);
+
   private:
 	const char* dbname_;
 	const char* dbhost_;

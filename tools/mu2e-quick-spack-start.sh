@@ -180,7 +180,7 @@ source setup-env.sh
 if ! [ -d fermi-spack-tools ]; then
     #git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
     #cd fermi-spack-tools && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf; cd $Base
-    git clone https://github.com/eflumerf/fermi-spack-tools.git # Fork
+    git clone https://github.com/art-daq/fermi-spack-tools.git # Fork
     cd fermi-spack-tools && git checkout StableWithCairoFix; cd $Base
 else
     #cd fermi-spack-tools && git fetch -a && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf ; cd $Base # Upstream
@@ -188,7 +188,7 @@ else
 fi
 if ! [ -d spack-mpd ]; then
     # git clone https://github.com/FNALssi/spack-mpd.git # Upstream
-    git clone https://github.com/eflumerf/spack-mpd.git # Fork
+    git clone https://github.com/art-daq/spack-mpd.git # Fork
 else
     cd spack-mpd && git pull && cd ..
 fi
@@ -210,7 +210,7 @@ if [ $repo_found -eq 0 ]; then
     git clone https://github.com/FNALssi/fnal_art.git
     cd fnal_art && git checkout ddeec355456e3bca5e4a743ce5d4906fa74a51b6 ; cd ..
     spack repo add ./fnal_art
-    git clone https://github.com/marcmengel/scd_recipes.git
+    git clone https://github.com/fnal-fife/scd_recipes.git
     cd scd_recipes && git checkout e9c8cc8af792008c3c85724cc8ae3ee0662233d6 ; cd ..
     spack repo add ./scd_recipes
     git clone https://github.com/art-daq/artdaq-spack.git
@@ -372,11 +372,11 @@ if [ -d $Base/local/install ]; then
   export PATH=$Base/local/install/bin:\$PATH
   export LD_LIBRARY_PATH=$Base/local/install/lib:\$LD_LIBRARY_PATH
   export CET_PLUGIN_PATH=$Base/local/install/lib:\$CET_PLUGIN_PATH
-  export FHICL_FILE_PATH=$Base/local/install/fcl:$FHICL_FILE_PATH
-  export MU2E_SEARCH_PATH=$MU2E_SEARCH_PATH:/cvmfs/mu2e.opensciencegrid.org/DataFiles
-  export MU2E_SEARCH_PATH=$Base/local/install/fcl:$MU2E_SEARCH_PATH
-  export MU2E_SEARCH_PATH=$Base/local/install/share/:$MU2E_SEARCH_PATH
-  export ROOT_INCLUDE_PATH=$Base/srcs:$ROOT_INCLUDE_PATH
+  export FHICL_FILE_PATH=$Base/local/install/fcl:\$FHICL_FILE_PATH
+  export MU2E_SEARCH_PATH=\$MU2E_SEARCH_PATH:/cvmfs/mu2e.opensciencegrid.org/DataFiles
+  export MU2E_SEARCH_PATH=$Base/local/install/fcl:\$MU2E_SEARCH_PATH
+  export MU2E_SEARCH_PATH=$Base/local/install/share/:\$MU2E_SEARCH_PATH
+  export ROOT_INCLUDE_PATH=$Base/srcs:\$ROOT_INCLUDE_PATH
 fi
 
 k5user=\`klist|grep "Default principal"|cut -d: -f2|sed 's/@.*//;s/ //'\`
@@ -463,6 +463,11 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
     fi
     spack env activate tdaq-develop
+    if ! spack find mu2e-trig-config >/dev/null 2>&1; then
+        echo "Adding mu2e-trig-config to tdaq-develop environment..."
+        spack add mu2e-trig-config
+    fi
+
     spack concretize --force --deprecated && spack install --deprecated
     # spack mpd build # Upstream
     spack mpd build -G Ninja # Fork
