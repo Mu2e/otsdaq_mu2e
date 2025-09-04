@@ -245,7 +245,10 @@ if [ $opt_no_auto_upstream -eq 0 ] && [ -d /mu2e/spack_areas ];then
   upstreams+=($mu2e $ots $artdaq $art)
 fi
 
-rm $spackdir/etc/spack/upstreams.yaml # Remove as we will re-generate
+# If updating upstreams, clear existing file first
+if [ ${#upstreams[@]} -gt 0 ]; then
+  rm $spackdir/etc/spack/upstreams.yaml
+fi
 for upstream in ${upstreams[@]}; do
     for upstreamdir in `find $upstream -type f -wholename '*/.spack-db/index.json' 2>/dev/null`; do
         echo "Getting real directory for upstream database $upstreamdir"
