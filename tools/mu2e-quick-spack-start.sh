@@ -181,10 +181,10 @@ if ! [ -d fermi-spack-tools ]; then
     #git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
     #cd fermi-spack-tools && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf; cd $Base
     git clone https://github.com/art-daq/fermi-spack-tools.git # Fork
-    cd fermi-spack-tools && git checkout StableWithCairoFix; cd $Base
+    cd fermi-spack-tools && git checkout eflumerf/CMakeFix; cd $Base
 else
     #cd fermi-spack-tools && git fetch -a && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf ; cd $Base # Upstream
-    cd fermi-spack-tools && git fetch -a && git checkout StableWithCairoFix ; cd $Base # Fork
+    cd fermi-spack-tools && git fetch -a && git checkout eflumerf/CMakeFix ; cd $Base # Fork
 fi
 if ! [ -d spack-mpd ]; then
     # git clone https://github.com/FNALssi/spack-mpd.git # Upstream
