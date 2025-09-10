@@ -161,14 +161,14 @@ fi
 if ! [ -d $spackdir ];then
     $(
     cd ${spackdir%/spack}
-    git clone https://github.com/Mu2e/spack.git -b Mu2e-TDAQ
+    git clone https://github.com/Mu2e/spack.git -b eflumerf/FixPerlPackageStash
         )
 else
     #cd $spackdir && git pull && cd $Base
     if [ `git remote -v|grep -c Mu2e` -eq 0 ];then
 	   git remote set-url origin https://github.com/Mu2e/spack.git
     fi
-    cd $spackdir && git fetch -a && git checkout Mu2e-TDAQ && cd $Base
+    cd $spackdir && git fetch -a && git checkout eflumerf/FixPerlPackageStash && cd $Base
 fi
 
 cat >setup-env.sh <<-EOF
