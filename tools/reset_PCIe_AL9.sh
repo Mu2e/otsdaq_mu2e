@@ -4,26 +4,31 @@
 
 lockfile="/tmp/mu2e.lock"
 # Attempt to create the lock file atomically using ln
-retried=0
+retriedA=0 retriedB=0
 while ! ln -s "$$" "$lockfile" 2>/dev/null; do
     # Check if the existing lock file contains a valid PID
     if [ -L "$lockfile" ]; then
         pid=$(readlink "$lockfile")
-	possible_parent=`ps aux | grep -E '[0-9] bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|awk '{print$2}'`
+        ps=`ps aux`
+	possible_parent=`echo "$ps" | grep -E ':[0-9]* bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|awk '{print$2}'`
+        echo "pid=$pid possible_parent=$possible_parent"
 	if [ -n "$pid"  ] && kill -0 "$pid" 2>/dev/null; then
 	    if [ -n "$possible_parent" -a "$possible_parent" = $pid ];then
 		echo lock set by valid non-read_dtc_temps parent
 		break
 	    fi
-	    echo "Script is already running with PID $pid and not valid parent"
-            exit 0
+            test $retriedB -gt 30 && { echo "Failed to acquire lock."; exit 1; }
+            retriedB=$(($retriedB+1))
+            echo `date`: Waiting for `echo "$ps" | grep " $pid "`
+            sleep 2
+            continue
         fi
     fi
     # must be stale , remove and try again
-    test $retried -gt 0 && { echo "Failed to acquire lock."; exit 1; }
+    test $retriedA -gt 0 && { echo "Failed to acquire lock."; exit 1; }
+    retriedA=$(($retriedA+1))
     echo 'Stale lock encountered - removing and retrying'
     rm -f "$lockfile"
-    retried=$(($retried+1))
 done
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
