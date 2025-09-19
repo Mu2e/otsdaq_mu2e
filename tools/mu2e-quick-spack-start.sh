@@ -161,14 +161,14 @@ fi
 if ! [ -d $spackdir ];then
     $(
     cd ${spackdir%/spack}
-    git clone https://github.com/Mu2e/spack.git -b Mu2e-TDAQ
+    git clone https://github.com/Mu2e/spack.git -b eflumerf/FixPerlPackageStash
         )
 else
     #cd $spackdir && git pull && cd $Base
     if [ `git remote -v|grep -c Mu2e` -eq 0 ];then
 	   git remote set-url origin https://github.com/Mu2e/spack.git
     fi
-    cd $spackdir && git fetch -a && git checkout Mu2e-TDAQ && cd $Base
+    cd $spackdir && git fetch -a && git checkout eflumerf/FixPerlPackageStash && cd $Base
 fi
 
 cat >setup-env.sh <<-EOF
@@ -181,10 +181,10 @@ if ! [ -d fermi-spack-tools ]; then
     #git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
     #cd fermi-spack-tools && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf; cd $Base
     git clone https://github.com/art-daq/fermi-spack-tools.git # Fork
-    cd fermi-spack-tools && git checkout StableWithCairoFix; cd $Base
+    cd fermi-spack-tools && git checkout eflumerf/CMakeFix; cd $Base
 else
     #cd fermi-spack-tools && git fetch -a && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf ; cd $Base # Upstream
-    cd fermi-spack-tools && git fetch -a && git checkout StableWithCairoFix ; cd $Base # Fork
+    cd fermi-spack-tools && git fetch -a && git checkout eflumerf/CMakeFix ; cd $Base # Fork
 fi
 if ! [ -d spack-mpd ]; then
     # git clone https://github.com/FNALssi/spack-mpd.git # Upstream
@@ -212,6 +212,7 @@ if [ $repo_found -eq 0 ]; then
     spack repo add ./fnal_art
     git clone https://github.com/fnal-fife/scd_recipes.git
     cd scd_recipes && git checkout e9c8cc8af792008c3c85724cc8ae3ee0662233d6 ; cd ..
+    rm -rf scd_recipes/packages/perl-ipc-run3
     spack repo add ./scd_recipes
     git clone https://github.com/art-daq/artdaq-spack.git
     spack repo add ./artdaq-spack
@@ -219,11 +220,11 @@ if [ $repo_found -eq 0 ]; then
     spack repo add ./mu2e-spack
     cd $Base
 else
-    echo "Repo's previously added -- pull any updates"
-    for dir in `spack repo list|awk '{print $2}'`;do
-        cd $dir
-        git pull
-    done
+    cd fnal_art && git fetch -a && git checkout ddeec355456e3bca5e4a743ce5d4906fa74a51b6 ; cd ..
+    cd scd_recipes && git fetch -a && git checkout e9c8cc8af792008c3c85724cc8ae3ee0662233d6 ; cd ..
+    rm -rf scd_recipes/packages/perl-ipc-run3
+    cd artdaq-spack && git pull; cd ..
+    cd mu2e-spack && git pull; cd ..
     cd $Base
 fi
 
@@ -245,6 +246,10 @@ if [ $opt_no_auto_upstream -eq 0 ] && [ -d /mu2e/spack_areas ];then
   upstreams+=($mu2e $ots $artdaq $art)
 fi
 
+# If updating upstreams, clear existing file first
+if [ ${#upstreams[@]} -gt 0 ]; then
+  rm $spackdir/etc/spack/upstreams.yaml
+fi
 for upstream in ${upstreams[@]}; do
     for upstreamdir in `find $upstream -type f -wholename '*/.spack-db/index.json' 2>/dev/null`; do
         echo "Getting real directory for upstream database $upstreamdir"
@@ -463,6 +468,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
     fi
     spack env activate tdaq-develop
+    spack add lcov # For coverage collection
     if ! spack find mu2e-trig-config >/dev/null 2>&1; then
         echo "Adding mu2e-trig-config to tdaq-develop environment..."
         spack add mu2e-trig-config
