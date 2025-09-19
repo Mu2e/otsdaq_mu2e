@@ -659,7 +659,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Also setup Jitter Attenuator (Default := false)",
 						"Set Link RX/TX Enable (Default := false)",
 						"Enable Auto-generation of Data Request Packets (Default := false)",
-						"Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)",
+						"Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 0)",
 					},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
@@ -3960,7 +3960,7 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 {
 	__SET_ARG_OUT__("Result",
 		SetupCFOInterface(
-			__GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 2)", int, 2),
+			__GET_ARG_IN__("Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 0)", int, 0),
 			__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false),
 			__GET_ARG_IN__("Also setup Jitter Attenuator (Default := false)",bool,false),
 			__GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
