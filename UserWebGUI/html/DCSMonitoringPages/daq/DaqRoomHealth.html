@@ -275,6 +275,58 @@
 				, {"Mu2e:RackTemp:7W:2:temperature": 7}
 			];
 
+			var pvTemperEW1_ = [
+				  {"Mu2e:RackTemp:1E:0:temperature": 1}
+				, {"Mu2e:RackTemp:1E:1:temperature": 1}
+				, {"Mu2e:RackTemp:1E:2:temperature": 1}
+				, {"Mu2e:RackTemp:2E:0:temperature": 2}
+				, {"Mu2e:RackTemp:2E:1:temperature": 2}
+				, {"Mu2e:RackTemp:2E:2:temperature": 2}
+				, {"Mu2e:RackTemp:3E:0:temperature": 3}
+				, {"Mu2e:RackTemp:3E:1:temperature": 3}
+				, {"Mu2e:RackTemp:3E:2:temperature": 3}
+				, {"Mu2e:RackTemp:4E:0:temperature": 4}
+				, {"Mu2e:RackTemp:4E:1:temperature": 4}
+				, {"Mu2e:RackTemp:4E:2:temperature": 4}
+				, {"Mu2e:RackTemp:5E:0:temperature": 5}
+				, {"Mu2e:RackTemp:5E:1:temperature": 5}
+				, {"Mu2e:RackTemp:5E:2:temperature": 5}
+				, {"Mu2e:RackTemp:6E:0:temperature": 6}
+				, {"Mu2e:RackTemp:6E:1:temperature": 6}
+				, {"Mu2e:RackTemp:6E:2:temperature": 6}
+				, {"Mu2e:RackTemp:7E:0:temperature": 7}
+				, {"Mu2e:RackTemp:7E:1:temperature": 7}
+				, {"Mu2e:RackTemp:7E:2:temperature": 7}
+				, {"Mu2e:Weather:1:temperature": 0}
+				, {"Mu2e:Weather:2:temperature": 0}
+				];
+
+			var pvTemperEW2_ = [
+				  {"Mu2e:RackTemp:1W:0:temperature": 1}
+				, {"Mu2e:RackTemp:1W:1:temperature": 1}
+				, {"Mu2e:RackTemp:1W:2:temperature": 1}
+				, {"Mu2e:RackTemp:2W:0:temperature": 2}
+				, {"Mu2e:RackTemp:2W:1:temperature": 2}
+				, {"Mu2e:RackTemp:2W:2:temperature": 2}
+				, {"Mu2e:RackTemp:3W:0:temperature": 3}
+				, {"Mu2e:RackTemp:3W:1:temperature": 3}
+				, {"Mu2e:RackTemp:3W:2:temperature": 3}
+				, {"Mu2e:RackTemp:4W:0:temperature": 4}
+				, {"Mu2e:RackTemp:4W:1:temperature": 4}
+				, {"Mu2e:RackTemp:4W:2:temperature": 4}
+				, {"Mu2e:RackTemp:5W:0:temperature": 5}
+				, {"Mu2e:RackTemp:5W:1:temperature": 5}
+				, {"Mu2e:RackTemp:5W:2:temperature": 5}
+				, {"Mu2e:RackTemp:6W:0:temperature": 6}
+				, {"Mu2e:RackTemp:6W:1:temperature": 6}
+				, {"Mu2e:RackTemp:6W:2:temperature": 6}
+				, {"Mu2e:RackTemp:7W:0:temperature": 7}
+				, {"Mu2e:RackTemp:7W:1:temperature": 7}
+				, {"Mu2e:RackTemp:7W:2:temperature": 7}
+				, {"Mu2e:Weather:1:temperature": 0}
+				, {"Mu2e:Weather:2:temperature": 0}
+			];
+
 			var pvNodeLedE_ = [
 				//1E
 				  {"Mu2e:PDU:1E_L:P1": [1, 1, 1]}
@@ -329,8 +381,29 @@
 
 			var pvNodeTemperE_ = [
 				//2E
-				  {"Mu2e:CompStatus:cfo-01:DTC0:dtctemp": [2, 11, 1]}
-				, {"Mu2e:CompStatus:cfo-01:DTC1:dtctemp": [2, 11, 2]}
+				  {"Mu2e:CompStatus:trk-15:DTC0:dtctemp": [2, 11, 1]}
+				, {"Mu2e:CompStatus:trk-15:DTC1:dtctemp": [2, 11, 2]}
+				, {"Mu2e:CompStatus:trk-16:DTC0:dtctemp": [2, 10, 1]}
+				, {"Mu2e:CompStatus:trk-16:DTC1:dtctemp": [2, 10, 2]}
+				//, {"Mu2e:CompStatus:trk-17:DTC0:dtctemp": [2, 9, 1]}
+				//, {"Mu2e:CompStatus:trk-17:DTC1:dtctemp": [2, 9, 2]}
+				//, {"Mu2e:CompStatus:trk-18:DTC0:dtctemp": [2, 8, 1]}
+				//, {"Mu2e:CompStatus:trk-18:DTC1:dtctemp": [2, 8, 2]}
+				, {"Mu2e:CompStatus:cfo-01:DTC0:dtctemp": [2, 7, 1]}
+				, {"Mu2e:CompStatus:cfo-01:DTC1:dtctemp": [2, 7, 2]}
+				//3E
+				, {"Mu2e:CompStatus:trk-11:DTC0:dtctemp": [3, 11, 1]}
+				, {"Mu2e:CompStatus:trk-11:DTC1:dtctemp": [3, 11, 2]}
+				//, {"Mu2e:CompStatus:trk-14:DTC0:dtctemp": [3, 8, 1]}
+				//, {"Mu2e:CompStatus:trk-14:DTC1:dtctemp": [3, 8, 2]}
+				, {"Mu2e:CompStatus:dl-01:DTC0:dtctemp": [3, 7, 1]}
+				, {"Mu2e:CompStatus:dl-01:DTC1:dtctemp": [3, 7, 2]}
+				, {"Mu2e:CompStatus:dl-02:DTC0:dtctemp": [3, 6, 1]}
+				, {"Mu2e:CompStatus:dl-02:DTC1:dtctemp": [3, 6, 2]}
+				, {"Mu2e:CompStatus:dcs-01:DTC0:dtctemp": [3, 5, 1]}
+				, {"Mu2e:CompStatus:dcs-01:DTC1:dtctemp": [3, 5, 2]}
+				, {"Mu2e:CompStatus:dcs-02:DTC0:dtctemp": [3, 4, 1]}
+				, {"Mu2e:CompStatus:dcs-02:DTC1:dtctemp": [3, 4, 2]}
 			];
 
 			var pvNodeLedW_ = [
@@ -397,6 +470,47 @@
 				, {"Mu2e:CompStatus:calo-04:DTC1:dtctemp": [1, 8, 2]}
 				, {"Mu2e:CompStatus:calo-05:DTC0:dtctemp": [1, 7, 1]}
 				, {"Mu2e:CompStatus:calo-05:DTC1:dtctemp": [1, 7, 2]}
+				, {"Mu2e:CompStatus:calo-06:DTC0:dtctemp": [1, 6, 1]}
+				, {"Mu2e:CompStatus:calo-06:DTC1:dtctemp": [1, 6, 2]}
+				, {"Mu2e:CompStatus:calo-07:DTC0:dtctemp": [1, 5, 1]}
+				, {"Mu2e:CompStatus:calo-07:DTC1:dtctemp": [1, 5, 2]}
+				//, {"Mu2e:CompStatus:calo-08:DTC0:dtctemp": [1, 4, 1]}
+				//, {"Mu2e:CompStatus:calo-08:DTC1:dtctemp": [1, 4, 2]}
+				//, {"Mu2e:CompStatus:extmon-01:DTC0:dtctemp": [1, 3, 1]}
+				//, {"Mu2e:CompStatus:extmon-01:DTC1:dtctemp": [1, 3, 2]}
+				//2W
+				, {"Mu2e:CompStatus:calo-09:DTC0:dtctemp": [2, 11, 1]}
+				, {"Mu2e:CompStatus:calo-09:DTC1:dtctemp": [2, 11, 2]}
+				, {"Mu2e:CompStatus:calo-10:DTC0:dtctemp": [2, 10, 1]}
+				, {"Mu2e:CompStatus:calo-10:DTC1:dtctemp": [2, 10, 2]}
+				, {"Mu2e:CompStatus:calo-11:DTC0:dtctemp": [2, 9, 1]}
+				, {"Mu2e:CompStatus:calo-11:DTC1:dtctemp": [2, 9, 2]}
+				, {"Mu2e:CompStatus:calo-12:DTC0:dtctemp": [2, 8, 1]}
+				, {"Mu2e:CompStatus:calo-12:DTC1:dtctemp": [2, 8, 2]}
+				, {"Mu2e:CompStatus:stm-01:DTC0:dtctemp":  [2, 7, 1]}
+				, {"Mu2e:CompStatus:stm-01:DTC1:dtctemp":  [2, 7, 2]}
+				//3W
+				, {"Mu2e:CompStatus:calo-13:DTC0:dtctemp": [3, 11, 1]}
+				, {"Mu2e:CompStatus:calo-13:DTC1:dtctemp": [3, 11, 2]}
+				, {"Mu2e:CompStatus:calo-14:DTC0:dtctemp": [3, 10, 1]}
+				, {"Mu2e:CompStatus:calo-14:DTC1:dtctemp": [3, 10, 2]}
+				, {"Mu2e:CompStatus:trk-09:DTC0:dtctemp":  [3, 9, 1]}
+				, {"Mu2e:CompStatus:trk-09:DTC1:dtctemp":  [3, 9, 2]}
+				, {"Mu2e:CompStatus:trk-10:DTC0:dtctemp":  [3, 8, 1]}
+				, {"Mu2e:CompStatus:trk-10:DTC1:dtctemp":  [3, 8, 2]}
+				, {"Mu2e:CompStatus:crv-03:DTC0:dtctemp":  [3, 7, 1]}
+				, {"Mu2e:CompStatus:crv-03:DTC1:dtctemp":  [3, 7, 2]}
+				//4W
+				, {"Mu2e:CompStatus:trk-05:DTC0:dtctemp": [4, 11, 1]}
+				, {"Mu2e:CompStatus:trk-05:DTC1:dtctemp": [4, 11, 2]}
+				, {"Mu2e:CompStatus:trk-06:DTC0:dtctemp": [4, 10, 1]}
+				, {"Mu2e:CompStatus:trk-06:DTC1:dtctemp": [4, 10, 2]}
+				, {"Mu2e:CompStatus:trk-07:DTC0:dtctemp":  [4, 9, 1]}
+				, {"Mu2e:CompStatus:trk-07:DTC1:dtctemp":  [4, 9, 2]}
+				, {"Mu2e:CompStatus:trk-08:DTC0:dtctemp":  [4, 8, 1]}
+				, {"Mu2e:CompStatus:trk-08:DTC1:dtctemp":  [4, 8, 2]}
+				, {"Mu2e:CompStatus:crv-02:DTC0:dtctemp":  [4, 7, 1]}
+				, {"Mu2e:CompStatus:crv-02:DTC1:dtctemp":  [4, 7, 2]}
 				//5W
 				, {"Mu2e:CompStatus:trk-01:DTC0:dtctemp": [5, 11, 1]}
 				, {"Mu2e:CompStatus:trk-01:DTC1:dtctemp": [5, 11, 2]}
@@ -406,8 +520,8 @@
 				, {"Mu2e:CompStatus:trk-03:DTC1:dtctemp": [5, 9, 2]}
 				, {"Mu2e:CompStatus:trk-04:DTC0:dtctemp": [5, 8, 1]}
 				, {"Mu2e:CompStatus:trk-04:DTC1:dtctemp": [5, 8, 2]}
-				, {"Mu2e:CompStatus:trk-05:DTC0:dtctemp": [5, 7, 1]}
-				, {"Mu2e:CompStatus:trk-05:DTC1:dtctemp": [5, 7, 2]}
+				, {"Mu2e:CompStatus:crv-01:DTC0:dtctemp": [5, 7, 1]}
+				, {"Mu2e:CompStatus:crv-01:DTC1:dtctemp": [5, 7, 2]}
 			];
 
 			/////////////////////////////////////////////////////////////////////////////////////////
@@ -433,6 +547,10 @@
 
 				makeMainPage();
 				generateUID();
+
+				var rackTemp = document.getElementById("rackTemp");
+				rackTemp.innerHTML = "<button onclick='drawGraph(pvTemperEW1_)'>East rack temperatures</button>\
+				<button onclick='drawGraph(pvTemperEW2_)'>West rack temperatures</button>";
 			} //end init()
 
 
@@ -657,11 +775,27 @@
 				}
 			} //end makeMainPage()
 
+			function safeStringify(obj) {
+			const seen = new WeakSet();
+			return JSON.stringify(obj, function(key, value) {
+				if (typeof value === "object" && value !== null) {
+				if (seen.has(value)) return "[Circular]";
+				seen.add(value);
+				}
+				return value;
+			});
+			}
 
 			//=====================================================================================
-			function drawGraph(widget, pvName)
+			function drawGraph(pvNames)
 			{
-				var url = location.origin + "/WebPath/UserWebPath/html/DCSMonitoringPages/Plot.html?urn=" + DesktopContent._localUrnLid + "&pv_name=" + pvName;
+				var pvName = "";
+				if (!Array.isArray(pvNames))
+					pvName = pvNames;
+				//const safeStringify = require('json-stringify-safe');
+				const safeArray = safeStringify(pvNames);
+				//pvNames = JSON.stringify(pvNames);
+				var url = location.origin + "/WebPath/UserWebPath/html/DCSMonitoringPages/Plot.html?urn=" + DesktopContent._localUrnLid + "&pv_names=" + safeArray;
 				DesktopContent.openNewWindow("Plot",pvName,url,false);
 			} //end drawGraph()
 
@@ -675,11 +809,11 @@
 				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
 				
 				if(page_.widgets[widget].el.id.indexOf('temper-') != -1)
-					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
+					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
 				else if(page_.widgets[widget].el.id.indexOf('led-') != -1)
-					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
+					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(\"" + pvName + "\")'></button>";
 				else if(page_.widgets[widget].el.id.indexOf('nodeLed-') != -1)
-					page_.widgets[widget].el.innerHTML = "<button class='pvNodeLedButton' onclick='drawGraph(" + widget + ",\"" + pvName + "\")'></button>";
+					page_.widgets[widget].el.innerHTML = "<button class='pvNodeLedButton' onclick='drawGraph(\"" + pvName + "\")'></button>";
 
 				page_.widgets[widget].el.title = SlowControlsAPI.setWidgetToolTip(pvName, pvValue, pvTime, pvStatus, pvSeverity, page_.widgets[widget].pvSettings);
 
@@ -840,7 +974,9 @@
 					<h2 align="center">DAQ room health</h2>
 				</div>
 			</div> 
+
 			<div class="topBlockContainer">
+				<div id="rackTemp"></div>
 				<div class="rack" id="rack7E"><center>7E</center></div>
 				<div class="rack" id="rack6E"><center>6E</center></div>
 				<div class="rack" id="rack5E"><center>5E</center></div>
