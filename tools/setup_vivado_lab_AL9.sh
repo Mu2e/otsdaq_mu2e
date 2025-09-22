@@ -4,7 +4,7 @@ XILINX_INSTALL_PATH="/home/xilinx/Vivado_Lab/2021.2/"
 source $XILINX_INSTALL_PATH/settings64.sh
 echo "--------------------------"
 echo "You could also ry installing USB drivers as root:"
-echo "#   ksu" 
+echo "#   ksu"
 echo "#   cd ${XILINX_INSTALL_PATH}/data/xicom/cable_drivers/lin64/install_script/install_drivers"
 echo "#   ./install_drivers"
 echo "--------------------------"
