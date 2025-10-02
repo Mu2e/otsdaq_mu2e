@@ -422,6 +422,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			    std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", dtc, roc)
 			        .c_str());
 			graph->SetMarkerStyle(20);  // default to being more visible when drawn
+                        // graph->SetMarkerColor(dtc + 1);
 		}
 
 		// add a data point

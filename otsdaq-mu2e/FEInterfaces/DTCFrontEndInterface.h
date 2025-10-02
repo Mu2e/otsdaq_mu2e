@@ -188,7 +188,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	// void 								ResetEVBLinkRxTxPLL					(__ARGS__);
 
 	void 								SetupCFOInterface					(__ARGS__);
-	std::string							SetupCFOInterface					(int forceCFOedge, bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP);
+	std::string							SetupCFOInterface					(int forceCFOedge, bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP, int permanentOffset = 0);
 	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
 	std::string							SetCFOEmulatorOnOffSpillEmulation	(bool enable,
 																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,

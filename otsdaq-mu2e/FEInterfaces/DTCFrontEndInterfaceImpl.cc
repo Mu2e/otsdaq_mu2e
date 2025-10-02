@@ -660,6 +660,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 						"Set Link RX/TX Enable (Default := false)",
 						"Enable Auto-generation of Data Request Packets (Default := false)",
 						"Force External CFO Sample Clock Edge (0 for rising-edge, 1 for falling-edge, 2 for auto-find, Default := 0)",
+						"Permanent Offset (-2 to 2, Default := 0)",
 					},  // namesOfInputArgs
 					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
@@ -3964,7 +3965,8 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 			__GET_ARG_IN__("Put DTC in CFO Emulation Mode (Default := false)",bool,false),
 			__GET_ARG_IN__("Also setup Jitter Attenuator (Default := false)",bool,false),
 			__GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
-			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false)
+			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false),
+			__GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0)			
 		)
 	);
 } //end SetupCFOInterface()
@@ -3975,7 +3977,8 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
                                                     bool useCFOemulator,
                                                     bool alsoSetupJA,
                                                     bool cfoRxTxEnable,
-                                                    bool enableAutogenDRP)
+                                                    bool enableAutogenDRP,
+													int  permanentOffset /* = 0 */)
 {
 	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
@@ -4047,6 +4050,11 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 		getDTC()->EnableAutogenDRP();
 	else
 		getDTC()->DisableAutogenDRP();
+
+
+	__FE_COUTV__(permanentOffset);
+	getDTC()->SetCFOSamplePermanentOffset(permanentOffset);
+
 
 	__FE_COUT_INFO__ << outSs.str();
 	return outSs.str();
