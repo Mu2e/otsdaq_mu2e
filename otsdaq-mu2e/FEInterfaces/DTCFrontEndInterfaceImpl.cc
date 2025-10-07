@@ -3984,7 +3984,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 	__FE_COUTV__(forceCFOedge);
 
 	getDTC()->DisableCFOEmulation();
-	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge);
+	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge); //forceCFOedge is a 2-bit value
 
 	__FE_COUTV__(useCFOemulator);
 
@@ -4023,7 +4023,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 					break;
 				sleep(1);
 			}
-			__FE_COUT_INFO__ << "JA Status = "
+			outSs << "JA Status = "
 			                 << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR()
 			                 << __E__;
 		}
@@ -4056,6 +4056,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 	getDTC()->SetCFOSamplePermanentOffset(permanentOffset);
 
 
+	outSs << getDTC()->FormatDTCControl() << __E__ << getDTC()->FormatCFOLinkError() << __E__;
 	__FE_COUT_INFO__ << outSs.str();
 	return outSs.str();
 }  //end SetupCFOInterface()
