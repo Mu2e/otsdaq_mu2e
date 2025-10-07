@@ -1,3 +1,4 @@
+#!/bin/sh
 source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
@@ -15,9 +16,14 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null;do
     if [ -L "$lockfile" ]; then
         pid=$(readlink "$lockfile")
         if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
-            tempPid=`ps aux | awk '/[0-9] \/bin\/bash .*[r]ead_dtc_temps/{print$2}'`  # last digit of TIME and then COMMAND
+            ps=`ps aux|grep -v ssh`
+            tempPid=`echo "$ps" | awk '/bash .*[r]ead_dtc_temps/{print$2}'`  # COMMAND as from cron
             if [ -n "$tempPid" ];then
-                for xx in `seq 5`;do kill $tempPid;sleep .02; done
+                for sig in 15 9;do
+                    echo "attempting kill with sig $sig"
+                    for xx in `seq 5`;do kill $tempPid;sleep .02; done
+                    if ! kill -0 "$pid" 2>/dev/null; then break;fi
+                done
                 sleep 2
                 if kill -0 "$pid" 2>/dev/null; then
                     echo "read_dtc_temps script is running (pid=$tempPid) and could not kill"
