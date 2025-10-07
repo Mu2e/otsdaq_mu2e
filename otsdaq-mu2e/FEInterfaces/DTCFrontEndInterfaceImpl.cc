@@ -3966,7 +3966,7 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 			__GET_ARG_IN__("Also setup Jitter Attenuator (Default := false)",bool,false),
 			__GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
 			__GET_ARG_IN__("Enable Auto-generation of Data Request Packets (Default := false)",bool,false),
-			__GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0)			
+			__GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0)
 		)
 	);
 } //end SetupCFOInterface()
