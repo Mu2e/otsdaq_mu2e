@@ -10,7 +10,7 @@ cet_make_library(LIBRARY_NAME DTCFrontEndInterface SOURCE DTCFrontEndInterfaceIm
   otsdaq-mu2e::CFOandDTCCore
   ROOT::Hist
   ROOT::Core
-
+  ROOT::RIO
 )
 cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG
   otsdaq-mu2e::DTCFrontEndInterface
