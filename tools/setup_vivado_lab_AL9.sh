@@ -3,18 +3,20 @@
 XILINX_INSTALL_PATH="/home/xilinx/Vivado_Lab/2021.2/"
 source $XILINX_INSTALL_PATH/settings64.sh
 echo "--------------------------"
-echo "You could also ry installing USB drivers as root:"
+echo "You could also try installing USB drivers as root:"
 echo "#   ksu"
 echo "#   cd ${XILINX_INSTALL_PATH}/data/xicom/cable_drivers/lin64/install_script/install_drivers"
 echo "#   ./install_drivers"
-echo "--------------------------"
-echo "Or try to unbind and bind USB JTAG:"
-echo "# ${SCRIPT_DIR}/find_JTAG_usb_AL9.sh"
+echo "#   reboot #might be needed"
 
 SCRIPT_DIR="$(
     cd "$(dirname "$(readlink "${BASH_SOURCE[0]}" || printf %s "${BASH_SOURCE[0]}")")"
     pwd -P
 )"
+
+echo "--------------------------"
+echo "Or try to unbind and bind USB JTAG:"
+echo "# source ${SCRIPT_DIR}/find_JTAG_usb_AL9.sh"
 
 HOSTNAME="$(hostname -f)"
 

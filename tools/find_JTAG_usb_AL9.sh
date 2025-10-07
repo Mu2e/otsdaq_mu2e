@@ -10,4 +10,5 @@ for d in /sys/bus/usb/devices/*; do
     fi
   fi
 done
-echo "Then do, e.g... echo -n "1-5" > /sys/bus/usb/drivers/usb/unbind; sleep 1; ../bind"
+echo "Then do, e.g... echo -n "1-5" > /sys/bus/usb/drivers/usb/unbind; sleep 1;"
+echo "Then ...        echo -n "1-5" > /sys/bus/usb/drivers/usb/bind;"
