@@ -3978,13 +3978,13 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
                                                     bool alsoSetupJA,
                                                     bool cfoRxTxEnable,
                                                     bool enableAutogenDRP,
-													int  permanentOffset /* = 0 */)
+                                                    int  permanentOffset /* = 0 */)
 {
 	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
 
 	getDTC()->DisableCFOEmulation();
-	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge); //forceCFOedge is a 2-bit value
+	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge);  //forceCFOedge is a 2-bit value
 
 	__FE_COUTV__(useCFOemulator);
 
@@ -4024,8 +4024,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 				sleep(1);
 			}
 			outSs << "JA Status = "
-			                 << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR()
-			                 << __E__;
+			      << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 		}
 
 		getDTC()->ClearCFOEmulationMode();
@@ -4051,12 +4050,11 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 	else
 		getDTC()->DisableAutogenDRP();
 
-
 	__FE_COUTV__(permanentOffset);
 	getDTC()->SetCFOSamplePermanentOffset(permanentOffset);
 
-
-	outSs << getDTC()->FormatDTCControl() << __E__ << getDTC()->FormatCFOLinkError() << __E__;
+	outSs << getDTC()->FormatDTCControl() << __E__ << getDTC()->FormatCFOLinkError()
+	      << __E__;
 	__FE_COUT_INFO__ << outSs.str();
 	return outSs.str();
 }  //end SetupCFOInterface()
