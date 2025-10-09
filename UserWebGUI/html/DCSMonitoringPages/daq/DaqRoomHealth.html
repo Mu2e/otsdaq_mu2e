@@ -702,6 +702,16 @@
 									temperE.classList.add("nodeTemper");
 									shelfE.appendChild(temperE);
 
+									//Add node name
+									var str = Object.keys(pvNodeTemperE_[l]).toString();
+									if (str.indexOf("DTC1") != -1)
+									{
+										var node = document.createElement('div');
+										node.classList.add("nodeName");
+										node.innerHTML = str.substring(str.indexOf("CompStatus:") + 11, str.indexOf(":DTC1"));
+										shelfE.appendChild(node);
+									}
+
 									var widgetObject 		= {};
 									widgetObject.pvSettings = {};
 									widgetObject.pvList 	= pvNodeTemperE_[l];
@@ -758,6 +768,16 @@
 									temperW.classList.add("nodeTemper");
 									shelfW.appendChild(temperW);
 
+									//Add node name
+									var str = Object.keys(pvNodeTemperW_[l]).toString();
+									if (str.indexOf("DTC1") != -1)
+									{
+										var node = document.createElement('div');
+										node.classList.add("nodeName");
+										node.innerHTML = str.substring(str.indexOf("CompStatus:") + 11, str.indexOf(":DTC1"));
+										shelfW.appendChild(node);
+									}
+
 									var widgetObject 		= {};
 									widgetObject.pvSettings = {};
 									widgetObject.pvList 	= pvNodeTemperW_[l];
@@ -809,7 +829,12 @@
 				var units = page_.widgets[widget].pvSettings != undefined ? page_.widgets[widget].pvSettings[pvName].Units : "";
 				
 				if(page_.widgets[widget].el.id.indexOf('temper-') != -1)
-					page_.widgets[widget].el.innerHTML = "<button class='pvButton' onclick='drawGraph(\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
+				{
+					var button = "<button class='pvButton' onclick='drawGraph(\"" + pvName + "\")'><div class='temperText'>" + Number.parseFloat(pvValue).toFixed(1) + "</div></button>";
+					//if (pvName.indexOf("DTC1") != -1) button = button + "<div style =\"font-size: 5px;\">" + pvName.substring(pvName.indexOf("CompStatus:") + 11, pvName.indexOf(":DTC1")) + "</div>";
+					page_.widgets[widget].el.innerHTML = button;
+				}
+
 				else if(page_.widgets[widget].el.id.indexOf('led-') != -1)
 					page_.widgets[widget].el.innerHTML = "<button class='pvLedButton' onclick='drawGraph(\"" + pvName + "\")'></button>";
 				else if(page_.widgets[widget].el.id.indexOf('nodeLed-') != -1)
