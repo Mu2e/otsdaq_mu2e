@@ -213,7 +213,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					&CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan),                  // feMacroFunction
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
 											"Number of 1.4s super cycle repetitions (0 := infinite)",
-											"Starting Event Window Tag (Default: 0)",
+											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Enable Clock Markers (Default := false)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
@@ -233,7 +233,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
 											"Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",
 											"Number of Event Window Markers to generate (0 := infinite)",
-											"Starting Event Window Tag (Default: 0)",
+											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Event Window Mode (Default := 1)",
 											"Enable Clock Markers (Default := false)",
 											"Use Detached Buffer Test (Default := false)",
@@ -2114,7 +2114,7 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__)
 {
 	uint64_t startTag =
-	    __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", uint64_t, -1);
+	    __GET_ARG_IN__("Starting Event Window Tag (Default or -1 := start from 0 and continue)", uint64_t, -1);
 	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
 	{
 		__FE_COUTV__(next_starting_event_window_tag_);
@@ -2277,7 +2277,7 @@ void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__)
 {
 	uint64_t startTag =
-	    __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", uint64_t, -1);
+	    __GET_ARG_IN__("Starting Event Window Tag (Default or -1 := start from 0 and continue)", uint64_t, -1);
 	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
 	{
 		__FE_COUTV__(next_starting_event_window_tag_);

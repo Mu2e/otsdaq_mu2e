@@ -3531,8 +3531,8 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		if(!found)
 		{
 			__FE_SS__ << "Fatal error - ROC link index '" << rocLinkIndex
-			          << "' not found in DTC's instantiated rocs! Here is the list of "
-			             "ROC links: ";
+			          << "' not found in DTC's instantiated ROCs (make sure your ROC is enabled)! Here is the list of "
+			             "enabled ROC links: ";
 			for(auto& roc : rocs_)
 				ss << roc.second->getLinkID() << ", ";
 			ss << __E__;
