@@ -2113,8 +2113,10 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 //========================================================================
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__)
 {
-	uint64_t startTag =
-	    __GET_ARG_IN__("Starting Event Window Tag (Default or -1 := start from 0 and continue)", uint64_t, -1);
+	uint64_t startTag = __GET_ARG_IN__(
+	    "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
+	    uint64_t,
+	    -1);
 	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
 	{
 		__FE_COUTV__(next_starting_event_window_tag_);
@@ -2276,8 +2278,10 @@ void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 //========================================================================
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__)
 {
-	uint64_t startTag =
-	    __GET_ARG_IN__("Starting Event Window Tag (Default or -1 := start from 0 and continue)", uint64_t, -1);
+	uint64_t startTag = __GET_ARG_IN__(
+	    "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
+	    uint64_t,
+	    -1);
 	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
 	{
 		__FE_COUTV__(next_starting_event_window_tag_);
