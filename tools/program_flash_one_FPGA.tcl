@@ -29,7 +29,7 @@ set_property PROGRAM.ERASE  1 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_d
 set_property PROGRAM.CFG_PROGRAM  1 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 set_property PROGRAM.VERIFY  1 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 set_property PROGRAM.CHECKSUM  0 [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
-startgroup 
+startgroup
 create_hw_bitstream -hw_device [lindex [get_hw_devices ] 0] [get_property PROGRAM.HW_CFGMEM_BITFILE [ lindex [get_hw_devices ] 0]]; program_hw_devices [lindex [get_hw_devices ] 0]; refresh_hw_device [lindex [get_hw_devices ] 0];
 program_hw_cfgmem -hw_cfgmem [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 endgroup
@@ -42,3 +42,4 @@ close_hw_target
 
 
 disconnect_hw_server
+close_hw_manager

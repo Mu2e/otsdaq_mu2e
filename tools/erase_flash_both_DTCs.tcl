@@ -19,7 +19,7 @@ set_property PROGRAM.CHECKSUM  0 [ get_property PROGRAM.HW_CFGMEM [lindex [get_h
 set_property PROGRAM.ADDRESS_RANGE  {entire_device} [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 #set_property PROGRAM.BPI_RS_PINS {none} [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 #refresh_hw_device [lindex [get_hw_devices] 0]
-startgroup 
+startgroup
 create_hw_bitstream -hw_device [lindex [get_hw_devices ] 0] [get_property PROGRAM.HW_CFGMEM_BITFILE [ lindex [get_hw_devices ] 0]]; program_hw_devices [lindex [get_hw_devices ] 0]; refresh_hw_device [lindex [get_hw_devices ] 0];
 program_hw_cfgmem -hw_cfgmem [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 endgroup
@@ -43,7 +43,7 @@ set_property PROGRAM.CHECKSUM  0 [ get_property PROGRAM.HW_CFGMEM [lindex [get_h
 set_property PROGRAM.ADDRESS_RANGE  {entire_device} [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 #set_property PROGRAM.BPI_RS_PINS {none} [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 #refresh_hw_device [lindex [get_hw_devices] 0]
-startgroup 
+startgroup
 create_hw_bitstream -hw_device [lindex [get_hw_devices ] 0] [get_property PROGRAM.HW_CFGMEM_BITFILE [ lindex [get_hw_devices ] 0]]; program_hw_devices [lindex [get_hw_devices ] 0]; refresh_hw_device [lindex [get_hw_devices ] 0];
 program_hw_cfgmem -hw_cfgmem [ get_property PROGRAM.HW_CFGMEM [lindex [get_hw_devices] 0]]
 endgroup
@@ -54,3 +54,4 @@ refresh_hw_device [lindex [get_hw_devices] 0]
 close_hw_target
 
 disconnect_hw_server
+close_hw_manager

@@ -111,6 +111,11 @@ body {
 	float: left;
   }
 
+  .nodeName {
+	font-size: 12px;
+	margin-top: 3px;
+  }
+
   /* Buttons */
   .pvButton {
 	height: 100%;

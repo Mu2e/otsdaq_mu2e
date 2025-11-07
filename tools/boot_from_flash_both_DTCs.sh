@@ -2,9 +2,9 @@ source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
 
-SCRIPT_DIR="$( 
+SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
- pwd -P 
+ pwd -P
 )"
 HOSTNAME="$(hostname -f)"
 
@@ -13,7 +13,7 @@ echo "Programming FPGA booting configuration from flash memory of both devices o
 echo
 
 
-vivado_lab -mode batch -source ${SCRIPT_DIR}/boot_from_flash_both_DTCs.tcl 
+vivado_lab -mode batch -source ${SCRIPT_DIR}/boot_from_flash_both_DTCs.tcl
 
 
 #now reset

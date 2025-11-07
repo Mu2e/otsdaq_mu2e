@@ -2,9 +2,9 @@ source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
 
-SCRIPT_DIR="$( 
+SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
- pwd -P 
+ pwd -P
 )"
 HOSTNAME="$(hostname -f)"
 
@@ -36,10 +36,10 @@ else
 	exit  #exit is used if script is run
 fi
 
-echo "JTAG-0 target flash: ${FLASH_PART0}" 
-echo "JTAG-1 target flash: ${FLASH_PART1}" 
+echo "JTAG-0 target flash: ${FLASH_PART0}"
+echo "JTAG-1 target flash: ${FLASH_PART1}"
 
-# echo "Loading this mcs file to both DTCs: $1" 
+# echo "Loading this mcs file to both DTCs: $1"
 vivado_lab -mode batch -source ${SCRIPT_DIR}/erase_flash_both_DTCs.tcl -tclargs nofile ${FLASH_PART0} nofile ${FLASH_PART1}
 
 #now reset

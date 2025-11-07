@@ -2,21 +2,21 @@
 
 # usage: --name <snapshot name>
 #
-#   snapshot 
+#   snapshot
 #		e.g. ${SNAPSHOT} or first_demo or a or b or c
 #
 #  example run:
 #	./get_mu2e_snapshot_data.sh --name first_demo
 #
 
-if ! [ -e setup_ots.sh ]; then
-  kdialog --sorry "You must run this script from an OTSDAQ installation directory!"
-  exit 1
-fi
+# if ! [ -e setup_ots.sh ]; then
+  echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t You must run this script from an OTSDAQ installation directory!"
+#   exit 1
+# fi
 
 Base=$PWD
 #commenting out unique filename generation
-# no need to keep more than one past log for standard users 
+# no need to keep more than one past log for standard users
 #alloutput_file=$( date | awk -v "SCRIPTNAME=$(basename $0)" '{print SCRIPTNAME"_"$1"_"$2"_"$3"_"$4".script"}' )
 #stderr_file=$( date | awk -v "SCRIPTNAME=$(basename $0)" '{print SCRIPTNAME"_"$1"_"$2"_"$3"_"$4"_stderr.script"}' )
 #exec  > >(tee "$Base/log/$alloutput_file")
@@ -37,7 +37,7 @@ fi
 
 
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t SNAPSHOT \t= $SNAPSHOT"
-echo		
+echo
 
 
 #source setup_ots.sh
@@ -52,11 +52,11 @@ if [ "x$USER_DATA" == "x" ]; then
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Error."
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Environment variable USER_DATA not setup!"
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t To setup, use 'export USER_DATA=<path to user data>'"
-	echo 
+	echo
 	echo
 	echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t (If you do not have a user data folder copy '<path to ots source>/otsdaq-demo/Data' as your starting point.)"
 	echo
-	exit    
+	exit
 fi
 
 #Steps:
@@ -79,11 +79,11 @@ done
 
 
 # download snapshot user data
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Downloading snapshot user data.."
-echo 
-cmd="scp mu2eshift@mu2edaq01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
+echo
+cmd="scp mu2eshift@mu2egateway01.fnal.gov:/mu2e/DataFiles/UserSnapshots/snapshot_${SNAPSHOT}_Data.zip ."
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t ${cmd}"
 echo
 
@@ -92,12 +92,12 @@ ${cmd} 2> "$errlog"
 if [[ -s "$errlog" ]]; then
     error=`cat "$errlog"`
     # File exists and has a size greater than zero
-    echo "THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
+    echo -e `date +"%h%y %T"` "get_mu2e_snapshot_database.sh [${LINENO}]  \t THERE WAS AN SCP ERROR: You can use the following error to decide what to do"
     echo $error
     rm $errlog
     exit
 else
-    echo "SCP OK"  
+    echo "SCP OK"
     rm $errlog
 fi
 
@@ -107,16 +107,16 @@ echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Unzipping s
 chmod 755 -R tmp01234 #make sure it can be deleted
 rm -rf tmp01234
 
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t unzip snapshot_${SNAPSHOT}_Data.zip -d tmp01234"
 
-unzip snapshot_${SNAPSHOT}_Data.zip -d tmp01234
+unzip -q snapshot_${SNAPSHOT}_Data.zip -d tmp01234  #q for quiet
 
 # bkup current user data
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Backing up current user data.."
-echo 
+echo
 
 chmod 755 -R ${USER_DATA}.bak #make sure it can be deleted
 rm -rf ${USER_DATA}.bak
@@ -128,19 +128,24 @@ echo
 mv ${USER_DATA} ${USER_DATA}.bak
 
 # move download user data into position
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Installing snapshot data as user data.."
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t mv tmp01234/NoGitData ${USER_DATA}"
 echo
 chmod 755 -R tmp01234/NoGitData #make sure it can be moved
 chmod 755 -R ${USER_DATA} #make sure it can be moved
 mv tmp01234/NoGitData ${USER_DATA}
+echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Cleaning up archived user data from snapshot data.."
+rm -rf ${USER_DATA}/Logs
+rm -rf ${USER_DATA}/ARTDAQConfigurations
+rm -rf ${USER_DATA}/TriggerConfigurations
+rm -rf ${USER_DATA}/OutputData
 
 echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Cleaning up downloads.."
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t rm -rf tmp01234; rm -rf snapshot_${SNAPSHOT}_Data.zip"
 echo
 chmod 755 -R tmp01234 #make sure it can be deleted
@@ -150,9 +155,9 @@ echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t Preserving your run number.."
 cp ${USER_DATA}.bak/ServiceData/RunNumber/* ${USER_DATA}/ServiceData/RunNumber/ #*/ fix comment text coloring
 
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t *****************************************************"
-echo 
+echo
 echo -e `date +"%h%y %T"` "get_mu2e_snapshot_data.sh [${LINENO}]  \t otsdaq snapshot Data installed!"
 echo
 echo

@@ -5,43 +5,70 @@
 
 #include <libpq-fe.h> /* for PGconn */
 #include <boost/algorithm/string.hpp>
-#include <chrono>     
+#include <chrono>
 
 using namespace ots;
 
 //==============================================================================
-DBRunInfo::DBRunInfo(
-    std::string              interfaceUID)
-	// ,
-    // const ConfigurationTree& theXDAQContextConfigTree,
-    // const std::string&       configurationPath)
-    : RunInfoVInterface(interfaceUID)//, theXDAQContextConfigTree, configurationPath)  
+DBRunInfo::DBRunInfo(std::string interfaceUID) : RunInfoVInterface(interfaceUID)
 {
-	dbname_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE")? getenv("OTSDAQ_RUNINFO_DATABASE") : "run_info");
-	dbhost_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_HOST")? getenv("OTSDAQ_RUNINFO_DATABASE_HOST") : "");
-	dbport_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PORT")? getenv("OTSDAQ_RUNINFO_DATABASE_PORT") : "");
-	dbuser_ = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_USER")? getenv("OTSDAQ_RUNINFO_DATABASE_USER") : "");
-	dbpwd_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_PWD")? getenv("OTSDAQ_RUNINFO_DATABASE_PWD") : "");
-	dbSchema_  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA") : "test");
+	dbname_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE")
+	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE")
+	                                  : "run_info");
+	dbhost_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_HOST")
+	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_HOST")
+	                                  : "");
+	dbport_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_PORT")
+	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_PORT")
+	                                  : "");
+	dbuser_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_USER")
+	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_USER")
+	                                  : "");
+	dbpwd_    = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_PWD")
+	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_PWD")
+	                                  : "");
+	dbSchema_ = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")
+	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")
+	                                  : "test");
 
 	//open db connection
 	openDbConnection();
-}
+}  //end constructor()
 
 //==============================================================================
-DBRunInfo::~DBRunInfo(void) { 
-    PQfinish(runInfoDbConn_);
+DBRunInfo::~DBRunInfo(void)
+{
+	if(runInfoDbConn_)
+		PQfinish(runInfoDbConn_);
 }
 
 //==============================================================================
 void DBRunInfo::openDbConnection()
 {
+	__COUT__ << "Opening Run Info db connection at " << dbhost_ << ":" << dbport_
+	         << __E__;
 	//open db connection
-	char runInfoDbConnInfo [1024];
-	sprintf(runInfoDbConnInfo, "dbname=%s host=%s port=%s  \
-		user=%s password=%s", dbname_, dbhost_, dbport_, dbuser_, dbpwd_);
+	char runInfoDbConnInfo[1024];
+	sprintf(runInfoDbConnInfo,
+	        "dbname=%s host=%s port=%s  \
+		user=%s password=%s connect_timeout=10",
+	        dbname_,
+	        dbhost_,
+	        dbport_,
+	        dbuser_,
+	        dbpwd_);
 	runInfoDbConn_ = PQconnectdb(runInfoDbConnInfo);
-}
+
+	if(PQstatus(runInfoDbConn_) != CONNECTION_OK)
+	{
+		__SS__ << "Connection failed: " << PQerrorMessage(runInfoDbConn_) << std::endl;
+		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
+		__SS_THROW__;
+	}
+	__COUT__ << "Run Info db connection opened successfully at " << dbhost_ << ":"
+	         << dbport_ << __E__;
+}  //end openDbConnection()
 
 //==============================================================================
 unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
@@ -53,44 +80,58 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 	int runInfoDbConnStatus_ = 0;
 
 	char* mu2eOwner = __ENV__("MU2E_OWNER");
-	char* hostName = __ENV__("HOSTNAME");
+	char* hostName  = __ENV__("HOSTNAME");
 
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to the run_info database inserting run condition\n" << __E__;
+		__COUT__ << "Unable to connect to the run_info database inserting run condition\n"
+		         << __E__;
 		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
 
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
-			__COUT__ << "Unable to connect for the second time to the run_info database inserting the run condition!\n" << __E__;
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "inserting the run condition!\n"
+			         << __E__;
 			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
 		}
 		else
 		{
-			__COUT__ << "Connected to the run_info database after a second tentative inserting the run condition! hostName: " << hostName << " mu2eOwner: " << mu2eOwner << "\n" << __E__;
+			__COUT__ << "Connected to the run_info database after a second tentative "
+			            "inserting the run condition! hostName: "
+			         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
+			         << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
 	else
 	{
-		__COUT__ << "Connected to the run_info database inserting the run condition! hostName: " << hostName << " mu2eOwner: " << mu2eOwner << "\n" << __E__;
+		__COUT__ << "Connected to the run_info database inserting the run condition! "
+		            "hostName: "
+		         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
+		         << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
 
 	// write run condition into db
-	if(runInfoDbConnStatus_ == 1)
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
 		char      buffer[4194304];
 
 		//extract run condition from runInfoConditions
-		std::string condition = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
+		std::string condition =
+		    runInfoConditions.substr(runInfoConditions.find("Configuration := ") +
+		                             sizeof("Configuration := ") - 1);
+		StringMacros::sanitizeForSQL(condition);
 
 		snprintf(buffer,
-				sizeof(buffer),
-				"INSERT INTO %s.run_condition(						\
+		         sizeof(buffer),
+		         "INSERT INTO %s.run_condition(						\
 											  condition				\
 											, commit_time)			\
 											  VALUES ('%s',CURRENT_TIMESTAMP) \
@@ -102,8 +143,8 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__ << "INSERT INTO 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
-				<< __E__;
+			__SS__ << "INSERT INTO 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -115,7 +156,9 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 		}
 		else
 		{
-			__SS__ << "RETRIVE CONDITION_ID FROM 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			__SS__ << "RETRIVE CONDITION_ID FROM 'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -130,14 +173,16 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 	}
 
 	return conditionID;
-} //end insertRunCondition()
+}  //end insertRunCondition()
 
 //==============================================================================
-unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::string& runInfoConditions)
+unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
+                                           const std::string& runInfoConditions)
 {
 	if(conditionID == (unsigned int)-1)
 	{
-		__SS__ << "Impossible condition ID number not retrived by run info plugin!" << __E__;
+		__SS__ << "Impossible condition ID number not retrived by run info plugin!"
+		       << __E__;
 		__SS_THROW__;
 	}
 
@@ -147,72 +192,92 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 	int runInfoDbConnStatus_ = 0;
 
-	char* mu2eOwner = __ENV__("MU2E_OWNER");
-	char* hostName = __ENV__("HOSTNAME");
+	char* mu2eOwner       = __ENV__("MU2E_OWNER");
+	char* hostName        = __ENV__("HOSTNAME");
 	char* artadqPartition = __ENV__("ARTDAQ_PARTITION");
 
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to the run_info database for insert new run number and info!\n" << __E__;
+		__COUT__ << "Unable to connect to the run_info database for insert new run "
+		            "number and info!\n"
+		         << __E__;
 		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
 
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
-			__COUT__ << "Unable to connect for the second time to the run_info database to update the transition!\n" << __E__;
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to update the transition!\n"
+			         << __E__;
 			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
 		}
 		else
 		{
-			__COUT__ << "Connected to the run_info database after a second tentative for insert new run number and info! hostName: " << hostName << " mu2eOwner: " << mu2eOwner << "\n" << __E__;
+			__COUT__ << "Connected to the run_info database after a second tentative for "
+			            "insert new run number and info! hostName: "
+			         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
+			         << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
 	else
 	{
-		__COUT__ << "Connected to the run_info database for insert new run number and info! hostName: " << hostName << " mu2eOwner: " << mu2eOwner << "\n" << __E__;
+		__COUT__ << "Connected to the run_info database for insert new run number and "
+		            "info! hostName: "
+		         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
+		         << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
 
 	// write run info into db
-	if(runInfoDbConnStatus_ == 1)
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
 		char      buffer[1024];
 
 		//extract configuraiton name and version from runInfoConditions
-		std::string runConfiguration = runInfoConditions.substr(runInfoConditions.find("Configuration := ") + sizeof("Configuration := ") - 1);
+		std::string runConfiguration =
+		    runInfoConditions.substr(runInfoConditions.find("Configuration := ") +
+		                             sizeof("Configuration := ") - 1);
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find(')'));
 
-		std::string runConfigurationVersion = runConfiguration.substr(runConfiguration.find('(') + 1);
+		std::string runConfigurationVersion =
+		    runConfiguration.substr(runConfiguration.find('(') + 1);
 		boost::trim_right(runConfigurationVersion);
+		StringMacros::sanitizeForSQL(runConfigurationVersion);
 
 		runConfiguration = runConfiguration.substr(0, runConfiguration.find('('));
 		boost::trim_right(runConfiguration);
+		StringMacros::sanitizeForSQL(runConfiguration);
 
 		//extract context name and version from runInfoConditions
-		std::string runContext = runInfoConditions.substr(runInfoConditions.find("Context := ") + sizeof("Context := ") - 1);
+		std::string runContext = runInfoConditions.substr(
+		    runInfoConditions.find("Context := ") + sizeof("Context := ") - 1);
 		runContext = runContext.substr(0, runContext.find(')'));
 
 		std::string runContextVersion = runContext.substr(runContext.find('(') + 1);
 		boost::trim_right(runContextVersion);
+		StringMacros::sanitizeForSQL(runContextVersion);
 
 		runContext = runContext.substr(0, runContext.find('('));
 		boost::trim_right(runContext);
+		StringMacros::sanitizeForSQL(runContext);
 
 		//insert a new row in the run_configuration table
-		__COUT__ << "Insert new run info in the run_configuration database table, run configuration is: "
-				 << runConfiguration
-				 << " , run context is: "
-				 << runContext
-				 << __E__;
+		__COUT__ << "Insert new run info in the run_configuration database table, run "
+		            "configuration is: "
+		         << runConfiguration << " , run context is: " << runContext << __E__;
 
-		char* runType  = const_cast < char *> (getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE") : "1");
+		char* runType = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")
+		                                      ? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")
+		                                      : "1");
 
 		snprintf(buffer,
-				sizeof(buffer),
-				"INSERT INTO %s.run_configuration(					\
+		         sizeof(buffer),
+		         "INSERT INTO %s.run_configuration(					\
 											  run_type				\
 											, condition_id			\
 											, artdaq_partition		\
@@ -238,8 +303,9 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__ << "INSERT INTO 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
-				<< __E__;
+			__SS__
+			    << "INSERT INTO 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: "
+			    << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -251,7 +317,9 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 		}
 		else
 		{
-			__SS__ << "RETRIVE RUN NUMBER FROM 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res) << __E__;
+			__SS__ << "RETRIVE RUN NUMBER FROM 'run_configuration' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -269,10 +337,11 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int conditionID, const std::
 	}
 
 	return runNumber;
-} //end claimNextRunNumber()
+}  //end claimNextRunNumber()
 
 //==============================================================================
-void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStopType runStopType)
+void DBRunInfo::updateRunInfo(unsigned int                   runNumber,
+                              RunInfoVInterface::RunStopType runStopType)
 {
 	__COUT__ << "Updating run transition for run number " << runNumber << __E__;
 
@@ -280,102 +349,116 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to the run_info database to update the transition!\n" << __E__;
+		__COUT__
+		    << "Unable to connect to the run_info database to update the transition!\n"
+		    << __E__;
 		PQfinish(runInfoDbConn_);
-		
+		runInfoDbConn_ = nullptr;
+
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
-			__COUT__ << "Unable to connect for the second time to the run_info database to update the transition!\n" << __E__;
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to update the transition!\n"
+			         << __E__;
 			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
 		}
 		else
 		{
-			__COUT__ << "Connected after a second tentative to the run_info database to update the transition!\n" << __E__;
+			__COUT__ << "Connected after a second tentative to the run_info database to "
+			            "update the transition!\n"
+			         << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
 	else
 	{
-		__COUT__ << "Connected to the run_info database to update the transition!\n" << __E__;
+		__COUT__ << "Connected to the run_info database to update the transition!\n"
+		         << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
 
 	// Insert the transition and time into db
-	if(runInfoDbConnStatus_ == 1)
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
-		int runTransitionType;
+		int         runTransitionType;
 		std::string transitionDescription = "";
 
 		// Insert 'Running to Configure - Stop' transition and time into db
 		if(runStopType == RunInfoVInterface::RunStopType::HALT)
 		{
-			runTransitionType = 0;
+			runTransitionType     = 0;
 			transitionDescription = "'Running to Halt - Abort'";
 		}
 
 		// Insert 'Running to Configure - Stop' transition and time into db
 		if(runStopType == RunInfoVInterface::RunStopType::STOP)
 		{
-			runTransitionType = 1;
+			runTransitionType     = 1;
 			transitionDescription = "'Running to Configure - Stop'";
 		}
 
 		// Insert 'Running to Pause - Pause' transition and time into db
 		if(runStopType == RunInfoVInterface::RunStopType::ERROR)
 		{
-			runTransitionType = 2;
+			runTransitionType     = 2;
 			transitionDescription = "'Other state to Error - Error'";
 		}
 
 		// Insert 'Running to Pause - Pause' transition and time into db
 		if(runStopType == RunInfoVInterface::RunStopType::PAUSE)
 		{
-			runTransitionType = 3;
+			runTransitionType     = 3;
 			transitionDescription = "'Running to Pause - Pause'";
 		}
 
 		// Insert 'Pause to Running - Resume' transition and time into db
 		if(runStopType == RunInfoVInterface::RunStopType::RESUME)
 		{
-			runTransitionType = 4;
+			runTransitionType     = 4;
 			transitionDescription = "'Pause to Running - Resume'";
 		}
 
 		// Insert 'Pause to Running - Resume' transition and time into db
 		if(runStopType == RunInfoVInterface::RunStopType::START)
 		{
-			runTransitionType = 5;
+			runTransitionType     = 5;
 			transitionDescription = "'Configeure to Running - Start'";
 		}
+
+		StringMacros::sanitizeForSQL(
+		    transitionDescription);  //in case transitionDescription is used instead of int
 
 		PGresult* res;
 		char      buffer[1024];
 
 		snprintf(buffer,
-				sizeof(buffer),
-				"INSERT INTO %s.run_transition(					\
+		         sizeof(buffer),
+		         "INSERT INTO %s.run_transition(					\
 											  run_number		\
 											, transition_type	\
 											, transition_time)	\
 											VALUES (%ld,'%d',CURRENT_TIMESTAMP);",
-				dbSchema_,
-				boost::numeric_cast<long int>(runNumber),
-				boost::numeric_cast<int>(runTransitionType));
+		         dbSchema_,
+		         boost::numeric_cast<long int>(runNumber),
+		         boost::numeric_cast<int>(runTransitionType));
 
 		res = PQexec(runInfoDbConn_, buffer);
 
 		if(PQresultStatus(res) != PGRES_COMMAND_OK)
 		{
-			__SS__ << "INSERT "<< transitionDescription << " TRANSITION INTO DATABASE TABLE FAILED!!! PQ ERROR: " << PQresultErrorMessage(res)
-				<< __E__;
+			__SS__ << "INSERT " << transitionDescription
+			       << " TRANSITION INTO DATABASE TABLE FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
 		PQclear(res);
 
-		__COUT__ << "Insert: "<< transitionDescription << " transition into the run_transition Database table" << __E__;
+		__COUT__ << "Insert: " << transitionDescription
+		         << " transition into the run_transition Database table" << __E__;
 	}
 
 	if(runNumber == (unsigned int)-1)
@@ -383,7 +466,251 @@ void DBRunInfo::updateRunInfo(unsigned int runNumber, RunInfoVInterface::RunStop
 		__SS__ << "Impossible run number not defined by run info plugin!" << __E__;
 		__SS_THROW__;
 	}
-	
-} //end updateRunInfo()
+
+	__COUT__ << "done with the run_info database for updating the transition!" << __E__;
+}  //end updateRunInfo()
+
+//==============================================================================
+std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
+    unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
+{
+	__COUT__ << "getRunRecords() reached" << __E__;
+	std::vector<std::vector<std::string>> runRecords;
+
+	int runInfoDbConnStatus_ = 0;
+
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		__COUT__ << "Unable to connect to the run_info database to select run records"
+		         << __E__;
+		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
+
+		//Try to open again the db connection
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to select run records"
+			         << __E__;
+			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
+		}
+		else
+		{
+			__COUT__ << "Connected to the run_info database to select run records"
+			         << __E__;
+			runInfoDbConnStatus_ = 1;
+		}
+	}
+	else
+	{
+		__COUT__ << "Connected to the run_info database to select run records" << __E__;
+		runInfoDbConnStatus_ = 1;
+	}
+
+	// select run info from db
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
+	{
+		PGresult*   res;
+		char        buffer[2048];
+		std::string row;
+
+		snprintf(
+		    buffer,
+		    sizeof(buffer),
+		    "SELECT run_configuration.run_number as run_numrber"
+		    ", run_configuration.commit_time as run_time"
+		    ", run_type.run_type_description as run_type"
+		    ", run_configuration.artdaq_partition"
+		    ", run_configuration.host_name"
+		    ", run_configuration.condition_id"
+		    ", run_configuration.configuration_name"
+		    ", run_configuration.configuration_version"
+		    ", run_configuration.context_name"
+		    ", run_configuration.context_version"
+		    ", run_configuration.online_software_version"
+		    ", run_configuration.shifter_note"
+		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Start' THEN "
+		    "run_transition.transition_time END) AS start_time"
+		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Stop' THEN "
+		    "run_transition.transition_time END) AS stop_time"
+		    " FROM %s.run_configuration, %s.run_type, %s.run_transition, "
+		    "%s.transition_type"
+		    " WHERE run_configuration.run_type = run_type.run_type_id"
+		    " AND run_configuration.run_number = run_transition.run_number"
+		    " AND run_transition.transition_type = transition_type.transition_id"
+		    " AND (transition_type.transition_description LIKE '%%Start' OR "
+		    "transition_type.transition_description LIKE '%%Stop')"
+		    " AND run_configuration.commit_time BETWEEN TO_TIMESTAMP(\'%d\') AND "
+		    "TO_TIMESTAMP(\'%d\')"
+		    " %s"
+		    " GROUP BY"
+		    "	run_configuration.run_number, run_type.run_type_description"
+		    " HAVING"
+		    "	COUNT(DISTINCT CASE"
+		    "		WHEN transition_type.transition_description LIKE '%%Start' THEN "
+		    "'Start'"
+		    "		WHEN transition_type.transition_description LIKE '%%Stop' THEN 'Stop'"
+		    "	END) = 2;",
+		    dbSchema_,
+		    dbSchema_,
+		    dbSchema_,
+		    dbSchema_,
+		    startTime,
+		    endTime,
+		    queryFilter.c_str());
+
+		res = PQexec(runInfoDbConn_, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "getRunRecords() SELECT FROM 'run_configuration' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << buffer << __E__;
+		if(PQntuples(res) >= 1)
+		{
+			/* first, print out the attribute names */
+			int nFields = PQnfields(res);
+			runRecords.resize(PQntuples(res));
+
+			/* next, print out the rows */
+			for(int i = 0; i < PQntuples(res); i++)
+			{
+				runRecords[i].resize(nFields);
+				for(int j = 0; j < nFields; j++)
+				{
+					runRecords[i][j] = PQgetvalue(res, i, j);
+					row.append(PQgetvalue(res, i, j));
+					row.append(" ");
+				}
+				row.append("\n");
+			}
+			__COUT__ << "Run records retrived" << __E__;
+		}
+		else
+		{
+			// __SS__ << "getRunRecords() RETRIVE RUN RECORDS FROM 'run_configuration' DATABASE TABLE "
+			//           "FAILED!!! PQ ERROR: "
+			//        << PQresultErrorMessage(res) << __E__;
+			// PQclear(res);
+			// __SS_THROW__;
+		}
+
+		PQclear(res);
+	}
+
+	return runRecords;
+}  //end updateRunInfo()
+
+//==============================================================================
+std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t conditionID)
+{
+	__COUT__ << "getRunConditionByID() reached" << __E__;
+	std::vector<std::vector<std::string>> conditionRecords;
+
+	int runInfoDbConnStatus_ = 0;
+
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		__COUT__
+		    << "Unable to connect to the run_info database to select run condition record"
+		    << __E__;
+		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
+
+		//Try to open again the db connection
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to select run condition record"
+			         << __E__;
+			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
+		}
+		else
+		{
+			__COUT__
+			    << "Connected to the run_info database to select run condition record"
+			    << __E__;
+			runInfoDbConnStatus_ = 1;
+		}
+	}
+	else
+	{
+		__COUT__ << "Connected to the run_info database to select run condition record"
+		         << __E__;
+		runInfoDbConnStatus_ = 1;
+	}
+
+	// select run info from db
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
+	{
+		PGresult*   res;
+		char        buffer[1024];
+		std::string row;
+
+		snprintf(buffer,
+		         sizeof(buffer),
+		         "SELECT run_condition.condition"
+		         ", run_condition.commit_time"
+		         " FROM %s.run_condition"
+		         " WHERE run_condition.condition_id = \'%ld\';",
+		         dbSchema_,
+		         conditionID);
+
+		res = PQexec(runInfoDbConn_, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "getRunRecords() SELECT FROM 'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << __E__;
+		if(PQntuples(res) >= 1)
+		{
+			/* first, print out the attribute names */
+			int nFields = PQnfields(res);
+			conditionRecords.resize(PQntuples(res));
+
+			/* next, print out the rows */
+			for(int i = 0; i < PQntuples(res); i++)
+			{
+				conditionRecords[i].resize(nFields);
+				for(int j = 0; j < nFields; j++)
+				{
+					conditionRecords[i][j] = PQgetvalue(res, i, j);
+					row.append(PQgetvalue(res, i, j));
+					row.append(" ");
+				}
+				row.append("\n");
+			}
+			__COUT__ << "Run condition record retrived" << __E__;
+		}
+		else
+		{
+			__SS__ << "getRunConditionByID() RETRIVE RUN CONDITION RECORD FROM "
+			          "'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		PQclear(res);
+	}
+
+	return conditionRecords;
+}  //end getRunConditionByID()
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)

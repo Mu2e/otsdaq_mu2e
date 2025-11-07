@@ -33,7 +33,7 @@ for i in ${HOSTS[@]}; do
 	TITLEPRE="mu2edaq$i DTC"
 	PLOTCMD="${PLOTCMD} '${DATA_FILE}' using 1:2 title '${TITLEPRE} ${DTCORDER[$DTCIDX]}'"
 	DTCIDX=$(($DTCIDX+1))
-	
+
 	PLOTCMD="${PLOTCMD}, '${DATA_FILE}' using 1:3 title '${TITLEPRE} ${DTCORDER[$DTCIDX]}'"
 	DTCIDX=$(($DTCIDX+1))
 done
