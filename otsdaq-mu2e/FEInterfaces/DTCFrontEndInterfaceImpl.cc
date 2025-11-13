@@ -3777,7 +3777,7 @@ void DTCFrontEndInterface::DTCInstantiate()
 	try
 	{
 		expectedDesignVersion =
-		    getSelfNode().getNode("ExpectedFirmwareVersion").getValue();
+		    getSelfNode().getNode("ExpectedFirmwareVersion").getValueWithDefault("");
 	}
 	catch(const std::runtime_error& e)
 	{
