@@ -1,6 +1,11 @@
-#!/bin/sh
-source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
+#!/bin/bash
 
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    echo "Error: this script must be executed, not sourced." >&2
+    return 1 2>/dev/null || exit 1
+fi
+
+source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
@@ -8,46 +13,53 @@ SCRIPT_DIR="$(
 )"
 HOSTNAME="$(hostname -f)"
 
+cd /home/mu2ehwdev/
+rm vivado_lab*.log 2>/dev/null
+rm vivado_lab*.jou 2>/dev/null
+rm vivado_lab*.str 2>/dev/null
+rm hs_err*.log 2>/dev/null
+rm err.log 2>/dev/null
+
 lockfile="/tmp/mu2e.lock"
 # Attempt to create the lock file atomically using ln
-retried=0
+retriedA=0 retriedB=0
 while ! ln -s "$$" "$lockfile" 2>/dev/null;do
     # Check if the existing lock file contains a valid PID
     if [ -L "$lockfile" ]; then
         pid=$(readlink "$lockfile")
         if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
             ps=`ps aux|grep -v ssh`
-            tempPid=`echo "$ps" | awk '/bash .*[r]ead_dtc_temps/{print$2}'`  # COMMAND as from cron
-            if [ -n "$tempPid" ];then
-                for sig in 15 9;do
-                    echo "attempting kill with sig $sig"
-                    for xx in `seq 5`;do kill $tempPid;sleep .02; done
-                    if ! kill -0 "$pid" 2>/dev/null; then break;fi
-                done
+            waitForCmd=`echo "$ps" | awk "/^[^ ]*  *$pid /"'{print}'`  # COMMAND assoc. w/ pid
+            if [ -n "$waitForCmd" ];then
+                test $retriedB -gt 39 && { echo "Failed 2 to acquire lock."; exit 1; }
+                retriedB=$(($retriedB+1))
+                echo "`date`: Waiting for $waitForCmd"
                 sleep 2
-                if kill -0 "$pid" 2>/dev/null; then
-                    echo "read_dtc_temps script is running (pid=$tempPid) and could not kill"
-                    exit 1
-                fi
-                # Temp and killed successfully -- get out
-                break
+                continue
             else
-                # Not Temp, someone else
-                echo "Some active non-read_dtc_temps script (w/ pid=$pid) has lock - wait and try later"
-                exit 0
+                : assume window where cmd just ended
             fi
         fi
     fi
     # Stale (pid not active), remove it and try again
-    test $retried -gt 0 && { echo "Failed to acquire lock."; exit 1; }
+    test $retriedA -gt 19 && { echo "Failed 1 to acquire lock."; exit 1; }
     rm -f "$lockfile"
-    retried=$(($retried+1))
+    echo "`date`: Waiting for retriedA=$retriedA"
+    sleep 4
+    retriedA=$(($retriedA+1))
 done
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
 
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Programming one FPGA on ${HOSTNAME}..."
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Number of arguments: $#"
+
+DORESET=1
+if [ "x$1" == "xNORESET" ]; then
+    echo -e "program_both_DTCs.sh:${LINENO} |  \t No reset!"
+    DORESET=0
+    shift
+fi
 
 if [ $# == 2 ]; then
     BITFILE_N=$2
@@ -68,13 +80,20 @@ vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2
 
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Done programming bitfile to one FPGA on ${HOSTNAME}"
 
+if [ $DORESET == 0 ]; then
+    echo -e "\t Skipping reset of PCIe. Done."
+    echo
+    return  >/dev/null 2>&1 #return is used if script is sourced
+        exit  #exit is used if script is run
+fi
 
 #now reset
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
-ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+# ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 # source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
-echo echo
-echo echo
+echo
+echo
 echo -e "program_one_FPGA.sh:${LINENO} |  \t ===> Done with ${HOSTNAME} programming one bitfile and PCIe reset!"
-echo echo
+echo

@@ -8,15 +8,20 @@ retriedA=0 retriedB=0
 while ! ln -s "$$" "$lockfile" 2>/dev/null; do
     # Check if the existing lock file contains a valid PID
     if [ -L "$lockfile" ]; then
+
         pid=$(readlink "$lockfile")
         ps=`ps aux`
-	possible_parent=`echo "$ps" | grep -E ':[0-9]* bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|awk '{print$2}'`
+	# Look for others possibly running already, ignoring the program_all script that makes underlying program calls
+        possible_parent=`echo "$ps" | grep -E ':[0-9]* [a-z/]*bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|grep -v program_all_FPGA|awk '{print$2}'`
         echo "pid=$pid possible_parent=$possible_parent"
-	if [ -n "$pid"  ] && kill -0 "$pid" 2>/dev/null; then
-	    if [ -n "$possible_parent" -a "$possible_parent" = $pid ];then
-		echo lock set by valid non-read_dtc_temps parent
-		break
-	    fi
+
+        if [ -n "$pid"  ] && kill -0 "$pid" 2>/dev/null; then
+
+            if [ -n "$possible_parent" -a "$possible_parent" = $pid ];then
+                echo lock set by valid non-read_dtc_temps parent
+                break
+            fi
+
             test $retriedB -gt 30 && { echo "Failed to acquire lock."; exit 1; }
             retriedB=$(($retriedB+1))
             echo `date`: Waiting for `echo "$ps" | grep " $pid "`
@@ -73,6 +78,8 @@ if [ "$foundXi" = 1 ];then
     echo
     echo "Removing each PCIe Xilinx device on ${HOSTNAME}..."
     echo
+    cards=$(lspci | grep "$RegEx")
+    test -z "$cards" && echo NO CARDS FOUND
     while read -r line
     do
         echo "$line"
