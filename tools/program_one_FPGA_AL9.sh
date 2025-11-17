@@ -56,7 +56,7 @@ echo -e "program_one_FPGA.sh:${LINENO} |  \t Number of arguments: $#"
 
 DORESET=1
 if [ "x$1" == "xNORESET" ]; then
-    echo -e "program_both_DTCs.sh:${LINENO} |  \t No reset!"
+    echo -e "program_one_FPGA.sh:${LINENO} |  \t No reset!"
     DORESET=0
     shift
 fi
@@ -81,7 +81,7 @@ vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Done programming bitfile to one FPGA on ${HOSTNAME}"
 
 if [ $DORESET == 0 ]; then
-    echo -e "\t Skipping reset of PCIe. Done."
+    echo -e "program_one_FPGA.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
     echo
     return  >/dev/null 2>&1 #return is used if script is sourced
         exit  #exit is used if script is run

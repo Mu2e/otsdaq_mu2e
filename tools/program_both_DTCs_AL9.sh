@@ -87,7 +87,7 @@ echo
 echo -e "program_both_DTCs.sh:${LINENO} |  \t Done programming bitfile to both DTCs on ${HOSTNAME}"
 
 if [ $DORESET == 0 ]; then
-    echo -e "\t Skipping reset of PCIe. Done."
+    echo -e "program_both_DTCs.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
     echo
     return  >/dev/null 2>&1 #return is used if script is sourced
         exit  #exit is used if script is run
