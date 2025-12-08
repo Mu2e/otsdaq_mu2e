@@ -52,6 +52,7 @@ eval env_opts=\${$env_opts_var-} # can be args too
 
 spackdir="${SPACK_ROOT:-$Base/spack}"
 upstreams=()
+tag=develop
 installStatus=0
 eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
@@ -112,27 +113,6 @@ stderr_file=$( date | awk -v "SCRIPTNAME=$(basename $0)" '{print SCRIPTNAME"_"$1
 exec  > >(tee "$Base/log/$alloutput_file")
 exec 2> >(tee "$Base/log/$stderr_file")
 
-# Get all the information we'll need to decide which exact flavor of the software to install
-notag=0
-if [ -z "${tag:-}" ]; then
-  tag=develop;
-  notag=1;
-fi
-
-rm CMakeLists.txt*
-wget https://raw.githubusercontent.com/Mu2e/otsdaq-mu2e/$tag/CMakeLists.txt
-demo_version=v`grep "project" $Base/CMakeLists.txt|grep -oE "VERSION [^)]*"|awk '{print $2}'|sed 's/\./_/g'`
-echo "Mu2e TDAQ Version is $demo_version"
-if [[ $notag -eq 1 ]] && [[ $opt_develop -eq 0 ]]; then
-  tag=$demo_version
-
-  # 06-Mar-2017, KAB: re-fetch the product_deps file based on the tag
-  mv CMakeLists.txt CMakeLists.txt.orig
-  wget https://raw.githubusercontent.com/Mu2e/otsdaq-mu2e/$tag/CMakeLists.txt
-  demo_version=v`grep "project" $Base/CMakeLists.txt|grep -oE "VERSION [^)]*"|awk '{print $2}'|sed 's/\./_/g'`
-  tag=$demo_version
-fi
-
 svariant=""
 avariant=""
 ovariant=""
@@ -158,80 +138,18 @@ if [ $opt_no_view -eq 1 ];then
     view_opt="--without-view"
 fi
 
-if ! [ -d $spackdir ];then
-    $(
-    cd ${spackdir%/spack}
-    git clone https://github.com/Mu2e/spack.git -b eflumerf/FixPerlPackageStash
-        )
-else
-    #cd $spackdir && git pull && cd $Base
-    if [ `git remote -v|grep -c Mu2e` -eq 0 ];then
-	   git remote set-url origin https://github.com/Mu2e/spack.git
-    fi
-    cd $spackdir && git fetch -a && git checkout eflumerf/FixPerlPackageStash && cd $Base
+build_system_script=`find $Base -type f -name setup_spack_build_system.sh`
+if [[ "x$build_system_script" == "x" ]];then
+  echo "WARNING: setup_spack_build_system.sh not found, downloading from https://github.com/art-daq/artdaq-demo"
+  wget https://raw.githubusercontent.com/art-daq/artdaq_demo/refs/heads/develop/tools/setup_spack_build_system.sh $Base/setup_spack_build_system.sh
+  build_system_script=$Base/setup_spack_build_system.sh
 fi
+source $build_system_script
+# Note that install_spack_build_system sources setup-env.sh
+install_spack_build_system $Base $spackdir
 
-cat >setup-env.sh <<-EOF
-export SPACK_DISABLE_LOCAL_CONFIG=true
-source $spackdir/share/spack/setup-env.sh
-EOF
-source setup-env.sh
-
-if ! [ -d fermi-spack-tools ]; then
-    #git clone https://github.com/FNALssi/fermi-spack-tools.git # Upstream
-    #cd fermi-spack-tools && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf; cd $Base
-    git clone https://github.com/art-daq/fermi-spack-tools.git # Fork
-    cd fermi-spack-tools && git checkout eflumerf/CMakeFix; cd $Base
-else
-    #cd fermi-spack-tools && git fetch -a && git checkout 965e0e73896328f8137c2bd53bad77a42b39e0bf ; cd $Base # Upstream
-    cd fermi-spack-tools && git fetch -a && git checkout eflumerf/CMakeFix ; cd $Base # Fork
-fi
-if ! [ -d spack-mpd ]; then
-    # git clone https://github.com/FNALssi/spack-mpd.git # Upstream
-    git clone https://github.com/art-daq/spack-mpd.git # Fork
-else
-    cd spack-mpd && git pull && cd ..
-fi
-
-sed -i '/perl/d' fermi-spack-tools/templates/packagelist
-if [ -f $spackdir/etc/spack/`uname -s | tr [A-Z] [a-z]`/almalinux9/packages.yaml ];then
-    echo "Skipping ./fermi-spack-tools/bin/make_packages_yaml $spackdir almalinux9"
-    echo "... $spackdir/etc/spack/`uname -s | tr [A-Z] [a-z]`/almalinux9/packages.yaml already exists"
-else
-    echo "executing ./fermi-spack-tools/bin/make_packages_yaml $spackdir almalinux9"
-    echo "... to produce $spackdir/etc/spack/`uname -s | tr [A-Z] [a-z]`/almalinux9/packages.yaml"
-    ./fermi-spack-tools/bin/make_packages_yaml $spackdir almalinux9
-fi
-
-repo_found=`spack repo list|grep -c fnal_art`
-if [ $repo_found -eq 0 ]; then
-    echo "Adding repos: fnal_art scd_recipes artdaq-spack mu2e-spack"
-    mkdir spack-repos;cd spack-repos
-    git clone https://github.com/FNALssi/fnal_art.git
-    cd fnal_art && git checkout ddeec355456e3bca5e4a743ce5d4906fa74a51b6 ; cd ..
-    spack repo add ./fnal_art
-    git clone https://github.com/fnal-fife/scd_recipes.git
-    cd scd_recipes && git checkout e9c8cc8af792008c3c85724cc8ae3ee0662233d6 ; cd ..
-    rm -rf scd_recipes/packages/perl-ipc-run3
-    spack repo add ./scd_recipes
-    git clone https://github.com/art-daq/artdaq-spack.git
-    spack repo add ./artdaq-spack
-    git clone https://github.com/Mu2e/mu2e-spack.git
-    spack repo add ./mu2e-spack
-    cd $Base
-else
-    cd fnal_art && git fetch -a && git checkout ddeec355456e3bca5e4a743ce5d4906fa74a51b6 ; cd ..
-    cd scd_recipes && git fetch -a && git checkout e9c8cc8af792008c3c85724cc8ae3ee0662233d6 ; cd ..
-    rm -rf scd_recipes/packages/perl-ipc-run3
-    cd artdaq-spack && git pull; cd ..
-    cd mu2e-spack && git pull; cd ..
-    cd $Base
-fi
-
-spack config --scope=site add "config:extensions:- $Base/spack-mpd"
-
-if [ $opt_padding -eq 1 ];then
-  spack config --scope=site add config:install_tree:padded_length:255
+if [[ $tag == "develop" ]] && [[ $opt_dev_only -eq 0 ]]; then
+    tag=`spack list --format=version_json mu2e-tdaq-suite|jq ".[]|.latest_version"| sed -e 's/^"//' -e 's/"$//'`
 fi
 
 concrete_include_cmd=
