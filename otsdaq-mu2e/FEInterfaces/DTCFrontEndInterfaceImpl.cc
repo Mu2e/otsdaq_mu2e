@@ -760,7 +760,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Result"},
 					1,  // requiredUserPermissions
 					"*",
-					"Program one or many ROCs with an indexed image in the SPI, or the bitfile at a specified filepath."
+					"Program one or many ROCs with an indexed image in the SPI, or the bitfile at a specified filepath. Use Link=7 with Mask to choose more than 1 ROC manually with the mask."
 	);
 
 	{ //add ROC FE Macros
@@ -6603,7 +6603,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	                              uint8_t,
 	                              7);  //7 == none, -1 == all
 	uint8_t mask =
-	    __GET_ARG_IN__("Target Link (Default := 0, b111111 := all)", uint8_t, 0);
+	    __GET_ARG_IN__("Target Mask (Default := 0, b111111 := all)", uint8_t, 0);
 	std::string mapPath =
 	    __GET_ARG_IN__("Path to Directory map file (Default := do not use)", std::string);
 	bool writeMap =
