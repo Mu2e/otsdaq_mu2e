@@ -195,7 +195,7 @@ for upstream in ${upstreams[@]}; do
 
     for envdir in `find $upstream -type d -wholename '*/var/spack/environments' 2>/dev/null`; do
         echo "Looking for mu2e environments in $envdir"
-        environment="tdaq-${demo_version}"
+        environment="tdaq-${tag}"
         if ! [ -d $environment ]; then continue; fi
         environment_dir=`realpath $environment`
         echo "Adding environment $environment_dir to include-concrete list"
@@ -218,14 +218,14 @@ fi
 spack compiler find
 
 if [ ${opt_dev_only:-0} -eq 0 ];then
-    spack env create ${concrete_include_cmd} $view_opt tdaq-${demo_version}
-    spack env activate tdaq-${demo_version}
-    env_to_activate="tdaq-${demo_version}"
-    ln -s $spackdir/var/spack/environments/tdaq-${demo_version}
+    spack env create ${concrete_include_cmd} $view_opt tdaq-${tag}
+    spack env activate tdaq-${tag}
+    env_to_activate="tdaq-${tag}"
+    ln -s $spackdir/var/spack/environments/tdaq-${tag}
 
     if ! [ -d srcs ];then
         rm srcs >/dev/null 2>&1
-        ln -s $spackdir/var/spack/environments/tdaq-${demo_version} srcs
+        ln -s $spackdir/var/spack/environments/tdaq-${tag} srcs
     fi
 
     if [ $opt_no_kmod -eq 1 ];then
@@ -234,7 +234,7 @@ if [ ${opt_dev_only:-0} -eq 0 ];then
         spack add trace+kmod
     fi
 
-    spack add mu2e-tdaq-suite@${demo_version}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
+    spack add mu2e-tdaq-suite@${tag}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
 
     # Add EMACS
     if [ $opt_no_emacs -eq 0 ]; then
@@ -380,8 +380,8 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
     # spack mpd init # Upstream
     spack mpd init -r site -u $Base/spack-repos/mpd # Fork
     if [ ${opt_dev_only:-0} -eq 0 ];then
-        # spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
-        spack mpd new-project --force -y --name tdaq-develop -E tdaq-${demo_version} cxxstd=20 %gcc@13.1.0 # Fork
+        # spack mpd new-project --force -y --name tdaq-develop -E tdaq-${tag} cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
+        spack mpd new-project --force -y --name tdaq-develop -E tdaq-${tag} cxxstd=20 %gcc@13.1.0 # Fork
     else
         # spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 generator=ninja # Upstream
         spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc@13.1.0 # Fork
