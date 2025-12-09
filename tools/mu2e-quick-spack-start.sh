@@ -141,7 +141,8 @@ fi
 build_system_script=`find $Base -type f -name setup_spack_build_system.sh`
 if [[ "x$build_system_script" == "x" ]];then
   echo "WARNING: setup_spack_build_system.sh not found, downloading from https://github.com/art-daq/artdaq-demo"
-  wget https://raw.githubusercontent.com/art-daq/artdaq_demo/refs/heads/develop/tools/setup_spack_build_system.sh $Base/setup_spack_build_system.sh
+  cd $Base
+  wget https://raw.githubusercontent.com/art-daq/artdaq_demo/refs/heads/develop/tools/setup_spack_build_system.sh
   build_system_script=$Base/setup_spack_build_system.sh
 fi
 source $build_system_script
