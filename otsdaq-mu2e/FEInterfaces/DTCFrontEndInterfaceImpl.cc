@@ -2062,6 +2062,9 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 		getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 		getDTC()->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+
+		usleep(100);
+		getDTC()->SoftReset();  // soft reset to clear lock counters and errors
 		break;
 	default:
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -4676,6 +4679,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 
 	// print the subevent header
 	// ostr << subevent->GetHeader()->toJson() << std::endl;
+	__COUTT__ << subevent->GetHeader()->toJson() << __E__;
 
 	//start mutex scope to change non-atomic status counters
 	std::lock_guard<std::mutex> lock(threadStruct->lock_);
@@ -4793,12 +4797,19 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	// iterate over the data blocks
 	std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent->GetDataBlocks();
 	__COUTTV__(dataBlocks.size());
+	if(dataBlocks.size() != 6)
+	{
+		__SS__ << "Unexpected number of ROC fragments found in subevent (EWT=" << 
+			subevent->GetEventWindowTag() << "): "
+		    << dataBlocks.size() << " ROC fragments found (expected 6)";
+		__SS_THROW__;
+	}
+
 	__COUTTV__(doSaveSubevent);
 	for(unsigned int j = 0; j < dataBlocks.size(); ++j)
 	{
 		// print the data block header
 		DTCLib::DTC_DataHeaderPacket* dataHeader = dataBlocks[j].GetHeader().get();
-		__COUTS__(2) << dataHeader->toJSON() << __E__;
 		++(threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]);
 
 		// ~~~	The Data Header Packet Status 8-bit field is defined as follows ~~~
