@@ -2406,7 +2406,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
             );
         } else {
             __FE_COUT__ 
-                << "'numberOfCAPTANPulses' set to -1, skipping SetCFOEmulatorFixedWidthEmulation" << __E__;
+                << "'numberOfCAPTANPulses' set to 0, skipping SetCFOEmulatorFixedWidthEmulation" << __E__;
         }
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
