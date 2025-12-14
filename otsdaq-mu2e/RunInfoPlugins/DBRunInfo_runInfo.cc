@@ -1,6 +1,7 @@
 #include "otsdaq-mu2e/RunInfoPlugins/DBRunInfo.h"
 #include "otsdaq/Macros/CoutMacros.h"
 #include "otsdaq/Macros/RunInfoPluginMacros.h"
+#include "otsdaq/Macros/StringMacros.h"
 #include "otsdaq/MessageFacility/MessageFacility.h"
 
 #include <libpq-fe.h> /* for PGconn */
@@ -177,7 +178,8 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 
 //==============================================================================
 unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
-                                           const std::string& runInfoConditions)
+                                           const std::string& runInfoConditions,
+                                           const std::string& runType)
 {
 	if(conditionID == (unsigned int)-1)
 	{
@@ -271,9 +273,27 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 		            "configuration is: "
 		         << runConfiguration << " , run context is: " << runContext << __E__;
 
-		char* runType = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")
-		                                      ? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")
-		                                      : "1");
+		// Use run_type parameter (should be a validated integer ID as string from GatewaySupervisor)
+		// Validate it's an integer and use directly, default to "0" if invalid
+		std::string runTypeIdStr = "0";  // default
+		if(!runType.empty())
+		{
+			// runType should be a validated integer ID string from GatewaySupervisor
+			// Validate it's a number, use directly if valid
+			if(StringMacros::isNumber(runType))
+			{
+				runTypeIdStr = runType;
+			}
+			else
+			{
+				__COUT_WARN__ << "run_type parameter '" << runType
+				               << "' is not a valid integer, defaulting to '0'" << __E__;
+				// keep default "0"
+			}
+		}
+		// else keep default "0"
+
+		const char* runTypeCStr = runTypeIdStr.c_str();
 
 		snprintf(buffer,
 		         sizeof(buffer),
@@ -290,7 +310,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 											VALUES ('%s','%d','%d','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP) \
                                             RETURNING run_number;",
 				dbSchema_,
-				runType,
+				runTypeCStr,
 				conditionID,
 				std::stoi(artadqPartition),
 				hostName,
@@ -712,5 +732,69 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 
 	return conditionRecords;
 }  //end getRunConditionByID()
+
+//==============================================================================
+std::pair<unsigned int, std::string> DBRunInfo::getRunTypeInfo(const std::string& runType)
+{
+	unsigned int runTypeId   = 0;
+	std::string  runTypeName = "";
+
+	if(runType.empty())
+	{
+		return std::make_pair(runTypeId, runTypeName);
+	}
+
+	// Ensure database connection is open
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT_WARN__ << "Unable to connect to database for run_type lookup" << __E__;
+			return std::make_pair(runTypeId, runTypeName);
+		}
+	}
+
+	PGresult* res;
+	char      buffer[1024];
+
+	// Check if runType is an integer
+	if(StringMacros::isNumber(runType))
+	{
+		// Look up by run_type_id
+		std::string sanitizedRunType = runType;
+		StringMacros::sanitizeForSQL(sanitizedRunType);
+		snprintf(buffer,
+		         sizeof(buffer),
+		         "SELECT run_type_id, run_type_name FROM %s.run_type WHERE run_type_id = '%s' LIMIT 1;",
+		         dbSchema_,
+		         sanitizedRunType.c_str());
+	}
+	else
+	{
+		// Look up by run_type_name
+		std::string sanitizedRunType = runType;
+		StringMacros::sanitizeForSQL(sanitizedRunType);
+		snprintf(buffer,
+		         sizeof(buffer),
+		         "SELECT run_type_id, run_type_name FROM %s.run_type WHERE run_type_name = '%s' LIMIT 1;",
+		         dbSchema_,
+		         sanitizedRunType.c_str());
+	}
+
+	res = PQexec(runInfoDbConn_, buffer);
+	if(PQresultStatus(res) == PGRES_TUPLES_OK && PQntuples(res) > 0)
+	{
+		runTypeId   = static_cast<unsigned int>(atoi(PQgetvalue(res, 0, 0)));
+		runTypeName = PQgetvalue(res, 0, 1);
+	}
+	else
+	{
+		__COUT_WARN__ << "run_type '" << runType << "' not found in run_type table" << __E__;
+	}
+	PQclear(res);
+
+	return std::make_pair(runTypeId, runTypeName);
+}  //end getRunTypeInfo()
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)

@@ -17,7 +17,8 @@ class DBRunInfo : public RunInfoVInterface
 
 	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "");
 	virtual unsigned int claimNextRunNumber(unsigned int       conditionID,
-	                                        const std::string& runInfoConditions = "");
+	                                        const std::string& runInfoConditions = "",
+	                                        const std::string& runType            = "");
 	virtual void         updateRunInfo(unsigned int                   runNumber,
 	                                   RunInfoVInterface::RunStopType runStopType);
 
@@ -29,6 +30,9 @@ class DBRunInfo : public RunInfoVInterface
 
 	virtual std::vector<std::vector<std::string>> getRunConditionByID(
 	    uint64_t conditionID);
+
+	// Helper method to look up run_type_id and run_type_name from run_type string
+	virtual std::pair<unsigned int, std::string> getRunTypeInfo(const std::string& runType) override;
 
   private:
 	const char* dbname_;
