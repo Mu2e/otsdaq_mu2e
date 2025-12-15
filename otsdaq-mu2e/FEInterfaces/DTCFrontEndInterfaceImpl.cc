@@ -1055,7 +1055,7 @@ try
 
 	__FE_COUTV__(operatingMode_);
 
-	if(operatingMode_ == "HardwareDevMode")
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "Configuring for hardware development mode!" << __E__;
 		configureHardwareDevMode();
@@ -2382,22 +2382,35 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		    << "Using 'numberOfCAPTANPulses' for number of Event Windows to generate: "
 		    << numberOfEventWindowMarkers << __E__;
 
-		SetCFOEmulatorFixedWidthEmulation(
-		    1,                           //bool enable,
-		    false,                       //bool useDetachedBufferTest,
-		    "0x44 clocks",               //std::string eventDuration,
-		    numberOfEventWindowMarkers,  //uint32_t numberOfEventWindowMarkers,
-		    0,                           //uint64_t initialEventWindowTag,
-		    1,                           //uint64_t eventWindowMode,
-		    0,                           //bool enableClockMarkers,
-		    1,                           //bool enableAutogenDRP,
-		    0,                           //bool saveBinaryDataToFile,
-		    "Default",                   //filename
-		    0,                           //bool saveSubeventHeadersToDataFile,
-		    0,                           //bool doNotResetCounters
-		    0,                           //bool skipBy32
-		    0                            //unint32_t packetThresholdToSave)
-		);
+		if(numberOfEventWindowMarkers != uint32_t(0))
+		{
+			__FE_COUT__ << "Using 'numberOfCAPTANPulses' for number of Event Windows to "
+			               "generate: "
+			            << numberOfEventWindowMarkers << __E__;
+
+			SetCFOEmulatorFixedWidthEmulation(
+			    1,                           //bool enable,
+			    false,                       //bool useDetachedBufferTest,
+			    "0x44 clocks",               //std::string eventDuration,
+			    numberOfEventWindowMarkers,  //uint32_t numberOfEventWindowMarkers,
+			    0,                           //uint64_t initialEventWindowTag,
+			    1,                           //uint64_t eventWindowMode,
+			    0,                           //bool enableClockMarkers,
+			    1,                           //bool enableAutogenDRP,
+			    0,                           //bool saveBinaryDataToFile,
+			    "Default",                   //filename
+			    0,                           //bool saveSubeventHeadersToDataFile,
+			    0,                           //bool doNotResetCounters
+			    0,                           //bool skipBy32
+			    0                            //unint32_t packetThresholdToSave)
+			);
+		}
+		else
+		{
+			__FE_COUT__ << "'numberOfCAPTANPulses' set to 0, skipping "
+			               "SetCFOEmulatorFixedWidthEmulation"
+			            << __E__;
+		}
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
@@ -2619,15 +2632,15 @@ bool DTCFrontEndInterface::running(void)
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
-	if(operatingMode_ == "HardwareDevMode")
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "Running for hardware development mode!" << __E__;
 	}
-	else if(operatingMode_ == "EventBuildingMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << "Running for Event Building mode!" << __E__;
 	}
-	else if(operatingMode_ == "LoopbackMode")
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Running for Loopback mode!" << __E__;
 	}
