@@ -3,6 +3,7 @@
 
 #include <libpq-fe.h>                                     /* for PGconn */
 #include "otsdaq/FiniteStateMachine/RunInfoVInterface.h"  // for Run Info plugins
+#include "otsdaq/TableCore/TableView.h"
 
 namespace ots
 {
@@ -29,6 +30,9 @@ class DBRunInfo : public RunInfoVInterface
 
 	virtual std::vector<std::vector<std::string>> getRunConditionByID(
 	    uint64_t conditionID);
+
+	virtual std::vector<std::vector<std::string>> getRunConfigSubsystemInfo(
+		uint64_t configID);
 
   private:
 	const char* dbname_;
