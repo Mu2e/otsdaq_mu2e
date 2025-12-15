@@ -136,8 +136,8 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 											, commit_time)			\
 											  VALUES ('%s',CURRENT_TIMESTAMP) \
                                               RETURNING condition_id;",
-				dbSchema_,
-				condition.c_str());
+		         dbSchema_,
+		         condition.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -289,15 +289,15 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 											, commit_time)			\
 											VALUES ('%s','%d','%d','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP) \
                                             RETURNING run_number;",
-				dbSchema_,
-				runType,
-				conditionID,
-				std::stoi(artadqPartition),
-				hostName,
-				runConfiguration.c_str(),
-				runConfigurationVersion.c_str(),
-				runContext.c_str(),
-				runContextVersion.c_str());
+		         dbSchema_,
+		         runType,
+		         conditionID,
+		         std::stoi(artadqPartition),
+		         hostName,
+		         runConfiguration.c_str(),
+		         runConfigurationVersion.c_str(),
+		         runContext.c_str(),
+		         runContextVersion.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
