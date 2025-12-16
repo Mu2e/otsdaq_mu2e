@@ -10,9 +10,13 @@ echo "#   ./install_drivers"
 echo "#   reboot #might be needed"
 
 SCRIPT_DIR="$(
-    cd "$(dirname "$(readlink "${BASH_SOURCE[0]}" || printf %s "${BASH_SOURCE[0]}")")"
-    pwd -P
+  cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd -P
 )"
+
+# SCRIPT_DIR="$(
+#     cd "$(dirname "$(readlink "${BASH_SOURCE[0]}" || printf %s "${BASH_SOURCE[0]}")")"
+#     pwd -P
+# )"
 
 echo "--------------------------"
 echo "Or try to unbind and bind USB JTAG:"
