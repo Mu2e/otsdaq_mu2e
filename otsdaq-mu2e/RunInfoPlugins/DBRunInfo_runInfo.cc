@@ -6,6 +6,7 @@
 #include <libpq-fe.h> /* for PGconn */
 #include <boost/algorithm/string.hpp>
 #include <chrono>
+#include <sstream>
 
 using namespace ots;
 
@@ -71,7 +72,68 @@ void DBRunInfo::openDbConnection()
 }  //end openDbConnection()
 
 //==============================================================================
-unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
+std::vector<std::string> DBRunInfo::getTableNames(const std::string& tableName)
+{
+	std::vector<std::string> names;
+	
+	char listBuffer[1024];
+	snprintf(listBuffer,
+	         sizeof(listBuffer),
+	         "SELECT name FROM %s.%s ORDER BY name;",
+	         dbSchema_,
+	         tableName.c_str());
+	
+	PGresult* listRes = PQexec(runInfoDbConn_, listBuffer);
+	
+	if(PQresultStatus(listRes) == PGRES_TUPLES_OK && PQntuples(listRes) > 0)
+	{
+		for(int i = 0; i < PQntuples(listRes); i++)
+		{
+			names.push_back(PQgetvalue(listRes, i, 0));
+		}
+	}
+	
+	if(listRes)
+		PQclear(listRes);
+	
+	return names;
+}  //end getTableNames()
+
+//==============================================================================
+void DBRunInfo::appendNotFoundError(std::ostringstream& ss,
+                                     const std::string& providedName,
+                                     const std::string& tableName,
+                                     const std::string& entityDescription,
+                                     const std::vector<std::string>& availableNames,
+                                     const std::string& additionalNote)
+{
+	ss << "The " << entityDescription << " '" << providedName 
+	   << "' does not match any entry in the " << tableName << " table." << __E__;
+	
+	if(!additionalNote.empty())
+	{
+		ss << additionalNote << __E__;
+	}
+	
+	ss << "The " << entityDescription << " needs to match one of the following " 
+	   << tableName << " names:" << __E__;
+	
+	if(availableNames.empty())
+	{
+		ss << "  (No " << tableName << " entries found in the database)" << __E__;
+	}
+	else
+	{
+		for(size_t i = 0; i < availableNames.size(); i++)
+		{
+			ss << "  " << (i + 1) << ". " << availableNames[i] << __E__;
+		}
+	}
+}  //end appendNotFoundError()
+
+//==============================================================================
+unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
+                                           const std::string& configTypeName)
 {
 	uint64_t conditionID = (unsigned int)-1;
 
@@ -121,7 +183,6 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
-		char      buffer[4194304];
 
 		//extract run condition from runInfoConditions
 		// std::string condition =
@@ -182,25 +243,50 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 		StringMacros::sanitizeForSQL(runInfo);
 		__COUT__ << "Configuration dump " << __E__ << runInfo.c_str() << __E__;
 
-		// std::string dummyData = "{\"Data\": \"hello\"}";
+		// Get detector setup name (from environment variable or use default)
+		const char* detectorSetupEnv = getenv("OTSDAQ_RUNINFO_DETECTOR_SETUP");
+		std::string detectorSetupName = detectorSetupEnv ? detectorSetupEnv : "default";
+		StringMacros::sanitizeForSQL(detectorSetupName);
 
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "INSERT INTO %s.global_config(						\
-											  config_data			\
-											, create_time)			\
-											  VALUES ('%s',CURRENT_TIMESTAMP) \
-                                              RETURNING config_id;",
-		         dbSchema_,
-		         runInfo.c_str());
+		// Sanitize configTypeName for SQL safety
+		std::string sanitizedConfigTypeName = configTypeName;
+		StringMacros::sanitizeForSQL(sanitizedConfigTypeName);
 
-		res = PQexec(runInfoDbConn_, buffer);
+		// Validate configTypeName is provided
+		if(configTypeName.empty())
+		{
+			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! "
+			       << "configTypeName (StateMachine UID) is required but was not provided." << __E__;
+			__SS_THROW__;
+		}
+
+		// Try INSERT first - let database validate the config_type exists
+		std::ostringstream queryStream;
+		queryStream << "INSERT INTO " << dbSchema_ << ".config("
+		            << "config_data, "
+		            << "create_time, "
+		            << "type_id, "
+		            << "host_name, "
+		            << "detector_setup_id) "
+		            << "SELECT '" << runInfo << "', "
+		            << "CURRENT_TIMESTAMP, "
+		            << "ct.id, "
+		            << "'" << hostName << "', "
+		            << "ds.id "
+		            << "FROM " << dbSchema_ << ".config_type ct "
+		            << "CROSS JOIN " << dbSchema_ << ".detector_setup ds "
+		            << "WHERE ct.name = '" << sanitizedConfigTypeName << "' "
+		            << "AND ds.name = '" << detectorSetupName << "' "
+		            << "RETURNING id;";
+		
+		std::string query = queryStream.str();
+		res = PQexec(runInfoDbConn_, query.c_str());
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__ << "INSERT INTO 'global_config' DATABASE TABLE FAILED!!! PQ ERROR: "
+			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! PQ ERROR: "
 			       << PQresultErrorMessage(res) << __E__
-                   << "Make sure 'ConfigurationDumpOnConfigureFormat' is set to 'json' in the FSM configuration." << __E__
+                   << "Make sure 'ConfigurationDumpOnConfigureFormat' is set to 'Json All' in the FSM configuration." << __E__
                    << "runInfo:" << __E__
                    << runInfo.c_str() << __E__;
 			PQclear(res);
@@ -212,11 +298,87 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 			conditionID = std::stoul(PQgetvalue(res, 0, 0));
 			__COUTV__(conditionID);
 		}
+		else if(PQntuples(res) == 0)
+		{
+			// No rows returned - check which lookup failed (config_type or detector_setup)
+			PQclear(res);
+			
+			// Check if config_type exists
+			char configTypeBuffer[1024];
+			snprintf(configTypeBuffer,
+			         sizeof(configTypeBuffer),
+			         "SELECT id FROM %s.config_type WHERE name = '%s';",
+			         dbSchema_,
+			         sanitizedConfigTypeName.c_str());
+			
+			PGresult* configTypeRes = PQexec(runInfoDbConn_, configTypeBuffer);
+			bool configTypeFound = (PQresultStatus(configTypeRes) == PGRES_TUPLES_OK && 
+			                        PQntuples(configTypeRes) == 1);
+			PQclear(configTypeRes);
+			
+			// Check if detector_setup exists
+			char detectorSetupBuffer[1024];
+			snprintf(detectorSetupBuffer,
+			         sizeof(detectorSetupBuffer),
+			         "SELECT id FROM %s.detector_setup WHERE name = '%s';",
+			         dbSchema_,
+			         detectorSetupName.c_str());
+			
+			PGresult* detectorSetupRes = PQexec(runInfoDbConn_, detectorSetupBuffer);
+			bool detectorSetupFound = (PQresultStatus(detectorSetupRes) == PGRES_TUPLES_OK && 
+			                          PQntuples(detectorSetupRes) == 1);
+			PQclear(detectorSetupRes);
+			
+			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! " << __E__;
+			
+			// Handle config_type not found
+			if(!configTypeFound)
+			{
+				std::vector<std::string> availableConfigTypes = getTableNames("config_type");
+				appendNotFoundError(ss,
+				                    configTypeName,
+				                    "config_type",
+				                    "StateMachine UID",
+				                    availableConfigTypes);
+			}
+			
+			// Handle detector_setup not found
+			if(!detectorSetupFound)
+			{
+				std::vector<std::string> availableDetectorSetups = getTableNames("detector_setup");
+				appendNotFoundError(ss,
+				                    detectorSetupName,
+				                    "detector_setup",
+				                    "detector setup name",
+				                    availableDetectorSetups,
+				                    "(Note: This can be set via the OTSDAQ_RUNINFO_DETECTOR_SETUP environment variable)");
+			}
+			
+			// If both are missing, provide a combined message
+			if(!configTypeFound && !detectorSetupFound)
+			{
+				ss << __E__ << "Both the StateMachine UID and detector setup name are invalid. "
+				   << "Please fix both issues listed above." << __E__;
+			}
+			else if(!configTypeFound)
+			{
+				ss << __E__ << "Please ensure that the StateMachine UID in your configuration "
+				   << "matches one of the config_type names listed above." << __E__;
+			}
+			else if(!detectorSetupFound)
+			{
+				ss << __E__ << "Please ensure that the detector setup name (from environment variable "
+				   << "OTSDAQ_RUNINFO_DETECTOR_SETUP or default 'default') "
+				   << "matches one of the detector_setup names listed above." << __E__;
+			}
+			
+			__SS_THROW__;
+		}
 		else
 		{
-			__SS__ << "RETRIVE CONDITION_ID FROM 'run_condition' DATABASE TABLE "
-			          "FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+			__SS__ << "RETRIVE CONDITION_ID FROM 'config' DATABASE TABLE "
+			          "FAILED!!! Unexpected number of rows returned: "
+			       << PQntuples(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}

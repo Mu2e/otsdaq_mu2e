@@ -4,6 +4,9 @@
 #include <libpq-fe.h>                                     /* for PGconn */
 #include "otsdaq/FiniteStateMachine/RunInfoVInterface.h"  // for Run Info plugins
 #include "otsdaq/TableCore/TableView.h"
+#include <sstream>
+#include <vector>
+#include <string>
 
 namespace ots
 {
@@ -16,7 +19,8 @@ class DBRunInfo : public RunInfoVInterface
 	// const std::string&       configurationPath);
 	virtual ~DBRunInfo(void);
 
-	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "");
+	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "",
+	                                        const std::string& configTypeName = "");
 	virtual unsigned int claimNextRunNumber(unsigned int       conditionID,
 	                                        const std::string& runInfoConditions = "");
 	virtual void         updateRunInfo(unsigned int                   runNumber,
@@ -44,6 +48,15 @@ class DBRunInfo : public RunInfoVInterface
 	PGconn*     runInfoDbConn_ = nullptr;
 
 	void openDbConnection();
+	
+	// Helper functions for error reporting
+	std::vector<std::string> getTableNames(const std::string& tableName);
+	void appendNotFoundError(std::ostringstream& ss,
+	                         const std::string& providedName,
+	                         const std::string& tableName,
+	                         const std::string& entityDescription,
+	                         const std::vector<std::string>& availableNames,
+	                         const std::string& additionalNote = "");
 };
 }  // namespace ots
 
