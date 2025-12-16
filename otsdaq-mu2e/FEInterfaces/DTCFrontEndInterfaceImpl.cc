@@ -122,7 +122,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC Setup",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::SetupROCs),
-						std::vector<std::string>{"Target ROC (Default = -1 := all ROCs)",
+						std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 											"Set Link RX/TX Enable (Default := false)",
 											"Set Link Timing Enable (Default := false)",
 											"Set ROC Emulation Enable (Default := false)",
@@ -144,7 +144,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteROC),  // feMacroFunction
-					std::vector<std::string>{"rocLinkIndex", "address", "writeData"},
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", 
+						"address", "writeData"},
 					std::vector<std::string>{},  // namesOfOutput
 					1,			     // requiredUserPermissions
 					"*",						 // allowedCallingFEs
@@ -155,7 +156,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC Read",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ReadROC),		  // feMacroFunction
-					std::vector<std::string>{"rocLinkIndex", "address"},  // namesOfInputArgs
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", 
+						"address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
 					1,   // requiredUserPermissions
 					"*",
@@ -165,8 +167,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction(
 		"ROC Block Read",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::BockReadROC),
-					std::vector<std::string>{"rocLinkIndex", "address",
+					&DTCFrontEndInterface::BlockReadROC),
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", 
+						"address",
 						"Number Of 16-bit words to Read (Default := 8)",
 						"incrementAddress (Default := false)"},
 					std::vector<std::string>{"readData"},
@@ -178,8 +181,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	registerFEMacroFunction(
 		"ROC Block Write",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&DTCFrontEndInterface::BockWriteROC),
-					std::vector<std::string>{"rocLinkIndex", "address",
+					&DTCFrontEndInterface::BlockWriteROC),
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", "address",
 						"writeData (CSV-literal or CSV-filename of 16-bit words, or keyword + parameter 'AUTOGENERATE count')",
 						"incrementAddress (Default = false)", "requestAck (Default = false)"},
 					std::vector<std::string>{"Status"},
@@ -206,7 +209,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			"ROC_Write_ExtRegister",  // feMacroName
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&DTCFrontEndInterface::WriteExternalROCRegister),  // feMacroFunction
-						std::vector<std::string>{"rocLinkIndex", "block", "address", "writeData"},
+						std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", "block", "address", "writeData"},
 						std::vector<std::string>{},  // namesOfOutputArgs
 						1);			     // requiredUserPermissions
 
@@ -214,7 +217,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			"ROC_Read_ExtRegister",
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&DTCFrontEndInterface::ReadExternalROCRegister),
-						std::vector<std::string>{"rocLinkIndex", "block", "address"},
+						std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", "block", "address"},
 						std::vector<std::string>{"readData"},
 						1);  // requiredUserPermissions
 
@@ -276,7 +279,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			"DTC_HighRate_DCS_Check",
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&DTCFrontEndInterface::DTCHighRateDCSCheck),
-						std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+						std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)","loops","baseAddress",
 							"correctRegisterValue0","correctRegisterValue1"},
 						std::vector<std::string>{},
 						1);  // requiredUserPermissions
@@ -285,7 +288,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			"DTC_HighRate_DCS_Block_Check",
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&DTCFrontEndInterface::DTCHighRateBlockCheck),
-						std::vector<std::string>{"rocLinkIndex","loops","baseAddress",
+						std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)","loops","baseAddress",
 							"correctRegisterValue0","correctRegisterValue1"},
 						std::vector<std::string>{},
 						1);  // requiredUserPermissions
@@ -748,8 +751,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::ProgramROCs),		 // feMacroFunction
 					std::vector<std::string>{
 						//First, only write the bitfile, manually readback .. do not reprogram yet!
-						"Target Link (Default := none, -1 := all)",
-						"Target Mask (Default := 0, b111111 := all)",
+						"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 						"Path to Directory map file (Default := do not use)",
 						"Write Directory map to SPI Flash (Default := false)",
 						"Verify Directory map (Default := false)",
@@ -845,7 +847,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					__FE_COUTV__(macroName);
 					std::vector<std::string> inputArgs,outputArgs;
 					//take ROC target as parameter for ROC FE Macros (allow -1 as wildcard for all)
-					inputArgs.push_back("Target ROC (Default = -1 := all ROCs)");
+					inputArgs.push_back("Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)");
 					for(auto& inArg: feMacro.second.namesOfInputArguments_)
 						inputArgs.push_back(inArg);
 					outputArgs.push_back("Target ROC"); //for display (especially to see which ROCs were targeted with -1)
@@ -2910,10 +2912,25 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
 	DTCLib::DTC_Link_ID rocLinkIndex =
-	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
-	DTCLib::roc_address_t address = __GET_ARG_IN__("address", DTCLib::roc_address_t);
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
 	__FE_COUTV__(rocLinkIndex);
+
+	DTCLib::roc_address_t address = __GET_ARG_IN__("address", DTCLib::roc_address_t);
 	__FE_COUTV__((unsigned int)address);
 
 	DTCLib::roc_data_t readData = -999;
@@ -2922,10 +2939,19 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 	std::string result = "";
 	for(auto& roc : rocs_)
 	{
-		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
-		            << rocLinkIndex << __E__;
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == DTC_Link_ALL || rocLinkIndex == roc.second->getLinkID())
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
 			try  //give user feedback on ROC status if exception caught
@@ -2967,7 +2993,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 			sprintf(readDataStr, "0x%x", readData);
 			if(result.size())
 				result += ", ";
-			if(rocLinkIndex == DTC_Link_ALL)
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
 				          ") ";
@@ -2976,7 +3002,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 			__FE_COUT__ << "readData"
 			            << ": 0x" << std::hex << readData << std::dec << __E__;
 		}
-	}
+	}  //end roc exec loop
 
 	if(found)
 	{
@@ -2984,10 +3010,8 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		return;
 	}
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex
-	          << " not found! Check the configuration of the DTC to make sure a child "
-	             "ROC is enabled at link "
-	          << rocLinkIndex << "." << __E__;
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
 	__FE_SS_THROW__;
 }  // end ReadROC()
 
@@ -3002,12 +3026,27 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
 	DTCLib::DTC_Link_ID rocLinkIndex =
-	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	DTCLib::roc_address_t address   = __GET_ARG_IN__("address", DTCLib::roc_address_t);
 	DTCLib::roc_data_t    writeData = __GET_ARG_IN__("writeData", DTCLib::roc_data_t);
 
-	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__(writeData);
 
@@ -3016,23 +3055,30 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 	bool found = false;
 	for(auto& roc : rocs_)
 	{
-		__FE_COUT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
-		            << rocLinkIndex << __E__;
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == DTC_Link_ALL || rocLinkIndex == roc.second->getLinkID())
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
 			roc.second->writeRegister(address, writeData);
-
-			for(auto& argOut : argsOut)
-				__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
 		}
-	}
+	}  //end roc exec loop
 
 	if(found)
 		return;
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
 	__FE_SS_THROW__;
 }  // end WriteROC()
 
@@ -3052,12 +3098,27 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
 	DTCLib::DTC_Link_ID rocLinkIndex =
-	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	DTCLib::roc_address_t address   = __GET_ARG_IN__("address", DTCLib::roc_address_t);
 	DTCLib::roc_data_t    writeData = __GET_ARG_IN__("writeData", DTCLib::roc_data_t);
 	DTCLib::roc_address_t block     = __GET_ARG_IN__("block", DTCLib::roc_address_t);
-	__FE_COUTV__(rocLinkIndex);
 	__FE_COUT__ << "block = " << std::dec << (unsigned int)block << __E__;
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
 	            << __E__;
@@ -3065,11 +3126,39 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 
 	bool acknowledge_request = false;
 
-	getDTC()->WriteExtROCRegister(
-	    rocLinkIndex, block, address, writeData, acknowledge_request, 0);
+	bool found = false;
+	for(auto& roc : rocs_)
+	{
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
 
-	for(auto& argOut : argsOut)
-		__FE_COUT__ << argOut.first << ": " << argOut.second << __E__;
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
+		{
+			found = true;
+			getDTC()->WriteExtROCRegister(roc.second->getLinkID(),
+			                              block,
+			                              address,
+			                              writeData,
+			                              acknowledge_request,
+			                              0);
+		}
+	}  //end roc exec loop
+
+	if(found)
+		return;
+
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
+	__FE_SS_THROW__;
 }  // end WriteExternalROCRegister()
 
 //==============================================================================
@@ -3080,24 +3169,51 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
 	DTCLib::DTC_Link_ID rocLinkIndex =
-	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	DTCLib::roc_address_t address = __GET_ARG_IN__("address", DTCLib::roc_address_t);
 	DTCLib::roc_address_t block   = __GET_ARG_IN__("block", DTCLib::roc_address_t);
-	__FE_COUTV__(rocLinkIndex);
 	__FE_COUT__ << "block = " << std::dec << (unsigned int)block << __E__;
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
 	            << __E__;
 
 	// bool acknowledge_request = false;
 
+	bool        found  = false;
+	std::string result = "";
 	for(auto& roc : rocs_)
 	{
-		__FE_COUT__ << "At ROC link ID " << roc.second->getLinkID() << ", looking for "
-		            << rocLinkIndex << __E__;
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == roc.second->getLinkID())
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
+			found = true;
 			DTCLib::roc_data_t readData;
 
 			readData = getDTC()->ReadExtROCRegister(rocLinkIndex, block, address);
@@ -3105,23 +3221,32 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 			std::string readDataString = "";
 			readDataString = BinaryStringMacros::binaryNumberToHexString(readData);
 
-			// StringMacros::vectorToString(readData);
+			if(result.size())
+				result += ", ";
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ") ";
+			result += readDataString;
 
-			__SET_ARG_OUT__("readData", readDataString);
-
-			// for(auto &argOut:argsOut)
 			__FE_COUT__ << "readData"
 			            << ": " << readDataString << __E__;
-			return;
 		}
+	}  //end roc exec loop
+
+	if(found)
+	{
+		__SET_ARG_OUT__("readData", result);
+		return;
 	}
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
 	__FE_SS_THROW__;
 }  // end ReadExternalROCRegister()
 
 //========================================================================
-void DTCFrontEndInterface::BockReadROC(__ARGS__)
+void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
 	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
@@ -3135,26 +3260,53 @@ void DTCFrontEndInterface::BockReadROC(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
 	DTCLib::DTC_Link_ID rocLinkIndex =
-	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	DTCLib::roc_address_t address = __GET_ARG_IN__("address", DTCLib::roc_address_t);
 	uint16_t              wordCount =
 	    __GET_ARG_IN__("Number Of 16-bit words to Read (Default := 8)", uint16_t, 8);
 	bool incrementAddress = __GET_ARG_IN__("incrementAddress (Default := false)", bool);
 
-	__FE_COUTV__(rocLinkIndex);
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
 	            << __E__;
 	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)wordCount << __E__;
 	__FE_COUTV__(incrementAddress);
 
+	bool        found  = false;
+	std::string result = "";
 	for(auto& roc : rocs_)
 	{
-		__FE_COUT__ << "At ROC link ID " << roc.second->getLinkID() << ", looking for "
-		            << rocLinkIndex << __E__;
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == roc.second->getLinkID())
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
+			found = true;
 			std::vector<DTCLib::roc_data_t> readData;
 
 			roc.second->readBlock(readData, address, wordCount, incrementAddress);
@@ -3171,24 +3323,34 @@ void DTCFrontEndInterface::BockReadROC(__ARGS__)
 					    BinaryStringMacros::binaryNumberToHexString(readData[i]);
 				}
 			}
-			// StringMacros::vectorToString(readData);
 
-			__SET_ARG_OUT__("readData", readDataString);
+			if(result.size())
+				result += ", ";
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ") ";
+			result += readDataString;
 
-			// for(auto &argOut:argsOut)
 			__FE_COUT__ << "readData"
 			            << ": " << readDataString << __E__;
-			return;
 		}
+	}  //end roc exec loop
+
+	if(found)
+	{
+		__SET_ARG_OUT__("readData", result);
+		return;
 	}
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
 	__FE_SS_THROW__;
 
-}  // end BockReadROC()
+}  // end BlockReadROC()
 
 //========================================================================
-void DTCFrontEndInterface::BockWriteROC(__ARGS__)
+void DTCFrontEndInterface::BlockWriteROC(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
 	__FE_COUT__ << "# of output args = " << argsOut.size() << __E__;
@@ -3202,8 +3364,24 @@ void DTCFrontEndInterface::BockWriteROC(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
 	DTCLib::DTC_Link_ID rocLinkIndex =
-	    DTCLib::DTC_Link_ID(__GET_ARG_IN__("rocLinkIndex", uint8_t));
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	DTCLib::roc_address_t address     = __GET_ARG_IN__("address", DTCLib::roc_address_t);
 	std::string           writeDataIn = __GET_ARG_IN__(
         "writeData (CSV-literal or CSV-filename of 16-bit words, or keyword + parameter "
@@ -3213,7 +3391,6 @@ void DTCFrontEndInterface::BockWriteROC(__ARGS__)
 	bool requestAck       = __GET_ARG_IN__("requestAck (Default = false)", bool);
 	std::vector<DTCLib::roc_data_t> writeData;
 
-	__FE_COUTV__(rocLinkIndex);
 	__FE_COUT__ << "address = 0x" << std::hex << (unsigned int)address << std::dec
 	            << __E__;
 	__FE_COUTV__(incrementAddress);
@@ -3287,37 +3464,78 @@ void DTCFrontEndInterface::BockWriteROC(__ARGS__)
 	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)writeData.size()
 	            << __E__;
 
+	bool        found  = false;
+	std::string result = "";
 	for(auto& roc : rocs_)
 	{
-		__FE_COUT__ << "At ROC link ID " << roc.second->getLinkID() << ", looking for "
-		            << rocLinkIndex << __E__;
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
 
-		if(rocLinkIndex == roc.second->getLinkID())
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
+			found = true;
 			roc.second->writeBlock(writeData, address, incrementAddress, requestAck);
 
 			// for(auto &argOut:argsOut)
-			std::stringstream ss;
-			ss << "Wrote " << writeData.size() << " words to address 0x" << std::hex
-			   << address
-			   << ", incrementingAddress=" << (incrementAddress ? "TRUE" : "FALSE")
-			   << ", requestAck=" << (requestAck ? "TRUE" : "FALSE") << __E__;
-			__FE_COUT__ << ss.str();
-			__SET_ARG_OUT__("Status", ss.str());
+			std::stringstream oss;
+			oss << "Wrote " << writeData.size() << " words to address 0x" << std::hex
+			    << address
+			    << ", incrementingAddress=" << (incrementAddress ? "TRUE" : "FALSE")
+			    << ", requestAck=" << (requestAck ? "TRUE" : "FALSE") << __E__;
 
-			return;
+			if(result.size())
+				result += ", ";
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ") ";
+			result += oss.str();
+			__FE_COUT__ << oss.str();
 		}
+	}  //end roc exec loop
+
+	if(found)
+	{
+		__SET_ARG_OUT__("Status", result);
+		return;
 	}
 
-	__FE_SS__ << "ROC link ID " << rocLinkIndex << " not found!" << __E__;
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
 	__FE_SS_THROW__;
 
-}  // end BockWriteROC()
+}  // end BlockWriteROC()
 
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
 {
-	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
 	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
 	unsigned int correctRegisterValue0 =
@@ -3325,29 +3543,65 @@ void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
 	unsigned int correctRegisterValue1 =
 	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
 
-	__FE_COUTV__(linkIndex);
 	__FE_COUTV__(loops);
 	__FE_COUTV__(baseAddress);
 	__FE_COUTV__(correctRegisterValue0);
 	__FE_COUTV__(correctRegisterValue1);
 
+	bool found = false;
 	for(auto& roc : rocs_)
-		if(roc.second->getLinkID() == linkIndex)
+	{
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
+
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
+			found = true;
+
 			roc.second->highRateBlockCheck(
 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
-			return;
 		}
+	}  //end roc exec loop
 
-	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
-	__FE_SS_THROW__;
+	if(!found)
+	{
+		__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal
+		          << " not found!" << __E__;
+		__FE_SS_THROW__;
+	}
 
 }  // end DTCHighRateBlockCheck()
 
 //========================================================================
 void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 {
-	unsigned int linkIndex   = __GET_ARG_IN__("rocLinkIndex", unsigned int);
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	unsigned int loops       = __GET_ARG_IN__("loops", unsigned int);
 	unsigned int baseAddress = __GET_ARG_IN__("baseAddress", unsigned int);
 	unsigned int correctRegisterValue0 =
@@ -3355,22 +3609,40 @@ void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 	unsigned int correctRegisterValue1 =
 	    __GET_ARG_IN__("correctRegisterValue1", unsigned int);
 
-	__FE_COUTV__(linkIndex);
 	__FE_COUTV__(loops);
 	__FE_COUTV__(baseAddress);
 	__FE_COUTV__(correctRegisterValue0);
 	__FE_COUTV__(correctRegisterValue1);
 
+	bool found = false;
 	for(auto& roc : rocs_)
-		if(roc.second->getLinkID() == linkIndex)
+	{
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
+
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
+			found = true;
 			roc.second->highRateCheck(
 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
-			return;
 		}
+	}  //end roc exec loop
 
-	__FE_SS__ << "Error! Could not find ROC at link index " << linkIndex << __E__;
-	__FE_SS_THROW__;
+	if(!found)
+	{
+		__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal
+		          << " not found!" << __E__;
+		__FE_SS_THROW__;
+	}
 
 }  // end DTCHighRateDCSCheck()
 
@@ -3526,8 +3798,22 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 	{
 		__FE_COUT__ << "Using ROC Link Index parameter to define ROC target" << __E__;
 
-		DTCLib::DTC_Link_ID rocLinkIndex = DTCLib::DTC_Link_ID(__GET_ARG_IN__(
-		    "Target ROC (Default = -1 := all ROCs)", uint8_t, -1 /* ALL */));
+		uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+		    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+		    uint32_t,
+		    -1 /* ALL */);
+		bool usingRocMask = false;
+		if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+		{
+			usingRocMask = true;
+			__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+			            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+		}
+
+		DTCLib::DTC_Link_ID rocLinkIndex =
+		    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+		__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+		__FE_COUTV__(usingRocMask);
 		__FE_COUTV__(rocLinkIndex);
 
 		//remove ROC index from input args (since not in official Macro registration)
@@ -3537,46 +3823,93 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 
 		FEVInterface::frontEndMacroConstArgs_t inputArgs = inputArgs_inst;
 
-		bool found = false;
+		bool found         = false;
+		bool arrayNotation = false;
 		for(auto& roc : rocs_)
 		{
-			if(rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
-			   roc.second->getLinkID() == rocLinkIndex)
+			if(usingRocMask)
+				__FE_COUT__ << "0x" << std::hex
+				            << (1 << (int(roc.second->getLinkID()) * 4))
+				            << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+				            << __E__;
+
+			if((!usingRocMask &&  //use ROC index
+			    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+			     roc.second->getLinkID() == rocLinkIndex)) ||
+			   (usingRocMask &&  //use ROC mask
+			    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 			{
-				found = true;
+				if(!found)
+				{
+					//clear output args for CSV output value assembly on first FEMacro run
+					for(auto& argOut : argsOut)
+						if(argOut.first !=
+						   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
+							argOut.second = "";
+				}
 				__FE_COUTV__(rocFEMacroName);
 				__FE_COUTV__(roc.second->getLinkID());
 
 				//for each ROC, append result to argsOut
+
+				//first create single instance of argsOut structure as outputArgs
+				// Note: removing first output arg, which is ROC link
 				std::vector<ots::FEVInterface::frontEndMacroArg_t> outputArgs_inst;
-				FEVInterface::frontEndMacroArgs_t outputArgs = outputArgs_inst;
+				FEVInterface::frontEndMacroArgs_t                  outputArgs =
+				    outputArgs_inst;  //get reference name
 				for(size_t i = 1; i < argsOut.size(); ++i)
 					outputArgs.push_back(make_pair(argsOut[i].first, ""));
 
 				roc.second->runSelfFrontEndMacro(rocFEMacroName, inputArgs, outputArgs);
 
-				//append output args CSV-style
-				argsOut[0].second +=
-				    (argsOut[0].second.size() ? ", " : "") + roc.second->getLinkID();
+				//append output args json array [CSV]-style, including for first output arg (ROC link)
+				if(found && !arrayNotation)
+					argsOut[0].second =
+					    "[" + argsOut[0].second;  //add leading bracket for array notation
+				argsOut[0].second +=              //add new value
+				    (found ? ", " : "") + std::to_string(roc.second->getLinkID());
+				__FE_COUTT__ << argsOut[0].first << ": " << argsOut[0].second << __E__;
 				for(size_t i = 1; i < argsOut.size() && i - 1 < outputArgs.size(); ++i)
-					argsOut[i].second +=
-					    (argsOut[i].second.size() ? ", " : "") + outputArgs[i - 1].second;
+				{
+					if(found && !arrayNotation)
+						argsOut[i].second =
+						    "[" +
+						    argsOut[i].second;  //add leading bracket for array notation
+					argsOut[i].second +=        //add new value
+					    (found ? ", " : "") + outputArgs[i - 1].second;
+					__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second
+					             << __E__;
+				}
 
-				if(rocLinkIndex != DTCLib::DTC_Link_ID::DTC_Link_ALL)
+				if(found)
+					arrayNotation = true;
+				found = true;
+
+				if(!usingRocMask && rocLinkIndex != DTCLib::DTC_Link_ID::DTC_Link_ALL)
 					break;  //done with target ROC
-			}
-		}  //end ROC FEMacro launch loop
+			}               //end ROC match
+		}                   //end ROC FEMacro launch loop
 
 		if(!found)
 		{
-			__FE_SS__ << "Fatal error - ROC link index '" << rocLinkIndex
-			          << "' not found in DTC's instantiated ROCs (make sure your ROC is "
+			__FE_SS__ << "Fatal error - Target ROC or Mask '" << int(rocLinkIndexVal)
+			          << " (0x" << std::hex << rocLinkIndexVal
+			          << ")' not found in DTC's instantiated ROCs (make sure your ROC is "
 			             "enabled)! Here is the list of "
 			             "enabled ROC links: ";
+			int i = 0;
 			for(auto& roc : rocs_)
-				ss << roc.second->getLinkID() << ", ";
+				ss << (i++ ? ", " : "") << roc.second->getLinkID();
 			ss << __E__;
 			__FE_SS_THROW__;
+		}
+
+		//finalize array notation for output args
+		if(arrayNotation)
+		{
+			for(auto& argOut : argsOut)
+				if(argOut.first != PLOTLY_PLOT)  //leave built-in arg as DEFAULT
+					argOut.second += "]";        //add trailing bracket for array notation
 		}
 	}
 	else  //individual target defined by feMacroIt pair
@@ -3600,23 +3933,81 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::SetupROCs(__ARGS__)
 {
-	__SET_ARG_OUT__(
-	    "Result",
-	    SetupROCs(
-	        DTCLib::DTC_Link_ID(__GET_ARG_IN__(
-	            "Target ROC (Default = -1 := all ROCs)", uint8_t, -1 /* ALL */)),
-	        __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
-	        __GET_ARG_IN__("Set Link Timing Enable (Default := false)", bool, false),
-	        __GET_ARG_IN__("Set ROC Emulation Enable (Default := false)", bool, false),
-	        DTCLib::DTC_ROC_Emulation_Type(
-	            __GET_ARG_IN__("ROC Emulation Type (Default = 0: Internal, 1: "
-	                           "Fiber-Loopback, 2: External)",
-	                           uint8_t,
-	                           0 /* internal */)),
-	        __GET_ARG_IN__("ROC generated Data Payload fragment packet count (11-bits, "
-	                       "Default := 16)",
-	                       uint32_t,
-	                       16)));
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
+	bool        found  = false;
+	std::string result = "";
+	for(auto& roc : rocs_)
+	{
+		if(usingRocMask)
+			__FE_COUTT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			             << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			             << __E__;
+		else
+			__FE_COUTT__ << "Found link ID " << roc.second->getLinkID() << " looking for "
+			             << rocLinkIndex << __E__;
+
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
+		{
+			found = true;
+
+			std::string setupRocResult = SetupROCs(
+			    roc.second->getLinkID(),
+			    __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
+			    __GET_ARG_IN__("Set Link Timing Enable (Default := false)", bool, false),
+			    __GET_ARG_IN__(
+			        "Set ROC Emulation Enable (Default := false)", bool, false),
+			    DTCLib::DTC_ROC_Emulation_Type(
+			        __GET_ARG_IN__("ROC Emulation Type (Default = 0: Internal, 1: "
+			                       "Fiber-Loopback, 2: External)",
+			                       uint8_t,
+			                       0 /* internal */)),
+			    __GET_ARG_IN__(
+			        "ROC generated Data Payload fragment packet count (11-bits, "
+			        "Default := 16)",
+			        uint32_t,
+			        16));
+
+			if(result.size())
+				result += ", ";
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ") ";
+			result += setupRocResult;
+			__FE_COUTV__(setupRocResult);
+		}
+	}  //end roc exec loop
+
+	if(found)
+	{
+		__SET_ARG_OUT__("Result", result);
+		return;
+	}
+
+	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
+	          << __E__;
+	__FE_SS_THROW__;
 }  // end SetEmulatedROCEventFragmentSize()
 
 //========================================================================
@@ -6702,11 +7093,24 @@ void DTCFrontEndInterface::loopbackTest(int step)
 /// 4) readback function (index, size in byte, output file name) reads the flash sector using action 7 and writes in the file
 void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 {
-	uint8_t link = __GET_ARG_IN__("Target Link (Default := use mask, -1 := all)",
-	                              uint8_t,
-	                              7);  //7 == none, -1 == all
-	uint8_t mask =
-	    __GET_ARG_IN__("Target Mask (Default := 0, b111111 := all)", uint8_t, 0);
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+	{
+		usingRocMask = true;
+		__FE_COUT__ << "Using ROC Link Mask value: 0x" << std::hex
+		            << (unsigned int)rocLinkIndexVal << std::dec << __E__;
+	}
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
+	__FE_COUTV__(usingRocMask);
+	__FE_COUTV__(rocLinkIndex);
+
 	std::string mapPath =
 	    __GET_ARG_IN__("Path to Directory map file (Default := do not use)", std::string);
 	bool writeMap =
@@ -6723,8 +7127,6 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	uint32_t debugForceSize =
 	    __GET_ARG_IN__("For Debug, force Write size (Default := do not force)", uint32_t);
 
-	__FE_COUTV__((int)link);
-	__FE_COUTV__((int)mask);
 	__FE_COUTV__(mapPath);
 	__FE_COUTV__(writeMap);
 	__FE_COUTV__(verifyMap);
@@ -6741,21 +7143,33 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	std::vector<std::string /* ROC UID */> targetROCs;
 	for(auto& roc : rocs_)
 	{
-		if(link == uint8_t(-1) ||  //all
-		   (link < 7 &&            //link target match
-		    DTCLib::DTC_Link_ID(link) == roc.second->getLinkID()) ||
-		   (link == 7 &&  //use mask
-		    (1 << roc.second->getLinkID()) & mask))
+		if(usingRocMask)
+			__FE_COUT__ << "0x" << std::hex << (1 << (int(roc.second->getLinkID()) * 4))
+			            << " vs rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal
+			            << __E__;
+
+		if((!usingRocMask &&  //use ROC index
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     roc.second->getLinkID() == rocLinkIndex)) ||
+		   (usingRocMask &&  //use ROC mask
+		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			targetROCs.push_back(roc.first);
 			__FE_COUTV__(roc.first);
 			__FE_COUTV__(roc.second->getLinkID());
 		}
-	}
+	}  //end target ROC search loop
 	if(!targetROCs.size())
 	{
-		__FE_SS__ << "No target ROCs selected by parameters! link = " << (int)link
-		          << ", mask = " << (int)mask << __E__;
+		__FE_SS__ << "Fatal error - Target ROC or Mask '" << int(rocLinkIndexVal)
+		          << " (0x" << std::hex << rocLinkIndexVal
+		          << ")' not found in DTC's instantiated ROCs (make sure your ROC is "
+		             "enabled)! Here is the list of "
+		             "enabled ROC links: ";
+		int i = 0;
+		for(auto& roc : rocs_)
+			ss << (i++ ? ", " : "") << roc.second->getLinkID();
+		ss << __E__;
 		__FE_SS_THROW__;
 	}
 
