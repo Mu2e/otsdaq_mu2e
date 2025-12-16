@@ -199,7 +199,10 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "INSERT INTO 'global_config' DATABASE TABLE FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+			       << PQresultErrorMessage(res) << __E__
+                   << "Make sure 'ConfigurationDumpOnConfigureFormat' is set to 'json' in the FSM configuration." << __E__
+                   << "runInfo:" << __E__
+                   << runInfo.c_str() << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
