@@ -100,7 +100,7 @@ std::vector<std::string> DBRunInfo::getTableNames(const std::string& tableName)
 }  //end getTableNames()
 
 //==============================================================================
-void DBRunInfo::appendNotFoundError(std::ostringstream& ss,
+void DBRunInfo::appendNotFoundError(std::stringstream& ss,
                                      const std::string& providedName,
                                      const std::string& tableName,
                                      const std::string& entityDescription,
@@ -132,31 +132,23 @@ void DBRunInfo::appendNotFoundError(std::ostringstream& ss,
 }  //end appendNotFoundError()
 
 //==============================================================================
-unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
-                                           const std::string& configTypeName)
+int DBRunInfo::checkAndReconnectDb(const std::string& operationDescription)
 {
-	uint64_t conditionID = (unsigned int)-1;
-
-	__COUT__ << "insert Run Condition" << __E__;
-
 	int runInfoDbConnStatus_ = 0;
-
-	char* mu2eOwner = __ENV__("MU2E_OWNER");
-	char* hostName  = __ENV__("HOSTNAME");
-
+	
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
-		__COUT__ << "Unable to connect to the run_info database inserting run condition\n"
+		__COUT__ << "Unable to connect to the run_info database " << operationDescription << "\n"
 		         << __E__;
 		PQfinish(runInfoDbConn_);
 		runInfoDbConn_ = nullptr;
-
+		
 		//Try to open again the db connection
 		openDbConnection();
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
 			__COUT__ << "Unable to connect for the second time to the run_info database "
-			            "inserting the run condition!\n"
+			            << operationDescription << "\n"
 			         << __E__;
 			PQfinish(runInfoDbConn_);
 			runInfoDbConn_ = nullptr;
@@ -164,20 +156,69 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 		else
 		{
 			__COUT__ << "Connected to the run_info database after a second tentative "
-			            "inserting the run condition! hostName: "
-			         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
+			            << operationDescription << "\n"
 			         << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
 	else
 	{
-		__COUT__ << "Connected to the run_info database inserting the run condition! "
-		            "hostName: "
-		         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
+		__COUT__ << "Connected to the run_info database " << operationDescription << "\n"
 		         << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
+	
+	return runInfoDbConnStatus_;
+}  //end checkAndReconnectDb()
+
+//==============================================================================
+std::vector<std::vector<std::string>> DBRunInfo::convertResultToVector(PGresult* res)
+{
+	std::vector<std::vector<std::string>> records;
+	
+	if(PQntuples(res) >= 1)
+	{
+		int nFields = PQnfields(res);
+		records.resize(PQntuples(res));
+		
+		for(int i = 0; i < PQntuples(res); i++)
+		{
+			records[i].resize(nFields);
+			for(int j = 0; j < nFields; j++)
+			{
+				records[i][j] = PQgetvalue(res, i, j);
+			}
+		}
+	}
+	
+	return records;
+}  //end convertResultToVector()
+
+//==============================================================================
+/// insertRunCondition
+///		Creates a new condition/config record in the database during the Configure transition.
+///		This is called by the state machine when transitioning to Configured state.
+///
+///		@param runInfoConditions - The configuration dump (JSON format) containing all
+///		                           configuration information
+///		@param configTypeName - The StateMachine UID (from activeStateMachineName_) that
+///		                       identifies which state machine triggered this configure transition.
+///		                       This is used to look up the corresponding type_id in the
+///		                       config_type table. Must match an existing entry in config_type.
+///                            Detector setup name is loaded from the environment variable 
+//                             OTSDAQ_RUNINFO_DETECTOR_SETUP if present and default to 'default' if not.
+///		@return conditionID - The database ID of the inserted config record. This is needed to link run record to the config record.
+unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
+                                           const std::string& configTypeName)
+{
+	uint64_t conditionID = (unsigned int)-1;
+
+	__COUT__ << "insert Run Condition" << __E__;
+
+	// char* mu2eOwner = __ENV__("MU2E_OWNER");
+	char* hostName  = __ENV__("HOSTNAME");
+
+	int runInfoDbConnStatus_ = checkAndReconnectDb("inserting run condition");
 
 	// write run condition into db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
@@ -386,7 +427,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 		std::vector<std::vector<std::string>> subsystemsInfo = {
 			{
 				// "1" 	// config ID
-				"1"  	// subsystem ID 
+				"crv"  	// subsystem ID 
 				,"{\"data\": \"test\"}"
 				,"alias_1"
 				,"context_1"
@@ -396,11 +437,11 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 				,"backbone_name_1" 
 				,"1"
 				,"config_db_uir_1"
-				,"subsystem_sw_version_id_1" 
+				,"subsystem_sw_version_id_1"
 			},
 			{
 				// "1" 	// config ID
-				"2"  	// subsystem ID 
+				"dcs"  	// subsystem ID 
 				,"{\"data\": \"test\"}"
 				,"alias_2"
 				,"context_2"
@@ -410,11 +451,11 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 				,"backbone_name_2" 
 				,"1"
 				,"config_db_uir_2"
-				,"subsystem_sw_version_id_1" 
+				,"subsystem_sw_version_id_1"
 			},
 			{
 				// "1" 	// config ID
-				"3"  	// subsystem ID 
+				"trigger"  	// subsystem ID 
 				,"{\"data\": \"test\"}"
 				,"alias_3"
 				,"context_3"
@@ -425,17 +466,21 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 				,"1"
 				,"config_db_uir_3"
 				,"subsystem_sw_version_id_1" 
+                ,"3"
 			}
 		};
 
+        // char* artadqPartition = __ENV__("ARTDAQ_PARTITION");
+
 		for(uint8_t i=0; i<subsystemsInfo.size(); i++)
 		{
+			char buffer[2048];
 			snprintf(buffer,
 		         sizeof(buffer),
-		         "INSERT INTO %s.subsystem_config(						\
+		         "INSERT INTO %s.config_subsystem_data(						\
 											  config_id					\
-											, subsystem_id				\
-											, subsystem_config_data		\
+											, subsystem				\
+											, data		\
 											, create_time)				\
 											  VALUES ('%ld','%s','%s',CURRENT_TIMESTAMP) \
 											  RETURNING config_id;",
@@ -449,7 +494,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 
 			if(PQresultStatus(res) != PGRES_TUPLES_OK)
 			{
-				__SS__ << "INSERT INTO 'subsystem_config' DATABASE TABLE FAILED!!! PQ ERROR: "
+				__SS__ << "INSERT INTO 'config_subsystem_data' DATABASE TABLE FAILED!!! PQ ERROR: "
 					<< PQresultErrorMessage(res) << __E__;
 				PQclear(res);
 				__SS_THROW__;
@@ -459,9 +504,9 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 
 			snprintf(buffer,
 		         sizeof(buffer),
-		         "INSERT INTO %s.subsystem_config_info(					\
+		         "INSERT INTO %s.config_subsystem(				    	\
 											  config_id					\
-											, subsystem_id				\
+											, subsystem 				\
 											, config_alias				\
 											, context_name				\
 											, context_key				\
@@ -470,8 +515,8 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 											, backbone_name 			\
 											, backbone_key				\
 											, config_db_uri				\
-											, subsystem_sw_version_id	\
-											, create_time)				\
+											, sw_version_id	\
+											, create_time)			\
 											  VALUES ('%ld','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP) \
 											  RETURNING config_id;",
 		         dbSchema_,
@@ -492,7 +537,7 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 
 			if(PQresultStatus(res) != PGRES_TUPLES_OK)
 			{
-				__SS__ << "INSERT INTO 'subsystem_config_info' DATABASE TABLE FAILED!!! PQ ERROR: "
+				__SS__ << "INSERT INTO 'config_subsystem' DATABASE TABLE FAILED!!! PQ ERROR: "
 					<< PQresultErrorMessage(res) << __E__;
 				PQclear(res);
 				__SS_THROW__;
@@ -513,8 +558,22 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 }  //end insertRunCondition()
 
 //==============================================================================
+/// claimNextRunNumber
+///		Creates a new run record in the database and claims the next available run number.
+///		This is called by the state machine when transitioning from Configured to Running state
+///		(Start transition).
+///
+///		@param conditionID - The database ID of the config record (from insertRunCondition).
+///		                     This links the run to the configuration that was used.
+///		@param runInfoConditions - The configuration dump (JSON format) containing all
+///		                           configuration information. Currently not used but kept for
+///		                           compatibility.
+///		@param comment - User-provided comment/description for the run. This is the log entry 
+///                      from the state machine transition.
+///		@return runNumber - The database-generated run number for the new run record. This is auto-generated by the database and returned via the RETURNING clause. Also inserts a START transition record into the run_transition table.
 unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
-                                           const std::string& runInfoConditions)
+                                           const std::string& runInfoConditions,
+                                           const std::string& comment)
 {
 	if(conditionID == (unsigned int)-1)
 	{
@@ -527,53 +586,12 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 	__COUT__ << "claiming next Run Number" << __E__;
 	__COUTV__(runInfoConditions);
 
-	int runInfoDbConnStatus_ = 0;
-
-	char* mu2eOwner       = __ENV__("MU2E_OWNER");
-	char* hostName        = __ENV__("HOSTNAME");
-	char* artadqPartition = __ENV__("ARTDAQ_PARTITION");
-
-	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-	{
-		__COUT__ << "Unable to connect to the run_info database for insert new run "
-		            "number and info!\n"
-		         << __E__;
-		PQfinish(runInfoDbConn_);
-		runInfoDbConn_ = nullptr;
-
-		//Try to open again the db connection
-		openDbConnection();
-		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-		{
-			__COUT__ << "Unable to connect for the second time to the run_info database "
-			            "to update the transition!\n"
-			         << __E__;
-			PQfinish(runInfoDbConn_);
-			runInfoDbConn_ = nullptr;
-		}
-		else
-		{
-			__COUT__ << "Connected to the run_info database after a second tentative for "
-			            "insert new run number and info! hostName: "
-			         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
-			         << __E__;
-			runInfoDbConnStatus_ = 1;
-		}
-	}
-	else
-	{
-		__COUT__ << "Connected to the run_info database for insert new run number and "
-		            "info! hostName: "
-		         << hostName << " mu2eOwner: " << mu2eOwner << "\n"
-		         << __E__;
-		runInfoDbConnStatus_ = 1;
-	}
+	int runInfoDbConnStatus_ = checkAndReconnectDb("for insert new run number and info");
 
 	// write run info into db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
-		char      buffer[1024];
 
 		//extract configuraiton name and version from runInfoConditions
 		// std::string runConfiguration =
@@ -608,9 +626,6 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 		//             "configuration is: "
 		//          << runConfiguration << " , run context is: " << runContext << __E__;
 
-		char* runType = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")
-		                                      ? getenv("OTSDAQ_RUNINFO_DATABASE_RUNTYPE")
-		                                      : "1");
 
 		// NOTES : 
 		// "production" -- runs
@@ -620,33 +635,26 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 		//    runs has less columns (moved to different table)
 		// run_confition renamed global_config 
 
-		int location_id = 12;
+		// Sanitize comment for SQL safety
+		std::string sanitizedComment = comment;
+		StringMacros::sanitizeForSQL(sanitizedComment);
 
+		// Build INSERT query using std::ostringstream to avoid buffer overflow
+		std::ostringstream queryStream;
+		queryStream << "INSERT INTO " << dbSchema_ << ".run(                         "
+		            << "                config_id,                               "
+		            << "                comment,                                 "
+		            << "                create_time)                             "
+		            << "            VALUES (" << conditionID << ", '" << sanitizedComment << "', CURRENT_TIMESTAMP)        "
+		            << "            RETURNING run_number;";
 
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "INSERT INTO %s.runs(								\
-											  run_type_id			\
-											, config_id				\
-											, artdaq_partition		\
-											, host_name				\
-											, location_id			\
-											, commit_time)			\
-											VALUES ('%s','%d','%d','%s','%d',CURRENT_TIMESTAMP) \
-                                            RETURNING run_id;",
-		         dbSchema_,
-		         runType,
-		         conditionID,
-		         std::stoi(artadqPartition),
-		         hostName,
-				 location_id);
-
-		res = PQexec(runInfoDbConn_, buffer);
+		std::string query = queryStream.str();
+		res = PQexec(runInfoDbConn_, query.c_str());
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__
-			    << "INSERT INTO 'runs' DATABASE TABLE FAILED!!! PQ ERROR: "
+			    << "INSERT INTO 'run' DATABASE TABLE FAILED!!! PQ ERROR: "
 			    << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
@@ -659,7 +667,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 		}
 		else
 		{
-			__SS__ << "RETRIVE RUN NUMBER FROM 'runs' DATABASE TABLE "
+			__SS__ << "RETRIVE RUN NUMBER FROM 'run' DATABASE TABLE "
 			          "FAILED!!! PQ ERROR: "
 			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
@@ -733,112 +741,78 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 }  //end claimNextRunNumber()
 
 //==============================================================================
+TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(RunInfoVInterface::RunStopType runStopType)
+{
+	// Map RunStopType enum to database transition type ID and description
+	switch(runStopType)
+	{
+		case RunInfoVInterface::RunStopType::HALT:
+			return {0, "Running to Halt - Abort"};
+		case RunInfoVInterface::RunStopType::STOP:
+			return {1, "Running to Configure - Stop"};
+		case RunInfoVInterface::RunStopType::ERROR:
+			return {2, "Other state to Error - Error"};
+		case RunInfoVInterface::RunStopType::PAUSE:
+			return {3, "Running to Pause - Pause"};
+		case RunInfoVInterface::RunStopType::RESUME:
+			return {4, "Pause to Running - Resume"};
+		case RunInfoVInterface::RunStopType::START:
+			return {5, "Configure to Running - Start"};
+		default:
+			__SS__ << "Unknown RunStopType: " << static_cast<int>(runStopType) << __E__;
+			__SS_THROW__;
+	}
+}  //end getTransitionTypeInfo()
+
+//==============================================================================
+/// updateRunInfo
+///		Inserts a transition record into the database for a specific run.
+///		This is called by the state machine during various transitions to track
+///		when state changes occur for a run (e.g., Start, Stop, Pause, Resume, Halt, Error).
+//      Only states Configured and "above" are recorded (aka relevant for run)
+///
+///		@param runNumber - The database run number for which to record the transition.
+///		                   This should be a valid run number that was previously created
+///		                   via claimNextRunNumber().
+///		@param runStopType - The type of transition being recorded. Valid values are:
+///		                     - HALT: Running/Paused to Halt (Abort)
+///		                     - STOP: Running to Configure (Stop)
+///		                     - ERROR: Any state to Error
+///		                     - PAUSE: Running to Pause
+///		                     - RESUME: Pause to Running
+///		                     - START: Configure to Running (typically called from claimNextRunNumber)
+///		@return void - Inserts a record into the run_transition table with the run_number,
+///		               transition type_id (mapped from runStopType), and current timestamp.
 void DBRunInfo::updateRunInfo(unsigned int                   runNumber,
                               RunInfoVInterface::RunStopType runStopType)
 {
 	__COUT__ << "Updating run transition for run number " << runNumber << __E__;
 
-	int runInfoDbConnStatus_ = 0;
-
-	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-	{
-		__COUT__
-		    << "Unable to connect to the run_info database to update the transition!\n"
-		    << __E__;
-		PQfinish(runInfoDbConn_);
-		runInfoDbConn_ = nullptr;
-
-		//Try to open again the db connection
-		openDbConnection();
-		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-		{
-			__COUT__ << "Unable to connect for the second time to the run_info database "
-			            "to update the transition!\n"
-			         << __E__;
-			PQfinish(runInfoDbConn_);
-			runInfoDbConn_ = nullptr;
-		}
-		else
-		{
-			__COUT__ << "Connected after a second tentative to the run_info database to "
-			            "update the transition!\n"
-			         << __E__;
-			runInfoDbConnStatus_ = 1;
-		}
-	}
-	else
-	{
-		__COUT__ << "Connected to the run_info database to update the transition!\n"
-		         << __E__;
-		runInfoDbConnStatus_ = 1;
-	}
+	int runInfoDbConnStatus_ = checkAndReconnectDb("to update the transition");
 
 	// Insert the transition and time into db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
-		int         runTransitionType;
-		std::string transitionDescription = "";
-
-		// Insert 'Running to Configure - Stop' transition and time into db
-		if(runStopType == RunInfoVInterface::RunStopType::HALT)
-		{
-			runTransitionType     = 0;
-			transitionDescription = "'Running to Halt - Abort'";
-		}
-
-		// Insert 'Running to Configure - Stop' transition and time into db
-		if(runStopType == RunInfoVInterface::RunStopType::STOP)
-		{
-			runTransitionType     = 1;
-			transitionDescription = "'Running to Configure - Stop'";
-		}
-
-		// Insert 'Running to Pause - Pause' transition and time into db
-		if(runStopType == RunInfoVInterface::RunStopType::ERROR)
-		{
-			runTransitionType     = 2;
-			transitionDescription = "'Other state to Error - Error'";
-		}
-
-		// Insert 'Running to Pause - Pause' transition and time into db
-		if(runStopType == RunInfoVInterface::RunStopType::PAUSE)
-		{
-			runTransitionType     = 3;
-			transitionDescription = "'Running to Pause - Pause'";
-		}
-
-		// Insert 'Pause to Running - Resume' transition and time into db
-		if(runStopType == RunInfoVInterface::RunStopType::RESUME)
-		{
-			runTransitionType     = 4;
-			transitionDescription = "'Pause to Running - Resume'";
-		}
-
-		// Insert 'Pause to Running - Resume' transition and time into db
-		if(runStopType == RunInfoVInterface::RunStopType::START)
-		{
-			runTransitionType     = 5;
-			transitionDescription = "'Configeure to Running - Start'";
-		}
-
+		// Get transition type information from mapping
+		TransitionTypeInfo transitionInfo = getTransitionTypeInfo(runStopType);
+		
+		std::string transitionDescription = "'" + transitionInfo.description + "'";
 		StringMacros::sanitizeForSQL(
 		    transitionDescription);  //in case transitionDescription is used instead of int
 
 		PGresult* res;
-		char      buffer[1024];
 
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "INSERT INTO %s.run_transition(					\
-											  run_id				\
-											, transition_type_id	\
-											, transition_time)		\
-											VALUES (%ld,'%d',CURRENT_TIMESTAMP);",
-		         dbSchema_,
-		         boost::numeric_cast<long int>(runNumber),
-		         boost::numeric_cast<int>(runTransitionType));
+		// Build INSERT query using std::ostringstream to avoid buffer overflow
+		std::ostringstream queryStream;
+		queryStream << "INSERT INTO " << dbSchema_ << ".run_transition("
+		            << "run_number, "
+		            << "type_id, "
+		            << "transition_time) "
+		            << "VALUES (" << boost::numeric_cast<long int>(runNumber)
+		            << "," << boost::numeric_cast<int>(transitionInfo.typeId) << ",CURRENT_TIMESTAMP);";
 
-		res = PQexec(runInfoDbConn_, buffer);
+		std::string query = queryStream.str();
+		res = PQexec(runInfoDbConn_, query.c_str());
 
 		if(PQresultStatus(res) != PGRES_COMMAND_OK)
 		{
@@ -870,88 +844,35 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 	__COUT__ << "getRunRecords() reached" << __E__;
 	std::vector<std::vector<std::string>> runRecords;
 
-	int runInfoDbConnStatus_ = 0;
-
-	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-	{
-		__COUT__ << "Unable to connect to the run_info database to select run records"
-		         << __E__;
-		PQfinish(runInfoDbConn_);
-		runInfoDbConn_ = nullptr;
-
-		//Try to open again the db connection
-		openDbConnection();
-		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-		{
-			__COUT__ << "Unable to connect for the second time to the run_info database "
-			            "to select run records"
-			         << __E__;
-			PQfinish(runInfoDbConn_);
-			runInfoDbConn_ = nullptr;
-		}
-		else
-		{
-			__COUT__ << "Connected to the run_info database to select run records"
-			         << __E__;
-			runInfoDbConnStatus_ = 1;
-		}
-	}
-	else
-	{
-		__COUT__ << "Connected to the run_info database to select run records" << __E__;
-		runInfoDbConnStatus_ = 1;
-	}
+	int runInfoDbConnStatus_ = checkAndReconnectDb("to select run records");
 
 	// select run info from db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult*   res;
 		char        buffer[2048];
-		std::string row;
 
-		snprintf(
-		    buffer,
-		    sizeof(buffer),
-		    "SELECT runs.run_id as run_number"
-		    ", runs.commit_time as run_time"
-		    ", run_type.run_type_description as run_type"
-		    ", runs.artdaq_partition"
-		    ", runs.host_name"
-		    ", runs.config_id"
-		    // ", runs.configuration_name"
-		    // ", runs.configuration_version"
-		    // ", runs.context_name"
-		    // ", runs.context_version"
-		    // ", runs.online_software_version"
-		    ", runs.shifter_comment" // runs.auto_comment for new schema 
-		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Start' THEN "
-		    "run_transition.transition_time END) AS start_time"
-		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Stop' THEN "
-		    "run_transition.transition_time END) AS stop_time"
-		    " FROM %s.runs, %s.run_type, %s.run_transition, %s.transition_type"
-		    " WHERE runs.run_type_id = run_type.run_type_id"
-		    " AND runs.run_id = run_transition.run_id"
-		    // " AND run_transition.transition_type_id = transition_type.transition_id"
-		    " AND (transition_type.transition_description LIKE '%%Start' OR "
-		    "transition_type.transition_description LIKE '%%Stop')"
-		    " AND runs.commit_time BETWEEN TO_TIMESTAMP(\'%d\') AND "
-		    "TO_TIMESTAMP(\'%d\')"
-		    " %s"
-		    " GROUP BY"
-		    "	runs.run_id, run_type.run_type_description"
-		    " HAVING"
-		    "	COUNT(DISTINCT CASE"
-		    "		WHEN transition_type.transition_description LIKE '%%Start' THEN "
-		    "'Start'"
-		    "		WHEN transition_type.transition_description LIKE '%%Stop' THEN 'Stop'"
-		    "	END) = 2;",
-		    dbSchema_,
-		    dbSchema_,
-		    dbSchema_,
-		    dbSchema_,
-		    startTime,
-		    endTime,
-		    queryFilter.c_str());
+        snprintf(
+            buffer,
+            sizeof(buffer),
+            "SELECT run_number"
+            ", start_time as run_time"
+            ", config_type_name as run_type"
+            ", NULL as artdaq_partition"
+            ", NULL as host_name"
+            ", config_id"
+            ", comment as shifter_comment"
+            ", start_time"
+            ", stop_time"
+            " FROM %s.run_summary"
+            " WHERE run_status = 'completed'"
+            " AND start_time BETWEEN TO_TIMESTAMP(%d) AND TO_TIMESTAMP(%d)"
+            " %s"
+            " ORDER BY run_number DESC;",
+            dbSchema_,
+            startTime,
+            endTime,
+            queryFilter.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -965,24 +886,9 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		}
 
 		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << buffer << __E__;
-		if(PQntuples(res) >= 1)
+		runRecords = convertResultToVector(res);
+		if(!runRecords.empty())
 		{
-			/* first, print out the attribute names */
-			int nFields = PQnfields(res);
-			runRecords.resize(PQntuples(res));
-
-			/* next, print out the rows */
-			for(int i = 0; i < PQntuples(res); i++)
-			{
-				runRecords[i].resize(nFields);
-				for(int j = 0; j < nFields; j++)
-				{
-					runRecords[i][j] = PQgetvalue(res, i, j);
-					row.append(PQgetvalue(res, i, j));
-					row.append(" ");
-				}
-				row.append("\n");
-			}
 			__COUT__ << "Run records retrived" << __E__;
 		}
 		else
@@ -1007,21 +913,24 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConfigSubsystemInfo(uint6
 	std::vector<std::vector<std::string>> configRecords;
 	PGresult*   res;
 	char        buffer[2048];
-	std::string row;
 
 	__COUT__ << "configID " << configID << __E__;
 
-	snprintf(
-		buffer,
-		sizeof(buffer),
-		" SELECT sc.config_id, sc.subsystem_id, sc.subsystem_config_data, sci.config_alias, sci.context_name, "
-		" sci.context_key, sci.config_group_name, sci.config_group_key, sci.backbone_name, sci.backbone_key, " 
-		" sci.config_db_uri, sci.subsystem_sw_version_id, sci.create_time "
-		" FROM %s.subsystem_config as sc, %s.subsystem_config_info as sci"
-		" WHERE sc.config_id = \'%ld\' AND sc.config_id = sci.config_id AND sc.subsystem_id = sci.subsystem_id;",
-		dbSchema_,
-		dbSchema_,
-		configID);
+    snprintf(
+        buffer,
+        sizeof(buffer),
+        "SELECT cs.config_id, cs.subsystem, csd.data as subsystem_config_data, "
+        "cs.config_alias, cs.context_name, cs.context_key, cs.config_group_name, "
+        "cs.config_group_key, cs.backbone_name, cs.backbone_key, cs.config_db_uri, "
+        "cs.sw_version_id, cs.create_time "
+        "FROM %s.config_subsystem cs "
+        "LEFT JOIN %s.config_subsystem_data csd "
+        "  ON cs.config_id = csd.config_id AND cs.subsystem = csd.subsystem "
+        "WHERE cs.config_id = %ld "
+        "ORDER BY cs.subsystem;",
+        dbSchema_,
+        dbSchema_,
+        configID);
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -1036,27 +945,13 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConfigSubsystemInfo(uint6
 
 		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << buffer << __E__;
 
-		if(PQntuples(res) >= 1)
+		configRecords = convertResultToVector(res);
+		if(!configRecords.empty())
 		{
-			/* first, print out the attribute names */
-			int nFields = PQnfields(res);
-			configRecords.resize(PQntuples(res));
-
-			/* next, print out the rows */
-			for(int i = 0; i < PQntuples(res); i++)
-			{
-				configRecords[i].resize(nFields);
-				for(int j = 0; j < nFields; j++)
-				{
-					configRecords[i][j] = PQgetvalue(res, i, j);
-					row.append(PQgetvalue(res, i, j));
-					row.append(" ");
-				}
-				row.append("\n");
-			}
 			__COUT__ << "Subsystem config retrieved" << __E__;
 		}
-
+		
+		PQclear(res);
 		return configRecords;
 } //end getRunConfigSubsystemInfo()
 
@@ -1067,56 +962,22 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 	__COUT__ << "getRunConditionByID() reached" << __E__;
 	std::vector<std::vector<std::string>> conditionRecords;
 
-	int runInfoDbConnStatus_ = 0;
-
-	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-	{
-		__COUT__
-		    << "Unable to connect to the run_info database to select run condition record"
-		    << __E__;
-		PQfinish(runInfoDbConn_);
-		runInfoDbConn_ = nullptr;
-
-		//Try to open again the db connection
-		openDbConnection();
-		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
-		{
-			__COUT__ << "Unable to connect for the second time to the run_info database "
-			            "to select run condition record"
-			         << __E__;
-			PQfinish(runInfoDbConn_);
-			runInfoDbConn_ = nullptr;
-		}
-		else
-		{
-			__COUT__
-			    << "Connected to the run_info database to select run condition record"
-			    << __E__;
-			runInfoDbConnStatus_ = 1;
-		}
-	}
-	else
-	{
-		__COUT__ << "Connected to the run_info database to select run condition record"
-		         << __E__;
-		runInfoDbConnStatus_ = 1;
-	}
+	int runInfoDbConnStatus_ = checkAndReconnectDb("to select run condition record");
 
 	// select run info from db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult*   res;
 		char        buffer[1024];
-		std::string row;
 
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "SELECT global_config.config_data"
-		         ", global_config.create_time"
-		         " FROM %s.global_config"
-		         " WHERE global_config.config_id = \'%ld\';",
-		         dbSchema_,
-		         conditionID);
+        snprintf(buffer,
+            sizeof(buffer),
+            "SELECT config_data"
+            ", create_time"
+            " FROM %s.config"
+            " WHERE id = %ld;",
+            dbSchema_,
+            conditionID);
 
 		res = PQexec(runInfoDbConn_, buffer);
 
@@ -1130,35 +991,16 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 		}
 
 		__COUT__ << "PQntuples(res) " << PQntuples(res) << __E__;
-		if(PQntuples(res) >= 1)
-		{
-			/* first, print out the attribute names */
-			int nFields = PQnfields(res);
-			conditionRecords.resize(PQntuples(res));
-
-			/* next, print out the rows */
-			for(int i = 0; i < PQntuples(res); i++)
-			{
-				conditionRecords[i].resize(nFields);
-				for(int j = 0; j < nFields; j++)
-				{
-					conditionRecords[i][j] = PQgetvalue(res, i, j);
-					row.append(PQgetvalue(res, i, j));
-					row.append(" ");
-				}
-				row.append("\n");
-			}
-			__COUT__ << "Run condition record retrived" << __E__;
-		}
-		else
+		conditionRecords = convertResultToVector(res);
+		if(conditionRecords.empty())
 		{
 			__SS__ << "getRunConditionByID() RETRIVE RUN CONDITION RECORD FROM "
 			          "'run_condition' DATABASE TABLE "
-			          "FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+			          "FAILED!!! No records found." << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
+		__COUT__ << "Run condition record retrived" << __E__;
 
 		PQclear(res);
 	}
