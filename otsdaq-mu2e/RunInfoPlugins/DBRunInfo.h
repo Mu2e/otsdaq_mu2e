@@ -4,9 +4,20 @@
 #include <libpq-fe.h>                                     /* for PGconn */
 #include "otsdaq/FiniteStateMachine/RunInfoVInterface.h"  // for Run Info plugins
 #include "otsdaq/TableCore/TableView.h"
+#include <sstream>
+#include <vector>
+#include <string>
+#include <map>
 
 namespace ots
 {
+
+// Structure to hold transition type mapping information
+struct TransitionTypeInfo
+{
+	int         typeId;
+	std::string description;
+};
 
 class DBRunInfo : public RunInfoVInterface
 {
@@ -16,9 +27,11 @@ class DBRunInfo : public RunInfoVInterface
 	// const std::string&       configurationPath);
 	virtual ~DBRunInfo(void);
 
-	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "");
+	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "",
+	                                        const std::string& configTypeName = "");
 	virtual unsigned int claimNextRunNumber(unsigned int       conditionID,
-	                                        const std::string& runInfoConditions = "");
+	                                        const std::string& runInfoConditions = "",
+	                                        const std::string& comment = "");
 	virtual void         updateRunInfo(unsigned int                   runNumber,
 	                                   RunInfoVInterface::RunStopType runStopType);
 
@@ -44,6 +57,24 @@ class DBRunInfo : public RunInfoVInterface
 	PGconn*     runInfoDbConn_ = nullptr;
 
 	void openDbConnection();
+	
+	// Helper functions for error reporting
+	std::vector<std::string> getTableNames(const std::string& tableName);
+	void appendNotFoundError(std::stringstream& ss,
+	                         const std::string& providedName,
+	                         const std::string& tableName,
+	                         const std::string& entityDescription,
+	                         const std::vector<std::string>& availableNames,
+	                         const std::string& additionalNote = "");
+	
+	// Helper function to get transition type information
+	static TransitionTypeInfo getTransitionTypeInfo(RunInfoVInterface::RunStopType runStopType);
+	
+	// Helper function to check and reconnect database connection if needed
+	int checkAndReconnectDb(const std::string& operationDescription);
+	
+	// Helper function to convert PGresult to vector<vector<string>>
+	std::vector<std::vector<std::string>> convertResultToVector(PGresult* res);
 };
 }  // namespace ots
 
