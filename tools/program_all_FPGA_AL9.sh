@@ -16,7 +16,7 @@ SCRIPT_DIR="$(
 
 DORESET=1
 if [[ "x$1" == "xNORESET" ]]; then
-    echo -e "program_one_FPGA.sh:${LINENO} |  \t No reset!"
+    echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t No reset!"
     DORESET=0
     shift
 fi
