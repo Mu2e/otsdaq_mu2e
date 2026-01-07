@@ -3723,25 +3723,27 @@ void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::WriteDTC(__ARGS__)
 {
-  // FIXME: Add optional validation, defaulted to true
-	uint32_t address   = __GET_ARG_IN__("address", uint32_t);
-	uint32_t writeData = __GET_ARG_IN__("writeData", uint32_t);
-	const bool validate = __GET_ARG_IN__("Do validation (Default := true)", bool, true);
+	// FIXME: Add optional validation, defaulted to true
+	uint32_t   address   = __GET_ARG_IN__("address", uint32_t);
+	uint32_t   writeData = __GET_ARG_IN__("writeData", uint32_t);
+	const bool validate  = __GET_ARG_IN__("Do validation (Default := true)", bool, true);
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__((unsigned int)writeData);
 	__FE_COUTV__(validate);
 
-	int errorCode(0);
-	uint32_t readData(0);
-	constexpr int timeout_ms(100); // for direct writes
+	int           errorCode(0);
+	uint32_t      readData(0);
+	constexpr int timeout_ms(100);  // for direct writes
 
-	if(validate) readData = getDTC()->WriteRegister_(writeData, address);
-	else        errorCode = getDevice()->write_register(address, timeout_ms, writeData);
+	if(validate)
+		readData = getDTC()->WriteRegister_(writeData, address);
+	else
+		errorCode = getDevice()->write_register(address, timeout_ms, writeData);
 	if(errorCode != 0)
 	{
 		__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0')
 		          << std::setw(4) << address << ". Error code = " << errorCode
-			  << " readData (if validated) = " << readData;
+		          << " readData (if validated) = " << readData;
 		__SS_THROW__;
 	}
 
@@ -5226,9 +5228,9 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	__COUTTV__(dataBlocks.size());
 	if(dataBlocks.size() != 6)
 	{
-		__SS__ << "Unexpected number of ROC fragments found in subevent (EWT=" << 
-			subevent->GetEventWindowTag() << "): "
-		    << dataBlocks.size() << " ROC fragments found (expected 6)";
+		__SS__ << "Unexpected number of ROC fragments found in subevent (EWT="
+		       << subevent->GetEventWindowTag() << "): " << dataBlocks.size()
+		       << " ROC fragments found (expected 6)";
 		__SS_THROW__;
 	}
 
@@ -6840,59 +6842,70 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 {
+	constexpr uint32_t control_address = 0x9100;
+	int                errorCode(0);
+	uint32_t           writeData, readData;
 
-  constexpr uint32_t control_address = 0x9100;
-  int errorCode(0);
-  uint32_t writeData, readData;
+	constexpr int nloops = 100;
+	for(int iloop = 0; iloop < nloops; ++iloop)
+	{
+		for(int bit = 1; bit <= 32; ++bit)
+		{
+			const int real_bit = (bit == 32) ? 0 : bit;  // moved bit 0 to last
 
-  constexpr int nloops = 100;
-  for(int iloop = 0; iloop < nloops; ++iloop) {
-    for(int bit = 1; bit <= 32; ++bit) {
+			// write the data
+			writeData = (bit == 32) ? 0 : 1 << bit;  // do the hard reset last
+			errorCode = getDevice()->write_register(control_address, 100, writeData);
+			if(errorCode != 0)
+			{
+				__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0')
+				          << std::setw(4) << control_address << " bit " << std::dec
+				          << real_bit << ". Error code = " << errorCode;
+				__SS_THROW__;
+			}
 
-      const int real_bit = (bit == 32) ? 0 : bit; // moved bit 0 to last
+			// test the data
+			errorCode = getDevice()->read_register(control_address, 100, &readData);
+			if(errorCode != 0)
+			{
+				__FE_SS__ << "Error reading register 0x" << std::hex << std::setfill('0')
+				          << std::setw(4) << control_address << " for bit " << std::dec
+				          << real_bit << ". Error code = " << errorCode;
+				__SS_THROW__;
+			}
+			if(real_bit == 25)
+			{  // special bit: auto-clear, resets to 0
+				if(readData != 0)
+					errorCode = 1;
+			}
+			else if(real_bit == 31)
+			{  // special bit: soft reset
+				if(readData != 0)
+					errorCode = 1;
+			}
+			else if(real_bit == 0)
+			{   // special bit: hard reset
+				// no clear value it should have
+				// if(readData != 0x10008204) errorCode = 1;
+			}
+			else if(readData != writeData)
+				errorCode = 1;
 
-      // write the data
-      writeData = (bit == 32) ? 0 : 1 << bit; // do the hard reset last
-      errorCode = getDevice()->write_register(control_address, 100, writeData);
-      if(errorCode != 0) {
-	__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0')
-		  << std::setw(4) << control_address
-		  <<  " bit " << std::dec << real_bit << ". Error code = " << errorCode;
-	__SS_THROW__;
-      }
+			if(errorCode != 0)
+			{
+				__FE_SS__ << "Error validating register 0x" << std::hex
+				          << std::setfill('0') << std::setw(4) << control_address
+				          << " write + read for bit " << std::dec << real_bit
+				          << ". Write = " << writeData << " and read = " << readData;
+				__SS_THROW__;
+			}
+		}  // end bit loop
+	}      // end iloop loop
 
-    
-      // test the data
-      errorCode = getDevice()->read_register(control_address, 100, &readData);
-      if(errorCode != 0) {
-	__FE_SS__ << "Error reading register 0x" << std::hex << std::setfill('0')
-		  << std::setw(4) << control_address
-		  <<  " for bit " << std::dec << real_bit << ". Error code = " << errorCode;
-	__SS_THROW__;
-      }
-      if(real_bit == 25) { // special bit: auto-clear, resets to 0
-	if(readData != 0) errorCode = 1;
-      } else if(real_bit == 31) { // special bit: soft reset
-	if(readData != 0) errorCode = 1;
-      } else if(real_bit == 0) { // special bit: hard reset
-	// no clear value it should have
-	// if(readData != 0x10008204) errorCode = 1;
-      } else if(readData != writeData) errorCode = 1;
+	// Test block writes/reads
 
-      if(errorCode != 0) {
-	__FE_SS__ << "Error validating register 0x" << std::hex << std::setfill('0')
-		  << std::setw(4) << control_address
-		  <<  " write + read for bit " << std::dec << real_bit << ". Write = " << writeData
-		  << " and read = " << readData;
-	__SS_THROW__;
-      }
-    } // end bit loop
-  } // end iloop loop
-
-  // Test block writes/reads
-  
-  // set the test status
-  __SET_ARG_OUT__("Status", std::string("success"));
+	// set the test status
+	__SET_ARG_OUT__("Status", std::string("success"));
 }  //end ValidateDTCControlRegisters
 
 //========================================================================

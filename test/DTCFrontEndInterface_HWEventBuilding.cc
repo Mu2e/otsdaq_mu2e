@@ -60,16 +60,17 @@ try
 	//	Note: normally these environment variables are set by StartOTS.sh
 
 	if(getenv("OTSDAQ_LOG_DIR") == NULL)
-		setenv("OTSDAQ_LOG_DIR",
-		       (std::string(__ENV__("USER_DATA")) + "/Logs").c_str(),
-		       1);
+		setenv(
+		    "OTSDAQ_LOG_DIR", (std::string(__ENV__("USER_DATA")) + "/Logs").c_str(), 1);
 
 	if(getenv("OTSDAQ_LOG_ROOT") == NULL)
 		setenv("OTSDAQ_LOG_ROOT", __ENV__("OTSDAQ_LOG_DIR"), 1);
 
 	if(getenv("OTSDAQ_LOG_FHICL") == NULL)
 		setenv("OTSDAQ_LOG_FHICL",
-		       (std::string(__ENV__("USER_DATA")) + "/MessageFacilityConfigurations/MessageFacilityWithCout_dev.fcl").c_str(),
+		       (std::string(__ENV__("USER_DATA")) +
+		        "/MessageFacilityConfigurations/MessageFacilityWithCout_dev.fcl")
+		           .c_str(),
 		       1);
 
 	// The configuration uses __ENV__("SERVICE_DATA_PATH") in init() so define it if it is not defined
