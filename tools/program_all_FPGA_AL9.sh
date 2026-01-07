@@ -68,7 +68,7 @@ fi
 
 echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe."
 
-if [ $NO_OTS_KILL == 1 ]; then
+if [[ "$NO_OTS_KILL" -eq 1 ]]; then
   echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe without xdaq kill: sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh NOKILL"
   ${COMMANDHEAD} sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh NOKILL
 else
