@@ -144,7 +144,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteROC),  // feMacroFunction
-					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", 
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 						"address", "writeData"},
 					std::vector<std::string>{},  // namesOfOutput
 					1,			     // requiredUserPermissions
@@ -156,7 +156,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC Read",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::ReadROC),		  // feMacroFunction
-					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", 
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 						"address"},  // namesOfInputArgs
 					std::vector<std::string>{"readData"},
 					1,   // requiredUserPermissions
@@ -168,7 +168,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"ROC Block Read",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::BlockReadROC),
-					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", 
+					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 						"address",
 						"Number Of 16-bit words to Read (Default := 8)",
 						"incrementAddress (Default := false)"},
