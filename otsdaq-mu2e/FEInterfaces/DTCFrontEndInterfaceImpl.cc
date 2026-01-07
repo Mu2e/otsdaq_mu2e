@@ -6889,6 +6889,8 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
     } // end bit loop
   } // end iloop loop
 
+  // Test block writes/reads
+  
   // set the test status
   __SET_ARG_OUT__("Status", std::string("success"));
 }  //end ValidateDTCControlRegisters
