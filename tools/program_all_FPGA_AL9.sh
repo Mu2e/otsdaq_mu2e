@@ -59,7 +59,7 @@ for d in /sys/bus/usb/devices/*; do
 done
 
 
-if [ $DORESET == 0 ]; then
+if [[ "$DORESET" -eq 0 ]]; then
     echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
     echo
     return  >/dev/null 2>&1 #return is used if script is sourced
