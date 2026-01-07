@@ -80,7 +80,7 @@ if [ "$foundXi" = 1 ];then
             # killall -9 TRACE
     else
         pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
-        echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Skipping xdaq.exe and boardreader kill as per NOKILL option, pids=$pids"        
+        echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Skipping xdaq.exe and boardreader kill as per NOKILL option, pids=$pids"
     fi
 
 	sleep 3

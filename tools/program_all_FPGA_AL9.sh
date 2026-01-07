@@ -39,7 +39,7 @@ echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t Checking ${HOSTNAME} JTAGs to p
 # For dry run, only print the JTAGs found
 COMMANDHEAD=""
 if [[ "${DRYRUN}" != "" ]]; then
-    echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t DRYRUN $DRYRUN" 
+    echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t DRYRUN $DRYRUN"
     COMMANDHEAD="echo -e program_all_FPGA_AL9.sh | \t "
 fi
 
