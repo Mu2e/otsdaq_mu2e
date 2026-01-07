@@ -64,7 +64,7 @@ if [ "$foundXi" = 1 ];then
 	echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Found DTC or CFO (Xilinx) card; removing mu2e driver as `whoami`;"
 
 
-    if [ $NO_OTS_KILL == 0 ]; then
+    if [[ $NO_OTS_KILL -eq 0 ]]; then
         echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t first killing any processes that may be using the device."
         retries=8
         pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
