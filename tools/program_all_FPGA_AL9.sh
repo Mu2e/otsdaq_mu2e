@@ -51,9 +51,9 @@ for d in /sys/bus/usb/devices/*; do
     product=$(<"$d/idProduct")
     if [[ "$vendor" == "0403" && "$product" == "6014" ]] ||
 	   [[ "$vendor" == "03fd" && "$product" == "0008" ]]; then
-      echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t Found JTAG with vendor ${vendor} and product ${product}"
-      ${COMMANDHEAD} /home/mu2ehwdev/program_one_FPGA_AL9.sh NORESET ${INDEX} ${BITFILE}
-      ((INDEX++))
+	   echo -e "program_all_FPGA_AL9.sh:${LINENO} |  \t Found JTAG with vendor ${vendor} and product ${product}"
+	   ${COMMANDHEAD} /home/mu2ehwdev/program_one_FPGA_AL9.sh NORESET ${INDEX} ${BITFILE}
+	   ((INDEX++))
     fi
   fi
 done
