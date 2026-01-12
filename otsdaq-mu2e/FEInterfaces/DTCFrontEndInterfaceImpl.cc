@@ -6853,7 +6853,7 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 {
 	constexpr uint32_t control_address = 0x9100;
-	int                errorCode(0);
+	int                errorCode(0), resultCode(0);
 	uint32_t           writeData, readData;
 
 	constexpr int timeout = 100; // for reads/writes
@@ -6884,15 +6884,16 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 				          << real_bit << ". Error code = " << errorCode;
 				__SS_THROW__;
 			}
+			resultCode = 0;
 			if(real_bit == 25)
 			{  // special bit: auto-clear, resets to 0
 				if(readData != 0)
-					errorCode = 1;
+					resultCode = 1;
 			}
 			else if(real_bit == 31)
 			{  // special bit: soft reset
 				if(readData != 0)
-					errorCode = 1;
+					resultCode = 1;
 			}
 			else if(real_bit == 0)
 			{   // special bit: hard reset
@@ -6900,9 +6901,9 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 				// if(readData != 0x10008204) errorCode = 1;
 			}
 			else if(readData != writeData)
-				errorCode = 1;
+				resultCode = 1;
 
-			if(errorCode != 0)
+			if(resultCode != 0)
 			{
 				__FE_SS__ << "Error validating register 0x" << std::hex
 				          << std::setfill('0') << std::setw(4) << control_address
