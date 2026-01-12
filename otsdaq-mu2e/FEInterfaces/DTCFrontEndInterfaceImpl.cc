@@ -2954,6 +2954,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			try  //give user feedback on ROC status if exception caught
 			{
 				if(emulatorMode_)
@@ -3070,6 +3071,7 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			roc.second->writeRegister(address, writeData);
 		}
 	}  //end roc exec loop
@@ -3144,6 +3146,7 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			getDTC()->WriteExtROCRegister(roc.second->getLinkID(),
 			                              block,
 			                              address,
@@ -3214,6 +3217,7 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			DTCLib::roc_data_t readData;
 
 			readData = getDTC()->ReadExtROCRegister(rocLinkIndex, block, address);
@@ -3307,6 +3311,7 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			std::vector<DTCLib::roc_data_t> readData;
 
 			roc.second->readBlock(readData, address, wordCount, incrementAddress);
@@ -3483,6 +3488,7 @@ void DTCFrontEndInterface::BlockWriteROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			roc.second->writeBlock(writeData, address, incrementAddress, requestAck);
 
 			// for(auto &argOut:argsOut)
@@ -3566,6 +3572,7 @@ void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 
 			roc.second->highRateBlockCheck(
 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
@@ -3632,6 +3639,7 @@ void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			roc.second->highRateCheck(
 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
 		}
@@ -3952,6 +3960,7 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
 	__FE_COUTV__(usingRocMask);
 	__FE_COUTV__(rocLinkIndex);
+	__FE_COUTV__(rocs_.size());
 
 	bool        found  = false;
 	std::string result = "";
@@ -3972,6 +3981,7 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 
 			std::string setupRocResult = SetupROCs(
 			    roc.second->getLinkID(),
@@ -4346,7 +4356,7 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 	uint8_t DTCid        = __GET_ARG_IN__("DTC ID", uint8_t);
 	uint8_t evbMode      = __GET_ARG_IN__("EVB Mode", uint8_t);
 	uint8_t evbPartition = __GET_ARG_IN__("EVB Partition ID", uint8_t);
-	uint8_t evbMAC       = __GET_ARG_IN__("EVB MAC Address Last Byte", uint8_t);
+	uint8_t evbMAC       = __GET_ARG_IN__("EVB Self MAC Address Last Byte", uint8_t);
 
 	__FE_COUTV__((int)DTCid);
 	__FE_COUTV__((int)evbMode);
@@ -6846,7 +6856,8 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 	int                errorCode(0);
 	uint32_t           writeData, readData;
 
-	constexpr int nloops = 100;
+	constexpr int timeout = 100; // for reads/writes
+	constexpr int nloops = 100; // test each register 100 times to catch intermittent issues
 	for(int iloop = 0; iloop < nloops; ++iloop)
 	{
 		for(int bit = 1; bit <= 32; ++bit)
@@ -6855,7 +6866,7 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 
 			// write the data
 			writeData = (real_bit == 0) ? 0 : (1u << real_bit);  // do the hard reset last
-			errorCode = getDevice()->write_register(control_address, 100, writeData);
+			errorCode = getDevice()->write_register(control_address, timeout, writeData);
 			if(errorCode != 0)
 			{
 				__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0')
@@ -6865,7 +6876,7 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 			}
 
 			// test the data
-			errorCode = getDevice()->read_register(control_address, 100, &readData);
+			errorCode = getDevice()->read_register(control_address, timeout, &readData);
 			if(errorCode != 0)
 			{
 				__FE_SS__ << "Error reading register 0x" << std::hex << std::setfill('0')
