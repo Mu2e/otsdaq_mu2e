@@ -6854,7 +6854,7 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 			const int real_bit = (bit == 32) ? 0 : bit;  // moved bit 0 to last
 
 			// write the data
-			writeData = (bit == 32) ? 0 : 1 << bit;  // do the hard reset last
+			writeData = (real_bit == 0) ? 0 : (1u << real_bit);  // do the hard reset last
 			errorCode = getDevice()->write_register(control_address, 100, writeData);
 			if(errorCode != 0)
 			{
