@@ -6856,8 +6856,9 @@ void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
 	int                errorCode(0), resultCode(0);
 	uint32_t           writeData, readData;
 
-	constexpr int timeout = 100; // for reads/writes
-	constexpr int nloops = 100; // test each register 100 times to catch intermittent issues
+	constexpr int timeout = 100;  // for reads/writes
+	constexpr int nloops =
+	    100;  // test each register 100 times to catch intermittent issues
 	for(int iloop = 0; iloop < nloops; ++iloop)
 	{
 		for(int bit = 1; bit <= 32; ++bit)
