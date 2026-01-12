@@ -113,7 +113,6 @@ try
 		return 0;
 	}
 
-
 	//==============================================================================
 	// Define environment variables
 	//	Note: normally these environment variables are set by ots script
