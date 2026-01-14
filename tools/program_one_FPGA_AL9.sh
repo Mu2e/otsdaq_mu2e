@@ -51,12 +51,12 @@ done
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
 
-echo -e "program_one_FPGA.sh:${LINENO} |  \t Programming one FPGA on ${HOSTNAME}..."
+echo -e "program_one_FPGA.sh:${LINENO} |  \t Programming one FPGA on ${HOSTNAME}... SCRIPT_DIR=${SCRIPT_DIR}"
 echo -e "program_one_FPGA.sh:${LINENO} |  \t Number of arguments: $#"
 
 DORESET=1
 if [ "x$1" == "xNORESET" ]; then
-    echo -e "program_one_FPGA.sh:${LINENO} |  \t No reset!"
+    echo -e "program_one_FPGA.sh:${LINENO} |  \t Not doing PCIe reset from program one FPGA script!"
     DORESET=0
     shift
 fi
