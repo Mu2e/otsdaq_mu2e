@@ -864,7 +864,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
             ", comment as shifter_comment"
             ", start_time"
             ", stop_time"
-            " FROM %s.run_summary"
+            " FROM %s.v_run_summary"
             " WHERE run_status = 'completed'"
             " AND start_time BETWEEN TO_TIMESTAMP(%d) AND TO_TIMESTAMP(%d)"
             " %s"
@@ -878,7 +878,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__ << "getRunRecords() SELECT FROM 'runs' DATABASE TABLE "
+			__SS__ << "getRunRecords() SELECT FROM 'v_run_summary' DATABASE TABLE "
 			          "FAILED!!! PQ ERROR: "
 			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
