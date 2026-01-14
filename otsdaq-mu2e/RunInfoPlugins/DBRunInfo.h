@@ -1,13 +1,13 @@
 #ifndef _ots_DBRunInfo_h_
 #define _ots_DBRunInfo_h_
 
-#include <libpq-fe.h>                                     /* for PGconn */
+#include <libpq-fe.h> /* for PGconn */
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
 #include "otsdaq/FiniteStateMachine/RunInfoVInterface.h"  // for Run Info plugins
 #include "otsdaq/TableCore/TableView.h"
-#include <sstream>
-#include <vector>
-#include <string>
-#include <map>
 
 namespace ots
 {
@@ -28,10 +28,10 @@ class DBRunInfo : public RunInfoVInterface
 	virtual ~DBRunInfo(void);
 
 	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "",
-	                                        const std::string& configTypeName = "");
+	                                        const std::string& configTypeName    = "");
 	virtual unsigned int claimNextRunNumber(unsigned int       conditionID,
 	                                        const std::string& runInfoConditions = "",
-	                                        const std::string& comment = "");
+	                                        const std::string& comment           = "");
 	virtual void         updateRunInfo(unsigned int                   runNumber,
 	                                   RunInfoVInterface::RunStopType runStopType);
 
@@ -45,7 +45,7 @@ class DBRunInfo : public RunInfoVInterface
 	    uint64_t conditionID);
 
 	virtual std::vector<std::vector<std::string>> getRunConfigSubsystemInfo(
-		uint64_t configID);
+	    uint64_t configID);
 
   private:
 	const char* dbname_;
@@ -57,22 +57,23 @@ class DBRunInfo : public RunInfoVInterface
 	PGconn*     runInfoDbConn_ = nullptr;
 
 	void openDbConnection();
-	
+
 	// Helper functions for error reporting
 	std::vector<std::string> getTableNames(const std::string& tableName);
-	void appendNotFoundError(std::stringstream& ss,
-	                         const std::string& providedName,
-	                         const std::string& tableName,
-	                         const std::string& entityDescription,
-	                         const std::vector<std::string>& availableNames,
-	                         const std::string& additionalNote = "");
-	
+	void                     appendNotFoundError(std::stringstream&              ss,
+	                                             const std::string&              providedName,
+	                                             const std::string&              tableName,
+	                                             const std::string&              entityDescription,
+	                                             const std::vector<std::string>& availableNames,
+	                                             const std::string&              additionalNote = "");
+
 	// Helper function to get transition type information
-	static TransitionTypeInfo getTransitionTypeInfo(RunInfoVInterface::RunStopType runStopType);
-	
+	static TransitionTypeInfo getTransitionTypeInfo(
+	    RunInfoVInterface::RunStopType runStopType);
+
 	// Helper function to check and reconnect database connection if needed
 	int checkAndReconnectDb(const std::string& operationDescription);
-	
+
 	// Helper function to convert PGresult to vector<vector<string>>
 	std::vector<std::vector<std::string>> convertResultToVector(PGresult* res);
 };
