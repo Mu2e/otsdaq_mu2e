@@ -2935,7 +2935,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	DTCLib::roc_data_t readData = -999;
 
-	bool        found  = false;
+	bool        found = false;
 	std::string result;
 	for(auto& roc : rocs_)
 	{
@@ -2994,10 +2994,11 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 			sprintf(readDataStr, "0x%x", readData);
 			if(result.size())
 				result += ", ";
-			else //init
+			else  //init
 			{
 				std::stringstream ss;
-				ss << "Reading ROC Address " << address << "(0x" << std::hex << (unsigned int)address << ") for ROC(s):\n";
+				ss << "Reading ROC Address " << address << "(0x" << std::hex
+				   << (unsigned int)address << ") for ROC(s):\n";
 				result = ss.str();
 			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
@@ -3060,7 +3061,7 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 	__FE_COUT__ << "ROCs size = " << rocs_.size() << __E__;
 
 	std::string result;
-	bool found = false;
+	bool        found = false;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -3083,18 +3084,20 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 
 			if(result.size())
 				result += ", ";
-			else //init
+			else  //init
 			{
 				std::stringstream ss;
-				ss << "Wrote Data " << writeData << "(0x " << std::hex << (unsigned int)writeData << std::dec << 
-					") to ROC Address " << address << "(0x" << std::hex << (unsigned int)address << ") for ROC(s): ";
+				ss << "Wrote Data " << writeData << "(0x " << std::hex
+				   << (unsigned int)writeData << std::dec << ") to ROC Address "
+				   << address << "(0x" << std::hex << (unsigned int)address
+				   << ") for ROC(s): ";
 				result = ss.str();
 			}
-				 
+
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
-				          ")"; 
+				          ")";
 		}
 	}  //end roc exec loop
 
@@ -3154,7 +3157,7 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 	bool acknowledge_request = false;
 
 	std::string result;
-	bool found = false;
+	bool        found = false;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -3182,19 +3185,21 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 
 			if(result.size())
 				result += ", ";
-			else //init
+			else  //init
 			{
 				std::stringstream ss;
-				ss << "Wrote Data " << writeData << "(0x " << std::hex << (unsigned int)writeData << std::dec << 
-					") to ROC external Block " << block << "(0x" << std::hex << (unsigned int)block << std::dec << 
-					") and Address " << address << "(0x" << std::hex << (unsigned int)address << ") for ROC(s): ";
+				ss << "Wrote Data " << writeData << "(0x " << std::hex
+				   << (unsigned int)writeData << std::dec << ") to ROC external Block "
+				   << block << "(0x" << std::hex << (unsigned int)block << std::dec
+				   << ") and Address " << address << "(0x" << std::hex
+				   << (unsigned int)address << ") for ROC(s): ";
 				result = ss.str();
 			}
-				 
+
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
-				          ")"; 
+				          ")";
 		}
 	}  //end roc exec loop
 
@@ -3271,12 +3276,13 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 			readDataString = BinaryStringMacros::binaryNumberToHexString(readData);
 
 			if(result.size())
-				result += ", ";			
-			else //init
+				result += ", ";
+			else  //init
 			{
 				std::stringstream ss;
-				ss << "Reading from ROC external Block " << block << "(0x" << std::hex << (unsigned int)block << std::dec << 
-					") and Address " << address << "(0x" << std::hex << (unsigned int)address << ") for ROC(s):\n";
+				ss << "Reading from ROC external Block " << block << "(0x" << std::hex
+				   << (unsigned int)block << std::dec << ") and Address " << address
+				   << "(0x" << std::hex << (unsigned int)address << ") for ROC(s):\n";
 				result = ss.str();
 			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
@@ -3383,10 +3389,11 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 
 			if(result.size())
 				result += "";
-			else //init
+			else  //init
 			{
 				std::stringstream ss;
-				ss << "Block Read from ROC Address " << address << "(0x" << std::hex << (unsigned int)address << ") for ROC(s):\n";
+				ss << "Block Read from ROC Address " << address << "(0x" << std::hex
+				   << (unsigned int)address << ") for ROC(s):\n";
 				result = ss.str();
 			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
@@ -4020,8 +4027,8 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__(rocs_.size());
 
-	bool        found  = false;
-	std::string result = "";
+	bool        found          = false;
+	std::string result         = "";
 	std::string setupRocResult = "";
 	for(auto& roc : rocs_)
 	{
@@ -4064,13 +4071,13 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
-				          ")"; 
+				          ")";
 			// result = setupRocResult; // not +=, always overwrite with last result;
 			__FE_COUTV__(setupRocResult);
 		}
 	}  //end roc exec loop
 
-	result += "\n" + setupRocResult; // not +=, always overwrite with last result;
+	result += "\n" + setupRocResult;  // not +=, always overwrite with last result;
 
 	if(found)
 	{
@@ -4434,9 +4441,8 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 	__FE_COUTV__((int)NumOfDTCs);
 	if(NumOfDTCs == 0)
 	{
-		__FE_SS__
-		    << "Invalid input for Number of DTCs in Cluster: " << (int)NumOfDTCs
-		    << ". This value must be at least 1." << __E__;
+		__FE_SS__ << "Invalid input for Number of DTCs in Cluster: " << (int)NumOfDTCs
+		          << ". This value must be at least 1." << __E__;
 		__FE_SS_THROW__;
 	}
 	__FE_COUTV__((int)evbBaseAddress);
