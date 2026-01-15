@@ -144,8 +144,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 																			DTCLib::DTC_ROC_Emulation_Type rocEmulationType, uint32_t size);
 	void 								ReadROC								(__ARGS__);
 	void 								WriteROC							(__ARGS__);
-	void 								BockReadROC							(__ARGS__);
-	void 								BockWriteROC						(__ARGS__);
+	void 								BlockReadROC						(__ARGS__);
+	void 								BlockWriteROC						(__ARGS__);
     void 								WriteExternalROCRegister			(__ARGS__);
 	void                             	ReadExternalROCRegister        		(__ARGS__);
 	void 								DTCHighRateBlockCheck				(__ARGS__);
@@ -218,6 +218,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								ProgramROCs							(__ARGS__);
 
+        void                                                            ValidateDTCControlRegisters(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots
