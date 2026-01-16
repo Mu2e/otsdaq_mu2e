@@ -218,6 +218,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								ProgramROCs							(__ARGS__);
 
+        void                                                            ValidateDTCControlRegisters(__ARGS__);
 	// clang-format on
 };
 }  // namespace ots
