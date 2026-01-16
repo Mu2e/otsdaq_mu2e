@@ -45,6 +45,7 @@ prompted for this location.
 --no-emacs    Do not attempt to install emacs
 --no-auto-upstream Do not search /mu2e/spack_areas for upstreams
 --all-packages Used with --develop, will fetch all subdetector repos
+--g4          Perform full build of Offline, with geant4 dependency
 "
 
 # Process script arguments and options
@@ -58,7 +59,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_no_auto_upstream=0;
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_no_auto_upstream=0; opt_g4=0
 while [ -n "${1-}" ];do
     if expr "x${1-}" : 'x-' >/dev/null;then
         op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -88,6 +89,7 @@ while [ -n "${1-}" ];do
             -all-packages) opt_all_packages=1;;
         -trigger)   opt_all_packages=1;;
             -no-view)   opt_no_view=1;;
+	    -g4)        opt_g4=1;;
             *)          echo "Unknown option -$op"; do_help=1;;
         esac
     else
@@ -234,7 +236,12 @@ if [ ${opt_dev_only:-0} -eq 0 ];then
         spack add trace+kmod
     fi
 
-    spack add mu2e-tdaq-suite@${tag}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ~g4 %gcc@13.1.0
+    g4_opt=~g4
+    if [ $opt_g4 -eq 1 ];then
+        g4_opt=+g4
+    fi
+
+    spack add mu2e-tdaq-suite@${tag}${compiler_info} ${svariant} ${avariant} ${ovariant} ${arch_opt} ${g4_opt} %gcc@13.1.0
 
     # Add EMACS
     if [ $opt_no_emacs -eq 0 ]; then
