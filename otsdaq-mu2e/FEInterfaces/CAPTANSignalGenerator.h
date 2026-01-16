@@ -29,16 +29,17 @@ class CAPTANSignalGenerator : public FEVInterface,
 	void stop(void) override;
 	bool running(void) override;
 
-	virtual void universalRead(char* address, char* readValue) override;
-	virtual void universalWrite(char* address, char* writeValue) override;
+	virtual void 	universalRead			(char* address, char* readValue) override;
+	virtual void 	universalWrite			(char* address, char* writeValue) override;
 
-	void getFirmwareVersion(__ARGS__);
-	void getPulsePeriod(__ARGS__);
-	void setPulsePeriod(__ARGS__);
-	void getManualMode(__ARGS__);
-	void setManualMode(__ARGS__);
-	void setManualMode(uint64_t manualMode);
-	void setupBurstMode(__ARGS__);
+	void 			Reset 					(__ARGS__);
+	void 			getFirmwareVersion		(__ARGS__);
+	void 			getPulsePeriod			(__ARGS__);
+	void 			setPulsePeriod			(__ARGS__);
+	void 			getManualMode			(__ARGS__);
+	void 			setManualMode			(__ARGS__);
+	void 			setManualMode			(uint64_t manualMode);
+	void 			setupBurstMode			(__ARGS__);
 
   private:
 	enum RTF_Register : uint64_t
@@ -55,6 +56,7 @@ class CAPTANSignalGenerator : public FEVInterface,
 		ManualMode       = 0x9,
 		BurstCount       = 0xA,
 		TriggerFrequency = 0xB,
+		GlobalReset		 = 0xC,
 	};
 
   public:  // FEMacro 'varTest' generated, Oct-11-2018 11:36:28, by 'admin' using
