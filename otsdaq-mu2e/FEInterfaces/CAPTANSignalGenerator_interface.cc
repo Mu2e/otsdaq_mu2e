@@ -53,12 +53,12 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    std::vector<std::string>{"myArg", "outArg1"},  // namesOfOutputArgs
 	    1);                                            // requiredUserPermissions
 	*/
-	registerFEMacroFunction("Reset",
-		static_cast<FEVInterface::frontEndMacroFunction_t>(
-			&CAPTANSignalGenerator::Reset),
-		std::vector<std::string>{},  // inputs parameters
-		std::vector<std::string>{},  // output parameters
-		1                            // requiredUserPermissions
+	registerFEMacroFunction(
+	    "Reset",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(&CAPTANSignalGenerator::Reset),
+	    std::vector<std::string>{},  // inputs parameters
+	    std::vector<std::string>{},  // output parameters
+	    1                            // requiredUserPermissions
 	);
 
 	registerFEMacroFunction(
@@ -90,7 +90,7 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &CAPTANSignalGenerator::getManualMode),  // feMacroFunction
 	    std::vector<std::string>{},                  // namesOfInputArgs
-	    std::vector<std::string>{"Manual Mode"},  // namesOfOutputArgs
+	    std::vector<std::string>{"Manual Mode"},     // namesOfOutputArgs
 	    1,                                           // requiredUserPermissions
 	    "*",
 	    "Reads the mode of the pulse generator. "
@@ -101,7 +101,7 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    "Set Manual Mode",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &CAPTANSignalGenerator::setManualMode),  // feMacroFunction
-	    std::vector<std::string>{"Manual Mode"},  // namesOfInputArgs
+	    std::vector<std::string>{"Manual Mode"},     // namesOfInputArgs
 	    std::vector<std::string>{},                  // namesOfOutputArgs
 	    1,                                           // requiredUserPermissions
 	    "*",
@@ -452,14 +452,14 @@ void ots::CAPTANSignalGenerator::Reset(__ARGS__)
 	char*       data    = new char[universalDataSize_]{0};
 	std::string sendBuffer;
 
-	uint64_t resetData = 0; 
+	uint64_t resetData    = 0;
 	uint64_t macroAddress = RTF_Register::GlobalReset;
 	memcpy(address, &macroAddress, universalAddressSize_);
 	memcpy(data, &resetData, universalDataSize_);
 
 	OtsUDPFirmwareCore::writeAdvanced(sendBuffer, address, data, 1 /*size*/);
-	OtsUDPHardware::write(sendBuffer);  // data request	
-} // end Reset()
+	OtsUDPHardware::write(sendBuffer);  // data request
+}  // end Reset()
 
 //==============================================================================
 void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
