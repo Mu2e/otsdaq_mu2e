@@ -5122,15 +5122,23 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 			statusSs << "\t Roc-" << i << " Fragment Header Timeouts count:"
 			         << threadStruct->rocHeaderTimeoutsCount_[i] << __E__;
 
+		size_t totalROCerrors = 0;
 		statusSs << "ROC Errors (Timeouts + others)..." << __E__;
 		for(size_t i = 0; i < threadStruct->rocFragmentErrorsCount_.size(); ++i)
+		{
 			statusSs << "\t Roc-" << i << " Fragment Errors count:"
 			         << threadStruct->rocFragmentErrorsCount_[i] << __E__;
+			totalROCerrors += threadStruct->rocFragmentErrorsCount_[i];
+		}
 
-		if(threadStruct->error_ != "")
+		if(threadStruct->error_ != "" || totalROCerrors)
 		{
-			__SS__ << "Error identified in the detached buffer status: "
-			       << statusSs.str();
+			__SS__ << "Error identified in the detached buffer status";
+			if(totalROCerrors)
+				ss << ". Check the ROC Errors (Timeouts + others) section for details: ";
+			else
+				ss << ": ";
+			ss << statusSs.str();
 			__SS_THROW__;
 		}
 	}
@@ -5655,7 +5663,7 @@ try
 						     << event->GetEventWindowTag().GetEventWindowTag(true)
 						     << " (0x" << std::hex << std::setw(4) << std::setfill('0')
 						     << event->GetEventWindowTag().GetEventWindowTag(true) << ")";
-
+						__COUTT__ << ostr.str();
 						threadStruct->mismatchedEventTagJumps_.push_back(
 						    std::make_pair<uint64_t, uint64_t>(
 						        threadStruct->nextEventWindowTag_,
