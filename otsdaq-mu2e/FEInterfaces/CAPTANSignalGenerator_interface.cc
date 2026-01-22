@@ -54,6 +54,14 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    1);                                            // requiredUserPermissions
 	*/
 	registerFEMacroFunction(
+	    "Reset",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(&CAPTANSignalGenerator::Reset),
+	    std::vector<std::string>{},  // inputs parameters
+	    std::vector<std::string>{},  // output parameters
+	    1                            // requiredUserPermissions
+	);
+
+	registerFEMacroFunction(
 	    "Get Firmware Version",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &CAPTANSignalGenerator::getFirmwareVersion),    // feMacroFunction
@@ -78,11 +86,11 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    "cycles).");
 
 	registerFEMacroFunction(
-	    "Get Pulse Gen Mode",  // feMacroName
+	    "Get Manual Mode",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &CAPTANSignalGenerator::getManualMode),  // feMacroFunction
 	    std::vector<std::string>{},                  // namesOfInputArgs
-	    std::vector<std::string>{"Pulse Gen Mode"},  // namesOfOutputArgs
+	    std::vector<std::string>{"Manual Mode"},     // namesOfOutputArgs
 	    1,                                           // requiredUserPermissions
 	    "*",
 	    "Reads the mode of the pulse generator. "
@@ -90,10 +98,10 @@ CAPTANSignalGenerator::CAPTANSignalGenerator(
 	    "When mode = 0, the RTF runs continuous pulses.");
 
 	registerFEMacroFunction(
-	    "Set Pulse Gen Mode",  // feMacroName
+	    "Set Manual Mode",  // feMacroName
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &CAPTANSignalGenerator::setManualMode),  // feMacroFunction
-	    std::vector<std::string>{"Pulse Gen Mode"},  // namesOfInputArgs
+	    std::vector<std::string>{"Manual Mode"},     // namesOfInputArgs
 	    std::vector<std::string>{},                  // namesOfOutputArgs
 	    1,                                           // requiredUserPermissions
 	    "*",
@@ -438,6 +446,22 @@ void ots::CAPTANSignalGenerator::universalWrite(char* address, char* writeValue)
 }  // end universalWrite()
 
 //==============================================================================
+void ots::CAPTANSignalGenerator::Reset(__ARGS__)
+{
+	char*       address = new char[universalAddressSize_]{0};
+	char*       data    = new char[universalDataSize_]{0};
+	std::string sendBuffer;
+
+	uint64_t resetData    = 0;
+	uint64_t macroAddress = RTF_Register::GlobalReset;
+	memcpy(address, &macroAddress, universalAddressSize_);
+	memcpy(data, &resetData, universalDataSize_);
+
+	OtsUDPFirmwareCore::writeAdvanced(sendBuffer, address, data, 1 /*size*/);
+	OtsUDPHardware::write(sendBuffer);  // data request
+}  // end Reset()
+
+//==============================================================================
 void ots::CAPTANSignalGenerator::getFirmwareVersion(__ARGS__)
 {
 	__FE_COUT__ << "# of input args = " << argsIn.size() << __E__;
@@ -703,7 +727,7 @@ void ots::CAPTANSignalGenerator::getManualMode(__ARGS__)
 	uint64_t macroData;
 	memcpy(&macroData, readBuffer.substr(2).data(), universalDataSize_);
 
-	__SET_ARG_OUT__("Pulse Gen Mode", macroData);
+	__SET_ARG_OUT__("Manual Mode", macroData);
 
 	delete[] address;  // free the memory
 }  // end getManualMode()
@@ -716,11 +740,11 @@ void ots::CAPTANSignalGenerator::setManualMode(__ARGS__)
 	for(auto& argIn : argsIn)
 		__FE_COUT__ << argIn.first << ": " << argIn.second << __E__;
 
-	uint64_t manualMode = __GET_ARG_IN__("Pulse Gen Mode", uint64_t);
+	uint64_t manualMode = __GET_ARG_IN__("Manual Mode", uint64_t);
 
 	if(manualMode != 0 && manualMode != 1)
 	{
-		__FE_SS__ << "Pulse Gen Mode must be 0 or 1 to be a valid input parameter. "
+		__FE_SS__ << "Manual Mode must be 0 or 1 to be a valid input parameter. "
 		             "Mode' value: "
 		          << manualMode << __E__;
 		__FE_SS_THROW__;
