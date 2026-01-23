@@ -1,54 +1,55 @@
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: white;
-    overflow: hidden;
-    transition: background-color .25s;
-    overflow-x: scroll;
-    overflow-y: scroll;
+  background-color: white;
+  overflow: hidden;
+  transition: background-color .25s;
+  overflow-x: scroll;
+  overflow-y: scroll;
 }
 
 /* Column container */
-.mainBlockContainer {
-	display: -ms-flexbox; /* IE10 */
-	display: flex;
-	flex-wrap: wrap;
-	width: fit-content;
-	overflow-x: auto;
-
-    .mainBlockContainer span {
-        display: inline-block;
-    }
+  .mainBlockContainer {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+    overflow-x: auto;
+  }
 
   .mainBlockContainer span {
-	display: inline-block;
+    display: inline-block;
+  }
+
+  .mainBlockContainer span {
+	  display: inline-block;
   }
 
   .subSystemContainer {
-	display: inline-flex;
-	border: 2px solid;
-	margin-left: 20px;
-	margin-top: 18px;
-	width: 280px;
-	height: 280px;
-	flex-shrink: 0;
-	cursor: pointer;
-	transition: all 0.3s ease;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	padding-top: 10px;
+    display: inline-flex;
+    border: 2px solid;
+    margin-left: 20px;
+    margin-top: 18px;
+    width: 280px;
+    height: 280px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
   }
 
   .containerTitle {
-	font-size: 18px;
-	font-weight: bold;
-	margin-bottom: 8px;
-	text-align: center;
-	flex-shrink: 0;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+    flex-shrink: 0;
   }
 
   .containerPreview {
@@ -69,29 +70,29 @@ body {
     object-fit: contain;
     opacity: 0.7;
     transition: opacity 0.3s ease;
-}
+  }
 
   .subSystemContainer:hover .containerPreview img {
     opacity: 1;
   }
 
   .subSystemContainer:hover {
-	background-color: #e8f4f8;
-	border-color: #0066cc;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	transform: translateY(-2px);
+    background-color: #e8f4f8;
+    border-color: #0066cc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
   }
 
   .subSystemContainer.disabled {
-	cursor: not-allowed;
-	opacity: 0.7;
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 
   .subSystemContainer.disabled:hover {
-	background-color: white;
-	border-color: #cccccc;
-	box-shadow: none;
-	transform: none;
+    background-color: white;
+    border-color: #cccccc;
+    box-shadow: none;
+    transform: none;
   }
 
 /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
