@@ -134,32 +134,16 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions)
 		         "INSERT INTO %s.run_condition(						\
 											  condition				\
 											, commit_time)			\
-											  VALUES ('%s',CURRENT_TIMESTAMP);",
+											  VALUES ('%s',CURRENT_TIMESTAMP) \
+                                              RETURNING condition_id;",
 		         dbSchema_,
 		         condition.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
-		if(PQresultStatus(res) != PGRES_COMMAND_OK)
-		{
-			__SS__ << "INSERT INTO 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
-			PQclear(res);
-			__SS_THROW__;
-		}
-
-		PQclear(res);
-
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "select max(condition_id) from %s.run_condition;",
-		         dbSchema_);
-
-		res = PQexec(runInfoDbConn_, buffer);
-
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__ << "SELECT FROM 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: "
+			__SS__ << "INSERT INTO 'run_condition' DATABASE TABLE FAILED!!! PQ ERROR: "
 			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
@@ -303,7 +287,8 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 											, context_name			\
 											, context_version		\
 											, commit_time)			\
-											VALUES ('%s','%d','%d','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP);",
+											VALUES ('%s','%d','%d','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP) \
+                                            RETURNING run_number;",
 		         dbSchema_,
 		         runType,
 		         conditionID,
@@ -316,28 +301,10 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 
 		res = PQexec(runInfoDbConn_, buffer);
 
-		if(PQresultStatus(res) != PGRES_COMMAND_OK)
-		{
-			__SS__
-			    << "INSERT INTO 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: "
-			    << PQresultErrorMessage(res) << __E__;
-			PQclear(res);
-			__SS_THROW__;
-		}
-
-		PQclear(res);
-
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "select max(run_number) from %s.run_configuration;",
-		         dbSchema_);
-
-		res = PQexec(runInfoDbConn_, buffer);
-
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__
-			    << "SELECT FROM 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: "
+			    << "INSERT INTO 'run_configuration' DATABASE TABLE FAILED!!! PQ ERROR: "
 			    << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
@@ -502,5 +469,248 @@ void DBRunInfo::updateRunInfo(unsigned int                   runNumber,
 
 	__COUT__ << "done with the run_info database for updating the transition!" << __E__;
 }  //end updateRunInfo()
+
+//==============================================================================
+std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
+    unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
+{
+	__COUT__ << "getRunRecords() reached" << __E__;
+	std::vector<std::vector<std::string>> runRecords;
+
+	int runInfoDbConnStatus_ = 0;
+
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		__COUT__ << "Unable to connect to the run_info database to select run records"
+		         << __E__;
+		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
+
+		//Try to open again the db connection
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to select run records"
+			         << __E__;
+			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
+		}
+		else
+		{
+			__COUT__ << "Connected to the run_info database to select run records"
+			         << __E__;
+			runInfoDbConnStatus_ = 1;
+		}
+	}
+	else
+	{
+		__COUT__ << "Connected to the run_info database to select run records" << __E__;
+		runInfoDbConnStatus_ = 1;
+	}
+
+	// select run info from db
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
+	{
+		PGresult*   res;
+		char        buffer[2048];
+		std::string row;
+
+		snprintf(
+		    buffer,
+		    sizeof(buffer),
+		    "SELECT run_configuration.run_number as run_numrber"
+		    ", run_configuration.commit_time as run_time"
+		    ", run_type.run_type_description as run_type"
+		    ", run_configuration.artdaq_partition"
+		    ", run_configuration.host_name"
+		    ", run_configuration.condition_id"
+		    ", run_configuration.configuration_name"
+		    ", run_configuration.configuration_version"
+		    ", run_configuration.context_name"
+		    ", run_configuration.context_version"
+		    ", run_configuration.online_software_version"
+		    ", run_configuration.shifter_note"
+		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Start' THEN "
+		    "run_transition.transition_time END) AS start_time"
+		    ", MAX(CASE WHEN transition_type.transition_description LIKE '%%Stop' THEN "
+		    "run_transition.transition_time END) AS stop_time"
+		    " FROM %s.run_configuration, %s.run_type, %s.run_transition, "
+		    "%s.transition_type"
+		    " WHERE run_configuration.run_type = run_type.run_type_id"
+		    " AND run_configuration.run_number = run_transition.run_number"
+		    " AND run_transition.transition_type = transition_type.transition_id"
+		    " AND (transition_type.transition_description LIKE '%%Start' OR "
+		    "transition_type.transition_description LIKE '%%Stop')"
+		    " AND run_configuration.commit_time BETWEEN TO_TIMESTAMP(\'%d\') AND "
+		    "TO_TIMESTAMP(\'%d\')"
+		    " %s"
+		    " GROUP BY"
+		    "	run_configuration.run_number, run_type.run_type_description"
+		    " HAVING"
+		    "	COUNT(DISTINCT CASE"
+		    "		WHEN transition_type.transition_description LIKE '%%Start' THEN "
+		    "'Start'"
+		    "		WHEN transition_type.transition_description LIKE '%%Stop' THEN 'Stop'"
+		    "	END) = 2;",
+		    dbSchema_,
+		    dbSchema_,
+		    dbSchema_,
+		    dbSchema_,
+		    startTime,
+		    endTime,
+		    queryFilter.c_str());
+
+		res = PQexec(runInfoDbConn_, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "getRunRecords() SELECT FROM 'run_configuration' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << buffer << __E__;
+		if(PQntuples(res) >= 1)
+		{
+			/* first, print out the attribute names */
+			int nFields = PQnfields(res);
+			runRecords.resize(PQntuples(res));
+
+			/* next, print out the rows */
+			for(int i = 0; i < PQntuples(res); i++)
+			{
+				runRecords[i].resize(nFields);
+				for(int j = 0; j < nFields; j++)
+				{
+					runRecords[i][j] = PQgetvalue(res, i, j);
+					row.append(PQgetvalue(res, i, j));
+					row.append(" ");
+				}
+				row.append("\n");
+			}
+			__COUT__ << "Run records retrived" << __E__;
+		}
+		else
+		{
+			// __SS__ << "getRunRecords() RETRIVE RUN RECORDS FROM 'run_configuration' DATABASE TABLE "
+			//           "FAILED!!! PQ ERROR: "
+			//        << PQresultErrorMessage(res) << __E__;
+			// PQclear(res);
+			// __SS_THROW__;
+		}
+
+		PQclear(res);
+	}
+
+	return runRecords;
+}  //end updateRunInfo()
+
+//==============================================================================
+std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t conditionID)
+{
+	__COUT__ << "getRunConditionByID() reached" << __E__;
+	std::vector<std::vector<std::string>> conditionRecords;
+
+	int runInfoDbConnStatus_ = 0;
+
+	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+	{
+		__COUT__
+		    << "Unable to connect to the run_info database to select run condition record"
+		    << __E__;
+		PQfinish(runInfoDbConn_);
+		runInfoDbConn_ = nullptr;
+
+		//Try to open again the db connection
+		openDbConnection();
+		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
+		{
+			__COUT__ << "Unable to connect for the second time to the run_info database "
+			            "to select run condition record"
+			         << __E__;
+			PQfinish(runInfoDbConn_);
+			runInfoDbConn_ = nullptr;
+		}
+		else
+		{
+			__COUT__
+			    << "Connected to the run_info database to select run condition record"
+			    << __E__;
+			runInfoDbConnStatus_ = 1;
+		}
+	}
+	else
+	{
+		__COUT__ << "Connected to the run_info database to select run condition record"
+		         << __E__;
+		runInfoDbConnStatus_ = 1;
+	}
+
+	// select run info from db
+	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
+	{
+		PGresult*   res;
+		char        buffer[1024];
+		std::string row;
+
+		snprintf(buffer,
+		         sizeof(buffer),
+		         "SELECT run_condition.condition"
+		         ", run_condition.commit_time"
+		         " FROM %s.run_condition"
+		         " WHERE run_condition.condition_id = \'%ld\';",
+		         dbSchema_,
+		         conditionID);
+
+		res = PQexec(runInfoDbConn_, buffer);
+
+		if(PQresultStatus(res) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "getRunRecords() SELECT FROM 'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << __E__;
+		if(PQntuples(res) >= 1)
+		{
+			/* first, print out the attribute names */
+			int nFields = PQnfields(res);
+			conditionRecords.resize(PQntuples(res));
+
+			/* next, print out the rows */
+			for(int i = 0; i < PQntuples(res); i++)
+			{
+				conditionRecords[i].resize(nFields);
+				for(int j = 0; j < nFields; j++)
+				{
+					conditionRecords[i][j] = PQgetvalue(res, i, j);
+					row.append(PQgetvalue(res, i, j));
+					row.append(" ");
+				}
+				row.append("\n");
+			}
+			__COUT__ << "Run condition record retrived" << __E__;
+		}
+		else
+		{
+			__SS__ << "getRunConditionByID() RETRIVE RUN CONDITION RECORD FROM "
+			          "'run_condition' DATABASE TABLE "
+			          "FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(res) << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		}
+
+		PQclear(res);
+	}
+
+	return conditionRecords;
+}  //end getRunConditionByID()
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)

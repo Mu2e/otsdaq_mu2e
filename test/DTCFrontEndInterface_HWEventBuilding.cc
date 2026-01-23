@@ -12,6 +12,9 @@
 
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
 
+// Shared test utilities
+#include "otsdaq/Macros/TestUtilities.h"
+
 using namespace ots;
 
 int main(int argc, char* argv[])
@@ -51,36 +54,15 @@ try
 	StringMacros::getVectorFromString(hostname, split, {'.'});
 	StringMacros::getVectorFromString(split[0], split2, {'-'});
 	__COUTV__(split2.back());
-	uint32_t macAddress = atoi(split2.back().c_str()) * 2 + deviceIndex;
+	uint32_t macAddress = atoi(split2.back().c_str()) * 2 +
+	                      deviceIndex;  // + (1 - deviceIndex); //from +deviceIndex
 	__COUTV__(macAddress);
 
 	//==============================================================================
 	// Define environment variables
 	//	Note: normally these environment variables are set by StartOTS.sh
 
-	// These are needed by
-	// otsdaq/otsdaq/ConfigurationDataFormats/ConfigurationInfoReader.cc [207]
-	setenv("CONFIGURATION_TYPE", "File", 1);  // Can be File, Database, DatabaseTest
-	setenv("CONFIGURATION_DATA_PATH",
-	       (std::string(getenv("USER_DATA")) + "/ConfigurationDataExamples").c_str(),
-	       1);
-	setenv(
-	    "TABLE_INFO_PATH", (std::string(getenv("USER_DATA")) + "/TableInfo").c_str(), 1);
-	////////////////////////////////////////////////////
-
-	// Some configuration plug-ins use __ENV__("OTSDAQ_LIB") and
-	// __ENV__("OTSDAQ_UTILITIES_LIB") in init() so define it 	to a non-sense place is ok
-	setenv("OTSDAQ_LIB", (std::string(getenv("USER_DATA")) + "/").c_str(), 1);
-	setenv("OTSDAQ_UTILITIES_LIB", (std::string(getenv("USER_DATA")) + "/").c_str(), 1);
-
-	// Some configuration plug-ins use __ENV__("OTS_MAIN_PORT") in init() so define it
-	setenv("OTS_MAIN_PORT", "2015", 1);
-
-	// also xdaq envs for XDAQContextTable
-	setenv("XDAQ_CONFIGURATION_DATA_PATH",
-	       (std::string(getenv("USER_DATA")) + "/XDAQConfigurations").c_str(),
-	       1);
-	setenv("XDAQ_CONFIGURATION_XML", "otsConfigurationNoRU_CMake", 1);
+	test::util::check_and_make_envs();
 	////////////////////////////////////////////////////
 
 	// // Variables
@@ -192,7 +174,8 @@ try
 		// void SetEVBClusterInfo(uint8_t baseDTCAddress, uint8_t numOfDTCs);
 		dtc.thisDTC_->SetEVBInfo(
 		    (1 << 7) | macAddress, 0 /* mode */, 0x99 /* partitionId */, macAddress);
-		dtc.thisDTC_->SetEVBClusterInfo(baseDTCAddress, numOfDTCs);
+		dtc.thisDTC_->SetEVBStartNode(baseDTCAddress);
+		dtc.thisDTC_->SetEVBNumberOfDestinationNodes(numOfDTCs);
 		dtc.SetupCFOInterface(0,       //int forceCFOedge,
 		                      false,   //bool useCFOemulator,
 		                      true,    //bool alsoSetupJA,

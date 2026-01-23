@@ -8,6 +8,8 @@ connect_hw_server
 
 
 open_hw_target [lindex [get_hw_targets *] 0]
+current_hw_device [get_hw_devices xc7k325t_0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices xc7k325t_0] 0]
 #create_hw_cfgmem -hw_device [lindex [get_hw_devices xc7k325t_0] 0] [lindex [get_cfgmem_parts {mt28gu512aax1e-bpi-x16}] 0]
 #create_hw_cfgmem -hw_device [lindex [get_hw_devices] 0] [lindex [get_cfgmem_parts {mt28gu01gaax1e-bpi-x16}] 0]
 create_hw_cfgmem -hw_device [lindex [get_hw_devices] 0] [lindex [get_cfgmem_parts [lindex $argv 1]] 0]
@@ -39,8 +41,11 @@ refresh_hw_device [lindex [get_hw_devices] 0]
 
 close_hw_target
 
-open_hw_target [lindex [get_hw_targets *] 1]
 
+
+open_hw_target [lindex [get_hw_targets *] 1]
+current_hw_device [get_hw_devices xc7k325t_0]
+refresh_hw_device -update_hw_probes false [lindex [get_hw_devices xc7k325t_0] 0]
 #create_hw_cfgmem -hw_device [lindex [get_hw_devices xc7k325t_0] 0] [lindex [get_cfgmem_parts {mt28gu512aax1e-bpi-x16}] 0]
 #create_hw_cfgmem -hw_device [lindex [get_hw_devices] 0] [lindex [get_cfgmem_parts {mt28gu01gaax1e-bpi-x16}] 0]
 create_hw_cfgmem -hw_device [lindex [get_hw_devices] 0] [lindex [get_cfgmem_parts [lindex $argv 3]] 0]

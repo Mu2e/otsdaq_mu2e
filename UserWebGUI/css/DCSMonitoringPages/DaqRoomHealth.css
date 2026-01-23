@@ -104,11 +104,16 @@ body {
   }
 
   .nodeTemper {
-	width:35%;
+	width:33%;
     height: 15px;
 	background-color: gray;
 	margin: 2px;
 	float: left;
+  }
+
+  .nodeName {
+	font-size: 12px;
+	margin-top: 3px;
   }
 
   /* Buttons */
