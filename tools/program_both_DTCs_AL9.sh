@@ -1,12 +1,24 @@
 #!/bin/bash
-source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+    echo "Error: this script must be executed, not sourced." >&2
+    return 1 2>/dev/null || exit 1
+fi
+
+source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 SCRIPT_DIR="$(
  cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
  pwd -P
 )"
 HOSTNAME="$(hostname -f)"
+
+cd /home/mu2ehwdev/
+rm vivado_lab*.log 2>/dev/null
+rm vivado_lab*.jou 2>/dev/null
+rm vivado_lab*.str 2>/dev/null
+rm hs_err*.log 2>/dev/null
+rm err.log 2>/dev/null
 
 lockfile="/tmp/mu2e.lock"
 # Attempt to create the lock file atomically using ln
@@ -19,7 +31,7 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null;do
             ps=`ps aux|grep -v ssh`
             waitForCmd=`echo "$ps" | awk "/^[^ ]*  *$pid /"'{print}'`  # COMMAND assoc. w/ pid
             if [ -n "$waitForCmd" ];then
-                test $retriedB -gt 39 && { echo "Failed to acquire lock."; exit 1; }
+                test $retriedB -gt 39 && { echo "Failed 2 to acquire lock."; exit 1; }
                 retriedB=$(($retriedB+1))
                 echo "`date`: Waiting for $waitForCmd"
                 sleep 2
@@ -30,8 +42,10 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null;do
         fi
     fi
     # Stale (pid not active), remove it and try again
-    test $retriedA -gt 0 && { echo "Failed to acquire lock."; exit 1; }
+    test $retriedA -gt 19 && { echo "Failed 1 to acquire lock."; exit 1; }
     rm -f "$lockfile"
+    echo "`date`: Waiting for retriedA=$retriedA"
+    sleep 4
     retriedA=$(($retriedA+1))
 done
 # Ensure lock file is removed on exit
@@ -39,6 +53,14 @@ trap 'rm -f "$lockfile"' EXIT
 
 echo -e "program_both_DTCs.sh:${LINENO} |  \t Programming both bitfiles on ${HOSTNAME}..."
 echo -e "program_both_DTCs.sh:${LINENO} |  \t Number of arguments: $#"
+
+DORESET=1
+if [ "x$1" == "xNORESET" ]; then
+    echo -e "program_both_DTCs.sh:${LINENO} |  \t No reset!"
+    DORESET=0
+    shift
+fi
+
 BITFILE0=$1
 BITFILE1=$1
 if [ $# == 1 ]; then
@@ -64,13 +86,21 @@ vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BI
 echo
 echo -e "program_both_DTCs.sh:${LINENO} |  \t Done programming bitfile to both DTCs on ${HOSTNAME}"
 
+if [ $DORESET == 0 ]; then
+    echo -e "program_both_DTCs.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
+    echo
+    return  >/dev/null 2>&1 #return is used if script is sourced
+        exit  #exit is used if script is run
+fi
+
 
 #now reset
 echo -e "program_both_DTCs.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
-ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+# ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 # source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
-echo echo
-echo echo
+echo
+echo
 echo -e "program_both_DTCs.sh:${LINENO} |  \t ===> Done with ${HOSTNAME} programming bitfile and PCIe reset!"
-echo echo
+echo
