@@ -1,50 +1,48 @@
 
 * {
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-	background-color: 			white;
-	overflow: 					hidden;
-	transition: 				background-color .25s;
-	overflow-x: scroll;
-	overflow-y: scroll;
+    background-color: white;
+    overflow: hidden;
+    transition: background-color .25s;
+    overflow-x: scroll;
+    overflow-y: scroll;
 }
 
 /* Column containers */
 .mainBlockContainer {
-	display: flex;
-	flex-direction: column;
-  }
+    display: flex;
+    flex-direction: column;
+}
 
-  .mainBlockContainer span {
-	display: inline-block;
-  }
+    .mainBlockContainer span {
+        display: inline-block;
+    }
 
 
 .topBlockContainer {
-	
-  }
+}
 
 .bottomBlockContainer {
-
-  }
+}
 
 .subSystemContainer {
-	display: inline-block;
-	border: 2px solid;
-	margin-left: 20px;
-	margin-top: 18px;
-	width: 40%;
-	height: 400px;
-	float: left;
-	text-align: center;
+    display: inline-block;
+    border: 2px solid;
+    margin-left: 20px;
+    margin-top: 18px;
+    width: 40%;
+    height: 400px;
+    float: left;
+    text-align: center;
 }
 
 /*mainFrame*/
 .caloFrame {
-	height: 100%;
-	width: 100%;
-	border: none;
-	min-height: 200px;
+    height: 100%;
+    width: 100%;
+    border: none;
+    min-height: 200px;
 }
