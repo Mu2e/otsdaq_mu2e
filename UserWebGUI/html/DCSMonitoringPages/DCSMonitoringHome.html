@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="en">
+
 <head>
     <title>DQM HOME PAGE</title>
-
-
 
     <link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoringPages/DCSMonitoringHome.css">
 
@@ -32,23 +31,23 @@
         //	pollServerHandlerFunction(req)
         //	generateUIDHandlerFunction(req)
 
-			//====================== start high-level behavior description
-			//
-			//	High-level description of page interactions:
-			//
-			//	- page init() is called by DesktopContent.js: 
-			//		* make Page_ to collect all objects to show PVs
-			//		* makeMainPage()
-			//		* pollServer()
-			//		* generateUID()
-			//
-			//	- setupPvParams(settings)
-			//		* Pass alarm thresholds, etc associated with pvList to widget content
-			//
-			//	- drawNewValue()
-			//		* Update widget drawing based on new value (and append to history if needed)
-			//
-			//====================== end high-level behavior description
+        //====================== start high-level behavior description
+        //
+        //	High-level description of page interactions:
+        //
+        //	- page init() is called by DesktopContent.js: 
+        //		* make Page_ to collect all objects to show PVs
+        //		* makeMainPage()
+        //		* pollServer()
+        //		* generateUID()
+        //
+        //	- setupPvParams(settings)
+        //		* Pass alarm thresholds, etc associated with pvList to widget content
+        //
+        //	- drawNewValue()
+        //		* Update widget drawing based on new value (and append to history if needed)
+        //
+        //====================== end high-level behavior description
 
         var windowWidth_, windowHeight_;
 
@@ -78,31 +77,25 @@
         /////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////
 
-			//=====================================================================================
-			//Navigate to a page via parent window
-			function navigateToPage(url)
-			{
-				if(url && url != "")
-				{
-					try
-					{
-						//Try to access parent window's openPage function
-						if(window.parent && window.parent.openPage)
-						{
-							window.parent.openPage(url);
-						}
-						else
-						{
-							//Fallback: navigate directly
-							window.location.href = url;
-						}
-					}
-					catch(e)
-					{
-						Debug.log("Error navigating to page: " + e);
-					}
-				}
-			} //end navigateToPage()
+        //=====================================================================================
+        //Navigate to a page via parent window
+        function navigateToPage(url) {
+            if (url && url != "") {
+                try {
+                    //Try to access parent window's openPage function
+                    if (window.parent && window.parent.openPage) {
+                        window.parent.openPage(url);
+                    }
+                    else {
+                        //Fallback: navigate directly
+                        window.location.href = url;
+                    }
+                }
+                catch (e) {
+                    Debug.log("Error navigating to page: " + e);
+                }
+            }
+        } //end navigateToPage()
 
         //=====================================================================================
         //init called once body has loaded
@@ -263,73 +256,76 @@
     </script>
 </head>
 
-	<body onload='//init() called by DesktopContent.js'>
-		
-		<div id="mainBlockContainer" height="auto" width="auto">
-			<h2 align="center">Online monitoring Home Page</h2>
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">BEAM INFO</div>
-				<div class="containerPreview">
-					<img src="" alt="BEAM Preview">
-				</div>
-			</div>
+<body onload='//init() called by DesktopContent.js'>
 
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">MAGNETIC FIELD</div>
-				<div class="containerPreview">
-					<img src="" alt="Magnetic Field Preview">
-				</div>
-			</div>
+    <div id="mainBlockContainer" height="auto" width="auto">
+        <h2 align="center">Online monitoring Home Page</h2>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">BEAM INFO</div>
+            <div class="containerPreview">
+                <img src="" alt="BEAM Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">TRIGGER</div>
-				<div class="containerPreview">
-					<img src="" alt="Trigger Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">MAGNETIC FIELD</div>
+            <div class="containerPreview">
+                <img src="" alt="Magnetic Field Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer" onclick="navigateToPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/DaqRoomHealth.html')">
-				<div class="containerTitle">DAQ</div>
-				<div class="containerPreview">
-					<img src="" alt="DAQ Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">TRIGGER</div>
+            <div class="containerPreview">
+                <img src="" alt="Trigger Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">STM</div>
-				<div class="containerPreview">
-					<img src="" alt="STM Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer"
+            onclick="navigateToPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/DaqRoomHealth.html')">
+            <div class="containerTitle">DAQ</div>
+            <div class="containerPreview">
+                <img src="" alt="DAQ Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">EXTMON</div>
-				<div class="containerPreview">
-					<img src="" alt="EXTMON Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">STM</div>
+            <div class="containerPreview">
+                <img src="" alt="STM Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">TRACKER</div>
-				<div class="containerPreview">
-					<img src="" alt="Tracker Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">EXTMON</div>
+            <div class="containerPreview">
+                <img src="" alt="EXTMON Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer" onclick="navigateToPage('/WebPath/UserWebPath/html/DCSMonitoringPages/calorimeter/CaloMain.html')">
-				<div class="containerTitle">CALORIMETER</div>
-				<div class="containerPreview">
-					<img src="http://w3.lnf.infn.it/wp-content/uploads/2020/03/Mu2e_web.jpg" alt="Calorimeter Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">TRACKER</div>
+            <div class="containerPreview">
+                <img src="" alt="Tracker Preview">
+            </div>
+        </div>
 
-			<div class="subSystemContainer disabled" onclick="">
-				<div class="containerTitle">CRV</div>
-				<div class="containerPreview">
-					<img src="" alt="CRV Preview">
-				</div>
-			</div>
+        <div class="subSystemContainer"
+            onclick="navigateToPage('/WebPath/UserWebPath/html/DCSMonitoringPages/calorimeter/CaloMain.html')">
+            <div class="containerTitle">CALORIMETER</div>
+            <div class="containerPreview">
+                <img src="http://w3.lnf.infn.it/wp-content/uploads/2020/03/Mu2e_web.jpg" alt="Calorimeter Preview">
+            </div>
+        </div>
 
-		</div> <!-- end main block container -->
-	</body>
+        <div class="subSystemContainer disabled" onclick="">
+            <div class="containerTitle">CRV</div>
+            <div class="containerPreview">
+                <img src="" alt="CRV Preview">
+            </div>
+        </div>
+
+    </div> <!-- end main block container -->
+</body>
+
 </html>
