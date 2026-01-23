@@ -146,7 +146,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					&DTCFrontEndInterface::WriteROC),  // feMacroFunction
 					std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 						"address", "writeData"},
-					std::vector<std::string>{},  // namesOfOutput
+					std::vector<std::string>{"Result"},  // namesOfOutput
 					1,			     // requiredUserPermissions
 					"*",						 // allowedCallingFEs
 					"This FE Macro writes data to a specific register on a specified link."
@@ -210,7 +210,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&DTCFrontEndInterface::WriteExternalROCRegister),  // feMacroFunction
 						std::vector<std::string>{"Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", "block", "address", "writeData"},
-						std::vector<std::string>{},  // namesOfOutputArgs
+						std::vector<std::string>{"Result"},  // namesOfOutputArgs
 						1);			     // requiredUserPermissions
 
 		registerFEMacroFunction(
@@ -349,7 +349,10 @@ void DTCFrontEndInterface::registerFEMacros(void)
 		"DTC Write",  // feMacroName
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&DTCFrontEndInterface::WriteDTC),  // feMacroFunction
-					std::vector<std::string>{"address", "writeData"},
+					std::vector<std::string>{"address",
+		                                                 "writeData",
+		                                                 "Do validation (Default := true)"
+					},
 					std::vector<std::string>{"Status"},  // namesOfOutput
 					1,			     // requiredUserPermissions
 					"*",
@@ -764,6 +767,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					"*",
 					"Program one or many ROCs with an indexed image in the SPI, or the bitfile at a specified filepath. Use Link=7 with Mask to choose more than 1 ROC manually with the mask."
 	);
+
+	registerFEMacroFunction(
+				"Validate DTC Control Registers",
+				static_cast<FEVInterface::frontEndMacroFunction_t>(
+				  &DTCFrontEndInterface::ValidateDTCControlRegisters),
+				std::vector<std::string>{}, // input arguments
+				std::vector<std::string>{"Status"}, // outputs
+				1,    // requiredUserPermissions
+				"*",
+				"Tests each DTC Control Register (address 0x9100)"
+				);
 
 	{ //add ROC FE Macros
 		__FE_COUT__ << "Getting children ROC FEMacros..." << __E__;
@@ -2064,6 +2078,9 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 		getDTC()->ResetSERDESTX(DTCLib::DTC_Link_ID::DTC_Link_ALL);
 		getDTC()->ResetSERDES(DTCLib::DTC_Link_ID::DTC_Link_ALL);
+
+		usleep(100);
+		getDTC()->SoftReset();  // soft reset to clear lock counters and errors
 		break;
 	default:
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -2918,8 +2935,8 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	DTCLib::roc_data_t readData = -999;
 
-	bool        found  = false;
-	std::string result = "";
+	bool        found = false;
+	std::string result;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -2937,6 +2954,7 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			try  //give user feedback on ROC status if exception caught
 			{
 				if(emulatorMode_)
@@ -2976,6 +2994,13 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 			sprintf(readDataStr, "0x%x", readData);
 			if(result.size())
 				result += ", ";
+			else  //init
+			{
+				std::stringstream ss;
+				ss << "Reading ROC Address " << address << "(0x" << std::hex
+				   << (unsigned int)address << ") for ROC(s):\n";
+				result = ss.str();
+			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
@@ -3035,7 +3060,8 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 
 	__FE_COUT__ << "ROCs size = " << rocs_.size() << __E__;
 
-	bool found = false;
+	std::string result;
+	bool        found = false;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -3053,12 +3079,33 @@ void DTCFrontEndInterface::WriteROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			roc.second->writeRegister(address, writeData);
+
+			if(result.size())
+				result += ", ";
+			else  //init
+			{
+				std::stringstream ss;
+				ss << "Wrote Data " << writeData << "(0x " << std::hex
+				   << (unsigned int)writeData << std::dec << ") to ROC Address "
+				   << address << "(0x" << std::hex << (unsigned int)address
+				   << ") for ROC(s): ";
+				result = ss.str();
+			}
+
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ")";
 		}
 	}  //end roc exec loop
 
 	if(found)
+	{
+		__SET_ARG_OUT__("Result", result);
 		return;
+	}
 
 	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
 	          << __E__;
@@ -3109,7 +3156,8 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 
 	bool acknowledge_request = false;
 
-	bool found = false;
+	std::string result;
+	bool        found = false;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -3127,17 +3175,39 @@ void DTCFrontEndInterface::WriteExternalROCRegister(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			getDTC()->WriteExtROCRegister(roc.second->getLinkID(),
 			                              block,
 			                              address,
 			                              writeData,
 			                              acknowledge_request,
 			                              0);
+
+			if(result.size())
+				result += ", ";
+			else  //init
+			{
+				std::stringstream ss;
+				ss << "Wrote Data " << writeData << "(0x " << std::hex
+				   << (unsigned int)writeData << std::dec << ") to ROC external Block "
+				   << block << "(0x" << std::hex << (unsigned int)block << std::dec
+				   << ") and Address " << address << "(0x" << std::hex
+				   << (unsigned int)address << ") for ROC(s): ";
+				result = ss.str();
+			}
+
+			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
+				result += "(" +
+				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
+				          ")";
 		}
 	}  //end roc exec loop
 
 	if(found)
+	{
+		__SET_ARG_OUT__("Result", result);
 		return;
+	}
 
 	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
 	          << __E__;
@@ -3197,6 +3267,7 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			DTCLib::roc_data_t readData;
 
 			readData = getDTC()->ReadExtROCRegister(rocLinkIndex, block, address);
@@ -3206,6 +3277,14 @@ void DTCFrontEndInterface::ReadExternalROCRegister(__ARGS__)
 
 			if(result.size())
 				result += ", ";
+			else  //init
+			{
+				std::stringstream ss;
+				ss << "Reading from ROC external Block " << block << "(0x" << std::hex
+				   << (unsigned int)block << std::dec << ") and Address " << address
+				   << "(0x" << std::hex << (unsigned int)address << ") for ROC(s):\n";
+				result = ss.str();
+			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
@@ -3290,6 +3369,7 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			std::vector<DTCLib::roc_data_t> readData;
 
 			roc.second->readBlock(readData, address, wordCount, incrementAddress);
@@ -3308,12 +3388,19 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 			}
 
 			if(result.size())
-				result += ", ";
+				result += "";
+			else  //init
+			{
+				std::stringstream ss;
+				ss << "Block Read from ROC Address " << address << "(0x" << std::hex
+				   << (unsigned int)address << ") for ROC(s):\n";
+				result = ss.str();
+			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
 				          ") ";
-			result += readDataString;
+			result += readDataString + "\n";
 
 			__FE_COUT__ << "readData"
 			            << ": " << readDataString << __E__;
@@ -3466,6 +3553,7 @@ void DTCFrontEndInterface::BlockWriteROC(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			roc.second->writeBlock(writeData, address, incrementAddress, requestAck);
 
 			// for(auto &argOut:argsOut)
@@ -3476,7 +3564,7 @@ void DTCFrontEndInterface::BlockWriteROC(__ARGS__)
 			    << ", requestAck=" << (requestAck ? "TRUE" : "FALSE") << __E__;
 
 			if(result.size())
-				result += ", ";
+				result += "\n";
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
@@ -3549,6 +3637,7 @@ void DTCFrontEndInterface::DTCHighRateBlockCheck(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 
 			roc.second->highRateBlockCheck(
 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
@@ -3615,6 +3704,7 @@ void DTCFrontEndInterface::DTCHighRateDCSCheck(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 			roc.second->highRateCheck(
 			    loops, baseAddress, correctRegisterValue0, correctRegisterValue1);
 		}
@@ -3706,16 +3796,27 @@ void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::WriteDTC(__ARGS__)
 {
-	uint32_t address   = __GET_ARG_IN__("address", uint32_t);
-	uint32_t writeData = __GET_ARG_IN__("writeData", uint32_t);
+	// FIXME: Add optional validation, defaulted to true
+	uint32_t   address   = __GET_ARG_IN__("address", uint32_t);
+	uint32_t   writeData = __GET_ARG_IN__("writeData", uint32_t);
+	const bool validate  = __GET_ARG_IN__("Do validation (Default := true)", bool, true);
 	__FE_COUTV__((unsigned int)address);
 	__FE_COUTV__((unsigned int)writeData);
+	__FE_COUTV__(validate);
 
-	int errorCode = getDevice()->write_register(address, 100, writeData);
+	int           errorCode(0);
+	uint32_t      readData(0);
+	constexpr int timeout_ms(100);  // for direct writes
+
+	if(validate)
+		readData = getDTC()->WriteRegister_(writeData, address);
+	else
+		errorCode = getDevice()->write_register(address, timeout_ms, writeData);
 	if(errorCode != 0)
 	{
 		__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0')
-		          << std::setw(4) << address << ". Error code = " << errorCode;
+		          << std::setw(4) << address << ". Error code = " << errorCode
+		          << " readData (if validated) = " << readData;
 		__SS_THROW__;
 	}
 
@@ -3924,9 +4025,11 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 	__FE_COUT__ << "rocLinkIndexVal = 0x" << std::hex << rocLinkIndexVal << __E__;
 	__FE_COUTV__(usingRocMask);
 	__FE_COUTV__(rocLinkIndex);
+	__FE_COUTV__(rocs_.size());
 
-	bool        found  = false;
-	std::string result = "";
+	bool        found          = false;
+	std::string result         = "";
+	std::string setupRocResult = "";
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -3944,8 +4047,9 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 		    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
+			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
 
-			std::string setupRocResult = SetupROCs(
+			setupRocResult = SetupROCs(
 			    roc.second->getLinkID(),
 			    __GET_ARG_IN__("Set Link RX/TX Enable (Default := false)", bool, false),
 			    __GET_ARG_IN__("Set Link Timing Enable (Default := false)", bool, false),
@@ -3967,11 +4071,13 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
 				result += "(" +
 				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
-				          ") ";
-			result += setupRocResult;
+				          ")";
+			// result = setupRocResult; // not +=, always overwrite with last result;
 			__FE_COUTV__(setupRocResult);
 		}
 	}  //end roc exec loop
+
+	result += "\n" + setupRocResult;  // not +=, always overwrite with last result;
 
 	if(found)
 	{
@@ -4318,7 +4424,7 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 	uint8_t DTCid        = __GET_ARG_IN__("DTC ID", uint8_t);
 	uint8_t evbMode      = __GET_ARG_IN__("EVB Mode", uint8_t);
 	uint8_t evbPartition = __GET_ARG_IN__("EVB Partition ID", uint8_t);
-	uint8_t evbMAC       = __GET_ARG_IN__("EVB MAC Address Last Byte", uint8_t);
+	uint8_t evbMAC       = __GET_ARG_IN__("EVB Self MAC Address Last Byte", uint8_t);
 
 	__FE_COUTV__((int)DTCid);
 	__FE_COUTV__((int)evbMode);
@@ -4328,11 +4434,17 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 	getDTC()->SetEVBInfo(DTCid, evbMode, evbPartition, evbMAC);
 
 	uint16_t deadTime       = __GET_ARG_IN__("EVB Dead Time in Cluster", uint16_t);
-	uint8_t  NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t);
+	uint8_t  NumOfDTCs      = __GET_ARG_IN__("EVB Number of DTCs in Cluster", uint8_t, 1);
 	uint8_t  evbBaseAddress = __GET_ARG_IN__("EVB Cluster Base DTC MAC Address", uint8_t);
 
 	__FE_COUTV__(deadTime);
 	__FE_COUTV__((int)NumOfDTCs);
+	if(NumOfDTCs == 0)
+	{
+		__FE_SS__ << "Invalid input for Number of DTCs in Cluster: " << (int)NumOfDTCs
+		          << ". This value must be at least 1." << __E__;
+		__FE_SS_THROW__;
+	}
 	__FE_COUTV__((int)evbBaseAddress);
 	getDTC()->SetEVBClusterInfo(deadTime, evbBaseAddress, NumOfDTCs);
 
@@ -5010,15 +5122,23 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 			statusSs << "\t Roc-" << i << " Fragment Header Timeouts count:"
 			         << threadStruct->rocHeaderTimeoutsCount_[i] << __E__;
 
+		size_t totalROCerrors = 0;
 		statusSs << "ROC Errors (Timeouts + others)..." << __E__;
 		for(size_t i = 0; i < threadStruct->rocFragmentErrorsCount_.size(); ++i)
+		{
 			statusSs << "\t Roc-" << i << " Fragment Errors count:"
 			         << threadStruct->rocFragmentErrorsCount_[i] << __E__;
+			totalROCerrors += threadStruct->rocFragmentErrorsCount_[i];
+		}
 
-		if(threadStruct->error_ != "")
+		if(threadStruct->error_ != "" || totalROCerrors)
 		{
-			__SS__ << "Error identified in the detached buffer status: "
-			       << statusSs.str();
+			__SS__ << "Error identified in the detached buffer status";
+			if(totalROCerrors)
+				ss << ". Check the ROC Errors (Timeouts + others) section for details: ";
+			else
+				ss << ": ";
+			ss << statusSs.str();
 			__SS_THROW__;
 		}
 	}
@@ -5080,6 +5200,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 
 	// print the subevent header
 	// ostr << subevent->GetHeader()->toJson() << std::endl;
+	__COUTT__ << subevent->GetHeader()->toJson() << __E__;
 
 	//start mutex scope to change non-atomic status counters
 	std::lock_guard<std::mutex> lock(threadStruct->lock_);
@@ -5197,12 +5318,19 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	// iterate over the data blocks
 	std::vector<DTCLib::DTC_DataBlock> dataBlocks = subevent->GetDataBlocks();
 	__COUTTV__(dataBlocks.size());
+	if(dataBlocks.size() != 6)
+	{
+		__SS__ << "Unexpected number of ROC fragments found in subevent (EWT="
+		       << subevent->GetEventWindowTag() << "): " << dataBlocks.size()
+		       << " ROC fragments found (expected 6)";
+		__SS_THROW__;
+	}
+
 	__COUTTV__(doSaveSubevent);
 	for(unsigned int j = 0; j < dataBlocks.size(); ++j)
 	{
 		// print the data block header
 		DTCLib::DTC_DataHeaderPacket* dataHeader = dataBlocks[j].GetHeader().get();
-		__COUTS__(2) << dataHeader->toJSON() << __E__;
 		++(threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]);
 
 		// ~~~	The Data Header Packet Status 8-bit field is defined as follows ~~~
@@ -5535,7 +5663,7 @@ try
 						     << event->GetEventWindowTag().GetEventWindowTag(true)
 						     << " (0x" << std::hex << std::setw(4) << std::setfill('0')
 						     << event->GetEventWindowTag().GetEventWindowTag(true) << ")";
-
+						__COUTT__ << ostr.str();
 						threadStruct->mismatchedEventTagJumps_.push_back(
 						    std::make_pair<uint64_t, uint64_t>(
 						        threadStruct->nextEventWindowTag_,
@@ -6802,6 +6930,78 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 	getDTC()->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
 
 }  //end ManualLoopbackSetup()
+
+//========================================================================
+void DTCFrontEndInterface::ValidateDTCControlRegisters(__ARGS__)
+{
+	constexpr uint32_t control_address = 0x9100;
+	int                errorCode(0), resultCode(0);
+	uint32_t           writeData, readData;
+
+	constexpr int timeout = 100;  // for reads/writes
+	constexpr int nloops =
+	    100;  // test each register 100 times to catch intermittent issues
+	for(int iloop = 0; iloop < nloops; ++iloop)
+	{
+		for(int bit = 1; bit <= 32; ++bit)
+		{
+			const int real_bit = (bit == 32) ? 0 : bit;  // moved bit 0 to last
+
+			// write the data
+			writeData = (real_bit == 0) ? 0 : (1u << real_bit);  // do the hard reset last
+			errorCode = getDevice()->write_register(control_address, timeout, writeData);
+			if(errorCode != 0)
+			{
+				__FE_SS__ << "Error writing register 0x" << std::hex << std::setfill('0')
+				          << std::setw(4) << control_address << " bit " << std::dec
+				          << real_bit << ". Error code = " << errorCode;
+				__SS_THROW__;
+			}
+
+			// test the data
+			errorCode = getDevice()->read_register(control_address, timeout, &readData);
+			if(errorCode != 0)
+			{
+				__FE_SS__ << "Error reading register 0x" << std::hex << std::setfill('0')
+				          << std::setw(4) << control_address << " for bit " << std::dec
+				          << real_bit << ". Error code = " << errorCode;
+				__SS_THROW__;
+			}
+			resultCode = 0;
+			if(real_bit == 25)
+			{  // special bit: auto-clear, resets to 0
+				if(readData != 0)
+					resultCode = 1;
+			}
+			else if(real_bit == 31)
+			{  // special bit: soft reset
+				if(readData != 0)
+					resultCode = 1;
+			}
+			else if(real_bit == 0)
+			{   // special bit: hard reset
+				// no clear value it should have
+				// if(readData != 0x10008204) errorCode = 1;
+			}
+			else if(readData != writeData)
+				resultCode = 1;
+
+			if(resultCode != 0)
+			{
+				__FE_SS__ << "Error validating register 0x" << std::hex
+				          << std::setfill('0') << std::setw(4) << control_address
+				          << " write + read for bit " << std::dec << real_bit
+				          << ". Write = " << writeData << " and read = " << readData;
+				__SS_THROW__;
+			}
+		}  // end bit loop
+	}      // end iloop loop
+
+	// Test block writes/reads
+
+	// set the test status
+	__SET_ARG_OUT__("Status", std::string("success"));
+}  //end ValidateDTCControlRegisters
 
 //========================================================================
 /// Dummy function

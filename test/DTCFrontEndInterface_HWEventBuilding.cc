@@ -12,6 +12,9 @@
 
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
 
+// Shared test utilities
+#include "otsdaq/Macros/TestUtilities.h"
+
 using namespace ots;
 
 int main(int argc, char* argv[])
@@ -59,29 +62,7 @@ try
 	// Define environment variables
 	//	Note: normally these environment variables are set by StartOTS.sh
 
-	// These are needed by
-	// otsdaq/otsdaq/ConfigurationDataFormats/ConfigurationInfoReader.cc [207]
-	setenv("CONFIGURATION_TYPE", "File", 1);  // Can be File, Database, DatabaseTest
-	setenv("CONFIGURATION_DATA_PATH",
-	       (std::string(getenv("USER_DATA")) + "/ConfigurationDataExamples").c_str(),
-	       1);
-	setenv(
-	    "TABLE_INFO_PATH", (std::string(getenv("USER_DATA")) + "/TableInfo").c_str(), 1);
-	////////////////////////////////////////////////////
-
-	// Some configuration plug-ins use __ENV__("OTSDAQ_LIB") and
-	// __ENV__("OTSDAQ_UTILITIES_LIB") in init() so define it 	to a non-sense place is ok
-	setenv("OTSDAQ_LIB", (std::string(getenv("USER_DATA")) + "/").c_str(), 1);
-	setenv("OTSDAQ_UTILITIES_LIB", (std::string(getenv("USER_DATA")) + "/").c_str(), 1);
-
-	// Some configuration plug-ins use __ENV__("OTS_MAIN_PORT") in init() so define it
-	setenv("OTS_MAIN_PORT", "2015", 1);
-
-	// also xdaq envs for XDAQContextTable
-	setenv("XDAQ_CONFIGURATION_DATA_PATH",
-	       (std::string(getenv("USER_DATA")) + "/XDAQConfigurations").c_str(),
-	       1);
-	setenv("XDAQ_CONFIGURATION_XML", "otsConfigurationNoRU_CMake", 1);
+	test::util::check_and_make_envs();
 	////////////////////////////////////////////////////
 
 	// // Variables
