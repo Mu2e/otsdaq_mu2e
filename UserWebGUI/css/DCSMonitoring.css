@@ -5,10 +5,11 @@
 
 body {
 	background-color: 			white;
-	overflow: 					hidden;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
 	transition: 				background-color .25s;
-	overflow-x: scroll;
-	overflow-y: scroll;
+	height: 100vh;
 }
 
 /* Style the top navigation bar */
@@ -50,15 +51,12 @@ body {
 
 /* Fixed sidenav, full height */
 .sidenav {
-	float: left;
 	height: 100%;
 	width: 200px;
-	/*position: fixed;*/
 	z-index: 1;
-	top: 0;
-	left: 0;
 	background-color: #111;
 	overflow-x: hidden;
+	overflow-y: auto;
 	padding-top: 20px;
 }
 
@@ -131,25 +129,30 @@ body {
 .row {
 	display: -ms-flexbox; /* IE10 */
 	display: flex;
-	-ms-flex-wrap: wrap; /* IE10 */
-	flex-wrap: wrap;
+	flex-wrap: nowrap; 
+	height: calc(100vh - 95px);
+	overflow: hidden;
   }
 
   /* Create two unequal columns that sits next to each other */
   /* Sidebar/left column */
   .side {
-	/*-ms-flex: 20%;*/ /* IE10 */
-	/*flex: 20%;*/
+	-ms-flex: 0 0 200px; /* IE10 */
+	flex: 0 0 200px; 
 	background-color: #111;
 	padding: 0px;
+	overflow-y: auto; 
+	overflow-x: hidden;
   }
 
   /* Main column */
   .main {
-	-ms-flex: 80%; /* IE10 */
-	flex: 80%;
+	-ms-flex: 1; /* IE10 */
+	flex: 1; 
 	background-color: rgb(213, 227, 245);
 	padding: 0px;
+	overflow: hidden; 
+	min-width: 0; 
   }
 
 /*mainFrame*/
@@ -157,7 +160,6 @@ body {
 	height: 100%;
 	width: 100%;
 	border: none;
-	min-height: 800px;
 }
 
 /* Footer */
