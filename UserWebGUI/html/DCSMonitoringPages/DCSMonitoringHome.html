@@ -32,7 +32,6 @@
         //	pollServerHandlerFunction(req)
         //	generateUIDHandlerFunction(req)
 
-<<<<<<< HEAD
 			//====================== start high-level behavior description
 			//
 			//	High-level description of page interactions:
@@ -50,35 +49,6 @@
 			//		* Update widget drawing based on new value (and append to history if needed)
 			//
 			//====================== end high-level behavior description
-=======
-        //top-level scope (global) variables:
-
-        var page_ = page_ || {}; 	//define the page object if needed
-        //	page_.widgets = {
-        //		<widgetID> : <widget object := x, y,
-        //			w, h, pvList{}, attributes{},
-        //			displayName, loaded,
-        //			el /*iframe element*/
-        //	}
-
-        //====================== start high-level behavior description
-        //
-        //	High-level description of page interactions:
-        //
-        //	- page init() is called by DesktopContent.js:
-        //		* make Page_ to collect all objects to show PVs
-        //		* makeMainPage()
-        //		* pollServer()
-        //		* generateUID()
-        //
-        //	- setupPvParams(settings)
-        //		* Pass alarm thresholds, etc associated with pvList to widget content
-        //
-        //	- drawNewValue()
-        //		* Update widget drawing based on new value (and append to history if needed)
-        //
-        //====================== end high-level behavior description
->>>>>>> develop
 
         var windowWidth_, windowHeight_;
 
@@ -293,7 +263,6 @@
     </script>
 </head>
 
-<<<<<<< HEAD
 	<body onload='//init() called by DesktopContent.js'>
 		
 		<div id="mainBlockContainer" height="auto" width="auto">
@@ -364,21 +333,3 @@
 		</div> <!-- end main block container -->
 	</body>
 </html>
-=======
-<body onload='//init() called by DesktopContent.js'>
-
-    <div id="mainBlockContainer" height="auto" width="auto">
-        <h2 align="center">Online monitoring Home Page</h2>
-        <div class="subSystemContainer">BEAM INFO</div>
-        <div class="subSystemContainer">MAGNETIC FIELD</div>
-        <div class="subSystemContainer">TRIGGER</div>
-        <div class="subSystemContainer">DAQ</div>
-        <div class="subSystemContainer">STM</div>
-        <div class="subSystemContainer">EXTMON</div>
-        <div class="subSystemContainer">TRACKER</div>
-        <div class="subSystemContainer">CALORIMETER</div>
-        <div class="subSystemContainer">CRV</div>
-    </div> <!-- end main block container -->
-</body>
-</html>
->>>>>>> develop
