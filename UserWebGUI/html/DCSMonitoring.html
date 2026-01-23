@@ -1,155 +1,157 @@
 <!DOCTYPE HTML>
 <html lang="en">
-	<head>
-		<title>DCS Monitoring</title>
+<head>
+    <title>DCS Monitoring</title>
 
-		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoring.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoring.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
 
-		<script>
+    <script>
 
-			//functions:
-			//	init()
-			//	manageMenu()
-			//	openPage()
-			//
-			/////////////////////////////////////////////////////////////////////////////////////////
-			/////////////////////////////////////////////////////////////////////////////////////////
-
-
-			//=====================================================================================
-			//init called once body has loaded
-			function init() 
-			{
-				Debug.log("init() was called");
-				updateClock()
-				setInterval(updateClock, 1000);
-				
-				manageMenu();
-				
-				openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html');
-			} //end init()
-
-			//=====================================================================================
-			//updateClock
-			function updateClock()
-			{
-				const gmtTime = new Date().toUTCString();
-				const cetTime = new Date().toLocaleString('nl-NL', {timeZone: 'Europe/Berlin'});
-				const centralTime = new Date().toLocaleString('nl-NL', {timeZone: 'America/Chicago'});
-
-				document.getElementById('central').innerHTML = centralTime;
-				//document.getElementById('gmt').innerHTML = gmtTime;
-				//document.getElementById('cet').innerHTML = cetTime;
-			} //end updateClock()
-
-			//=====================================================================================
-			function manageMenu(obj)
-			{
-				//* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
-				var dropdown = document.getElementsByClassName("dropdown-btn");
-				var i;
-
-				for (i = 0; i < dropdown.length; i++) {
-					dropdown[i].addEventListener("click", function() {
-						this.classList.toggle("active");
-						var dropdownContent = this.nextElementSibling;
-						if (dropdownContent.style.display === "block") {
-							dropdownContent.style.display = "none";
-						} else {
-							dropdownContent.style.display = "block";
-						}
-					});
-				}
-			} //end manageMenu()
+        //functions:
+        //	init()
+        //	manageMenu()
+        //	openPage()
+        //
+        /////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////
 
 
-			//=====================================================================================
-			function openPage(url)
-			{
-				var frame = document.getElementById('mainFrame');
-				frame.src = url;
-			}// end openPage()
+        //=====================================================================================
+        //init called once body has loaded
+        function init() {
+            Debug.log("init() was called");
+            updateClock()
+            setInterval(updateClock, 1000);
 
-		</script>
-	</head>
+            manageMenu();
 
-	<body onload='//init() called by DesktopContent.js'>
+            openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html');
+        } //end init()
 
-		<div class="navbar">
-			<span class="left">Time: </span>
-			<span class="left" id="central"></span>
-			<a class="right" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html')"><i class="fa fa-fw fa-home"></i> HOME</a>
-		</div>
+        //=====================================================================================
+        //updateClock
+        function updateClock() {
+            const gmtTime = new Date().toUTCString();
+            const cetTime = new Date().toLocaleString('nl-NL', { timeZone: 'Europe/Berlin' });
+            const centralTime = new Date().toLocaleString('nl-NL', { timeZone: 'America/Chicago' });
 
-		<div class="row">
-			<!-- The sidenav -->
-			<div class="side">
-				<div class="sidenav">
-					<div class="logo">
-						Online monitoring
-						<img src="/WebPath/images/iconImages/mu2e_logo_oval_small.png" alt="" 	width="50%">
-						<img src="/WebPath/images/otsdaqIcons/logo.png" alt="" 	width="46%">
-					</div>
-					<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html')"><i class="fa fa-fw fa-home"></i> HOME</button>
-					<a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
-					<a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
-					<button class="dropdown-btn">DAQ
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/DaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> DAQ-Room health</button>
-						<button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/edq5ctt6ups00f/dtc-montioring?orgId=1&refresh=5s')"><i class="fa fa-fw fa-thermometer"></i> DAQ-Room - Graphana</button>
-						<!-- <button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/IERCDaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> IERC test-stand room health</button> -->
-						<!-- <button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/e65b525b-f0c3-4cf3-8a30-f1cf80720b0c/antonio?orgId=1')"><i class="fa fa-fw fa-thermometer"></i> Graphana</button> -->
-						<!-- <button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/edl01jam6wem8f/test-stand-temperature-monitor?orgId=1&refresh=1m')"><i class="fa fa-fw fa-thermometer"></i> IERC room health - Graphana</button> -->
-						<!-- <button class="open-page-btn" onmousedown="openPage('http://localhost:3001/d/ee1k6rvspcf0gd/calorimeteratsidet?orgId=1&from=1729728393746&to=1729728801045')"><i class="fa fa-fw fa-thermometer"></i> mu2ecalo01 - Graphana</button> -->
-					</div>
-					<button class="dropdown-btn">DCS
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<button class="open-page-btn" onmousedown="openPage('http://localhost:4812/main')"><i class="fa fa-fw fa-gear"></i> Archiver status</button>
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_2.bob')"><i class="fa fa-fw fa-gear"></i> Dashboard</button>
-					</div>
-					<button class="dropdown-btn">STM
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<a href="#">Link to STM main page</a>
-					</div>
-					<button class="dropdown-btn">CRV
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<a href="#">Link CRV main page</a>
-					</div>
-					<button class="dropdown-btn">ECAL
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/calorimeter/CaloMain.html')"><i class="fa fa-fw fa-home"></i> Ecal main</button>
-					</div>
-					<button class="dropdown-btn">TRK
-						<i class="fa fa-caret-down"></i>
-					</button>
-					<div class="dropdown-container">
-						<a href="#">Link TRK main page</a>
-					</div>
-				</div> <!-- end sidenav -->
-			</div> <!-- end side block -->
-			<div class="main">
-				<iframe class="mainFrame" id="mainFrame" src="">
-				</iframe>
-			</div> <!-- end main frame block -->
-		</div> <!-- end row block container -->
+            document.getElementById('central').innerHTML = centralTime;
+            //document.getElementById('gmt').innerHTML = gmtTime;
+            //document.getElementById('cet').innerHTML = cetTime;
+        } //end updateClock()
 
-		<div class="footer">
-			<h2>Footer</h2>
-		</div>
-	</body>
+        //=====================================================================================
+        function manageMenu(obj) {
+            //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+            var dropdown = document.getElementsByClassName("dropdown-btn");
+            var i;
+
+            for (i = 0; i < dropdown.length; i++) {
+                dropdown[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var dropdownContent = this.nextElementSibling;
+                    if (dropdownContent.style.display === "block") {
+                        dropdownContent.style.display = "none";
+                    } else {
+                        dropdownContent.style.display = "block";
+                    }
+                });
+            }
+        } //end manageMenu()
+
+
+        //=====================================================================================
+        function openPage(url) {
+            var frame = document.getElementById('mainFrame');
+            frame.src = url;
+        }// end openPage()
+
+    </script>
+</head>
+
+<body onload='//init() called by DesktopContent.js'>
+
+    <div class="navbar">
+        <span class="left">Time: </span>
+        <span class="left" id="central"></span>
+        <a class="right" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html')"><i class="fa fa-fw fa-home"></i> HOME</a>
+    </div>
+
+    <div class="row">
+        <!-- The sidenav -->
+        <div class="side">
+            <div class="sidenav">
+                <div class="logo">
+                    Online monitoring
+                    <img src="/WebPath/images/iconImages/mu2e_logo_oval_small.png" alt="" width="50%">
+                    <img src="/WebPath/images/otsdaqIcons/logo.png" alt="" width="46%">
+                </div>
+                <button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/DCSMonitoringHome.html')"><i class="fa fa-fw fa-home"></i> HOME</button>
+                <a href="#"><i class="fa fa-fw fa-search"></i> Search</a>
+                <a href="#"><i class="fa fa-fw fa-envelope"></i> Contact</a>
+                <button class="dropdown-btn">
+                    DAQ
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/DaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> DAQ-Room health</button>
+                    <button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/edq5ctt6ups00f/dtc-montioring?orgId=1&refresh=5s')"><i class="fa fa-fw fa-thermometer"></i> DAQ-Room - Graphana</button>
+                    <!-- <button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/daq/IERCDaqRoomHealth.html')"><i class="fa fa-fw fa-thermometer"></i> IERC test-stand room health</button> -->
+                    <!-- <button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/e65b525b-f0c3-4cf3-8a30-f1cf80720b0c/antonio?orgId=1')"><i class="fa fa-fw fa-thermometer"></i> Graphana</button> -->
+                    <!-- <button class="open-page-btn" onmousedown="openPage('http://localhost:3000/d/edl01jam6wem8f/test-stand-temperature-monitor?orgId=1&refresh=1m')"><i class="fa fa-fw fa-thermometer"></i> IERC room health - Graphana</button> -->
+                    <!-- <button class="open-page-btn" onmousedown="openPage('http://localhost:3001/d/ee1k6rvspcf0gd/calorimeteratsidet?orgId=1&from=1729728393746&to=1729728801045')"><i class="fa fa-fw fa-thermometer"></i> mu2ecalo01 - Graphana</button> -->
+                </div>
+                <button class="dropdown-btn">
+                    DCS
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <button class="open-page-btn" onmousedown="openPage('http://localhost:4812/main')"><i class="fa fa-fw fa-gear"></i> Archiver status</button>
+                    <button class="open-page-btn" onmousedown="openPage('/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_2.bob')"><i class="fa fa-fw fa-gear"></i> Dashboard</button>
+                </div>
+                <button class="dropdown-btn">
+                    STM
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <a href="#">Link to STM main page</a>
+                </div>
+                <button class="dropdown-btn">
+                    CRV
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <a href="#">Link CRV main page</a>
+                </div>
+                <button class="dropdown-btn">
+                    ECAL
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <button class="open-page-btn" onmousedown="openPage('/WebPath/UserWebPath/html/DCSMonitoringPages/calorimeter/CaloMain.html')"><i class="fa fa-fw fa-home"></i> Ecal main</button>
+                </div>
+                <button class="dropdown-btn">
+                    TRK
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-container">
+                    <a href="#">Link TRK main page</a>
+                </div>
+            </div> <!-- end sidenav -->
+        </div> <!-- end side block -->
+        <div class="main">
+            <iframe class="mainFrame" id="mainFrame" src="">
+            </iframe>
+        </div> <!-- end main frame block -->
+    </div> <!-- end row block container -->
+
+    <div class="footer">
+        <h2>Footer</h2>
+    </div>
+</body>
 </html>
