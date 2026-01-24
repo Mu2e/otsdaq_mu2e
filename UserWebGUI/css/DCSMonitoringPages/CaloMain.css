@@ -13,9 +13,12 @@ body {
 
 /* Column containers */
 .mainBlockContainer {
-    display: flex;
-    flex-direction: column;
-}
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: fit-content;
+	overflow-x: auto;
+  }
 
     .mainBlockContainer span {
         display: inline-block;
@@ -29,14 +32,18 @@ body {
 }
 
 .subSystemContainer {
-    display: inline-block;
+    display: inline-flex;
     border: 2px solid;
     margin-left: 20px;
     margin-top: 18px;
-    width: 40%;
-    height: 400px;
-    float: left;
+    width: 500px;
+    height: 500px;
+    flex-shrink: 0;
     text-align: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
 }
 
 /*mainFrame*/
