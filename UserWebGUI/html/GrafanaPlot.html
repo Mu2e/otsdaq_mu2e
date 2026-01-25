@@ -1,58 +1,56 @@
 <!DOCTYPE HTML>
 <html lang="en">
-	<head>
-		<title>Grafana Test</title>
+<head>
+    <title>Grafana Test</title>
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
 
-        <style type="text/css">
-            /*mainFrame*/
-            .mainFrame {
-                height: 100%;
-                width: 100%;
-                border: none;
+    <style type="text/css">
+        /*mainFrame*/
+        .mainFrame {
+            height: 100%;
+            width: 100%;
+            border: none;
+        }
+    </style>
+
+    <script>
+
+        //functions:
+        //	init()
+        //	openPage()
+        //
+        /////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////
+
+        //=====================================================================================
+        //init called once body has loaded
+        function init() {
+            Debug.log("init() was called");
+
+            var grafanaUrl = DesktopContent.getParameter(0, "grafana_url");
+            var minHeight = DesktopContent.getParameter(1, "min_height");
+            if (grafanaUrl !== undefined) //set read mode if parameter
+            {
+                openPage(grafanaUrl, minHeight);
             }
-        </style>
+        } //end init()
 
-        <script>
+        //=====================================================================================
+        function openPage(url, minHeight) {
+            var frame = document.getElementById('mainFrame');
+            frame.src = url;
+            if (minHeight !== undefined)
+                frame.style.minHeight = minHeight;
+        }// end openPage()
 
-            //functions:
-			//	init()
-			//	openPage()
-			//
-			/////////////////////////////////////////////////////////////////////////////////////////
-			/////////////////////////////////////////////////////////////////////////////////////////
-
-			//=====================================================================================
-			//init called once body has loaded
-			function init()
-			{
-				Debug.log("init() was called");
-
-				var grafanaUrl = DesktopContent.getParameter(0, "grafana_url");
-				var minHeight = DesktopContent.getParameter(1, "min_height");
-				if (grafanaUrl !== undefined) //set read mode if parameter
-				{
-					openPage(grafanaUrl, minHeight);
-				}
-			} //end init()
-
-            //=====================================================================================
-			function openPage(url, minHeight)
-			{
-				var frame = document.getElementById('mainFrame');
-				frame.src = url;
-                if (minHeight !== undefined)
-                    frame.style.minHeight = minHeight;
-			}// end openPage()
-
-        </script>
-    </head>
-<body onload='//init() called by DesktopContent.js'>	
+    </script>
+</head>
+<body onload='//init() called by DesktopContent.js'>
     <div>
         <iframe id="mainFrame" class="mainFrame" src=""></iframe>
     </div>

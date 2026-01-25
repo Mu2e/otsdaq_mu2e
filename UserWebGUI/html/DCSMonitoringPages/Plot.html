@@ -1,576 +1,541 @@
 <!DOCTYPE HTML>
 <html lang="en">
-	<head>
-		<title>Plot</title>
-
-
-
-		<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoringPages/Plot.css">
-
-		<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/widgetLibrary.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
-		<script type="text/JavaScript" src="/WebPath/js/js_lib/SlowControlsAPI.js"></script>
-
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<!-- <script type="text/javascript" src="/WebPath/html/widgets/libraries/plotly-1.27.1.min.js"></script> -->
-		<!-- <script type="text/javascript" src="/WebPath/UserWebPath/js/plotly-1.27.1.min.js"></script> -->
-		<script type="text/javascript" src="/WebPath/UserWebPath/js/plotly-3.0.1.min.js"></script>
-
-		<script>
-
-			//functions:
-			//	init()
-			//	getPvSet()
-			//	makeMainPage()
-			//	drawGraph()
-			//	makeGraph()
-
-			//	getPvHistory(widget, parameters)
-			//	pvHistoryReqHandler(req, passParams)
-
-			//	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
-			//	drawNewGraphValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
-
-			//	generateUID()
-			//	generateUIDHandlerFunction(req)
-			//	pollServer()
-			//	updateRefreshInterval()
-			//	pollServerHandlerFunction(req)
-
-
-			//top-level scope (global) variables:
-
-			var page_ = page_ || {}; 	//define the page object if needed
-										//	page_.widgets = {
-										//		<widgetID> : <widget object := x, y, 
-										//			w, h, pvList{}, attributes{},
-										//			displayName, loaded,
-										//			el /*iframe element*/
-										//	} 
-
-			//====================== start high-level behavior description
-			//
-			//	High-level description of page interactions:
-			//
-			//	- page init() is called by DesktopContent.js: 
-			//		* make Page_ to collect all objects to show PVs
-			//		* makeMainPage()
-			//		* pollServer()
-			//		* generateUID()
-			//
-			//	- setupPvParams(settings)
-			//		* Pass alarm thresholds, etc associated with pvList to widget content
-			//
-			//	- drawNewValue()
-			//		* Update widget drawing based on new value (and append to history if needed)
-			//
-			//====================== end high-level behavior description
-
-
-			var refreshRate_ = 60000; //set default to refresh every 15 seconds (ms)
-			var timerVariable_;
-
-			var UID_ = 0;
-			var timeToPoll_ = false;
-
-			var datalist_;
-
-			page_.createPage = function(){
-
-				this.name = "MyPage";
-				this.widgets = {};
-				this.addPV = function(pv){
-					console.log("Reached " + pv);
-				}
-			}
-
-			var pvName_ = [];
-
-			/////////////////////////////////////////////////////////////////////////////////////////
-			/////////////////////////////////////////////////////////////////////////////////////////
-
-
-			//=====================================================================================
-			//init called once body has loaded
-			function init() 
-			{
-				Debug.log("init() was called");
-				var parameterPvNames = DesktopContent.getParameter(0,"pv_names");
-				page_.createPage();
-
-				//get command string if opening a new window
-				var cmdStr = DesktopContent.getParameter(2); //from  location.search
-				if (cmdStr && cmdStr != "") {
-					//do incoming commands!
-					Debug.log("cmdStr=" + cmdStr);
-					//replace %22 with "
-					cmdStr = cmdStr.replace(/%22/g, "\"");
-				}
-
-				var autoUpdate = document.getElementById("autoupdate");
-				autoupdate.checked = true;
-				makeMainPage(parameterPvNames);
-				generateUID();
-			} //end init()
-
-
-			//=====================================================================================
-			//Make main page here
-			function makeMainPage(pvNames)
-			{
-			  	pvNames = JSON.parse(decodeURIComponent(pvNames));
-
-				var plot = document.getElementById('plot');
-				var widgetObject 		= {};
-
-				if (Array.isArray(pvNames)) {
-					pvName_ = pvNames.map(obj => Object.keys(obj)[0]);
-				}
-				else
-				{
-					pvName_[0] = pvNames;
-				}
-
-				widgetObject.pvList = pvName_;
-				widgetObject.pvSettings = {};
-				widgetObject.el = plot;
-				page_.widgets[0] = widgetObject;
-				SlowControlsAPI.setupPvParams(0, page_.widgets[0]);
-
-				var actualTime = Math.floor(Date.now())/1000;
-				var startTime = actualTime - 6*3600;
-				drawGraph(0, startTime, actualTime);
-			} //end makeMainPage()
-
-
-			var actualGraphId_;
-			var plotTimeData_ = {};
-			var plotValueData_ = {};
-			var plotPvList_ = {};
-			var plotParameters_ = {class: "", "show_labels": "false", "background_color": "transparent", "trace_type": "scattergl", "trace_mode": "lines"};
-			//=====================================================================================
-			function drawGraph(widget, startTime, endTime)
-			{
-				var i = 0;
-				plotPvList_ = {};
-
-				for (pv in page_.widgets[widget].pvList)
-				{
-					plotTimeData_[page_.widgets[widget].pvList[pv]] = [];
-					plotValueData_[page_.widgets[widget].pvList[pv]] = [];
-					plotPvList_[page_.widgets[widget].pvList[pv]] = i;
-					i++;
-				}
-
-				initializeGraph();
-				getPvHistory(widget, plotParameters_, startTime, endTime);
-				actualGraphId_ = widget;
-			} //end drawGraph()
-
-
-			//=====================================================================================
-			function initializeGraph()
-			{
-				var plot = document.getElementById("plot");
-				var plotColor = "black";
-
-				var traces = [];
-				for (pv in plotPvList_)
-				{
-					traces.push({ y: [],  type: plotParameters_["trace_type"], mode: plotParameters_["trace_mode"], visible: true });
-				}
-
-				Plotly.newPlot(plot.id
-			    , traces
-			    , {
-					  xaxis: { title: 'time', 'titlefont': { size: 10 }, showticklabels: true },
-					  yaxis: { title: 'amplitude', titlefont: { size: 10 }, zeroline: true }
-					, margin: { l:45, r: 10, b: 70, t: 20 }
-					//, showlegend: true
-					, legend: {
-								  x: 0
-							//  , y: -150
-							  	, "orientation": "h"
-								, font: {
-     								family: 'sans-serif'
-      							  , size: 8
- 							      , color: '#000'
-    							}
-								, bgcolor: 'rgba(0,0,0,0)'
-							 }
-					, plot_bgcolor: plotParameters_["background_color"]
-					, paper_bgcolor: plotParameters_["background_color"]
-	    		}, {responsive: true});
-
-	    		Plotly.relayout(plot, {
-								  width: window.innerWidth - 50
-								, height: window.innerHeight - 100,}
-							   );
-
-				console.log("makeGraph() reached");
-			} //end initializeGraph()
-
-
-			//=====================================================================================
-			function getPvHistory(widget, parameters, startTime, endTime)
-			{
-				var pvList = "";
-				
-				if(page_.widgets[widget] === undefined)
-				{
-					Debug.log("Illegal widget UID (not found in widget list) received from child widget frame: " + 
-							  widget, Debug.HIGH_PRIORITY);
-					return;
-				}
-
-				for(var pv in page_.widgets[widget].pvList)
-				{
-					pvList += page_.widgets[widget].pvList[pv] + ",";
-				}
-
-				var passParams = [widget, parameters];
-				DesktopContent.XMLHttpRequest("Request?RequestType=getPvArchiverData",
-									//post data 
-		    						"pvList=" + pvList + 
-									"&id=" + widget +
-									"&startTime=" + startTime +
-									"&endTime=" + endTime,
-									pvHistoryReqHandler /*handler*/,
-									 passParams /*parameter*/);
-				console.log("get history for widget! pvList: " + pvList);
-			} //end getPVHistory()
-
-
-			//=====================================================================================
-			function pvHistoryReqHandler(req, passParams) 
-			{
-				var jsonArr = req.responseXML.getElementsByTagName("JSON");
-				console.log("pvHistoryReqHandler()", jsonArr);
-
-				var id = passParams[0];
-				var parameters = passParams[1];
-				console.log("id: " + id + " parameter: " + parameters);
-
-				var _pvName, _pvStatus, _pvSeverity;
-				for (var i = jsonArr.length - 1; i >= 0; i--){
-					var history = JSON.parse(DesktopContent.getXMLValue(jsonArr[i]));				
-
-					for (var pvName in history) {
-						console.log(pvName);
-						console.log(history[pvName].Timestamp + " " + history[pvName].Value);
-						var date = new Date(history[pvName].Timestamp*1000);
-						if (plotTimeData_[pvName] !== undefined && plotTimeData_[pvName].length)
-							if ((date <= plotTimeData_[pvName][plotTimeData_.length-1]))
-							{
-								console.log("Plot pvHistoryReqHandler(): no value to add: last data time is major of actual date, CONTINUE"); continue;
-							}
-
-						if (plotTimeData_[pvName] !== undefined) plotTimeData_[pvName].push(date);
-						if (plotValueData_[pvName] !== undefined) plotValueData_[pvName].push(history[pvName].Value);
-						if(i == jsonArr.length - 1)
-						{
-							_pvName = pvName;
-							_pvStatus = history[pvName].Status;
-							_pvSeverity = history[pvName].Severity;
-						}
-					}
-				}
-
-				//
-				drawGraphFromArray((_pvName, _pvStatus, _pvSeverity));
-			} //end pvHistoryReqHandler()
-
-
-			//=====================================================================================
-			//plot a new value of a PV
-			function drawGraphFromArray(pvName, pvStatus, pvSeverity)
-			{
-				var plot = document.getElementById("plot");
-				var plotColor = "black";
-				if(pvSeverity == "MAJOR" )
-					plotColor = "red";
-				else if(pvSeverity == "MINOR")
-					plotColor = "orange";
-				else if(pvSeverity == "INVALID")
-					plotColor = "darkgrey";
-				else
-					plotColor = "green";
-
-				if (Object.getOwnPropertyNames(plotPvList_).length == 1)
-					Plotly.relayout(plot, {
-						title: {
-								text: pvName + "<br>Status: " + pvStatus + " Severity: " + pvSeverity
-							, font: { size: 12, color: plotColor }
-						}
-					});
-
-				var ntraces = [];
-				var traces = [];
-
-				var xval = [];
-				var yval = [];
-
-				var i = 0;
-
-				for (pv in plotPvList_)
-				{
-					ntraces.push(i);
-
-					if (plotTimeData_[pv] !== undefined && plotValueData_[pv] !== undefined)
-					{
-						xval = plotTimeData_[pv];
-						yval = plotValueData_[pv];
-					}
-					var trace = { x: xval, y: yval, type: plotParameters_["trace_type"], mode: plotParameters_["trace_mode"], name: pv, visible: (plot.data[i].visible == true) ? true : 'legendonly'};
-					traces.push(trace);
-					i++;
-				}
-
-				if (ntraces.length) Plotly.deleteTraces(plot, ntraces);
-				if (traces.length) Plotly.addTraces(plot, traces);
-				console.log("drawNewGraphValue() executed, pv: " + pvName);			
-			} //end drawNewValue()
-
-
-			//=====================================================================================
-			//Plot a new value of a PV
-			function drawNewValue(serverResponse)
-			{
-				var pvTime,	pvValue, pvTime, pvStatus, pvSeverity;
-				var lastPlotTime = {};
-				var dataBuffer = 100;
-
-				var ntraces = [];
-				var traces = [];
-
-				var xval = [];
-				var yval = [];
-
-				var i = 0;
-				var pvDate;
-				for(pvName in serverResponse)
-				{
-					pvValue = serverResponse[pvName].Value;
-					pvTime = serverResponse[pvName].Timestamp;
-					pvStatus = serverResponse[pvName].Status;
-					pvSeverity = serverResponse[pvName].Severity;
-
-					if(pvTime > lastPlotTime[pvName])
-					{
-						lastPlotTime[pvName] = pvTime;
-						pvDate = new Date(pvTime*1000);
-					}
-					else
-						pvDate = new Date();
-
-					if (plotTimeData_[pvName] !== undefined && plotTimeData_[pvName].length)
-						if ((pvDate <= plotTimeData_[pvName][plotTimeData_.length-1]))
-						{
-							console.log("Plot drawNewGraphValue(): no value to add: last data time is major of actual date, CONTINUE"); continue;
-						}
-
-					if (plotTimeData_[pvName] !== undefined && plotValueData_[pvName] !== undefined)
-					{
-						plotTimeData_[pvName].push(pvDate);
-						if (plotTimeData_[pvName].lenght > dataBuffer) plotTimeData_[pvName].shift();
-
-						plotValueData_[pvName].push(pvValue);
-						if (plotValueData_[pvName].lenght > dataBuffer) plotValueData_[pvName].shift();
-					}
-
-					console.log("Plot newValue() reached", pvName, pvDate, pvValue);
-					//console.log(plotTimeData_);
-					//console.log(plotValueData_);				
-					var plot = document.getElementById("plot");
-					var plotColor = "black";
-					if (Object.getOwnPropertyNames(serverResponse).length == 1)
-					{
-						if(pvSeverity == "MAJOR" )
-							plotColor = "red";
-						else if(pvSeverity == "MINOR")
-							plotColor = "orange";
-						else if(pvSeverity == "INVALID")
-							plotColor = "darkgrey";
-						else
-							plotColor = "green";
-
-						Plotly.relayout(plot, {
-							title: {
-								  text: pvName + "<br>Status: " + pvStatus + " Severity: " + pvSeverity
-								, font: { size: 12, color: plotColor }
-							}
-						});
-					}
-
-					ntraces.push(i);
-
-					if (plotTimeData_[pvName] !== undefined && plotValueData_[pvName] !== undefined)
-					{
-						xval = plotTimeData_[pvName];
-						yval = plotValueData_[pvName];
-					}
-					var trace = { x: xval, y: yval, type: plotParameters_["trace_type"], mode: plotParameters_["trace_mode"], name: pvName, visible: (plot.data[i].visible == true) ? true : 'legendonly'};
-					traces.push(trace);
-					i++;
-				}
-
-				if (ntraces.length) Plotly.deleteTraces(plot, ntraces);
-				if (traces.length) Plotly.addTraces(plot, traces);
-				console.log("drawNewGraphValue() executed, pv: " + pvName);
-			} //end drawNewValue()
-
-
-			//=====================================================================================
-			function generateUID()
-			{
-				UID_ = 0;
-				window.clearTimeout(timerVariable_);
-
-				var autoUpdate = document.getElementById("autoupdate");
-				if (!autoupdate.checked) return;
-
-				//BEGIN Put all pvs in a JSON and send to server
-				var pvList = "";
-				//console.log("page: ", page_);
-				for (var widget in page_.widgets)
-				{
-					console.log("generateUID: " +  page_.widgets[widget] + " " +  page_.widgets[widget].pvList);
-
-					for(var pv in page_.widgets[widget].pvList)
-					{
-						pvList += page_.widgets[widget].pvList[pv] + ",";
-					}
-				}
-
-				//END Put all pvs in a JSON and send to server
-				DesktopContent.XMLHttpRequest(
-					"Request?RequestType=generateUID",
-					"pvList=" + pvList,
-					generateUIDHandlerFunction);//, undefined, undefined, "sequence");
-			} //end generateUID(
-
-
-			//=====================================================================================
-			function generateUIDHandlerFunction(req)
-			{
-				var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
-
-				if(uid.message != "-1")
-					UID_ = uid.message;
-				else
-				{
-					UID_ = "";
-					Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
-				}
-
-				pollServer();
-			} //end generateUIDHandlerFunction()
-
-
-			//=====================================================================================
-			function pollServer()
-			{
-				Debug.log("pollServer: polling server!");
-				console.log("pollServer(): ",page_.widgets);
-				if(page_.widgets)
-				{
-					DesktopContent.XMLHttpRequest(
-						"Request?RequestType=poll&uid=" + UID_,
-						"", 
-						pollServerHandlerFunction /*returnHandler*/, 
-						0 /*reqParam*/, 
-						0 /*progressHandler*/, 
-						0 /*callHandlerOnErr*/, 
-						true /*doNoShowLoadingOverlay*/);	
-				}
-			} //end pollServer())
-
-
-			//=====================================================================================
-			function pollServerHandlerFunction(req)
-			{
-				Debug.log("pollServerHandlerFunction() was called. Req: " + req.responseText);
-
- 				var jsonStr = DesktopContent.getXMLValue(req, "JSON");
-				jsonStr = jsonStr.replace(/\s/g, ''); //hack for removing whitespace 
-    			if(!jsonStr || jsonStr == "") 
-					return;
-
-				Debug.log(jsonStr);
-
-				var serverResponse;
-
-				serverResponse = JSON.parse(jsonStr);
-
-				Debug.log(serverResponse);
-
-				if(serverResponse.message == "NOT_FOUND")
-				{
-					console.log("Have to generate new UID!");
-					generateUID();
-				}
-				else
-				{
-					drawNewValue(serverResponse);
-				}
-
-				timerVariable_ = window.setTimeout(pollServer, refreshRate_);
-			} //end pollServerHandlerFunction()
-
-
-			//=====================================================================================
-			function showGraphPeriod(period /*days*/)
-			{
-				var actualTime;
-				var startTime;
-				if (period == 0)
-				{
-					var layout = document.getElementById('plot')._fullLayout;
-					const xRange = layout.xaxis.range;
-					actualTime = Math.floor(new Date(xRange[1]))/1000;
-					startTime = Math.floor(new Date(xRange[0]))/1000;
-				}
-				else
-				{
-					actualTime = Math.floor(Date.now())/1000;
-					startTime = actualTime - period*24*3600;
-				}
-				drawGraph(0,startTime, actualTime);
-			} //end showGraphPeriod()
-
-
-			//=====================================================================================
-			window.onresize = function() {
-				Plotly.relayout(document.getElementById("plot"),
-				{
-					width: (window.innerWidth - 50),
-					height: (window.innerHeight - 100)
-				});
-				//console.log("window.onresize Plotly.relayout");
-			};
-
-
-		</script>
-	</head>
-
-	<body onload='//init() called by DesktopContent.js'>
-		<div class="mainBlockContainer" id ="mainBlock">
-			<div class="topContainer">
-				Show period
-				<button class='timeButton' onclick='showGraphPeriod(0.5)'>12 h</button>
-				<button class='timeButton' onclick='showGraphPeriod(1)'>1 day</button>
-				<button class='timeButton' onclick='showGraphPeriod(7)'>1 week</button>
-				<button class='timeButton' onclick='showGraphPeriod(15)'>2 weeks</button>
-				<button class='timeButton' onclick='showGraphPeriod(30)'>1 month</button>
-				<button class='timeButton' onclick='showGraphPeriod(0)'>update on range</button>
-				<label><input type="checkbox" id="autoupdate" onclick="generateUID()">   Auto update</label>
-			</div>
-			<div class="bottomContainer">
-				<div class="plotContainer" id="plot"></div>
-			</div>
-		</div> <!-- end main block container -->
-	</body>
+<head>
+    <title>Plot</title>
+
+
+
+    <link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/DCSMonitoringPages/Plot.css">
+
+    <script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/widgetLibrary.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+    <script type="text/JavaScript" src="/WebPath/js/js_lib/SlowControlsAPI.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <script type="text/javascript" src="/WebPath/html/widgets/libraries/plotly-1.27.1.min.js"></script> -->
+    <!-- <script type="text/javascript" src="/WebPath/UserWebPath/js/plotly-1.27.1.min.js"></script> -->
+    <script type="text/javascript" src="/WebPath/UserWebPath/js/plotly-3.0.1.min.js"></script>
+
+    <script>
+
+        //functions:
+        //	init()
+        //	getPvSet()
+        //	makeMainPage()
+        //	drawGraph()
+        //	makeGraph()
+
+        //	getPvHistory(widget, parameters)
+        //	pvHistoryReqHandler(req, passParams)
+
+        //	drawNewValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+        //	drawNewGraphValue(widget, pvName, pvValue, pvTime, pvStatus, pvSeverity)
+
+        //	generateUID()
+        //	generateUIDHandlerFunction(req)
+        //	pollServer()
+        //	updateRefreshInterval()
+        //	pollServerHandlerFunction(req)
+
+
+        //top-level scope (global) variables:
+
+        var page_ = page_ || {}; 	//define the page object if needed
+        //	page_.widgets = {
+        //		<widgetID> : <widget object := x, y,
+        //			w, h, pvList{}, attributes{},
+        //			displayName, loaded,
+        //			el /*iframe element*/
+        //	}
+
+        //====================== start high-level behavior description
+        //
+        //	High-level description of page interactions:
+        //
+        //	- page init() is called by DesktopContent.js:
+        //		* make Page_ to collect all objects to show PVs
+        //		* makeMainPage()
+        //		* pollServer()
+        //		* generateUID()
+        //
+        //	- setupPvParams(settings)
+        //		* Pass alarm thresholds, etc associated with pvList to widget content
+        //
+        //	- drawNewValue()
+        //		* Update widget drawing based on new value (and append to history if needed)
+        //
+        //====================== end high-level behavior description
+
+
+        var refreshRate_ = 60000; //set default to refresh every 15 seconds (ms)
+        var timerVariable_;
+
+        var UID_ = 0;
+        var timeToPoll_ = false;
+
+        var datalist_;
+
+        page_.createPage = function () {
+
+            this.name = "MyPage";
+            this.widgets = {};
+            this.addPV = function (pv) {
+                console.log("Reached " + pv);
+            }
+        }
+
+        var pvName_ = [];
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////
+
+
+        //=====================================================================================
+        //init called once body has loaded
+        function init() {
+            Debug.log("init() was called");
+            var parameterPvNames = DesktopContent.getParameter(0, "pv_names");
+            page_.createPage();
+
+            //get command string if opening a new window
+            var cmdStr = DesktopContent.getParameter(2); //from  location.search
+            if (cmdStr && cmdStr != "") {
+                //do incoming commands!
+                Debug.log("cmdStr=" + cmdStr);
+                //replace %22 with "
+                cmdStr = cmdStr.replace(/%22/g, "\"");
+            }
+
+            var autoUpdate = document.getElementById("autoupdate");
+            autoupdate.checked = true;
+            makeMainPage(parameterPvNames);
+            generateUID();
+        } //end init()
+
+
+        //=====================================================================================
+        //Make main page here
+        function makeMainPage(pvNames) {
+            pvNames = JSON.parse(decodeURIComponent(pvNames));
+
+            var plot = document.getElementById('plot');
+            var widgetObject = {};
+
+            if (Array.isArray(pvNames)) {
+                pvName_ = pvNames.map(obj => Object.keys(obj)[0]);
+            }
+            else {
+                pvName_[0] = pvNames;
+            }
+
+            widgetObject.pvList = pvName_;
+            widgetObject.pvSettings = {};
+            widgetObject.el = plot;
+            page_.widgets[0] = widgetObject;
+            SlowControlsAPI.setupPvParams(0, page_.widgets[0]);
+
+            var actualTime = Math.floor(Date.now()) / 1000;
+            var startTime = actualTime - 6 * 3600;
+            drawGraph(0, startTime, actualTime);
+        } //end makeMainPage()
+
+
+        var actualGraphId_;
+        var plotTimeData_ = {};
+        var plotValueData_ = {};
+        var plotPvList_ = {};
+        var plotParameters_ = { class: "", "show_labels": "false", "background_color": "transparent", "trace_type": "scattergl", "trace_mode": "lines" };
+        //=====================================================================================
+        function drawGraph(widget, startTime, endTime) {
+            var i = 0;
+            plotPvList_ = {};
+
+            for (pv in page_.widgets[widget].pvList) {
+                plotTimeData_[page_.widgets[widget].pvList[pv]] = [];
+                plotValueData_[page_.widgets[widget].pvList[pv]] = [];
+                plotPvList_[page_.widgets[widget].pvList[pv]] = i;
+                i++;
+            }
+
+            initializeGraph();
+            getPvHistory(widget, plotParameters_, startTime, endTime);
+            actualGraphId_ = widget;
+        } //end drawGraph()
+
+
+        //=====================================================================================
+        function initializeGraph() {
+            var plot = document.getElementById("plot");
+            var plotColor = "black";
+
+            var traces = [];
+            for (pv in plotPvList_) {
+                traces.push({ y: [], type: plotParameters_["trace_type"], mode: plotParameters_["trace_mode"], visible: true });
+            }
+
+            Plotly.newPlot(plot.id
+                , traces
+                , {
+                    xaxis: { title: 'time', 'titlefont': { size: 10 }, showticklabels: true },
+                    yaxis: { title: 'amplitude', titlefont: { size: 10 }, zeroline: true }
+                    , margin: { l: 45, r: 10, b: 70, t: 20 }
+                    //, showlegend: true
+                    , legend: {
+                        x: 0
+                        //  , y: -150
+                        , "orientation": "h"
+                        , font: {
+                            family: 'sans-serif'
+                            , size: 8
+                            , color: '#000'
+                        }
+                        , bgcolor: 'rgba(0,0,0,0)'
+                    }
+                    , plot_bgcolor: plotParameters_["background_color"]
+                    , paper_bgcolor: plotParameters_["background_color"]
+                }, { responsive: true });
+
+            Plotly.relayout(plot, {
+                width: window.innerWidth - 50
+                , height: window.innerHeight - 100,
+            }
+            );
+
+            console.log("makeGraph() reached");
+        } //end initializeGraph()
+
+
+        //=====================================================================================
+        function getPvHistory(widget, parameters, startTime, endTime) {
+            var pvList = "";
+
+            if (page_.widgets[widget] === undefined) {
+                Debug.log("Illegal widget UID (not found in widget list) received from child widget frame: " +
+                    widget, Debug.HIGH_PRIORITY);
+                return;
+            }
+
+            for (var pv in page_.widgets[widget].pvList) {
+                pvList += page_.widgets[widget].pvList[pv] + ",";
+            }
+
+            var passParams = [widget, parameters];
+            DesktopContent.XMLHttpRequest("Request?RequestType=getPvArchiverData",
+                //post data
+                "pvList=" + pvList +
+                "&id=" + widget +
+                "&startTime=" + startTime +
+                "&endTime=" + endTime,
+                pvHistoryReqHandler /*handler*/,
+                passParams /*parameter*/);
+            console.log("get history for widget! pvList: " + pvList);
+        } //end getPVHistory()
+
+
+        //=====================================================================================
+        function pvHistoryReqHandler(req, passParams) {
+            var jsonArr = req.responseXML.getElementsByTagName("JSON");
+            console.log("pvHistoryReqHandler()", jsonArr);
+
+            var id = passParams[0];
+            var parameters = passParams[1];
+            console.log("id: " + id + " parameter: " + parameters);
+
+            var _pvName, _pvStatus, _pvSeverity;
+            for (var i = jsonArr.length - 1; i >= 0; i--) {
+                var history = JSON.parse(DesktopContent.getXMLValue(jsonArr[i]));
+
+                for (var pvName in history) {
+                    console.log(pvName);
+                    console.log(history[pvName].Timestamp + " " + history[pvName].Value);
+                    var date = new Date(history[pvName].Timestamp * 1000);
+                    if (plotTimeData_[pvName] !== undefined && plotTimeData_[pvName].length)
+                        if ((date <= plotTimeData_[pvName][plotTimeData_.length - 1])) {
+                            console.log("Plot pvHistoryReqHandler(): no value to add: last data time is major of actual date, CONTINUE"); continue;
+                        }
+
+                    if (plotTimeData_[pvName] !== undefined) plotTimeData_[pvName].push(date);
+                    if (plotValueData_[pvName] !== undefined) plotValueData_[pvName].push(history[pvName].Value);
+                    if (i == jsonArr.length - 1) {
+                        _pvName = pvName;
+                        _pvStatus = history[pvName].Status;
+                        _pvSeverity = history[pvName].Severity;
+                    }
+                }
+            }
+
+            //
+            drawGraphFromArray((_pvName, _pvStatus, _pvSeverity));
+        } //end pvHistoryReqHandler()
+
+
+        //=====================================================================================
+        //plot a new value of a PV
+        function drawGraphFromArray(pvName, pvStatus, pvSeverity) {
+            var plot = document.getElementById("plot");
+            var plotColor = "black";
+            if (pvSeverity == "MAJOR")
+                plotColor = "red";
+            else if (pvSeverity == "MINOR")
+                plotColor = "orange";
+            else if (pvSeverity == "INVALID")
+                plotColor = "darkgrey";
+            else
+                plotColor = "green";
+
+            if (Object.getOwnPropertyNames(plotPvList_).length == 1)
+                Plotly.relayout(plot, {
+                    title: {
+                        text: pvName + "<br>Status: " + pvStatus + " Severity: " + pvSeverity
+                        , font: { size: 12, color: plotColor }
+                    }
+                });
+
+            var ntraces = [];
+            var traces = [];
+
+            var xval = [];
+            var yval = [];
+
+            var i = 0;
+
+            for (pv in plotPvList_) {
+                ntraces.push(i);
+
+                if (plotTimeData_[pv] !== undefined && plotValueData_[pv] !== undefined) {
+                    xval = plotTimeData_[pv];
+                    yval = plotValueData_[pv];
+                }
+                var trace = { x: xval, y: yval, type: plotParameters_["trace_type"], mode: plotParameters_["trace_mode"], name: pv, visible: (plot.data[i].visible == true) ? true : 'legendonly' };
+                traces.push(trace);
+                i++;
+            }
+
+            if (ntraces.length) Plotly.deleteTraces(plot, ntraces);
+            if (traces.length) Plotly.addTraces(plot, traces);
+            console.log("drawNewGraphValue() executed, pv: " + pvName);
+        } //end drawNewValue()
+
+
+        //=====================================================================================
+        //Plot a new value of a PV
+        function drawNewValue(serverResponse) {
+            var pvTime, pvValue, pvTime, pvStatus, pvSeverity;
+            var lastPlotTime = {};
+            var dataBuffer = 100;
+
+            var ntraces = [];
+            var traces = [];
+
+            var xval = [];
+            var yval = [];
+
+            var i = 0;
+            var pvDate;
+            for (pvName in serverResponse) {
+                pvValue = serverResponse[pvName].Value;
+                pvTime = serverResponse[pvName].Timestamp;
+                pvStatus = serverResponse[pvName].Status;
+                pvSeverity = serverResponse[pvName].Severity;
+
+                if (pvTime > lastPlotTime[pvName]) {
+                    lastPlotTime[pvName] = pvTime;
+                    pvDate = new Date(pvTime * 1000);
+                }
+                else
+                    pvDate = new Date();
+
+                if (plotTimeData_[pvName] !== undefined && plotTimeData_[pvName].length)
+                    if ((pvDate <= plotTimeData_[pvName][plotTimeData_.length - 1])) {
+                        console.log("Plot drawNewGraphValue(): no value to add: last data time is major of actual date, CONTINUE"); continue;
+                    }
+
+                if (plotTimeData_[pvName] !== undefined && plotValueData_[pvName] !== undefined) {
+                    plotTimeData_[pvName].push(pvDate);
+                    if (plotTimeData_[pvName].lenght > dataBuffer) plotTimeData_[pvName].shift();
+
+                    plotValueData_[pvName].push(pvValue);
+                    if (plotValueData_[pvName].lenght > dataBuffer) plotValueData_[pvName].shift();
+                }
+
+                console.log("Plot newValue() reached", pvName, pvDate, pvValue);
+                //console.log(plotTimeData_);
+                //console.log(plotValueData_);
+                var plot = document.getElementById("plot");
+                var plotColor = "black";
+                if (Object.getOwnPropertyNames(serverResponse).length == 1) {
+                    if (pvSeverity == "MAJOR")
+                        plotColor = "red";
+                    else if (pvSeverity == "MINOR")
+                        plotColor = "orange";
+                    else if (pvSeverity == "INVALID")
+                        plotColor = "darkgrey";
+                    else
+                        plotColor = "green";
+
+                    Plotly.relayout(plot, {
+                        title: {
+                            text: pvName + "<br>Status: " + pvStatus + " Severity: " + pvSeverity
+                            , font: { size: 12, color: plotColor }
+                        }
+                    });
+                }
+
+                ntraces.push(i);
+
+                if (plotTimeData_[pvName] !== undefined && plotValueData_[pvName] !== undefined) {
+                    xval = plotTimeData_[pvName];
+                    yval = plotValueData_[pvName];
+                }
+                var trace = { x: xval, y: yval, type: plotParameters_["trace_type"], mode: plotParameters_["trace_mode"], name: pvName, visible: (plot.data[i].visible == true) ? true : 'legendonly' };
+                traces.push(trace);
+                i++;
+            }
+
+            if (ntraces.length) Plotly.deleteTraces(plot, ntraces);
+            if (traces.length) Plotly.addTraces(plot, traces);
+            console.log("drawNewGraphValue() executed, pv: " + pvName);
+        } //end drawNewValue()
+
+
+        //=====================================================================================
+        function generateUID() {
+            UID_ = 0;
+            window.clearTimeout(timerVariable_);
+
+            var autoUpdate = document.getElementById("autoupdate");
+            if (!autoupdate.checked) return;
+
+            //BEGIN Put all pvs in a JSON and send to server
+            var pvList = "";
+            //console.log("page: ", page_);
+            for (var widget in page_.widgets) {
+                console.log("generateUID: " + page_.widgets[widget] + " " + page_.widgets[widget].pvList);
+
+                for (var pv in page_.widgets[widget].pvList) {
+                    pvList += page_.widgets[widget].pvList[pv] + ",";
+                }
+            }
+
+            //END Put all pvs in a JSON and send to server
+            DesktopContent.XMLHttpRequest(
+                "Request?RequestType=generateUID",
+                "pvList=" + pvList,
+                generateUIDHandlerFunction);//, undefined, undefined, "sequence");
+        } //end generateUID(
+
+
+        //=====================================================================================
+        function generateUIDHandlerFunction(req) {
+            var uid = JSON.parse(DesktopContent.getXMLValue(req, "JSON"));
+
+            if (uid.message != "-1")
+                UID_ = uid.message;
+            else {
+                UID_ = "";
+                Debug.log("Unable to generate UID!", Debug.HIGH_PRIORITY);
+            }
+
+            pollServer();
+        } //end generateUIDHandlerFunction()
+
+
+        //=====================================================================================
+        function pollServer() {
+            Debug.log("pollServer: polling server!");
+            console.log("pollServer(): ", page_.widgets);
+            if (page_.widgets) {
+                DesktopContent.XMLHttpRequest(
+                    "Request?RequestType=poll&uid=" + UID_,
+                    "",
+                    pollServerHandlerFunction /*returnHandler*/,
+                    0 /*reqParam*/,
+                    0 /*progressHandler*/,
+                    0 /*callHandlerOnErr*/,
+                    true /*doNoShowLoadingOverlay*/);
+            }
+        } //end pollServer())
+
+
+        //=====================================================================================
+        function pollServerHandlerFunction(req) {
+            Debug.log("pollServerHandlerFunction() was called. Req: " + req.responseText);
+
+            var jsonStr = DesktopContent.getXMLValue(req, "JSON");
+            jsonStr = jsonStr.replace(/\s/g, ''); //hack for removing whitespace
+            if (!jsonStr || jsonStr == "")
+                return;
+
+            Debug.log(jsonStr);
+
+            var serverResponse;
+
+            serverResponse = JSON.parse(jsonStr);
+
+            Debug.log(serverResponse);
+
+            if (serverResponse.message == "NOT_FOUND") {
+                console.log("Have to generate new UID!");
+                generateUID();
+            }
+            else {
+                drawNewValue(serverResponse);
+            }
+
+            timerVariable_ = window.setTimeout(pollServer, refreshRate_);
+        } //end pollServerHandlerFunction()
+
+
+        //=====================================================================================
+        function showGraphPeriod(period /*days*/) {
+            var actualTime;
+            var startTime;
+            if (period == 0) {
+                var layout = document.getElementById('plot')._fullLayout;
+                const xRange = layout.xaxis.range;
+                actualTime = Math.floor(new Date(xRange[1])) / 1000;
+                startTime = Math.floor(new Date(xRange[0])) / 1000;
+            }
+            else {
+                actualTime = Math.floor(Date.now()) / 1000;
+                startTime = actualTime - period * 24 * 3600;
+            }
+            drawGraph(0, startTime, actualTime);
+        } //end showGraphPeriod()
+
+
+        //=====================================================================================
+        window.onresize = function () {
+            Plotly.relayout(document.getElementById("plot"),
+                {
+                    width: (window.innerWidth - 50),
+                    height: (window.innerHeight - 100)
+                });
+            //console.log("window.onresize Plotly.relayout");
+        };
+
+
+    </script>
+</head>
+
+<body onload='//init() called by DesktopContent.js'>
+    <div class="mainBlockContainer" id="mainBlock">
+        <div class="topContainer">
+            Show period
+            <button class='timeButton' onclick='showGraphPeriod(0.5)'>12 h</button>
+            <button class='timeButton' onclick='showGraphPeriod(1)'>1 day</button>
+            <button class='timeButton' onclick='showGraphPeriod(7)'>1 week</button>
+            <button class='timeButton' onclick='showGraphPeriod(15)'>2 weeks</button>
+            <button class='timeButton' onclick='showGraphPeriod(30)'>1 month</button>
+            <button class='timeButton' onclick='showGraphPeriod(0)'>update on range</button>
+            <label><input type="checkbox" id="autoupdate" onclick="generateUID()">   Auto update</label>
+        </div>
+        <div class="bottomContainer">
+            <div class="plotContainer" id="plot"></div>
+        </div>
+    </div> <!-- end main block container -->
+</body>
 </html>
