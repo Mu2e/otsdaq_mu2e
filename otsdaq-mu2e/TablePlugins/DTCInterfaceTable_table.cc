@@ -193,8 +193,7 @@ std::string DTCInterfaceTable::setFilePath() const { return SLOWCONTROL_PV_FILE_
 
 //==============================================================================
 // return status structures
-std::string DTCInterfaceTable::getStructureAsJSON(
-    const ConfigurationManager* cfgMgr)
+std::string DTCInterfaceTable::getStructureAsJSON(const ConfigurationManager* cfgMgr)
 {
 	//Steps:
 	//	Get all FE Supervisors

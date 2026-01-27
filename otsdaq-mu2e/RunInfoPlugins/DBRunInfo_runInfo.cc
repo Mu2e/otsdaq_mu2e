@@ -209,8 +209,11 @@ std::vector<std::vector<std::string>> DBRunInfo::convertResultToVector(PGresult*
 ///                            Detector setup name is loaded from the environment variable
 //                             OTSDAQ_RUNINFO_DETECTOR_SETUP if present and default to 'default' if not.
 ///		@return conditionID - The database ID of the inserted config record. This is needed to link run record to the config record.
-unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
-                                           const std::string& configTypeName)
+unsigned int DBRunInfo::insertRunCondition(
+    const std::map<std::string /* subsystem */,
+                   std::map<std::string /*type/name/field */, std::string /* value */>>&
+                       runConditionMap,
+    const std::string& configTypeName)
 {
 	uint64_t conditionID = (unsigned int)-1;
 
@@ -280,7 +283,23 @@ unsigned int DBRunInfo::insertRunCondition(const std::string& runInfoConditions,
 
 		// __COUT__ << "Run Condition before JSON conversion " << condition.c_str() << __E__;
 
-		std::string runInfo = runInfoConditions;
+		std::string runInfo = "[";
+		for(auto& subsystemPair : runConditionMap)
+		{
+			if(runInfo.size() > 1)
+				runInfo += ", ";
+			runInfo += "\"" + subsystemPair.first + "\": {";
+			size_t fieldCount = 0;
+			for(auto& fieldPair : subsystemPair.second)
+			{
+				runInfo += "\"" + fieldPair.first + "\": \"" + fieldPair.second + "\"";
+				if(fieldCount < subsystemPair.second.size() - 1)
+					runInfo += ", ";
+				fieldCount++;
+			}
+			runInfo += "}";
+		}
+		runInfo += "]";
 		StringMacros::sanitizeForSQL(runInfo);
 		__COUT__ << "Configuration dump " << __E__ << runInfo.c_str() << __E__;
 

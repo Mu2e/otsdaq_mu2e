@@ -27,8 +27,11 @@ class DBRunInfo : public RunInfoVInterface
 	// const std::string&       configurationPath);
 	virtual ~DBRunInfo(void);
 
-	virtual unsigned int insertRunCondition(const std::string& runInfoConditions = "",
-	                                        const std::string& configTypeName    = "");
+	virtual unsigned int insertRunCondition(
+	    const std::map<std::string /* subsystem */,
+	                   std::map<std::string /*type/name/field */,
+	                            std::string /* value */>>& runConditionMap,
+	    const std::string&                                 configTypeName = "");
 	virtual unsigned int claimNextRunNumber(unsigned int       conditionID,
 	                                        const std::string& runInfoConditions = "",
 	                                        const std::string& comment           = "");
