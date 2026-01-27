@@ -60,7 +60,7 @@ class DBRunInfo : public RunInfoVInterface
 															std::map<std::string /*type/name/field */,
 																std::string  /* value */>>&
 																			 /* runConditionMap */,
-													 	 unsigned int        /* configureConditionID */,
+													 unsigned int        /* configureConditionID */,
 														 const std::string&  /* comment */);
 
 	virtual void 			updateRunInfo				(unsigned int        /* runConditionID */,
