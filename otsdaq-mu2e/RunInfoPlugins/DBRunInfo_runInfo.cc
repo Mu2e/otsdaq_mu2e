@@ -200,20 +200,24 @@ std::vector<std::vector<std::string>> DBRunInfo::convertResultToVector(PGresult*
 ///		Creates a new condition/config record in the database during the Configure transition.
 ///		This is called by the state machine when transitioning to Configured state.
 ///
-///		@param runInfoConditions - The configuration dump (JSON format) containing all
-///		                           configuration information
-///		@param configTypeName - The StateMachine UID (from activeStateMachineName_) that
-///		                       identifies which state machine triggered this configure transition.
-///		                       This is used to look up the corresponding type_id in the
-///		                       config_type table. Must match an existing entry in config_type.
-///                            Detector setup name is loaded from the environment variable
-//                             OTSDAQ_RUNINFO_DETECTOR_SETUP if present and default to 'default' if not.
-///		@return conditionID - The database ID of the inserted config record. This is needed to link run record to the config record.
+///		@param runNumber - The run number associated with this run condition.
+///		@param runConditionMap - The map of configuration dump (JSON format for Mu2e) containing all
+///		                           configuration information of all subsystems (i.e. remote and local gateways).
+///		                           The outer map key is the subsystem name. The inner map key is the field name (type/name/field)
+///		                           and the inner map value is the corresponding value for that field.
+///		@param configureConditionID - The database ID of the configure condition record created
+///		                             during the configure transition. This is used to link
+///		                             the run condition to the configure condition (if desired). 
+///		@param comment - A user comment associated with this run transition.
+///		@return runConditionID - The database ID of the inserted run record. This is needed to link future run transitions to this run record.
 unsigned int DBRunInfo::insertRunCondition(
-    const std::map<std::string /* subsystem */,
-                   std::map<std::string /*type/name/field */, std::string /* value */>>&
-                       runConditionMap,
-    const std::string& configTypeName)
+	unsigned int        /* runNumber */,
+	const std::map<std::string /* subsystem */,
+	std::map<std::string /*type/name/field */, 
+		std::string  /* value */>>&
+						runConditionMap,
+	unsigned int        /* configureConditionID */,
+	const std::string&  /* comment */)
 {
 	uint64_t conditionID = (unsigned int)-1;
 
@@ -308,19 +312,21 @@ unsigned int DBRunInfo::insertRunCondition(
 		std::string detectorSetupName = detectorSetupEnv ? detectorSetupEnv : "default";
 		StringMacros::sanitizeForSQL(detectorSetupName);
 
-		// Sanitize configTypeName for SQL safety
-		std::string sanitizedConfigTypeName = configTypeName;
-		StringMacros::sanitizeForSQL(sanitizedConfigTypeName);
 
-		// Validate configTypeName is provided
-		if(configTypeName.empty())
+		// Consider getActiveStateMachineName as configuration type name
+		// Validate getActiveStateMachineName is provided
+		if(getActiveStateMachineName().empty())
 		{
 			__SS__
 			    << "INSERT INTO 'config' DATABASE TABLE FAILED!!! "
-			    << "configTypeName (StateMachine UID) is required but was not provided."
+			    << "getActiveStateMachineName (StateMachine UID) is required but was not provided."
 			    << __E__;
 			__SS_THROW__;
 		}
+
+		// Sanitize getActiveStateMachineName for SQL safety
+		std::string sanitizedConfigTypeName = getActiveStateMachineName();
+		StringMacros::sanitizeForSQL(sanitizedConfigTypeName);
 
 		// Try INSERT first - let database validate the config_type exists
 		std::ostringstream queryStream;
@@ -400,7 +406,7 @@ unsigned int DBRunInfo::insertRunCondition(
 				std::vector<std::string> availableConfigTypes =
 				    getTableNames("config_type");
 				appendNotFoundError(ss,
-				                    configTypeName,
+				                    getActiveStateMachineName(),
 				                    "config_type",
 				                    "StateMachine UID",
 				                    availableConfigTypes);
@@ -595,19 +601,15 @@ unsigned int DBRunInfo::insertRunCondition(
 ///		This is called by the state machine when transitioning from Configured to Running state
 ///		(Start transition).
 ///
-///		@param conditionID - The database ID of the config record (from insertRunCondition).
+///		@param configureConditionID - The database ID of the config record (from insertRunCondition).
 ///		                     This links the run to the configuration that was used.
-///		@param runInfoConditions - The configuration dump (JSON format) containing all
-///		                           configuration information. Currently not used but kept for
-///		                           compatibility.
 ///		@param comment - User-provided comment/description for the run. This is the log entry
 ///                      from the state machine transition.
 ///		@return runNumber - The database-generated run number for the new run record. This is auto-generated by the database and returned via the RETURNING clause. Also inserts a START transition record into the run_transition table.
-unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
-                                           const std::string& runInfoConditions,
-                                           const std::string& comment)
+unsigned int DBRunInfo::claimNextRunNumber(unsigned int        configureConditionID,
+											const std::string& comment)
 {
-	if(conditionID == (unsigned int)-1)
+	if(configureConditionID == (unsigned int)-1)
 	{
 		__SS__ << "Impossible condition ID number not retrived by run info plugin!"
 		       << __E__;
@@ -615,8 +617,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 	}
 
 	unsigned int runNumber = (unsigned int)-1;
-	__COUT__ << "claiming next Run Number" << __E__;
-	__COUTV__(runInfoConditions);
+	__COUT__ << "claiming next Run Number" << __E__;	
 
 	int runInfoDbConnStatus_ = checkAndReconnectDb("for insert new run number and info");
 
@@ -676,7 +677,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 		            << "                config_id,                               "
 		            << "                comment,                                 "
 		            << "                create_time)                             "
-		            << "            VALUES (" << conditionID << ", '" << sanitizedComment
+		            << "            VALUES (" << configureConditionID << ", '" << sanitizedComment
 		            << "', CURRENT_TIMESTAMP)        "
 		            << "            RETURNING run_number;";
 
@@ -708,7 +709,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 		PQclear(res);
 
 		// write run start transition into run_transition table
-		updateRunInfo(runNumber, RunInfoVInterface::RunStopType::START);
+		updateRunInfo(runNumber, RunInfoVInterface::RunTransitionType::START, comment);
 	}
 
 	// __SS__ << "Halting..." << __E__;
@@ -773,25 +774,25 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       conditionID,
 
 //==============================================================================
 TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
-    RunInfoVInterface::RunStopType runStopType)
+    RunInfoVInterface::RunTransitionType runStopType)
 {
-	// Map RunStopType enum to database transition type ID and description
+	// Map RunTransitionType enum to database transition type ID and description
 	switch(runStopType)
 	{
-	case RunInfoVInterface::RunStopType::HALT:
+	case RunInfoVInterface::RunTransitionType::HALT:
 		return {0, "Running to Halt - Abort"};
-	case RunInfoVInterface::RunStopType::STOP:
+	case RunInfoVInterface::RunTransitionType::STOP:
 		return {1, "Running to Configure - Stop"};
-	case RunInfoVInterface::RunStopType::ERROR:
+	case RunInfoVInterface::RunTransitionType::ERROR:
 		return {2, "Other state to Error - Error"};
-	case RunInfoVInterface::RunStopType::PAUSE:
+	case RunInfoVInterface::RunTransitionType::PAUSE:
 		return {3, "Running to Pause - Pause"};
-	case RunInfoVInterface::RunStopType::RESUME:
+	case RunInfoVInterface::RunTransitionType::RESUME:
 		return {4, "Pause to Running - Resume"};
-	case RunInfoVInterface::RunStopType::START:
+	case RunInfoVInterface::RunTransitionType::START:
 		return {5, "Configure to Running - Start"};
 	default:
-		__SS__ << "Unknown RunStopType: " << static_cast<int>(runStopType) << __E__;
+		__SS__ << "Unknown RunTransitionType: " << static_cast<int>(runStopType) << __E__;
 		__SS_THROW__;
 	}
 }  //end getTransitionTypeInfo()
@@ -803,21 +804,26 @@ TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
 ///		when state changes occur for a run (e.g., Start, Stop, Pause, Resume, Halt, Error).
 //      Only states Configured and "above" are recorded (aka relevant for run)
 ///
-///		@param runNumber - The database run number for which to record the transition.
+///		@param runConditionID - For Mu2e, the runConditionID is the database run number for which to record the transition.
 ///		                   This should be a valid run number that was previously created
-///		                   via claimNextRunNumber().
-///		@param runStopType - The type of transition being recorded. Valid values are:
+///		                   and value returned via claimNextRunNumber().
+///		@param runTransitionType - The type of transition being recorded. Valid values are:
 ///		                     - HALT: Running/Paused to Halt (Abort)
 ///		                     - STOP: Running to Configure (Stop)
 ///		                     - ERROR: Any state to Error
 ///		                     - PAUSE: Running to Pause
 ///		                     - RESUME: Pause to Running
 ///		                     - START: Configure to Running (typically called from claimNextRunNumber)
+///		@param comment - User-provided comment/description for the transition. This is the log entry
+///                      from the state machine transition.
 ///		@return void - Inserts a record into the run_transition table with the run_number,
 ///		               transition type_id (mapped from runStopType), and current timestamp.
-void DBRunInfo::updateRunInfo(unsigned int                   runNumber,
-                              RunInfoVInterface::RunStopType runStopType)
+void DBRunInfo::updateRunInfo(unsigned int       runConditionID,
+							RunTransitionType    runTransitionType,
+							const std::string&  /* comment */)
 {
+	// For Mu2e, the runConditionID is the run number (for now!)
+	unsigned int runNumber = runConditionID;
 	__COUT__ << "Updating run transition for run number " << runNumber << __E__;
 
 	int runInfoDbConnStatus_ = checkAndReconnectDb("to update the transition");
@@ -826,7 +832,7 @@ void DBRunInfo::updateRunInfo(unsigned int                   runNumber,
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		// Get transition type information from mapping
-		TransitionTypeInfo transitionInfo = getTransitionTypeInfo(runStopType);
+		TransitionTypeInfo transitionInfo = getTransitionTypeInfo(runTransitionType);
 
 		std::string transitionDescription = "'" + transitionInfo.description + "'";
 		StringMacros::sanitizeForSQL(
