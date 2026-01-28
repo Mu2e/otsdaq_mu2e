@@ -750,7 +750,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 	// }
 	// else
 	// {
-	// 	__SS__ << "RETRIVE RUN NUMBER FROM 'runs' DATABASE TABLE "
+	// 	__SS__ << "RETRIEVE RUN NUMBER FROM 'runs' DATABASE TABLE "
 	// 	          "FAILED!!! PQ ERROR: "
 	// 	       << PQresultErrorMessage(readRes) << __E__;
 	// 	PQclear(res);
@@ -930,7 +930,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		}
 		else
 		{
-			// __SS__ << "getRunRecords() RETRIVE RUN RECORDS FROM 'runs' DATABASE TABLE "
+			// __SS__ << "getRunRecords() RETRIEVE RUN RECORDS FROM 'runs' DATABASE TABLE "
 			//           "FAILED!!! PQ ERROR: "
 			//        << PQresultErrorMessage(res) << __E__;
 			// PQclear(res);
@@ -1031,7 +1031,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 		conditionRecords = convertResultToVector(res);
 		if(conditionRecords.empty())
 		{
-			__SS__ << "getRunConditionByID() RETRIVE RUN CONDITION RECORD FROM "
+			__SS__ << "getRunConditionByID() RETRIEVE RUN CONDITION RECORD FROM "
 			          "'run_condition' DATABASE TABLE "
 			          "FAILED!!! No records found."
 			       << __E__;
