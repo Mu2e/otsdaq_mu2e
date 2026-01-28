@@ -800,7 +800,7 @@ TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
 ///		Inserts a transition record into the database for a specific run.
 ///		This is called by the state machine during various transitions to track
 ///		when state changes occur for a run (e.g., Start, Stop, Pause, Resume, Halt, Error).
-//      Only states Configured and "above" are recorded (aka relevant for run)
+///      Only states Configured and "above" are recorded (aka relevant for run)
 ///
 ///		@param runConditionID - For Mu2e, the runConditionID is the database run number for which to record the transition.
 ///		                   This should be a valid run number that was previously created
