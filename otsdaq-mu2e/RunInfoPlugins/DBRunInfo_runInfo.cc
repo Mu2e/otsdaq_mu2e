@@ -295,7 +295,8 @@ unsigned int DBRunInfo::insertRunCondition(
 			size_t fieldCount = 0;
 			for(auto& fieldPair : subsystemPair.second)
 			{
-				runInfo += "\"" + fieldPair.first + "\": \"" + fieldPair.second + "\"";
+				runInfo += "\"" + fieldPair.first + "\": \"" +
+				           StringMacros::encodeURIComponent(fieldPair.second) + "\"";
 				if(fieldCount < subsystemPair.second.size() - 1)
 					runInfo += ", ";
 				fieldCount++;
