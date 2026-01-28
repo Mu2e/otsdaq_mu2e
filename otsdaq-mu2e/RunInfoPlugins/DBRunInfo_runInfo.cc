@@ -238,7 +238,7 @@ unsigned int DBRunInfo::insertRunCondition(
 		//                              sizeof("Configuration := ") - 1);
 		// StringMacros::sanitizeForSQL(condition);
 
-		//extract configuraiton name and version from runInfoConditions
+		//extract configuration name and version from runInfoConditions
 		// std::string runConfiguration =
 		//     runInfoConditions.substr(runInfoConditions.find("Configuration := ") +
 		//                              sizeof("Configuration := ") - 1);
@@ -279,7 +279,7 @@ unsigned int DBRunInfo::insertRunCondition(
 		// StringMacros::sanitizeForSQL(backbone);
 
 		// __COUT__ << "runInfoConditions " << runInfoConditions << __E__;
-		// __COUT__ << "Info from parsering dump..." << __E__;
+		// __COUT__ << "Info from parsing dump..." << __E__;
 		// __COUT__ << "\tBackbone := " << backbone << " (" << backboneVersion << ")" <<  __E__;
 		// __COUT__ << "\tContext := " << runContext << " (" << runContextVersion << ")" <<  __E__;
 		// __COUT__ << "\tConfiguration := " << runConfiguration << " (" << runConfigurationVersion << ")" <<  __E__;
@@ -452,7 +452,7 @@ unsigned int DBRunInfo::insertRunCondition(
 		}
 		else
 		{
-			__SS__ << "RETRIVE CONDITION_ID FROM 'config' DATABASE TABLE "
+			__SS__ << "RETRIEVE CONDITION_ID FROM 'config' DATABASE TABLE "
 			          "FAILED!!! Unexpected number of rows returned: "
 			       << PQntuples(res) << __E__;
 			PQclear(res);
@@ -625,7 +625,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 	{
 		PGresult* res;
 
-		//extract configuraiton name and version from runInfoConditions
+		//extract configuration name and version from runInfoConditions
 		// std::string runConfiguration =
 		//     runInfoConditions.substr(runInfoConditions.find("Configuration := ") +
 		//                              sizeof("Configuration := ") - 1);
@@ -664,7 +664,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 
 		// runs renamed to "runs"
 		//    runs has less columns (moved to different table)
-		// run_confition renamed global_config
+		// run_condition renamed global_config
 
 		// Sanitize comment for SQL safety
 		std::string sanitizedComment = comment;
@@ -698,7 +698,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		}
 		else
 		{
-			__SS__ << "RETRIVE RUN NUMBER FROM 'run' DATABASE TABLE "
+			__SS__ << "RETRIEVE RUN NUMBER FROM 'run' DATABASE TABLE "
 			          "FAILED!!! PQ ERROR: "
 			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
@@ -801,7 +801,7 @@ TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
 ///		Inserts a transition record into the database for a specific run.
 ///		This is called by the state machine during various transitions to track
 ///		when state changes occur for a run (e.g., Start, Stop, Pause, Resume, Halt, Error).
-//      Only states Configured and "above" are recorded (aka relevant for run)
+///      Only states Configured and "above" are recorded (aka relevant for run)
 ///
 ///		@param runConditionID - For Mu2e, the runConditionID is the database run number for which to record the transition.
 ///		                   This should be a valid run number that was previously created

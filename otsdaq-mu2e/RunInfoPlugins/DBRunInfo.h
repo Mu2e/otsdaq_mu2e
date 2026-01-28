@@ -24,24 +24,24 @@ struct TransitionTypeInfo
 
 /// ~~ DBRunInfo expected flow (managed by GatewaySupervisor) ~~:
 ///
-///		Configure transtion:
+///		Configure transition:
 ///			- insertConfigureCondition(<local configure blob>, <comment>)
 ///				==> Run Info plugin records configure conditions associated with this Configure transition.
 ///					The blob is local to the parent GatewaySupervisor (i.e. not from subsystems, as subsystems could configure asynchronously)
 ///
-///		Pre-start transtion:
+///		Pre-start transition:
 ///			- claimNextRunNumber(<configure condition ID>, <comment>)
 ///				==> Run Info plugin retrieves/returns next run number from run number
 ///
-///		During start transtion:
+///		During start transition:
 ///			- Gateway Supervisor collects configure blobs from all subsystem Gateways
 ///				==> Run Info plugin not involved
 ///
-///		End of start transtion:
+///		End of start transition:
 /// 		- insertRunCondition(<run number>, <map of blob from all subsystems>, <configure condition ID>, <comment>)
 ///				==> Run Info plugin records run conditions as desired associated with run number)
 ///
-///		In stop/pause/resume/halt/error transtions:
+///		In stop/pause/resume/halt/error transitions:
 /// 		- updateRunInfo(<run number>, <transition type>, <comment>)
 ///				==> Run Info plugin records run transition as desired associated with run number)
 ///
@@ -60,7 +60,7 @@ class DBRunInfo : public RunInfoVInterface
 															std::map<std::string /*type/name/field */,
 																std::string  /* value */>>&
 																			 /* runConditionMap */,
-													 	 unsigned int        /* configureConditionID */,
+													 unsigned int        /* configureConditionID */,
 														 const std::string&  /* comment */);
 
 	virtual void 			updateRunInfo				(unsigned int        /* runConditionID */,
