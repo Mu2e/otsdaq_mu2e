@@ -610,7 +610,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 {
 	if(configureConditionID == (unsigned int)-1)
 	{
-		__SS__ << "Impossible condition ID number not retrived by run info plugin!"
+		__SS__ << "Impossible condition ID number not retrieved by run info plugin!"
 		       << __E__;
 		__SS_THROW__;
 	}
@@ -926,7 +926,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		runRecords = convertResultToVector(res);
 		if(!runRecords.empty())
 		{
-			__COUT__ << "Run records retrived" << __E__;
+			__COUT__ << "Run records retrieved" << __E__;
 		}
 		else
 		{
@@ -1038,7 +1038,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 			PQclear(res);
 			__SS_THROW__;
 		}
-		__COUT__ << "Run condition record retrived" << __E__;
+		__COUT__ << "Run condition record retrieved" << __E__;
 
 		PQclear(res);
 	}
