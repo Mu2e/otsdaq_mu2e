@@ -193,8 +193,7 @@ std::string DTCInterfaceTable::setFilePath() const { return SLOWCONTROL_PV_FILE_
 
 //==============================================================================
 // return status structures
-std::string DTCInterfaceTable::getStructureStatusAsJSON(
-    ConfigurationManager* cfgMgr) const
+std::string DTCInterfaceTable::getStructureAsJSON(const ConfigurationManager* cfgMgr)
 {
 	//Steps:
 	//	Get all FE Supervisors
@@ -304,6 +303,6 @@ std::string DTCInterfaceTable::getStructureStatusAsJSON(
 	json << "]}";                 //end primary application structure
 	__COUTV__(json.str());
 	return json.str();
-}  // end getStructureStatusAsJSON()
+}  // end getStructureAsJSON()
 
 DEFINE_OTS_TABLE(DTCInterfaceTable)
