@@ -7,11 +7,15 @@
 #include <boost/algorithm/string.hpp>
 #include <chrono>
 #include <sstream>
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 using namespace ots;
 
 //==============================================================================
-DBRunInfo::DBRunInfo(std::string interfaceUID) : RunInfoVInterface(interfaceUID)
+DBRunInfo::DBRunInfo(const std::string& runInfoPluginClassName,
+	const std::string& activeStateMachineName) 
+	: RunInfoVInterface(runInfoPluginClassName, activeStateMachineName)
 {
 	dbname_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE")
 	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE")
@@ -32,6 +36,7 @@ DBRunInfo::DBRunInfo(std::string interfaceUID) : RunInfoVInterface(interfaceUID)
 	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")
 	                                  : "test");
 
+	__COUTV__(getActiveStateMachineName());
 	//open db connection
 	openDbConnection();
 }  //end constructor()
@@ -211,11 +216,11 @@ std::vector<std::vector<std::string>> DBRunInfo::convertResultToVector(PGresult*
 ///		@param comment - A user comment associated with this run transition.
 ///		@return runConditionID - The database ID of the inserted run record. This is needed to link future run transitions to this run record.
 unsigned int DBRunInfo::insertRunCondition(
-    unsigned int /* runNumber */,
+    unsigned int runNumber,
     const std::map<std::string /* subsystem */,
                    std::map<std::string /*type/name/field */, std::string /* value */>>&
         runConditionMap,
-    unsigned int /* configureConditionID */,
+    unsigned int configureConditionID,
     const std::string& /* comment */)
 {
 	uint64_t conditionID = (unsigned int)-1;
@@ -223,7 +228,7 @@ unsigned int DBRunInfo::insertRunCondition(
 	__COUT__ << "insert Run Condition" << __E__;
 
 	// char* mu2eOwner = __ENV__("MU2E_OWNER");
-	char* hostName = __ENV__("HOSTNAME");
+	//char* hostName = __ENV__("HOSTNAME");
 
 	int runInfoDbConnStatus_ = checkAndReconnectDb("inserting run condition");
 
@@ -231,6 +236,151 @@ unsigned int DBRunInfo::insertRunCondition(
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
+
+		// Iterate through each subsystem in the map
+		for (auto const& [subsystem, fieldMap] : runConditionMap)
+		{
+            nlohmann::json jsonObj;
+            for (auto const& [field, value] : fieldMap) {
+                // first non-whitespace character
+                size_t firstRealChar = value.find_first_not_of(" \t\n\r");
+
+                if (firstRealChar != std::string::npos && 
+                (value[firstRealChar] == '{' || value[firstRealChar] == '[')) {
+
+                    const char* scratchEnv = std::getenv("OTS_SCRATCH");
+                    std::string fullPath2;
+                    fullPath2 = std::string(scratchEnv) + "/Logs/debug_json_dump.txt";
+                    std::ofstream debugFile2(fullPath2, std::ios::out | std::ios::app);
+                    
+                    if (debugFile2.is_open()) {
+                            debugFile2 << "\n--- New Error Log: " << field << " ---\n";
+                            debugFile2 << value;
+                            debugFile2.close();
+                        }
+
+                    jsonObj[field] = nlohmann::json::parse(value);
+
+
+                    /*
+                    try {
+                        jsonObj[field] = nlohmann::json::parse(value);
+                    } catch (...) { 
+                        // Get the environment variable
+                        const char* scratchEnv = std::getenv("OTS_SCRATCH");
+                        
+                        std::string fullPath;
+                        if (scratchEnv != nullptr) {
+                            // 2. Construct the path: $OTS_SCRATCH + /Logs/ + filename
+                            fullPath = std::string(scratchEnv) + "/Logs/debug_json_dump.txt";
+                        } else {
+                            // Fallback to local directory if env var is missing
+                            fullPath = "debug_json_dump.txt"; 
+                        }
+
+                        // 3. Write to file
+                        std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
+                        
+                        if (debugFile.is_open()) {
+                            debugFile << "\n--- New Error Log ---\n";
+                            debugFile << value;
+                            debugFile.close();
+                        } else {
+                            // Optional: Print error to stderr if file couldn't be created 
+                            // (e.g., if the /Logs/ folder doesn't exist)
+                            // std::cerr << "Failed to write debug file to: " << fullPath << std::endl;
+                        }
+
+                        // 4. Handle program flow (Fallback to string storage)
+                        jsonObj[field] = value; 
+                    }*/
+                } else {
+                    jsonObj[field] = value;
+                }
+
+                /*
+                // Parse json objects and lists
+                if (firstRealChar != std::string::npos && 
+                (value[firstRealChar] == '{' || value[firstRealChar] == '[')) {
+                    try {
+                        jsonObj[field] = nlohmann::json::parse(value);
+                    } catch (...) { // Fallback, store as string
+                        __SS__ <<  value.substr(1730, 50) << __E__;
+                        __SS_THROW__;
+                    }
+
+                    //try {
+                    //    jsonObj[field] = nlohmann::json::parse(value);
+                    //} catch (...) { // Fallback, store as string
+                    //    jsonObj[field] = value;
+                    //}
+                } else {
+                    jsonObj[field] = value;
+                }*/
+            }
+            std::string jsonString = jsonObj.dump();
+		    /*std::stringstream jsonBlob;
+		    jsonBlob << "{";
+		    
+		    bool first = true;
+		    for (auto const& [field, value] : fieldMap)
+		    {
+			if (!first) jsonBlob << ", ";
+			// Basic escaping of quotes might be needed if values contain them
+			jsonBlob << "\"" << field << "\": \"" << value << "\"";
+			first = false;
+		    }
+		    jsonBlob << "}";
+
+		    // Construct the SQL Command
+		    std::stringstream query;
+		    std::string jsonString = jsonBlob.str();*/
+		    std::string runNumberStr = std::to_string(runNumber);
+
+		    std::string sql = std::string("INSERT INTO ") + dbSchema_ + ".config "
+				     "(run_number, subsystem, config, create_time) "
+			             "VALUES ($1, $2, $3::jsonb, CURRENT_TIMESTAMP);";
+            
+		    const char* paramValues[3];
+		    paramValues[0] = runNumberStr.c_str();
+		    paramValues[1] = subsystem.c_str();
+		    paramValues[2] = jsonString.c_str();
+
+            __COUT__ << "DEBUG INSERTING RUN CONDITION:" << __E__;
+            __COUT__ << "paramValues[0]: " << paramValues[0] << __E__;
+            __COUT__ << "paramValues[1]: " << paramValues[1] << __E__;
+            __COUT__ << "paramValues[2]: " << paramValues[2] << __E__;
+		    
+		    res = PQexecParams(runInfoDbConn_,
+                        sql.c_str(),
+                        3,             // number of parameters
+                        NULL,          // param types (let Postgres infer)
+                        paramValues,
+                        NULL,          // param lengths
+                        NULL,          // param formats
+                        0);            // result format (text)
+			    
+
+		    // Check result status
+		    // Note: For INSERT, PQresultStatus usually returns PGRES_COMMAND_OK 
+		    // or PGRES_TUPLES_OK if using RETURNING
+		    if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK)
+		    {
+			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! PQ ERROR: " << __E__
+			       << PQresultErrorMessage(res) << __E__
+			       << "Subsystem: " << subsystem << __E__
+			       << "SQL: " << sql << __E__;
+			PQclear(res);
+			__SS_THROW__;
+		    }
+		    
+		    PQclear(res);
+		}
+
+		// Update conditionID or return success
+		conditionID = runNumber; 
+		return conditionID;
+
 
 		//extract run condition from runInfoConditions
 		// std::string condition =
@@ -286,7 +436,7 @@ unsigned int DBRunInfo::insertRunCondition(
 
 		// __COUT__ << "Run Condition before JSON conversion " << condition.c_str() << __E__;
 
-		std::string runInfo = "[";
+		/*std::string runInfo = "[";
 		for(auto& subsystemPair : runConditionMap)
 		{
 			if(runInfo.size() > 1)
@@ -584,7 +734,7 @@ unsigned int DBRunInfo::insertRunCondition(
 
 			PQclear(res);
 
-		}  // end for loop
+		}  // end for loop*/
 	}
 
 	if(conditionID == (unsigned int)-1)
@@ -593,7 +743,7 @@ unsigned int DBRunInfo::insertRunCondition(
 		__SS_THROW__;
 	}
 
-	return conditionID;
+	return conditionID; // in this scheme we return the run number since that's used to track the run condition
 }  //end insertRunCondition()
 
 //==============================================================================
@@ -610,12 +760,12 @@ unsigned int DBRunInfo::insertRunCondition(
 unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureConditionID,
                                            const std::string& comment)
 {
-	if(configureConditionID == (unsigned int)-1)
-	{
-		__SS__ << "Impossible condition ID number not retrieved by run info plugin!"
-		       << __E__;
-		__SS_THROW__;
-	}
+	//if(configureConditionID == (unsigned int)-1)
+	//{
+	//	__SS__ << "Impossible condition ID number not retrieved by run info plugin!"
+	//	       << __E__;
+	//	__SS_THROW__;
+	//}
 
 	unsigned int runNumber = (unsigned int)-1;
 	__COUT__ << "claiming next Run Number" << __E__;
@@ -672,15 +822,20 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		std::string sanitizedComment = comment;
 		StringMacros::sanitizeForSQL(sanitizedComment);
 
+		std::string runType = getActiveStateMachineName();
+ 		StringMacros::sanitizeForSQL(runType);
+
 		// Build INSERT query using std::ostringstream to avoid buffer overflow
 		std::ostringstream queryStream;
-		queryStream << "INSERT INTO " << dbSchema_ << ".run(                         "
-		            << "                config_id,                               "
-		            << "                comment,                                 "
-		            << "                create_time)                             "
-		            << "            VALUES (" << configureConditionID << ", '"
-		            << sanitizedComment << "', CURRENT_TIMESTAMP)        "
-		            << "            RETURNING run_number;";
+		queryStream << "INSERT INTO " << dbSchema_ << ".run ("
+			    << "  comment, "
+			    << "  run_type, " 
+			    << "  create_time) "
+			    << " VALUES ("
+			    << "  '" << sanitizedComment << "', "
+			    << "  '" << runType << "', "
+			    << "  CURRENT_TIMESTAMP) "
+			    << " RETURNING run_number;";
 
 		std::string query = queryStream.str();
 		res               = PQexec(runInfoDbConn_, query.c_str());
