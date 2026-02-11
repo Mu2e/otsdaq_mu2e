@@ -12,6 +12,7 @@ userinput=$1
 # the next "unsets" the command line input, so as not to pass it along unwittingly somewhere else
 shift
 
+HOSTNAME="${HOSTNAME:-$(hostname -f)}"
 echo "running setup on $HOSTNAME"
 
 source /mu2e/spack_pcie/setup-env.sh
