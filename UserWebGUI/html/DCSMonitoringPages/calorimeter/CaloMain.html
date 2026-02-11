@@ -43,7 +43,7 @@
         //
         //	High-level description of page interactions:
         //
-        //	- page init() is called by DesktopContent.js:
+		//	- page init() is called by DesktopContent.js:
         //		* make Page_ to collect all objects to show PVs
         //		* makeMainPage()
         //		* pollServer()
@@ -124,16 +124,34 @@
         } //end init()
 
 
-        //=====================================================================================
-        //Make main page here
-        function makeMainPage() {
-            var frame = document.getElementById("calo1");
-            frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_2.bob";
+			//=====================================================================================
+			//Make main page here
+			function makeMainPage()
+			{
+				var frame = document.getElementById("calo1");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_hv_d0_s0.bob";
 
-            frame = document.getElementById("calo2");
-            var url = location.origin + "/WebPath/UserWebPath/html/DCSMonitoringPages/StopLightsTable.html?csv_file=" + tableUploaded2Str_1_;
-            frame.src = url;
-        } //end makeMainPage()
+				frame = document.getElementById("calo2");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_hv_d0_s1.bob";
+
+				frame = document.getElementById("calo3");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_hv_d1_s0.bob";
+
+				frame = document.getElementById("calo4");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_hv_d1_s1.bob";
+
+				var frame = document.getElementById("calo5");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_lv_d0_s0.bob";
+
+				frame = document.getElementById("calo6");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_lv_d0_s1.bob";
+
+				var frame = document.getElementById("calo7");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_lv_d1_s0.bob";
+
+				frame = document.getElementById("calo8");
+				frame.src = "/WebPath/html/SlowControlsDashboard.html?page_name=private/calo_lv_d1_s1.bob";
+			} //end makeMainPage()
 
 
         //=====================================================================================
@@ -261,30 +279,47 @@
     </script>
 </head>
 
-<body onload='//init() called by DesktopContent.js'>
+	<body onload='//init() called by DesktopContent.js'>
 
-    <div id="mainBlockContainer" height="auto" width="auto">
-        <h2 align="center">Calorimeter Monitoring Home Page</h2>
-        <div class="topBlockContainer">
-            <div id="subSystemContainer1" class="subSystemContainer">
-                <span>DIRAC Temperatures Disk 0</span>
-                <iframe class="caloFrame" id="calo1"></iframe>
-            </div>
-            <div id="subSystemContainer2" class="subSystemContainer">
-                <span>DIRAC Temperatures Disk 1</span>
-                <iframe class="caloFrame" id="calo2"></iframe>
-            </div>
-        </div>
-        <div class="bottomBlockContainer">
-            <div id="subSystemContainer3" class="subSystemContainer">
-                <span>DIRAC Voltages Disk 0</span>
-                <iframe class="caloFrame" id="calo3"></iframe>
-            </div>
-            <div id="subSystemContainer4" class="subSystemContainer">
-                <span>DIRAC Voltages Disk 1</span>
-                <iframe class="caloFrame" id="calo4"></iframe>
-            </div>
-        </div>
-    </div> <!-- end main block container -->
-</body>
+		<div id="mainBlockContainer" height="auto" width="auto">
+			<h2 align="center">Calorimeter High Voltage Monitoring Page</h2>
+			<div class="topBlockContainer">
+				<div id="subSystemContainer1" class="subSystemContainer">
+					<span>High Voltages Disk0 S0</span>
+					<iframe class="caloFrame" id="calo1"></iframe>
+				</div>
+				<div id="subSystemContainer2" class="subSystemContainer">
+					<span>High Voltages Disk0 S1</span>
+					<iframe class="caloFrame" id="calo2"></iframe>
+				</div>
+				<div id="subSystemContainer1" class="subSystemContainer">
+					<span>High Voltages Disk1 S0</span>
+					<iframe class="caloFrame" id="calo3"></iframe>
+				</div>
+				<div id="subSystemContainer2" class="subSystemContainer">
+					<span>High Voltages Disk1 S1</span>
+					<iframe class="caloFrame" id="calo4"></iframe>
+				</div>
+			</div>
+            <h2 align="center">Calorimeter Low Voltage Monitoring Page</h2>
+			<div class="bottomBlockContainer">
+				<div id="subSystemContainer3" class="subSystemContainer">
+					<span>Low Voltages Disk0 S0</span>
+					<iframe class="caloFrame" id="calo5"></iframe>
+				</div>
+				<div id="subSystemContainer4" class="subSystemContainer">
+					<span>Low Voltages Disk0 S1</span>
+					<iframe class="caloFrame" id="calo6"></iframe>
+				</div>
+				<div id="subSystemContainer1" class="subSystemContainer">
+					<span>High Voltages Disk1 S0</span>
+					<iframe class="caloFrame" id="calo7"></iframe>
+				</div>
+				<div id="subSystemContainer2" class="subSystemContainer">
+					<span>High Voltages Disk1 S1</span>
+					<iframe class="caloFrame" id="calo8"></iframe>
+				</div>
+			</div>
+		</div> <!-- end main block container -->
+	</body>
 </html>

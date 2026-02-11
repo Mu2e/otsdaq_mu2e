@@ -1,14 +1,14 @@
-
 * {
     box-sizing: border-box;
 }
 
 body {
     background-color: white;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     transition: background-color .25s;
-    overflow-x: scroll;
-    overflow-y: scroll;
+    height: 100vh;
 }
 
 /* Style the top navigation bar */
@@ -17,89 +17,90 @@ body {
     background-color: #111;
 }
 
-    /* Style the navigation bar links */
-    .navbar a {
-        float: left;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 20px;
-        text-decoration: none;
-        cursor: pointer;
-    }
+/* Style the navigation bar links */
+.navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    cursor: pointer;
+}
 
-    .navbar span {
-        float: left;
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 20px;
-        text-decoration: none;
-    }
+.navbar span {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
 
-    /* Right-aligned link */
-    .navbar a.right {
-        float: right;
-    }
+/* Right-aligned link */
+.navbar a.right {
+    float: right;
+}
 
-    /* Change color on hover */
-    .navbar a:hover {
-        background-color: #ddd;
-        color: black;
-    }
+/* Change color on hover */
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
 
 /* Fixed sidenav, full height */
 .sidenav {
-    float: left;
     height: 100%;
     width: 200px;
-    /*position: fixed;*/
     z-index: 1;
-    top: 0;
-    left: 0;
     background-color: #111;
     overflow-x: hidden;
+    overflow-y: auto;
     padding-top: 20px;
 }
 
-    /* Style the sidenav links and the dropdown button */
-    .sidenav a, .dropdown-btn {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 20px;
-        color: #818181;
-        display: block;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-        outline: none;
-    }
+/* Style the sidenav links and the dropdown button */
+.sidenav a,
+.dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
 
-        /* On mouse-over */
-        .sidenav a:hover, .dropdown-btn:hover {
-            color: #f1f1f1;
-        }
+/* On mouse-over */
+.sidenav a:hover,
+.dropdown-btn:hover {
+    color: #f1f1f1;
+}
 
-    .sidenav a, .open-page-btn {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 20px;
-        color: #818181;
-        display: block;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-        outline: none;
-    }
+.sidenav a,
+.open-page-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
 
-        /* On mouse-over */
-        .sidenav a:hover, .open-page-btn:hover {
-            color: #f1f1f1;
-        }
+/* On mouse-over */
+.sidenav a:hover,
+.open-page-btn:hover {
+    color: #f1f1f1;
+}
 
 /* Add an active class to the active dropdown button */
 .active {
@@ -129,27 +130,35 @@ body {
 
 /* Column container */
 .row {
-    display: -ms-flexbox; /* IE10 */
+    display: -ms-flexbox;
+    /* IE10 */
     display: flex;
-    -ms-flex-wrap: wrap; /* IE10 */
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    height: calc(100vh - 95px);
+    overflow: hidden;
 }
 
 /* Create two unequal columns that sits next to each other */
 /* Sidebar/left column */
 .side {
-    /*-ms-flex: 20%;*/ /* IE10 */
-    /*flex: 20%;*/
+    -ms-flex: 0 0 200px;
+    /* IE10 */
+    flex: 0 0 200px;
     background-color: #111;
     padding: 0px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Main column */
 .main {
-    -ms-flex: 80%; /* IE10 */
-    flex: 80%;
+    -ms-flex: 1;
+    /* IE10 */
+    flex: 1;
     background-color: rgb(213, 227, 245);
     padding: 0px;
+    overflow: hidden;
+    min-width: 0;
 }
 
 /*mainFrame*/
@@ -157,7 +166,6 @@ body {
     height: 100%;
     width: 100%;
     border: none;
-    min-height: 800px;
 }
 
 /* Footer */

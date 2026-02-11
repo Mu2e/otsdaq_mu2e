@@ -60,6 +60,20 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 		    << __E__;
 	}
 
+	__FE_COUTV__(StringMacros::systemVariables_["ActiveStateMachine"]["name"]);
+	__FE_COUTV__(StringMacros::systemVariables_["ActiveStateMachine"]["runAlias"]);
+	try
+	{
+		//test an extra field (e.g. to use System Vars in tree, add value '${OTS.ActiveStateMachine.name}')
+		std::string test = getSelfNode().getNode("DefaultColumnName").getValue();
+		__FE_COUT__ << getSelfNode().getNode("DefaultColumnName").getValueAsString()
+		            << " ==> " << test << __E__;
+	}
+	catch(const std::runtime_error& e)
+	{
+		__FE_COUTV__(e.what());
+	}  //ignore
+
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
 	                 << " talking to /dev/mu2e" << deviceIndex_ << __E__;
 	__FE_COUT__ << "Linux Kernel Driver Version: "
