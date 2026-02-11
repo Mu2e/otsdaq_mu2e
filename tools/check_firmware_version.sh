@@ -9,7 +9,7 @@ if [[ $# -ne 1 ]]; then
 fi
 
 userinput=$1
-# the next "unsets" the command line input, so as not to pass it along unwittinging somewhere else
+# the next "unsets" the command line input, so as not to pass it along unwittingly somewhere else
 shift
 
 basepath="/home/mu2eshift/ots_ops/"
