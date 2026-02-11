@@ -12,15 +12,18 @@ userinput=$1
 # the next "unsets" the command line input, so as not to pass it along unwittingly somewhere else
 shift
 
-basepath="/home/mu2eshift/ots_ops/"
-echo "running setup on $HOSTNAME at $basepath"
+SCRIPT_DIR="$(
+ cd "$(dirname "$(readlink "$0" || printf %s "$0")")"
+ pwd -P
+)"
+echo "running setup on $HOSTNAME at $SCRIPT_DIR"
 
 # source ${basepath}/setup_ots.sh HWDev &>/dev/null
 source /mu2e/spack_pcie/setup-env.sh
 spack env activate pcie
 
 Reset="" #`tput sgr0`         # Reset all
-echo -e "${Reset}setup complete on $HOSTNAME at $basepath${Reset}"
+echo -e "${Reset}setup complete on $HOSTNAME at $SCRIPT_DIR${Reset}"
 
 #read firmware version
 ver=$(my_cntl -d0 read 0x9004 2>&1 | grep 0x)
