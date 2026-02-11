@@ -23,14 +23,14 @@ Reset="" #`tput sgr0`         # Reset all
 echo -e "${Reset}setup complete on $HOSTNAME at $basepath${Reset}"
 
 #read firmware version
-ver=$(my_cntl -d0 read 0x9004 2>1 | grep 0x)
+ver=$(my_cntl -d0 read 0x9004 2>&1 | grep 0x)
 # echo "DTC0 Firmware version: $ver"
 if [[ "$ver" == "$userinput" ]]; then
     echo "===> $HOSTNAME DTC0 Exact version match. *"
 else
     echo "===> $HOSTNAME DTC0 Version mismatch! --------> $ver and expected $userinput${Reset}"
 fi
-ver=$(my_cntl -d1 read 0x9004 2>1 | grep 0x)
+ver=$(my_cntl -d1 read 0x9004 2>&1 | grep 0x)
 # echo "DTC1 Firmware version: $ver"
 if [[ "$ver" == "$userinput" ]]; then
     echo "===> $HOSTNAME DTC1 Exact version match. *"
