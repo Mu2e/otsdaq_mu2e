@@ -250,18 +250,32 @@ unsigned int DBRunInfo::insertRunCondition(
 
                     const char* scratchEnv = std::getenv("OTS_SCRATCH");
                     std::string fullPath2;
-                    fullPath2 = std::string(scratchEnv) + "/Logs/debug_json_dump.txt";
-                    std::ofstream debugFile2(fullPath2, std::ios::out | std::ios::app);
+                    fullPath2 = std::string(scratchEnv) + "/Logs/runlog_dump.txt";
+                    std::ofstream debugFile2(fullPath2, std::ios::out);
                     
                     if (debugFile2.is_open()) {
-                            debugFile2 << "\n--- New Error Log: " << field << " ---\n";
+                            debugFile2 << "\n--- Field: " << field << " ---\n";
                             debugFile2 << value;
                             debugFile2.close();
                         }
 
-                    jsonObj[field] = nlohmann::json::parse(value);
-
-
+					try {
+	                    jsonObj[field] = nlohmann::json::parse(value);
+					} catch(...) {
+					const char* scratchEnv = std::getenv("OTS_SCRATCH");
+					std::string fullPath = std::string(scratchEnv ? scratchEnv : ".") + "/Logs/failed_json_parse.txt";
+					std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
+					
+					if (debugFile.is_open()) {
+						debugFile << "\n--- Failed JSON Parse ---\n";
+						debugFile << "Field: " << field << "\n";
+						debugFile << "Value: " << value << "\n";
+						debugFile.close();
+					}
+					
+					__SS__ << "Failed to parse JSON for field '" << field << "'. "
+					       << "Value dumped to " << fullPath << __E__;
+					__SS_THROW__;
                     /*
                     try {
                         jsonObj[field] = nlohmann::json::parse(value);

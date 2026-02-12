@@ -38,8 +38,6 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 	//	generating files on local disk multiple times.
 	isFirstAppInContext_ = configManager->isOwnerFirstAppInContext();
 
-	channelListHasChanged_ = false;
-
 	//__COUTV__(isFirstAppInContext);
 	if(!isFirstAppInContext_)
 		return;
