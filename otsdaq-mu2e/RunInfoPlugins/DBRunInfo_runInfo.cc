@@ -263,53 +263,31 @@ unsigned int DBRunInfo::insertRunCondition(
 	                    jsonObj[field] = nlohmann::json::parse(value);
 					} catch(...) {
 					const char* scratchEnv = std::getenv("OTS_SCRATCH");
-					std::string fullPath = std::string(scratchEnv ? scratchEnv : ".") + "/Logs/failed_json_parse.txt";
+					
+					// Sanitize field name for use in filename
+					std::string safeFieldName = field;
+					for (char& c : safeFieldName) {
+						if (!std::isalnum(c) && c != '_' && c != '-') {
+							c = '_';
+						}
+					}
+					
+					std::string fullPath = std::string(scratchEnv ? scratchEnv : ".") + 
+					                      "/Logs/failed_json_parse_" + safeFieldName + ".txt";
 					std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
 					
 					if (debugFile.is_open()) {
-						debugFile << "\n--- Failed JSON Parse ---\n";
-						debugFile << "Field: " << field << "\n";
-						debugFile << "Value: " << value << "\n";
+						//debugFile << "\n--- Failed JSON Parse ---\n";
+						//debugFile << "Field: " << field << "\n";
+						//debugFile << "Value: " << value << "\n";
+						debugFile << value;
 						debugFile.close();
 					}
 					
 					__SS__ << "Failed to parse JSON for field '" << field << "'. "
 					       << "Value dumped to " << fullPath << __E__;
 					__SS_THROW__;
-                    /*
-                    try {
-                        jsonObj[field] = nlohmann::json::parse(value);
-                    } catch (...) { 
-                        // Get the environment variable
-                        const char* scratchEnv = std::getenv("OTS_SCRATCH");
-                        
-                        std::string fullPath;
-                        if (scratchEnv != nullptr) {
-                            // 2. Construct the path: $OTS_SCRATCH + /Logs/ + filename
-                            fullPath = std::string(scratchEnv) + "/Logs/debug_json_dump.txt";
-                        } else {
-                            // Fallback to local directory if env var is missing
-                            fullPath = "debug_json_dump.txt"; 
-                        }
-
-                        // 3. Write to file
-                        std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
-                        
-                        if (debugFile.is_open()) {
-                            debugFile << "\n--- New Error Log ---\n";
-                            debugFile << value;
-                            debugFile.close();
-                        } else {
-                            // Optional: Print error to stderr if file couldn't be created 
-                            // (e.g., if the /Logs/ folder doesn't exist)
-                            // std::cerr << "Failed to write debug file to: " << fullPath << std::endl;
-                        }
-
-                        // 4. Handle program flow (Fallback to string storage)
-                        jsonObj[field] = value; 
-                    }*/
-                } else {
-                    jsonObj[field] = value;
+			}
                 }
 
                 /*
