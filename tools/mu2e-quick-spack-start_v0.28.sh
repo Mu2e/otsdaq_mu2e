@@ -43,7 +43,10 @@ prompted for this location.
 --no-kmod     Do not build TRACE kernel module (for Docker builds)
 --no-view     Do not create a Spack environment view
 --no-emacs    Do not attempt to install emacs
---no-auto-upstream Do not search /mu2e/spack_areas for upstreams
+--no-use-mu2e Do not search /mu2e/spack_v0.28 for upstreams
+--no-use-cvmfs Do not search /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28 for upstreams
+              Note that CVMFS will not be used if /mu2e is available and active (i.e. --no-use-mu2e is not passed)
+              If --upstream is used, neither /mu2e nor CVMFS will be automatically searched for upstreams
 --all-packages Used with --develop, will fetch all subdetector repos
 --g4          Perform full build of Offline, with geant4 dependency
 "
@@ -59,7 +62,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_no_auto_upstream=0; opt_g4=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0
 while [ -n "${1-}" ];do
     if expr "x${1-}" : 'x-' >/dev/null;then
         op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -81,16 +84,17 @@ while [ -n "${1-}" ];do
             -no-extra-products)  opt_skip_extra_products=1;;
             -no-emacs)  ;; # No emacs support, so ignore this option if given
             -no-pull)   opt_no_pull=1;;
-            -upstream)  eval $op1arg; upstreams+=($1); shift;;
+            -upstream)  eval $op1arg; upstreams+=($1); opt_use_mu2e=0; opt_use_cvmfs=0; shift;;
             -padding)   opt_padding=1;;
             -arch)      eval $op1arg; arch=$1; shift;;
             -no-kmod)   opt_no_kmod=1;;
             -no-emacs)  opt_no_emacs=1;;
-                        -no-auto-upstream) opt_no_auto_upstream=1;;
+            -no-use-mu2e) opt_use_mu2e=0;;
+            -no-use-cvmfs) opt_use_cvmfs=0;;
             -all-packages) opt_all_packages=1;;
-        -trigger)   opt_all_packages=1;;
+            -trigger)   opt_all_packages=1;;
             -no-view)   opt_no_view=1;;
-	    -g4)        opt_g4=1;;
+	        -g4)        opt_g4=1;;
             *)          echo "Unknown option -$op"; do_help=1;;
         esac
     else
@@ -167,13 +171,22 @@ concrete_include_cmd=
 
 os=$(cat /etc/redhat-release |grep -oE "release [0-9]+"|cut -d' ' -f2)
 # Auto-add upstreams from /mu2e
-if [ $opt_no_auto_upstream -eq 0 ] && [ -d /mu2e/spack_areas ];then
-  art=`ls -d /mu2e/spack_areas/art-suite-*-al${os}|tail -1`
-  artdaq=`ls -d /mu2e/spack_areas/artdaq-*-al${os}|tail -1`
-  ots=`ls -d /mu2e/spack_areas/ots-*-al${os}|tail -1`
-  mu2e=`ls -d /mu2e/spack_areas/mu2e-tdaq-*-al${os}|tail -1`
+if [ $opt_use_mu2e -eq 1 ] && [ -d /mu2e/spack_v0.28 ];then
+  art=`ls -d /mu2e/spack_v0.28/art-suite-*-al${os}|tail -1`
+  artdaq=`ls -d /mu2e/spack_v0.28/artdaq-*-al${os}|tail -1`
+  ots=`ls -d /mu2e/spack_v0.28/ots-*-al${os}|tail -1`
+  mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-al${os}|tail -1`
 
   upstreams+=($mu2e $ots $artdaq $art)
+
+elif [ $opt_use_cvmfs -eq 1 ] && [ -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28 ]; then
+  art=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/art-suite-*-al${os}|tail -1`
+  artdaq=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/artdaq-*-al${os}|tail -1`
+  ots=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/ots-*-al${os}|tail -1`
+  mu2e=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/mu2e-tdaq-*-al${os}|tail -1`
+
+  upstreams+=($artdaq $art)
+
 fi
 
 # If updating upstreams, clear existing file first
