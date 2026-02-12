@@ -10,3 +10,4 @@ otsdaq-mu2e/FEInterfaces/otsdaq_mu2e.code-workspace
 build-linux-*
 spack-build-*
 UserWebGUI/ServiceData
+_codeql*
