@@ -150,7 +150,7 @@ if [[ "x$build_system_script" == "x" ]];then
   build_system_script=$Base/setup_spack_build_system_v1.1.sh
 fi
 
-echo "65aba39314fb588b2d0b256d675fa05cf7a044db *setup_spack_build_system_v1.1.sh" | sha1sum -c -
+echo "65aba39314fb588b2d0b256d675fa05cf7a044db *$build_system_script" | sha1sum -c -
 if [ $? -ne 0 ]; then
   echo "ERROR: setup_spack_build_system_v1.1.sh does not have the expected checksum! Please check Github for updates to this script!"
   exit 1
