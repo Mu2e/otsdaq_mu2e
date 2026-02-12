@@ -15,7 +15,7 @@ test -d log || mkdir log
 test -d Data && rmdir Data
 test -d databases && rmdir databases
 
-env_opts_var=`basename $0 | sed 's/\.sh$//' | tr 'a-z-' 'A-Z_'`_OPTS
+env_opts_var=`basename $0 | sed 's/\.sh$//' | tr 'a-z-.' 'A-Z__'`_OPTS
 USAGE="\
    usage: `basename $0` [options] [demo_root]
 examples: `basename $0` .
@@ -79,6 +79,7 @@ while [ -n "${1-}" ];do
             -tag)       eval $reqarg; tag=$1; shift;;
             -spackdir)  eval $op1arg; spackdir=$1; shift;;
             -no-extra-products)  opt_skip_extra_products=1;;
+            -no-emacs)  ;; # No emacs support, so ignore this option if given
             -no-pull)   opt_no_pull=1;;
             -upstream)  eval $op1arg; upstreams+=($1); shift;;
             -padding)   opt_padding=1;;
