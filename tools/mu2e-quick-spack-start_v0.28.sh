@@ -312,7 +312,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         checkout_package $pkg
     done
     if [[ ${opt_all_packages:-0} -eq 1 ]]; then
-        for pkg in Offline mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-tracker otsdaq-mu2e-trigger;do
+        for pkg in Offline mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-tracker otsdaq-mu2e-trigger mu2e-tdaq-suite;do
             checkout_package $pkg
         done
     fi
@@ -418,15 +418,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         spack mpd new-project --force -y --name tdaq-develop cxxstd=20 %gcc${gccver:+@${gccver}}
     fi
     spack env activate tdaq-develop
-    spack add lcov # For coverage collection
-    spack add py-black # For python code formatting
-    spack add py-cmake-format # For CMake code formatting
-    if ! spack find mu2e-trig-config >/dev/null 2>&1; then
-        echo "Adding mu2e-trig-config to tdaq-develop environment..."
-        spack add mu2e-trig-config
-    fi
 
-    spack concretize --force --deprecated && spack install --deprecated
     spack mpd build -G Ninja
     cd $Base/build
     ninja install
