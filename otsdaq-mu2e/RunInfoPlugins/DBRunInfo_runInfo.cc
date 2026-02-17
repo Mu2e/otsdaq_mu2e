@@ -6,16 +6,16 @@
 #include <libpq-fe.h> /* for PGconn */
 #include <boost/algorithm/string.hpp>
 #include <chrono>
-#include <sstream>
-#include <nlohmann/json.hpp>
 #include <fstream>
+#include <nlohmann/json.hpp>
+#include <sstream>
 
 using namespace ots;
 
 //==============================================================================
 DBRunInfo::DBRunInfo(const std::string& runInfoPluginClassName,
-	const std::string& activeStateMachineName) 
-	: RunInfoVInterface(runInfoPluginClassName, activeStateMachineName)
+                     const std::string& activeStateMachineName)
+    : RunInfoVInterface(runInfoPluginClassName, activeStateMachineName)
 {
 	dbname_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE")
 	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE")
@@ -219,7 +219,7 @@ unsigned int DBRunInfo::insertRunCondition(
     unsigned int runNumber,
     const std::map<std::string /* subsystem */,
                    std::map<std::string /*type/name/field */, std::string /* value */>>&
-        runConditionMap,
+                 runConditionMap,
     unsigned int configureConditionID,
     const std::string& /* comment */)
 {
@@ -238,59 +238,68 @@ unsigned int DBRunInfo::insertRunCondition(
 		PGresult* res;
 
 		// Iterate through each subsystem in the map
-		for (auto const& [subsystem, fieldMap] : runConditionMap)
+		for(auto const& [subsystem, fieldMap] : runConditionMap)
 		{
-            nlohmann::json jsonObj;
-            for (auto const& [field, value] : fieldMap) {
-                // first non-whitespace character
-                size_t firstRealChar = value.find_first_not_of(" \t\n\r");
+			nlohmann::json jsonObj;
+			for(auto const& [field, value] : fieldMap)
+			{
+				// first non-whitespace character
+				size_t firstRealChar = value.find_first_not_of(" \t\n\r");
 
-                if (firstRealChar != std::string::npos && 
-                (value[firstRealChar] == '{' || value[firstRealChar] == '[')) {
-
-                    const char* scratchEnv = std::getenv("OTS_SCRATCH");
-                    std::string fullPath2;
-                    fullPath2 = std::string(scratchEnv) + "/Logs/runlog_dump.txt";
-                    std::ofstream debugFile2(fullPath2, std::ios::out);
-                    
-                    if (debugFile2.is_open()) {
-                            debugFile2 << "\n--- Field: " << field << " ---\n";
-                            debugFile2 << value;
-                            debugFile2.close();
-                        }
-
-					try {
-	                    jsonObj[field] = nlohmann::json::parse(value);
-					} catch(...) {
+				if(firstRealChar != std::string::npos &&
+				   (value[firstRealChar] == '{' || value[firstRealChar] == '['))
+				{
 					const char* scratchEnv = std::getenv("OTS_SCRATCH");
-					
-					// Sanitize field name for use in filename
-					std::string safeFieldName = field;
-					for (char& c : safeFieldName) {
-						if (!std::isalnum(c) && c != '_' && c != '-') {
-							c = '_';
-						}
-					}
-					
-					std::string fullPath = std::string(scratchEnv ? scratchEnv : ".") + 
-					                      "/Logs/failed_json_parse_" + safeFieldName + ".txt";
-					std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
-					
-					if (debugFile.is_open()) {
-						//debugFile << "\n--- Failed JSON Parse ---\n";
-						//debugFile << "Field: " << field << "\n";
-						//debugFile << "Value: " << value << "\n";
-						debugFile << value;
-						debugFile.close();
-					}
-					
-					__SS__ << "Failed to parse JSON for field '" << field << "'. "
-					       << "Value dumped to " << fullPath << __E__;
-					__SS_THROW__;
-			}
-                }
+					std::string fullPath2;
+					fullPath2 = std::string(scratchEnv) + "/Logs/runlog_dump.txt";
+					std::ofstream debugFile2(fullPath2, std::ios::out);
 
-                /*
+					if(debugFile2.is_open())
+					{
+						debugFile2 << "\n--- Field: " << field << " ---\n";
+						debugFile2 << value;
+						debugFile2.close();
+					}
+
+					try
+					{
+						jsonObj[field] = nlohmann::json::parse(value);
+					}
+					catch(...)
+					{
+						const char* scratchEnv = std::getenv("OTS_SCRATCH");
+
+						// Sanitize field name for use in filename
+						std::string safeFieldName = field;
+						for(char& c : safeFieldName)
+						{
+							if(!std::isalnum(c) && c != '_' && c != '-')
+							{
+								c = '_';
+							}
+						}
+
+						std::string fullPath =
+						    std::string(scratchEnv ? scratchEnv : ".") +
+						    "/Logs/failed_json_parse_" + safeFieldName + ".txt";
+						std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
+
+						if(debugFile.is_open())
+						{
+							//debugFile << "\n--- Failed JSON Parse ---\n";
+							//debugFile << "Field: " << field << "\n";
+							//debugFile << "Value: " << value << "\n";
+							debugFile << value;
+							debugFile.close();
+						}
+
+						__SS__ << "Failed to parse JSON for field '" << field << "'. "
+						       << "Value dumped to " << fullPath << __E__;
+						__SS_THROW__;
+					}
+				}
+
+				/*
                 // Parse json objects and lists
                 if (firstRealChar != std::string::npos && 
                 (value[firstRealChar] == '{' || value[firstRealChar] == '[')) {
@@ -309,9 +318,9 @@ unsigned int DBRunInfo::insertRunCondition(
                 } else {
                     jsonObj[field] = value;
                 }*/
-            }
-            std::string jsonString = jsonObj.dump();
-		    /*std::stringstream jsonBlob;
+			}
+			std::string jsonString = jsonObj.dump();
+			/*std::stringstream jsonBlob;
 		    jsonBlob << "{";
 		    
 		    bool first = true;
@@ -327,52 +336,51 @@ unsigned int DBRunInfo::insertRunCondition(
 		    // Construct the SQL Command
 		    std::stringstream query;
 		    std::string jsonString = jsonBlob.str();*/
-		    std::string runNumberStr = std::to_string(runNumber);
+			std::string runNumberStr = std::to_string(runNumber);
 
-		    std::string sql = std::string("INSERT INTO ") + dbSchema_ + ".config "
-				     "(run_number, subsystem, config, create_time) "
-			             "VALUES ($1, $2, $3::jsonb, CURRENT_TIMESTAMP);";
-            
-		    const char* paramValues[3];
-		    paramValues[0] = runNumberStr.c_str();
-		    paramValues[1] = subsystem.c_str();
-		    paramValues[2] = jsonString.c_str();
+			std::string sql = std::string("INSERT INTO ") + dbSchema_ +
+			                  ".config "
+			                  "(run_number, subsystem, config, create_time) "
+			                  "VALUES ($1, $2, $3::jsonb, CURRENT_TIMESTAMP);";
 
-            __COUT__ << "DEBUG INSERTING RUN CONDITION:" << __E__;
-            __COUT__ << "paramValues[0]: " << paramValues[0] << __E__;
-            __COUT__ << "paramValues[1]: " << paramValues[1] << __E__;
-            __COUT__ << "paramValues[2]: " << paramValues[2] << __E__;
-		    
-		    res = PQexecParams(runInfoDbConn_,
-                        sql.c_str(),
-                        3,             // number of parameters
-                        NULL,          // param types (let Postgres infer)
-                        paramValues,
-                        NULL,          // param lengths
-                        NULL,          // param formats
-                        0);            // result format (text)
-			    
+			const char* paramValues[3];
+			paramValues[0] = runNumberStr.c_str();
+			paramValues[1] = subsystem.c_str();
+			paramValues[2] = jsonString.c_str();
 
-		    // Check result status
-		    // Note: For INSERT, PQresultStatus usually returns PGRES_COMMAND_OK 
-		    // or PGRES_TUPLES_OK if using RETURNING
-		    if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK)
-		    {
-			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! PQ ERROR: " << __E__
-			       << PQresultErrorMessage(res) << __E__
-			       << "Subsystem: " << subsystem << __E__
-			       << "SQL: " << sql << __E__;
+			__COUT__ << "DEBUG INSERTING RUN CONDITION:" << __E__;
+			__COUT__ << "paramValues[0]: " << paramValues[0] << __E__;
+			__COUT__ << "paramValues[1]: " << paramValues[1] << __E__;
+			__COUT__ << "paramValues[2]: " << paramValues[2] << __E__;
+
+			res = PQexecParams(runInfoDbConn_,
+			                   sql.c_str(),
+			                   3,     // number of parameters
+			                   NULL,  // param types (let Postgres infer)
+			                   paramValues,
+			                   NULL,  // param lengths
+			                   NULL,  // param formats
+			                   0);    // result format (text)
+
+			// Check result status
+			// Note: For INSERT, PQresultStatus usually returns PGRES_COMMAND_OK
+			// or PGRES_TUPLES_OK if using RETURNING
+			if(PQresultStatus(res) != PGRES_COMMAND_OK &&
+			   PQresultStatus(res) != PGRES_TUPLES_OK)
+			{
+				__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! PQ ERROR: "
+				       << __E__ << PQresultErrorMessage(res) << __E__
+				       << "Subsystem: " << subsystem << __E__ << "SQL: " << sql << __E__;
+				PQclear(res);
+				__SS_THROW__;
+			}
+
 			PQclear(res);
-			__SS_THROW__;
-		    }
-		    
-		    PQclear(res);
 		}
 
 		// Update conditionID or return success
-		conditionID = runNumber; 
+		conditionID = runNumber;
 		return conditionID;
-
 
 		//extract run condition from runInfoConditions
 		// std::string condition =
@@ -735,7 +743,7 @@ unsigned int DBRunInfo::insertRunCondition(
 		__SS_THROW__;
 	}
 
-	return conditionID; // in this scheme we return the run number since that's used to track the run condition
+	return conditionID;  // in this scheme we return the run number since that's used to track the run condition
 }  //end insertRunCondition()
 
 //==============================================================================
@@ -815,19 +823,19 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		StringMacros::sanitizeForSQL(sanitizedComment);
 
 		std::string runType = getActiveStateMachineName();
- 		StringMacros::sanitizeForSQL(runType);
+		StringMacros::sanitizeForSQL(runType);
 
 		// Build INSERT query using std::ostringstream to avoid buffer overflow
 		std::ostringstream queryStream;
 		queryStream << "INSERT INTO " << dbSchema_ << ".run ("
-			    << "  comment, "
-			    << "  run_type, " 
-			    << "  create_time) "
-			    << " VALUES ("
-			    << "  '" << sanitizedComment << "', "
-			    << "  '" << runType << "', "
-			    << "  CURRENT_TIMESTAMP) "
-			    << " RETURNING run_number;";
+		            << "  comment, "
+		            << "  run_type, "
+		            << "  create_time) "
+		            << " VALUES ("
+		            << "  '" << sanitizedComment << "', "
+		            << "  '" << runType << "', "
+		            << "  CURRENT_TIMESTAMP) "
+		            << " RETURNING run_number;";
 
 		std::string query = queryStream.str();
 		res               = PQexec(runInfoDbConn_, query.c_str());
