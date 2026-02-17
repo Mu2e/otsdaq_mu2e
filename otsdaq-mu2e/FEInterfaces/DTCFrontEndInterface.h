@@ -99,7 +99,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 		unsigned int 			packetThresholdToSave_;
 		std::atomic<uint64_t>	savedCount_;
-		
+
 		std::map<DTCLib::DTC_Link_ID, bool>			rocLinkEnabledLatch_;
 
 	};  // end DetachedBufferTestThreadStruct declaration
