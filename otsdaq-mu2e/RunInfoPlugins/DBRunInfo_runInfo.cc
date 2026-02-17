@@ -6,32 +6,37 @@
 #include <libpq-fe.h> /* for PGconn */
 #include <boost/algorithm/string.hpp>
 #include <chrono>
+#include <fstream>
+#include <nlohmann/json.hpp>
 #include <sstream>
 
 using namespace ots;
 
 //==============================================================================
-DBRunInfo::DBRunInfo(std::string interfaceUID) : RunInfoVInterface(interfaceUID)
+DBRunInfo::DBRunInfo(const std::string& runInfoPluginClassName,
+					 const std::string& activeStateMachineName)
+	: RunInfoVInterface(runInfoPluginClassName, activeStateMachineName)
 {
 	dbname_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE")
-	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE")
-	                                  : "run_info");
+									  ? getenv("OTSDAQ_RUNINFO_DATABASE")
+									  : "run_info");
 	dbhost_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_HOST")
-	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_HOST")
-	                                  : "");
+									  ? getenv("OTSDAQ_RUNINFO_DATABASE_HOST")
+									  : "");
 	dbport_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_PORT")
-	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_PORT")
-	                                  : "");
+									  ? getenv("OTSDAQ_RUNINFO_DATABASE_PORT")
+									  : "");
 	dbuser_   = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_USER")
-	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_USER")
-	                                  : "");
+									  ? getenv("OTSDAQ_RUNINFO_DATABASE_USER")
+									  : "");
 	dbpwd_    = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_PWD")
-	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_PWD")
-	                                  : "");
+									  ? getenv("OTSDAQ_RUNINFO_DATABASE_PWD")
+									  : "");
 	dbSchema_ = const_cast<char*>(getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")
-	                                  ? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")
-	                                  : "test");
+									  ? getenv("OTSDAQ_RUNINFO_DATABASE_SCHEMA")
+									  : "test");
 
+	__COUTV__(getActiveStateMachineName());
 	//open db connection
 	openDbConnection();
 }  //end constructor()
@@ -47,17 +52,17 @@ DBRunInfo::~DBRunInfo(void)
 void DBRunInfo::openDbConnection()
 {
 	__COUT__ << "Opening Run Info db connection at " << dbhost_ << ":" << dbport_
-	         << __E__;
+			 << __E__;
 	//open db connection
 	char runInfoDbConnInfo[1024];
 	sprintf(runInfoDbConnInfo,
-	        "dbname=%s host=%s port=%s  \
+			"dbname=%s host=%s port=%s  \
 		user=%s password=%s connect_timeout=10",
-	        dbname_,
-	        dbhost_,
-	        dbport_,
-	        dbuser_,
-	        dbpwd_);
+			dbname_,
+			dbhost_,
+			dbport_,
+			dbuser_,
+			dbpwd_);
 	runInfoDbConn_ = PQconnectdb(runInfoDbConnInfo);
 
 	if(PQstatus(runInfoDbConn_) != CONNECTION_OK)
@@ -68,7 +73,7 @@ void DBRunInfo::openDbConnection()
 		__SS_THROW__;
 	}
 	__COUT__ << "Run Info db connection opened successfully at " << dbhost_ << ":"
-	         << dbport_ << __E__;
+			 << dbport_ << __E__;
 }  //end openDbConnection()
 
 //==============================================================================
@@ -78,10 +83,10 @@ std::vector<std::string> DBRunInfo::getTableNames(const std::string& tableName)
 
 	char listBuffer[1024];
 	snprintf(listBuffer,
-	         sizeof(listBuffer),
-	         "SELECT name FROM %s.%s ORDER BY name;",
-	         dbSchema_,
-	         tableName.c_str());
+			 sizeof(listBuffer),
+			 "SELECT name FROM %s.%s ORDER BY name;",
+			 dbSchema_,
+			 tableName.c_str());
 
 	PGresult* listRes = PQexec(runInfoDbConn_, listBuffer);
 
@@ -101,11 +106,11 @@ std::vector<std::string> DBRunInfo::getTableNames(const std::string& tableName)
 
 //==============================================================================
 void DBRunInfo::appendNotFoundError(std::stringstream&              ss,
-                                    const std::string&              providedName,
-                                    const std::string&              tableName,
-                                    const std::string&              entityDescription,
-                                    const std::vector<std::string>& availableNames,
-                                    const std::string&              additionalNote)
+									const std::string&              providedName,
+									const std::string&              tableName,
+									const std::string&              entityDescription,
+									const std::vector<std::string>& availableNames,
+									const std::string&              additionalNote)
 {
 	ss << "The " << entityDescription << " '" << providedName
 	   << "' does not match any entry in the " << tableName << " table." << __E__;
@@ -139,8 +144,8 @@ int DBRunInfo::checkAndReconnectDb(const std::string& operationDescription)
 	if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 	{
 		__COUT__ << "Unable to connect to the run_info database " << operationDescription
-		         << "\n"
-		         << __E__;
+				 << "\n"
+				 << __E__;
 		PQfinish(runInfoDbConn_);
 		runInfoDbConn_ = nullptr;
 
@@ -149,23 +154,23 @@ int DBRunInfo::checkAndReconnectDb(const std::string& operationDescription)
 		if(PQstatus(runInfoDbConn_) == CONNECTION_BAD)
 		{
 			__COUT__ << "Unable to connect for the second time to the run_info database "
-			         << operationDescription << "\n"
-			         << __E__;
+					 << operationDescription << "\n"
+					 << __E__;
 			PQfinish(runInfoDbConn_);
 			runInfoDbConn_ = nullptr;
 		}
 		else
 		{
 			__COUT__ << "Connected to the run_info database after a second tentative "
-			         << operationDescription << "\n"
-			         << __E__;
+					 << operationDescription << "\n"
+					 << __E__;
 			runInfoDbConnStatus_ = 1;
 		}
 	}
 	else
 	{
 		__COUT__ << "Connected to the run_info database " << operationDescription << "\n"
-		         << __E__;
+				 << __E__;
 		runInfoDbConnStatus_ = 1;
 	}
 
@@ -211,19 +216,19 @@ std::vector<std::vector<std::string>> DBRunInfo::convertResultToVector(PGresult*
 ///		@param comment - A user comment associated with this run transition.
 ///		@return runConditionID - The database ID of the inserted run record. This is needed to link future run transitions to this run record.
 unsigned int DBRunInfo::insertRunCondition(
-    unsigned int /* runNumber */,
-    const std::map<std::string /* subsystem */,
-                   std::map<std::string /*type/name/field */, std::string /* value */>>&
-        runConditionMap,
-    unsigned int /* configureConditionID */,
-    const std::string& /* comment */)
+	unsigned int runNumber,
+	const std::map<std::string /* subsystem */,
+				   std::map<std::string /*type/name/field */, std::string /* value */>>&
+				 runConditionMap,
+	unsigned int configureConditionID,
+	const std::string& /* comment */)
 {
 	uint64_t conditionID = (unsigned int)-1;
 
 	__COUT__ << "insert Run Condition" << __E__;
 
 	// char* mu2eOwner = __ENV__("MU2E_OWNER");
-	char* hostName = __ENV__("HOSTNAME");
+	//char* hostName = __ENV__("HOSTNAME");
 
 	int runInfoDbConnStatus_ = checkAndReconnectDb("inserting run condition");
 
@@ -231,6 +236,151 @@ unsigned int DBRunInfo::insertRunCondition(
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
 		PGresult* res;
+
+		// Iterate through each subsystem in the map
+		for(auto const& [subsystem, fieldMap] : runConditionMap)
+		{
+			nlohmann::json jsonObj;
+			for(auto const& [field, value] : fieldMap)
+			{
+				// first non-whitespace character
+				size_t firstRealChar = value.find_first_not_of(" \t\n\r");
+
+				if(firstRealChar != std::string::npos &&
+				   (value[firstRealChar] == '{' || value[firstRealChar] == '['))
+				{
+					const char* scratchEnv = std::getenv("OTS_SCRATCH");
+					std::string fullPath2;
+					fullPath2 = std::string(scratchEnv) + "/Logs/runlog_dump.txt";
+					std::ofstream debugFile2(fullPath2, std::ios::out);
+
+					if(debugFile2.is_open())
+					{
+						debugFile2 << "\n--- Field: " << field << " ---\n";
+						debugFile2 << value;
+						debugFile2.close();
+					}
+
+					try
+					{
+						jsonObj[field] = nlohmann::json::parse(value);
+					}
+					catch(...)
+					{
+						const char* scratchEnv = std::getenv("OTS_SCRATCH");
+
+						// Sanitize field name for use in filename
+						std::string safeFieldName = field;
+						for(char& c : safeFieldName)
+						{
+							if(!std::isalnum(c) && c != '_' && c != '-')
+							{
+								c = '_';
+							}
+						}
+
+						std::string fullPath =
+							std::string(scratchEnv ? scratchEnv : ".") +
+							"/Logs/failed_json_parse_" + safeFieldName + ".txt";
+						std::ofstream debugFile(fullPath, std::ios::out | std::ios::app);
+
+						if(debugFile.is_open())
+						{
+							//debugFile << "\n--- Failed JSON Parse ---\n";
+							//debugFile << "Field: " << field << "\n";
+							//debugFile << "Value: " << value << "\n";
+							debugFile << value;
+							debugFile.close();
+						}
+
+						__SS__ << "Failed to parse JSON for field '" << field << "'. "
+							   << "Value dumped to " << fullPath << __E__;
+						__SS_THROW__;
+					}
+				}
+
+				/*
+				// Parse json objects and lists
+				if (firstRealChar != std::string::npos &&
+				(value[firstRealChar] == '{' || value[firstRealChar] == '[')) {
+					try {
+						jsonObj[field] = nlohmann::json::parse(value);
+					} catch (...) { // Fallback, store as string
+						__SS__ <<  value.substr(1730, 50) << __E__;
+						__SS_THROW__;
+					}
+
+					//try {
+					//    jsonObj[field] = nlohmann::json::parse(value);
+					//} catch (...) { // Fallback, store as string
+					//    jsonObj[field] = value;
+					//}
+				} else {
+					jsonObj[field] = value;
+				}*/
+			}
+			std::string jsonString = jsonObj.dump();
+			/*std::stringstream jsonBlob;
+			jsonBlob << "{";
+
+			bool first = true;
+			for (auto const& [field, value] : fieldMap)
+			{
+			if (!first) jsonBlob << ", ";
+			// Basic escaping of quotes might be needed if values contain them
+			jsonBlob << "\"" << field << "\": \"" << value << "\"";
+			first = false;
+			}
+			jsonBlob << "}";
+
+			// Construct the SQL Command
+			std::stringstream query;
+			std::string jsonString = jsonBlob.str();*/
+			std::string runNumberStr = std::to_string(runNumber);
+
+			std::string sql = std::string("INSERT INTO ") + dbSchema_ +
+							  ".config "
+							  "(run_number, subsystem, config, create_time) "
+							  "VALUES ($1, $2, $3::jsonb, CURRENT_TIMESTAMP);";
+
+			const char* paramValues[3];
+			paramValues[0] = runNumberStr.c_str();
+			paramValues[1] = subsystem.c_str();
+			paramValues[2] = jsonString.c_str();
+
+			__COUT__ << "DEBUG INSERTING RUN CONDITION:" << __E__;
+			__COUT__ << "paramValues[0]: " << paramValues[0] << __E__;
+			__COUT__ << "paramValues[1]: " << paramValues[1] << __E__;
+			__COUT__ << "paramValues[2]: " << paramValues[2] << __E__;
+
+			res = PQexecParams(runInfoDbConn_,
+							   sql.c_str(),
+							   3,     // number of parameters
+							   NULL,  // param types (let Postgres infer)
+							   paramValues,
+							   NULL,  // param lengths
+							   NULL,  // param formats
+							   0);    // result format (text)
+
+			// Check result status
+			// Note: For INSERT, PQresultStatus usually returns PGRES_COMMAND_OK
+			// or PGRES_TUPLES_OK if using RETURNING
+			if(PQresultStatus(res) != PGRES_COMMAND_OK &&
+			   PQresultStatus(res) != PGRES_TUPLES_OK)
+			{
+				__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! PQ ERROR: "
+					   << __E__ << PQresultErrorMessage(res) << __E__
+					   << "Subsystem: " << subsystem << __E__ << "SQL: " << sql << __E__;
+				PQclear(res);
+				__SS_THROW__;
+			}
+
+			PQclear(res);
+		}
+
+		// Update conditionID or return success
+		conditionID = runNumber;
+		return conditionID;
 
 		//extract run condition from runInfoConditions
 		// std::string condition =
@@ -286,7 +436,7 @@ unsigned int DBRunInfo::insertRunCondition(
 
 		// __COUT__ << "Run Condition before JSON conversion " << condition.c_str() << __E__;
 
-		std::string runInfo = "[";
+		/*std::string runInfo = "[";
 		for(auto& subsystemPair : runConditionMap)
 		{
 			if(runInfo.size() > 1)
@@ -296,9 +446,9 @@ unsigned int DBRunInfo::insertRunCondition(
 			for(auto& fieldPair : subsystemPair.second)
 			{
 				runInfo += "\"" + fieldPair.first + "\": \"" +
-				           StringMacros::StringMacros::escapeJSONStringEntities(
-				               fieldPair.second) +
-				           "\"";
+						   StringMacros::StringMacros::escapeJSONStringEntities(
+							   fieldPair.second) +
+						   "\"";
 				if(fieldCount < subsystemPair.second.size() - 1)
 					runInfo += ", ";
 				fieldCount++;
@@ -319,9 +469,9 @@ unsigned int DBRunInfo::insertRunCondition(
 		if(getActiveStateMachineName().empty())
 		{
 			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! "
-			       << "getActiveStateMachineName (StateMachine UID) is required but was "
-			          "not provided."
-			       << __E__;
+				   << "getActiveStateMachineName (StateMachine UID) is required but was "
+					  "not provided."
+				   << __E__;
 			__SS_THROW__;
 		}
 
@@ -332,21 +482,21 @@ unsigned int DBRunInfo::insertRunCondition(
 		// Try INSERT first - let database validate the config_type exists
 		std::ostringstream queryStream;
 		queryStream << "INSERT INTO " << dbSchema_ << ".config("
-		            << "config_data, "
-		            << "create_time, "
-		            << "type_id, "
-		            << "host_name, "
-		            << "detector_setup_id) "
-		            << "SELECT '" << runInfo << "', "
-		            << "CURRENT_TIMESTAMP, "
-		            << "ct.id, "
-		            << "'" << hostName << "', "
-		            << "ds.id "
-		            << "FROM " << dbSchema_ << ".config_type ct "
-		            << "CROSS JOIN " << dbSchema_ << ".detector_setup ds "
-		            << "WHERE ct.name = '" << sanitizedConfigTypeName << "' "
-		            << "AND ds.name = '" << detectorSetupName << "' "
-		            << "RETURNING id;";
+					<< "config_data, "
+					<< "create_time, "
+					<< "type_id, "
+					<< "host_name, "
+					<< "detector_setup_id) "
+					<< "SELECT '" << runInfo << "', "
+					<< "CURRENT_TIMESTAMP, "
+					<< "ct.id, "
+					<< "'" << hostName << "', "
+					<< "ds.id "
+					<< "FROM " << dbSchema_ << ".config_type ct "
+					<< "CROSS JOIN " << dbSchema_ << ".detector_setup ds "
+					<< "WHERE ct.name = '" << sanitizedConfigTypeName << "' "
+					<< "AND ds.name = '" << detectorSetupName << "' "
+					<< "RETURNING id;";
 
 		std::string query = queryStream.str();
 		res               = PQexec(runInfoDbConn_, query.c_str());
@@ -354,10 +504,10 @@ unsigned int DBRunInfo::insertRunCondition(
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__
-			       << "Make sure 'ConfigurationDumpOnConfigureFormat' is set to 'Json "
-			          "All' in the FSM configuration."
-			       << __E__ << "runInfo:" << __E__ << runInfo.c_str() << __E__;
+				   << PQresultErrorMessage(res) << __E__
+				   << "Make sure 'ConfigurationDumpOnConfigureFormat' is set to 'Json "
+					  "All' in the FSM configuration."
+				   << __E__ << "runInfo:" << __E__ << runInfo.c_str() << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -375,28 +525,28 @@ unsigned int DBRunInfo::insertRunCondition(
 			// Check if config_type exists
 			char configTypeBuffer[1024];
 			snprintf(configTypeBuffer,
-			         sizeof(configTypeBuffer),
-			         "SELECT id FROM %s.config_type WHERE name = '%s';",
-			         dbSchema_,
-			         sanitizedConfigTypeName.c_str());
+					 sizeof(configTypeBuffer),
+					 "SELECT id FROM %s.config_type WHERE name = '%s';",
+					 dbSchema_,
+					 sanitizedConfigTypeName.c_str());
 
 			PGresult* configTypeRes = PQexec(runInfoDbConn_, configTypeBuffer);
 			bool configTypeFound    = (PQresultStatus(configTypeRes) == PGRES_TUPLES_OK &&
-                                    PQntuples(configTypeRes) == 1);
+									PQntuples(configTypeRes) == 1);
 			PQclear(configTypeRes);
 
 			// Check if detector_setup exists
 			char detectorSetupBuffer[1024];
 			snprintf(detectorSetupBuffer,
-			         sizeof(detectorSetupBuffer),
-			         "SELECT id FROM %s.detector_setup WHERE name = '%s';",
-			         dbSchema_,
-			         detectorSetupName.c_str());
+					 sizeof(detectorSetupBuffer),
+					 "SELECT id FROM %s.detector_setup WHERE name = '%s';",
+					 dbSchema_,
+					 detectorSetupName.c_str());
 
 			PGresult* detectorSetupRes = PQexec(runInfoDbConn_, detectorSetupBuffer);
 			bool      detectorSetupFound =
-			    (PQresultStatus(detectorSetupRes) == PGRES_TUPLES_OK &&
-			     PQntuples(detectorSetupRes) == 1);
+				(PQresultStatus(detectorSetupRes) == PGRES_TUPLES_OK &&
+				 PQntuples(detectorSetupRes) == 1);
 			PQclear(detectorSetupRes);
 
 			__SS__ << "INSERT INTO 'config' DATABASE TABLE FAILED!!! " << __E__;
@@ -405,27 +555,27 @@ unsigned int DBRunInfo::insertRunCondition(
 			if(!configTypeFound)
 			{
 				std::vector<std::string> availableConfigTypes =
-				    getTableNames("config_type");
+					getTableNames("config_type");
 				appendNotFoundError(ss,
-				                    getActiveStateMachineName(),
-				                    "config_type",
-				                    "StateMachine UID",
-				                    availableConfigTypes);
+									getActiveStateMachineName(),
+									"config_type",
+									"StateMachine UID",
+									availableConfigTypes);
 			}
 
 			// Handle detector_setup not found
 			if(!detectorSetupFound)
 			{
 				std::vector<std::string> availableDetectorSetups =
-				    getTableNames("detector_setup");
+					getTableNames("detector_setup");
 				appendNotFoundError(
-				    ss,
-				    detectorSetupName,
-				    "detector_setup",
-				    "detector setup name",
-				    availableDetectorSetups,
-				    "(Note: This can be set via the OTSDAQ_RUNINFO_DETECTOR_SETUP "
-				    "environment variable)");
+					ss,
+					detectorSetupName,
+					"detector_setup",
+					"detector setup name",
+					availableDetectorSetups,
+					"(Note: This can be set via the OTSDAQ_RUNINFO_DETECTOR_SETUP "
+					"environment variable)");
 			}
 
 			// If both are missing, provide a combined message
@@ -445,7 +595,7 @@ unsigned int DBRunInfo::insertRunCondition(
 			{
 				ss << __E__
 				   << "Please ensure that the detector setup name (from environment "
-				      "variable "
+					  "variable "
 				   << "OTSDAQ_RUNINFO_DETECTOR_SETUP or default 'default') "
 				   << "matches one of the detector_setup names listed above." << __E__;
 			}
@@ -455,59 +605,59 @@ unsigned int DBRunInfo::insertRunCondition(
 		else
 		{
 			__SS__ << "RETRIEVE CONDITION_ID FROM 'config' DATABASE TABLE "
-			          "FAILED!!! Unexpected number of rows returned: "
-			       << PQntuples(res) << __E__;
+					  "FAILED!!! Unexpected number of rows returned: "
+				   << PQntuples(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
 
 		std::vector<std::vector<std::string>> subsystemsInfo = {
-		    {       // "1" 	// config ID
-		     "crv"  // subsystem ID
-		     ,
-		     "{\"data\": \"test\"}",
-		     "alias_1",
-		     "context_1",
-		     "1"  // context group key
-		     ,
-		     "conf_group_name_1",
-		     "1"  // config group key
-		     ,
-		     "backbone_name_1",
-		     "1",
-		     "config_db_uir_1",
-		     "subsystem_sw_version_id_1"},
-		    {       // "1" 	// config ID
-		     "dcs"  // subsystem ID
-		     ,
-		     "{\"data\": \"test\"}",
-		     "alias_2",
-		     "context_2",
-		     "1"  // context group key
-		     ,
-		     "conf_group_name_2",
-		     "1"  // config group key
-		     ,
-		     "backbone_name_2",
-		     "1",
-		     "config_db_uir_2",
-		     "subsystem_sw_version_id_1"},
-		    {           // "1" 	// config ID
-		     "trigger"  // subsystem ID
-		     ,
-		     "{\"data\": \"test\"}",
-		     "alias_3",
-		     "context_3",
-		     "1"  // context group key
-		     ,
-		     "conf_group_name_3",
-		     "1"  // config group key
-		     ,
-		     "backbone_name_3",
-		     "1",
-		     "config_db_uir_3",
-		     "subsystem_sw_version_id_1",
-		     "3"}};
+			{       // "1" 	// config ID
+			 "crv"  // subsystem ID
+			 ,
+			 "{\"data\": \"test\"}",
+			 "alias_1",
+			 "context_1",
+			 "1"  // context group key
+			 ,
+			 "conf_group_name_1",
+			 "1"  // config group key
+			 ,
+			 "backbone_name_1",
+			 "1",
+			 "config_db_uir_1",
+			 "subsystem_sw_version_id_1"},
+			{       // "1" 	// config ID
+			 "dcs"  // subsystem ID
+			 ,
+			 "{\"data\": \"test\"}",
+			 "alias_2",
+			 "context_2",
+			 "1"  // context group key
+			 ,
+			 "conf_group_name_2",
+			 "1"  // config group key
+			 ,
+			 "backbone_name_2",
+			 "1",
+			 "config_db_uir_2",
+			 "subsystem_sw_version_id_1"},
+			{           // "1" 	// config ID
+			 "trigger"  // subsystem ID
+			 ,
+			 "{\"data\": \"test\"}",
+			 "alias_3",
+			 "context_3",
+			 "1"  // context group key
+			 ,
+			 "conf_group_name_3",
+			 "1"  // config group key
+			 ,
+			 "backbone_name_3",
+			 "1",
+			 "config_db_uir_3",
+			 "subsystem_sw_version_id_1",
+			 "3"}};
 
 		// char* artadqPartition = __ENV__("ARTDAQ_PARTITION");
 
@@ -515,26 +665,26 @@ unsigned int DBRunInfo::insertRunCondition(
 		{
 			char buffer[2048];
 			snprintf(buffer,
-			         sizeof(buffer),
-			         "INSERT INTO %s.config_subsystem_data(						\
+					 sizeof(buffer),
+					 "INSERT INTO %s.config_subsystem_data(						\
 											  config_id					\
 											, subsystem				\
 											, data		\
 											, create_time)				\
 											  VALUES ('%ld','%s','%s',CURRENT_TIMESTAMP) \
 											  RETURNING config_id;",
-			         dbSchema_,
-			         conditionID,
-			         subsystemsInfo[i][0].c_str(),
-			         subsystemsInfo[i][1].c_str());
+					 dbSchema_,
+					 conditionID,
+					 subsystemsInfo[i][0].c_str(),
+					 subsystemsInfo[i][1].c_str());
 
 			res = PQexec(runInfoDbConn_, buffer);
 
 			if(PQresultStatus(res) != PGRES_TUPLES_OK)
 			{
 				__SS__ << "INSERT INTO 'config_subsystem_data' DATABASE TABLE FAILED!!! "
-				          "PQ ERROR: "
-				       << PQresultErrorMessage(res) << __E__;
+						  "PQ ERROR: "
+					   << PQresultErrorMessage(res) << __E__;
 				PQclear(res);
 				__SS_THROW__;
 			}
@@ -542,8 +692,8 @@ unsigned int DBRunInfo::insertRunCondition(
 			PQclear(res);
 
 			snprintf(buffer,
-			         sizeof(buffer),
-			         "INSERT INTO %s.config_subsystem(				    	\
+					 sizeof(buffer),
+					 "INSERT INTO %s.config_subsystem(				    	\
 											  config_id					\
 											, subsystem 				\
 											, config_alias				\
@@ -558,33 +708,33 @@ unsigned int DBRunInfo::insertRunCondition(
 											, create_time)			\
 											  VALUES ('%ld','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',CURRENT_TIMESTAMP) \
 											  RETURNING config_id;",
-			         dbSchema_,
-			         conditionID,
-			         (subsystemsInfo[i][0]).c_str(),
-			         (subsystemsInfo[i][2]).c_str(),
-			         (subsystemsInfo[i][3]).c_str(),
-			         (subsystemsInfo[i][4]).c_str(),
-			         (subsystemsInfo[i][5]).c_str(),
-			         (subsystemsInfo[i][6]).c_str(),
-			         (subsystemsInfo[i][7]).c_str(),
-			         (subsystemsInfo[i][8]).c_str(),
-			         (subsystemsInfo[i][9]).c_str(),
-			         (subsystemsInfo[i][10]).c_str());
+					 dbSchema_,
+					 conditionID,
+					 (subsystemsInfo[i][0]).c_str(),
+					 (subsystemsInfo[i][2]).c_str(),
+					 (subsystemsInfo[i][3]).c_str(),
+					 (subsystemsInfo[i][4]).c_str(),
+					 (subsystemsInfo[i][5]).c_str(),
+					 (subsystemsInfo[i][6]).c_str(),
+					 (subsystemsInfo[i][7]).c_str(),
+					 (subsystemsInfo[i][8]).c_str(),
+					 (subsystemsInfo[i][9]).c_str(),
+					 (subsystemsInfo[i][10]).c_str());
 
 			res = PQexec(runInfoDbConn_, buffer);
 
 			if(PQresultStatus(res) != PGRES_TUPLES_OK)
 			{
 				__SS__ << "INSERT INTO 'config_subsystem' DATABASE TABLE FAILED!!! PQ "
-				          "ERROR: "
-				       << PQresultErrorMessage(res) << __E__;
+						  "ERROR: "
+					   << PQresultErrorMessage(res) << __E__;
 				PQclear(res);
 				__SS_THROW__;
 			}
 
 			PQclear(res);
 
-		}  // end for loop
+		}  // end for loop*/
 	}
 
 	if(conditionID == (unsigned int)-1)
@@ -593,7 +743,7 @@ unsigned int DBRunInfo::insertRunCondition(
 		__SS_THROW__;
 	}
 
-	return conditionID;
+	return conditionID;  // in this scheme we return the run number since that's used to track the run condition
 }  //end insertRunCondition()
 
 //==============================================================================
@@ -608,14 +758,14 @@ unsigned int DBRunInfo::insertRunCondition(
 ///                      from the state machine transition.
 ///		@return runNumber - The database-generated run number for the new run record. This is auto-generated by the database and returned via the RETURNING clause. Also inserts a START transition record into the run_transition table.
 unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureConditionID,
-                                           const std::string& comment)
+										   const std::string& comment)
 {
-	if(configureConditionID == (unsigned int)-1)
-	{
-		__SS__ << "Impossible condition ID number not retrieved by run info plugin!"
-		       << __E__;
-		__SS_THROW__;
-	}
+	//if(configureConditionID == (unsigned int)-1)
+	//{
+	//	__SS__ << "Impossible condition ID number not retrieved by run info plugin!"
+	//	       << __E__;
+	//	__SS_THROW__;
+	//}
 
 	unsigned int runNumber = (unsigned int)-1;
 	__COUT__ << "claiming next Run Number" << __E__;
@@ -672,15 +822,20 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		std::string sanitizedComment = comment;
 		StringMacros::sanitizeForSQL(sanitizedComment);
 
+		std::string runType = getActiveStateMachineName();
+		StringMacros::sanitizeForSQL(runType);
+
 		// Build INSERT query using std::ostringstream to avoid buffer overflow
 		std::ostringstream queryStream;
-		queryStream << "INSERT INTO " << dbSchema_ << ".run(                         "
-		            << "                config_id,                               "
-		            << "                comment,                                 "
-		            << "                create_time)                             "
-		            << "            VALUES (" << configureConditionID << ", '"
-		            << sanitizedComment << "', CURRENT_TIMESTAMP)        "
-		            << "            RETURNING run_number;";
+		queryStream << "INSERT INTO " << dbSchema_ << ".run ("
+					<< "  comment, "
+					<< "  run_type, "
+					<< "  create_time) "
+					<< " VALUES ("
+					<< "  '" << sanitizedComment << "', "
+					<< "  '" << runType << "', "
+					<< "  CURRENT_TIMESTAMP) "
+					<< " RETURNING run_number;";
 
 		std::string query = queryStream.str();
 		res               = PQexec(runInfoDbConn_, query.c_str());
@@ -688,7 +843,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "INSERT INTO 'run' DATABASE TABLE FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+				   << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -701,8 +856,8 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		else
 		{
 			__SS__ << "RETRIEVE RUN NUMBER FROM 'run' DATABASE TABLE "
-			          "FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+					  "FAILED!!! PQ ERROR: "
+				   << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -775,7 +930,7 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 
 //==============================================================================
 TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
-    RunInfoVInterface::RunTransitionType runStopType)
+	RunInfoVInterface::RunTransitionType runStopType)
 {
 	// Map RunTransitionType enum to database transition type ID and description
 	switch(runStopType)
@@ -820,8 +975,8 @@ TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
 ///		@return void - Inserts a record into the run_transition table with the run_number,
 ///		               transition type_id (mapped from runStopType), and current timestamp.
 void DBRunInfo::updateRunInfo(unsigned int      runConditionID,
-                              RunTransitionType runTransitionType,
-                              const std::string& /* comment */)
+							  RunTransitionType runTransitionType,
+							  const std::string& /* comment */)
 {
 	// For Mu2e, the runConditionID is the run number (for now!)
 	unsigned int runNumber = runConditionID;
@@ -837,19 +992,19 @@ void DBRunInfo::updateRunInfo(unsigned int      runConditionID,
 
 		std::string transitionDescription = "'" + transitionInfo.description + "'";
 		StringMacros::sanitizeForSQL(
-		    transitionDescription);  //in case transitionDescription is used instead of int
+			transitionDescription);  //in case transitionDescription is used instead of int
 
 		PGresult* res;
 
 		// Build INSERT query using std::ostringstream to avoid buffer overflow
 		std::ostringstream queryStream;
 		queryStream << "INSERT INTO " << dbSchema_ << ".run_transition("
-		            << "run_number, "
-		            << "type_id, "
-		            << "transition_time) "
-		            << "VALUES (" << boost::numeric_cast<long int>(runNumber) << ","
-		            << boost::numeric_cast<int>(transitionInfo.typeId)
-		            << ",CURRENT_TIMESTAMP);";
+					<< "run_number, "
+					<< "type_id, "
+					<< "transition_time) "
+					<< "VALUES (" << boost::numeric_cast<long int>(runNumber) << ","
+					<< boost::numeric_cast<int>(transitionInfo.typeId)
+					<< ",CURRENT_TIMESTAMP);";
 
 		std::string query = queryStream.str();
 		res               = PQexec(runInfoDbConn_, query.c_str());
@@ -857,15 +1012,15 @@ void DBRunInfo::updateRunInfo(unsigned int      runConditionID,
 		if(PQresultStatus(res) != PGRES_COMMAND_OK)
 		{
 			__SS__ << "INSERT " << transitionDescription
-			       << " TRANSITION INTO DATABASE TABLE FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+				   << " TRANSITION INTO DATABASE TABLE FAILED!!! PQ ERROR: "
+				   << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
 		PQclear(res);
 
 		__COUT__ << "Insert: " << transitionDescription
-		         << " transition into the run_transition Database table" << __E__;
+				 << " transition into the run_transition Database table" << __E__;
 	}
 
 	if(runNumber == (unsigned int)-1)
@@ -879,7 +1034,7 @@ void DBRunInfo::updateRunInfo(unsigned int      runConditionID,
 
 //==============================================================================
 std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
-    unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
+	unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
 {
 	__COUT__ << "getRunRecords() reached" << __E__;
 	std::vector<std::vector<std::string>> runRecords;
@@ -893,33 +1048,33 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		char      buffer[2048];
 
 		snprintf(buffer,
-		         sizeof(buffer),
-		         "SELECT run_number"
-		         ", start_time as run_time"
-		         ", config_type_name as run_type"
-		         ", NULL as artdaq_partition"
-		         ", NULL as host_name"
-		         ", config_id"
-		         ", comment as shifter_comment"
-		         ", start_time"
-		         ", stop_time"
-		         " FROM %s.v_run_summary"
-		         " WHERE run_status = 'completed'"
-		         " AND start_time BETWEEN TO_TIMESTAMP(%d) AND TO_TIMESTAMP(%d)"
-		         " %s"
-		         " ORDER BY run_number DESC;",
-		         dbSchema_,
-		         startTime,
-		         endTime,
-		         queryFilter.c_str());
+				 sizeof(buffer),
+				 "SELECT run_number"
+				 ", start_time as run_time"
+				 ", config_type_name as run_type"
+				 ", NULL as artdaq_partition"
+				 ", NULL as host_name"
+				 ", config_id"
+				 ", comment as shifter_comment"
+				 ", start_time"
+				 ", stop_time"
+				 " FROM %s.v_run_summary"
+				 " WHERE run_status = 'completed'"
+				 " AND start_time BETWEEN TO_TIMESTAMP(%d) AND TO_TIMESTAMP(%d)"
+				 " %s"
+				 " ORDER BY run_number DESC;",
+				 dbSchema_,
+				 startTime,
+				 endTime,
+				 queryFilter.c_str());
 
 		res = PQexec(runInfoDbConn_, buffer);
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "getRunRecords() SELECT FROM 'v_run_summary' DATABASE TABLE "
-			          "FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+					  "FAILED!!! PQ ERROR: "
+				   << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -947,7 +1102,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 
 //==============================================================================
 std::vector<std::vector<std::string>> DBRunInfo::getRunConfigSubsystemInfo(
-    uint64_t configID)
+	uint64_t configID)
 {
 	std::vector<std::vector<std::string>> configRecords;
 	PGresult*                             res;
@@ -956,28 +1111,28 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConfigSubsystemInfo(
 	__COUT__ << "configID " << configID << __E__;
 
 	snprintf(buffer,
-	         sizeof(buffer),
-	         "SELECT cs.config_id, cs.subsystem, csd.data as subsystem_config_data, "
-	         "cs.config_alias, cs.context_name, cs.context_key, cs.config_group_name, "
-	         "cs.config_group_key, cs.backbone_name, cs.backbone_key, cs.config_db_uri, "
-	         "cs.sw_version_id, cs.create_time "
-	         "FROM %s.config_subsystem cs "
-	         "LEFT JOIN %s.config_subsystem_data csd "
-	         "  ON cs.config_id = csd.config_id AND cs.subsystem = csd.subsystem "
-	         "WHERE cs.config_id = %ld "
-	         "ORDER BY cs.subsystem;",
-	         dbSchema_,
-	         dbSchema_,
-	         configID);
+			 sizeof(buffer),
+			 "SELECT cs.config_id, cs.subsystem, csd.data as subsystem_config_data, "
+			 "cs.config_alias, cs.context_name, cs.context_key, cs.config_group_name, "
+			 "cs.config_group_key, cs.backbone_name, cs.backbone_key, cs.config_db_uri, "
+			 "cs.sw_version_id, cs.create_time "
+			 "FROM %s.config_subsystem cs "
+			 "LEFT JOIN %s.config_subsystem_data csd "
+			 "  ON cs.config_id = csd.config_id AND cs.subsystem = csd.subsystem "
+			 "WHERE cs.config_id = %ld "
+			 "ORDER BY cs.subsystem;",
+			 dbSchema_,
+			 dbSchema_,
+			 configID);
 
 	res = PQexec(runInfoDbConn_, buffer);
 
 	if(PQresultStatus(res) != PGRES_TUPLES_OK)
 	{
 		__SS__ << "getRunConfigSubsystemInfo() SELECT FROM 'subsystem_config' DATABASE "
-		          "TABLE "
-		          "FAILED!!! PQ ERROR: "
-		       << PQresultErrorMessage(res) << __E__;
+				  "TABLE "
+				  "FAILED!!! PQ ERROR: "
+			   << PQresultErrorMessage(res) << __E__;
 		PQclear(res);
 		__SS_THROW__;
 	}
@@ -1010,21 +1165,21 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 		char      buffer[1024];
 
 		snprintf(buffer,
-		         sizeof(buffer),
-		         "SELECT config_data"
-		         ", create_time"
-		         " FROM %s.config"
-		         " WHERE id = %ld;",
-		         dbSchema_,
-		         conditionID);
+				 sizeof(buffer),
+				 "SELECT config_data"
+				 ", create_time"
+				 " FROM %s.config"
+				 " WHERE id = %ld;",
+				 dbSchema_,
+				 conditionID);
 
 		res = PQexec(runInfoDbConn_, buffer);
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
 			__SS__ << "getRunRecords() SELECT FROM 'run_condition' DATABASE TABLE "
-			          "FAILED!!! PQ ERROR: "
-			       << PQresultErrorMessage(res) << __E__;
+					  "FAILED!!! PQ ERROR: "
+				   << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -1034,9 +1189,9 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 		if(conditionRecords.empty())
 		{
 			__SS__ << "getRunConditionByID() RETRIEVE RUN CONDITION RECORD FROM "
-			          "'run_condition' DATABASE TABLE "
-			          "FAILED!!! No records found."
-			       << __E__;
+					  "'run_condition' DATABASE TABLE "
+					  "FAILED!!! No records found."
+				   << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}

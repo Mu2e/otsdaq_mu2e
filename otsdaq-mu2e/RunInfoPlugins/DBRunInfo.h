@@ -48,11 +48,11 @@ struct TransitionTypeInfo
 class DBRunInfo : public RunInfoVInterface
 {
   public:
-	DBRunInfo(std::string activeStateMachineName);
+	DBRunInfo(const std::string& runInfoPluginClassName, const std::string& activeStateMachineName);
 	virtual ~DBRunInfo(void);
 
-	// virtual unsigned int 	insertConfigureCondition	(const std::string&  /*blob*/,
-	// 													 const std::string&  /*comment*/);
+	virtual unsigned int 	insertConfigureCondition	(const std::string&  /*blob*/,
+														 const std::string&  /*comment*/) { __COUT__ << "Do nothing for insertConfigureCondition()" << __E__; return -1; };
 	virtual unsigned int 	claimNextRunNumber			(unsigned int        /* configureConditionID */,
 														 const std::string&  /* comment */);
 	virtual unsigned int 	insertRunCondition			(unsigned int        /* runNumber */,
