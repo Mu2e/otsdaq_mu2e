@@ -5250,66 +5250,41 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	}  //end save raw subevent header
 
 	// check if there is an error on the link in the subevent header
-	if(subevent->GetHeader()->link0_status > 0)
+	for(auto r : DTCLib::DTC_ROC_Links)
 	{
-		// ostr << "Error: " << std::endl;
-		++(threadStruct->rocFragmentErrorsCount_[0]);
-
-		std::bitset<8> link_status(subevent->GetHeader()->link0_status);
-		if(link_status.test(0))
+		if(subevent->GetHeader()->getLinkStatus(r) > 0)
 		{
-			++(threadStruct->rocFragmentTimeoutsCount_[0]);
-			// ostr << "ROC Timeout Error!" << std::endl;
-		}
-		// if (link0_status.test(2))
-		// {
-		//	// ostr << "Packet sequence number Error!" << std::endl;
-		// }
-		// if (link0_status.test(3))
-		// {
-		//	// ostr << "CRC Error!" << std::endl;
-		// }
-		// if (link0_status.test(6))
-		// {
-		//	// ostr << "Fatal Error!" << std::endl;
-		// }
+			// ostr << "Error: " << std::endl;
 
-	}  //end link0 errors
-	if(subevent->GetHeader()->link1_status > 0)
-	{
-		++(threadStruct->rocFragmentErrorsCount_[1]);
-		std::bitset<8> link_status(subevent->GetHeader()->link1_status);
-		if(link_status.test(0))
-			++(threadStruct->rocFragmentTimeoutsCount_[1]);
-	}  //end link1 errors
-	if(subevent->GetHeader()->link2_status > 0)
-	{
-		++(threadStruct->rocFragmentErrorsCount_[2]);
-		std::bitset<8> link_status(subevent->GetHeader()->link2_status);
-		if(link_status.test(0))
-			++(threadStruct->rocFragmentTimeoutsCount_[2]);
-	}  //end link2 errors
-	if(subevent->GetHeader()->link3_status > 0)
-	{
-		++(threadStruct->rocFragmentErrorsCount_[3]);
-		std::bitset<8> link_status(subevent->GetHeader()->link3_status);
-		if(link_status.test(0))
-			++(threadStruct->rocFragmentTimeoutsCount_[3]);
-	}  //end link3 errors
-	if(subevent->GetHeader()->link4_status > 0)
-	{
-		++(threadStruct->rocFragmentErrorsCount_[4]);
-		std::bitset<8> link_status(subevent->GetHeader()->link4_status);
-		if(link_status.test(0))
-			++(threadStruct->rocFragmentTimeoutsCount_[4]);
-	}  //end link4 errors
-	if(subevent->GetHeader()->link5_status > 0)
-	{
-		++(threadStruct->rocFragmentErrorsCount_[5]);
-		std::bitset<8> link_status(subevent->GetHeader()->link5_status);
-		if(link_status.test(0))
-			++(threadStruct->rocFragmentTimeoutsCount_[5]);
-	}  //end link5 errors
+			std::bitset<8> link_status(subevent->GetHeader()->getLinkStatus(r));
+			if(link_status.test(0))
+			{
+				++(threadStruct->rocFragmentTimeoutsCount_[r]);
+
+				if(threadStruct->rocLinkEnabledLatch_
+				       [r])  //only consider the timeout an error, if link is active
+					++(threadStruct->rocFragmentErrorsCount_[r]);
+
+				// ostr << "ROC Timeout Error!" << std::endl;
+			}
+			else
+				++(threadStruct->rocFragmentErrorsCount_[r]);
+
+			// if (link0_status.test(2))
+			// {
+			//	// ostr << "Packet sequence number Error!" << std::endl;
+			// }
+			// if (link0_status.test(3))
+			// {
+			//	// ostr << "CRC Error!" << std::endl;
+			// }
+			// if (link0_status.test(6))
+			// {
+			//	// ostr << "Fatal Error!" << std::endl;
+			// }
+		}
+	}  //end link status error check
+
 #endif
 
 	// print the number of data blocks
@@ -5453,10 +5428,23 @@ try
 		}
 	}
 	//start with clean release
-	// getDevice()->read_release(DTC_DMA_Engine_DAQ, 100);
 	if(threadStruct->thisDTC_)
+	{
 		threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
-	__COUTT__ << "ReleaseAllBuffers called!" << __E__;
+		__COUTT__ << "ReleaseAllBuffers called!" << __E__;
+
+		//latch link enable status for use in accounting (ignoring timeout errors)
+		auto regVal = threadStruct->thisDTC_->ReadLinkEnabledData();
+		for(auto r : DTCLib::DTC_ROC_Links)
+		{
+			auto re = threadStruct->thisDTC_->ReadLinkEnabled(r, regVal);
+			if(re.TransmitEnable && re.ReceiveEnable)
+				threadStruct->rocLinkEnabledLatch_[r] = true;
+			else
+				threadStruct->rocLinkEnabledLatch_[r] = false;
+		}
+		__COUTV__(StringMacros::mapToString(threadStruct->rocLinkEnabledLatch_));
+	}
 
 	std::vector<std::unique_ptr<DTCLib::DTC_Event>>    events;
 	std::vector<std::unique_ptr<DTCLib::DTC_SubEvent>> subevents;
@@ -5603,7 +5591,24 @@ try
 
 				//release buffers for restart
 				if(threadStruct->thisDTC_)
+				{
 					threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+					__COUTT__ << "ReleaseAllBuffers called!" << __E__;
+
+					//latch link enable status for use in accounting (ignoring timeout errors)
+					threadStruct->rocLinkEnabledLatch_.clear();
+					auto regVal = threadStruct->thisDTC_->ReadLinkEnabledData();
+					for(auto r : DTCLib::DTC_ROC_Links)
+					{
+						auto re = threadStruct->thisDTC_->ReadLinkEnabled(r, regVal);
+						if(re.TransmitEnable && re.ReceiveEnable)
+							threadStruct->rocLinkEnabledLatch_[r] = true;
+						else
+							threadStruct->rocLinkEnabledLatch_[r] = false;
+					}
+					__COUTV__(
+					    StringMacros::mapToString(threadStruct->rocLinkEnabledLatch_));
+				}
 			}
 
 		}  //done with check for starting event window tag
