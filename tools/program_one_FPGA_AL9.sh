@@ -51,12 +51,12 @@ done
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
 
-echo -e "program_one_FPGA.sh:${LINENO} |  \t Programming one FPGA on ${HOSTNAME}... SCRIPT_DIR=${SCRIPT_DIR}"
-echo -e "program_one_FPGA.sh:${LINENO} |  \t Number of arguments: $#"
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Programming one FPGA on ${HOSTNAME}... SCRIPT_DIR=${SCRIPT_DIR}"
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Number of arguments: $#"
 
 DORESET=1
 if [ "x$1" == "xNORESET" ]; then
-    echo -e "program_one_FPGA.sh:${LINENO} |  \t Not doing PCIe reset from program one FPGA script!"
+    echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Not doing PCIe reset from program one FPGA script!"
     DORESET=0
     shift
 fi
@@ -64,36 +64,36 @@ fi
 if [ $# == 2 ]; then
     BITFILE_N=$2
 else
-    echo -e "program_one_FPGA.sh:${LINENO} |  \t Illegal number of arguments, must be 2 to specify the JTAG index and bitfile"
+    echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Illegal number of arguments, must be 2 to specify the JTAG index and bitfile"
     echo -e "\t usage 2 args: program_one_FPGA.sh <JTAG index N> <bitfile for JTAG-N>"
     echo
     return  >/dev/null 2>&1 #return is used if script is sourced
 	exit  #exit is used if script is run
 fi
 
-echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG index N: ${1}"
-echo -e "program_one_FPGA.sh:${LINENO} |  \t JTAG-N bitfile: ${2}"
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t JTAG index N: ${1}"
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t JTAG-N bitfile: ${2}"
 
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
     | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
 
-echo -e "program_one_FPGA.sh:${LINENO} |  \t Done programming bitfile to one FPGA on ${HOSTNAME}"
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Done programming bitfile to one FPGA on ${HOSTNAME}"
 
 if [ $DORESET == 0 ]; then
-    echo -e "program_one_FPGA.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
+    echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
     echo
     return  >/dev/null 2>&1 #return is used if script is sourced
         exit  #exit is used if script is run
 fi
 
 #now reset
-echo -e "program_one_FPGA.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
 # ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 # source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo
 echo
-echo -e "program_one_FPGA.sh:${LINENO} |  \t ===> Done with ${HOSTNAME} programming one bitfile and PCIe reset!"
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t ===> Done with ${HOSTNAME} programming one bitfile and PCIe reset!"
 echo

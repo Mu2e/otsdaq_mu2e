@@ -4,7 +4,7 @@
 
 NO_OTS_KILL=0
 if [[ "x$1" == "xNOKILL" ]]; then
-    echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t No-ots-kill specified."
+    echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t No-ots-kill specified."
     NO_OTS_KILL=1
     shift
 fi
@@ -20,7 +20,7 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null; do
         ps=`ps aux`
 	# Look for others possibly running already, ignoring the program_all script that makes underlying program calls
         possible_parent=`echo "$ps" | grep -E ':[0-9]* [a-z/]*bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|grep -v program_all_FPGA|awk '{print$2}'`
-        echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t pid=$pid possible_parent=$possible_parent"
+        echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t pid=$pid possible_parent=$possible_parent"
 
         if [ -n "$pid"  ] && kill -0 "$pid" 2>/dev/null; then
 
@@ -29,7 +29,7 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null; do
                 break
             fi
 
-            test $retriedB -gt 30 && { echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Failed to acquire lock."; exit 1; }
+            test $retriedB -gt 30 && { echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Failed to acquire lock."; exit 1; }
             retriedB=$(($retriedB+1))
             echo `date`: Waiting for `echo "$ps" | grep " $pid "`
             sleep 2
@@ -37,7 +37,7 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null; do
         fi
     fi
     # must be stale , remove and try again
-    test $retriedA -gt 0 && { echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Failed to acquire lock."; exit 1; }
+    test $retriedA -gt 0 && { echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Failed to acquire lock."; exit 1; }
     retriedA=$(($retriedA+1))
     echo 'Stale lock encountered - removing and retrying'
     rm -f "$lockfile"
@@ -52,7 +52,7 @@ SCRIPT_DIR="$(
 )"
 HOSTNAME="$(hostname -f)"
 
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t SCRIPT_DIR: ${SCRIPT_DIR}"
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t SCRIPT_DIR: ${SCRIPT_DIR}"
 
 RegEx='Xilinx.*704[23]'
 
@@ -61,15 +61,15 @@ lspci | grep "$RegEx" && foundXi=1 || foundXi=0
 if [ "$foundXi" = 1 ];then
     TRIES=3
     while expr $TRIES - 1 >/dev/null;do
-	echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Found DTC or CFO (Xilinx) card; removing mu2e driver as `whoami`;"
+	echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Found DTC or CFO (Xilinx) card; removing mu2e driver as `whoami`;"
 
 
     if [[ $NO_OTS_KILL -eq 0 ]]; then
-        echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t first killing any processes that may be using the device."
+        echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t first killing any processes that may be using the device."
         retries=8
         pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
         while [ -n "$pids" -a $retries -gt 0 ];do
-            echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t attempt to kill $pids (which are using /dev/mu2e?) - retries=$retries"; kill -9 $pids
+            echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t attempt to kill $pids (which are using /dev/mu2e?) - retries=$retries"; kill -9 $pids
             sleep 3
             retries=`expr $retries - 1`
             pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
@@ -80,7 +80,7 @@ if [ "$foundXi" = 1 ];then
         # killall -9 TRACE
     else
         pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
-        echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Skipping xdaq.exe and boardreader kill as per NOKILL option, pids=$pids"
+        echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Skipping xdaq.exe and boardreader kill as per NOKILL option, pids=$pids"
     fi
 
 	sleep 3
@@ -88,17 +88,17 @@ if [ "$foundXi" = 1 ];then
 
 	lsmod | grep -q mu2e || break
     done
-    lsmod | grep mu2e && { echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t FAILURE - mu2e kernel module failed to unload!"; exit 1; }
+    lsmod | grep mu2e && { echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t FAILURE - mu2e kernel module failed to unload!"; exit 1; }
 
 
     echo
-    echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Removing each PCIe Xilinx device on ${HOSTNAME}..."
+    echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Removing each PCIe Xilinx device on ${HOSTNAME}..."
     echo
     cards=$(lspci | grep "$RegEx")
     test -z "$cards" && echo NO CARDS FOUND
     while read -r line
     do
-        echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t $line"
+        echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t $line"
         IFS=' ' read -r -a array <<< "$line"
 
         # for p in ${array[@]}; do
@@ -111,33 +111,33 @@ if [ "$foundXi" = 1 ];then
     $(lspci | grep "$RegEx")
 EOF
 else
-    echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t No $RegEx cards found -- no need to unload mu2e kernel module"
+    echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t No $RegEx cards found -- no need to unload mu2e kernel module"
 fi
 
 echo
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Rescanning for PCIe devices on ${HOSTNAME}..."
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Rescanning for PCIe devices on ${HOSTNAME}..."
 echo
 
 sleep 1
 echo "1" > /sys/bus/pci/rescan
 
 
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Now attempt to reload mu2e module via modprobe mu2e"
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Now attempt to reload mu2e module via modprobe mu2e"
 modprobe mu2e
 
 cd /root
 
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Attempting to read firmware version on ${HOSTNAME}..."
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Attempting to read firmware version on ${HOSTNAME}..."
 source ./setup_pcie_AL9.sh
 echo
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t PCIe Device 0 firmware version on ${HOSTNAME}:"
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t PCIe Device 0 firmware version on ${HOSTNAME}:"
 my_cntl -d 0 read 0x9004 #device 0
 echo
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t PCIe Device 1 firmware version on ${HOSTNAME}:"
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t PCIe Device 1 firmware version on ${HOSTNAME}:"
 my_cntl -d 1 read 0x9004 #device 1
 echo
 
 cd - >/dev/null 2>&1
 echo
-echo -e "reset_PCIe_AL9.sh:${LINENO} |  \t Done with ${HOSTNAME} PCIe reset script!"
+echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Done with ${HOSTNAME} PCIe reset script!"
 echo

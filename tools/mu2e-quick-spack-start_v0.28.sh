@@ -352,9 +352,9 @@ export ARTDAQ_DATABASE_URI="filesystemdb://$Base/databases/filesystemdb/test_db"
 export OTSDAQ_DATA="$Base/Data/OutputData"
 export OTS_SOURCE=$Base/srcs
 
-echo -e "setup_ots.sh:\${LINENO} |  \t  Now your user data path is USER_DATA \t\t = \${USER_DATA}"
-echo -e "setup_ots.sh:\${LINENO} |  \t  Now your database path is ARTDAQ_DATABASE_URI \t = \${ARTDAQ_DATABASE_URI}"
-echo -e "setup_ots.sh:\${LINENO} |  \t  Now your output data path is OTSDAQ_DATA \t = \${OTSDAQ_DATA}"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  Now your user data path is USER_DATA \t\t = \${USER_DATA}"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  Now your database path is ARTDAQ_DATABASE_URI \t = \${ARTDAQ_DATABASE_URI}"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  Now your output data path is OTSDAQ_DATA \t = \${OTSDAQ_DATA}"
 echo
 
 #make the number of build threads dependent on the number of cores on the machine:
@@ -367,21 +367,21 @@ alias  mz='date; start_time=\$(date +%s); spack concretize --force --deprecated;
 
 
 echo
-echo -e "setup_ots.sh:\${LINENO} |  \t  Now use 'ots --wiz' to configure otsdaq"
-echo -e "setup_ots.sh:\${LINENO} |  \t   	Then use 'ots' to start otsdaq"
-echo -e "setup_ots.sh:\${LINENO} |  \t   	Or use 'ots --help' for more options"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  Now use 'ots --wiz' to configure otsdaq"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t   	Then use 'ots' to start otsdaq"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t   	Or use 'ots --help' for more options"
 echo
-echo -e "setup_ots.sh:\${LINENO} |  \t      use 'kx' to kill otsdaq processes"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t      use 'kx' to kill otsdaq processes"
 echo
 
-echo -e "setup_ots.sh:\${LINENO} |  \t  "
-echo -e "setup_ots.sh:\${LINENO} |  \t      setup_ots.sh creates some compiling aliases for you:"
-echo -e "setup_ots.sh:\${LINENO} |  \t     ---------------"
-echo -e "setup_ots.sh:\${LINENO} |  \t            mb                             ### for incremental build"
-echo -e "setup_ots.sh:\${LINENO} |  \t            mz                             ### for clean build"
-echo -e "setup_ots.sh:\${LINENO} |  \t     ---------------"
-echo -e "setup_ots.sh:\${LINENO} |  \t  "
-echo -e "setup_ots.sh:\${LINENO} |  \t  "
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  "
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t      setup_ots.sh creates some compiling aliases for you:"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t     ---------------"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t            mb                             ### for incremental build"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t            mz                             ### for clean build"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t     ---------------"
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  "
+echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  "
 
 EOF
 #
