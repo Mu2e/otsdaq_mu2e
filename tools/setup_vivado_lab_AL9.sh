@@ -24,7 +24,7 @@ echo "# source ${SCRIPT_DIR}/find_JTAG_usb_AL9.sh"
 
 HOSTNAME="$(hostname -f)"
 
-echo -e "setup_vivado_lab.sh:${LINENO} |  \t Clearing and setting up vivado lab..."
+echo -e "$(date +%d%b%y.%T) setup_vivado_lab.sh:${LINENO} |  \t Clearing and setting up vivado lab..."
 
 killall -9 vivado_lab
 killall -9 java
