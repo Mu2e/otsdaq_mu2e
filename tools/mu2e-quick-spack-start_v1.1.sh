@@ -300,9 +300,20 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         checkout_package $pkg
     done
     if [[ ${opt_all_packages:-0} -eq 1 ]]; then
-        for pkg in Offline mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-tracker otsdaq-mu2e-trigger mu2e-tdaq-suite;do
+        for pkg in mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-tracker otsdaq-mu2e-trigger mu2e-tdaq-suite;do
             checkout_package $pkg
         done
+        if ! [ -d offline ];then
+            if [ $opt_w -eq 0 ];then
+                git clone https://github.com/Mu2e/Offline.git offline
+            else
+                git clone git@github.com:Mu2e/Offline.git offline
+            fi
+        else
+            cd offline
+            git pull
+            cd ..
+        fi
     fi
     cd $Base
 fi
