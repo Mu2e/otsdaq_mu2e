@@ -8,5 +8,3 @@ SOURCE CFOandDTCCoreVInterface.cc
 
 install_headers()
 install_source()
-
- 

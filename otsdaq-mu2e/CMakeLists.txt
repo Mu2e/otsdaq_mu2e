@@ -6,6 +6,3 @@ add_subdirectory(TablePlugins)
 add_subdirectory(DataProcessorPlugins)
 add_subdirectory(ArtModules)
 add_subdirectory(RunInfoPlugins)
-
-
-
