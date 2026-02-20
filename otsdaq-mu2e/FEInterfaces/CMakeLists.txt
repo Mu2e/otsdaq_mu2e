@@ -1,4 +1,3 @@
-
 include(otsdaq::FEInterface)
 
 cet_make_library(LIBRARY_NAME ROCPolarFireCoreInterface SOURCE ROCPolarFireCoreInterfaceImpl.cc LIBRARIES PUBLIC otsdaq-mu2e::ROCCore )
@@ -12,6 +11,7 @@ cet_make_library(LIBRARY_NAME DTCFrontEndInterface SOURCE DTCFrontEndInterfaceIm
   ROOT::Core
   ROOT::RIO
 )
+
 cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG
   otsdaq-mu2e::DTCFrontEndInterface
   ROOT::Hist
@@ -28,14 +28,16 @@ cet_make_library(LIBRARY_NAME CFOFrontEndInterface SOURCE CFOFrontEndInterfaceIm
   ROOT::RIO
   ROOT::Tree
 )
+
 cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::CFOFrontEndInterface )
 
+<<<<<<< eflumerf/FixWhitespace
 # cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::CFOandDTCCore mu2e-pcie-utils::CFOInterface )
 
 
+=======
+>>>>>>> develop
 cet_build_plugin(CAPTANSignalGenerator otsdaq::FEInterface LIBRARIES REG otsdaq-components::DAQHardware )
-
-cet_build_plugin(ROCTimingPaddlesInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::ROCPolarFireCoreInterface )
 
 install_headers()
 install_source()

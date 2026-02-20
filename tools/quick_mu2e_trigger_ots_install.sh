@@ -15,14 +15,14 @@ USER=$(whoami)
 FOR_USER=$(stat -c "%U" $PWD)
 FOR_GROUP=$(stat -c "%G" $PWD)
 
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t ~~ quick_mu2e_trigger_ots_install ~~ "
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t usage: source quick_mu2e_trigger_ots_install.sh"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t user '$USER' installing for target user '$FOR_USER $FOR_GROUP'"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t (note: target user is set based on the owner of $PWD)"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t ~~ quick_mu2e_trigger_ots_install ~~ "
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t usage: source quick_mu2e_trigger_ots_install.sh"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t user '$USER' installing for target user '$FOR_USER $FOR_GROUP'"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t (note: target user is set based on the owner of $PWD)"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  "
 
 
 # at this point, there must have been valid parameters
@@ -70,7 +70,7 @@ for p in ${REPO_DIR[@]}; do
 
 			bp=$(basename $p)
 
-			echo -e "UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
+			echo -e "$(date +%d%b%y.%T) UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
 
 			cd $p
 			if [ $bp == "otsdaq_mu2e_config" ]; then
@@ -103,7 +103,7 @@ for p in ${REPO_DIR[@]}; do
 
 			bp=$(basename $p)
 
-			echo -e "UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
+			echo -e "$(date +%d%b%y.%T) UpdateOTS.sh [${LINENO}]  \t Repo directory found as: $bp"
 
 			cd $p
 			if [ $bp == "otsdaq_utilities" ]; then
@@ -127,19 +127,19 @@ fi
 #remove self so users do not install twice!
 rm -rf ../quick_mu2e_trigger_ots_install.sh
 
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t =================="
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t quick_mu2e_trigger_ots_install script done!"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t Next time, cd to ${PWD}:"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t source setup_ots.sh     #########################################   #to setup ots"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t mb                      #########################################   #for incremental build"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t mz                      #########################################   #for clean build"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t UpdateOTS.sh            #########################################   #to see update options"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ./change_ots_qualifiers.sh           ############################   #to see qualifier options"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t chmod 755 reset_ots_tutorial.sh; ./reset_ots_tutorial.sh --list     #to see tutorial options"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t reset_mu2e_ots_snapshot.sh name trigger_Dev_20200116     			 #to reset ots to a named mu2e snapshot"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ots -w                  #########################################   #to run ots in wiz(safe) mode"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ots                     #########################################   #to run ots in normal mode"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t =================="
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t quick_mu2e_trigger_ots_install script done!"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t Next time, cd to ${PWD}:"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t source setup_ots.sh     #########################################   #to setup ots"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t mb                      #########################################   #for incremental build"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t mz                      #########################################   #for clean build"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t UpdateOTS.sh            #########################################   #to see update options"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ./change_ots_qualifiers.sh           ############################   #to see qualifier options"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t chmod 755 reset_ots_tutorial.sh; ./reset_ots_tutorial.sh --list     #to see tutorial options"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t reset_mu2e_ots_snapshot.sh name trigger_Dev_20200116     			 #to reset ots to a named mu2e snapshot"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ots -w                  #########################################   #to run ots in wiz(safe) mode"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t\t ots                     #########################################   #to run ots in normal mode"
 
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t *******************************"
-echo -e "quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t *******************************"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t *******************************"
+echo -e "$(date +%d%b%y.%T) quick_mu2e_trigger_ots_install.sh [${LINENO}]  \t *******************************"

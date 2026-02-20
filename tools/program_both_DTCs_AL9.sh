@@ -51,12 +51,12 @@ done
 # Ensure lock file is removed on exit
 trap 'rm -f "$lockfile"' EXIT
 
-echo -e "program_both_DTCs.sh:${LINENO} |  \t Programming both bitfiles on ${HOSTNAME}..."
-echo -e "program_both_DTCs.sh:${LINENO} |  \t Number of arguments: $#"
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Programming both bitfiles on ${HOSTNAME}..."
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Number of arguments: $#"
 
 DORESET=1
 if [ "x$1" == "xNORESET" ]; then
-    echo -e "program_both_DTCs.sh:${LINENO} |  \t No reset!"
+    echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t No reset!"
     DORESET=0
     shift
 fi
@@ -64,11 +64,11 @@ fi
 BITFILE0=$1
 BITFILE1=$1
 if [ $# == 1 ]; then
-    echo -e "program_both_DTCs.sh:${LINENO} |  \t Loading this bitfile to both DTCS: ${BITFILE0}"
+    echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Loading this bitfile to both DTCS: ${BITFILE0}"
 elif [ $# == 2 ]; then
     BITFILE1=$2
 else
-    echo -e "program_both_DTCs.sh:${LINENO} |  \t Illegal number of arguments, must be 1 or 2 to specify the bitfile for JTAG-0 and JTAG-1"
+    echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Illegal number of arguments, must be 1 or 2 to specify the bitfile for JTAG-0 and JTAG-1"
     echo -e "\t usage 1 arg:  program_both_DTCs.sh <bitfile for both>"
     echo -e "\t usage 2 args: program_both_DTCs.sh <bitfile for JTAG-0> <bitfile for JTAG-1>"
     echo
@@ -76,18 +76,18 @@ else
 	exit  #exit is used if script is run
 fi
 
-echo -e "program_both_DTCs.sh:${LINENO} |  \t JTAG-0 bitfile: ${BITFILE0}"
-echo -e "program_both_DTCs.sh:${LINENO} |  \t JTAG-1 bitfile: ${BITFILE1}"
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t JTAG-0 bitfile: ${BITFILE0}"
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t JTAG-1 bitfile: ${BITFILE1}"
 echo
-echo -e "program_both_DTCs.sh:${LINENO} |  \t vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1}"
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1}"
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1} 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
     | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
 echo
-echo -e "program_both_DTCs.sh:${LINENO} |  \t Done programming bitfile to both DTCs on ${HOSTNAME}"
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Done programming bitfile to both DTCs on ${HOSTNAME}"
 
 if [ $DORESET == 0 ]; then
-    echo -e "program_both_DTCs.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
+    echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
     echo
     return  >/dev/null 2>&1 #return is used if script is sourced
         exit  #exit is used if script is run
@@ -95,12 +95,12 @@ fi
 
 
 #now reset
-echo -e "program_both_DTCs.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Resetting PCIe as ${USER} on ${HOSTNAME}..."
 # ssh root@${HOSTNAME} bash ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 # source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo
 echo
-echo -e "program_both_DTCs.sh:${LINENO} |  \t ===> Done with ${HOSTNAME} programming bitfile and PCIe reset!"
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t ===> Done with ${HOSTNAME} programming bitfile and PCIe reset!"
 echo
