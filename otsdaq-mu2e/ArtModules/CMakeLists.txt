@@ -1,4 +1,4 @@
-cet_make_library( 
+cet_make_library(
 SOURCE HistoReceiver.cc HistoSender.cc
 LIBRARIES PUBLIC
 otsdaq::NetworkUtilities
