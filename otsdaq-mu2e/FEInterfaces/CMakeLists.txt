@@ -31,12 +31,6 @@ cet_make_library(LIBRARY_NAME CFOFrontEndInterface SOURCE CFOFrontEndInterfaceIm
 
 cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::CFOFrontEndInterface )
 
-<<<<<<< eflumerf/FixWhitespace
-# cet_build_plugin(CFOFrontEndInterface otsdaq::FEInterface LIBRARIES REG otsdaq-mu2e::CFOandDTCCore mu2e-pcie-utils::CFOInterface )
-
-
-=======
->>>>>>> develop
 cet_build_plugin(CAPTANSignalGenerator otsdaq::FEInterface LIBRARIES REG otsdaq-components::DAQHardware )
 
 install_headers()
