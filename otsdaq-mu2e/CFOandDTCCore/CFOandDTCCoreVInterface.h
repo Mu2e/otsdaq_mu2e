@@ -7,9 +7,9 @@
 #include <mutex>
 #include <string>
 #include "cfoInterfaceLib/CFO.h"
+#include "cfoInterfaceLib/CFO_Compiler.hh"
 #include "dtcInterfaceLib/CFOandDTC_Registers.h"
 #include "dtcInterfaceLib/mu2edev.h"
-//#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
 #include "otsdaq/FECore/FEVInterface.h"
@@ -70,6 +70,9 @@ class CFOandDTCCoreVInterface : public FEVInterface
   protected:
 
 	void 								registerCFOandDTCFEMacros	(void);
+	uint64_t							convertEventDurationToClocks(const std::string& eventDuration);
+
+  protected:
 
 	int         						deviceIndex_		         	= -1; //PCIe index
 	bool        						configure_clock_    			= false;
@@ -82,6 +85,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	bool 								artdaqMode_ = false; // true to prevent run data file generation
 
+	const uint64_t 						FPGAClock_ = CFOLib::CFO_Compiler::FPGAClock_;	//period of FPGA clock in ns (as of Feb 2026, was 25ns)
 
   public:
 	void 								SoftReset							(__ARGS__);

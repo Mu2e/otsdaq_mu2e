@@ -4823,9 +4823,6 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
 	if(timeValue < value)
 		timeValue = value;
 
-	const uint64_t FPGAClock_ =
-	    (1e9 /
-	     (40e6) /* 40MHz FPGAClock for calculating delays */);  //period of FPGA clock in ns
 	__FE_COUTV__(FPGAClock_);
 	__FE_COUTV__(value);
 	__FE_COUTV__(timeValue);

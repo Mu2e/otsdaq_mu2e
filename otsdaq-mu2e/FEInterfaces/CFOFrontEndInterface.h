@@ -5,9 +5,6 @@
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 
-#include "cfoInterfaceLib/CFO.h"
-#include "cfoInterfaceLib/CFO_Compiler.hh"
-
 namespace ots
 {
 class CFOFrontEndInterface : public CFOandDTCCoreVInterface
@@ -33,8 +30,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// CFO specific items
 	//----------------
-	float 								MeasureLoopback				(int linkToLoopback); //pre-covid loopback calculation stretegy
-	uint32_t 							measureDelay				(CFOLib::CFO_Link_ID link); //post-covid loopback function
+	float 								MeasureLoopback				(int linkToLoopback); ///< pre-covid loopback calculation stretegy
+	uint32_t 							measureDelay				(CFOLib::CFO_Link_ID link); ///< post-covid loopback function
 
 	// int  								getLinkStatus				(void);
 	void 								configureEventBuildingMode	(int step = -1);
@@ -90,16 +87,31 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
   private:
 
-	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag,
-																			bool saveBinaryDataToFile,
-																			bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
-	static void 						detechedBufferTestThread			(std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	void 								initDetachedBufferTest						(uint64_t initialEventWindowTag,
+																					bool saveBinaryDataToFile,
+																					bool saveSubeventHeadersToDataFile, bool doNotResetCounters);
+	static void 						detechedBufferTestThread					(std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
 
 
-	void 								registerFEMacros					(void);
+	void 								registerFEMacros							(void);
+
+	void 								parseEventDurationForRunPlan				(const std::string& eventDuration, std::string& durationValue, std::string& durationUnits);
+	void 								getRatioOfOnPerEvents						(uint32_t clocksPerOn, uint32_t clocksPerEvent, uint32_t& mPartRatio, uint32_t& nPartRatio);
+	void 								generateSharedRunPlanWithPeriodicModeOn		(std::stringstream& logResult, 
+																					 std::string& genFilename, 
+																					 const uint64_t initEventTag, 
+																					 const uint16_t onBits_startBit, 
+																					 const uint16_t onBits_bitCount,
+																					 const uint64_t onBits_value, 
+																					 uint32_t mPartRatio, 
+																					 uint32_t nPartRatio, 
+																					 const std::string& eventDurationSplitNumber, 
+																					 const std::string& eventDurationSplitUnits);
+
 
 	int									timing_chain_first_substep_	   		= -1;
 	uint64_t							next_starting_event_window_tag_		= 0;
+	const std::vector<uint32_t>			standardNValues_					= {100, 200, uint32_t(1e3), uint32_t(1e5), uint32_t(1e7), uint32_t(1e9)};
 
   public:
 
@@ -113,13 +125,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	CFOLib::CFO* 						thisCFO_;
 
-	// void 								FlashLEDs						(__ARGS__);
-	// void 								GetFirmwareVersion				(__ARGS__);
-	// void 								GetStatus						(__ARGS__);
 	void 								GetCounters							(__ARGS__);
-	// void 								GetFPGATemperature				(__ARGS__);
-	// void								SelectJitterAttenuatorSource	(__ARGS__);
-
 
 	void 								CFOReset							(__ARGS__);
 	void 								CFOHalt								(__ARGS__);
@@ -149,6 +155,18 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 																						std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																						uint64_t eventWindowMode, bool enableClockMarkers, bool saveBinaryDataToFile,
 																						bool saveSubeventHeadersToDataFile,	bool doNotResetCounters);
+	
+	/// Shared Run Plan related functions and declarations
+	enum class SharedRunPlanSubsystemModeBit
+	{
+		CRV = 31, Calo = 23, Tracker = 15, STM = 37, ExtMon = 39, HWDev = 7
+	};
+	void 								SharedRunPlanStatus					(__ARGS__); ///< Get Event Mode, Tag, Active Subsystems, and running status 
+	void 								SharedRunPlanStart					(__ARGS__);
+	void 								SharedRunPlanStop					(__ARGS__); ///< Halts Run Plan
+	void 								SharedRunPlanSubsystemJoin			(__ARGS__);
+	void 								SharedRunPlanSubsystemLeave			(__ARGS__);
+	
 	void 								ConfigureForTimingChain				(__ARGS__);
 	void								LoopbackTest						(__ARGS__);
 	void 								TestMarker							(__ARGS__);
