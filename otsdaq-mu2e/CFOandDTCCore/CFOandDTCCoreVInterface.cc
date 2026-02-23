@@ -586,15 +586,16 @@ void CFOandDTCCoreVInterface::SelectJitterAttenuatorSource(__ARGS__)
 void CFOandDTCCoreVInterface::SoftReset(__ARGS__)
 {
 	getCFOandDTCRegisters()->SoftReset();
-} //end SoftReset()
+}  //end SoftReset()
 //========================================================================
 void CFOandDTCCoreVInterface::HardReset(__ARGS__)
 {
 	getCFOandDTCRegisters()->HardReset();
-} //end HardReset()
+}  //end HardReset()
 
 //========================================================================
-uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(const std::string& eventDuration)
+uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
+    const std::string& eventDuration)
 {
 	__FE_COUTV__(eventDuration);
 	bool   foundUnits = false;
@@ -684,7 +685,7 @@ uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(const std::string
 	}
 
 	return eventDurationInClocks;
-} //end convertEventDurationToClocks()
+}  //end convertEventDurationToClocks()
 
 //
 ////==================================================================================================
