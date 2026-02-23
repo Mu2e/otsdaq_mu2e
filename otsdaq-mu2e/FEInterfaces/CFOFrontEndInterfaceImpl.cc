@@ -104,71 +104,69 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 	mapOfFEMacroFunctions_.clear();
 
-	// clang-format off
+	registerFEMacroFunction("CFO Reset",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &CFOFrontEndInterface::CFOReset),
+	                        std::vector<std::string>{},  // namesOfInputArgs
+	                        std::vector<std::string>{},  // namesOfOutput
+	                        1,                           // requiredUserPermissions
+	                        "*",                         // allowedCallingFEs
+	                        "Executes a soft reset of the CFO by setting the reset bit "
+	                        "(31) to true on the <b>CFO Control Register</b> (0x9100).");
 
 	registerFEMacroFunction(
-		"CFO Reset",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::CFOReset),
-					std::vector<std::string>{}, // namesOfInputArgs
-					std::vector<std::string>{}, // namesOfOutput
-					1,  // requiredUserPermissions
-					"*",  // allowedCallingFEs
-					"Executes a soft reset of the CFO by setting the reset bit (31) to true on the <b>CFO Control Register</b> (0x9100)."
-	);
+	    "Clock Marker Enable/Disable",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::EnableOrDisableClockMarkers),
+	    std::vector<std::string>{
+	        "Enable Clock Markers (Default := false)"},  // namesOfInputArgs
+	    std::vector<std::string>{},                      // namesOfOutput
+	    1,                                               // requiredUserPermissions
+	    "*",                                             // allowedCallingFEs
+	    "Enable or Disable the Mu2e Clock Marker broadcast over the CFO timing links.");
+
+	registerFEMacroFunction("CFO Halt",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &CFOFrontEndInterface::CFOHalt),
+	                        std::vector<std::string>{},  // namesOfInputArgs
+	                        std::vector<std::string>{},  // namesOfOutput
+	                        1,                           // requiredUserPermissions
+	                        "*",
+	                        "Transitions the state machine to <b>Halt</b> by setting the "
+	                        "Enable Beam Off Mode Register to off.");
 
 	registerFEMacroFunction(
-		"Clock Marker Enable/Disable",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::EnableOrDisableClockMarkers),
-					std::vector<std::string>{"Enable Clock Markers (Default := false)"}, // namesOfInputArgs
-					std::vector<std::string>{}, // namesOfOutput
-					1,  // requiredUserPermissions
-					"*",  // allowedCallingFEs
-					"Enable or Disable the Mu2e Clock Marker broadcast over the CFO timing links."
-	);
+	    "CFO Write",  // feMacroName
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::WriteCFO),              // feMacroFunction
+	    std::vector<std::string>{"address", "writeData"},  // namesOfInputArgs
+	    std::vector<std::string>{},                        // namesOfOutput
+	    1,                                                 // requiredUserPermissions
+	    "*",                                               // allowedCallingFEs
+	    "This FE Macro writes to the CFO registers.");
 
 	registerFEMacroFunction(
-		"CFO Halt",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::CFOHalt),
-					std::vector<std::string>{}, // namesOfInputArgs
-					std::vector<std::string>{}, // namesOfOutput
-					1,  // requiredUserPermissions
-					"*",
-					"Transitions the state machine to <b>Halt</b> by setting the Enable Beam Off Mode Register to off."
-	);
-
-	registerFEMacroFunction(
-		"CFO Write",  // feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::WriteCFO),  // feMacroFunction
-					std::vector<std::string>{"address", "writeData"}, // namesOfInputArgs
-					std::vector<std::string>{},  // namesOfOutput
-					1,    // requiredUserPermissions
-					"*",  // allowedCallingFEs
-					"This FE Macro writes to the CFO registers."
-	);
-
-	registerFEMacroFunction(
-		"Loopback Test",  // feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
-					std::vector<std::string>{ // namesOfInputArgs
-						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
-						"Number of Loopback tests (Default := 1)",
-						"Target Link (-1 for all, Default := -1)",
-						"Target ROC (-1 for all, Default := -1)",
-						"Write ROOT file (Default := false)", "ROOT file name (Default := CFO_loopback.root)"},
-					std::vector<std::string>{"Response"},  // namesOfOutput
-					1,
-					"*",
-					"Similar to <b>Test Loopback marker</b>, this FE Macro repeatedly measures the delay of markers from ROCs for a specified link. "
-					"The average delay is returned given the number of iterations (loopbacks), link, and delay (sleep between iterations). "
-					"This FE Macro is useful for Event Window synchronization.\n\n"
-					"Constraints:\n"
-					"\t-Loopback must be less than 10,000.\n"
-	);
+	    "Loopback Test",  // feMacroName
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
+	    std::vector<std::string>{                  // namesOfInputArgs
+	                             "Number of Loopback Exponent (Default := 3, which is 8 "
+	                             "Loopback Markers sent)",
+	                             "Number of Loopback tests (Default := 1)",
+	                             "Target Link (-1 for all, Default := -1)",
+	                             "Target ROC (-1 for all, Default := -1)",
+	                             "Write ROOT file (Default := false)",
+	                             "ROOT file name (Default := CFO_loopback.root)"},
+	    std::vector<std::string>{"Response"},  // namesOfOutput
+	    1,
+	    "*",
+	    "Similar to <b>Test Loopback marker</b>, this FE Macro repeatedly measures the "
+	    "delay of markers from ROCs for a specified link. "
+	    "The average delay is returned given the number of iterations (loopbacks), link, "
+	    "and delay (sleep between iterations). "
+	    "This FE Macro is useful for Event Window synchronization.\n\n"
+	    "Constraints:\n"
+	    "\t-Loopback must be less than 10,000.\n");
 
 	// registerFEMacroFunction(
 	// 	"Test Loopback marker",  // feMacroName
@@ -182,255 +180,298 @@ void CFOFrontEndInterface::registerFEMacros(void)
 	// 				"Optionally, the delay can be measured over mutliple iterations with the <b>Loopback Test</B> Macro."
 	// );
 
+	registerFEMacroFunction("CFO Read",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &CFOFrontEndInterface::ReadCFO),  // feMacroFunction
+	                        std::vector<std::string>{"address"},  // namesOfInputArgs
+	                        std::vector<std::string>{"readData"},
+	                        1,  // requiredUserPermissions
+	                        "*",
+	                        "Read from the CFO Memory Map.\n\n"
+	                        "Parameters:\n"
+	                        "\taddress (uint16_t): Address in Memory Map.\n");
+
+	registerFEMacroFunction("Reset Runplan",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &CFOFrontEndInterface::ResetRunplan),  // feMacroFunction
+	                        std::vector<std::string>{},                // namesOfInputArgs
+	                        std::vector<std::string>{},                // namesOfOutput
+	                        1,  // requiredUserPermissions
+	                        "*",
+	                        "Resets the Event Building run plan by setting the reset bit "
+	                        "(27) to true on the <b>CFO Control Register</b>.");
+
 	registerFEMacroFunction(
-		"CFO Read",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::ReadCFO),                  // feMacroFunction
-					std::vector<std::string>{"address"},  // namesOfInputArgs
-					std::vector<std::string>{"readData"},
-					1,  // requiredUserPermissions
-					"*",
-					"Read from the CFO Memory Map.\n\n"
-					"Parameters:\n"
-					"\taddress (uint16_t): Address in Memory Map.\n"
+	    "Compile Runplan",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::CompileRunplan),  // feMacroFunction
+	    std::vector<std::string>{
+	        "Input Text File",
+	        "Output Binary File"},  //"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
+	    std::vector<std::string>{"Result"},
+	    1,  // requiredUserPermissions
+	    "*" /* allowedCallingFEs */,
+	    "This FE Macro compiles the CFO run plan to a binary file. You must compile "
+	    "before running <b>Set Runplan</b> "
+	    "which downloads the binary run plan to the CFO.\n\nDefault text run plan: "
+	    "srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: "
+	    "srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
 	);
 
 	registerFEMacroFunction(
-		"Reset Runplan",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::ResetRunplan),                  // feMacroFunction
-					std::vector<std::string>{}, // namesOfInputArgs
-					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions
-					"*",
-					"Resets the Event Building run plan by setting the reset bit (27) to true on the <b>CFO Control Register</b>."
-	);
+	    "Set Runplan",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::SetRunplan),       // feMacroFunction
+	    std::vector<std::string>{"Binary Run File"},  // namesOfInputArgs
+	    std::vector<std::string>{"Result"},
+	    1,   // requiredUserPermissions
+	    "*", /* allowedCallingFEs */
+	    "Download the binary run plan to the CFO. <b>You must first compile your run "
+	    "plan</b>.\n\n\n\n" /* feMacroTooltip */
+	    "Paramters:\n"
+	    "\tBinary Run File (string): Path to the binary run plan. Default: "
+	    "srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n");
 
 	registerFEMacroFunction(
-		"Compile Runplan",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::CompileRunplan),                  // feMacroFunction
-					std::vector<std::string>{"Input Text File", "Output Binary File"},//"Input Text Run Plan", "Output Binary Run File"},  // namesOfInputArgs
-					std::vector<std::string>{"Result"},
-					1,    // requiredUserPermissions
-					"*" /* allowedCallingFEs */,
-					"This FE Macro compiles the CFO run plan to a binary file. You must compile before running <b>Set Runplan</b> "
-					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
-					);
+	    "Compile, Set, and Launch On/Off Spill Template Run Plan",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::
+	            CompileSetAndLaunchTemplateSuperCycleRunPlan),  // feMacroFunction
+	    std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
+	                             "Number of 1.4s super cycle repetitions (0 := infinite)",
+	                             "Starting Event Window Tag (Default or -1 := start from "
+	                             "0 and continue)",
+	                             "Enable Clock Markers (Default := false)",
+	                             "Use Detached Buffer Test (Default := false)",
+	                             "For Detached Buffer Test, Save Binary Data to File "
+	                             "(Default: false)",
+	                             "For Detached Buffer Test, Save Subevent Header to "
+	                             "Binary File (Default: false)",
+	                             "For Detached Buffer Test, Do NOT Reset Counters "
+	                             "(Default: false)"},  // namesOfInputArgs
+	    std::vector<std::string>{"response"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Compile & Set a Template CFO Run Plan. Disabling turns off output of CFO Event "
+	    "Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
+	    "Enabling turns on emulated Event Window generation and timing markers based on "
+	    "the CFO parameters.");
+	registerFEMacroFunction(
+	    "Compile, Set, and Launch Fixed-width Event Window Template Run Plan",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::
+	            CompileSetAndLaunchTemplateFixedWidthRunPlan),  // feMacroFunction
+	    std::vector<
+	        std::string>{"Enable CFO Run Plan Execution (Default := false)",
+	                     "Fixed-width Event Window Duration (s, ms, us, ns, and clocks "
+	                     "allowed) [clocks := 25ns]",
+	                     "Number of Event Window Markers to generate (0 := infinite)",
+	                     "Starting Event Window Tag (Default or -1 := start from 0 and "
+	                     "continue)",
+	                     "Event Window Mode (Default := 1)",
+	                     "Enable Clock Markers (Default := false)",
+	                     "Use Detached Buffer Test (Default := false)",
+	                     "For Detached Buffer Test, Save Binary Data to File (Default: "
+	                     "false)",
+	                     "For Detached Buffer Test, Save Subevent Header to Binary File "
+	                     "(Default: false)",
+	                     "For Detached Buffer Test, Do NOT Reset Counters (Default: "
+	                     "false)"},  // namesOfInputArgs
+	    std::vector<std::string>{"response"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Compile & Set a Template CFO Run Plan. Disabling turns off output of CFO Event "
+	    "Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
+	    "Enabling turns on emulated Event Window generation and timing markers based on "
+	    "the CFO parameters.");
 
 	registerFEMacroFunction(
-		"Set Runplan",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::SetRunplan),                  // feMacroFunction
-					std::vector<std::string>{"Binary Run File"},         // namesOfInputArgs
-					std::vector<std::string>{"Result"},
-					1,   // requiredUserPermissions
-					"*", /* allowedCallingFEs */
-					"Download the binary run plan to the CFO. <b>You must first compile your run plan</b>.\n\n\n\n" /* feMacroTooltip */
-					"Paramters:\n"
-					"\tBinary Run File (string): Path to the binary run plan. Default: srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n"
-	);
-
-	registerFEMacroFunction(
-		"Compile, Set, and Launch On/Off Spill Template Run Plan",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan),                  // feMacroFunction
-					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
-											"Number of 1.4s super cycle repetitions (0 := infinite)",
-											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-											"Enable Clock Markers (Default := false)",
-											"Use Detached Buffer Test (Default := false)",
-											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
-											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
-											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)"
-											},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
-					1,   // requiredUserPermissions
-					"*",
-					"Compile & Set a Template CFO Run Plan. Disabling turns off output of CFO Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
-					"Enabling turns on emulated Event Window generation and timing markers based on the CFO parameters."
-	);
-	registerFEMacroFunction(
-		"Compile, Set, and Launch Fixed-width Event Window Template Run Plan",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan),                  // feMacroFunction
-					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
-											"Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",
-											"Number of Event Window Markers to generate (0 := infinite)",
-											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-											"Event Window Mode (Default := 1)",
-											"Enable Clock Markers (Default := false)",
-											"Use Detached Buffer Test (Default := false)",
-											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
-											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
-											"For Detached Buffer Test, Do NOT Reset Counters (Default: false)"
-											},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
-					1,   // requiredUserPermissions
-					"*",
-					"Compile & Set a Template CFO Run Plan. Disabling turns off output of CFO Event Window Markers, timing markers, and Heartbeat Packets. " /* feMacroTooltip */
-					"Enabling turns on emulated Event Window generation and timing markers based on the CFO parameters."
-	);
-
-	registerFEMacroFunction(
-		"Launch Runplan",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::LaunchRunplan),                  // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{},
-					1,   // requiredUserPermissions
-					"*" /* allowedCallingFEs */,
-					"Launchs the Event Building run plan. You must <b>Compile Runplan</b> and <b>Set Runplan</b> before launching. " /* feMacroTooltip */
-					"You do not need to compile and set the same runplan more than once. Use <b>Reset Runplan</b> and <b>Launch Runplan</b> thereafter."
-	);
+	    "Launch Runplan",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::LaunchRunplan),  // feMacroFunction
+	    std::vector<std::string>{},                 // namesOfInputArgs
+	    std::vector<std::string>{},
+	    1,  // requiredUserPermissions
+	    "*" /* allowedCallingFEs */,
+	    "Launchs the Event Building run plan. You must <b>Compile Runplan</b> and <b>Set "
+	    "Runplan</b> before launching. " /* feMacroTooltip */
+	    "You do not need to compile and set the same runplan more than once. Use "
+	    "<b>Reset Runplan</b> and <b>Launch Runplan</b> thereafter.");
 
 	// Shared Run Info FE Macro Registration ------------------
 	{
 		registerFEMacroFunction(
-			"Shared Run Plan Get Status",
-				static_cast<FEVInterface::frontEndMacroFunction_t>(
-						&CFOFrontEndInterface::SharedRunPlanStatus),              	// feMacroFunction
-						std::vector<std::string>{},  // namesOfInputArgs
-						std::vector<std::string>{"Result"},
-						1,
-						"*",
-						"This FE Macro returns the status of the CFO Run Plan. It retrieves the current Event Mode, Event Window Tag, Active Subsystems, and running status."
-		);  // requiredUserPermissions
+		    "Shared Run Plan Get Status",
+		    static_cast<FEVInterface::frontEndMacroFunction_t>(
+		        &CFOFrontEndInterface::SharedRunPlanStatus),  // feMacroFunction
+		    std::vector<std::string>{},                       // namesOfInputArgs
+		    std::vector<std::string>{"Result"},
+		    1,
+		    "*",
+		    "This FE Macro returns the status of the CFO Run Plan. It retrieves the "
+		    "current Event Mode, Event Window Tag, Active Subsystems, and running "
+		    "status.");  // requiredUserPermissions
+
+		registerFEMacroFunction("Shared Run Plan Start",
+		                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+		                            &CFOFrontEndInterface::
+		                                SharedRunPlanStart),  // feMacroFunction
+		                        std::vector<std::string>{
+		                            "Initial Event Mode (Default = 0)",
+		                            "Initial Event Tag  (Default = 0)",
+		                            "Run Plan Event Window Duration (s, ms, us, ns, and "
+		                            "clocks allowed) [clocks := 25ns] (Default = 1.8 "
+		                            "us)"},
+		                        // namesOfInputArgs
+		                        std::vector<std::string>{"Result"},
+		                        1,
+		                        "*",
+		                        "This FE Macro starts the shared CFO Run Plan, with a "
+		                        "specified Event Mode, "
+		                        "initial Event Window Tag, and Fixed-width Window "
+		                        "Duration or Super-cycle Emulation "
+		                        "Event Window Duration.<br><br>"
+		                        "Note on Event Window Duration: Remember this is a "
+		                        "<b>Shared</b> Run Plan, so choose an "
+		                        "Event Window Duration that works for all currentyl "
+		                        "active subsystems. "
+		                        "For example, if you are testing with the CRV and you "
+		                        "want to emulate super cycles while the CRV "
+		                        "takes 100us windows at 50% Duty Cycle, then choose "
+		                        "1.8us because this is the common denominator "
+		                        "(i.e. both run type needs can be assembled from 1.8 us "
+		                        "Event Window building blocks)."
+		                        "<br><br>"
+		                        "Example continued: The next step after starting with "
+		                        "the common building block of 1.8 us windows, "
+		                        "would be for you to select <b>Shared Run Plan Join</b> "
+		                        "and specify your Subsystem and that you want Supercycle "
+		                        "Emulation, "
+		                        "while the CRV team selects <b>Shared Run Plan Join</b> "
+		                        "and specifies their Subsystem and that they want 100 us "
+		                        "windows at 50% duty cycle. ");  // requiredUserPermissions
+
+		registerFEMacroFunction("Shared Run Plan Stop",
+		                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+		                            &CFOFrontEndInterface::
+		                                SharedRunPlanStop),  // feMacroFunction
+		                        std::vector<std::string>{},  // namesOfInputArgs
+		                        std::vector<std::string>{"Result"},
+		                        1,
+		                        "*",
+		                        "This FE Macro stops the Shared CFO Run Plan. Note this "
+		                        "stops the Shared Run Plan for everyone! "
+		                        "Be sure you do not want to do this! If you only want to "
+		                        "stop for your subsystem (and not for everyone), "
+		                        "then choose <b>Shared Run Plan Leave</b>, not "
+		                        "<b>Stop</b>");  // requiredUserPermissions
 
 		registerFEMacroFunction(
-			"Shared Run Plan Start",
-				static_cast<FEVInterface::frontEndMacroFunction_t>(
-						&CFOFrontEndInterface::SharedRunPlanStart),                  // feMacroFunction
-						std::vector<std::string>{
-							"Initial Event Mode (Default = 0)",
-							"Initial Event Tag  (Default = 0)",
-							"Run Plan Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns] (Default = 1.8 us)"},  
-						// namesOfInputArgs
-						std::vector<std::string>{"Result"},
-						1,
-						"*",
-						"This FE Macro starts the shared CFO Run Plan, with a specified Event Mode, "
-						"initial Event Window Tag, and Fixed-width Window Duration or Super-cycle Emulation "
-						"Event Window Duration.<br><br>"
-						"Note on Event Window Duration: Remember this is a <b>Shared</b> Run Plan, so choose an "
-						"Event Window Duration that works for all currentyl active subsystems. "
-						"For example, if you are testing with the CRV and you want to emulate super cycles while the CRV "
-						"takes 100us windows at 50% Duty Cycle, then choose 1.8us because this is the common denominator "
-						"(i.e. both run type needs can be assembled from 1.8 us Event Window building blocks)."
-						"<br><br>"
-						"Example continued: The next step after starting with the common building block of 1.8 us windows, "
-						"would be for you to select <b>Shared Run Plan Join</b> and specify your Subsystem and that you want Supercycle Emulation, "
-						"while the CRV team selects <b>Shared Run Plan Join</b> and specifies their Subsystem and that they want 100 us windows at 50% duty cycle. "
-		);  // requiredUserPermissions
+		    "Shared Run Plan Join",
+		    static_cast<FEVInterface::frontEndMacroFunction_t>(
+		        &CFOFrontEndInterface::SharedRunPlanSubsystemJoin),  // feMacroFunction
+		    std::vector<std::string>{
+		        "Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, HWDev)",
+		        "Run Type (Supercycle Emulation, Fixed-width Windows) (Default = "
+		        "Fixed-width Windows)",
+		        "Duty Cycle (% or M:N ratio, Default = 100%)",
+		    },  // namesOfInputArgs
+		    std::vector<std::string>{"Result"},
+		    1,
+		    "*",
+		    "This FE Macro joins the Shared CFO Run Plan with the specified subsystem. "
+		    "Run type and duty cycle are specified."
+		    "<br><br>"
+		    "Regarding <b>Duty Cycle</b>"
+		    "% specifies the duty cycle percentage of active Event Windows. For example, "
+		    "50% duty cycle with 100 us windows would be one 100 us windows active every "
+		    "200 us. "
+		    "M:N ratio specifies M Event Windows active every N Event Windows. For "
+		    "example, 2:5 ratio with 100 us windows would be two consecutive 100 us "
+		    "windows active every 500 us (i.e. 2 in 5 windows active). "
+		    "<br><br>"
+		    "Here are the corresponding <b>Subsystem Mode Bits</b> from docdb 4914:"
+
+		    "<br><TAB>"
+		    "<br>Tracker := bit " +
+		        std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::Tracker)) +
+		        "<br>Calo := bit " +
+		        std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::Calo)) +
+		        "<br>CRV := bit " +
+		        std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::CRV)) +
+		        "<br>STM := bit " +
+		        std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::STM)) +
+		        "<br>ExtMon (TEM) := bit " +
+		        std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::ExtMon)) +
+		        "<br>HWDev := bit " +
+		        std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::HWDev)) +
+		        "</TAB>"
+
+		        "<br>Mode Packet Definition:<TAB>"
+		        "<br>Event Mode Byte 1 (Resrv’d Trk)	Event Mode Byte 0 [7:3] 	"
+		        "Pattern Mode [2:1]	Injection Data Source [0]"
+		        "<br>Event Mode Byte 3 (Resrv’d CRV)	Event Mode Byte 2 (Resrv’d Calo) "
+		        "[7:1]	Calo Laser Injection [0]"
+		        "<br>Delivery Ring RF-0 Marker TDC [15:8]	Resrv’d (TEM) [7:6] (STM) "
+		        "[5:4] 	Subrun Handling [3:1]	On-spill Flag [0]"
+		        "</TAB>");  // requiredUserPermissions
 
 		registerFEMacroFunction(
-			"Shared Run Plan Stop",
-				static_cast<FEVInterface::frontEndMacroFunction_t>(
-						&CFOFrontEndInterface::SharedRunPlanStop),              	// feMacroFunction
-						std::vector<std::string>{},  // namesOfInputArgs
-						std::vector<std::string>{"Result"},
-						1,
-						"*",
-						"This FE Macro stops the Shared CFO Run Plan. Note this stops the Shared Run Plan for everyone! "
-						"Be sure you do not want to do this! If you only want to stop for your subsystem (and not for everyone), "
-						"then choose <b>Shared Run Plan Leave</b>, not <b>Stop</b>"
-		);  // requiredUserPermissions
+		    "Shared Run Plan Leave",
+		    static_cast<FEVInterface::frontEndMacroFunction_t>(
+		        &CFOFrontEndInterface::SharedRunPlanSubsystemLeave),  // feMacroFunction
+		    std::vector<std::string>{"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, "
+		                             "HWDev)"},  // namesOfInputArgs
+		    std::vector<std::string>{"Result"},
+		    1,
+		    "*",
+		    "This FE Macro removes the specified subsystem from the Shared CFO Run "
+		    "Plan.");  // requiredUserPermissions
+	}                  //end Shared Run Info FE Macro Registration ------------------
 
-		registerFEMacroFunction(
-			"Shared Run Plan Join",
-				static_cast<FEVInterface::frontEndMacroFunction_t>(
-						&CFOFrontEndInterface::SharedRunPlanSubsystemJoin),              	// feMacroFunction
-						std::vector<std::string>{
-							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, HWDev)",
-							"Run Type (Supercycle Emulation, Fixed-width Windows) (Default = Fixed-width Windows)",
-							"Duty Cycle (% or M:N ratio, Default = 100%)",							
-						},  // namesOfInputArgs
-						std::vector<std::string>{"Result"},
-						1,
-						"*",
-						"This FE Macro joins the Shared CFO Run Plan with the specified subsystem. Run type and duty cycle are specified."
-						"<br><br>"
-						"Regarding <b>Duty Cycle</b>"
-						"% specifies the duty cycle percentage of active Event Windows. For example, 50% duty cycle with 100 us windows would be one 100 us windows active every 200 us. "
-						"M:N ratio specifies M Event Windows active every N Event Windows. For example, 2:5 ratio with 100 us windows would be two consecutive 100 us windows active every 500 us (i.e. 2 in 5 windows active). "
-						"<br><br>"
-						"Here are the corresponding <b>Subsystem Mode Bits</b> from docdb 4914:"
-
-						"<br><TAB>"
-						"<br>Tracker := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::Tracker)) +
-						"<br>Calo := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::Calo)) +
-						"<br>CRV := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::CRV)) +
-						"<br>STM := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::STM)) +
-						"<br>ExtMon (TEM) := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::ExtMon)) +
-						"<br>HWDev := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::HWDev)) +
-						"</TAB>"
-
-						"<br>Mode Packet Definition:<TAB>"
-						"<br>Event Mode Byte 1 (Resrv’d Trk)	Event Mode Byte 0 [7:3] 	Pattern Mode [2:1]	Injection Data Source [0]"
-						"<br>Event Mode Byte 3 (Resrv’d CRV)	Event Mode Byte 2 (Resrv’d Calo) [7:1]	Calo Laser Injection [0]"
-						"<br>Delivery Ring RF-0 Marker TDC [15:8]	Resrv’d (TEM) [7:6] (STM) [5:4] 	Subrun Handling [3:1]	On-spill Flag [0]"
-						"</TAB>"
-		);  // requiredUserPermissions
-
-		registerFEMacroFunction(
-			"Shared Run Plan Leave",
-				static_cast<FEVInterface::frontEndMacroFunction_t>(
-						&CFOFrontEndInterface::SharedRunPlanSubsystemLeave),              	// feMacroFunction
-						std::vector<std::string>{"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, HWDev)"},  // namesOfInputArgs
-						std::vector<std::string>{"Result"},
-						1,
-						"*",
-						"This FE Macro removes the specified subsystem from the Shared CFO Run Plan."
-		);  // requiredUserPermissions
-	} //end Shared Run Info FE Macro Registration ------------------
+	registerFEMacroFunction("Configure for Timing Chain",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &CFOFrontEndInterface::
+	                                ConfigureForTimingChain),       // feMacroFunction
+	                        std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
+	                        std::vector<std::string>{},
+	                        1,
+	                        "*",
+	                        "This FE Macro configures the CFO for DTC chain "
+	                        "synchronization.");  // requiredUserPermissions
 
 	registerFEMacroFunction(
-		"Configure for Timing Chain",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::ConfigureForTimingChain),                  // feMacroFunction
-					std::vector<std::string>{"StepIndex"},  // namesOfInputArgs
-					std::vector<std::string>{},
-					1,
-					"*",
-					"This FE Macro configures the CFO for DTC chain synchronization."
-	);  // requiredUserPermissions
+	    "Super Orchestration Start",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::SuperOrchestrationStart),  // feMacroFunction
+	    std::vector<std::string>{
+	        "Number of Event Window Markers (Default: 10)"},  // namesOfInputArgs
+	    std::vector<std::string>{},                           // namesOfOutput
+	    1,                                                    // requiredUserPermissions
+	    "*",
+	    "Start Super Orchestration while in a run.");
 
 	registerFEMacroFunction(
-		"Super Orchestration Start",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::SuperOrchestrationStart),                  // feMacroFunction
-					std::vector<std::string>{"Number of Event Window Markers (Default: 10)"}, // namesOfInputArgs
-					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions
-					"*",
-					"Start Super Orchestration while in a run."
-	);
+	    "Super Orchestration End",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::SuperOrchestrationEnd),  // feMacroFunction
+	    std::vector<std::string>{},                         // namesOfInputArgs
+	    std::vector<std::string>{},                         // namesOfOutput
+	    1,                                                  // requiredUserPermissions
+	    "*",
+	    "End Super Orchestration while in a run.");
 
 	registerFEMacroFunction(
-		"Super Orchestration End",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::SuperOrchestrationEnd),                  // feMacroFunction
-					std::vector<std::string>{}, // namesOfInputArgs
-					std::vector<std::string>{}, // namesOfOutput
-					1,   // requiredUserPermissions
-					"*",
-					"End Super Orchestration while in a run."
-	);
-
-	registerFEMacroFunction(
-		"Super Orchestration",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOFrontEndInterface::SuperOrchestration),                  // feMacroFunction
-					std::vector<std::string>{"Do CRV ROC Reset",
-											"Do Calo ROC Reset",
-											"Do Calo ROC Writes"
-											},  // namesOfInputArgs
-					std::vector<std::string>{"response"},
-					1,   // requiredUserPermissions
-					"*",
-					"To assist with throttling Event Window Marker rates during Global Run 4."
-	);
-	// clang-format on
+	    "Super Orchestration",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOFrontEndInterface::SuperOrchestration),  // feMacroFunction
+	    std::vector<std::string>{"Do CRV ROC Reset",
+	                             "Do Calo ROC Reset",
+	                             "Do Calo ROC Writes"},  // namesOfInputArgs
+	    std::vector<std::string>{"response"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "To assist with throttling Event Window Marker rates during Global Run 4.");
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
@@ -522,12 +563,11 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 		              "RECREATE");
 		f->cd();
 		tree = new TTree("loopback", "Loopback test results");
-		// clang-format off
-	  tree->Branch("dtc_id"     , &dtc_id     );
-	  tree->Branch("roc_id"     , &roc_id     );
-	  tree->Branch("output_time", &output_time);
-	  tree->Branch("output_unc" , &output_unc );
-		// clang-format on
+
+		tree->Branch("dtc_id", &dtc_id);
+		tree->Branch("roc_id", &roc_id);
+		tree->Branch("output_time", &output_time);
+		tree->Branch("output_unc", &output_unc);
 	}
 
 	// store the measurement results
