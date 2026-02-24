@@ -95,8 +95,11 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void 								registerFEMacros							(void);
 
+	/// -- helper functions for Shared Run Plan ---------
 	void 								parseEventDurationForRunPlan				(const std::string& eventDuration, std::string& durationValue, std::string& durationUnits);
 	void 								getRatioOfOnPerEvents						(uint32_t clocksPerOn, uint32_t clocksPerEvent, uint32_t& mPartRatio, uint32_t& nPartRatio);
+	void 								mnFixRatio									(std::stringstream& logResult, uint32_t& mPartRatio, uint32_t& nPartRatio);
+	uint64_t 							extractSharedRunPlanEventDuration			(void);
 	void 								generateSharedRunPlanWithPeriodicModeOn		(std::stringstream& logResult, 
 																					 std::string& genFilename, 
 																					 const uint64_t initEventTag, 
@@ -107,11 +110,28 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 																					 uint32_t nPartRatio, 
 																					 const std::string& eventDurationSplitNumber, 
 																					 const std::string& eventDurationSplitUnits);
+	void 								generateSharedRunPlanWithPeriodicModeOff	(std::stringstream& logResult, 
+																					 std::string& genFilename, 
+																					 const uint16_t onBits_startBit, 
+																					 const uint16_t onBits_bitCount, 
+																					 const std::string& eventDurationSplitNumber, 
+																					 const std::string& eventDurationSplitUnits);
+	/// -- end helper functions for Shared Run Plan ---------
 
 
 	int									timing_chain_first_substep_	   		= -1;
 	uint64_t							next_starting_event_window_tag_		= 0;
-	const std::vector<uint32_t>			standardNValues_					= {100, 200, uint32_t(1e3), uint32_t(1e5), uint32_t(1e7), uint32_t(1e9)};
+	const std::vector<uint32_t>			standardNValues_					= {100, 200, uint32_t(1e3)};//, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
+	const std::map<std::string, 
+						uint16_t>		supportedSubsystems_				= {
+																				{"CRV", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::CRV)}, 
+																			  	{"Calo", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo)}, 
+																				{"Tracker", static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Tracker)}, 
+																				{"STM", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::STM)}, 
+																				{"ExtMon", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::ExtMon)}, 
+																				{"Custom", 	0}
+																			};
+	
 
   public:
 
