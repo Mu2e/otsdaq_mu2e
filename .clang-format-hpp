@@ -6,7 +6,9 @@ Language:        Cpp
 # Optional style tweaks for headers
 ColumnLimit: 0   # prevents wrapping that breaks alignment
 AlignConsecutiveMacros: true 
-
+AllowAllConstructorInitializersOnNextLine: false
+BreakConstructorInitializers: AfterColon
+PackConstructorInitializers: CurrentLine
 
 
 AccessModifierOffset: -2
@@ -48,7 +50,7 @@ BreakBeforeBraces: Custom
 BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
-BreakConstructorInitializers: BeforeColon
+# BreakConstructorInitializers: BeforeColon #removed for headers
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
 # ColumnLimit:     90 #removed for headers
