@@ -418,7 +418,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    1,  // requiredUserPermissions
 	    "*",
 	    "Fetches data from all the counter registers in a human-readable format. "
-	    "Counters include the number of bytes and packets transmitted and recieved over "
+	    "Counters include the number of bytes and packets transmitted and received over "
 	    "ROC/CFO links since the last reset. "
 	    "Also includes Event Builder, Jitter Attenuator, Emulated ROC delay, Heartbeat "
 	    "packet and Data Header packet counters since last reset. ");
