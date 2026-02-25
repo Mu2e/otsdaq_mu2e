@@ -406,7 +406,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    std::vector<std::string>{"Upstream Rx Lock Loss Count"},
 	    1,  // requiredUserPermissions
 	    "*",
-	    "Use this FE Macro to reset the Loss-of-Lock register counter to zero. Reseting "
+	    "Use this FE Macro to reset the Loss-of-Lock register counter to zero. Resetting "
 	    "the DTC will also reset this register.");
 
 	registerFEMacroFunction(
@@ -418,7 +418,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    1,  // requiredUserPermissions
 	    "*",
 	    "Fetches data from all the counter registers in a human-readable format. "
-	    "Counters include the number of bytes and packets transmitted and recieved over "
+	    "Counters include the number of bytes and packets transmitted and received over "
 	    "ROC/CFO links since the last reset. "
 	    "Also includes Event Builder, Jitter Attenuator, Emulated ROC delay, Heartbeat "
 	    "packet and Data Header packet counters since last reset. ");
