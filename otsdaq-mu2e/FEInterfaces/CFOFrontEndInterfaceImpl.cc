@@ -3827,8 +3827,8 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 		__FE_SS_THROW__;
 	}
 
-	uint32_t eventsPerOn =  // (events / on) = (clocks / on) * (event / clocks)
-	    clocksPerOn / clocksPerEvent;
+	double eventsPerOn =  // (events / on) = (clocks / on) * (event / clocks)
+	    static_cast<double>(clocksPerOn) / static_cast<double>(clocksPerEvent);
 	__FE_COUTV__(clocksPerOn);
 	__FE_COUTV__(clocksPerEvent);
 	__FE_COUTV__(eventsPerOn);
@@ -3837,8 +3837,7 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 	mPartRatio = 0;
 	nPartRatio = 0;
 
-	double targetRatio =
-	    1 / static_cast<double>(eventsPerOn);  // (on / event) = 1 / (events / on)
+	double targetRatio = 1 / eventsPerOn;  // (on / event) = 1 / (events / on)
 	__FE_COUTV__(targetRatio);
 
 	for(uint32_t n : standardNValues_)
