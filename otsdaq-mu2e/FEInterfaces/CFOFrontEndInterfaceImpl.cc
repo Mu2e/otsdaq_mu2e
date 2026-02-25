@@ -2313,7 +2313,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 
 	thisCFO_->SoftReset();  //to reset event window tag starting point handling
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("USER_DATA")) + "/";
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
 	std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
 
@@ -2483,7 +2483,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 
 	thisCFO_->SoftReset();  //to reset event window tag starting point handling
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("USER_DATA")) + "/";
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
 	std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
 	__FE_COUT__ << "Generated Run Plan text file: " << inFileName << __E__;
@@ -3258,7 +3258,8 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 
 	uint64_t eventDurationInClocks = extractSharedRunPlanEventDuration();
 	result << "\n" << divider << "Event Window Duration:                                " << eventDurationInClocks
-	       << " clocks (" << (eventDurationInClocks * FPGAClock_ / 1000.0) << " us)" << __E__;
+	       << " 0x" << std::hex << eventDurationInClocks << std::dec << 
+		   " clocks (" << (eventDurationInClocks * FPGAClock_ / 1000.0) << " us)" << __E__;
 	if(eventDurationInClocks > 0)
 		result << "\n" << divider << "Event Window Rate:                                    " << (1000.0 / (eventDurationInClocks * FPGAClock_ / 1000.0)) << " kHz"
 	       << __E__;	   
@@ -3372,9 +3373,11 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	halt();
 	thisCFO_->SoftReset();  //to reset event window tag starting point handling and mode = 0
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("USER_DATA")) + "/";
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
 	std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
+	result << "Generated Run Plan text file: <FILE>" << inFileName << "</FILE>" << __E__;
+	result << "Compiled Run Plan binary file: <FILE>" << outFileName << "</FILE>" << __E__;
 	__FE_COUT__ << "Generated Run Plan text file: " << inFileName << __E__;
 	__FE_COUT__ << "Compiled Run Plan binary file: " << outFileName << __E__;
 	
@@ -3542,7 +3545,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	
 	__FE_COUT__ << "onBits_startBit = " << onBits_startBit << " onBits_bitCount = " << onBits_bitCount << " onBits_value = 0x" << std::hex << onBits_value << __E__;
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("USER_DATA")) + "/";
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
 	std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
 	result << __E__; //space for readability
@@ -3638,7 +3641,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	__FE_COUT__ << "offBits_startBit = " << offBits_startBit << " offBits_bitCount = " << offBits_bitCount << " offBits_value = 0x" << std::hex << offBits_value << __E__;
 
 
-	const std::string SOURCE_BASE_PATH = std::string(__ENV__("USER_DATA")) + "/";
+	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
 	std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
 	result << __E__; //space for readability
@@ -4018,10 +4021,130 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 //========================================================================
 // return M:N ratio of M events on per N events
 uint64_t CFOFrontEndInterface::extractSharedRunPlanEventDuration()
+try
 {
-	uint64_t retVal = 100;
+	//make a dummy shared run plan, and use to compare against current run plan
+	//	- Confirm the current run plan is exact Operand match of the dummy Shared Run Plan ops.
+	//	- Extract run plan event duration from mismatches.
+	//	
 
-	return retVal;
+	std::map<uint32_t /* address */, 
+		std::pair<uint32_t /* expected */, 
+		uint32_t /* actual */> > mismatches;
+
+	//generate dummy Run Plan and diff with current CFO Run Plan data read back from CFO
+	// Note: as of 22-Feb-2026, Run Plan BRAM is 1024 ops
+	{		
+		const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
+		std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
+		std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
+		
+		uint64_t dummyDuration = 1; 
+		dummyDuration <<= 47;
+		dummyDuration |= 1; //put a value in hi and lo 32-bits to show diff
+		std::stringstream result;
+		generateSharedRunPlanWithPeriodicModeOff(
+			result,
+			inFileName,
+			0, 		//start bit
+			1, 		//bit count
+			std::to_string(dummyDuration), //eventDurationInClocks
+			"clocks" //eventDurationSplitUnits
+		);
+
+		CFOLib::CFO_Compiler compiler;
+		result << "\n\nDummy Run Plan:\n" << compiler.processFile(inFileName, outFileName);
+		
+		__COUT_MULTI__(1, result.str());
+
+		std::string binaryContents;
+		{ 	//load dummy plan data a la CFOFrontEndInterface::SetRunplan
+			__FE_COUTV__(outFileName);
+
+			std::FILE* fp = std::fopen(outFileName.c_str(), "rb");
+			if(!fp)
+			{
+				__SS__ << "Could not open file at " << outFileName << ". Error: " << errno
+					<< " - " << strerror(errno) << __E__;
+				__SS_THROW__;
+			}
+
+			std::fseek(fp, 0, SEEK_END);
+			binaryContents.resize(std::ftell(fp));
+			std::rewind(fp);
+			std::fread(&binaryContents[0], 1, binaryContents.size(), fp);
+			std::fclose(fp);
+		} //end load dummy plan data
+
+		thisCFO_->CompareRunPlanData(binaryContents, 0 /* address */, 
+			&mismatches);
+	} //end generate and Run Plan diff
+
+	//look for a WAIT op to find event duration
+	if(!mismatches.size())
+	{
+		__FE_SS__ << "IMPOSSIBLE!! No mismatches were found when comparing the generated Run Plan to the current CFO Run Plan data read back from the CFO. This indicates that the CFO is currently running the expected shared Run Plan, and that reading back the Run Plan data from the CFO." << __E__;
+		__FE_SS_THROW__;
+	}
+	
+	__FE_SS__ << "Mismatches were found when comparing the generated Run Plan to the current CFO Run Plan data read back from the CFO. This likely indicates that the CFO is not currently running the expected shared Run Plan, or that there is an issue with reading back the Run Plan data from the CFO." << __E__;
+	uint64_t eventDurationInClocks = 0;
+	uint32_t lastMismatchAddress = 0;
+	uint64_t potentialEventDurationInClocks = 0; //build from 2 32-bit words
+	for(auto& mismatch : mismatches)
+	{	
+		if(mismatch.first % 2 == 0) // only look at top-32 bits for ops
+		{
+			potentialEventDurationInClocks = mismatch.second.second; // actual low 32-bits from CFO 
+			lastMismatchAddress = mismatch.first;
+			continue;
+		}
+
+		uint8_t expectedOpCode = (mismatch.second.first >> 24) & 0xFF;
+		uint8_t actualOpCode   = (mismatch.second.second >> 24) & 0xFF;
+
+		if(expectedOpCode != actualOpCode)
+		{
+			ss << "Address: " << mismatch.first << 
+				" Line #: " << mismatch.first/2 + 1 << std::hex <<
+				" Expected: 0x" << mismatch.second.first <<
+				" Actual: 0x" << mismatch.second.second << std::dec << __E__;
+			__FE_SS_THROW__;
+		}
+
+		if(expectedOpCode == (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::WAIT) // WAIT op opcode
+		{
+			if(lastMismatchAddress != mismatch.first - 1)
+			{
+				__FE_SS__ << "Unexpected mismatch pattern found when comparing the generated Run Plan to the current CFO Run Plan data read back from the CFO. Expected mismatches for WAIT op to be in consecutive addresses with the first address containing the low 32-bits of event duration and the second address containing the high 32-bits of event duration. Found mismatch at address " << lastMismatchAddress << " followed by mismatch at non-consecutive address " << mismatch.first << __E__;
+				__FE_SS_THROW__;
+			}
+			
+			potentialEventDurationInClocks |= uint64_t(mismatch.second.second & 0xFFFF) << 32; // actual hi 16-bits from CFO
+			__FE_COUT__ << "potentialEventDurationInClocks = " << potentialEventDurationInClocks <<
+				" Address: " << mismatch.first << 
+				" Line #: " << mismatch.first/2 + 1 << std::hex <<
+				" Expected: 0x" << mismatch.second.first <<
+				" Actual: 0x" << mismatch.second.second << std::dec << __E__;
+			if(!eventDurationInClocks)
+				eventDurationInClocks = potentialEventDurationInClocks;
+			else if(eventDurationInClocks != potentialEventDurationInClocks)
+			{
+				__FE_SS__ << "Inconsistent event duration values found in CFO Run Plan mismatches. Expected: " << eventDurationInClocks << ", Found: " << potentialEventDurationInClocks << __E__;
+				__FE_SS_THROW__;
+			}
+		}
+	} //end mismatch loop search
+
+	__FE_COUTV__(eventDurationInClocks);
+	
+	return eventDurationInClocks;
 } //end extractSharedRunPlanEventDuration()
+catch(const std::runtime_error& e)
+{
+	__FE_SS__ << "Error extracting event duration for the Shared Run Plan - please make sure there is an active Shared Run Plan (i.e. common operation set). "
+		"To start a Shared Run Plan, do 'CFO Halt' and then 'Share Run Plan Start.'\n\nHere was the error:\n" << e.what() << __E__;
+	__FE_SS_THROW__;
+}
 
 // DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
