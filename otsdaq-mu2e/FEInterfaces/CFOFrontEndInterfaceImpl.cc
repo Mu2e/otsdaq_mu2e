@@ -313,7 +313,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						"initial Event Window Tag, and Fixed-width Window Duration or Super-cycle Emulation "
 						"Event Window Duration.<br><br>"
 						"Note on Event Window Duration: Remember this is a <b>Shared</b> Run Plan, so choose an "
-						"Event Window Duration that works for all currently active subsystems. "
+						"Event Window Duration that works for all currentyl active subsystems. "
 						"For example, if you are testing with the CRV and you want to emulate super cycles while the CRV "
 						"takes 100us windows at 50% Duty Cycle, then choose 1.8us because this is the common denominator "
 						"(i.e. both run type needs can be assembled from 1.8 us Event Window building blocks)."
@@ -3816,6 +3816,17 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
                                                  uint32_t& mPartRatio,
                                                  uint32_t& nPartRatio)
 {
+	if(clocksPerEvent == 0)
+	{
+		__FE_SS__ << "Invalid clocksPerEvent value: " << clocksPerEvent << __E__;
+		__FE_SS_THROW__;
+	}
+	if(clocksPerOn == 0)
+	{
+		__FE_SS__ << "Invalid clocksPerOn value: " << clocksPerOn << __E__;
+		__FE_SS_THROW__;
+	}
+
 	uint32_t eventsPerOn =  // (events / on) = (clocks / on) * (event / clocks)
 	    clocksPerOn / clocksPerEvent;
 	__FE_COUTV__(clocksPerOn);
