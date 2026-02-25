@@ -229,7 +229,7 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	    std::vector<std::string>{"Temperature"},
 	    1,
 	    "*",
-	    "Get the temperature of the FPGA in degrees Celesius. "
+	    "Get the temperature of the FPGA in degrees Celsius. "
 	    "A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor.");
 
 	registerFEMacroFunction(
