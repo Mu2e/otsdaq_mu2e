@@ -13,8 +13,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
   public:
 	CFOFrontEndInterface(const std::string&       interfaceUID,
-	                     const ConfigurationTree& theXDAQContextConfigTree,
-	                     const std::string&       interfaceConfigurationPath);
+						 const ConfigurationTree& theXDAQContextConfigTree,
+						 const std::string&       interfaceConfigurationPath);
 
 	virtual ~CFOFrontEndInterface(void);
 
@@ -100,21 +100,21 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void 								getRatioOfOnPerEvents						(uint32_t clocksPerOn, uint32_t clocksPerEvent, uint32_t& mPartRatio, uint32_t& nPartRatio);
 	void 								mnFixRatio									(std::stringstream& logResult, uint32_t& mPartRatio, uint32_t& nPartRatio);
 	uint64_t 							extractSharedRunPlanEventDuration			(void);
-	void 								generateSharedRunPlanWithPeriodicModeOn		(std::stringstream& logResult, 
-																					 std::string& genFilename, 
-																					 const uint64_t initEventTag, 
-																					 const uint16_t onBits_startBit, 
+	void 								generateSharedRunPlanWithPeriodicModeOn		(std::stringstream& logResult,
+																					 std::string& genFilename,
+																					 const uint64_t initEventTag,
+																					 const uint16_t onBits_startBit,
 																					 const uint16_t onBits_bitCount,
-																					 const uint64_t onBits_value, 
-																					 uint32_t mPartRatio, 
-																					 uint32_t nPartRatio, 
-																					 const std::string& eventDurationSplitNumber, 
+																					 const uint64_t onBits_value,
+																					 uint32_t mPartRatio,
+																					 uint32_t nPartRatio,
+																					 const std::string& eventDurationSplitNumber,
 																					 const std::string& eventDurationSplitUnits);
-	void 								generateSharedRunPlanWithPeriodicModeOff	(std::stringstream& logResult, 
-																					 std::string& genFilename, 
-																					 const uint16_t onBits_startBit, 
-																					 const uint16_t onBits_bitCount, 
-																					 const std::string& eventDurationSplitNumber, 
+	void 								generateSharedRunPlanWithPeriodicModeOff	(std::stringstream& logResult,
+																					 std::string& genFilename,
+																					 const uint16_t onBits_startBit,
+																					 const uint16_t onBits_bitCount,
+																					 const std::string& eventDurationSplitNumber,
 																					 const std::string& eventDurationSplitUnits);
 	/// -- end helper functions for Shared Run Plan ---------
 
@@ -122,16 +122,16 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	int									timing_chain_first_substep_	   		= -1;
 	uint64_t							next_starting_event_window_tag_		= 0;
 	const std::vector<uint32_t>			standardNValues_					= {100, 200, uint32_t(1e3)};//, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
-	const std::map<std::string, 
+	const std::map<std::string,
 						uint16_t>		supportedSubsystems_				= {
-																				{"CRV", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::CRV)}, 
-																			  	{"Calo", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo)}, 
-																				{"Tracker", static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Tracker)}, 
-																				{"STM", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::STM)}, 
-																				{"ExtMon", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::ExtMon)}, 
+																				{"CRV", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::CRV)},
+																				{"Calo", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo)},
+																				{"Tracker", static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Tracker)},
+																				{"STM", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::STM)},
+																				{"ExtMon", 	static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::ExtMon)},
 																				{"Custom", 	0}
 																			};
-	
+
 
   public:
 
@@ -175,18 +175,18 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 																						std::string eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
 																						uint64_t eventWindowMode, bool enableClockMarkers, bool saveBinaryDataToFile,
 																						bool saveSubeventHeadersToDataFile,	bool doNotResetCounters);
-	
+
 	/// Shared Run Plan related functions and declarations
 	enum class SharedRunPlanSubsystemModeBit
 	{
 		CRV = 31, Calo = 23, Tracker = 15, STM = 37, ExtMon = 39, HWDev = 7
 	};
-	void 								SharedRunPlanStatus					(__ARGS__); ///< Get Event Mode, Tag, Active Subsystems, and running status 
+	void 								SharedRunPlanStatus					(__ARGS__); ///< Get Event Mode, Tag, Active Subsystems, and running status
 	void 								SharedRunPlanStart					(__ARGS__);
 	void 								SharedRunPlanStop					(__ARGS__); ///< Halts Run Plan
 	void 								SharedRunPlanSubsystemJoin			(__ARGS__);
 	void 								SharedRunPlanSubsystemLeave			(__ARGS__);
-	
+
 	void 								ConfigureForTimingChain				(__ARGS__);
 	void								LoopbackTest						(__ARGS__);
 	void 								TestMarker							(__ARGS__);
