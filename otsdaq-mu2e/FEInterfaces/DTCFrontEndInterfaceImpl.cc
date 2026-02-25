@@ -406,7 +406,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    std::vector<std::string>{"Upstream Rx Lock Loss Count"},
 	    1,  // requiredUserPermissions
 	    "*",
-	    "Use this FE Macro to reset the Loss-of-Lock register counter to zero. Reseting "
+	    "Use this FE Macro to reset the Loss-of-Lock register counter to zero. Resetting "
 	    "the DTC will also reset this register.");
 
 	registerFEMacroFunction(
