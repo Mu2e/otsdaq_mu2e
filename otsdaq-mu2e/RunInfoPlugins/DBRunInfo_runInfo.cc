@@ -822,18 +822,83 @@ unsigned int DBRunInfo::claimNextRunNumber(unsigned int       configureCondition
 		std::string sanitizedComment = comment;
 		StringMacros::sanitizeForSQL(sanitizedComment);
 
-		std::string runType = getActiveStateMachineName();
-		StringMacros::sanitizeForSQL(runType);
+		// Get both runAlias and name from ActiveStateMachine
+		std::string runAlias = StringMacros::convertEnvironmentVariables(
+		    "${OTS.ActiveStateMachine.runAlias}");
+		StringMacros::sanitizeForSQL(runAlias);
+
+		std::string stateMachineName = getActiveStateMachineName();
+		StringMacros::sanitizeForSQL(stateMachineName);
+
+		__COUTV__(runAlias);
+		__COUTV__(stateMachineName);
+
+		// Query run_type table to get the type_id for this run type (using runAlias)
+		std::ostringstream typeQueryStream;
+		typeQueryStream << "SELECT id FROM " << dbSchema_ << ".run_type "
+		                << "WHERE name = '" << runAlias << "';";
+
+		std::string typeQuery = typeQueryStream.str();
+		PGresult*   typeRes   = PQexec(runInfoDbConn_, typeQuery.c_str());
+
+		if(PQresultStatus(typeRes) != PGRES_TUPLES_OK)
+		{
+			__SS__ << "QUERY run_type TABLE FAILED!!! PQ ERROR: "
+			       << PQresultErrorMessage(typeRes) << __E__;
+			PQclear(typeRes);
+			__SS_THROW__;
+		}
+
+		int runTypeId = -1;
+		if(PQntuples(typeRes) == 1)
+		{
+			runTypeId = atoi(PQgetvalue(typeRes, 0, 0));
+		}
+		else
+		{
+			// run_type not found, get list of valid types for error message
+			std::ostringstream validTypesQueryStream;
+			validTypesQueryStream << "SELECT name FROM " << dbSchema_ << ".run_type "
+			                      << "ORDER BY id;";
+
+			std::string validTypesQuery = validTypesQueryStream.str();
+			PGresult*   validTypesRes   = PQexec(runInfoDbConn_, validTypesQuery.c_str());
+
+			__SS__ << "Unknown run_type '" << runAlias << "'! "
+			       << "(StateMachine name: " << stateMachineName << ") "
+			       << "Valid run types are: ";
+
+			if(PQresultStatus(validTypesRes) == PGRES_TUPLES_OK &&
+			   PQntuples(validTypesRes) > 0)
+			{
+				for(int i = 0; i < PQntuples(validTypesRes); ++i)
+				{
+					if(i > 0)
+						ss << ", ";
+					ss << PQgetvalue(validTypesRes, i, 0);
+				}
+			}
+			else
+			{
+				ss << "(none defined in database)";
+			}
+
+			ss << __E__;
+			PQclear(validTypesRes);
+			PQclear(typeRes);
+			__SS_THROW__;
+		}
+		PQclear(typeRes);
 
 		// Build INSERT query using std::ostringstream to avoid buffer overflow
 		std::ostringstream queryStream;
 		queryStream << "INSERT INTO " << dbSchema_ << ".run ("
 		            << "  comment, "
-		            << "  run_type, "
+		            << "  run_type_id, "
 		            << "  create_time) "
 		            << " VALUES ("
 		            << "  '" << sanitizedComment << "', "
-		            << "  '" << runType << "', "
+		            << "  " << runTypeId << ", "
 		            << "  CURRENT_TIMESTAMP) "
 		            << " RETURNING run_number;";
 
@@ -974,9 +1039,9 @@ TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
 ///                      from the state machine transition.
 ///		@return void - Inserts a record into the run_transition table with the run_number,
 ///		               transition type_id (mapped from runStopType), and current timestamp.
-void DBRunInfo::updateRunInfo(unsigned int      runConditionID,
-                              RunTransitionType runTransitionType,
-                              const std::string& /* comment */)
+void DBRunInfo::updateRunInfo(unsigned int       runConditionID,
+                              RunTransitionType  runTransitionType,
+                              const std::string& comment)
 {
 	// For Mu2e, the runConditionID is the run number (for now!)
 	unsigned int runNumber = runConditionID;
@@ -1021,6 +1086,46 @@ void DBRunInfo::updateRunInfo(unsigned int      runConditionID,
 
 		__COUT__ << "Insert: " << transitionDescription
 		         << " transition into the run_transition Database table" << __E__;
+
+		// If this is a STOP transition, also record the end comment
+		if(transitionInfo.typeId == 1)
+		{
+			// Use PQescapeLiteral to properly escape the comment (handles reserved keywords like 'end')
+			char* escapedComment =
+			    PQescapeLiteral(runInfoDbConn_, comment.c_str(), comment.length());
+			if(!escapedComment)
+			{
+				__SS__ << "FAILED TO ESCAPE COMMENT FOR DATABASE!!! PQ ERROR: "
+				       << PQerrorMessage(runInfoDbConn_) << __E__;
+				__SS_THROW__;
+			}
+
+			std::ostringstream endCommentQueryStream;
+			endCommentQueryStream << "INSERT INTO " << dbSchema_ << ".run_end_info("
+			                      << "run_number, "
+			                      << "comment, "
+			                      << "create_time) "
+			                      << "VALUES ("
+			                      << boost::numeric_cast<long int>(runNumber) << ","
+			                      << escapedComment << ",CURRENT_TIMESTAMP);";
+
+			std::string endCommentQuery = endCommentQueryStream.str();
+			PGresult*   endCommentRes   = PQexec(runInfoDbConn_, endCommentQuery.c_str());
+
+			PQfreemem(escapedComment);  // Free the escaped string
+
+			if(PQresultStatus(endCommentRes) != PGRES_COMMAND_OK)
+			{
+				__SS__ << "INSERT END COMMENT INTO DATABASE TABLE FAILED!!! PQ ERROR: "
+				       << PQresultErrorMessage(endCommentRes) << __E__;
+				PQclear(endCommentRes);
+				__SS_THROW__;
+			}
+			PQclear(endCommentRes);
+
+			__COUT__ << "Insert: End comment into the run_end_info Database table"
+			         << __E__;
+		}
 	}
 
 	if(runNumber == (unsigned int)-1)
