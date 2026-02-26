@@ -236,33 +236,33 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              bool enableAutogenDRP,
 	                              int  permanentOffset = 0);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
-	std::string SetCFOEmulatorOnOffSpillEmulation(bool     enable,
-	                                              bool     useDetachedBufferTest,
-	                                              uint32_t numberOfSuperCycles,
-	                                              uint64_t initialEventWindowTag,
-	                                              bool     enableClockMarkers,
-	                                              bool     enableAutogenDRP,
-	                                              bool     saveBinaryDataToFile,
+	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
+	                                              bool               useDetachedBufferTest,
+	                                              uint32_t           numberOfSuperCycles,
+	                                              uint64_t           initialEventWindowTag,
+	                                              bool               enableClockMarkers,
+	                                              bool               enableAutogenDRP,
+	                                              bool               saveBinaryDataToFile,
 	                                              const std::string& filename,
-	                                              bool     saveSubeventHeadersToDataFile,
-	                                              bool     doNotResetCounters,
-	                                              bool     skipBy32,
-	                                              uint32_t packetThresholdToSave);
+	                                              bool               saveSubeventHeadersToDataFile,
+	                                              bool               doNotResetCounters,
+	                                              bool               skipBy32,
+	                                              uint32_t           packetThresholdToSave);
 	void        SetCFOEmulatorFixedWidthEmulation(__ARGS__);
-	std::string SetCFOEmulatorFixedWidthEmulation(bool enable,
-	                                              bool useDetachedBufferTest,
+	std::string SetCFOEmulatorFixedWidthEmulation(bool               enable,
+	                                              bool               useDetachedBufferTest,
 	                                              const std::string& eventDuration,
-	                                              uint32_t numberOfEventWindowMarkers,
-	                                              uint64_t initialEventWindowTag,
-	                                              uint64_t eventWindowMode,
-	                                              bool     enableClockMarkers,
-	                                              bool     enableAutogenDRP,
-	                                              bool     saveBinaryDataToFile,
+	                                              uint32_t           numberOfEventWindowMarkers,
+	                                              uint64_t           initialEventWindowTag,
+	                                              uint64_t           eventWindowMode,
+	                                              bool               enableClockMarkers,
+	                                              bool               enableAutogenDRP,
+	                                              bool               saveBinaryDataToFile,
 	                                              const std::string& filename,
-	                                              bool     saveSubeventHeadersToDataFile,
-	                                              bool     doNotResetCounters,
-	                                              bool     skipBy32,
-	                                              uint32_t packetThresholdToSave);
+	                                              bool               saveSubeventHeadersToDataFile,
+	                                              bool               doNotResetCounters,
+	                                              bool               skipBy32,
+	                                              uint32_t           packetThresholdToSave);
 
 	void BufferTest(__ARGS__);
 	void PatternTest(__ARGS__);

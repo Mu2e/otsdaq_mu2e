@@ -50,9 +50,9 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	// hardware access
 	//----------------
-	void             universalRead(char* address, char* readValue) override;
-	void             universalWrite(char* address, char* writeValue) override;
-	virtual mu2edev* getDevice(void)                                 = 0;
+	void                                 universalRead(char* address, char* readValue) override;
+	void                                 universalWrite(char* address, char* writeValue) override;
+	virtual mu2edev*                     getDevice(void)             = 0;
 	virtual DTCLib::CFOandDTC_Registers* getCFOandDTCRegisters(void) = 0;
 
 	// DTC specific items

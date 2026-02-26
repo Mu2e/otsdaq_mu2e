@@ -36,17 +36,17 @@ class ROCCoreVInterface : public FEVInterface
 	//	Philosophy: call writeRegister/readRegister/readBlock/writeBlock and it will choose the ROC or software emulator implementation
 	//      For each, there is a "ROC" and "Emulator" version:   readROCRegister/readEmulatorRegister/readROCBlock/readEmulatorBlock/writeROCRegister/writeEmulatorRegister
 	void               writeRegister(DTCLib::roc_address_t address,
-	                                 DTCLib::roc_data_t writeData);  // chooses ROC or Emulator version
+	                                 DTCLib::roc_data_t    writeData);  // chooses ROC or Emulator version
 	DTCLib::roc_data_t readRegister(
 	    DTCLib::roc_address_t address);  // chooses ROC or Emulator version
 	void readBlock(std::vector<DTCLib::roc_data_t>& data,
 	               DTCLib::roc_address_t            address,
 	               uint16_t                         wordCount,
-	               bool incrementAddress);  // chooses ROC or Emulator version
+	               bool                             incrementAddress);  // chooses ROC or Emulator version
 	void writeBlock(const std::vector<DTCLib::roc_data_t>& writeData,
 	                DTCLib::roc_address_t                  address,
 	                bool                                   incrementAddress,
-	                bool requestAck = true);  // chooses ROC or Emulator version
+	                bool                                   requestAck = true);  // chooses ROC or Emulator version
 
 	virtual void writeROCRegister(
 	    DTCLib::roc_address_t address,
@@ -84,8 +84,8 @@ class ROCCoreVInterface : public FEVInterface
 	};  // pure virtual, must define in inheriting children
 	virtual void writeEmulatorBlock(const std::vector<DTCLib::roc_data_t>& writeData,
 	                                DTCLib::roc_address_t                  address,
-	                                bool incrementAddress,
-	                                bool requestAck = true)
+	                                bool                                   incrementAddress,
+	                                bool                                   requestAck = true)
 	{
 		throw std::runtime_error("UNDEFINED BLOCK EMULATOR WRITE");
 	};  // pure virtual, must define in inheriting children

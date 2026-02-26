@@ -36,7 +36,7 @@ class ROCDTCHardwareEmulated : public ROCCoreVInterface
 	virtual void readEmulatorBlock(std::vector<DTCLib::roc_data_t>& data,
 	                               DTCLib::roc_address_t            address,
 	                               uint16_t                         numberOfReads,
-	                               bool incrementAddress) override;
+	                               bool                             incrementAddress) override;
 
 	virtual void universalBlockRead(char*        address,
 	                                char*        returnValue,
