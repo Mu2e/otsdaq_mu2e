@@ -50,9 +50,12 @@ if [[ -z "$1" ]]; then
 	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: Missing argument: please provide a target directory name"
 	return 1
 fi
-mkdir -p -- "$1"
-if [ ! -d "$1" ]; then
-	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: Directory $1 does not exist"
+if [[ -d "$1" ]]; then
+	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: Directory $1 already exists. Please provide a new directory name."
+	return 1
+fi
+if ! mkdir -- "$1"; then
+	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: Failed to create directory $1"
 	return 1
 fi
 cd -- "$1"
@@ -73,8 +76,6 @@ if [ ! -d "srcs" ]; then
 fi
 
 #copy dev sources over
-cd srcs/
-cd ..
 rm -rf srcs/otsdaq*
 cp -r "$OTS_OPS_DEV_PATH/srcs/otsdaq"* srcs/.
 
