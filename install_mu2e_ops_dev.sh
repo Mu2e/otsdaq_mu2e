@@ -50,6 +50,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	exit 1
 fi
 
+if [[ ! -d "$OTS_OPS_DEV_PATH" ]]; then
+	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: OTS_OPS_DEV_PATH directory does not exist: $OTS_OPS_DEV_PATH"
+	return 1
+fi
+
 if [[ -z "$1" ]]; then
 	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: Missing argument: please provide a target directory name"
 	return 1
