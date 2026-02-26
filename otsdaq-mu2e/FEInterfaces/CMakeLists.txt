@@ -22,7 +22,6 @@ cet_build_plugin(DTCFrontEndInterface otsdaq::FEInterface LIBRARIES REG
 cet_make_library(LIBRARY_NAME CFOFrontEndInterface SOURCE CFOFrontEndInterfaceImpl.cc
   LIBRARIES PUBLIC
   otsdaq-mu2e::CFOandDTCCore
-  mu2e-pcie-utils::CFOInterface
   ROOT::Hist
   ROOT::Core
   ROOT::RIO
