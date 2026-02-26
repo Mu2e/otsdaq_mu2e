@@ -78,7 +78,6 @@ fi
 #copy dev sources over
 rm -rf srcs/otsdaq*
 cp -r "$OTS_OPS_DEV_PATH/srcs/otsdaq"* srcs/.
-mz_uc
 
 #cleanup vestiges of the install
 rm setup-env.sh
