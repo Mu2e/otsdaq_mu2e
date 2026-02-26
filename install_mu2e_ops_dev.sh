@@ -38,6 +38,10 @@
 #
 
 OTS_OPS_DEV_PATH="/home/mu2eshift/ots_ops_dev"
+# $2 (optional): override OTS_OPS_DEV_PATH with an existing directory to build from another area's work
+if [[ -n "$2" && -d "$2" ]]; then
+	OTS_OPS_DEV_PATH="$2"
+fi
 
 echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t This script should be sourced on mu2e-dl-01 in MC2. Will copy srcs/otsdaq* from ${OTS_OPS_DEV_PATH}"
 
