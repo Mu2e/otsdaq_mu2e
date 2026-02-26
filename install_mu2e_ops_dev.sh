@@ -73,8 +73,6 @@ if [ ! -d "srcs" ]; then
 fi
 
 #copy dev sources over
-cd srcs/
-cd ..
 rm -rf srcs/otsdaq*
 cp -r "$OTS_OPS_DEV_PATH/srcs/otsdaq"* srcs/.
 mz_uc
