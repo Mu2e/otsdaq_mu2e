@@ -84,9 +84,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 		std::chrono::time_point<std::chrono::steady_clock>
 		    transferStartTime_, transferEndTime_;
 
-		FILE* fp_ = nullptr;
-		bool publish_ = false;
-		FESupervisor* feSupervisor_ = nullptr;	
+		FILE*         fp_           = nullptr;
+		bool          publish_      = false;
+		FESupervisor* feSupervisor_ = nullptr;
 
 		std::string error_;
 

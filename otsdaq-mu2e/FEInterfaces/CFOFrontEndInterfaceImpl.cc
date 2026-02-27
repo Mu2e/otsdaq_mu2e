@@ -2646,10 +2646,11 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 		// start mutex scope
 		{
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-			bufferTestThreadStruct_->expectedEventTag_   = initialEventWindowTag;
-			bufferTestThreadStruct_->saveBinaryData_     = saveBinaryDataToFile;
-			bufferTestThreadStruct_->publish_     		 = false;
-			bufferTestThreadStruct_->feSupervisor_		 = static_cast<ots::FESupervisor*>(parentSupervisor_);
+			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
+			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+			bufferTestThreadStruct_->publish_          = false;
+			bufferTestThreadStruct_->feSupervisor_ =
+			    static_cast<ots::FESupervisor*>(parentSupervisor_);
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = true;
 			bufferTestThreadStruct_->doNotResetCounters_ = doNotResetBufferTestCounters;
@@ -2665,10 +2666,11 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 		// start mutex scope
 		{
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-			bufferTestThreadStruct_->expectedEventTag_   = initialEventWindowTag;
-			bufferTestThreadStruct_->saveBinaryData_     = saveBinaryDataToFile;
-			bufferTestThreadStruct_->publish_     		 = false;
-			bufferTestThreadStruct_->feSupervisor_		 = static_cast<ots::FESupervisor*>(parentSupervisor_);
+			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
+			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+			bufferTestThreadStruct_->publish_          = false;
+			bufferTestThreadStruct_->feSupervisor_ =
+			    static_cast<ots::FESupervisor*>(parentSupervisor_);
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = false;
 			bufferTestThreadStruct_->thisCFO_            = thisCFO_;
@@ -2851,7 +2853,8 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 		}
 		if(threadStruct->publish_)
-			threadStruct->feSupervisor_->publishData((const char*)dataPtr, sizeof(CFOLib::CFO_EventRecord));
+			threadStruct->feSupervisor_->publishData((const char*)dataPtr,
+			                                         sizeof(CFOLib::CFO_EventRecord));
 	}
 #endif
 
