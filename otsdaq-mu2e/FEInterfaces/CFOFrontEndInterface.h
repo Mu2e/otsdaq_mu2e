@@ -201,6 +201,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
 	void SharedRunPlanSubsystemJoin(__ARGS__);
 	void SharedRunPlanSubsystemLeave(__ARGS__);
+	
+	void BufferTest_detached(__ARGS__);
 
 	void ConfigureForTimingChain(__ARGS__);
 	void LoopbackTest(__ARGS__);
