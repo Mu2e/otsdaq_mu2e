@@ -81,10 +81,11 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// DTC specific items
 	//----------------
-	void configureHardwareDevMode(void);
-	void configureEventBuildingMode(int step = -1);
-	void configureLoopbackMode(int step = -1);
-	void configureForTimingChain(int step);
+	void 								configureHardwareDevMode	(void);
+	void 								configureEventBuildingMode	(int step = -1);
+	void 								configureLoopbackMode		(int step = -1);
+	void 								configureForTimingChain		(int step);
+    void 								configureCommon 			(void);
 
 	void loopbackTest(int step = -1);
 

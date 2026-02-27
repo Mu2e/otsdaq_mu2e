@@ -215,7 +215,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					1,    // requiredUserPermissions
 					"*" /* allowedCallingFEs */,
 					"This FE Macro compiles the CFO run plan to a binary file. You must compile before running <b>Set Runplan</b> "
-					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: srcs/mu2e_pcie_utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
+					"which downloads the binary run plan to the CFO.\n\nDefault text run plan: srcs/mu2e-pcie-utils/cfoInterfaceLib/Command.txt\nDefault binary run plan: srcs/mu2e-pcie-utils/cfoInterfaceLib/Command.bin" /* feMacroTooltip */
 					);
 
 	registerFEMacroFunction(
@@ -228,7 +228,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"*", /* allowedCallingFEs */
 					"Download the binary run plan to the CFO. <b>You must first compile your run plan</b>.\n\n\n\n" /* feMacroTooltip */
 					"Paramters:\n"
-					"\tBinary Run File (string): Path to the binary run plan. Default: srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin\n"
+					"\tBinary Run File (string): Path to the binary run plan. Default: srcs/mu2e-pcie-utils/cfoInterfaceLib/Commands.bin\n"
 	);
 
 	registerFEMacroFunction(
@@ -2182,12 +2182,12 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 {
 	// to view output file with 8-byte rows
-	// hexdump -e '"%08_ax " 1/8 "%016x "' -e '"\n"' srcs/mu2e_pcie_utils/cfoInterfaceLib/Commands.bin
+	// hexdump -e '"%08_ax " 1/8 "%016x "' -e '"\n"' srcs/mu2e-pcie-utils/cfoInterfaceLib/Commands.bin
 
 	__FE_COUT__ << "Compile CFO Run Plan" << __E__;
 
 	const std::string SOURCE_BASE_PATH =
-	    std::string(__ENV__("OTS_SOURCE")) + "/mu2e_pcie_utils/cfoInterfaceLib/";
+	    std::string(__ENV__("OTS_SOURCE")) + "/mu2e-pcie-utils/cfoInterfaceLib/";
 
 	std::string inFileName =
 	    __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
@@ -2203,7 +2203,7 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 void CFOFrontEndInterface::SetRunplan(__ARGS__)
 {
 	const std::string SOURCE_BASE_PATH =
-	    std::string(__ENV__("OTS_SOURCE")) + "/mu2e_pcie_utils/cfoInterfaceLib/";
+	    std::string(__ENV__("OTS_SOURCE")) + "/mu2e-pcie-utils/cfoInterfaceLib/";
 	__SET_ARG_OUT__(
 	    "Result",
 	    SetRunplan(__GET_ARG_IN__(
