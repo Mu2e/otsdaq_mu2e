@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
+#include "otsdaq/CoreSupervisors/FESupervisor.h"
 
 namespace ots
 {
@@ -84,6 +85,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 		    transferStartTime_, transferEndTime_;
 
 		FILE* fp_ = nullptr;
+		bool publish_ = false;
+		FESupervisor* feSupervisor_ = nullptr;	
 
 		std::string error_;
 
