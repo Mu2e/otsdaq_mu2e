@@ -1629,7 +1629,7 @@ catch(...)
 
 void DTCFrontEndInterface::configureCommon(void)
 {
-    __FE_COUT_INFO__ << "configureCommon()" << __E__;
+	__FE_COUT_INFO__ << "configureCommon()" << __E__;
 
 	getDTC()->SoftReset();
 	getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
@@ -1649,8 +1649,6 @@ void DTCFrontEndInterface::configureCommon(void)
 			__FE_COUT__ << "roc[" << i << "] enabled " << enabled << " emulated "
 			            << emulated << __E__;
 
-            
-
 			if(!enabled)
 				rocSetupString = SetupROCs(
 				    DTCLib::DTC_Link_ID(i),  //DTCLib::DTC_Link_ID rocLinkIndex,
@@ -1662,24 +1660,24 @@ void DTCFrontEndInterface::configureCommon(void)
 				    0  // uint32_t size
 				);
 			else if(enabled && !emulated)
-                {
-                bool clockMakersEnabled = false; // TODO
-                if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
-            	{
-		            __FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
-                    clockMakersEnabled = 0; // clock markers are alwasy off for the CRV
-            		getDTC()->SetPunchEnable();
-	            }
+			{
+				bool clockMakersEnabled = false;  // TODO
+				if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+				{
+					__FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
+					clockMakersEnabled = 0;  // clock markers are alwasy off for the CRV
+					getDTC()->SetPunchEnable();
+				}
 				rocSetupString = SetupROCs(
 				    DTCLib::DTC_Link_ID(i),  //DTCLib::DTC_Link_ID rocLinkIndex,
 				    1,
-				    clockMakersEnabled, 
+				    clockMakersEnabled,
 				    0,  //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
 				    DTCLib::DTC_ROC_Emulation_Type(
 				        0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),  // DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 				    0  // uint32_t size
 				);
-            }
+			}
 			else  //enabled and emulated
 				rocSetupString = SetupROCs(
 				    DTCLib::DTC_Link_ID(i),  //DTCLib::DTC_Link_ID rocLinkIndex,
@@ -1786,17 +1784,15 @@ void DTCFrontEndInterface::configureCommon(void)
 		;
 	}  //ignore exceptions;
 	if(EnableSoftwareDataRequestMode)
-    {
+	{
 		__FE_COUT__ << "Enabling Software Data Request Mode..." << __E__;
-        getDTC()->EnableSoftwareDRP();
-    }
+		getDTC()->EnableSoftwareDRP();
+	}
 	else
-    {
+	{
 		__FE_COUT__ << "Enabling Auto-generation of Data Requests..." << __E__;
-        getDTC()->DisableSoftwareDRP();
-    }
-    
-
+		getDTC()->DisableSoftwareDRP();
+	}
 }
 
 //==============================================================================
@@ -1816,7 +1812,7 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	getDTC()->SetCFOEmulationMode();  //turn on DTC emulation (ignores any real CFO)
 	getDTC()->DisableLink(DTCLib::DTC_Link_CFO);
 
-    //During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
+	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 	//	So solution:
 	//		- only configure JA one time ever after cold start
 	//		- from then on, do not touch JA
@@ -1845,9 +1841,9 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 	else
 		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
 
-    configureCommon();
+	configureCommon();
 
-    bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
+	bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
 	try
 	{
 		EnableSoftwareDataRequestMode =
@@ -1904,7 +1900,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
 	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
 	{
-        configureCommon();
+		configureCommon();
 
 		// getDTC()->SetSequenceNumberDisable(); //bit 10
 
@@ -1915,19 +1911,20 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		// registerWrite(0x9114, 0xc1c1);
 		getDTC()->EnableLink(DTCLib::DTC_Link_EVB);
 
-        uint32_t EventModeRequiredMask = uint32_t(0);
-        // sets the bits that are required. If a mask-bit is 0 its accepted anyways. 
-        // If a mask-bit is 1, then the eventMode-bit also needs to be 1.
-        try
-	    {
-		    EventModeRequiredMask =
-		    getSelfNode().getNode("EventModeRequiredMask").getValue<uint32_t>();
-	    }
-	    catch(...)
-	    {
-		    __FE_COUT_INFO__ << "No 'EventModeRequiredMask' field found. Default to 0x" << std::hex << EventModeRequiredMask << __E__;
-	    }
-        getDTC()->SetCFOEventModeRequiredMask(EventModeRequiredMask);
+		uint32_t EventModeRequiredMask = uint32_t(0);
+		// sets the bits that are required. If a mask-bit is 0 its accepted anyways.
+		// If a mask-bit is 1, then the eventMode-bit also needs to be 1.
+		try
+		{
+			EventModeRequiredMask =
+			    getSelfNode().getNode("EventModeRequiredMask").getValue<uint32_t>();
+		}
+		catch(...)
+		{
+			__FE_COUT_INFO__ << "No 'EventModeRequiredMask' field found. Default to 0x"
+			                 << std::hex << EventModeRequiredMask << __E__;
+		}
+		getDTC()->SetCFOEventModeRequiredMask(EventModeRequiredMask);
 
 		// registerWrite(0x96C8, 0x555555D5);	//10G configurable preamble world
 		// registerWrite(0x96CC, 0x78555555);	//10G configurable idle world
