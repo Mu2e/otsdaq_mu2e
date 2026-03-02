@@ -1666,7 +1666,6 @@ void DTCFrontEndInterface::configureCommon(void)
 				{
 					__FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
 					clockMakersEnabled = 0;  // clock markers are alwasy off for the CRV
-					getDTC()->SetPunchEnable();
 				}
 				rocSetupString = SetupROCs(
 				    DTCLib::DTC_Link_ID(i),  //DTCLib::DTC_Link_ID rocLinkIndex,
