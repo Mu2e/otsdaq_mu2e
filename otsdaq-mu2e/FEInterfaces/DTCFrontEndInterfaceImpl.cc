@@ -1910,6 +1910,32 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		// registerWrite(0x9114, 0xc1c1);
 		getDTC()->EnableLink(DTCLib::DTC_Link_EVB);
 
+		{
+			uint32_t dtcEventBuilderReg_DeadTime  = 0;
+			uint32_t dtcEventBuilderReg_StartNode = 0;
+			uint32_t dtcEventBuilderReg_NumNodes  = 0;
+			try
+			{
+				dtcEventBuilderReg_DeadTime =
+				    getSelfNode().getNode("EventBuilderDeadTime").getValue<uint32_t>();
+				dtcEventBuilderReg_StartNode =
+				    getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
+				dtcEventBuilderReg_NumNodes =
+				    getSelfNode().getNode("EventBuilderNumNodes").getValue<uint32_t>();
+			}
+			catch(...)
+			{
+				__FE_COUT_INFO__
+				    << "Ignoring missing EVB cluster configuration values." << __E__;
+			}
+			__FE_COUTV__(dtcEventBuilderReg_DeadTime);
+			__FE_COUTV__(dtcEventBuilderReg_StartNode);
+			__FE_COUTV__(dtcEventBuilderReg_NumNodes);
+			getDTC()->SetEVBClusterInfo(dtcEventBuilderReg_DeadTime,
+			                            dtcEventBuilderReg_StartNode,
+			                            dtcEventBuilderReg_NumNodes);
+		}
+
 		uint32_t EventModeRequiredMask = uint32_t(0);
 		// sets the bits that are required. If a mask-bit is 0 its accepted anyways.
 		// If a mask-bit is 1, then the eventMode-bit also needs to be 1.
