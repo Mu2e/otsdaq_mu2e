@@ -2269,6 +2269,10 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 	thisCFO_->SetRunPlanData(binaryContents, 0 /* address */);
 
 	std::stringstream resultSs;
+
+	thisCFO_->SetLinuxTimestampPreset();
+	resultSs << "\n\nInitialized CFO Linux Timestamp to " << 
+		StringMacros::getTimestampString(thisCFO_->ReadLinuxTimestamp()) << __E__ << __E__;
 	resultSs << "Downloaded to CFO binary run plan file: " << binFilename << __E__;
 	return resultSs.str();
 }  //end SetRunplan()
@@ -2400,7 +2404,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 
 	}  //done generating template Run Plan
 
-	SetRunplan(outFileName);
+	outSs << SetRunplan(outFileName);
 
 	if(useDetachedBufferTest)
 	{
@@ -2422,7 +2426,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-	outSs << "Launched CFO Run Plan!" << __E__;
+	outSs << "\n\nLaunched CFO Run Plan!" << __E__;
 	return outSs.str();
 }  //end CompileSetAndLaunchTemplateSuperCycleRunPlan()
 
@@ -2615,7 +2619,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 
 	}  //done generating template Run Plan
 
-	SetRunplan(outFileName);
+	outSs << SetRunplan(outFileName);
 
 	if(useDetachedBufferTest)
 	{
@@ -2637,7 +2641,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-	outSs << "Launched CFO Run Plan!" << __E__;
+	outSs << "\n\nLaunched CFO Run Plan!" << __E__;
 	return outSs.str();
 }  //end SetCFOEmulatorFixedWidthEmulation()
 
@@ -2886,6 +2890,9 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 				fwrite(&dataPtr[l], sizeof(uint32_t), 1, threadStruct->fp_);
 			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 		}
+
+		// To receive published data:
+		// 	artdaqDriver -c srcs/artdaq-mu2e/tools/fcl/cfo_driver.fcl
 		if(threadStruct->publish_)
 			threadStruct->feSupervisor_->publishData((const char*)dataPtr,
 													 sizeof(CFOLib::CFO_EventRecord));
@@ -3462,7 +3469,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 			result << "\n\nRun Plan part-1:\n"
 				   << compiler.processFile(inFileName, outFileName);
 
-			SetRunplan(outFileName);
+			result << SetRunplan(outFileName);
 			thisCFO_->EnableEmbeddedClockMarker();
 			thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 			thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -3483,7 +3490,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan part-2:\n"
 			   << compiler.processFile(inFileName, outFileName);
-		SetRunplan(outFileName);
+		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan
 
 	__SET_ARG_OUT__("Result", result.str());
@@ -3645,7 +3652,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
 			   << compiler.processFile(inFileName, outFileName);
-		SetRunplan(outFileName);
+		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
 	result << "\n\nSubsystem '" << subsystem << "' successfully joined with M:N ratio "
@@ -3746,7 +3753,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
 			   << compiler.processFile(inFileName, outFileName);
-		SetRunplan(outFileName);
+		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
 	result << "\nSubsystem '" << subsystem
@@ -4427,7 +4434,12 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 	// outSs << "Active Event Match: " << (activeMatch?"true":"false") << __E__;
 	// outSs << "Event Duration: " << cfoDelay << " = " << cfoDelay*25 << " ns" << __E__;
 	// outSs << "Reading back: " << (doNotReadBack?"false":"true") << __E__;
-	// if(fp) outSs << "Binary data file saved at: " << filename << __E__;
+	if(saveBinaryDataToFile) 
+	{
+		outSs << "Binary data file saved to: " << std::string(__ENV__("OTSDAQ_DATA")) + "/macroOutput_*" << __E__;
+		outSs << "\n" << "To view binary data do "
+			"hexdump -e '\"%08_ax \" 7/8 \"%016x \"' -e '\"\\n\"' " << std::string(__ENV__("OTSDAQ_DATA")) << "/macroOutput_*.bin" << __E__;
+	}
 	// outSs << ostr.str();
 
 	std::cout << "Untruncated output: \n" << outSs.str() << __E__;  //for no truncation!
