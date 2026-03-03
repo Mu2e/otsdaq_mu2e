@@ -439,6 +439,36 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					"*",
 					"To assist with throttling Event Window Marker rates during Global Run 4."
 	);
+
+	registerFEMacroFunction(
+		"Buffer Test Detached",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::BufferTest_detached),  // feMacroFunction
+		std::vector<std::string>{
+			"Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: "
+			"Status)",
+			// "Data are SubEvents (Default: true)", //not needed for CFO
+			// "Number of [Sub]Events (Default: 1)",  // will be continuous!
+			"Starting Event Window Tag (Default: 0)",
+			// "Match Event Tags (Default: false)", //not needed for CFO
+			// "Display Payload at GUI (Default: true)", // will be summary output
+			// "eventDuration (Default := 400)",
+			// "doNotReadBack (bool)",
+			"Save Binary Data to File (Default: false)",
+			// "Save Binary Data Filename", //not needed for CFO (not multiple CFOs)
+			// "Save Subevent Header to Binary File (Default: false)", //not needed for CFO
+			// "Payload Packet Threshold for Saving Event (Default: 0)" //not needed for CFO
+			// "Software Generated Data Requests (bool)",
+			// "Do Not Send Heartbeats (bool)"
+		},
+		std::vector<std::string>{"Result"},
+		1,  // requiredUserPermissions
+		"*",
+		"Read a specified number of events from the Data DMA channel-0, and attempt to "
+		"validate data."
+		// "Send a request for a number of events and waits for the respective responses. "
+		// "Currently, the responses are simulated data (a counter)."
+	);
 	// clang-format on
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
@@ -2239,6 +2269,11 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 	thisCFO_->SetRunPlanData(binaryContents, 0 /* address */);
 
 	std::stringstream resultSs;
+
+	thisCFO_->SetLinuxTimestampPreset();
+	resultSs << "\n\nInitialized CFO Linux Timestamp to "
+	         << StringMacros::getTimestampString(thisCFO_->ReadLinuxTimestamp()) << __E__
+	         << __E__;
 	resultSs << "Downloaded to CFO binary run plan file: " << binFilename << __E__;
 	return resultSs.str();
 }  //end SetRunplan()
@@ -2370,7 +2405,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 
 	}  //done generating template Run Plan
 
-	SetRunplan(outFileName);
+	outSs << SetRunplan(outFileName);
 
 	if(useDetachedBufferTest)
 	{
@@ -2392,7 +2427,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-	outSs << "Launched CFO Run Plan!" << __E__;
+	outSs << "\n\nLaunched CFO Run Plan!" << __E__;
 	return outSs.str();
 }  //end CompileSetAndLaunchTemplateSuperCycleRunPlan()
 
@@ -2585,7 +2620,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 
 	}  //done generating template Run Plan
 
-	SetRunplan(outFileName);
+	outSs << SetRunplan(outFileName);
 
 	if(useDetachedBufferTest)
 	{
@@ -2607,7 +2642,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 
 	thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
-	outSs << "Launched CFO Run Plan!" << __E__;
+	outSs << "\n\nLaunched CFO Run Plan!" << __E__;
 	return outSs.str();
 }  //end SetCFOEmulatorFixedWidthEmulation()
 
@@ -2646,11 +2681,16 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 		// start mutex scope
 		{
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-			bufferTestThreadStruct_->expectedEventTag_   = initialEventWindowTag;
-			bufferTestThreadStruct_->saveBinaryData_     = saveBinaryDataToFile;
+			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
+			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+			bufferTestThreadStruct_->publish_ =
+			    static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
+			bufferTestThreadStruct_->feSupervisor_ =
+			    static_cast<ots::FESupervisor*>(parentSupervisor_);
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = true;
 			bufferTestThreadStruct_->doNotResetCounters_ = doNotResetBufferTestCounters;
+			bufferTestThreadStruct_->error_              = "";
 		}
 		__FE_COUT__ << "Found buffer test thread already running... so re-initializing "
 		               "and reading data starting at event tag "
@@ -2663,13 +2703,18 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 		// start mutex scope
 		{
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
-			bufferTestThreadStruct_->expectedEventTag_   = initialEventWindowTag;
-			bufferTestThreadStruct_->saveBinaryData_     = saveBinaryDataToFile;
+			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
+			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+			bufferTestThreadStruct_->publish_ =
+			    static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
+			bufferTestThreadStruct_->feSupervisor_ =
+			    static_cast<ots::FESupervisor*>(parentSupervisor_);
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = false;
 			bufferTestThreadStruct_->thisCFO_            = thisCFO_;
 			bufferTestThreadStruct_->running_            = true;
 			bufferTestThreadStruct_->doNotResetCounters_ = false;
+			bufferTestThreadStruct_->error_              = "";
 		}
 		std::thread(
 		    [](std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>
@@ -2846,6 +2891,12 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 				fwrite(&dataPtr[l], sizeof(uint32_t), 1, threadStruct->fp_);
 			// ostr << "\t0x" << std::hex << std::setw(8) << std::setfill('0') << *((uint32_t *)(&(dataPtr[l]))) << std::endl;
 		}
+
+		// To receive published data:
+		// 	artdaqDriver -c srcs/artdaq-mu2e/tools/fcl/cfo_driver.fcl
+		if(threadStruct->publish_)
+			threadStruct->feSupervisor_->publishData((const char*)dataPtr,
+			                                         sizeof(CFOLib::CFO_EventRecord));
 	}
 #endif
 
@@ -3419,7 +3470,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 			result << "\n\nRun Plan part-1:\n"
 			       << compiler.processFile(inFileName, outFileName);
 
-			SetRunplan(outFileName);
+			result << SetRunplan(outFileName);
 			thisCFO_->EnableEmbeddedClockMarker();
 			thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 			thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -3440,7 +3491,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan part-2:\n"
 		       << compiler.processFile(inFileName, outFileName);
-		SetRunplan(outFileName);
+		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan
 
 	__SET_ARG_OUT__("Result", result.str());
@@ -3602,7 +3653,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
 		       << compiler.processFile(inFileName, outFileName);
-		SetRunplan(outFileName);
+		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
 	result << "\n\nSubsystem '" << subsystem << "' successfully joined with M:N ratio "
@@ -3703,7 +3754,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
 		       << compiler.processFile(inFileName, outFileName);
-		SetRunplan(outFileName);
+		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
 	result << "\nSubsystem '" << subsystem
@@ -4224,5 +4275,180 @@ catch(const std::runtime_error& e)
 	          << e.what() << __E__;
 	__FE_SS_THROW__;
 }
+
+//========================================================================
+void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"BufferTest_detached\"" << std::endl;
+
+	// arguments
+	std::string command = __GET_ARG_IN__(
+	    "Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: "
+	    "Status)",
+	    std::string,
+	    "Status");
+
+	// bool dataAreSubEvents =
+	//     __GET_ARG_IN__("Data are SubEvents (Default: true)", bool, true);
+	// unsigned int numberOfEvents = __GET_ARG_IN__("Number of [Sub]Events (Default: 1)", uint32_t, 1);
+	// bool         activeMatch = __GET_ARG_IN__("Match Event Tags (Default: false)", bool);
+	unsigned int timestampStart =
+	    __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", unsigned int);
+	bool saveBinaryDataToFile =
+	    __GET_ARG_IN__("Save Binary Data to File (Default: false)", bool);
+	// std::string saveBinaryDataFilename =
+	//     __GET_ARG_IN__("Save Binary Data Filename", std::string);
+	// bool saveSubeventHeadersToDataFile =
+	//     __GET_ARG_IN__("Save Subevent Header to Binary File (Default: false)", bool);
+	// bool displayPayloadAtGUI = __GET_ARG_IN__("Display Payload at GUI (Default: true)", bool, true);
+	// unsigned int packetThresholdToSave = __GET_ARG_IN__(
+	//     "Payload Packet Threshold for Saving Event (Default: 0)", unsigned int);
+
+	__FE_COUTV__(command);
+	// __FE_COUTV__(dataAreSubEvents);
+	// __FE_COUTV__(activeMatch);
+	__FE_COUTV__(timestampStart);
+	__FE_COUTV__(saveBinaryDataToFile);
+	// __FE_COUTV__(saveBinaryDataFilename);
+	// __FE_COUTV__(saveSubeventHeadersToDataFile);
+	// __FE_COUTV__(packetThresholdToSave);
+
+	// // print the result
+	std::stringstream outSs;
+	outSs << "Command: " << command << __E__;
+	if(command == "1" || command == "Start")
+	{
+		__FE_COUT__ << "Detaching thread and reading data DMA-0 starting at event tag "
+		            << timestampStart << " (0x" << std::hex << timestampStart << ")"
+		            << __E__;
+
+		if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
+			bufferTestThreadStruct_ =
+			    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+
+		if(bufferTestThreadStruct_->running_)
+			outSs
+			    << "Found buffer test thread already running, doing nothing. Please "
+			       "'Halt' before restarting. Or run 'Status' to read the latest status."
+			    << __E__;
+		else
+		{
+			__FE_COUT__ << "Launching detached Buffer Test thread..." << __E__;
+
+			// start mutex scope
+			{
+				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+
+				bufferTestThreadStruct_->expectedEventTag_ = timestampStart;
+				bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+				bufferTestThreadStruct_->publish_ =
+				    static_cast<ots::FESupervisor*>(parentSupervisor_)
+				        ->isPublishingData();
+				bufferTestThreadStruct_->feSupervisor_ =
+				    static_cast<ots::FESupervisor*>(parentSupervisor_);
+				bufferTestThreadStruct_->exitThread_         = false;
+				bufferTestThreadStruct_->resetStartEventTag_ = false;
+				bufferTestThreadStruct_->thisCFO_            = thisCFO_;
+				bufferTestThreadStruct_->running_            = true;
+				bufferTestThreadStruct_->doNotResetCounters_ = false;
+				bufferTestThreadStruct_->error_              = "";
+			}
+			std::thread(
+			    [](std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>
+			           threadStruct) {
+				    CFOFrontEndInterface::detechedBufferTestThread(threadStruct);
+			    },
+			    bufferTestThreadStruct_)
+			    .detach();
+			outSs << "Launched detached Buffer Test thread and reading data DMA-0 "
+			         "starting at event tag "
+			      << timestampStart << " (0x" << std::hex << timestampStart << ")"
+			      << __E__;
+		}
+		sleep(1);
+		outSs << "Reading status..." << __E__;
+		outSs << CFOFrontEndInterface::getDetachedBufferTestStatus(
+		    bufferTestThreadStruct_);
+	}
+	else if(command == "0" || command == "Status")
+	{
+		__FE_COUT__ << "Reading thread status..." << __E__;
+		outSs << "Reading thread status..." << __E__;
+
+		if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
+			bufferTestThreadStruct_ =
+			    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+
+		outSs << CFOFrontEndInterface::getDetachedBufferTestStatus(
+		    bufferTestThreadStruct_);
+	}
+	else if(command == "2" || command == "Halt")
+	{
+		__FE_COUT__ << "Halting thread... " << __E__;
+
+		if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
+			bufferTestThreadStruct_ =
+			    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+
+		// start mutex scope
+		{
+			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
+			bufferTestThreadStruct_->exitThread_ = true;
+		}
+
+		//check for thread to exit
+		for(int i = 0; i < 10; ++i)
+		{
+			usleep(100 * 1000 /*100ms*/);  // sleep for exit time
+			if(!bufferTestThreadStruct_->running_)
+				break;
+			__FE_COUT__ << "Waiting for thread to exit... #" << i << __E__;
+		}
+
+		if(bufferTestThreadStruct_->fp_)
+		{
+			__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..."
+			                 << __E__;
+
+			fclose(bufferTestThreadStruct_->fp_);
+			bufferTestThreadStruct_->fp_ = nullptr;
+		}
+
+		outSs << "Detached Buffer Test thread exited. " << __E__;
+		outSs << "Reading final status..." << __E__;
+		try
+		{
+			outSs << CFOFrontEndInterface::getDetachedBufferTestStatus(
+			    bufferTestThreadStruct_);
+		}
+		catch(const std::runtime_error& e)
+		{
+			__FE_COUT_WARN__ << "Ignoring buffer status error during HALT: " << e.what()
+			                 << __E__;
+		}
+	}
+	else
+	{
+		outSs << "Unrecognized command '" << command
+		      << "' found. Valid commands are Start, Status, and Halt." << __E__;
+	}
+	// outSs << "Active Event Match: " << (activeMatch?"true":"false") << __E__;
+	// outSs << "Event Duration: " << cfoDelay << " = " << cfoDelay*25 << " ns" << __E__;
+	// outSs << "Reading back: " << (doNotReadBack?"false":"true") << __E__;
+	if(saveBinaryDataToFile)
+	{
+		outSs << "Binary data file saved to: "
+		      << std::string(__ENV__("OTSDAQ_DATA")) + "/macroOutput_*" << __E__;
+		outSs << "\n"
+		      << "To view binary data do "
+		         "hexdump -e '\"%08_ax \" 7/8 \"%016x \"' -e '\"\\n\"' "
+		      << std::string(__ENV__("OTSDAQ_DATA")) << "/macroOutput_*.bin" << __E__;
+	}
+	// outSs << ostr.str();
+
+	std::cout << "Untruncated output: \n" << outSs.str() << __E__;  //for no truncation!
+
+	__SET_ARG_OUT__("Result", outSs.str());
+}  //end BufferTest_detached()
 
 // DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
