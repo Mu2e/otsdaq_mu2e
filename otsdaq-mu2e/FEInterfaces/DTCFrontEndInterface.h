@@ -85,6 +85,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void configureEventBuildingMode(int step = -1);
 	void configureLoopbackMode(int step = -1);
 	void configureForTimingChain(int step);
+	void configureCommon(void);
 
 	void loopbackTest(int step = -1);
 

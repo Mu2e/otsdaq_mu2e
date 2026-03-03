@@ -1627,51 +1627,9 @@ catch(...)
 	__FE_SS_THROW__;
 }
 
-//==============================================================================
-void DTCFrontEndInterface::configureHardwareDevMode(void)
+void DTCFrontEndInterface::configureCommon(void)
 {
-	__FE_COUT_INFO__ << "configureHardwareDevMode()" << __E__;
-
-	//Steps:
-	//	- disable CFO
-	//	- setup JA
-	//	- setup ROCs
-	//	- Soft Reset
-	//	- enable CFO emulation and DCS
-	//	- configure ROCs
-
-	getDTC()->DisableCFOEmulation();
-	getDTC()->SetCFOEmulationMode();  //turn on DTC emulation (ignores any real CFO)
-	getDTC()->DisableLink(DTCLib::DTC_Link_CFO);
-
-	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
-	//	So solution:
-	//		- only configure JA one time ever after cold start
-	//		- from then on, do not touch JA
-	if(configure_clock_)
-	{
-		uint32_t select = 0;
-		try
-		{
-			select =
-			    getSelfNode().getNode("JitterAttenuatorInputSource").getValue<uint32_t>();
-		}
-		catch(...)
-		{
-			__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to select = "
-			            << select << __E__;
-		}
-
-		__FE_COUTV__(select);
-		//For DTC - 0 ==> CFO Control Link
-		//For DTC - 1 ==> RTF copper clock
-		//For DTC - 2 ==> FPGA FMC
-		getDTC()->SetJitterAttenuatorSelect(
-		    select,
-		    true /* alsoResetJA */);  // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
-	}
-	else
-		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+	__FE_COUT_INFO__ << "configureCommon()" << __E__;
 
 	getDTC()->SoftReset();
 	getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
@@ -1702,15 +1660,24 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 				    0  // uint32_t size
 				);
 			else if(enabled && !emulated)
+			{
+				bool clockMakersEnabled = false;  // TODO
+				if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+				{
+					__FE_COUT__ << "enable punched clock on CRV DTC" << __E__;
+					clockMakersEnabled =
+					    false;  // clock markers are always off for the CRV
+				}
 				rocSetupString = SetupROCs(
 				    DTCLib::DTC_Link_ID(i),  //DTCLib::DTC_Link_ID rocLinkIndex,
 				    1,
-				    1,
+				    clockMakersEnabled,
 				    0,  //bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
 				    DTCLib::DTC_ROC_Emulation_Type(
 				        0 /* 0: Internal, 1: Fiber-Loopback, 2: External */),  // DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 				    0  // uint32_t size
 				);
+			}
 			else  //enabled and emulated
 				rocSetupString = SetupROCs(
 				    DTCLib::DTC_Link_ID(i),  //DTCLib::DTC_Link_ID rocLinkIndex,
@@ -1817,9 +1784,75 @@ void DTCFrontEndInterface::configureHardwareDevMode(void)
 		;
 	}  //ignore exceptions;
 	if(EnableSoftwareDataRequestMode)
+	{
 		__FE_COUT__ << "Enabling Software Data Request Mode..." << __E__;
+		getDTC()->EnableSoftwareDRP();
+	}
 	else
+	{
 		__FE_COUT__ << "Enabling Auto-generation of Data Requests..." << __E__;
+		getDTC()->DisableSoftwareDRP();
+	}
+}
+
+//==============================================================================
+void DTCFrontEndInterface::configureHardwareDevMode(void)
+{
+	__FE_COUT_INFO__ << "configureHardwareDevMode()" << __E__;
+
+	//Steps:
+	//	- disable CFO
+	//	- setup JA
+	//	- setup ROCs
+	//	- Soft Reset
+	//	- enable CFO emulation and DCS
+	//	- configure ROCs
+
+	getDTC()->DisableCFOEmulation();
+	getDTC()->SetCFOEmulationMode();  //turn on DTC emulation (ignores any real CFO)
+	getDTC()->DisableLink(DTCLib::DTC_Link_CFO);
+
+	//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
+	//	So solution:
+	//		- only configure JA one time ever after cold start
+	//		- from then on, do not touch JA
+	if(configure_clock_)
+	{
+		uint32_t select = 0;
+		try
+		{
+			select =
+			    getSelfNode().getNode("JitterAttenuatorInputSource").getValue<uint32_t>();
+		}
+		catch(...)
+		{
+			__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to select = "
+			            << select << __E__;
+		}
+
+		__FE_COUTV__(select);
+		//For DTC - 0 ==> CFO Control Link
+		//For DTC - 1 ==> RTF copper clock
+		//For DTC - 2 ==> FPGA FMC
+		getDTC()->SetJitterAttenuatorSelect(
+		    select,
+		    true /* alsoResetJA */);  // this call should first check if JA is already locked, JA only needs to be set after a cold start or if input clock changes
+	}
+	else
+		__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
+
+	configureCommon();
+
+	bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
+	try
+	{
+		EnableSoftwareDataRequestMode =
+		    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+	}
+	catch(...)
+	{
+		;
+	}  //ignore exceptions;
 
 	//enable CFO emulator
 	emulate_cfo_ = true;
@@ -1867,110 +1900,31 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
 	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
 	{
-		__FE_COUT__ << "Setup EVB parameters..." << __E__;
-		uint32_t dtcEventBuilderReg_DTCID       = 0;
-		uint32_t dtcEventBuilderReg_Mode        = 0;
-		uint32_t dtcEventBuilderReg_PartitionID = 0;
-		uint32_t dtcEventBuilderReg_MACIndex    = 0;
-		// uint32_t dtcEventBuilderReg_DTCInfo = 0;
+		configureCommon();
 
-		// uint32_t dtcEventBuilderReg_NumBuff   = 0;
-		uint32_t dtcEventBuilderReg_DeadTime  = 0;
-		uint32_t dtcEventBuilderReg_StartNode = 0;
-		uint32_t dtcEventBuilderReg_NumNodes  = 0;
-		// uint32_t dtcEventBuilderReg_Configuration = 0;
-
-		try
-		{
-			dtcEventBuilderReg_DTCID =
-			    getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
-			dtcEventBuilderReg_Mode =
-			    getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
-			dtcEventBuilderReg_PartitionID =
-			    getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
-			dtcEventBuilderReg_MACIndex =
-			    getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
-
-			dtcEventBuilderReg_DeadTime =  //dtcEventBuilderReg_NumBuff =
-			    // getSelfNode().getNode("EventBuilderNumBuff").getValue<uint32_t>();
-			    getSelfNode().getNode("EventBuilderDeadTime").getValue<uint32_t>();
-			dtcEventBuilderReg_StartNode =
-			    getSelfNode().getNode("EventBuilderStartNode").getValue<uint32_t>();
-			dtcEventBuilderReg_NumNodes =
-			    getSelfNode().getNode("EventBuilderNumNodes").getValue<uint32_t>();
-
-			__FE_COUTV__(dtcEventBuilderReg_DTCID);
-			__FE_COUTV__(dtcEventBuilderReg_Mode);
-			__FE_COUTV__(dtcEventBuilderReg_PartitionID);
-			__FE_COUTV__(dtcEventBuilderReg_MACIndex);
-			// __FE_COUTV__(dtcEventBuilderReg_NumBuff);
-			__FE_COUTV__(dtcEventBuilderReg_DeadTime);
-			__FE_COUTV__(dtcEventBuilderReg_StartNode);
-			__FE_COUTV__(dtcEventBuilderReg_NumNodes);
-
-			// Register x9154 is #DTC ID [31-24] / EVB Mode [23-16]/ EVB Partition ID [15-8]/
-			// EVB Local MAC Index [7-0]
-			getDTC()->SetEVBInfo(dtcEventBuilderReg_DTCID,
-			                     dtcEventBuilderReg_Mode,
-			                     dtcEventBuilderReg_PartitionID,
-			                     dtcEventBuilderReg_MACIndex);
-			// dtcEventBuilderReg_DTCInfo =
-			//     dtcEventBuilderReg_DTCID << 24 | dtcEventBuilderReg_Mode << 16 |
-			//     dtcEventBuilderReg_PartitionID << 8 | dtcEventBuilderReg_MACIndex;
-			// __FE_COUTV__(dtcEventBuilderReg_DTCInfo);
-			// registerWrite(0x9154, dtcEventBuilderReg_DTCInfo);
-
-			// Register x9158 is #Num EVB Buffers[22-16], EVB Start Node [14-8], Num Nodes
-			// [6-0]
-			getDTC()->SetEVBClusterInfo(
-			    dtcEventBuilderReg_DeadTime,  //dtcEventBuilderReg_NumBuff,
-			    dtcEventBuilderReg_StartNode,
-			    dtcEventBuilderReg_NumNodes);
-			// dtcEventBuilderReg_Configuration = dtcEventBuilderReg_NumBuff << 16 |
-			//				      dtcEventBuilderReg_StartNode << 8 |
-			//				      dtcEventBuilderReg_NumNodes;
-			// __FE_COUTV__(dtcEventBuilderReg_Configuration);
-			// registerWrite(0x9158, dtcEventBuilderReg_Configuration);
-		}
-		catch(...)
-		{
-			__FE_COUT_INFO__ << "Ignoring EVB setup exception, likely missing event "
-			                    "building configuration values."
-			                 << __E__;
-		}
-
-		// These registers are needed for the EVB, but I need to check their meaning
-		// registerWrite(0x9100, 0x800404);
-
-		bool EnableSoftwareDataRequestMode = false;  //default to auto-gen DRP
-		try
-		{
-			EnableSoftwareDataRequestMode =
-			    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
-		}
-		catch(...)
-		{
-			;
-		}  //ignore exceptions;
-
-		if(EnableSoftwareDataRequestMode)
-		{
-			__FE_COUT__ << "Enabling Software Data Request Mode." << __E__;
-			getDTC()->DisableAutogenDRP();  //bit 23
-		}
-		else
-		{
-			__FE_COUT__ << "Enabling Auto-generation of Data Requests." << __E__;
-			getDTC()->EnableAutogenDRP();  //bit 23
-		}
 		// getDTC()->SetSequenceNumberDisable(); //bit 10
 
 		// registerWrite(0x92c0, 0x0);
-		getDTC()->ClearEventModeTableEnable();
-		getDTC()->SetEventModeLookupByteSelect(0);
+		// getDTC()->ClearEventModeTableEnable();
+		// getDTC()->SetEventModeLookupByteSelect(0);
 
 		// registerWrite(0x9114, 0xc1c1);
 		getDTC()->EnableLink(DTCLib::DTC_Link_EVB);
+
+		uint32_t EventModeRequiredMask = uint32_t(0);
+		// sets the bits that are required. If a mask-bit is 0 its accepted anyways.
+		// If a mask-bit is 1, then the eventMode-bit also needs to be 1.
+		try
+		{
+			EventModeRequiredMask =
+			    getSelfNode().getNode("EventModeRequiredMask").getValue<uint32_t>();
+		}
+		catch(...)
+		{
+			__FE_COUT_INFO__ << "No 'EventModeRequiredMask' field found. Default to 0x"
+			                 << std::hex << EventModeRequiredMask << __E__;
+		}
+		getDTC()->SetCFOEventModeRequiredMask(EventModeRequiredMask);
 
 		// registerWrite(0x96C8, 0x555555D5);	//10G configurable preamble world
 		// registerWrite(0x96CC, 0x78555555);	//10G configurable idle world
