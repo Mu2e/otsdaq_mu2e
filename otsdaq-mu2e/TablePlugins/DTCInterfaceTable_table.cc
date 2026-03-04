@@ -42,8 +42,8 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 	mkdir(EPICS_CONFIG_PATH.c_str(), 0755);
 
 	// check for valid data types
-	__COUT__ << "*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*" << __E__;
-	__COUT__ << configManager->__SELF_NODE__ << __E__;
+	__COUTT__ << "*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*" << __E__;
+	__COUTT__ << configManager->__SELF_NODE__ << __E__;
 
 	//outputEpicsPVFile(configManager);
 }  // end init()

@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
+#include "otsdaq/CoreSupervisors/FESupervisor.h"
 
 namespace ots
 {
@@ -83,7 +84,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 		std::chrono::time_point<std::chrono::steady_clock>
 		    transferStartTime_, transferEndTime_;
 
-		FILE* fp_ = nullptr;
+		FILE*         fp_           = nullptr;
+		bool          publish_      = false;
+		FESupervisor* feSupervisor_ = nullptr;
 
 		std::string error_;
 
@@ -198,6 +201,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
 	void SharedRunPlanSubsystemJoin(__ARGS__);
 	void SharedRunPlanSubsystemLeave(__ARGS__);
+
+	void BufferTest_detached(__ARGS__);
 
 	void ConfigureForTimingChain(__ARGS__);
 	void LoopbackTest(__ARGS__);
