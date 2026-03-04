@@ -124,7 +124,7 @@ if [ "${opt_dev_otsdaq-0}" -eq 1 ]; then
         mkdir srcs
     fi
     cd srcs
-    for pkg in otsdaq otsdaq-utilities otsdaq-components; do
+    for pkg in otsdaq otsdaq-utilities otsdaq-components otsdaq-epics otsdaq-suite; do
         if ! [ -d $pkg ]; then
             if [ $opt_w -eq 0 ]; then
                 git clone https://github.com/art-daq/$pkg.git $pkg
@@ -146,7 +146,7 @@ if [ "${opt_dev_artdaq-0}" -eq 1 ]; then
         mkdir srcs
     fi
     cd srcs
-    for pkg in artdaq artdaq-core artdaq-daqinterface artdaq-database; do
+    for pkg in artdaq artdaq-core artdaq-daqinterface artdaq-database artdaq-suite artdaq-core-demo; do
         if ! [ -d $pkg ]; then
             if [ $opt_w -eq 0 ]; then
                 git clone https://github.com/art-daq/$pkg.git $pkg
@@ -367,6 +367,10 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
     cd $Base
 fi
 
+if [ -f setup_ots.sh ]; then
+    echo "Existing setup_ots.sh found. Backing it up..."
+    mv setup_ots.sh setup_ots.sh.bak
+fi
 if ! [ -f setup_ots.sh ]; then
     cat >setup_ots.sh <<-EOF
 echo # This script is intended to be sourced.
