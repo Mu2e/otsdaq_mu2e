@@ -320,6 +320,12 @@ if ! [ -f setup_ots.sh ]; then
 echo # This script is intended to be sourced.
 
 sh -c "[ \`ps \$\$ | grep bash | wc -l\` -gt 0 ] || { echo 'Please switch to the bash shell before running ots.'; exit; }" || exit
+
+if [ \${TDAQ_SETUP:-0} -eq 0 ]; then
+  # Save environment
+  declare -x >$Base/.env_before_setup_ots
+fi
+
 export SPACK_DISABLE_LOCAL_CONFIG=true
 export SPACK_USER_CACHE_PATH=$Base/.spack-cache
 source $spackdir/share/spack/setup-env.sh
@@ -361,6 +367,14 @@ alias  kx='ots -k'
 alias  mb='date; start_time=\$(date +%s); spack find | grep gcc; spack mpd build -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g | sed s/\\\[padded-to-255-chars\\\]//g | sed s/\\\/tdaq-v......../\\\/tdaq-v_\ \ \ /g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
 alias  ml='date; start_time=\$(date +%s); spack find | grep gcc; spack mpd build -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g | sed s/\\\[padded-to-255-chars\\\]//g | sed s/\\\/tdaq-v......../\\\/tdaq-v_\ \ \ /g | tee m.txt; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"; less m.txt'
 alias  mz='date; start_time=\$(date +%s); spack concretize --force --deprecated; spack mpd build --clean -j\$CETPKG_J 2>&1 | sed s/__spack_path_placeholder__//g; end_time=\$(date +%s); pushd $Base/build; ninja install; popd; date; delta_time=\$((end_time - start_time)); fractional_minutes=\$(echo "scale=1; \$delta_time / 60" | bc); echo "Full time: \$delta_time seconds or \$fractional_minutes minutes"'
+
+if [ \${TDAQ_SETUP:-0} -eq 0 ]; then
+  # Now save a copy of the environment after setup
+  declare -x >$Base/.env_after_setup_ots
+  # Next, remove any variables that haven't changed
+  grep -v -x -Ff $Base/.env_before_setup_ots $Base/.env_after_setup_ots >$Base/setup_ots_rte.sh
+fi
+export TDAQ_SETUP=1
 
 echo
 echo -e "$(date +%d%b%y.%T) setup_ots.sh:\${LINENO} |  \t  Now use 'ots --wiz' to configure otsdaq"
