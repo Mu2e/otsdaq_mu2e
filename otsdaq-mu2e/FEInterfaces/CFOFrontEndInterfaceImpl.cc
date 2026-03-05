@@ -2506,6 +2506,14 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 {
 	__FE_COUTV__(enable);
 
+	if(eventWindowMode == (uint64_t)-1)
+	{
+		__FE_SS__ << "Error - please check input parameters. Event Window Mode "
+		             "cannot be -1 for Fixed Width Run Plan. -1 is a reserved value in the CFO Run Plan which means leave the current Event Mode unchanged (but in the Fixed Width Run Plan the event mode starting value is 0)."
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
 	std::stringstream outSs;
 
 	halt();
