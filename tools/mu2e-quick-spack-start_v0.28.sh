@@ -153,7 +153,7 @@ if [[ "x$build_system_script" == "x" ]];then
   build_system_script=$Base/setup_spack_build_system_v0.28.sh
 fi
 
-echo "c70e6c68ec1f7fddbf4afdcd5b24a3b1d9bbb660 *$build_system_script" | sha1sum -c -
+echo "fee1e3b2de18c535f9800b66e5007bb0f5cbfe5a *$build_system_script" | sha1sum -c -
 if [ $? -ne 0 ]; then
   echo "ERROR: setup_spack_build_system_v0.28.sh does not have the expected checksum! Please check Github for updates to this script!"
   exit 1
@@ -169,21 +169,22 @@ fi
 
 concrete_include_cmd=
 
-os=$(cat /etc/redhat-release |grep -oE "release [0-9]+"|cut -d' ' -f2)
+os_long=$(spack arch -o)
+os=$(echo ${os_long//./_}|sed 's/almalinux/al/;s/ubuntu/u/')
 # Auto-add upstreams from /mu2e
 if [ $opt_use_mu2e -eq 1 ] && [ -d /mu2e/spack_v0.28 ];then
-  art=`ls -d /mu2e/spack_v0.28/art-suite-*-al${os}|tail -1`
-  artdaq=`ls -d /mu2e/spack_v0.28/artdaq-*-al${os}|tail -1`
-  ots=`ls -d /mu2e/spack_v0.28/ots-*-al${os}|tail -1`
-  mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-al${os}|tail -1`
+  art=`ls -d /mu2e/spack_v0.28/art-suite-*-${os}|tail -1`
+  artdaq=`ls -d /mu2e/spack_v0.28/artdaq-*-${os}|tail -1`
+  ots=`ls -d /mu2e/spack_v0.28/ots-*-${os}|tail -1`
+  mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
 
   upstreams+=($mu2e $ots $artdaq $art)
 
 elif [ $opt_use_cvmfs -eq 1 ] && [ -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28 ]; then
-  art=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/art-suite-*-al${os}|tail -1`
-  artdaq=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/artdaq-*-al${os}|tail -1`
-  ots=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/ots-*-al${os}|tail -1`
-  mu2e=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/mu2e-tdaq-*-al${os}|tail -1`
+  art=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/art-suite-*-${os}|tail -1`
+  artdaq=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/artdaq-*-${os}|tail -1`
+  ots=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/ots-*-${os}|tail -1`
+  mu2e=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
 
   upstreams+=($artdaq $art)
 
@@ -219,7 +220,7 @@ for upstream in ${upstreams[@]}; do
 
     for envdir in `find $upstream -type d -wholename '*/var/spack/environments' 2>/dev/null`; do
         echo "Looking for mu2e environments in $envdir"
-        environment="tdaq-${tag}"
+        environment="tdaq-${tag}-${os_long//./_}"
         if ! [ -d $environment ]; then continue; fi
         environment_dir=`realpath $environment`
         echo "Adding environment $environment_dir to include-concrete list"
@@ -233,10 +234,9 @@ spack reindex
 cd $Base
 
 BUILD_J=$((`cat /proc/cpuinfo|grep processor|tail -1|awk '{print $3}'` + 1))
-env_name=tdaq-${tag}-al${os}
-if [ $os -eq 9 ];then
-    gccver=13.1.0
-elif [ $os -eq 10 ];then
+env_name=tdaq-${tag}-${os_long//./_}
+gccver=13.1.0
+if [ "$os_long" == "almalinux10" ];then
     gccver=13.3.0
 fi
 
@@ -325,6 +325,7 @@ echo # This script is intended to be sourced.
 
 sh -c "[ \`ps \$\$ | grep bash | wc -l\` -gt 0 ] || { echo 'Please switch to the bash shell before running ots.'; exit; }" || exit
 export SPACK_DISABLE_LOCAL_CONFIG=true
+export SPACK_USER_CACHE_PATH=$Base/.spack-cache
 source $spackdir/share/spack/setup-env.sh
 
 spack load --first gcc@13.1.0
