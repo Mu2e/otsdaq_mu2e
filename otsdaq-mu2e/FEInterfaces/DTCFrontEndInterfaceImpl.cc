@@ -992,8 +992,15 @@ void DTCFrontEndInterface::createROCs(void)
 {
 	rocs_.clear();
 
+	auto rocLink = Configurable::getSelfNode().getNode("LinkToROCGroupTable");
+	if(rocLink.isDisconnected())
+	{
+		__FE_COUT__ << "No ROC link table found, so no ROCs will be created." << __E__;
+		return;
+	}
+
 	std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-	    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+	   rocLink.getChildren();
 
 	// instantiate vector of ROCs
 	for(auto& roc : rocChildren)
@@ -2044,31 +2051,36 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	case 2:
 
 		// check if any ROCs should be DTC-hardware emulated ROCs
+
 		{
-			std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-			    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
-
-			int dtcHwEmulateROCmask = 0;
-			for(auto& roc : rocChildren)
+			auto rocLink = Configurable::getSelfNode().getNode("LinkToROCGroupTable");
+			if(!rocLink.isDisconnected())
 			{
-				bool enabled =
-				    roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
+				std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
+					rocLink.getChildren();
 
-				if(enabled)
+				int dtcHwEmulateROCmask = 0;
+				for(auto& roc : rocChildren)
 				{
-					int linkID = roc.second.getNode("linkID").getValue<int>();
-					__FE_COUT__ << "roc uid '" << roc.first << "' at link=" << linkID
-					            << " is DTC-hardware emulated!" << __E__;
-					dtcHwEmulateROCmask |= (1 << linkID);
-				}
-			}
+					bool enabled =
+						roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
 
-			__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
-			            << dtcHwEmulateROCmask << std::dec << __E__;
-			getDTC()->SetROCEmulatorMask(dtcHwEmulateROCmask);
-			// registerWrite(0x9110, dtcHwEmulateROCmask);
-			__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
-		}  // end check if any ROCs should be DTC-hardware emulated ROCs
+					if(enabled)
+					{
+						int linkID = roc.second.getNode("linkID").getValue<int>();
+						__FE_COUT__ << "roc uid '" << roc.first << "' at link=" << linkID
+									<< " is DTC-hardware emulated!" << __E__;
+						dtcHwEmulateROCmask |= (1 << linkID);
+					}
+				}
+
+				__FE_COUT__ << "Writing DTC-hardware emulation mask: 0x" << std::hex
+							<< dtcHwEmulateROCmask << std::dec << __E__;
+				getDTC()->SetROCEmulatorMask(dtcHwEmulateROCmask);
+				// registerWrite(0x9110, dtcHwEmulateROCmask);
+				__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
+			}  // end check if any ROCs should be DTC-hardware emulated ROCs
+		}
 
 		//enable ROC links w/CFO link
 		__FE_COUT__ << "Enabling/Disabling DTC links with ROC mask = " << roc_mask_
@@ -4261,9 +4273,11 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 	unsigned dtc_class_roc_mask = 0;
 	// create roc mask for DTC
+	auto rocLink = Configurable::getSelfNode().getNode("LinkToROCGroupTable");
+	if(!rocLink.isDisconnected())
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-		    Configurable::getSelfNode().getNode("LinkToROCGroupTable").getChildren();
+		    rocLink.getChildren();
 
 		__FE_COUTV__(rocChildren.size());
 		roc_mask_          = 0;
