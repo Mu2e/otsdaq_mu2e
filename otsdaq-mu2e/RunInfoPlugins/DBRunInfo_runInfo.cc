@@ -1139,10 +1139,10 @@ void DBRunInfo::updateRunInfo(unsigned int       runConditionID,
 
 //==============================================================================
 std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
-	unsigned int       startTime,
-	unsigned int       endTime,
-	const std::string& queryFilter,
-	const std::string& runType)
+    unsigned int       startTime,
+    unsigned int       endTime,
+    const std::string& queryFilter,
+    const std::string& runType)
 {
 	__COUT__ << "getRunRecords() reached" << __E__;
 	std::vector<std::vector<std::string>> runRecords;
@@ -1152,8 +1152,8 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 	// select run info from db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
-		PGresult*    res;
-		std::string  filterClause;
+		PGresult*          res;
+		std::string        filterClause;
 		std::ostringstream queryStream;
 
 		if(!queryFilter.empty())
@@ -1163,8 +1163,8 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		if(!runType.empty())
 		{
 			std::string runTypePattern = "%" + runType + "%";
-			char* escapedRunType =
-			    PQescapeLiteral(runInfoDbConn_, runTypePattern.c_str(), runTypePattern.length());
+			char*       escapedRunType = PQescapeLiteral(
+                runInfoDbConn_, runTypePattern.c_str(), runTypePattern.length());
 			if(!escapedRunType)
 			{
 				__SS__ << "Failed to escape runType filter for getRunRecords()." << __E__;
@@ -1189,8 +1189,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 		            << " WHERE run_status = 'completed'"
 		            << " AND start_time BETWEEN TO_TIMESTAMP("
 		            << boost::numeric_cast<int>(startTime) << ") AND TO_TIMESTAMP("
-		            << boost::numeric_cast<int>(endTime) << ")"
-		            << runTypeClause
+		            << boost::numeric_cast<int>(endTime) << ")" << runTypeClause
 		            << filterClause << " ORDER BY run_number DESC;";
 
 		std::string query = queryStream.str();

@@ -38,7 +38,7 @@ cd "$TARGET_DIR"
 # ==========================================
 echo "Cloning otsdaq-mu2e-config..."
 # Temporarily disable exit-on-error so we can catch the git clone failure
-set +e 
+set +e
 git clone "$CONFIG_REPO" otsdaq-mu2e-config
 CLONE_STATUS=$?
 set -e # Re-enable exit-on-error
@@ -71,7 +71,7 @@ curl -L -s "$SPACK_SCRIPT_URL" -o "$SPACK_SCRIPT_NAME"
 chmod +x "$SPACK_SCRIPT_NAME"
 
 # Clear Spack root if it exists
-unset SPACK_ROOT 
+unset SPACK_ROOT
 
 echo "Running Spack setup (this may take a while)..."
 ./"$SPACK_SCRIPT_NAME" --all-packages --develop --dev-only --dev-artdaq --dev-otsdaq
@@ -108,18 +108,18 @@ for subsystem in "${SUBSYSTEMS[@]}"; do
 
     USER_DATA="Data_$subsystem"
     mkdir -p "$USER_DATA/ServiceData/"
-    
+
     # Copy and link configuration files
     cp otsdaq-mu2e-config/CoreTableInfoNames.dat "$USER_DATA/ServiceData/"
     cp "otsdaq-mu2e-config/Data_${subsystem}/ServiceData/ActiveTableGroups.cfg" "$USER_DATA/ServiceData/ActiveTableGroups.cfg"
     ln -sf "../../otsdaq-mu2e-config/webPortTranslation.dat" "$USER_DATA/ServiceData/webPortTranslation.dat"
 
-    # Execute the DAQ setup inside a subshell `(...)` 
+    # Execute the DAQ setup inside a subshell `(...)`
     # This ensures that sourced environment variables don't pollute the next iteration
     (
         source setup_ots.sh "$subsystem"
         UpdateOTS.sh --tables
-        ots --wiz 
+        ots --wiz
         yes Y | ots -k
     )
 
