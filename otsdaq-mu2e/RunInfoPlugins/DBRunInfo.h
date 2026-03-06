@@ -76,13 +76,22 @@ class DBRunInfo : public RunInfoVInterface
 	virtual std::vector<std::vector<std::string>> getRunRecords(
 	    unsigned int /* startTime */,
 	    unsigned int /* endTime */,
-	    const std::string& queryFilter = "");
+	    const std::string& queryFilter = "",
+	    const std::string& runType     = "");
 
 	virtual std::vector<std::vector<std::string>> getRunConditionByID(
-	    uint64_t /* conditionID*/);
+	    uint64_t /* conditionID*/)
+	{
+		__SS__ << "getRunConditionByID() Not implemented by DBRunInfo." << __E__;
+		__SS_THROW__;
+	};
 
 	virtual std::vector<std::vector<std::string>> getRunConfigSubsystemInfo(
-	    uint64_t /* configID */);
+	    uint64_t /* configID */)
+	{
+		__SS__ << "getRunConfigSubsystemInfo() Not implemented by DBRunInfo." << __E__;
+		__SS_THROW__;
+	};
 
   private:
 	const char* dbname_;
