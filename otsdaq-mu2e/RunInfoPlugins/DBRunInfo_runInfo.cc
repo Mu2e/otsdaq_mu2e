@@ -1139,7 +1139,10 @@ void DBRunInfo::updateRunInfo(unsigned int       runConditionID,
 
 //==============================================================================
 std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
-    unsigned int startTime, unsigned int endTime, const std::string& queryFilter)
+    unsigned int       startTime,
+    unsigned int       endTime,
+    const std::string& queryFilter,
+    const std::string& runType)
 {
 	__COUT__ << "getRunRecords() reached" << __E__;
 	std::vector<std::vector<std::string>> runRecords;
@@ -1149,42 +1152,59 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 	// select run info from db
 	if(runInfoDbConn_ && runInfoDbConnStatus_ == 1)
 	{
-		PGresult* res;
-		char      buffer[2048];
+		PGresult*          res;
+		std::string        filterClause;
+		std::ostringstream queryStream;
 
-		snprintf(buffer,
-		         sizeof(buffer),
-		         "SELECT run_number"
-		         ", start_time as run_time"
-		         ", config_type_name as run_type"
-		         ", NULL as artdaq_partition"
-		         ", NULL as host_name"
-		         ", config_id"
-		         ", comment as shifter_comment"
-		         ", start_time"
-		         ", stop_time"
-		         " FROM %s.v_run_summary"
-		         " WHERE run_status = 'completed'"
-		         " AND start_time BETWEEN TO_TIMESTAMP(%d) AND TO_TIMESTAMP(%d)"
-		         " %s"
-		         " ORDER BY run_number DESC;",
-		         dbSchema_,
-		         startTime,
-		         endTime,
-		         queryFilter.c_str());
+		if(!queryFilter.empty())
+			filterClause = " " + queryFilter;
 
-		res = PQexec(runInfoDbConn_, buffer);
+		std::string runTypeClause;
+		if(!runType.empty())
+		{
+			std::string runTypePattern = "%" + runType + "%";
+			char*       escapedRunType = PQescapeLiteral(
+                runInfoDbConn_, runTypePattern.c_str(), runTypePattern.length());
+			if(!escapedRunType)
+			{
+				__SS__ << "Failed to escape runType filter for getRunRecords()." << __E__;
+				__SS_THROW__;
+			}
+
+			runTypeClause = " AND run_type_name LIKE ";
+			runTypeClause += escapedRunType;
+			PQfreemem(escapedRunType);
+		}
+
+		queryStream << "SELECT run_number"
+		            << ", start_time as run_time"
+		            << ", run_type_name as run_type"
+		            << ", artdaq_partition"
+		            << ", host_name"
+		            << ", config_alias as config_id"
+		            << ", comment as shifter_comment"
+		            << ", start_time"
+		            << ", stop_time"
+		            << " FROM " << dbSchema_ << ".view_run_summary"
+		            << " WHERE run_status = 'completed'"
+		            << " AND start_time BETWEEN TO_TIMESTAMP("
+		            << boost::numeric_cast<int>(startTime) << ") AND TO_TIMESTAMP("
+		            << boost::numeric_cast<int>(endTime) << ")" << runTypeClause
+		            << filterClause << " ORDER BY run_number DESC;";
+
+		std::string query = queryStream.str();
+		res               = PQexec(runInfoDbConn_, query.c_str());
 
 		if(PQresultStatus(res) != PGRES_TUPLES_OK)
 		{
-			__SS__ << "getRunRecords() SELECT FROM 'v_run_summary' DATABASE TABLE "
+			__SS__ << "getRunRecords() SELECT FROM 'view_run_summary' DATABASE TABLE "
 			          "FAILED!!! PQ ERROR: "
 			       << PQresultErrorMessage(res) << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
 
-		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << buffer << __E__;
+		__COUT__ << "PQntuples(res) " << PQntuples(res) << "Query: " << query << __E__;
 		runRecords = convertResultToVector(res);
 		if(!runRecords.empty())
 		{
@@ -1206,6 +1226,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunRecords(
 }  //end getRunRecords()
 
 //==============================================================================
+/*
 std::vector<std::vector<std::string>> DBRunInfo::getRunConfigSubsystemInfo(
     uint64_t configID)
 {
@@ -1253,9 +1274,11 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConfigSubsystemInfo(
 	PQclear(res);
 	return configRecords;
 }  //end getRunConfigSubsystemInfo()
+*/
 
 //==============================================================================
 // TODO: change function name to config ID
+/*
 std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t conditionID)
 {
 	__COUT__ << "getRunConditionByID() reached" << __E__;
@@ -1296,7 +1319,7 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 			__SS__ << "getRunConditionByID() RETRIEVE RUN CONDITION RECORD FROM "
 			          "'run_condition' DATABASE TABLE "
 			          "FAILED!!! No records found."
-			       << __E__;
+		       << __E__;
 			PQclear(res);
 			__SS_THROW__;
 		}
@@ -1307,5 +1330,6 @@ std::vector<std::vector<std::string>> DBRunInfo::getRunConditionByID(uint64_t co
 
 	return conditionRecords;
 }  //end getRunConditionByID()
+*/
 
 DEFINE_OTS_PROCESSOR(DBRunInfo)
