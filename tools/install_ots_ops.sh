@@ -38,7 +38,7 @@ cd "$TARGET_DIR"
 # ==========================================
 echo "Cloning otsdaq-mu2e-config..."
 # Temporarily disable exit-on-error so we can catch the git clone failure
-set +e 
+set +e
 git clone "$CONFIG_REPO" otsdaq-mu2e-config
 CLONE_STATUS=$?
 set -e # Re-enable exit-on-error
@@ -108,7 +108,7 @@ for subsystem in "${SUBSYSTEMS[@]}"; do
 
     USER_DATA="Data_$subsystem"
     mkdir -p "$USER_DATA/ServiceData/"
-    
+
     # Copy and link configuration files
     cp otsdaq-mu2e-config/CoreTableInfoNames.dat "$USER_DATA/ServiceData/"
     cp "otsdaq-mu2e-config/Data_${subsystem}/ServiceData/ActiveTableGroups.cfg" "$USER_DATA/ServiceData/ActiveTableGroups.cfg"
@@ -119,7 +119,7 @@ for subsystem in "${SUBSYSTEMS[@]}"; do
     (
         source setup_ots.sh "$subsystem"
         UpdateOTS.sh --tables
-        ots --wiz 
+        ots --wiz
         yes Y | ots -k
     )
 
