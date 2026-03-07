@@ -7,9 +7,9 @@
 #include <mutex>
 #include <string>
 #include "cfoInterfaceLib/CFO.h"
+#include "cfoInterfaceLib/CFO_Compiler.hh"
 #include "dtcInterfaceLib/CFOandDTC_Registers.h"
 #include "dtcInterfaceLib/mu2edev.h"
-//#include "dtcInterfaceLib/DTCSoftwareCFO.h"
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
 #include "otsdaq/FECore/FEVInterface.h"
@@ -18,45 +18,42 @@ namespace ots
 {
 class CFOandDTCCoreVInterface : public FEVInterface
 {
-	// clang-format off
   public:
 	CFOandDTCCoreVInterface(const std::string&       interfaceUID,
-							const ConfigurationTree& theXDAQContextConfigTree,
-							const std::string&       interfaceConfigurationPath);
+	                        const ConfigurationTree& theXDAQContextConfigTree,
+	                        const std::string&       interfaceConfigurationPath);
 
 	virtual ~CFOandDTCCoreVInterface(void);
 
 	// specialized handling of slow controls
 	//----------------
-	void 								outputEpicsPVFile			(ConfigurationManager* configManager);
-
+	void outputEpicsPVFile(ConfigurationManager* configManager);
 
   public:
-
-	static std::string					CONFIG_MODE_HARDWARE_DEV;
-	static std::string					CONFIG_MODE_EVENT_BUILDING;
-	static std::string					CONFIG_MODE_LOOPBACK;
+	static std::string CONFIG_MODE_HARDWARE_DEV;
+	static std::string CONFIG_MODE_EVENT_BUILDING;
+	static std::string CONFIG_MODE_LOOPBACK;
 
 	// state machine
 	//----------------
-//	void 								configure					(void);
-//	void 								halt						(void);
-//	void 								pause						(void);
-//	void 								resume						(void);
-//	void 								start						(std::string runNumber);
-//	void 								stop						(void);
-//	bool 								running						(void);
+	//	void 								configure					(void);
+	//	void 								halt						(void);
+	//	void 								pause						(void);
+	//	void 								resume						(void);
+	//	void 								start						(std::string runNumber);
+	//	void 								stop						(void);
+	//	bool 								running						(void);
 
 	// emulator handlers
 	//----------------
-//	void 								emulatorConfigure			(void);
+	//	void 								emulatorConfigure			(void);
 
 	// hardware access
 	//----------------
-	void 								universalRead				(char* address, char* readValue) override;
-	void 								universalWrite				(char* address, char* writeValue) override;
-	virtual mu2edev* 					getDevice					(void) = 0;
-	virtual DTCLib::CFOandDTC_Registers* getCFOandDTCRegisters		(void) = 0;
+	void                                 universalRead(char* address, char* readValue) override;
+	void                                 universalWrite(char* address, char* writeValue) override;
+	virtual mu2edev*                     getDevice(void)             = 0;
+	virtual DTCLib::CFOandDTC_Registers* getCFOandDTCRegisters(void) = 0;
 
 	// DTC specific items
 	//----------------
@@ -68,42 +65,43 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	// void 								turnOffLED					(void);  // turn off LED on visible side of timing card
 
   protected:
+	void     registerCFOandDTCFEMacros(void);
+	uint64_t convertEventDurationToClocks(const std::string& eventDuration);
 
-	void 								registerCFOandDTCFEMacros	(void);
+  protected:
+	int         deviceIndex_     = -1;  //PCIe index
+	bool        configure_clock_ = false;
+	bool        emulatorMode_    = false;
+	bool        skipInit_        = true;
+	std::string operatingMode_   = "";
 
-	int         						deviceIndex_		         	= -1; //PCIe index
-	bool        						configure_clock_    			= false;
-	bool      							emulatorMode_					= false;
-	bool 								skipInit_						= true;
-	std::string							operatingMode_ 					= "";
+	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
+	static const int CONFIG_DTC_TIMING_CHAIN_STEPS       = 3;
 
-	static const int					CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
-	static const int					CONFIG_DTC_TIMING_CHAIN_STEPS = 3;
+	bool artdaqMode_ = false;  // true to prevent run data file generation
 
-	bool 								artdaqMode_ = false; // true to prevent run data file generation
-
+	const uint64_t FPGAClock_ = CFOLib::CFO_Compiler::
+	    FPGAClock_;  //period of FPGA clock in ns (as of Feb 2026, was 25ns)
 
   public:
-	void 								SoftReset							(__ARGS__);
-	void 								HardReset							(__ARGS__);
+	void SoftReset(__ARGS__);
+	void HardReset(__ARGS__);
 
-	void								GetFirmwareVersion					(__ARGS__);
-	void 								ResetPCIe							(__ARGS__);
-	void 								FlashLEDs							(__ARGS__);
-	void 								GetStatus							(__ARGS__);
-	void 								GetSimpleStatus						(__ARGS__);
-	void 								GetLinkLossOfLight					(__ARGS__);
-	void 								GetFireflyTemperature				(__ARGS__);
-	void 								GetFPGATemperature					(__ARGS__);
-	void								SelectJitterAttenuatorSource		(__ARGS__);
+	void GetFirmwareVersion(__ARGS__);
+	void ResetPCIe(__ARGS__);
+	void FlashLEDs(__ARGS__);
+	void GetStatus(__ARGS__);
+	void GetSimpleStatus(__ARGS__);
+	void GetLinkLossOfLight(__ARGS__);
+	void GetFireflyTemperature(__ARGS__);
+	void GetFPGATemperature(__ARGS__);
+	void SelectJitterAttenuatorSource(__ARGS__);
 
-		// void								ResetLinkRx					(__ARGS__);
+	// void								ResetLinkRx					(__ARGS__);
 	// void								ShutdownLinkTx				(__ARGS__);
 	// void								StartupLinkTx				(__ARGS__);
 	// void								ShutdownFireflyTx			(__ARGS__);
 	// void								StartupFireflyTx			(__ARGS__);
-
-	// clang-format on
 };
 }  // namespace ots
 #endif

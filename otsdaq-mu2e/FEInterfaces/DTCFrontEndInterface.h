@@ -16,212 +16,269 @@ namespace ots
 
 class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 {
-	// clang-format off
   public:
 	DTCFrontEndInterface(const std::string&       interfaceUID,
 	                     const ConfigurationTree& theXDAQContextConfigTree,
 	                     const std::string&       interfaceConfigurationPath);
 	virtual ~DTCFrontEndInterface(void);
 
-	void 								DTCInstantiate();
+	void DTCInstantiate();
 
 	// specialized ROC handling slow controls
 	//----------------
-	virtual void 						configureSlowControls		(void) override;
-	virtual void						resetSlowControlsChannelIterator (void) override;
-	virtual FESlowControlsChannel*		getNextSlowControlsChannel	(void) override;
-	virtual unsigned int				getSlowControlsChannelCount	(void) override;
+	virtual void                   configureSlowControls(void) override;
+	virtual void                   resetSlowControlsChannelIterator(void) override;
+	virtual FESlowControlsChannel* getNextSlowControlsChannel(void) override;
+	virtual unsigned int           getSlowControlsChannelCount(void) override;
 
   public:
 	// state machine
 	//----------------
-	void 								configure					(void) override;
-	void 								halt						(void) override;
-	void 								pause						(void) override;
-	void 								resume						(void) override;
-	void 								start						(std::string runNumber) override;
-	void 								stop						(void) override;
-	bool 								running						(void) override;
+	void configure(void) override;
+	void halt(void) override;
+	void pause(void) override;
+	void resume(void) override;
+	void start(std::string runNumber) override;
+	void stop(void) override;
+	bool running(void) override;
 
 	// emulator handlers
 	//----------------
-	void 								emulatorConfigure			(void);
+	void emulatorConfigure(void);
 
 	// hardware access
 	//----------------
-	virtual mu2edev* 					getDevice					(void) override { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_->GetDevice();};
-	virtual CFOandDTC_Registers* 		getCFOandDTCRegisters		(void) override { if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_;};
-	inline DTCLib::DTC* 				getDTC						(void) 			{ if(!thisDTC_) { __SS__ << "thisDTC_ pointer has not been initialized! " << StringMacros::stackTrace(); __SS_THROW__;} return thisDTC_;};
+	virtual mu2edev* getDevice(void) override
+	{
+		if(!thisDTC_)
+		{
+			__SS__ << "thisDTC_ pointer has not been initialized! "
+			       << StringMacros::stackTrace();
+			__SS_THROW__;
+		}
+		return thisDTC_->GetDevice();
+	};
+	virtual CFOandDTC_Registers* getCFOandDTCRegisters(void) override
+	{
+		if(!thisDTC_)
+		{
+			__SS__ << "thisDTC_ pointer has not been initialized! "
+			       << StringMacros::stackTrace();
+			__SS_THROW__;
+		}
+		return thisDTC_;
+	};
+	inline DTCLib::DTC* getDTC(void)
+	{
+		if(!thisDTC_)
+		{
+			__SS__ << "thisDTC_ pointer has not been initialized! "
+			       << StringMacros::stackTrace();
+			__SS_THROW__;
+		}
+		return thisDTC_;
+	};
 
 	// DTC specific items
 	//----------------
-	void 								configureHardwareDevMode	(void);
-	void 								configureEventBuildingMode	(int step = -1);
-	void 								configureLoopbackMode		(int step = -1);
-	void 								configureForTimingChain		(int step);
+	void configureHardwareDevMode(void);
+	void configureEventBuildingMode(int step = -1);
+	void configureLoopbackMode(int step = -1);
+	void configureForTimingChain(int step);
+	void configureCommon(void);
 
-	void								loopbackTest				(int step = -1);
+	void loopbackTest(int step = -1);
 
-	DTCLib::DTC* 									thisDTC_;
+	DTCLib::DTC* thisDTC_;
 
 	struct DetachedBufferTestThreadStruct
 	{
-		std::mutex 				lock_;
-		std::atomic<bool>		running_ = false;
-		std::atomic<bool>		exitThread_ = false;
-		std::atomic<bool>		resetStartEventTag_ = false;
+		std::mutex        lock_;
+		std::atomic<bool> running_            = false;
+		std::atomic<bool> exitThread_         = false;
+		std::atomic<bool> resetStartEventTag_ = false;
 
-		DTCLib::DTC* 			thisDTC_;
+		DTCLib::DTC* thisDTC_;
 
-		bool					inSubeventMode_ = false;
-		bool					activeMatch_ = false;
-		std::atomic<uint64_t>	expectedEventTag_ = -1, nextEventWindowTag_ = -1;
-		bool					saveBinaryData_ = false;
-		bool					saveSubeventHeadersToBinaryData_ = false;
-		bool					doNotResetCounters_ = false;
-		bool					skipBy32_ = false;
+		bool                  inSubeventMode_   = false;
+		bool                  activeMatch_      = false;
+		std::atomic<uint64_t> expectedEventTag_ = -1, nextEventWindowTag_ = -1;
+		bool                  saveBinaryData_                  = false;
+		bool                  saveSubeventHeadersToBinaryData_ = false;
+		bool                  doNotResetCounters_              = false;
+		bool                  skipBy32_                        = false;
 
-		std::atomic<uint64_t>	eventsCount_;
-		std::atomic<uint64_t>	subeventsCount_;
-		std::atomic<uint64_t>	mismatchedEventTagsCount_;
-		std::vector<std::pair<uint64_t, uint64_t>>	mismatchedEventTagJumps_;
+		std::atomic<uint64_t>                      eventsCount_;
+		std::atomic<uint64_t>                      subeventsCount_;
+		std::atomic<uint64_t>                      mismatchedEventTagsCount_;
+		std::vector<std::pair<uint64_t, uint64_t>> mismatchedEventTagJumps_;
 
-		std::vector<uint64_t> 	rocFragmentsCount_, rocFragmentTimeoutsCount_, rocFragmentErrorsCount_,
-			rocPayloadEmptyCount_, rocHeaderTimeoutsCount_, rocPayloadByteCount_;
-		uint64_t				totalSubeventBytesTransferred_;
-		std::chrono::time_point<std::chrono::steady_clock>
-							transferStartTime_, transferEndTime_;
+		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
+		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
+		    rocPayloadByteCount_;
+		uint64_t                                           totalSubeventBytesTransferred_;
+		std::chrono::time_point<std::chrono::steady_clock> transferStartTime_,
+		    transferEndTime_;
 
-		FILE*					fp_ = nullptr;
+		FILE* fp_ = nullptr;
 
-		std::string				error_;
-		std::string				saveBinaryDataFilename_;
+		std::string error_;
+		std::string saveBinaryDataFilename_;
 
-		unsigned int 			packetThresholdToSave_;
-		std::atomic<uint64_t>	savedCount_;
+		unsigned int          packetThresholdToSave_;
+		std::atomic<uint64_t> savedCount_;
 
-		std::map<DTCLib::DTC_Link_ID, bool>			rocLinkEnabledLatch_;
+		std::map<DTCLib::DTC_Link_ID, bool> rocLinkEnabledLatch_;
 
 	};  // end DetachedBufferTestThreadStruct declaration
 
-	static std::string 					getDetachedBufferTestStatus			(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
-	static uint64_t 					getDetachedBufferTestReceivedCount	(std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
-	static void 						handleDetachedSubevent				(const DTCLib::DTC_SubEvent& subevent,
-																				std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	static std::string getDetachedBufferTestStatus(
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
+	static uint64_t getDetachedBufferTestReceivedCount(
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
+	static void handleDetachedSubevent(
+	    const DTCLib::DTC_SubEvent& subevent,
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
 
-	void 								initDetachedBufferTest				(uint64_t initialEventWindowTag, bool saveBinaryDataToFile,
-																				const std::string& filename,
-																				bool saveSubeventHeadersToDataFile, bool doNotResetCounters,
-																				bool skipBy32, uint32_t packetThresholdToSave);
+	void initDetachedBufferTest(uint64_t           initialEventWindowTag,
+	                            bool               saveBinaryDataToFile,
+	                            const std::string& filename,
+	                            bool               saveSubeventHeadersToDataFile,
+	                            bool               doNotResetCounters,
+	                            bool               skipBy32,
+	                            uint32_t           packetThresholdToSave);
 
-	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>	bufferTestThreadStruct_;
+	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	    bufferTestThreadStruct_;
 
   private:
-	void 								createROCs							(void);
-	void 								registerFEMacros					(void);
+	void createROCs(void);
+	void registerFEMacros(void);
 
-	int         									dtc_location_in_chain_ = -1;
-	unsigned int   									roc_mask_              = 0;
-	unsigned int   									roc_emulated_mask_     = 0;
-	bool         									emulate_cfo_           = true;
-	DTCLib::DTCSoftwareCFO* 						EmulatedCFO_;
+	int                     dtc_location_in_chain_ = -1;
+	unsigned int            roc_mask_              = 0;
+	unsigned int            roc_emulated_mask_     = 0;
+	bool                    emulate_cfo_           = true;
+	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
 
 	std::ofstream datafile_[8];
 
-	std::map<std::string /*ROC UID*/,
-		std::unique_ptr<ROCCoreVInterface>> 		rocs_;
+	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
 
 	std::map<std::string /*DTC's FEMacro name*/,
-		std::pair<std::string /*ROC UID*/,
-			std::string /*ROC's FEMacro name*/>> 	rocFEMacroMap_;
+	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>
+	    rocFEMacroMap_;
 
 	static void detechedBufferTestThread(
-		std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
 
   public:
+	void        SetupROCs(__ARGS__);
+	std::string SetupROCs(DTCLib::DTC_Link_ID            rocLinkIndex,
+	                      bool                           rocRxTxEnable,
+	                      bool                           rocTimingEnable,
+	                      bool                           rocEmulationEnable,
+	                      DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
+	                      uint32_t                       size);
+	void        ReadROC(__ARGS__);
+	void        WriteROC(__ARGS__);
+	void        BlockReadROC(__ARGS__);
+	void        BlockWriteROC(__ARGS__);
+	void        WriteExternalROCRegister(__ARGS__);
+	void        ReadExternalROCRegister(__ARGS__);
+	void        DTCHighRateBlockCheck(__ARGS__);
 
-	void								SetupROCs							(__ARGS__);
-	std::string							SetupROCs							(DTCLib::DTC_Link_ID rocLinkIndex,
-																			bool rocRxTxEnable, bool rocTimingEnable, bool rocEmulationEnable,
-																			DTCLib::DTC_ROC_Emulation_Type rocEmulationType, uint32_t size);
-	void 								ReadROC								(__ARGS__);
-	void 								WriteROC							(__ARGS__);
-	void 								BlockReadROC						(__ARGS__);
-	void 								BlockWriteROC						(__ARGS__);
-    void 								WriteExternalROCRegister			(__ARGS__);
-	void                             	ReadExternalROCRegister        		(__ARGS__);
-	void 								DTCHighRateBlockCheck				(__ARGS__);
+	void DTCHighRateDCSCheck(__ARGS__);
+	void RunROCFEMacro(__ARGS__);
+	void DTCSendHeartbeatAndDataRequest(__ARGS__);
+	void ResetLossOfLockCounter(__ARGS__);
+	void ReadLossOfLockCounter(__ARGS__);
+	void GetLinkLockStatus(__ARGS__);
+	void SelectJitterAttenuatorSource(__ARGS__);
+	void WriteDTC(__ARGS__);
+	void ReadDTC(__ARGS__);
 
-	void 								DTCHighRateDCSCheck					(__ARGS__);
-	void 								RunROCFEMacro						(__ARGS__);
-	void 								DTCSendHeartbeatAndDataRequest		(__ARGS__);
-	void								ResetLossOfLockCounter				(__ARGS__);
-	void								ReadLossOfLockCounter				(__ARGS__);
-	void								GetLinkLockStatus					(__ARGS__);
-	void								SelectJitterAttenuatorSource		(__ARGS__);
-	void								WriteDTC							(__ARGS__);
-	void								ReadDTC								(__ARGS__);
+	void configureHardwareDevMode(__ARGS__);
+	void ConfigureForTimingChain(__ARGS__);
 
-	void								configureHardwareDevMode			(__ARGS__);
-	void								ConfigureForTimingChain				(__ARGS__);
+	void DTCCounters(__ARGS__);
+	void readRxDiagFIFO(__ARGS__);
+	void readTxDiagFIFO(__ARGS__);
+	void GetLinkErrors(__ARGS__);
+	void ROCResetLink(__ARGS__);
+	void HeaderFormatTest(__ARGS__);
 
-	void 								DTCCounters							(__ARGS__);
-	void 								readRxDiagFIFO						(__ARGS__);
-	void 								readTxDiagFIFO						(__ARGS__);
-	void 								GetLinkErrors						(__ARGS__);
-	void 								ROCResetLink						(__ARGS__);
-	void								HeaderFormatTest					(__ARGS__);
+	void DTCInstantiate(__ARGS__);
+	void ResetDTCLinks(__ARGS__);
+	void EnableDTCLink(__ARGS__);
 
-	void 								DTCInstantiate						(__ARGS__);
-	void 								ResetDTCLinks						(__ARGS__);
-	void 								EnableDTCLink						(__ARGS__);
+	void ResetPCIe(__ARGS__);
+	void ResetCFOLinkRx(__ARGS__);
+	void ResetCFOLinkTx(__ARGS__);
+	void ResetCFOLinkRxPLL(__ARGS__);
+	void ResetCFOLinkTxPLL(__ARGS__);
 
-	void 								ResetPCIe							(__ARGS__);
-	void 								ResetCFOLinkRx						(__ARGS__);
-	void 								ResetCFOLinkTx						(__ARGS__);
-	void 								ResetCFOLinkRxPLL					(__ARGS__);
-	void 								ResetCFOLinkTxPLL					(__ARGS__);
-
-	void 								GetDTCIdAndEVBInfo					(__ARGS__);
-	void 								SetDTCIdAndEVBInfo					(__ARGS__);
+	void GetDTCIdAndEVBInfo(__ARGS__);
+	void SetDTCIdAndEVBInfo(__ARGS__);
 
 	// void 								ResetEVBLinkRx						(__ARGS__);
 	// void 								ResetEVBLinkTx						(__ARGS__);
 	// void 								ResetEVBLinkRxTxPLL					(__ARGS__);
 
-	void 								SetupCFOInterface					(__ARGS__);
-	std::string							SetupCFOInterface					(int forceCFOedge, bool useCFOemulator, bool alsoSetupJA, bool cfoRxTxEnable, bool enableAutogenDRP, int permanentOffset = 0);
-	void 								SetCFOEmulatorOnOffSpillEmulation	(__ARGS__);
-	std::string							SetCFOEmulatorOnOffSpillEmulation	(bool enable,
-																			bool useDetachedBufferTest, uint32_t numberOfSuperCycles, uint64_t initialEventWindowTag,
-																			bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
-																			const std::string& filename,
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters,
-																			bool skipBy32, uint32_t packetThresholdToSave);
-	void 								SetCFOEmulatorFixedWidthEmulation	(__ARGS__);
-	std::string							SetCFOEmulatorFixedWidthEmulation	(bool enable, bool useDetachedBufferTest,
-																			const std::string& eventDuration, uint32_t numberOfEventWindowMarkers, uint64_t initialEventWindowTag,
-																			uint64_t eventWindowMode, bool enableClockMarkers, bool enableAutogenDRP, bool saveBinaryDataToFile,
-																			const std::string& filename,
-																			bool saveSubeventHeadersToDataFile,	bool doNotResetCounters,
-																			bool skipBy32, uint32_t packetThresholdToSave);
+	void        SetupCFOInterface(__ARGS__);
+	std::string SetupCFOInterface(int  forceCFOedge,
+	                              bool useCFOemulator,
+	                              bool alsoSetupJA,
+	                              bool cfoRxTxEnable,
+	                              bool enableAutogenDRP,
+	                              int  permanentOffset = 0);
+	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
+	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
+	                                              bool               useDetachedBufferTest,
+	                                              uint32_t           numberOfSuperCycles,
+	                                              uint64_t           initialEventWindowTag,
+	                                              bool               enableClockMarkers,
+	                                              bool               enableAutogenDRP,
+	                                              bool               saveBinaryDataToFile,
+	                                              const std::string& filename,
+	                                              bool               saveSubeventHeadersToDataFile,
+	                                              bool               doNotResetCounters,
+	                                              bool               skipBy32,
+	                                              uint32_t           packetThresholdToSave);
+	void        SetCFOEmulatorFixedWidthEmulation(__ARGS__);
+	std::string SetCFOEmulatorFixedWidthEmulation(bool               enable,
+	                                              bool               useDetachedBufferTest,
+	                                              const std::string& eventDuration,
+	                                              uint32_t           numberOfEventWindowMarkers,
+	                                              uint64_t           initialEventWindowTag,
+	                                              uint64_t           eventWindowMode,
+	                                              bool               enableClockMarkers,
+	                                              bool               enableAutogenDRP,
+	                                              bool               saveBinaryDataToFile,
+	                                              const std::string& filename,
+	                                              bool               saveSubeventHeadersToDataFile,
+	                                              bool               doNotResetCounters,
+	                                              bool               skipBy32,
+	                                              uint32_t           packetThresholdToSave);
 
-	void 								BufferTest							(__ARGS__);
-	void 								PatternTest							(__ARGS__);
-	void 								BufferTest_detached					(__ARGS__);
+	void BufferTest(__ARGS__);
+	void PatternTest(__ARGS__);
+	void BufferTest_detached(__ARGS__);
 
+	void SoftwareDataRequest(__ARGS__);
+	void PunchedClock(__ARGS__);
 
-    void                                SoftwareDataRequest                 (__ARGS__);
-    void                                PunchedClock                        (__ARGS__);
+	void CFOEmulatorLoopbackTest(__ARGS__);
+	void CFOEmulatorLoopbackTests(__ARGS__);
+	void ManualLoopbackSetup(__ARGS__);
 
-	void 								CFOEmulatorLoopbackTest				(__ARGS__);
-	void 								CFOEmulatorLoopbackTests			(__ARGS__);
-	void 								ManualLoopbackSetup					(__ARGS__);
+	void ProgramROCs(__ARGS__);
 
-	void 								ProgramROCs							(__ARGS__);
-
-        void                                                            ValidateDTCControlRegisters(__ARGS__);
-	// clang-format on
+	void ValidateDTCControlRegisters(__ARGS__);
 };
 }  // namespace ots
 #endif

@@ -110,44 +110,51 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 //===========================================================================================
 void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 {
-	// clang-format off
-
 	bool isCFO = getInterfaceType() == "CFOFrontEndInterface";
 
 	registerFEMacroFunction(
-		std::string(isCFO?"CFO ":"DTC ") + "Soft Reset",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::SoftReset),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1, // requiredUserPermissions
-					"*",
-					"Executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " by setting the reset bit (31) to true on the <b>" + std::string(isCFO?"CFO ":"DTC ") + "Control Register</b> (0x9100). "
-					"This bit clear counters and FIFOs; it does not change select/control bits, it does not reset the primary " + std::string(isCFO?"CFO":"DTC") + " Timing Interface block."
-	);
+	    std::string(isCFO ? "CFO " : "DTC ") + "Soft Reset",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::SoftReset),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Executes a soft reset of the " + std::string(isCFO ? "CFO" : "DTC") +
+	        " by setting the reset bit (31) to true on the <b>" +
+	        std::string(isCFO ? "CFO " : "DTC ") +
+	        "Control Register</b> (0x9100). "
+	        "This bit clear counters and FIFOs; it does not change select/control bits, "
+	        "it does not reset the primary " +
+	        std::string(isCFO ? "CFO" : "DTC") + " Timing Interface block.");
 
 	registerFEMacroFunction(
-		std::string(isCFO?"CFO ":"DTC ") + "Hard Reset",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::HardReset),
-					std::vector<std::string>{},
-					std::vector<std::string>{},
-					1, // requiredUserPermissions
-					"*",
-					"Executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " by setting the reset bit (0) to true on the <b>" + std::string(isCFO?"CFO ":"DTC ") + "Control Register</b> (0x9100). "
-					"This bit is like a ‘factory reset’ - it DOES change select/control/threshold bits back to defaults; it DOES reset the primary FPGA Timing Interface block. It also executes a soft reset of the " + std::string(isCFO?"CFO":"DTC") + " after the hard reset."
-	);
+	    std::string(isCFO ? "CFO " : "DTC ") + "Hard Reset",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::HardReset),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Executes a soft reset of the " + std::string(isCFO ? "CFO" : "DTC") +
+	        " by setting the reset bit (0) to true on the <b>" +
+	        std::string(isCFO ? "CFO " : "DTC ") +
+	        "Control Register</b> (0x9100). "
+	        "This bit is like a ‘factory reset’ - it DOES change "
+	        "select/control/threshold bits back to defaults; it DOES reset the primary "
+	        "FPGA Timing Interface block. It also executes a soft reset of the " +
+	        std::string(isCFO ? "CFO" : "DTC") + " after the hard reset.");
 
 	registerFEMacroFunction(
-		"Get Firmware Version",  // feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::GetFirmwareVersion),  // feMacroFunction
-					std::vector<std::string>{},
-					std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
-					1,  //"allUsers:0 | TDAQ:255");
-					"*",
-					"Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> format."
-	);
+	    "Get Firmware Version",  // feMacroName
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetFirmwareVersion),  // feMacroFunction
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"Firmware Version Date"},  // namesOfOutputArgs
+	    1,                                                  //"allUsers:0 | TDAQ:255");
+	    "*",
+	    "Read the modification date of the DTC firmware using <b>MON/DD/20YY HH:00</b> "
+	    "format.");
 
 	// registerFEMacroFunction( //RAR not working!
 	// 	"Reset PCIe",
@@ -160,88 +167,84 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 				"Reset the PCIe interface allocated for this FPGA."
 	// );
 
-	registerFEMacroFunction(
-		"Flash LEDs",  // feMacroName
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::FlashLEDs),  // feMacroFunction
-					std::vector<std::string>{},
-					std::vector<std::string>{"Status"}, // namesOfOutputArgs
-					1,  // requiredUserPermissions
-					"*", // allowedCallingFEs
-					"Flashes the LEDs, for example to help find the target FPGA in a multi-FPGA deployment."
-	);
+	registerFEMacroFunction("Flash LEDs",  // feMacroName
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &CFOandDTCCoreVInterface::FlashLEDs),  // feMacroFunction
+	                        std::vector<std::string>{},
+	                        std::vector<std::string>{"Status"},  // namesOfOutputArgs
+	                        1,    // requiredUserPermissions
+	                        "*",  // allowedCallingFEs
+	                        "Flashes the LEDs, for example to help find the target FPGA "
+	                        "in a multi-FPGA deployment.");
 
 	registerFEMacroFunction(
-		"Get Status",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::GetStatus),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Status"},
-					1,  // requiredUserPermissions
-					"*", // allowedCallingFEs
-					"Reads and displays all registers in a human-readable format."
-	);
+	    "Get Status",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetStatus),  // feMacroFunction
+	    std::vector<std::string>{},                // namesOfInputArgs
+	    std::vector<std::string>{"Status"},
+	    1,    // requiredUserPermissions
+	    "*",  // allowedCallingFEs
+	    "Reads and displays all registers in a human-readable format.");
 
 	registerFEMacroFunction(
-		"Get Simple Status",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::GetSimpleStatus),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Status"},
-					1,  // requiredUserPermissions
-					"*", // allowedCallingFEs
-					"Similar to <b>Get Status</b>, this FE Macro fetches data from a select few registers. "
-					"Registers <b>DTC Control, ROC Emulation Enable, Link Enable, SERDES Reset, and SERDES Reset Done</b> are displayed in a human-readable format."
-	);
+	    "Get Simple Status",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetSimpleStatus),  // feMacroFunction
+	    std::vector<std::string>{},                      // namesOfInputArgs
+	    std::vector<std::string>{"Status"},
+	    1,    // requiredUserPermissions
+	    "*",  // allowedCallingFEs
+	    "Similar to <b>Get Status</b>, this FE Macro fetches data from a select few "
+	    "registers. "
+	    "Registers <b>DTC Control, ROC Emulation Enable, Link Enable, SERDES Reset, and "
+	    "SERDES Reset Done</b> are displayed in a human-readable format.");
 
 	registerFEMacroFunction(
-		"Check Firefly Temperature",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::GetFireflyTemperature),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Temperature"},
-					1,  // requiredUserPermissions
-					"*",
-					"Check the temperature from the Firefly RX IIC Bus."
-	);
+	    "Check Firefly Temperature",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetFireflyTemperature),  // feMacroFunction
+	    std::vector<std::string>{},                            // namesOfInputArgs
+	    std::vector<std::string>{"Temperature"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Check the temperature from the Firefly RX IIC Bus.");
 
 	registerFEMacroFunction(
-		"Check Firefly Loss-of-Light",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::GetLinkLossOfLight),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Link Status"},
-					1,  // requiredUserPermissions
-					"*",
-					"Checking the Loss-of-Light reads from the I2C bus register on the Firefly for any light source."
-	);
-
-
-	registerFEMacroFunction(
-		"Check FPGA Temperature",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::GetFPGATemperature),            // feMacroFunction
-					std::vector<std::string>{},  // namesOfInputArgs
-					std::vector<std::string>{"Temperature"},
-					1,
-					"*",
-					"Get the temperature of the FPGA in degrees Celesius. "
-					"A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor."
-	);
+	    "Check Firefly Loss-of-Light",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetLinkLossOfLight),  // feMacroFunction
+	    std::vector<std::string>{},                         // namesOfInputArgs
+	    std::vector<std::string>{"Link Status"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Checking the Loss-of-Light reads from the I2C bus register on the Firefly for "
+	    "any light source.");
 
 	registerFEMacroFunction(
-		"Jitter Attenuator Setup",
-			static_cast<FEVInterface::frontEndMacroFunction_t>(
-					&CFOandDTCCoreVInterface::SelectJitterAttenuatorSource),
-				        std::vector<std::string>{"Source Clock (0 is from CFO, 1 is from RJ45)",
-												"DoNotSet",
-												"AlsoResetJA"},
-						std::vector<std::string>{"Register Write Results"},
-					1,  // requiredUserPermissions
-					"*",
-					"Select the source of the jitter attenuator: a local oscilator on the DTC or the RTF.\n"
-					"The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter accumulation. <b>Not all DTCs are connected to the RTF</b>. "
-	);
+	    "Check FPGA Temperature",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetFPGATemperature),  // feMacroFunction
+	    std::vector<std::string>{},                         // namesOfInputArgs
+	    std::vector<std::string>{"Temperature"},
+	    1,
+	    "*",
+	    "Get the temperature of the FPGA in degrees Celsius. "
+	    "A -273.0 reading is equivalent to 0x0 from the ADC on-die sensor.");
+
+	registerFEMacroFunction(
+	    "Jitter Attenuator Setup",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::SelectJitterAttenuatorSource),
+	    std::vector<std::string>{
+	        "Source Clock (0 is from CFO, 1 is from RJ45)", "DoNotSet", "AlsoResetJA"},
+	    std::vector<std::string>{"Register Write Results"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Select the source of the jitter attenuator: a local oscilator on the DTC or the "
+	    "RTF.\n"
+	    "The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter "
+	    "accumulation. <b>Not all DTCs are connected to the RTF</b>. ");
 
 	// registerFEMacroFunction(
 	// 	"Reset Link Rx",
@@ -286,8 +289,6 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	// 				std::vector<std::string>{
 	// 					"Startup Status"},
 	// 				1);  // requiredUserPermissions
-
-	// clang-format on
 
 }  //end registerCFOandDTCFEMacros()
 
@@ -586,12 +587,106 @@ void CFOandDTCCoreVInterface::SelectJitterAttenuatorSource(__ARGS__)
 void CFOandDTCCoreVInterface::SoftReset(__ARGS__)
 {
 	getCFOandDTCRegisters()->SoftReset();
-}
+}  //end SoftReset()
 //========================================================================
 void CFOandDTCCoreVInterface::HardReset(__ARGS__)
 {
 	getCFOandDTCRegisters()->HardReset();
-}
+}  //end HardReset()
+
+//========================================================================
+uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
+    const std::string& eventDuration)
+{
+	__FE_COUTV__(eventDuration);
+	bool   foundUnits = false;
+	size_t i;
+	for(i = 0; i < eventDuration.size(); ++i)
+		if(eventDuration[i] == 's' || eventDuration[i] == 'm' ||
+		   eventDuration[i] == 'u' || eventDuration[i] == 'n' || eventDuration[i] == 'c')
+		{
+			foundUnits = true;
+			break;
+		}
+
+	if(!foundUnits)
+	{
+		__FE_SS__
+		    << "No units were found in the input parameters 'Fixed-width Event Window "
+		       "Duration' value: "
+		    << eventDuration
+		    << ". Please use units when specifying event window duration (s, ms, us, ns, "
+		       "and clocks are allowed). For example '1.7us' or '1675ns' would be valid."
+		    << __E__;
+		__FE_SS_THROW__;
+	}
+	std::string eventDurationSplitNumber = eventDuration.substr(0, i);
+	std::string eventDurationSplitUnits  = eventDuration.substr(i);
+	__FE_COUTV__(eventDurationSplitNumber);
+	__FE_COUTV__(eventDurationSplitUnits);
+
+	//copied from CFO_Compiler.cpp::transcribeInstructions() [L494]
+	uint64_t value;
+	if(!StringMacros::getNumber(eventDurationSplitNumber, value))
+	{
+		__FE_SS__ << "The duration parameter value '" << eventDurationSplitNumber << " "
+		          << eventDurationSplitUnits << "' is not a valid number. "
+		          << "Use 0x### to indicate hex and b### to indicate binary; otherwise, "
+		             "decimal is inferred."
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+	//test floating point in case integer conversion dropped something
+	double timeValue = strtod(eventDurationSplitNumber.c_str(), 0);
+	__FE_COUTV__(timeValue);
+	if(timeValue < value)
+		timeValue = value;
+
+	__FE_COUTV__(FPGAClock_);
+	__FE_COUTV__(value);
+	__FE_COUTV__(timeValue);
+
+	uint32_t eventDurationInClocks;
+
+	if(eventDurationSplitUnits == "s")  // Wait wanted in seconds
+		eventDurationInClocks = timeValue * 1e9 / FPGAClock_;
+	else if(eventDurationSplitUnits == "ms")  // Wait wanted in milliseconds
+		eventDurationInClocks = timeValue * 1e6 / FPGAClock_;
+	else if(eventDurationSplitUnits == "us")  // Wait wanted in microseconds
+		eventDurationInClocks = timeValue * 1e3 / FPGAClock_;
+	else if(eventDurationSplitUnits == "ns")  // Wait wanted in nanoseconds
+	{
+		if((value % FPGAClock_) != 0)
+		{
+			__FE_SS__ << "FPGA can only wait in multiples of " << FPGAClock_
+			          << " ns: the input event duration value '" << value
+			          << "' yields a remainder of " << (value % FPGAClock_) << __E__;
+			__FE_SS_THROW__;
+		}
+		eventDurationInClocks = value / FPGAClock_;
+	}
+	else if(eventDurationSplitUnits == "clocks")  // Wait wanted in FPGA clocks
+		eventDurationInClocks = value;
+	else  //impossible
+	{
+		__FE_SS__ << "The event duration input parameter is missing a valid unit type "
+		             "after parameter: "
+		          << eventDurationSplitUnits
+		          << ". Accepted unit types are clocks, ns, us, ms, and s." << __E__;
+		__FE_SS_THROW__;
+	}
+	if(eventDurationInClocks < 40)
+	{
+		__FE_SS__ << "The event duration input parameter can not evaluate to less than "
+		             "40 clocks (1000ns). The input value '"
+		          << eventDurationSplitNumber << " " << eventDurationSplitUnits
+		          << "' evaluates to " << eventDurationInClocks << "clocks < 40."
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
+	return eventDurationInClocks;
+}  //end convertEventDurationToClocks()
 
 //
 ////==================================================================================================

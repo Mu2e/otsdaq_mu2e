@@ -8,15 +8,11 @@
 
 using namespace ots;
 
-// clang-format off
-
-#define SLOWCONTROL_PV_FILE_PATH \
-		std::string( \
-			getenv("OTSDAQ_EPICS_DATA")? \
-				(std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + __ENV__("MU2E_OWNER") + "_otsdaq_dtc-ai.dbg"): \
-				(EPICS_CONFIG_PATH + "/otsdaq_dtc-ai.dbg")  )
-
-// clang-format on
+#define SLOWCONTROL_PV_FILE_PATH                                        \
+	std::string(getenv("OTSDAQ_EPICS_DATA")                             \
+	                ? (std::string(getenv("OTSDAQ_EPICS_DATA")) + "/" + \
+	                   __ENV__("MU2E_OWNER") + "_otsdaq_dtc-ai.dbg")    \
+	                : (EPICS_CONFIG_PATH + "/otsdaq_dtc-ai.dbg"))
 
 //==============================================================================
 DTCInterfaceTable::DTCInterfaceTable(void)
@@ -46,8 +42,8 @@ void DTCInterfaceTable::init(ConfigurationManager* configManager)
 	mkdir(EPICS_CONFIG_PATH.c_str(), 0755);
 
 	// check for valid data types
-	__COUT__ << "*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*" << __E__;
-	__COUT__ << configManager->__SELF_NODE__ << __E__;
+	__COUTT__ << "*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*&*" << __E__;
+	__COUTT__ << configManager->__SELF_NODE__ << __E__;
 
 	//outputEpicsPVFile(configManager);
 }  // end init()
