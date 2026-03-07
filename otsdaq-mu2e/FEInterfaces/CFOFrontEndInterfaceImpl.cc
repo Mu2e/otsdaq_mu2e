@@ -3750,7 +3750,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 		       << "' leaving with mode off bit parameters: "
 		       << "\n\toffBits_startBit = " << offBits_startBit
 		       << "\n\toffBits_bitCount = " << offBits_bitCount
-		       << "\n\toffBits_value = 0x" << std::hex << offBits_value << std::dec << __E__;
+		       << "\n\toffBits_value = 0x" << std::hex << offBits_value << std::dec
+		       << __E__;
 		result << __E__;  //space for readability
 		generateSharedRunPlanWithPeriodicModeOff(
 		    result,
@@ -3844,8 +3845,8 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 		if(standardNValues_[0] % nPartRatio != 0)
 		{
 			__FE_SS__ << "Invalid sub-fine ratio M:N = " << mPartRatio << ":"
-			          << nPartRatio << ". N must satisfy " << standardNValues_[0] << 
-					  " % N = 0." << __E__;
+			          << nPartRatio << ". N must satisfy " << standardNValues_[0]
+			          << " % N = 0." << __E__;
 			__FE_SS_THROW__;
 		}
 		logResult << "Sub-fine ratio accepted: M:N = " << mPartRatio << ":" << nPartRatio
@@ -3987,21 +3988,22 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
 
-	const size_t N_coarse    = standardNValues_.size() - 1;
-	const size_t expectedSz  = N_coarse + standardNValues_[0];
+	const size_t N_coarse   = standardNValues_.size() - 1;
+	const size_t expectedSz = N_coarse + standardNValues_[0];
 
 	if(existingAndMasks.size() != expectedSz || existingOrMasks.size() != expectedSz)
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
 		          << expectedSz << " (= " << N_coarse << " coarse + "
-		          << standardNValues_[0] << " fine). Got andMasks="
-		          << existingAndMasks.size() << " orMasks=" << existingOrMasks.size()
-		          << __E__;
+		          << standardNValues_[0]
+		          << " fine). Got andMasks=" << existingAndMasks.size()
+		          << " orMasks=" << existingOrMasks.size() << __E__;
 		__FE_SS_THROW__;
 	}
 
 	//48-bit pattern of bits this subsystem sets when ON
-	const uint64_t setBitsMask48 = (onBits_value << onBits_startBit) &
+	const uint64_t setBitsMask48 =
+	    (onBits_value << onBits_startBit) &
 	    (((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
 
 	std::stringstream out;
@@ -4018,14 +4020,15 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		//  existingOrMasks[0..N_coarse-1] hold the existing coarse OR masks (no AND in coarse)
 		for(size_t l = standardNValues_.size() - 1; l > 0; --l)
 		{
-			size_t   coarseIdx          = standardNValues_.size() - 1 - l;  //0 for outermost loop
-			uint32_t loopN              = standardNValues_[l] / standardNValues_[l - 1];
+			size_t   coarseIdx = standardNValues_.size() - 1 - l;  //0 for outermost loop
+			uint32_t loopN     = standardNValues_[l] / standardNValues_[l - 1];
 			__FE_COUTTV__(loopN);
 
-			uint64_t new_coarse_or    = (standardNValues_[l] == nPartRatio) ? setBitsMask48 : 0ULL;
+			uint64_t new_coarse_or =
+			    (standardNValues_[l] == nPartRatio) ? setBitsMask48 : 0ULL;
 			uint64_t merged_coarse_or = existingOrMasks[coarseIdx] | new_coarse_or;
-			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-			    << std::hex << merged_coarse_or << std::dec << __E__;
+			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+			    << merged_coarse_or << std::dec << __E__;
 
 			__FE_COUTT__ << "LOOP " << loopN << " // for N = " << standardNValues_[l]
 			             << __E__;
@@ -4043,24 +4046,27 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			// sub-fine (nPartRatio < standardNValues_[0], factor of it): repeating M:N pattern, clear when position within period >= M
 			// fine      (nPartRatio == standardNValues_[0])             : clear once at transition i >= M
 			// coarse    (nPartRatio > standardNValues_[0])              : clear every i > 0 (bit was set by outer LOOP's OR)
-			bool shouldClear = (nPartRatio > standardNValues_[0] && i > 0) ||
-			                   (nPartRatio == standardNValues_[0] && i >= mPartRatio) ||
-			                   (nPartRatio < standardNValues_[0] && (i % nPartRatio) >= mPartRatio);
-			uint64_t new_and    = shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
+			bool shouldClear =
+			    (nPartRatio > standardNValues_[0] && i > 0) ||
+			    (nPartRatio == standardNValues_[0] && i >= mPartRatio) ||
+			    (nPartRatio < standardNValues_[0] && (i % nPartRatio) >= mPartRatio);
+			uint64_t new_and =
+			    shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
 			uint64_t merged_and = existingAndMasks[fineIdx] & new_and;
-			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-			    << std::hex << merged_and << std::dec
+			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+			    << merged_and << std::dec
 			    << __E__;  // bit positions with 1 keep, 0 remove
 
 			//OR: set this subsystem's bits during ON positions; merge with existing mask.
 			// fine:     first M of N events
 			// sub-fine: repeating M:N pattern
-			bool shouldSet = (nPartRatio == standardNValues_[0] && i < mPartRatio) ||
-			                 (nPartRatio < standardNValues_[0] && (i % nPartRatio) < mPartRatio);
+			bool shouldSet =
+			    (nPartRatio == standardNValues_[0] && i < mPartRatio) ||
+			    (nPartRatio < standardNValues_[0] && (i % nPartRatio) < mPartRatio);
 			uint64_t new_or    = shouldSet ? setBitsMask48 : 0ULL;
 			uint64_t merged_or = existingOrMasks[fineIdx] | new_or;
-			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-			    << std::hex << merged_or << std::dec << __E__;
+			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+			    << merged_or << std::dec << __E__;
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
@@ -4182,8 +4188,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 //========================================================================
 // return M:N ratio of M events on per N events
 uint64_t CFOFrontEndInterface::extractSharedRunPlanEventDuration(
-    std::vector<uint64_t>* andMasks,
-    std::vector<uint64_t>* orMasks)
+    std::vector<uint64_t>* andMasks, std::vector<uint64_t>* orMasks)
 try
 {
 	//make a dummy shared run plan, and use to compare against current run plan
@@ -4344,17 +4349,21 @@ try
 		const uint64_t AND_TEMPLATE_48 = 0xFFFFFFFFFFFEULL;
 		const uint64_t OR_TEMPLATE_48  = 0x0ULL;
 
-		const uint32_t N_coarse         = standardNValues_.size() - 1;
-		const uint32_t headerOps        = 2 + 2 * N_coarse;  //SET_TAG + LABEL + N_coarse*(OR+LOOP)
-		const uint32_t fineLoopStart    = headerOps * 2;      //word addr of first fine-loop AND op
-		const uint32_t wordsPerFineIter = 6 * 2;              //6 ops * 2 words/op
+		const uint32_t N_coarse = standardNValues_.size() - 1;
+		const uint32_t headerOps =
+		    2 + 2 * N_coarse;  //SET_TAG + LABEL + N_coarse*(OR+LOOP)
+		const uint32_t fineLoopStart =
+		    headerOps * 2;                        //word addr of first fine-loop AND op
+		const uint32_t wordsPerFineIter = 6 * 2;  //6 ops * 2 words/op
 
 		//helper: reconstruct 48-bit param at a given even BRAM word address
 		auto getMask = [&](uint32_t evenAddr, uint64_t templateVal) -> uint64_t {
-			uint32_t lo32 = mismatches.count(evenAddr)     ? mismatches.at(evenAddr).second
-			                                               : (uint32_t)(templateVal & 0xFFFFFFFF);
-			uint16_t hi16 = mismatches.count(evenAddr + 1) ? (uint16_t)(mismatches.at(evenAddr + 1).second & 0xFFFF)
-			                                               : (uint16_t)((templateVal >> 32) & 0xFFFF);
+			uint32_t lo32 = mismatches.count(evenAddr)
+			                    ? mismatches.at(evenAddr).second
+			                    : (uint32_t)(templateVal & 0xFFFFFFFF);
+			uint16_t hi16 = mismatches.count(evenAddr + 1)
+			                    ? (uint16_t)(mismatches.at(evenAddr + 1).second & 0xFFFF)
+			                    : (uint16_t)((templateVal >> 32) & 0xFFFF);
 			return (uint64_t)lo32 | ((uint64_t)hi16 << 32);
 		};
 
@@ -4397,9 +4406,9 @@ try
 			__FE_SS_THROW__;
 		}
 
-		__FE_COUT__ << "Extracted " << (andMasks ? andMasks->size() : 0) << " AND masks and "
-		            << (orMasks ? orMasks->size() : 0) << " OR masks from current CFO run plan."
-		            << __E__;
+		__FE_COUT__ << "Extracted " << (andMasks ? andMasks->size() : 0)
+		            << " AND masks and " << (orMasks ? orMasks->size() : 0)
+		            << " OR masks from current CFO run plan." << __E__;
 	}
 
 	return eventDurationInClocks;
