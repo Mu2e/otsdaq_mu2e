@@ -3452,9 +3452,12 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	// Note: as of 22-Feb-2026, Run Plan BRAM is 1024 ops
 	//	Set Run Plan checks BRAM size indirectly, by reading back and validating the instruction set written!
 	{
-		//Start inits the mode; and Join, should use subsystem bit
+		//Start overwrites whatever is in hardware; use empty/default masks for both parts.
+		const size_t totalSlots = (standardNValues_.size() - 1) + standardNValues_[0];
+		std::vector<uint64_t> emptyAndMasks(totalSlots, 0xFFFFFFFFFFFFULL);  //keep-all
+		std::vector<uint64_t> emptyOrMasks(totalSlots, 0x0ULL);              //set-nothing
 
-		//now need to insert bit in run plan at duty cycle
+		//part-1: write the initial all-on mode plan
 		generateSharedRunPlanWithPeriodicModeOn(result,
 		                                        inFileName,
 		                                        initEventTag,
@@ -3464,7 +3467,9 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		                                        1,              // duty M in M:N on
 		                                        1,              // duty N in M:N on
 		                                        eventDurationSplitNumber,
-		                                        eventDurationSplitUnits);
+		                                        eventDurationSplitUnits,
+		                                        emptyAndMasks,
+		                                        emptyOrMasks);
 		{
 			CFOLib::CFO_Compiler compiler;
 			result << "\n\nRun Plan part-1:\n"
@@ -3476,7 +3481,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 			thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		}
 
-		//now need to insert calo inject bit in run plan at duty cycle
+		//part-2: merge calo inject bit on top of part-1 (still fresh start, so empty masks are valid)
 		generateSharedRunPlanWithPeriodicModeOn(result,
 		                                        inFileName,
 		                                        initEventTag,
@@ -3486,7 +3491,9 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		                                        mPartRatio,  // duty M in M:N on
 		                                        nPartRatio,  // duty N in M:N on
 		                                        eventDurationSplitNumber,
-		                                        eventDurationSplitUnits);
+		                                        eventDurationSplitUnits,
+		                                        emptyAndMasks,
+		                                        emptyOrMasks);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan part-2:\n"
@@ -3588,7 +3595,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		nPartRatio = std::strtoul(dutyCycleSplit[1].c_str(), nullptr, 10);
 	}
 
-	uint64_t eventDurationInClocks = extractSharedRunPlanEventDuration();
+	std::vector<uint64_t> existingAndMasks, existingOrMasks;
+	uint64_t              eventDurationInClocks =
+	    extractSharedRunPlanEventDuration(&existingAndMasks, &existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
 	//now need to insert subsystems enable bit in run plan at duty cycle
@@ -3635,7 +3644,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		       << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
 		       << "\n\tonBits_startBit = " << onBits_startBit
 		       << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
-		       << std::hex << onBits_value << __E__;
+		       << std::hex << onBits_value << std::dec << __E__;
 		result << __E__;  //space for readability
 		generateSharedRunPlanWithPeriodicModeOn(
 		    result,
@@ -3647,8 +3656,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		    mPartRatio,       // duty M in M:N on
 		    nPartRatio,       // duty N in M:N on
 		    std::to_string(eventDurationInClocks),  //eventDurationInClocks,
-		    "clocks"                                //eventDurationSplitUnits
-		);
+		    "clocks",                               //eventDurationSplitUnits
+		    existingAndMasks,
+		    existingOrMasks);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
@@ -3657,10 +3667,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	}  //end generate and set Run Plan to join
 
 	result << "\n\nSubsystem '" << subsystem << "' successfully joined with M:N ratio "
-	       << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
+	       << std::dec << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
 	       << "\n\tonBits_startBit = " << onBits_startBit
 	       << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
-	       << std::hex << onBits_value << __E__;
+	       << std::hex << onBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanSubsystemJoin()
@@ -3740,7 +3750,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 		       << "' leaving with mode off bit parameters: "
 		       << "\n\toffBits_startBit = " << offBits_startBit
 		       << "\n\toffBits_bitCount = " << offBits_bitCount
-		       << "\n\toffBits_value = 0x" << std::hex << offBits_value << __E__;
+		       << "\n\toffBits_value = 0x" << std::hex << offBits_value << std::dec << __E__;
 		result << __E__;  //space for readability
 		generateSharedRunPlanWithPeriodicModeOff(
 		    result,
@@ -3759,9 +3769,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 
 	result << "\nSubsystem '" << subsystem
 	       << "' successfully removed from the Shared Run Plan with mode bit parameters: "
-	       << "\n\toffBits_startBit = " << offBits_startBit
+	       << "\n\toffBits_startBit = " << std::dec << offBits_startBit
 	       << "\n\toffBits_bitCount = " << offBits_bitCount << "\n\toffBits_value = 0x"
-	       << std::hex << offBits_value << __E__;
+	       << std::hex << offBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanSubsystemLeave()
@@ -3819,6 +3829,30 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 		}
 
 	logResult << "}..." << __E__;
+
+	// Sub-fine ratio: nPartRatio < standardNValues_[0] and evenly divides it.
+	// These repeat the M:N pattern standardNValues_[0]/nPartRatio times per super-cycle
+	// (e.g. 1:2 → ON,OFF,ON,OFF,... 50 times). Skip standard resolution for these.
+	if(nPartRatio > 0 && nPartRatio < standardNValues_[0])
+	{
+		if(mPartRatio == 0 || mPartRatio > nPartRatio)
+		{
+			__FE_SS__ << "Invalid sub-fine ratio M:N = " << mPartRatio << ":"
+			          << nPartRatio << ". M must satisfy 0 < M <= N." << __E__;
+			__FE_SS_THROW__;
+		}
+		if(standardNValues_[0] % nPartRatio != 0)
+		{
+			__FE_SS__ << "Invalid sub-fine ratio M:N = " << mPartRatio << ":"
+			          << nPartRatio << ". N must satisfy " << standardNValues_[0] << 
+					  " % N = 0." << __E__;
+			__FE_SS_THROW__;
+		}
+		logResult << "Sub-fine ratio accepted: M:N = " << mPartRatio << ":" << nPartRatio
+		          << " repeats " << standardNValues_[0] / nPartRatio
+		          << " times per super-cycle." << __E__;
+		return;
+	}
 
 	double targetRatio = static_cast<double>(mPartRatio) / nPartRatio;
 
@@ -3934,22 +3968,41 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 // The concept is that the Shared Run Plan ops never change
 //	only the AND and OR parameters change to add/remove bits
 void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
-    std::stringstream& logResult,
-    std::string&       genFilename,
-    const uint64_t     initEventTag,
-    const uint16_t     onBits_startBit,
-    const uint16_t     onBits_bitCount,
-    const uint64_t     onBits_value,
-    uint32_t           mPartRatio,
-    uint32_t           nPartRatio,
-    const std::string& eventDurationSplitNumber,
-    const std::string& eventDurationSplitUnits)
+    std::stringstream&           logResult,
+    std::string&                 genFilename,
+    const uint64_t               initEventTag,
+    const uint16_t               onBits_startBit,
+    const uint16_t               onBits_bitCount,
+    const uint64_t               onBits_value,
+    uint32_t                     mPartRatio,
+    uint32_t                     nPartRatio,
+    const std::string&           eventDurationSplitNumber,
+    const std::string&           eventDurationSplitUnits,
+    const std::vector<uint64_t>& existingAndMasks,
+    const std::vector<uint64_t>& existingOrMasks)
 {
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
 	mnFixRatio(logResult, mPartRatio, nPartRatio);
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
+
+	const size_t N_coarse    = standardNValues_.size() - 1;
+	const size_t expectedSz  = N_coarse + standardNValues_[0];
+
+	if(existingAndMasks.size() != expectedSz || existingOrMasks.size() != expectedSz)
+	{
+		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
+		          << expectedSz << " (= " << N_coarse << " coarse + "
+		          << standardNValues_[0] << " fine). Got andMasks="
+		          << existingAndMasks.size() << " orMasks=" << existingOrMasks.size()
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
+	//48-bit pattern of bits this subsystem sets when ON
+	const uint64_t setBitsMask48 = (onBits_value << onBits_startBit) &
+	    (((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
 
 	std::stringstream out;
 	std::string       tabStr, commentStr;
@@ -3962,18 +4015,17 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		// but allow 1 in 200, 500, 1000, etc. coarse granularity
 
 		//coarse granularity loops
+		//  existingOrMasks[0..N_coarse-1] hold the existing coarse OR masks (no AND in coarse)
 		for(size_t l = standardNValues_.size() - 1; l > 0; --l)
 		{
-			uint32_t loopN = standardNValues_[l] / standardNValues_[l - 1];
+			size_t   coarseIdx          = standardNValues_.size() - 1 - l;  //0 for outermost loop
+			uint32_t loopN              = standardNValues_[l] / standardNValues_[l - 1];
 			__FE_COUTTV__(loopN);
 
-			if(standardNValues_[l] == nPartRatio)
-				OUT << "OR_MODE_BITS start_bit= " << onBits_startBit
-				    << " bit_count= " << onBits_bitCount << " value= " << onBits_value
-				    << __E__;
-			else
-				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
-				    << " value= " << 0 << __E__;  // no change to mode bits for this loop
+			uint64_t new_coarse_or    = (standardNValues_[l] == nPartRatio) ? setBitsMask48 : 0ULL;
+			uint64_t merged_coarse_or = existingOrMasks[coarseIdx] | new_coarse_or;
+			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
+			    << std::hex << merged_coarse_or << std::dec << __E__;
 
 			__FE_COUTT__ << "LOOP " << loopN << " // for N = " << standardNValues_[l]
 			             << __E__;
@@ -3982,25 +4034,33 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		}
 
 		//fine granularity loop
+		//  existingAndMasks[N_coarse + i] and existingOrMasks[N_coarse + i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
-			//clear bits on first in iteration
-			if(nPartRatio > standardNValues_[0] && i > 0)
-				OUT << "AND_MODE_BITS start_bit= " << onBits_startBit
-				    << " bit_count= " << onBits_bitCount << " value= ~" << onBits_value
-				    << __E__;  // bit positions with 1 keep, 0 remove
-			else
-				OUT << "AND_MODE_BITS start_bit= " << 0 << " bit_count= " << 48
-				    << " value= ~0" << __E__;
+			size_t fineIdx = N_coarse + i;
 
-			if((nPartRatio == standardNValues_[0] &&
-			    i < mPartRatio))  // creating M:N on ration, if N == standardNValues_[0], then M >= 1, else M is required to be 1
-				OUT << "OR_MODE_BITS start_bit= " << onBits_startBit
-				    << " bit_count= " << onBits_bitCount << " value= " << onBits_value
-				    << __E__;
-			else
-				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
-				    << " value= " << 0 << __E__;
+			//AND: clear this subsystem's bits during OFF positions; merge with existing mask.
+			// sub-fine (nPartRatio < standardNValues_[0], factor of it): repeating M:N pattern, clear when position within period >= M
+			// fine      (nPartRatio == standardNValues_[0])             : clear once at transition i >= M
+			// coarse    (nPartRatio > standardNValues_[0])              : clear every i > 0 (bit was set by outer LOOP's OR)
+			bool shouldClear = (nPartRatio > standardNValues_[0] && i > 0) ||
+			                   (nPartRatio == standardNValues_[0] && i >= mPartRatio) ||
+			                   (nPartRatio < standardNValues_[0] && (i % nPartRatio) >= mPartRatio);
+			uint64_t new_and    = shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
+			uint64_t merged_and = existingAndMasks[fineIdx] & new_and;
+			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
+			    << std::hex << merged_and << std::dec
+			    << __E__;  // bit positions with 1 keep, 0 remove
+
+			//OR: set this subsystem's bits during ON positions; merge with existing mask.
+			// fine:     first M of N events
+			// sub-fine: repeating M:N pattern
+			bool shouldSet = (nPartRatio == standardNValues_[0] && i < mPartRatio) ||
+			                 (nPartRatio < standardNValues_[0] && (i % nPartRatio) < mPartRatio);
+			uint64_t new_or    = shouldSet ? setBitsMask48 : 0ULL;
+			uint64_t merged_or = existingOrMasks[fineIdx] | new_or;
+			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
+			    << std::hex << merged_or << std::dec << __E__;
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
@@ -4121,7 +4181,9 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 
 //========================================================================
 // return M:N ratio of M events on per N events
-uint64_t CFOFrontEndInterface::extractSharedRunPlanEventDuration()
+uint64_t CFOFrontEndInterface::extractSharedRunPlanEventDuration(
+    std::vector<uint64_t>* andMasks,
+    std::vector<uint64_t>* orMasks)
 try
 {
 	//make a dummy shared run plan, and use to compare against current run plan
@@ -4263,6 +4325,82 @@ try
 	}  //end mismatch loop search
 
 	__FE_COUTV__(eventDurationInClocks);
+
+	//optionally extract existing AND/OR 48-bit masks from the current CFO run plan.
+	//Used by SubsystemJoin so the new subsystem's bits are merged without clobbering
+	//  masks belonging to previously joined subsystems.
+	//
+	// The run plan binary structure is fixed:
+	//   SET_TAG, LABEL, [OR_MODE_BITS, LOOP] × N_coarse,
+	//   [AND_MODE_BITS, OR_MODE_BITS, HEARTBEAT, MARKER, WAIT, INC_TAG] × standardNValues_[0],
+	//   [DO_LOOP] × N_coarse, GOTO_LABEL
+	// Each op = 2 BRAM words: word(2k) = lo-32 of param, word(2k+1) = hi-16|0x00|opcode.
+	//
+	// Template (dummy plan) AND param = 0xFFFFFFFFFFFE (AND_MODE_BITS start_bit=0 bit_count=1 value=0)
+	// Template OR  param = 0x0           (OR_MODE_BITS  start_bit=0 bit_count=1 value=0)
+	// For positions with no mismatch, the actual value equals the template.
+	if(andMasks || orMasks)
+	{
+		const uint64_t AND_TEMPLATE_48 = 0xFFFFFFFFFFFEULL;
+		const uint64_t OR_TEMPLATE_48  = 0x0ULL;
+
+		const uint32_t N_coarse         = standardNValues_.size() - 1;
+		const uint32_t headerOps        = 2 + 2 * N_coarse;  //SET_TAG + LABEL + N_coarse*(OR+LOOP)
+		const uint32_t fineLoopStart    = headerOps * 2;      //word addr of first fine-loop AND op
+		const uint32_t wordsPerFineIter = 6 * 2;              //6 ops * 2 words/op
+
+		//helper: reconstruct 48-bit param at a given even BRAM word address
+		auto getMask = [&](uint32_t evenAddr, uint64_t templateVal) -> uint64_t {
+			uint32_t lo32 = mismatches.count(evenAddr)     ? mismatches.at(evenAddr).second
+			                                               : (uint32_t)(templateVal & 0xFFFFFFFF);
+			uint16_t hi16 = mismatches.count(evenAddr + 1) ? (uint16_t)(mismatches.at(evenAddr + 1).second & 0xFFFF)
+			                                               : (uint16_t)((templateVal >> 32) & 0xFFFF);
+			return (uint64_t)lo32 | ((uint64_t)hi16 << 32);
+		};
+
+		//Both vectors have the same size = N_coarse + standardNValues_[0].
+		//  Indices [0..N_coarse-1]  = coarse-level slots
+		//  Indices [N_coarse..end]  = fine-loop slots
+		//andMasks[0..N_coarse-1] are padded with keep-all (no AND op exists in coarse loop).
+		if(andMasks)
+			andMasks->clear();
+		if(orMasks)
+			orMasks->clear();
+
+		for(uint32_t c = 0; c < N_coarse; ++c)
+		{
+			if(andMasks)
+				andMasks->push_back(0xFFFFFFFFFFFFULL);  //keep-all: no AND in coarse loop
+			if(orMasks)  //coarse OR ops: op positions 3,5,... → even word addresses 4,8,...
+				orMasks->push_back(getMask(4 + 4 * c, OR_TEMPLATE_48));
+		}
+
+		for(size_t i = 0; i < standardNValues_[0]; ++i)
+		{
+			uint32_t andEven = fineLoopStart + i * wordsPerFineIter;
+			uint32_t orEven  = andEven + 2;  //OR is one op (2 words) after AND
+
+			if(andMasks)
+				andMasks->push_back(getMask(andEven, AND_TEMPLATE_48));
+			if(orMasks)
+				orMasks->push_back(getMask(orEven, OR_TEMPLATE_48));
+		}
+
+		const size_t expectedSize = N_coarse + standardNValues_[0];
+		if((andMasks && andMasks->size() != expectedSize) ||
+		   (orMasks && orMasks->size() != expectedSize))
+		{
+			__FE_SS__ << "Internal error: extracted mask vector size mismatch. "
+			          << "Expected " << expectedSize
+			          << ", got andMasks=" << (andMasks ? andMasks->size() : 0)
+			          << " orMasks=" << (orMasks ? orMasks->size() : 0) << __E__;
+			__FE_SS_THROW__;
+		}
+
+		__FE_COUT__ << "Extracted " << (andMasks ? andMasks->size() : 0) << " AND masks and "
+		            << (orMasks ? orMasks->size() : 0) << " OR masks from current CFO run plan."
+		            << __E__;
+	}
 
 	return eventDurationInClocks;
 }  //end extractSharedRunPlanEventDuration()
