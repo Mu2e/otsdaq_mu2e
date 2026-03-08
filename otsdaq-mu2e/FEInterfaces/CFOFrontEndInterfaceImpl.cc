@@ -4245,7 +4245,8 @@ try
 			std::fclose(fp);
 		}  //end load dummy plan data
 
-		thisCFO_->CompareRunPlanData(binaryContents, 0 /* address */, &mismatches, andMasks, orMasks);
+		thisCFO_->CompareRunPlanData(
+		    binaryContents, 0 /* address */, &mismatches, andMasks, orMasks);
 	}  //end generate and Run Plan diff
 
 	//look for a WAIT op to find event duration
@@ -4335,8 +4336,8 @@ try
 	// Expected: N_coarse coarse-OR slots + standardNValues_[0] fine-loop AND+OR slots.
 	if(andMasks || orMasks)
 	{
-		const uint32_t N_coarse   = standardNValues_.size() - 1;
-		const size_t expectedSize = N_coarse + standardNValues_[0];
+		const uint32_t N_coarse     = standardNValues_.size() - 1;
+		const size_t   expectedSize = N_coarse + standardNValues_[0];
 		if((andMasks && andMasks->size() != expectedSize) ||
 		   (orMasks && orMasks->size() != expectedSize))
 		{
