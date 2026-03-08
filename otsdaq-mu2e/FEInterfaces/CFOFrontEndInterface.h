@@ -2,6 +2,7 @@
 #define _ots_CFOFrontEndInterface_h_
 
 #include <map>
+#include <optional>
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/CoreSupervisors/FESupervisor.h"
@@ -112,8 +113,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void     parseEventDurationForRunPlan(const std::string& eventDuration, std::string& durationValue, std::string& durationUnits);
 	void     getRatioOfOnPerEvents(uint32_t clocksPerOn, uint32_t clocksPerEvent, uint32_t& mPartRatio, uint32_t& nPartRatio);
 	void     mnFixRatio(std::stringstream& logResult, uint32_t& mPartRatio, uint32_t& nPartRatio);
-	uint64_t extractSharedRunPlanEventDuration(std::vector<uint64_t>* andMasks = nullptr,
-	                                           std::vector<uint64_t>* orMasks  = nullptr);
+	uint64_t extractSharedRunPlanEventDuration(
+		std::optional<std::reference_wrapper<std::vector<uint64_t>>> andMasks = std::nullopt,
+		std::optional<std::reference_wrapper<std::vector<uint64_t>>> orMasks  = std::nullopt);
 	void     generateSharedRunPlanWithPeriodicModeOn(std::stringstream&           logResult,
 	                                                 std::string&                 genFilename,
 	                                                 const uint64_t               initEventTag,

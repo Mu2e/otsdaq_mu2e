@@ -3595,9 +3595,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		nPartRatio = std::strtoul(dutyCycleSplit[1].c_str(), nullptr, 10);
 	}
 
+	//extract and/or op values to be modified in the join
 	std::vector<uint64_t> existingAndMasks, existingOrMasks;
 	uint64_t              eventDurationInClocks =
-	    extractSharedRunPlanEventDuration(&existingAndMasks, &existingOrMasks);
+	    extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
 	//now need to insert subsystems enable bit in run plan at duty cycle
@@ -3989,14 +3990,12 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	__FE_COUTV__(nPartRatio);
 
 	const size_t N_coarse   = standardNValues_.size() - 1;
-	const size_t expectedSz = N_coarse + standardNValues_[0];
-
-	if(existingAndMasks.size() != expectedSz || existingOrMasks.size() != expectedSz)
+	if(existingAndMasks.size() != standardNValues_[0] || 
+		existingOrMasks.size() != N_coarse + standardNValues_[0])
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
-		          << expectedSz << " (= " << N_coarse << " coarse + "
-		          << standardNValues_[0]
-		          << " fine). Got andMasks=" << existingAndMasks.size()
+		          << standardNValues_[0] << " and " << N_coarse + standardNValues_[0]
+		          << " respectively. Got andMasks=" << existingAndMasks.size()
 		          << " orMasks=" << existingOrMasks.size() << __E__;
 		__FE_SS_THROW__;
 	}
@@ -4037,7 +4036,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		}
 
 		//fine granularity loop
-		//  existingAndMasks[N_coarse + i] and existingOrMasks[N_coarse + i] are the existing fine masks
+		//  existingAndMasks[i] and existingOrMasks[N_coarse + i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
 			size_t fineIdx = N_coarse + i;
@@ -4052,7 +4051,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			    (nPartRatio < standardNValues_[0] && (i % nPartRatio) >= mPartRatio);
 			uint64_t new_and =
 			    shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
-			uint64_t merged_and = existingAndMasks[fineIdx] & new_and;
+			uint64_t merged_and = existingAndMasks[i] & new_and;
 			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
 			    << merged_and << std::dec
 			    << __E__;  // bit positions with 1 keep, 0 remove
@@ -4188,7 +4187,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 //========================================================================
 // return M:N ratio of M events on per N events
 uint64_t CFOFrontEndInterface::extractSharedRunPlanEventDuration(
-    std::vector<uint64_t>* andMasks, std::vector<uint64_t>* orMasks)
+    std::optional<std::reference_wrapper<std::vector<uint64_t>>> andMasks,
+    std::optional<std::reference_wrapper<std::vector<uint64_t>>> orMasks)
 try
 {
 	//make a dummy shared run plan, and use to compare against current run plan
@@ -4246,7 +4246,7 @@ try
 		}  //end load dummy plan data
 
 		thisCFO_->CompareRunPlanData(
-		    binaryContents, 0 /* address */, &mismatches, andMasks, orMasks);
+		    binaryContents, 0 /* address */, mismatches, andMasks, orMasks);
 	}  //end generate and Run Plan diff
 
 	//look for a WAIT op to find event duration
@@ -4337,19 +4337,24 @@ try
 	if(andMasks || orMasks)
 	{
 		const uint32_t N_coarse     = standardNValues_.size() - 1;
-		const size_t   expectedSize = N_coarse + standardNValues_[0];
-		if((andMasks && andMasks->size() != expectedSize) ||
-		   (orMasks && orMasks->size() != expectedSize))
+		if(andMasks && andMasks->get().size() != standardNValues_[0])
+		{
+			__FE_SS__ << "Extracted AND ops size mismatch. "
+			          << "Expected " << standardNValues_[0]
+			          << ", got andMasks=" << andMasks->get().size() << __E__;
+			__FE_SS_THROW__;
+		}
+		
+		if(orMasks && orMasks->get().size() != standardNValues_[0] + N_coarse)
 		{
 			__FE_SS__ << "Internal error: extracted mask vector size mismatch. "
-			          << "Expected " << expectedSize
-			          << ", got andMasks=" << (andMasks ? andMasks->size() : 0)
-			          << " orMasks=" << (orMasks ? orMasks->size() : 0) << __E__;
+			          << "Expected " << standardNValues_[0] + N_coarse
+			          << ", got orMasks=" << orMasks->get().size() << __E__;
 			__FE_SS_THROW__;
 		}
 
-		__FE_COUT__ << "Extracted " << (andMasks ? andMasks->size() : 0)
-		            << " AND masks and " << (orMasks ? orMasks->size() : 0)
+		__FE_COUT__ << "Extracted " << (andMasks ? andMasks->get().size() : 0)
+		            << " AND masks and " << (orMasks ? orMasks->get().size() : 0)
 		            << " OR masks from current CFO run plan." << __E__;
 	}
 
