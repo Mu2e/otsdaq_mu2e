@@ -342,8 +342,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						&CFOFrontEndInterface::SharedRunPlanSubsystemJoin),              	// feMacroFunction
 						std::vector<std::string>{
 							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
-							"Custom Mode Bit Position (Default = 0)",
-							"Custom Mode Bit Count (Default = 48)",
+							"Custom Mode Bit Position (0-47, Default = 0)",
+							"Custom Mode Bit Count (1-48, Default = 48)",
 							"Custom Mode Bit Value (Default = 0)",
 							// "Run Type (Supercycle Emulation = 1, Fixed-width Windows = 0) (Default = Fixed-width Windows)",
 							"Duty Cycle (% or M:N on:event ratio, Default = 100%)",
