@@ -4245,7 +4245,7 @@ try
 			std::fclose(fp);
 		}  //end load dummy plan data
 
-		thisCFO_->CompareRunPlanData(binaryContents, 0 /* address */, &mismatches);
+		thisCFO_->CompareRunPlanData(binaryContents, 0 /* address */, &mismatches, andMasks, orMasks);
 	}  //end generate and Run Plan diff
 
 	//look for a WAIT op to find event duration
@@ -4279,8 +4279,8 @@ try
 			continue;
 		}
 
-		uint8_t expectedOpCode = (mismatch.second.first >> 24) & 0xFF;
-		uint8_t actualOpCode   = (mismatch.second.second >> 24) & 0xFF;
+		uint8_t expectedOpCode = (mismatch.second.first >> 24) & 0xEF;
+		uint8_t actualOpCode   = (mismatch.second.second >> 24) & 0xEF;
 
 		if(expectedOpCode != actualOpCode)
 		{
@@ -4331,70 +4331,11 @@ try
 
 	__FE_COUTV__(eventDurationInClocks);
 
-	//optionally extract existing AND/OR 48-bit masks from the current CFO run plan.
-	//Used by SubsystemJoin so the new subsystem's bits are merged without clobbering
-	//  masks belonging to previously joined subsystems.
-	//
-	// The run plan binary structure is fixed:
-	//   SET_TAG, LABEL, [OR_MODE_BITS, LOOP] × N_coarse,
-	//   [AND_MODE_BITS, OR_MODE_BITS, HEARTBEAT, MARKER, WAIT, INC_TAG] × standardNValues_[0],
-	//   [DO_LOOP] × N_coarse, GOTO_LABEL
-	// Each op = 2 BRAM words: word(2k) = lo-32 of param, word(2k+1) = hi-16|0x00|opcode.
-	//
-	// Template (dummy plan) AND param = 0xFFFFFFFFFFFE (AND_MODE_BITS start_bit=0 bit_count=1 value=0)
-	// Template OR  param = 0x0           (OR_MODE_BITS  start_bit=0 bit_count=1 value=0)
-	// For positions with no mismatch, the actual value equals the template.
+	// Verify AND/OR mask vectors populated by CompareRunPlanData have the expected size.
+	// Expected: N_coarse coarse-OR slots + standardNValues_[0] fine-loop AND+OR slots.
 	if(andMasks || orMasks)
 	{
-		const uint64_t AND_TEMPLATE_48 = 0xFFFFFFFFFFFEULL;
-		const uint64_t OR_TEMPLATE_48  = 0x0ULL;
-
-		const uint32_t N_coarse = standardNValues_.size() - 1;
-		const uint32_t headerOps =
-		    2 + 2 * N_coarse;  //SET_TAG + LABEL + N_coarse*(OR+LOOP)
-		const uint32_t fineLoopStart =
-		    headerOps * 2;                        //word addr of first fine-loop AND op
-		const uint32_t wordsPerFineIter = 6 * 2;  //6 ops * 2 words/op
-
-		//helper: reconstruct 48-bit param at a given even BRAM word address
-		auto getMask = [&](uint32_t evenAddr, uint64_t templateVal) -> uint64_t {
-			uint32_t lo32 = mismatches.count(evenAddr)
-			                    ? mismatches.at(evenAddr).second
-			                    : (uint32_t)(templateVal & 0xFFFFFFFF);
-			uint16_t hi16 = mismatches.count(evenAddr + 1)
-			                    ? (uint16_t)(mismatches.at(evenAddr + 1).second & 0xFFFF)
-			                    : (uint16_t)((templateVal >> 32) & 0xFFFF);
-			return (uint64_t)lo32 | ((uint64_t)hi16 << 32);
-		};
-
-		//Both vectors have the same size = N_coarse + standardNValues_[0].
-		//  Indices [0..N_coarse-1]  = coarse-level slots
-		//  Indices [N_coarse..end]  = fine-loop slots
-		//andMasks[0..N_coarse-1] are padded with keep-all (no AND op exists in coarse loop).
-		if(andMasks)
-			andMasks->clear();
-		if(orMasks)
-			orMasks->clear();
-
-		for(uint32_t c = 0; c < N_coarse; ++c)
-		{
-			if(andMasks)
-				andMasks->push_back(0xFFFFFFFFFFFFULL);  //keep-all: no AND in coarse loop
-			if(orMasks)  //coarse OR ops: op positions 3,5,... → even word addresses 4,8,...
-				orMasks->push_back(getMask(4 + 4 * c, OR_TEMPLATE_48));
-		}
-
-		for(size_t i = 0; i < standardNValues_[0]; ++i)
-		{
-			uint32_t andEven = fineLoopStart + i * wordsPerFineIter;
-			uint32_t orEven  = andEven + 2;  //OR is one op (2 words) after AND
-
-			if(andMasks)
-				andMasks->push_back(getMask(andEven, AND_TEMPLATE_48));
-			if(orMasks)
-				orMasks->push_back(getMask(orEven, OR_TEMPLATE_48));
-		}
-
+		const uint32_t N_coarse   = standardNValues_.size() - 1;
 		const size_t expectedSize = N_coarse + standardNValues_[0];
 		if((andMasks && andMasks->size() != expectedSize) ||
 		   (orMasks && orMasks->size() != expectedSize))
