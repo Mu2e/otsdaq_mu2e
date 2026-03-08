@@ -3989,9 +3989,9 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
 
-	const size_t N_coarse   = standardNValues_.size() - 1;
-	if(existingAndMasks.size() != standardNValues_[0] || 
-		existingOrMasks.size() != N_coarse + standardNValues_[0])
+	const size_t N_coarse = standardNValues_.size() - 1;
+	if(existingAndMasks.size() != standardNValues_[0] ||
+	   existingOrMasks.size() != N_coarse + standardNValues_[0])
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
 		          << standardNValues_[0] << " and " << N_coarse + standardNValues_[0]
@@ -4336,7 +4336,7 @@ try
 	// Expected: N_coarse coarse-OR slots + standardNValues_[0] fine-loop AND+OR slots.
 	if(andMasks || orMasks)
 	{
-		const uint32_t N_coarse     = standardNValues_.size() - 1;
+		const uint32_t N_coarse = standardNValues_.size() - 1;
 		if(andMasks && andMasks->get().size() != standardNValues_[0])
 		{
 			__FE_SS__ << "Extracted AND ops size mismatch. "
@@ -4344,7 +4344,7 @@ try
 			          << ", got andMasks=" << andMasks->get().size() << __E__;
 			__FE_SS_THROW__;
 		}
-		
+
 		if(orMasks && orMasks->get().size() != standardNValues_[0] + N_coarse)
 		{
 			__FE_SS__ << "Internal error: extracted mask vector size mismatch. "
