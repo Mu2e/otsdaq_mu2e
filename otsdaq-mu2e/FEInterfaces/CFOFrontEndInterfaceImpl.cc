@@ -3453,9 +3453,8 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	//	Set Run Plan checks BRAM size indirectly, by reading back and validating the instruction set written!
 	{
 		//Start overwrites whatever is in hardware; use empty/default masks for both parts.
-		const size_t totalSlots = (standardNValues_.size() - 1) + standardNValues_[0];
-		std::vector<uint64_t> emptyAndMasks(totalSlots, 0xFFFFFFFFFFFFULL);  //keep-all
-		std::vector<uint64_t> emptyOrMasks(totalSlots, 0x0ULL);              //set-nothing
+		std::vector<uint64_t> emptyAndMasks(standardNValues_[0], 0xFFFFFFFFFFFFULL);  //keep-all
+		std::vector<uint64_t> emptyOrMasks( (standardNValues_.size() - 1) + standardNValues_[0], 0x0ULL);              //set-nothing
 
 		//part-1: write the initial all-on mode plan
 		generateSharedRunPlanWithPeriodicModeOn(result,
