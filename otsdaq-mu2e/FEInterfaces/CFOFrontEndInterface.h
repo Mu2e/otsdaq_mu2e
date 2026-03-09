@@ -1,6 +1,7 @@
 #ifndef _ots_CFOFrontEndInterface_h_
 #define _ots_CFOFrontEndInterface_h_
 
+#include <functional>
 #include <map>
 #include <optional>
 #include <string>
