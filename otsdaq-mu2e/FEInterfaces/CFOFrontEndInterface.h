@@ -1,7 +1,9 @@
 #ifndef _ots_CFOFrontEndInterface_h_
 #define _ots_CFOFrontEndInterface_h_
 
+#include <functional>
 #include <map>
+#include <optional>
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/CoreSupervisors/FESupervisor.h"
@@ -112,23 +114,27 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void     parseEventDurationForRunPlan(const std::string& eventDuration, std::string& durationValue, std::string& durationUnits);
 	void     getRatioOfOnPerEvents(uint32_t clocksPerOn, uint32_t clocksPerEvent, uint32_t& mPartRatio, uint32_t& nPartRatio);
 	void     mnFixRatio(std::stringstream& logResult, uint32_t& mPartRatio, uint32_t& nPartRatio);
-	uint64_t extractSharedRunPlanEventDuration(void);
-	void     generateSharedRunPlanWithPeriodicModeOn(std::stringstream& logResult,
-	                                                 std::string&       genFilename,
-	                                                 const uint64_t     initEventTag,
-	                                                 const uint16_t     onBits_startBit,
-	                                                 const uint16_t     onBits_bitCount,
-	                                                 const uint64_t     onBits_value,
-	                                                 uint32_t           mPartRatio,
-	                                                 uint32_t           nPartRatio,
-	                                                 const std::string& eventDurationSplitNumber,
-	                                                 const std::string& eventDurationSplitUnits);
-	void     generateSharedRunPlanWithPeriodicModeOff(std::stringstream& logResult,
-	                                                  std::string&       genFilename,
-	                                                  const uint16_t     onBits_startBit,
-	                                                  const uint16_t     onBits_bitCount,
-	                                                  const std::string& eventDurationSplitNumber,
-	                                                  const std::string& eventDurationSplitUnits);
+	uint64_t extractSharedRunPlanEventDuration(
+	    std::optional<std::reference_wrapper<std::vector<uint64_t>>> andMasks = std::nullopt,
+	    std::optional<std::reference_wrapper<std::vector<uint64_t>>> orMasks  = std::nullopt);
+	void generateSharedRunPlanWithPeriodicModeOn(std::stringstream&           logResult,
+	                                             std::string&                 genFilename,
+	                                             const uint64_t               initEventTag,
+	                                             const uint16_t               onBits_startBit,
+	                                             const uint16_t               onBits_bitCount,
+	                                             const uint64_t               onBits_value,
+	                                             uint32_t                     mPartRatio,
+	                                             uint32_t                     nPartRatio,
+	                                             const std::string&           eventDurationSplitNumber,
+	                                             const std::string&           eventDurationSplitUnits,
+	                                             const std::vector<uint64_t>& existingAndMasks,
+	                                             const std::vector<uint64_t>& existingOrMasks);
+	void generateSharedRunPlanWithPeriodicModeOff(std::stringstream& logResult,
+	                                              std::string&       genFilename,
+	                                              const uint16_t     onBits_startBit,
+	                                              const uint16_t     onBits_bitCount,
+	                                              const std::string& eventDurationSplitNumber,
+	                                              const std::string& eventDurationSplitUnits);
 	/// -- end helper functions for Shared Run Plan ---------
 
 	int                         timing_chain_first_substep_     = -1;

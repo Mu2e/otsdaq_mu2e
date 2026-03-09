@@ -225,7 +225,7 @@ class ROCCoreVInterface : public FEVInterface
 		}
 		return thisDTC_->GetDevice();
 	};
-	inline DTCLib::DTC* getDTC(void)
+	virtual inline DTCLib::DTC* getDTC(void)
 	{
 		if(!thisDTC_)
 		{
