@@ -2034,6 +2034,11 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 				// registerWrite(0x9110, dtcHwEmulateROCmask);
 				__FE_COUT__ << "End check for DTC-hardware emulated ROCs." << __E__;
 			}  // end check if any ROCs should be DTC-hardware emulated ROCs
+			else
+			{
+				__FE_COUT_INFO__ << "LinkToROCGroupTable is disconnected; writing ROC emulator mask 0 to ensure deterministic hardware state." << __E__;
+				getDTC()->SetROCEmulatorMask(0);
+			}
 		}
 
 		//enable ROC links w/CFO link
