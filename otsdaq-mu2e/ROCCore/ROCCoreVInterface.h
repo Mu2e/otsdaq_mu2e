@@ -17,6 +17,8 @@ class ROCCoreVInterface : public FEVInterface
 
 	~ROCCoreVInterface(void);
 
+	virtual void setParentSupervisor(CoreSupervisorBase* supervisor);
+
 	// state machine
 	//----------------
 	void configure(void) override;

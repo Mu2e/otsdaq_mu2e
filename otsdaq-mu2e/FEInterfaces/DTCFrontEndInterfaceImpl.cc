@@ -110,6 +110,17 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 }  // end destructor()
 
 //==============================================================================
+void DTCFrontEndInterface::setParentSupervisor(CoreSupervisorBase* supervisor)
+{
+	// Call base class to set own parentSupervisor_
+	CFOandDTCCoreVInterface::setParentSupervisor(supervisor);
+
+	// Propagate to all ROC FE Interfaces via their virtual setter
+	for(auto& roc : rocs_)
+		roc.second->setParentSupervisor(supervisor);
+}  // end setParentSupervisor()
+
+//==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
 	__FE_COUT__ << "Registering DTC FE Macros..." << __E__;
@@ -904,6 +915,11 @@ void DTCFrontEndInterface::configureSlowControls(void)
 	if(skipInit_)
 		return;
 
+	// Propagate parentSupervisor_ to all ROC FE Interfaces in case this is called
+	// before configure() (e.g., from the slow controls work loop).
+	if(parentSupervisor_)
+		setParentSupervisor(parentSupervisor_);
+
 	bool slowControlsEnable = true;
 	try
 	{
@@ -1085,6 +1101,11 @@ try
 {
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
+
+	// Propagate parentSupervisor_ to all ROC FE Interfaces.
+	// This is needed because createROCs() is called from DTCInstantiate() which runs
+	// during the constructor, before parentSupervisor_ is set by the framework.
+	setParentSupervisor(parentSupervisor_);
 
 	__FE_COUTV__(skipInit_);
 	if(skipInit_)

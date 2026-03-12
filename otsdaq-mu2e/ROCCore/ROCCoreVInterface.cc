@@ -96,6 +96,12 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 }  // end destructor()
 
 //==================================================================================================
+void ROCCoreVInterface::setParentSupervisor(CoreSupervisorBase* supervisor)
+{
+	parentSupervisor_ = supervisor;
+}  // end setParentSupervisor()
+
+//==================================================================================================
 void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
                                       DTCLib::roc_data_t    writeData)
 {

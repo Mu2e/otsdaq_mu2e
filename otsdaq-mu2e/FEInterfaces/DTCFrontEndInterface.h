@@ -24,6 +24,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void DTCInstantiate();
 
+	virtual void setParentSupervisor(CoreSupervisorBase* supervisor) override;
+
 	// specialized ROC handling slow controls
 	//----------------
 	virtual void                   configureSlowControls(void) override;

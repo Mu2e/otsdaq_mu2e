@@ -25,6 +25,8 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	virtual ~CFOandDTCCoreVInterface(void);
 
+	virtual void setParentSupervisor(CoreSupervisorBase* supervisor);
+
 	// specialized handling of slow controls
 	//----------------
 	void outputEpicsPVFile(ConfigurationManager* configManager);

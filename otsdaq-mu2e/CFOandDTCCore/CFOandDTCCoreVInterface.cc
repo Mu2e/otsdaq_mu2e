@@ -108,6 +108,12 @@ CFOandDTCCoreVInterface::~CFOandDTCCoreVInterface(void)
 }  // end destructor()
 
 //===========================================================================================
+void CFOandDTCCoreVInterface::setParentSupervisor(CoreSupervisorBase* supervisor)
+{
+	parentSupervisor_ = supervisor;
+}  // end setParentSupervisor()
+
+//===========================================================================================
 void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 {
 	bool isCFO = getInterfaceType() == "CFOFrontEndInterface";
