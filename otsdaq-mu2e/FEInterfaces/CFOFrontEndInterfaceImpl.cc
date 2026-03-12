@@ -4138,9 +4138,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 	// When existing masks are provided, validate their sizes and use them to preserve
 	// other subsystems' bits. When empty (e.g. internal dummy call), use legacy behavior.
 	const bool useMasks = !existingAndMasks.empty() || !existingOrMasks.empty();
-	if(useMasks &&
-	   (existingAndMasks.size() != standardNValues_[0] ||
-	    existingOrMasks.size() != N_coarse + standardNValues_[0]))
+	if(useMasks && (existingAndMasks.size() != standardNValues_[0] ||
+	                existingOrMasks.size() != N_coarse + standardNValues_[0]))
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
 		          << standardNValues_[0] << " and " << N_coarse + standardNValues_[0]
@@ -4150,8 +4149,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 	}
 
 	// 48-bit mask of bits this subsystem clears when leaving
-	const uint64_t clearBitsMask48 =
-	    ((uint64_t(1) << offBits_bitCount) - 1) << offBits_startBit;
+	const uint64_t clearBitsMask48 = ((uint64_t(1) << offBits_bitCount) - 1)
+	                                 << offBits_startBit;
 
 	std::stringstream out;
 	std::string       tabStr, commentStr;
