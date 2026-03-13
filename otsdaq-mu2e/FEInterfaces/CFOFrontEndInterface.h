@@ -208,6 +208,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void SharedRunPlanStart(__ARGS__);
 	void SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
 	void SharedRunPlanSubsystemJoin(__ARGS__);
+	void SharedRunPlanSubsystemSingleShotJoin(__ARGS__);  ///< Join for a single-shot event count using OR_SINGLESHOT opcode
 	void SharedRunPlanSubsystemLeave(__ARGS__);
 
 	void BufferTest_detached(__ARGS__);
