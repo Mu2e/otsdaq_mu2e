@@ -1512,7 +1512,7 @@ void CFOFrontEndInterface::halt(void)
 		__FE_COUT_INFO__ << "CFO halt for HW Dev mode." << __E__;
 		return;
 	}
-	
+
 	__FE_COUT__ << "HALT: CFO status" << __E__;
 
 	if(operatingMode_ != CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
@@ -1538,7 +1538,7 @@ void CFOFrontEndInterface::resume(void)
 	__FE_COUT__ << "RESUME: CFO status" << __E__;
 
 	// readStatus();
-} //end resume()
+}  //end resume()
 
 //==============================================================================
 void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)

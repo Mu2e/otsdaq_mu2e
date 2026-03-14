@@ -110,14 +110,14 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 }  // end destructor()
 
 //==============================================================================
-void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase* supervisor,
-									 FEVInterfacesManager* manager)
+void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
+                                             FEVInterfacesManager* manager)
 {
 	FEVInterface::setParentPointers(supervisor, manager);
 
 	for(auto& roc : rocs_)
 		roc.second->setParentPointers(supervisor, manager);
-} // end setParentPointers()
+}  // end setParentPointers()
 
 //==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
@@ -1069,11 +1069,11 @@ void DTCFrontEndInterface::createROCs(void)
 			catch(const cet::exception& e)
 			{
 				__FE_SS__ << "Failed to instantiate plugin named '" << roc.first
-				       << "' of type '"
-				       << roc.second.getNode("ROCInterfacePluginName")
-				              .getValue<std::string>()
-				       << "' due to the following error: \n"
-				       << e.what() << __E__;
+				          << "' of type '"
+				          << roc.second.getNode("ROCInterfacePluginName")
+				                 .getValue<std::string>()
+				          << "' due to the following error: \n"
+				          << e.what() << __E__;
 				__FE_SS_THROW__;
 			}
 			catch(const std::bad_cast& e)
