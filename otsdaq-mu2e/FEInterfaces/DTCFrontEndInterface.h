@@ -21,6 +21,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                     const ConfigurationTree& theXDAQContextConfigTree,
 	                     const std::string&       interfaceConfigurationPath);
 	virtual ~DTCFrontEndInterface(void);
+	void setParentPointers(CoreSupervisorBase* supervisor,
+						 FEVInterfacesManager* manager) override;
 
 	void DTCInstantiate();
 

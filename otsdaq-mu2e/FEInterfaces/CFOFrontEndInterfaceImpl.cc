@@ -1507,10 +1507,19 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 //==============================================================================
 void CFOFrontEndInterface::halt(void)
 {
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << "CFO halt for HW Dev mode." << __E__;
+		return;
+	}
+	
 	__FE_COUT__ << "HALT: CFO status" << __E__;
 
-	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	if(operatingMode_ != CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	{
+		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	}
 
 	// readStatus();
 }  //end halt()
@@ -1529,11 +1538,17 @@ void CFOFrontEndInterface::resume(void)
 	__FE_COUT__ << "RESUME: CFO status" << __E__;
 
 	// readStatus();
-}
+} //end resume()
 
 //==============================================================================
 void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 {
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << "CFO start for HW Dev mode." << __E__;
+		return;
+	}
+
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
@@ -1710,6 +1725,12 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 //==============================================================================
 void CFOFrontEndInterface::stop(void)
 {
+	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
+	{
+		__FE_COUT_INFO__ << "CFO stop for HW Dev mode." << __E__;
+		return;
+	}
+
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
