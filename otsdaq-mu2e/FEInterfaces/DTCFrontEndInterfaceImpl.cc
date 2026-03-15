@@ -2134,8 +2134,6 @@ void DTCFrontEndInterface::halt(void)
 		roc.second->halt();
 	}
 
-	rocs_.clear();
-
 	__FE_COUT__ << "Halted." << __E__;
 
 	// if(device_name_ == "DTC8")
@@ -2432,15 +2430,19 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			               "SetCFOEmulatorFixedWidthEmulation"
 			            << __E__;
 		}
+
+		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
-		loopbackTest();
+		// loopbackTest();
+		return;
 	}
 	else
 	{
@@ -2450,7 +2452,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		__FE_SS_THROW__;
 	}
 
-	getDTC()->SoftReset();  //reset counters
 	return;
 
 	// /////////////////////////////
