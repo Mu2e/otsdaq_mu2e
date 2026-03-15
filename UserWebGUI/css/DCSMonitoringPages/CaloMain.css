@@ -36,8 +36,8 @@ body {
     border: 2px solid;
     margin-left: 20px;
     margin-top: 18px;
-    width: 500px;
-    height: 500px;
+    width: 950px;
+    height: 950px;
     flex-shrink: 0;
     text-align: center;
     flex-direction: column;
