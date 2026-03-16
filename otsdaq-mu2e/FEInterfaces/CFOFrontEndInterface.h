@@ -129,12 +129,14 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	                                             const std::string&           eventDurationSplitUnits,
 	                                             const std::vector<uint64_t>& existingAndMasks,
 	                                             const std::vector<uint64_t>& existingOrMasks);
-	void generateSharedRunPlanWithPeriodicModeOff(std::stringstream& logResult,
-	                                              std::string&       genFilename,
-	                                              const uint16_t     onBits_startBit,
-	                                              const uint16_t     onBits_bitCount,
-	                                              const std::string& eventDurationSplitNumber,
-	                                              const std::string& eventDurationSplitUnits);
+	void generateSharedRunPlanWithPeriodicModeOff(std::stringstream&           logResult,
+	                                              std::string&                 genFilename,
+	                                              const uint16_t               offBits_startBit,
+	                                              const uint16_t               offBits_bitCount,
+	                                              const std::string&           eventDurationSplitNumber,
+	                                              const std::string&           eventDurationSplitUnits,
+	                                              const std::vector<uint64_t>& existingAndMasks = {},
+	                                              const std::vector<uint64_t>& existingOrMasks  = {});
 	/// -- end helper functions for Shared Run Plan ---------
 
 	int                         timing_chain_first_substep_     = -1;

@@ -3718,7 +3718,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 		__FE_SS_THROW__;
 	}
 
-	uint64_t eventDurationInClocks = extractSharedRunPlanEventDuration();
+	//extract and/or op values to be modified in the leave
+	std::vector<uint64_t> existingAndMasks, existingOrMasks;
+	uint64_t              eventDurationInClocks =
+	    extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
 	//now need to remove subsystems enable bit in run plan
@@ -3772,8 +3775,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 		    offBits_startBit,                       //start bit
 		    offBits_bitCount,                       //bit count
 		    std::to_string(eventDurationInClocks),  //eventDurationInClocks,
-		    "clocks"                                //eventDurationSplitUnits
-		);
+		    "clocks",                               //eventDurationSplitUnits
+		    existingAndMasks,
+		    existingOrMasks);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
@@ -4120,13 +4124,34 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 // The concept is that the Shared Run Plan ops never change
 //	only the AND and OR parameters change to add/remove bits
 void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
-    std::stringstream& logResult,
-    std::string&       genFilename,
-    const uint16_t     offBits_startBit,
-    const uint16_t     offBits_bitCount,
-    const std::string& eventDurationSplitNumber,
-    const std::string& eventDurationSplitUnits)
+    std::stringstream&           logResult,
+    std::string&                 genFilename,
+    const uint16_t               offBits_startBit,
+    const uint16_t               offBits_bitCount,
+    const std::string&           eventDurationSplitNumber,
+    const std::string&           eventDurationSplitUnits,
+    const std::vector<uint64_t>& existingAndMasks,
+    const std::vector<uint64_t>& existingOrMasks)
 {
+	const size_t N_coarse = standardNValues_.size() - 1;
+
+	// When existing masks are provided, validate their sizes and use them to preserve
+	// other subsystems' bits. When empty (e.g. internal dummy call), use legacy behavior.
+	const bool useMasks = !existingAndMasks.empty() || !existingOrMasks.empty();
+	if(useMasks && (existingAndMasks.size() != standardNValues_[0] ||
+	                existingOrMasks.size() != N_coarse + standardNValues_[0]))
+	{
+		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
+		          << standardNValues_[0] << " and " << N_coarse + standardNValues_[0]
+		          << " respectively. Got andMasks=" << existingAndMasks.size()
+		          << " orMasks=" << existingOrMasks.size() << __E__;
+		__FE_SS_THROW__;
+	}
+
+	// 48-bit mask of bits this subsystem clears when leaving
+	const uint64_t clearBitsMask48 = ((uint64_t(1) << offBits_bitCount) - 1)
+	                                 << offBits_startBit;
+
 	std::stringstream out;
 	std::string       tabStr, commentStr;
 	OUT << "SET_TAG " << 0 << __E__;  //irrelevant since already in the loops!
@@ -4138,13 +4163,25 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 		// but allow 1 in 200, 500, 1000, etc. coarse granularity
 
 		//coarse granularity loops
+		//  existingOrMasks[0..N_coarse-1] hold the existing coarse OR masks (no AND in coarse)
 		for(size_t l = standardNValues_.size() - 1; l > 0; --l)
 		{
-			uint32_t loopN = standardNValues_[l] / standardNValues_[l - 1];
+			size_t   coarseIdx = standardNValues_.size() - 1 - l;  //0 for outermost loop
+			uint32_t loopN     = standardNValues_[l] / standardNValues_[l - 1];
 			__FE_COUTTV__(loopN);
 
-			OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
-			    << " value= " << 0 << __E__;  // no change to mode bits for this loop
+			if(useMasks)
+			{
+				// Keep existing coarse OR bits, but remove the leaving subsystem's bits
+				uint64_t merged_coarse_or = existingOrMasks[coarseIdx] & ~clearBitsMask48;
+				OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+				    << merged_coarse_or << std::dec << __E__;
+			}
+			else
+			{
+				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
+				    << " value= " << 0 << __E__;  // no change to mode bits for this loop
+			}
 
 			__FE_COUTT__ << "LOOP " << loopN << " // for N = " << standardNValues_[l]
 			             << __E__;
@@ -4153,15 +4190,35 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 		}
 
 		//fine granularity loop
+		//  existingAndMasks[i] and existingOrMasks[N_coarse + i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
-			//clear bits on first in iteration
-			OUT << "AND_MODE_BITS start_bit= " << offBits_startBit
-			    << " bit_count= " << offBits_bitCount << " value= " << 0
-			    << __E__;  // bit positions with 1 keep, 0 remove
+			if(useMasks)
+			{
+				size_t fineIdx = N_coarse + i;
 
-			OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
-			    << " value= " << 0 << __E__;
+				// AND: clear the leaving subsystem's bits for all positions; merge with existing mask
+				uint64_t new_and    = 0xFFFFFFFFFFFFULL & ~clearBitsMask48;
+				uint64_t merged_and = existingAndMasks[i] & new_and;
+				OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+				    << merged_and << std::dec
+				    << __E__;  // bit positions with 1 keep, 0 remove
+
+				// OR: remove the leaving subsystem's bits from existing OR mask
+				uint64_t merged_or = existingOrMasks[fineIdx] & ~clearBitsMask48;
+				OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+				    << merged_or << std::dec << __E__;
+			}
+			else
+			{
+				//clear bits on first in iteration
+				OUT << "AND_MODE_BITS start_bit= " << offBits_startBit
+				    << " bit_count= " << offBits_bitCount << " value= " << 0
+				    << __E__;  // bit positions with 1 keep, 0 remove
+
+				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
+				    << " value= " << 0 << __E__;
+			}
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
