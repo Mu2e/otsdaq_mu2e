@@ -396,6 +396,27 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	                        "*",
 	                        "Read from the DTC Memory Map.");
 
+	registerFEMacroFunction(
+	    "Set Event Mode Required Mask",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::SetCFOEventModeRequiredMask),
+	    std::vector<std::string>{"Event Mode Required Mask (Default := 0)"},
+	    std::vector<std::string>{"Result"},
+	    1,
+	    "*",
+	    "Set the Event Mode Required Mask used for Event Mode filtering. "
+	    "A mask bit of 1 requires the corresponding Event Mode bit to also be 1.");
+
+	registerFEMacroFunction(
+	    "Read Event Mode Required Mask",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::ReadCFOEventModeRequiredMask),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"Event Mode Required Mask"},
+	    1,
+	    "*",
+	    "Read back the current DTC Event Mode Required Mask used for CFO Event Mode filtering.");
+
 	registerFEMacroFunction("Loss-of-Lock Counter Read",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
 	                            &DTCFrontEndInterface::ReadLossOfLockCounter),
@@ -3851,6 +3872,32 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 	   << ".";
 	__SET_ARG_OUT__("readData", ss.str());  // readDataStr);
 }  // end ReadDTC()
+
+//========================================================================
+void DTCFrontEndInterface::SetCFOEventModeRequiredMask(__ARGS__)
+{
+	uint32_t eventModeRequiredMask =
+	    __GET_ARG_IN__("Event Mode Required Mask (Default := 0)", uint32_t, 0);
+	__FE_COUTV__(eventModeRequiredMask);
+
+	getDTC()->SetCFOEventModeRequiredMask(eventModeRequiredMask);
+
+	std::stringstream ss;
+	ss << "Set Event Mode Required Mask to 0x" << std::hex << std::setfill('0')
+	   << std::setw(8) << eventModeRequiredMask << ".";
+	__SET_ARG_OUT__("Result", ss.str());
+}  // end SetCFOEventModeRequiredMask()
+
+//========================================================================
+void DTCFrontEndInterface::ReadCFOEventModeRequiredMask(__ARGS__)
+{
+	const uint32_t eventModeRequiredMask = getDTC()->ReadCFOEventModeRequiredMask();
+
+	std::stringstream ss;
+	ss << "Event Mode Required Mask: " << std::dec << eventModeRequiredMask << " (0x"
+	   << std::hex << std::setfill('0') << std::setw(8) << eventModeRequiredMask << ")";
+	__SET_ARG_OUT__("Event Mode Required Mask", ss.str());
+}  // end ReadCFOEventModeRequiredMask()
 
 //========================================================================
 void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)

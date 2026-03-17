@@ -203,6 +203,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void SelectJitterAttenuatorSource(__ARGS__);
 	void WriteDTC(__ARGS__);
 	void ReadDTC(__ARGS__);
+	void SetCFOEventModeRequiredMask(__ARGS__);
+	void ReadCFOEventModeRequiredMask(__ARGS__);
 
 	void configureHardwareDevMode(__ARGS__);
 	void ConfigureForTimingChain(__ARGS__);
