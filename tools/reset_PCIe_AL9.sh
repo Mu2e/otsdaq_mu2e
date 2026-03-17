@@ -9,6 +9,15 @@ if [[ "x$1" == "xNOKILL" ]]; then
     shift
 fi
 
+# Kill any reset_PCIe processes that might be running (excluding current process)
+ps=`ps aux`
+reset_pids=`echo "$ps" | grep "reset_PCIe" | grep -v "$$" | awk '{print $2}'`
+if [ -n "$reset_pids" ]; then
+    echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Killing existing reset_PCIe processes: $reset_pids"
+    kill -9 $reset_pids
+    sleep 2
+fi
+
 lockfile="/tmp/mu2e.lock"
 # Attempt to create the lock file atomically using ln
 retriedA=0 retriedB=0
@@ -18,7 +27,7 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null; do
 
         pid=$(readlink "$lockfile")
         ps=`ps aux`
-	# Look for others possibly running already, ignoring the program_all script that makes underlying program calls
+	    # Look for others possibly running already, ignoring the program_all script that makes underlying program calls
         possible_parent=`echo "$ps" | grep -E ':[0-9]* [a-z/]*bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|grep -v program_all_FPGA|awk '{print$2}'`
         echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t pid=$pid possible_parent=$possible_parent"
 
@@ -79,8 +88,14 @@ if [ "$foundXi" = 1 ];then
         killall -9 boardreader
         # killall -9 TRACE
     else
+        
         pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
-        echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Skipping xdaq.exe and boardreader kill as per NOKILL option, pids=$pids"
+        if [ -z "$pids" ]; then
+            pid_count=0
+        else
+            pid_count=$(echo "$pids" | wc -l)
+        fi
+        echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Skipping xdaq.exe and boardreader kill as per NOKILL option,.. \n==== List of pids holding device ===\n$pids\nTotal PIDs found: $pid_count\n"
     fi
 
 	sleep 3
