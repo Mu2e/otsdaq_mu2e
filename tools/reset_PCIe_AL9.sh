@@ -90,7 +90,7 @@ if [ "$foundXi" = 1 ];then
         killall -9 boardreader
         # killall -9 TRACE
     else
-        
+
         pids=`lsof /dev/mu2e* 2>/dev/null | awk '!/^COMMAND/{print$2;}' | uniq`
         if [ -z "$pids" ]; then
             pid_count=0
