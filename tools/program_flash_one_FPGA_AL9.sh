@@ -34,6 +34,8 @@ echo "JTAG index N: ${1}"
 echo "JTAG-N mcs file: ${MCS_FILE_N}"
 echo "JTAG-N target flash: ${FLASH_PART_N}"
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') ${0} $(whoami) ${HOSTNAME} JTAG=${1} flash=${MCS_FILE_N} ${FLASH_PART_N}" >> /home/mu2ehwdev/.Xil/vivado_user_log.txt
+
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_flash_one_FPGA.tcl -tclargs ${1} ${MCS_FILE_N} ${FLASH_PART_N} 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
     | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
