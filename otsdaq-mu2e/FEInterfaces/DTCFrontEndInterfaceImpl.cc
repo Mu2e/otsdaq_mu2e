@@ -110,6 +110,16 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 }  // end destructor()
 
 //==============================================================================
+void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
+                                             FEVInterfacesManager* manager)
+{
+	FEVInterface::setParentPointers(supervisor, manager);
+
+	for(auto& roc : rocs_)
+		roc.second->setParentPointers(supervisor, manager);
+}  // end setParentPointers()
+
+//==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
 	__FE_COUT__ << "Registering DTC FE Macros..." << __E__;
@@ -1014,8 +1024,8 @@ void DTCFrontEndInterface::createROCs(void)
 
 			try
 			{
-				__COUTV__(theXDAQContextConfigTree_.getValueAsString());
-				__COUTV__(
+				__FE_COUTV__(theXDAQContextConfigTree_.getValueAsString());
+				__FE_COUTV__(
 				    roc.second.getNode("ROCInterfacePluginName").getValue<std::string>());
 
 				// Note: FEVInterface makeInterface returns a unique_ptr
@@ -1030,7 +1040,10 @@ void DTCFrontEndInterface::createROCs(void)
 
 				// setup parent supervisor of FEVinterface (for backwards compatibility,
 				// left out of constructor)
-				tmpVFE->parentSupervisor_ = parentSupervisor_;
+				tmpVFE->setParentPointers(parentSupervisor_, parentInterfaceManager_);
+				__FE_COUTV__(parentSupervisor_);
+				__FE_COUTV__(VStateMachine::parentSupervisor_);
+				__FE_COUTV__(tmpVFE->parentSupervisor_);
 
 				ROCCoreVInterface& tmpRoc = dynamic_cast<ROCCoreVInterface&>(
 				    *tmpVFE);  // dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
@@ -1051,15 +1064,16 @@ void DTCFrontEndInterface::createROCs(void)
 				    roc.first, &tmpRoc));
 				tmpVFE.release();  // release the FEVInterface unique_ptr, so we are left
 				                   // with just one
+				__FE_COUTV__(rocs_.at(roc.first)->parentSupervisor_);
 			}
 			catch(const cet::exception& e)
 			{
-				__SS__ << "Failed to instantiate plugin named '" << roc.first
-				       << "' of type '"
-				       << roc.second.getNode("ROCInterfacePluginName")
-				              .getValue<std::string>()
-				       << "' due to the following error: \n"
-				       << e.what() << __E__;
+				__FE_SS__ << "Failed to instantiate plugin named '" << roc.first
+				          << "' of type '"
+				          << roc.second.getNode("ROCInterfacePluginName")
+				                 .getValue<std::string>()
+				          << "' due to the following error: \n"
+				          << e.what() << __E__;
 				__FE_SS_THROW__;
 			}
 			catch(const std::bad_cast& e)
@@ -2120,8 +2134,6 @@ void DTCFrontEndInterface::halt(void)
 		roc.second->halt();
 	}
 
-	rocs_.clear();
-
 	__FE_COUT__ << "Halted." << __E__;
 
 	// if(device_name_ == "DTC8")
@@ -2418,15 +2430,19 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			               "SetCFOEmulatorFixedWidthEmulation"
 			            << __E__;
 		}
+
+		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
-		loopbackTest();
+		// loopbackTest();
+		return;
 	}
 	else
 	{
@@ -2436,7 +2452,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		__FE_SS_THROW__;
 	}
 
-	getDTC()->SoftReset();  //reset counters
 	return;
 
 	// /////////////////////////////
