@@ -30,25 +30,25 @@ prompted for this location.
 --spackdir    Install Spack in this directory (or use existing installation)
 --all-packages Install all packages including Offline and otsdaq-mu2e-trigger
 --trigger     Synonym for --all-packages
+--otsdaq      Also install the otsdaq suite in srcs
+--artdaq      Also install the artdaq suite in srcs
 -a            Artdaq version number (e.g. 31300 for v3_13_00)
 -o            Otsdaq version number (e.g. 20800 for v2_08_00)
 -s            Use specific qualifiers when building ots
 -v            Be more verbose
 -x            set -x this script
 -w            Check out repositories read/write
---no-extra-products  Skip the automatic use of central product areas, such as CVMFS
 --upstream    Use <dir> as a Spack upstream (repeatable)
 --padding     Pad directories to 255 characters for relocatability
 --arch        Set architechture for build (ex. linux-almalinux9-x86_64_v3)
 --no-kmod     Do not build TRACE kernel module (for Docker builds)
 --no-view     Do not create a Spack environment view
 --no-emacs    Do not attempt to install emacs
+--no-extra-products  Skip the automatic use of central product areas, such as CVMFS
 --no-use-mu2e Do not search /mu2e/spack_v0.28 for upstreams
 --no-use-cvmfs Do not search /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28 for upstreams
               Note that CVMFS will not be used if /mu2e is available and active (i.e. --no-use-mu2e is not passed)
               If --upstream is used, neither /mu2e nor CVMFS will be automatically searched for upstreams
---dev-otsdaq  Checks out otsdaq, otsdaq-utilities, and otsdaq-components
---dev-artdaq  Checks out artdaq, artdaq-core, artdaq-daqinterface, and artdaq-database
 --all-packages Used with --develop, will fetch all subdetector repos
 --g4          Perform full build of Offline, with geant4 dependency
 "
@@ -64,7 +64,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_otsdaq=0; opt_artdaq=0; opt_no_view=0; opt_no_emacs=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0
 while [ -n "${1-}" ];do
     if expr "x${1-}" : 'x-' >/dev/null;then
         op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -93,12 +93,12 @@ while [ -n "${1-}" ];do
             -no-emacs)  opt_no_emacs=1;;
             -no-use-mu2e) opt_use_mu2e=0;;
             -no-use-cvmfs) opt_use_cvmfs=0;;
-            -dev-otsdaq) opt_dev_otsdaq=1;;\
-        -dev-artdaq) opt_dev_artdaq=1;;\
-        -all-packages) opt_all_packages=1;;
+            -all-packages) opt_all_packages=1;;
+            -otsdaq)             opt_otsdaq=1;;
+            -artdaq)             opt_artdaq=1;;
             -trigger)   opt_all_packages=1;;
             -no-view)   opt_no_view=1;;
-	        -g4)        opt_g4=1;;
+            -g4)        opt_g4=1;;
             *)          echo "Unknown option -$op"; do_help=1;;
         esac
     else
@@ -118,49 +118,6 @@ fi
 # Save all output from this script (stdout + stderr) in a file with a
 # name that looks like "quick-start.sh_Fri_Jan_16_13:58:27.script" as
 
-if [ "${opt_dev_otsdaq-0}" -eq 1 ]; then
-    echo "Checking out otsdaq, otsdaq-utilities, and otsdaq-components..."
-    if ! [ -d srcs ]; then
-        mkdir srcs
-    fi
-    cd srcs
-    for pkg in otsdaq otsdaq-utilities otsdaq-components otsdaq-epics otsdaq-suite; do
-        if ! [ -d $pkg ]; then
-            if [ $opt_w -eq 0 ]; then
-                git clone https://github.com/art-daq/$pkg.git $pkg
-            else
-                git clone git@github.com:art-daq/$pkg.git $pkg
-            fi
-        else
-            cd $pkg
-            git pull
-            cd ..
-        fi
-    done
-    cd ..
-fi
-
-if [ "${opt_dev_artdaq-0}" -eq 1 ]; then
-    echo "Checking out artdaq and artdaq-core..."
-    if ! [ -d srcs ]; then
-        mkdir srcs
-    fi
-    cd srcs
-    for pkg in artdaq artdaq-core artdaq-daqinterface artdaq-database artdaq-suite artdaq-core-demo; do
-        if ! [ -d $pkg ]; then
-            if [ $opt_w -eq 0 ]; then
-                git clone https://github.com/art-daq/$pkg.git $pkg
-            else
-                git clone git@github.com:art-daq/$pkg.git $pkg
-            fi
-        else
-            cd $pkg
-            git pull
-            cd ..
-        fi
-    done
-    cd ..
-fi
 # well as all stderr in a file with a name that looks like
 # "quick-start.sh_Fri_Jan_16_13:58:27_stderr.script"
 alloutput_file=$( date | awk -v "SCRIPTNAME=$(basename $0)" '{print SCRIPTNAME"_"$1"_"$2"_"$3"_"$4".script"}' )
@@ -337,11 +294,12 @@ fi
 function checkout_package()
 {
     pkg=$1
+    org=${2:-Mu2e}
     if ! [ -d $pkg ]; then
         if [ $opt_w -eq 0 ];then
-            git clone https://github.com/Mu2e/$pkg.git $pkg
+            git clone https://github.com/$org/$pkg.git $pkg
         else
-            git clone git@github.com:Mu2e/$pkg.git $pkg
+            git clone git@github.com:$org/$pkg.git $pkg
         fi
     else
         cd $pkg
@@ -364,13 +322,23 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
             checkout_package $pkg
         done
     fi
+    if [[ ${opt_otsdaq:-0} -eq 1 ]] ; then
+        for pkg in otsdaq otsdaq-utilities otsdaq-components otsdaq-epics otsdaq-suite;do
+            checkout_package $pkg art-daq
+        done
+    fi
+    if [[ ${opt_artdaq:-0} -eq 1 ]] ; then
+        for pkg in artdaq artdaq-core artdaq-database artdaq-epics-plugin artdaq-mfextensions artdaq-utilities artdaq-daqinterface trace artdaq-suite;do
+            checkout_package $pkg art-daq
+        done
+    fi
     cd $Base
 fi
 
-if [ -f setup_ots.sh ]; then
-    echo "Existing setup_ots.sh found. Backing it up..."
-    mv setup_ots.sh setup_ots.sh.bak
-fi
+#if [ -f setup_ots.sh ]; then
+#    echo "Existing setup_ots.sh found. Backing it up..."
+#    mv setup_ots.sh setup_ots.sh.bak
+#fi
 if ! [ -f setup_ots.sh ]; then
     cat >setup_ots.sh <<-EOF
 echo # This script is intended to be sourced.
