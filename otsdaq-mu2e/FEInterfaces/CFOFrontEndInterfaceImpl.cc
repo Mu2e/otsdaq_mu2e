@@ -2715,10 +2715,11 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
 			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+			auto supervisorSPtr                        = parentSupervisor_.lock();
 			bufferTestThreadStruct_->publish_ =
-			    static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
+			    static_cast<ots::FESupervisor*>(supervisorSPtr.get())->isPublishingData();
 			bufferTestThreadStruct_->feSupervisor_ =
-			    static_cast<ots::FESupervisor*>(parentSupervisor_);
+			    static_cast<ots::FESupervisor*>(supervisorSPtr.get());
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = true;
 			bufferTestThreadStruct_->doNotResetCounters_ = doNotResetBufferTestCounters;
@@ -2737,10 +2738,11 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
 			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+			auto supervisorSPtr                        = parentSupervisor_.lock();
 			bufferTestThreadStruct_->publish_ =
-			    static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
+			    static_cast<ots::FESupervisor*>(supervisorSPtr.get())->isPublishingData();
 			bufferTestThreadStruct_->feSupervisor_ =
-			    static_cast<ots::FESupervisor*>(parentSupervisor_);
+			    static_cast<ots::FESupervisor*>(supervisorSPtr.get());
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = false;
 			bufferTestThreadStruct_->thisCFO_            = thisCFO_;
@@ -4525,11 +4527,12 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 
 				bufferTestThreadStruct_->expectedEventTag_ = timestampStart;
 				bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
+				auto supervisorSPtr                        = parentSupervisor_.lock();
 				bufferTestThreadStruct_->publish_ =
-				    static_cast<ots::FESupervisor*>(parentSupervisor_)
+				    static_cast<ots::FESupervisor*>(supervisorSPtr.get())
 				        ->isPublishingData();
 				bufferTestThreadStruct_->feSupervisor_ =
-				    static_cast<ots::FESupervisor*>(parentSupervisor_);
+				    static_cast<ots::FESupervisor*>(supervisorSPtr.get());
 				bufferTestThreadStruct_->exitThread_         = false;
 				bufferTestThreadStruct_->resetStartEventTag_ = false;
 				bufferTestThreadStruct_->thisCFO_            = thisCFO_;

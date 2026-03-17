@@ -110,8 +110,8 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 }  // end destructor()
 
 //==============================================================================
-void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
-                                             FEVInterfacesManager* manager)
+void DTCFrontEndInterface::setParentPointers(std::shared_ptr<CoreSupervisorBase>   supervisor,
+                                             std::shared_ptr<FEVInterfacesManager> manager)
 {
 	FEVInterface::setParentPointers(supervisor, manager);
 
@@ -1040,10 +1040,10 @@ void DTCFrontEndInterface::createROCs(void)
 
 				// setup parent supervisor of FEVinterface (for backwards compatibility,
 				// left out of constructor)
-				tmpVFE->setParentPointers(parentSupervisor_, parentInterfaceManager_);
-				__FE_COUTV__(parentSupervisor_);
-				__FE_COUTV__(VStateMachine::parentSupervisor_);
-				__FE_COUTV__(tmpVFE->parentSupervisor_);
+				tmpVFE->setParentPointers(parentSupervisor_.lock(), parentInterfaceManager_.lock());
+				__FE_COUTV__(parentSupervisor_.lock().get());
+				__FE_COUTV__(VStateMachine::parentSupervisor_.lock().get());
+				__FE_COUTV__(tmpVFE->parentSupervisor_.lock().get());
 
 				ROCCoreVInterface& tmpRoc = dynamic_cast<ROCCoreVInterface&>(
 				    *tmpVFE);  // dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
@@ -1064,7 +1064,7 @@ void DTCFrontEndInterface::createROCs(void)
 				    roc.first, &tmpRoc));
 				tmpVFE.release();  // release the FEVInterface unique_ptr, so we are left
 				                   // with just one
-				__FE_COUTV__(rocs_.at(roc.first)->parentSupervisor_);
+				__FE_COUTV__(rocs_.at(roc.first)->parentSupervisor_.lock().get());
 			}
 			catch(const cet::exception& e)
 			{
