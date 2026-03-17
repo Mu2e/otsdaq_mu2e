@@ -11,9 +11,11 @@ fi
 
 # Kill any reset_PCIe processes that might be running (excluding current process)
 ps=`ps aux`
-reset_pids=`echo "$ps" | grep "reset_PCIe" | grep -v "$$" | awk '{print $2}'`
+echo "PID = $$"
+reset_pids=`echo "$ps" | grep "reset_PCIe" | grep -v "$$" | grep -v sudo | awk '{print $2}'`
 if [ -n "$reset_pids" ]; then
     echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t Killing existing reset_PCIe processes: $reset_pids"
+    sleep 1
     kill -9 $reset_pids
     sleep 2
 fi
