@@ -1072,8 +1072,9 @@ void DTCFrontEndInterface::createROCs(void)
 				__FE_COUT__ << "roc[" << (int)roc_link_i << "] enabled " << enabled
 				            << " emulated " << emulated << __E__;
 				tmpRoc.emulatedInDTC_ = emulated;
-				tmpRoc.thisDTC_ = thisDTC_;
-				tmpRoc.onDTCReady();  // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
+				tmpRoc.thisDTC_       = thisDTC_;
+				tmpRoc
+				    .onDTCReady();  // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
 
 				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
 				    roc.first, &tmpRoc));
