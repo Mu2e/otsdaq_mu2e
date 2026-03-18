@@ -396,25 +396,24 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	                        "*",
 	                        "Read from the DTC Memory Map.");
 
-	registerFEMacroFunction(
-	    "Set Event Mode Required Mask",
-	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &DTCFrontEndInterface::SetCFOEventModeRequiredMask),
-	    std::vector<std::string>{"Event Mode Required Mask (Default := 0)"},
-	    std::vector<std::string>{"Result"},
-	    1,
-	    "*",
-	    "Set the Event Mode Required Mask used for Event Mode filtering. "
-	    "A mask bit of 1 requires the corresponding Event Mode bit to also be 1.");
+	registerFEMacroFunction("Event Mode Required Mask Set",
+							static_cast<FEVInterface::frontEndMacroFunction_t>(
+								&DTCFrontEndInterface::SetCFOEventModeRequiredMask),
+							std::vector<std::string>{"Event Mode Required Mask (Default := 0)"},
+							std::vector<std::string>{"Result"},
+							1,
+							"*",
+							"Set the Event Mode Required Mask used for Event Mode filtering. "
+							"A mask bit of 1 requires the corresponding Event Mode bit to also be 1.");
 
-	registerFEMacroFunction("Read Event Mode Required Mask",
+	registerFEMacroFunction("Event Mode Required Mask Read",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
 	                            &DTCFrontEndInterface::ReadCFOEventModeRequiredMask),
 	                        std::vector<std::string>{},
 	                        std::vector<std::string>{"Event Mode Required Mask"},
 	                        1,
 	                        "*",
-	                        "Read back the current DTC Event Mode Required Mask used for "
+	                        "Readback the current DTC Event Mode Required Mask used for "
 	                        "CFO Event Mode filtering.");
 
 	registerFEMacroFunction("Loss-of-Lock Counter Read",
