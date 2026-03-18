@@ -21,6 +21,8 @@ SCRIPT_DIR="$(
 echo "--------------------------"
 echo "Or try to unbind and bind USB JTAG:"
 echo "# source ${SCRIPT_DIR}/find_JTAG_usb_AL9.sh"
+echo "--------------------------"
+echo "Check last user to touch FPGAs: cat /home/mu2ehwdev/.Xil/vivado_user_log.txt | grep <node> #like trk-03"
 
 HOSTNAME="$(hostname -f)"
 

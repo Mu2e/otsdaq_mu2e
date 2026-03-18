@@ -80,6 +80,9 @@ echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t JTAG-0 bitfile:
 echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t JTAG-1 bitfile: ${BITFILE1}"
 echo
 echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1}"
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') ${0} $(whoami) ${HOSTNAME} both-JTAGs bitfile=${BITFILE0} ${BITFILE1}" >> /home/mu2ehwdev/.Xil/vivado_user_log.txt
+
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_both_DTCs.tcl -tclargs ${BITFILE0} ${BITFILE1} 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
     | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
