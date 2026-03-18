@@ -118,8 +118,9 @@ void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
 	for(auto& roc : rocs_)
 	{
 		roc.second->setParentPointers(supervisor, manager);
-		roc.second->thisDTC_       = thisDTC_;
-		roc.second->onDTCReady(); // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
+		roc.second->thisDTC_ = thisDTC_;
+		roc.second
+		    ->onDTCReady();  // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
 	}
 }  // end setParentPointers()
 

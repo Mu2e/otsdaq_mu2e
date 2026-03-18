@@ -235,7 +235,7 @@ class ROCCoreVInterface : public FEVInterface
 		}
 		return thisDTC_;
 	};
-	virtual void onDTCReady() {};  // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
+	virtual void onDTCReady(){};  // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
 
 	// bool         									emulatorMode_; // Deprecated! Use mu2esim in mu2e-pcie-utils
 	bool         emulatedInDTC_ = false;
