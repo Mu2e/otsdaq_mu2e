@@ -116,7 +116,11 @@ void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
 	FEVInterface::setParentPointers(supervisor, manager);
 
 	for(auto& roc : rocs_)
+	{
 		roc.second->setParentPointers(supervisor, manager);
+		roc.second->thisDTC_       = thisDTC_;
+		roc.second->onDTCReady(); // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
+	}
 }  // end setParentPointers()
 
 //==============================================================================
@@ -1071,8 +1075,6 @@ void DTCFrontEndInterface::createROCs(void)
 				bool    emulated   = ((roc_emulated_mask_ >> roc_link_i) & 1);
 				__FE_COUT__ << "roc[" << (int)roc_link_i << "] enabled " << enabled
 				            << " emulated " << emulated << __E__;
-
-				tmpRoc.thisDTC_       = thisDTC_;
 				tmpRoc.emulatedInDTC_ = emulated;
 
 				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
