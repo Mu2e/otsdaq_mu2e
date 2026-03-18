@@ -150,7 +150,7 @@ if [ $opt_no_view -eq 1 ];then
     view_opt="--without-view"
 fi
 
-build_system_script=`find $Base -type f -name setup_spack_build_system_v0.28.sh`
+build_system_script=`find $Base -maxdepth 4 -type f -name setup_spack_build_system_v0.28.sh`
 if [[ "x$build_system_script" == "x" ]];then
   echo "WARNING: setup_spack_build_system_v0.28.sh not found, downloading from https://github.com/art-daq/artdaq-demo"
   cd $Base
