@@ -851,7 +851,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			auto feMacros = roc.second->getMapOfFEMacroFunctions();
 			for(auto& feMacro : feMacros)
 			{
-				__FE_COUT__ << roc.first << "::" << feMacro.first << __E__;
+				__FE_COUTT__ << roc.first << "::" << feMacro.first << __E__;
 
 				if(!allROCsAreSameType)
 				{
@@ -859,15 +859,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::string macroName = "Link" +
 					                        std::to_string(roc.second->getLinkID()) +
 					                        "_" + roc.first + "_" + feMacro.first;
-					__FE_COUTV__(macroName);
+					__FE_COUTTV__(macroName);
 					std::vector<std::string> inputArgs, outputArgs;
 					for(auto& inArg : feMacro.second.namesOfInputArguments_)
 						inputArgs.push_back(inArg);
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
 
-					__FE_COUTV__(StringMacros::vectorToString(inputArgs));
-					__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
 
 					rocFEMacroMap_.emplace(std::make_pair(
 					    macroName, std::make_pair(roc.first, feMacro.first)));
@@ -884,7 +884,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				{
 					//make DTC FEMacro forwarding to ROC FEMacro
 					std::string macroName = "ROC FEMacro - " + feMacro.first;
-					__FE_COUTV__(macroName);
+					__FE_COUTTV__(macroName);
 					std::vector<std::string> inputArgs, outputArgs;
 					//take ROC target as parameter for ROC FE Macros (allow -1 as wildcard for all)
 					inputArgs.push_back(
@@ -897,8 +897,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
 
-					__FE_COUTV__(StringMacros::vectorToString(inputArgs));
-					__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
 
 					rocFEMacroMap_.emplace(std::make_pair(
 					    macroName,
@@ -1059,18 +1059,12 @@ void DTCFrontEndInterface::createROCs(void)
 				    theXDAQContextConfigTree_,
 				    (theConfigurationPath_ + "/LinkToROCGroupTable/" + roc.first));
 
-				// setup parent supervisor of FEVinterface (for backwards compatibility,
-				// left out of constructor)
-				tmpVFE->setParentPointers(parentSupervisor_, parentInterfaceManager_);
-				__FE_COUTV__(parentSupervisor_);
-				__FE_COUTV__(VStateMachine::parentSupervisor_);
-				__FE_COUTV__(tmpVFE->parentSupervisor_);
+				// setup parent supervisor of FEVinterface (for backwards compatibility, left out of constructor), moved to virtual setParentPointers()
 
 				ROCCoreVInterface& tmpRoc = dynamic_cast<ROCCoreVInterface&>(
 				    *tmpVFE);  // dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
 
-				// setup other members of ROCCore (for interface plug-in compatibility,
-				// left out of constructor)
+				// setup other members of ROCCore (for interface plug-in compatibility, left out of constructor)
 
 				uint8_t roc_link_i = static_cast<uint8_t>(tmpRoc.getLinkID());
 				bool    enabled    = ((roc_mask_ >> roc_link_i) & 1);
@@ -4309,11 +4303,10 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 		for(auto& roc : rocChildren)
 		{
-			__FE_COUT__ << "roc uid " << roc.first << __E__;
-			bool enabled = roc.second.getNode("Status").getValue<bool>();
-			__FE_COUT__ << "roc enabled " << enabled << __E__;
-			bool emulated = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
-			__FE_COUT__ << "roc emulated " << emulated << __E__;
+			bool enabled = roc.second.getNode("Status").getValue<bool>();			
+			bool emulated = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();			
+
+			__FE_COUT__ << "roc uid " << roc.first  << (enabled?" enabled":"") << (emulated?" emulated":"") << __E__;
 
 			if(enabled)
 			{

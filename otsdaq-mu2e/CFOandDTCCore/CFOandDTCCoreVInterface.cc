@@ -357,6 +357,7 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 void CFOandDTCCoreVInterface::GetFirmwareVersion(__ARGS__)
 {
 	__SET_ARG_OUT__("Firmware Version Date", getCFOandDTCRegisters()->ReadDesignDate());
+	sleep(10);
 }  // end GetFirmwareVersion()
 
 //========================================================================

@@ -2488,6 +2488,8 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	next_starting_event_window_tag_ = startTag + numberOfEvents;
 	__FE_COUTV__(next_starting_event_window_tag_);
 
+	std::string modeStr = __GET_ARG_IN__("Event Window Mode (Default := 1)", std::string, "1");
+	
 	__SET_ARG_OUT__(
 	    "response",
 	    CompileSetAndLaunchTemplateFixedWidthRunPlan(
@@ -2499,7 +2501,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	                       std::string),
 	        numberOfEvents,
 	        startTag,
-	        __GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
+	        modeStr == "0"? 0 : __GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1), //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
 	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
@@ -2526,6 +2528,8 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
     bool        doNotResetBufferTestCounters)
 {
 	__FE_COUTV__(enable);
+	__FE_COUTV__(eventWindowMode);
+	__FE_COUTV__(initialEventWindowTag);
 
 	if(eventWindowMode == (uint64_t)-1)
 	{
