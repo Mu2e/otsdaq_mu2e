@@ -407,15 +407,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "Set the Event Mode Required Mask used for Event Mode filtering. "
 	    "A mask bit of 1 requires the corresponding Event Mode bit to also be 1.");
 
-	registerFEMacroFunction(
-	    "Read Event Mode Required Mask",
-	    static_cast<FEVInterface::frontEndMacroFunction_t>(
-	        &DTCFrontEndInterface::ReadCFOEventModeRequiredMask),
-	    std::vector<std::string>{},
-	    std::vector<std::string>{"Event Mode Required Mask"},
-	    1,
-	    "*",
-	    "Read back the current DTC Event Mode Required Mask used for CFO Event Mode filtering.");
+	registerFEMacroFunction("Read Event Mode Required Mask",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &DTCFrontEndInterface::ReadCFOEventModeRequiredMask),
+	                        std::vector<std::string>{},
+	                        std::vector<std::string>{"Event Mode Required Mask"},
+	                        1,
+	                        "*",
+	                        "Read back the current DTC Event Mode Required Mask used for "
+	                        "CFO Event Mode filtering.");
 
 	registerFEMacroFunction("Loss-of-Lock Counter Read",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -4303,10 +4303,11 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 		for(auto& roc : rocChildren)
 		{
-			bool enabled = roc.second.getNode("Status").getValue<bool>();			
-			bool emulated = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();			
+			bool enabled  = roc.second.getNode("Status").getValue<bool>();
+			bool emulated = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
 
-			__FE_COUT__ << "roc uid " << roc.first  << (enabled?" enabled":"") << (emulated?" emulated":"") << __E__;
+			__FE_COUT__ << "roc uid " << roc.first << (enabled ? " enabled" : "")
+			            << (emulated ? " emulated" : "") << __E__;
 
 			if(enabled)
 			{
