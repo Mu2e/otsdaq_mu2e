@@ -1060,6 +1060,7 @@ void DTCFrontEndInterface::createROCs(void)
 				    (theConfigurationPath_ + "/LinkToROCGroupTable/" + roc.first));
 
 				// setup parent supervisor of FEVinterface (for backwards compatibility, left out of constructor), moved to virtual setParentPointers()
+				tmpVFE->setParentPointers(parentSupervisor_, parentInterfaceManager_);
 
 				ROCCoreVInterface& tmpRoc = dynamic_cast<ROCCoreVInterface&>(
 				    *tmpVFE);  // dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
