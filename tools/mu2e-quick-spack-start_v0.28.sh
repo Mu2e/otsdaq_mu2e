@@ -150,7 +150,7 @@ if [ $opt_no_view -eq 1 ];then
     view_opt="--without-view"
 fi
 
-build_system_script=`find $Base -type f -name setup_spack_build_system_v0.28.sh`
+build_system_script=`find $Base -maxdepth 4 -type f -name setup_spack_build_system_v0.28.sh`
 if [[ "x$build_system_script" == "x" ]];then
   echo "WARNING: setup_spack_build_system_v0.28.sh not found, downloading from https://github.com/art-daq/artdaq-demo"
   cd $Base
@@ -158,7 +158,7 @@ if [[ "x$build_system_script" == "x" ]];then
   build_system_script=$Base/setup_spack_build_system_v0.28.sh
 fi
 
-echo "fee1e3b2de18c535f9800b66e5007bb0f5cbfe5a *$build_system_script" | sha1sum -c -
+echo "5bfade30fa8b3da95d2f904a17e602f033c326b5 *$build_system_script" | sha1sum -c -
 if [ $? -ne 0 ]; then
   echo "ERROR: setup_spack_build_system_v0.28.sh does not have the expected checksum! Please check Github for updates to this script!"
   exit 1
