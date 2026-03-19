@@ -10,6 +10,8 @@
 #include "TGraph.h"
 #include "TH1.h"
 
+#include <thread>
+
 using namespace ots;
 
 #undef __MF_SUBJECT__
@@ -3944,8 +3946,19 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 
 		FEVInterface::frontEndMacroConstArgs_t inputArgs = inputArgs_inst;
 
-		bool found         = false;
-		bool arrayNotation = false;
+		// Capture per-ROC outputs independently so each ROC macro can run in parallel
+		// and the combined result can still be assembled in a deterministic order.
+		struct RocMacroLaunchResult
+		{
+			DTCLib::DTC_Link_ID                               linkID;
+			ROCCoreVInterface*                                roc;
+			std::vector<ots::FEVInterface::frontEndMacroArg_t> outputArgs;
+			std::string                                       error;
+		};
+
+		// First collect the matching ROCs in map iteration order. That lets the
+		// execution happen concurrently while preserving the original output ordering.
+		std::vector<RocMacroLaunchResult> selectedRocs;
 		for(auto& roc : rocs_)
 		{
 			if(usingRocMask)
@@ -3960,58 +3973,20 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			   (usingRocMask &&  //use ROC mask
 			    ((1 << (int(roc.second->getLinkID()) * 4)) & rocLinkIndexVal)))
 			{
-				if(!found)
-				{
-					//clear output args for CSV output value assembly on first FEMacro run
-					for(auto& argOut : argsOut)
-						if(argOut.first !=
-						   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
-							argOut.second = "";
-				}
 				__FE_COUTV__(rocFEMacroName);
 				__FE_COUTV__(roc.second->getLinkID());
 
-				//for each ROC, append result to argsOut
+				selectedRocs.push_back({roc.second->getLinkID(), roc.second.get(), {}, ""});
 
-				//first create single instance of argsOut structure as outputArgs
-				// Note: removing first output arg, which is ROC link
-				std::vector<ots::FEVInterface::frontEndMacroArg_t> outputArgs_inst;
-				FEVInterface::frontEndMacroArgs_t                  outputArgs =
-				    outputArgs_inst;  //get reference name
 				for(size_t i = 1; i < argsOut.size(); ++i)
-					outputArgs.push_back(make_pair(argsOut[i].first, ""));
-
-				roc.second->runSelfFrontEndMacro(rocFEMacroName, inputArgs, outputArgs);
-
-				//append output args json array [CSV]-style, including for first output arg (ROC link)
-				if(found && !arrayNotation)
-					argsOut[0].second =
-					    "[" + argsOut[0].second;  //add leading bracket for array notation
-				argsOut[0].second +=              //add new value
-				    (found ? ", " : "") + std::to_string(roc.second->getLinkID());
-				__FE_COUTT__ << argsOut[0].first << ": " << argsOut[0].second << __E__;
-				for(size_t i = 1; i < argsOut.size() && i - 1 < outputArgs.size(); ++i)
-				{
-					if(found && !arrayNotation)
-						argsOut[i].second =
-						    "[" +
-						    argsOut[i].second;  //add leading bracket for array notation
-					argsOut[i].second +=        //add new value
-					    (found ? ", " : "") + outputArgs[i - 1].second;
-					__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second
-					             << __E__;
-				}
-
-				if(found)
-					arrayNotation = true;
-				found = true;
+					selectedRocs.back().outputArgs.push_back(make_pair(argsOut[i].first, ""));
 
 				if(!usingRocMask && rocLinkIndex != DTCLib::DTC_Link_ID::DTC_Link_ALL)
 					break;  //done with target ROC
 			}               //end ROC match
 		}                   //end ROC FEMacro launch loop
 
-		if(!found)
+		if(selectedRocs.empty())
 		{
 			__FE_SS__ << "Fatal error - Target ROC or Mask '" << int(rocLinkIndexVal)
 			          << " (0x" << std::hex << rocLinkIndexVal
@@ -4025,11 +4000,85 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			__FE_SS_THROW__;
 		}
 
+		for(auto& argOut : argsOut)
+			if(argOut.first != PLOTLY_PLOT /* defined at FEVinterface.h */) //leave built-in arg as DEFAULT
+				argOut.second = "";
+
+		// Launch one worker thread per selected ROC FE Macro.
+		std::vector<std::thread> launchThreads;
+		launchThreads.reserve(selectedRocs.size());
+		for(auto& selectedRoc : selectedRocs)
+		{
+			launchThreads.emplace_back(
+			    [&inputArgs, &rocFEMacroName, &selectedRoc]() {
+				    try
+				    {
+					    __COUT__ << "ROC FE Macro thread start. rocLink="
+					                 << selectedRoc.linkID << " macro="
+					                 << rocFEMacroName << " threadid="
+					                 << std::this_thread::get_id() << __E__;
+					    selectedRoc.roc->runSelfFrontEndMacro(
+					        rocFEMacroName, inputArgs, selectedRoc.outputArgs);
+					    __COUT__ << "ROC FE Macro thread done. rocLink="
+					                 << selectedRoc.linkID << " macro="
+					                 << rocFEMacroName << " threadid="
+					                 << std::this_thread::get_id() << __E__;
+				    }
+				    catch(const std::exception& e)
+				    {
+					    selectedRoc.error = e.what();
+				    }
+				    catch(...)
+				    {
+					    selectedRoc.error = "Unknown exception while running ROC FE Macro.";
+				    }
+			    });
+		}
+
+		for(auto& launchThread : launchThreads)
+			launchThread.join();
+
+		for(const auto& selectedRoc : selectedRocs)
+			if(!selectedRoc.error.empty())
+			{
+				__FE_SS__ << "ROC FE Macro '" << rocFEMacroName << "' failed for ROC link "
+				          << selectedRoc.linkID << ": " << selectedRoc.error << __E__;
+				__FE_SS_THROW__;
+			}
+
+		// Merge per-ROC outputs after all threads complete, keeping the original
+		// CSV/array formatting expected by the FE Macro response.
+		bool arrayNotation = selectedRocs.size() > 1;
+		bool openedArray   = false;
+		for(size_t rocIndex = 0; rocIndex < selectedRocs.size(); ++rocIndex)
+		{
+			const auto& selectedRoc = selectedRocs[rocIndex];
+			bool        found       = rocIndex != 0;
+
+			if(found && arrayNotation && !openedArray)
+				argsOut[0].second = "[" + argsOut[0].second;
+			argsOut[0].second +=
+			    (found ? ", " : "") + std::to_string(selectedRoc.linkID);
+			__FE_COUTT__ << argsOut[0].first << ": " << argsOut[0].second << __E__;
+
+			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size(); ++i)
+			{
+				if(found && arrayNotation && !openedArray)
+					argsOut[i].second = "[" + argsOut[i].second;
+				argsOut[i].second +=
+				    (found ? ", " : "") + selectedRoc.outputArgs[i - 1].second;
+				__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second << __E__;
+			}
+
+			if(found && arrayNotation)
+				openedArray = true;
+		}
+
 		//finalize array notation for output args
 		if(arrayNotation)
 		{
 			for(auto& argOut : argsOut)
-				if(argOut.first != PLOTLY_PLOT)  //leave built-in arg as DEFAULT
+				if(argOut.first != PLOTLY_PLOT  /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
 					argOut.second += "]";        //add trailing bracket for array notation
 		}
 	}
