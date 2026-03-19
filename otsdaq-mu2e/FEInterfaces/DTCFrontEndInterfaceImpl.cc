@@ -4057,16 +4057,19 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			bool        found       = rocIndex != 0;
 
 			if(found && arrayNotation && !openedArray)
-				argsOut[0].second = "[" + argsOut[0].second;
-			argsOut[0].second += (found ? ", " : "") + std::to_string(selectedRoc.linkID);
+				argsOut[0].second =
+				    "[" + argsOut[0].second;  //add leading bracket for array notation
+			argsOut[0].second +=              //add new value
+			    (found ? ", " : "") + std::to_string(selectedRoc.linkID);
 			__FE_COUTT__ << argsOut[0].first << ": " << argsOut[0].second << __E__;
 
 			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size();
 			    ++i)
 			{
 				if(found && arrayNotation && !openedArray)
-					argsOut[i].second = "[" + argsOut[i].second;
-				argsOut[i].second +=
+					argsOut[i].second =
+					    "[" + argsOut[i].second;  //add leading bracket for array notation
+				argsOut[i].second +=              //add new value
 				    (found ? ", " : "") + selectedRoc.outputArgs[i - 1].second;
 				__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second << __E__;
 			}
