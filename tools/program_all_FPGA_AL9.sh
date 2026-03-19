@@ -66,7 +66,7 @@ if [[ "$DORESET" -eq 0 ]]; then
         exit  #exit is used if script is run
 fi
 
-echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe."
+echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe as ${USER} on ${HOSTNAME}."
 
 if [[ "$NO_OTS_KILL" -eq 1 ]]; then
   echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe without xdaq kill: sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh NOKILL"

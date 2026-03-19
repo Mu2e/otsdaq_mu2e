@@ -48,6 +48,8 @@ echo "JTAG-1 mcs file: ${MCS_FILE1}"
 echo "JTAG-0 target flash: ${FLASH_PART0}"
 echo "JTAG-1 target flash: ${FLASH_PART1}"
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') ${0} $(whoami) ${HOSTNAME} both-JTAGs flash=${MCS_FILE0} ${MCS_FILE0} ${FLASH_PART0} ${FLASH_PART1}" >> /home/mu2ehwdev/.Xil/vivado_user_log.txt
+
 # echo "Loading this mcs file to both DTCs: $1"
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_flash_both_DTCs.tcl -tclargs ${MCS_FILE0} ${FLASH_PART0} ${MCS_FILE1} ${FLASH_PART1} 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \

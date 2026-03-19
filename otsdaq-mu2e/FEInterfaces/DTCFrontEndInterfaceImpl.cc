@@ -110,6 +110,16 @@ DTCFrontEndInterface::~DTCFrontEndInterface(void)
 }  // end destructor()
 
 //==============================================================================
+void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
+                                             FEVInterfacesManager* manager)
+{
+	FEVInterface::setParentPointers(supervisor, manager);
+
+	for(auto& roc : rocs_)
+		roc.second->setParentPointers(supervisor, manager);
+}  // end setParentPointers()
+
+//==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
 	__FE_COUT__ << "Registering DTC FE Macros..." << __E__;
@@ -385,6 +395,27 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	                        1,  // requiredUserPermissions
 	                        "*",
 	                        "Read from the DTC Memory Map.");
+
+	registerFEMacroFunction(
+	    "Event Mode Required Mask Set",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::SetCFOEventModeRequiredMask),
+	    std::vector<std::string>{"Event Mode Required Mask (Default := 0)"},
+	    std::vector<std::string>{"Result"},
+	    1,
+	    "*",
+	    "Set the Event Mode Required Mask used for Event Mode filtering. "
+	    "A mask bit of 1 requires the corresponding Event Mode bit to also be 1.");
+
+	registerFEMacroFunction("Event Mode Required Mask Read",
+	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
+	                            &DTCFrontEndInterface::ReadCFOEventModeRequiredMask),
+	                        std::vector<std::string>{},
+	                        std::vector<std::string>{"Event Mode Required Mask"},
+	                        1,
+	                        "*",
+	                        "Readback the current DTC Event Mode Required Mask used for "
+	                        "CFO Event Mode filtering.");
 
 	registerFEMacroFunction("Loss-of-Lock Counter Read",
 	                        static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -820,7 +851,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 			auto feMacros = roc.second->getMapOfFEMacroFunctions();
 			for(auto& feMacro : feMacros)
 			{
-				__FE_COUT__ << roc.first << "::" << feMacro.first << __E__;
+				__FE_COUTT__ << roc.first << "::" << feMacro.first << __E__;
 
 				if(!allROCsAreSameType)
 				{
@@ -828,15 +859,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					std::string macroName = "Link" +
 					                        std::to_string(roc.second->getLinkID()) +
 					                        "_" + roc.first + "_" + feMacro.first;
-					__FE_COUTV__(macroName);
+					__FE_COUTTV__(macroName);
 					std::vector<std::string> inputArgs, outputArgs;
 					for(auto& inArg : feMacro.second.namesOfInputArguments_)
 						inputArgs.push_back(inArg);
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
 
-					__FE_COUTV__(StringMacros::vectorToString(inputArgs));
-					__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
 
 					rocFEMacroMap_.emplace(std::make_pair(
 					    macroName, std::make_pair(roc.first, feMacro.first)));
@@ -853,7 +884,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 				{
 					//make DTC FEMacro forwarding to ROC FEMacro
 					std::string macroName = "ROC FEMacro - " + feMacro.first;
-					__FE_COUTV__(macroName);
+					__FE_COUTTV__(macroName);
 					std::vector<std::string> inputArgs, outputArgs;
 					//take ROC target as parameter for ROC FE Macros (allow -1 as wildcard for all)
 					inputArgs.push_back(
@@ -866,8 +897,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
 
-					__FE_COUTV__(StringMacros::vectorToString(inputArgs));
-					__FE_COUTV__(StringMacros::vectorToString(outputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
+					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
 
 					rocFEMacroMap_.emplace(std::make_pair(
 					    macroName,
@@ -1014,8 +1045,8 @@ void DTCFrontEndInterface::createROCs(void)
 
 			try
 			{
-				__COUTV__(theXDAQContextConfigTree_.getValueAsString());
-				__COUTV__(
+				__FE_COUTV__(theXDAQContextConfigTree_.getValueAsString());
+				__FE_COUTV__(
 				    roc.second.getNode("ROCInterfacePluginName").getValue<std::string>());
 
 				// Note: FEVInterface makeInterface returns a unique_ptr
@@ -1028,38 +1059,38 @@ void DTCFrontEndInterface::createROCs(void)
 				    theXDAQContextConfigTree_,
 				    (theConfigurationPath_ + "/LinkToROCGroupTable/" + roc.first));
 
-				// setup parent supervisor of FEVinterface (for backwards compatibility,
-				// left out of constructor)
-				tmpVFE->parentSupervisor_ = parentSupervisor_;
+				// setup parent supervisor of FEVinterface (for backwards compatibility, left out of constructor), moved to virtual setParentPointers()
+				tmpVFE->setParentPointers(parentSupervisor_, parentInterfaceManager_);
 
 				ROCCoreVInterface& tmpRoc = dynamic_cast<ROCCoreVInterface&>(
 				    *tmpVFE);  // dynamic_cast<ROCCoreVInterface*>(tmpRoc.get());
 
-				// setup other members of ROCCore (for interface plug-in compatibility,
-				// left out of constructor)
+				// setup other members of ROCCore (for interface plug-in compatibility, left out of constructor)
 
 				uint8_t roc_link_i = static_cast<uint8_t>(tmpRoc.getLinkID());
 				bool    enabled    = ((roc_mask_ >> roc_link_i) & 1);
 				bool    emulated   = ((roc_emulated_mask_ >> roc_link_i) & 1);
 				__FE_COUT__ << "roc[" << (int)roc_link_i << "] enabled " << enabled
 				            << " emulated " << emulated << __E__;
-
-				tmpRoc.thisDTC_       = thisDTC_;
 				tmpRoc.emulatedInDTC_ = emulated;
+				tmpRoc.thisDTC_       = thisDTC_;
+				tmpRoc
+				    .onDTCReady();  // can be overridden by inheriting class to know when thisDTC_ is ready to use (which is after the ROC constructor completes)
 
 				rocs_.emplace(std::pair<std::string, std::unique_ptr<ROCCoreVInterface>>(
 				    roc.first, &tmpRoc));
 				tmpVFE.release();  // release the FEVInterface unique_ptr, so we are left
 				                   // with just one
+				__FE_COUTV__(rocs_.at(roc.first)->parentSupervisor_);
 			}
 			catch(const cet::exception& e)
 			{
-				__SS__ << "Failed to instantiate plugin named '" << roc.first
-				       << "' of type '"
-				       << roc.second.getNode("ROCInterfacePluginName")
-				              .getValue<std::string>()
-				       << "' due to the following error: \n"
-				       << e.what() << __E__;
+				__FE_SS__ << "Failed to instantiate plugin named '" << roc.first
+				          << "' of type '"
+				          << roc.second.getNode("ROCInterfacePluginName")
+				                 .getValue<std::string>()
+				          << "' due to the following error: \n"
+				          << e.what() << __E__;
 				__FE_SS_THROW__;
 			}
 			catch(const std::bad_cast& e)
@@ -2120,8 +2151,6 @@ void DTCFrontEndInterface::halt(void)
 		roc.second->halt();
 	}
 
-	rocs_.clear();
-
 	__FE_COUT__ << "Halted." << __E__;
 
 	// if(device_name_ == "DTC8")
@@ -2418,15 +2447,19 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			               "SetCFOEmulatorFixedWidthEmulation"
 			            << __E__;
 		}
+
+		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
+		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Loopback mode!" << __E__;
-		loopbackTest();
+		// loopbackTest();
+		return;
 	}
 	else
 	{
@@ -2436,7 +2469,6 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		__FE_SS_THROW__;
 	}
 
-	getDTC()->SoftReset();  //reset counters
 	return;
 
 	// /////////////////////////////
@@ -3838,6 +3870,32 @@ void DTCFrontEndInterface::ReadDTC(__ARGS__)
 }  // end ReadDTC()
 
 //========================================================================
+void DTCFrontEndInterface::SetCFOEventModeRequiredMask(__ARGS__)
+{
+	uint32_t eventModeRequiredMask =
+	    __GET_ARG_IN__("Event Mode Required Mask (Default := 0)", uint32_t, 0);
+	__FE_COUTV__(eventModeRequiredMask);
+
+	getDTC()->SetCFOEventModeRequiredMask(eventModeRequiredMask);
+
+	std::stringstream ss;
+	ss << "Set Event Mode Required Mask to 0x" << std::hex << std::setfill('0')
+	   << std::setw(8) << eventModeRequiredMask << ".";
+	__SET_ARG_OUT__("Result", ss.str());
+}  // end SetCFOEventModeRequiredMask()
+
+//========================================================================
+void DTCFrontEndInterface::ReadCFOEventModeRequiredMask(__ARGS__)
+{
+	const uint32_t eventModeRequiredMask = getDTC()->ReadCFOEventModeRequiredMask();
+
+	std::stringstream ss;
+	ss << "Event Mode Required Mask: " << std::dec << eventModeRequiredMask << " (0x"
+	   << std::hex << std::setfill('0') << std::setw(8) << eventModeRequiredMask << ")";
+	__SET_ARG_OUT__("Event Mode Required Mask", ss.str());
+}  // end ReadCFOEventModeRequiredMask()
+
+//========================================================================
 void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 {
 	//	std::string feMacroName = __GET_ARG_IN__("ROC_FEMacroName", std::string);
@@ -4247,11 +4305,11 @@ void DTCFrontEndInterface::DTCInstantiate()
 
 		for(auto& roc : rocChildren)
 		{
-			__FE_COUT__ << "roc uid " << roc.first << __E__;
-			bool enabled = roc.second.getNode("Status").getValue<bool>();
-			__FE_COUT__ << "roc enabled " << enabled << __E__;
+			bool enabled  = roc.second.getNode("Status").getValue<bool>();
 			bool emulated = roc.second.getNode("EmulateInDTCHardware").getValue<bool>();
-			__FE_COUT__ << "roc emulated " << emulated << __E__;
+
+			__FE_COUT__ << "roc uid " << roc.first << (enabled ? " enabled" : "")
+			            << (emulated ? " emulated" : "") << __E__;
 
 			if(enabled)
 			{

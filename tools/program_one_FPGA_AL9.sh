@@ -74,6 +74,8 @@ fi
 echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t JTAG index N: ${1}"
 echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t JTAG-N bitfile: ${2}"
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') ${0} $(whoami) ${HOSTNAME} JTAG=${1} bitfile=${2}" >> /home/mu2ehwdev/.Xil/vivado_user_log.txt
+
 vivado_lab -mode batch -source ${SCRIPT_DIR}/program_one_FPGA.tcl -tclargs $1 $2 2>&1 \
     | sed -E s/\(ERROR.*\)/\\1\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ ERROR!/g \
     | sed s/HIGH/HIGH\ \ \ \ \ \ \<\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\=\ \ \ Look\ here\!\ \(HIGH\ for\ success\ if\ no\ ERROR\ above\ or\ below\)\\\n\\\n/g
