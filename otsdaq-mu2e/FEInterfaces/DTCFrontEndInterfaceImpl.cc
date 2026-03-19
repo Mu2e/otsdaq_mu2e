@@ -3950,10 +3950,10 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		// and the combined result can still be assembled in a deterministic order.
 		struct RocMacroLaunchResult
 		{
-			DTCLib::DTC_Link_ID                               linkID;
-			ROCCoreVInterface*                                roc;
+			DTCLib::DTC_Link_ID                                linkID;
+			ROCCoreVInterface*                                 roc;
 			std::vector<ots::FEVInterface::frontEndMacroArg_t> outputArgs;
-			std::string                                       error;
+			std::string                                        error;
 		};
 
 		// First collect the matching ROCs in map iteration order. That lets the
@@ -3976,10 +3976,12 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 				__FE_COUTV__(rocFEMacroName);
 				__FE_COUTV__(roc.second->getLinkID());
 
-				selectedRocs.push_back({roc.second->getLinkID(), roc.second.get(), {}, ""});
+				selectedRocs.push_back(
+				    {roc.second->getLinkID(), roc.second.get(), {}, ""});
 
 				for(size_t i = 1; i < argsOut.size(); ++i)
-					selectedRocs.back().outputArgs.push_back(make_pair(argsOut[i].first, ""));
+					selectedRocs.back().outputArgs.push_back(
+					    make_pair(argsOut[i].first, ""));
 
 				if(!usingRocMask && rocLinkIndex != DTCLib::DTC_Link_ID::DTC_Link_ALL)
 					break;  //done with target ROC
@@ -4001,7 +4003,8 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		}
 
 		for(auto& argOut : argsOut)
-			if(argOut.first != PLOTLY_PLOT /* defined at FEVinterface.h */) //leave built-in arg as DEFAULT
+			if(argOut.first !=
+			   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
 				argOut.second = "";
 
 		// Launch one worker thread per selected ROC FE Macro.
@@ -4009,30 +4012,27 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		launchThreads.reserve(selectedRocs.size());
 		for(auto& selectedRoc : selectedRocs)
 		{
-			launchThreads.emplace_back(
-			    [&inputArgs, &rocFEMacroName, &selectedRoc]() {
-				    try
-				    {
-					    __COUT__ << "ROC FE Macro thread start. rocLink="
-					                 << selectedRoc.linkID << " macro="
-					                 << rocFEMacroName << " threadid="
-					                 << std::this_thread::get_id() << __E__;
-					    selectedRoc.roc->runSelfFrontEndMacro(
-					        rocFEMacroName, inputArgs, selectedRoc.outputArgs);
-					    __COUT__ << "ROC FE Macro thread done. rocLink="
-					                 << selectedRoc.linkID << " macro="
-					                 << rocFEMacroName << " threadid="
-					                 << std::this_thread::get_id() << __E__;
-				    }
-				    catch(const std::exception& e)
-				    {
-					    selectedRoc.error = e.what();
-				    }
-				    catch(...)
-				    {
-					    selectedRoc.error = "Unknown exception while running ROC FE Macro.";
-				    }
-			    });
+			launchThreads.emplace_back([&inputArgs, &rocFEMacroName, &selectedRoc]() {
+				try
+				{
+					__COUT__ << "ROC FE Macro thread start. rocLink="
+					         << selectedRoc.linkID << " macro=" << rocFEMacroName
+					         << " threadid=" << std::this_thread::get_id() << __E__;
+					selectedRoc.roc->runSelfFrontEndMacro(
+					    rocFEMacroName, inputArgs, selectedRoc.outputArgs);
+					__COUT__ << "ROC FE Macro thread done. rocLink=" << selectedRoc.linkID
+					         << " macro=" << rocFEMacroName
+					         << " threadid=" << std::this_thread::get_id() << __E__;
+				}
+				catch(const std::exception& e)
+				{
+					selectedRoc.error = e.what();
+				}
+				catch(...)
+				{
+					selectedRoc.error = "Unknown exception while running ROC FE Macro.";
+				}
+			});
 		}
 
 		for(auto& launchThread : launchThreads)
@@ -4041,8 +4041,9 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		for(const auto& selectedRoc : selectedRocs)
 			if(!selectedRoc.error.empty())
 			{
-				__FE_SS__ << "ROC FE Macro '" << rocFEMacroName << "' failed for ROC link "
-				          << selectedRoc.linkID << ": " << selectedRoc.error << __E__;
+				__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
+				          << "' failed for ROC link " << selectedRoc.linkID << ": "
+				          << selectedRoc.error << __E__;
 				__FE_SS_THROW__;
 			}
 
@@ -4057,11 +4058,11 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 
 			if(found && arrayNotation && !openedArray)
 				argsOut[0].second = "[" + argsOut[0].second;
-			argsOut[0].second +=
-			    (found ? ", " : "") + std::to_string(selectedRoc.linkID);
+			argsOut[0].second += (found ? ", " : "") + std::to_string(selectedRoc.linkID);
 			__FE_COUTT__ << argsOut[0].first << ": " << argsOut[0].second << __E__;
 
-			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size(); ++i)
+			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size();
+			    ++i)
 			{
 				if(found && arrayNotation && !openedArray)
 					argsOut[i].second = "[" + argsOut[i].second;
@@ -4078,8 +4079,9 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 		if(arrayNotation)
 		{
 			for(auto& argOut : argsOut)
-				if(argOut.first != PLOTLY_PLOT  /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
-					argOut.second += "]";        //add trailing bracket for array notation
+				if(argOut.first !=
+				   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
+					argOut.second += "]";  //add trailing bracket for array notation
 		}
 	}
 	else  //individual target defined by feMacroIt pair
