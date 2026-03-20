@@ -142,7 +142,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	int                         timing_chain_first_substep_     = -1;
 	uint64_t                    next_starting_event_window_tag_ = 0;
-	const std::vector<uint32_t> standardNValues_                = {100, 200, uint32_t(1e3), 2*uint32_t(1e3)};  //, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
+	const std::vector<uint32_t> standardNValues_                = {100, 200, uint32_t(1e3), 2 * uint32_t(1e3)};  //, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
 	const std::map<std::string,
 	               uint16_t>
 	    supportedSubsystems_ = {
@@ -198,21 +198,21 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	/// Shared Run Plan related functions and declarations
 	enum class SharedRunPlanSubsystemModeBit
 	{
-		CRV     = 31,
-		Calo    = 23,
-		Calo_inject    = 16,
-		Tracker = 15,
-		STM     = 37,
-		ExtMon  = 39,
-		HWDev   = 7
+		CRV         = 31,
+		Calo        = 23,
+		Calo_inject = 16,
+		Tracker     = 15,
+		STM         = 37,
+		ExtMon      = 39,
+		HWDev       = 7
 	};
-	size_t sharedRunPlanSize_ = 0; //populated by extractSharedRunPlanEventDuration()
-	void SharedRunPlanStatus(__ARGS__);  ///< Get Event Mode, Tag, Active Subsystems, and running status
-	void SharedRunPlanStart(__ARGS__);
-	void SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
-	void SharedRunPlanSubsystemJoin(__ARGS__);
-	void SharedRunPlanSubsystemSingleShotJoin(__ARGS__);  ///< Join for a single-shot event count using OR_SINGLESHOT opcode
-	void SharedRunPlanSubsystemLeave(__ARGS__);
+	size_t sharedRunPlanSize_ = 0;         //populated by extractSharedRunPlanEventDuration()
+	void   SharedRunPlanStatus(__ARGS__);  ///< Get Event Mode, Tag, Active Subsystems, and running status
+	void   SharedRunPlanStart(__ARGS__);
+	void   SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
+	void   SharedRunPlanSubsystemJoin(__ARGS__);
+	void   SharedRunPlanSubsystemSingleShotJoin(__ARGS__);  ///< Join for a single-shot event count using OR_SINGLESHOT opcode
+	void   SharedRunPlanSubsystemLeave(__ARGS__);
 
 	void BufferTest_detached(__ARGS__);
 
