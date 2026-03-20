@@ -72,17 +72,20 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 
 	__FE_COUTV__(StringMacros::systemVariables_["ActiveStateMachine"]["name"]);
 	__FE_COUTV__(StringMacros::systemVariables_["ActiveStateMachine"]["runAlias"]);
-	try
+	if(0) //keep as System Variable example
 	{
-		//test an extra field (e.g. to use System Vars in tree, add value '${OTS.ActiveStateMachine.name}')
-		std::string test = getSelfNode().getNode("DefaultColumnName").getValue();
-		__FE_COUT__ << getSelfNode().getNode("DefaultColumnName").getValueAsString()
-		            << " ==> " << test << __E__;
+		try
+		{
+			//test an extra field (e.g. to use System Vars in tree, add value '${OTS.ActiveStateMachine.name}')
+			std::string test = getSelfNode().getNode("DefaultColumnName").getValue();
+			__FE_COUT__ << getSelfNode().getNode("DefaultColumnName").getValueAsString()
+						<< " ==> " << test << __E__;
+		}
+		catch(const std::runtime_error& e)
+		{
+			__FE_COUTV__(e.what());
+		}  //ignore
 	}
-	catch(const std::runtime_error& e)
-	{
-		__FE_COUTV__(e.what());
-	}  //ignore
 
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
 	                 << " talking to /dev/mu2e" << deviceIndex_ << __E__;
@@ -1553,6 +1556,8 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 //==============================================================================
 void CFOFrontEndInterface::halt(void)
 {
+	//Note: some global operating modes may do nothing for halt (to not interfere with others when transitioning the FSM)!
+	
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO halt for HW Dev mode." << __E__;
@@ -1560,7 +1565,7 @@ void CFOFrontEndInterface::halt(void)
 	}
 
 	__FE_COUT__ << "HALT: CFO status" << __E__;
-
+	
 	if(operatingMode_ != CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -2270,6 +2275,9 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 	__FE_COUT__ << "Reset CFO Run Plan" << __E__;
 
 	halt();
+	//halt may disable run plan, but let's make sure:
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	// thisCFO_->ResetCFORunPlan();
 	thisCFO_->SoftReset();
 
@@ -2279,7 +2287,7 @@ void CFOFrontEndInterface::ResetRunplan(__ARGS__)
 void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 {
 	// to view output file with 8-byte rows
-	// hexdump -e '"%08_ax " 1/8 "%016x "' -e '"\n"' srcs/mu2e-pcie-utils/cfoInterfaceLib/Commands.bin
+	// hexdump -v -e '"%08_ax " 1/8 "%016x "' -e '"\n"' srcs/mu2e-pcie-utils/cfoInterfaceLib/Commands.bin
 
 	__FE_COUT__ << "Compile CFO Run Plan" << __E__;
 
@@ -2406,6 +2414,10 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 	std::stringstream outSs;
 
 	halt();
+	//halt may disable run plan, but let's make sure:
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
 	if(!enable)  //do not need to apply parameters if disabling
 	{
 		outSs << "Halted CFO Emulator!" << __E__;
@@ -2597,7 +2609,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 	std::stringstream outSs;
 
 	halt();
-	//halt may disable run plan modes, but let's make sure:
+	//halt may disable run plan, but let's make sure:
 	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
@@ -3227,6 +3239,10 @@ void CFOFrontEndInterface::CFOReset(__ARGS__)
 	next_starting_event_window_tag_ = 0;  //reset
 
 	halt();
+	//halt may disable run plan, but let's make sure:
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
 	getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */,
 	                                                   false /* alsoResetJA */);
 	sleep(1);
@@ -3245,7 +3261,13 @@ void CFOFrontEndInterface::CFOReset(__ARGS__)
 }  //end CFOReset()
 
 //========================================================================
-void CFOFrontEndInterface::CFOHalt(__ARGS__) { halt(); }
+void CFOFrontEndInterface::CFOHalt(__ARGS__) 
+{ 
+	halt(); 
+	//halt may disable run plan, but let's make sure:
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+} //end CFOHalt()
 
 //========================================================================
 void CFOFrontEndInterface::GetCounters(__ARGS__)
@@ -3401,18 +3423,21 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 
 	uint64_t eventDurationInClocks = extractSharedRunPlanEventDuration();
 	result << "\n"
-	       << divider << "Event Window Duration:                                "
+	       << divider 
+		   << "Event Window Duration:                      "
 	       << eventDurationInClocks << " 0x" << std::hex << eventDurationInClocks
 	       << std::dec << " clocks (" << (eventDurationInClocks * FPGAClock_ / 1000.0)
 	       << " us)" << __E__;
 	if(eventDurationInClocks > 0)
 		result << "\n"
-		       << divider << "Event Window Rate:                                    "
+		       << divider 
+			<< "Event Window Rate:                         "
 		       << (1000.0 / (eventDurationInClocks * FPGAClock_ / 1000.0)) << " kHz"
 		       << __E__;
 	else
 		result << "\n"
-		       << divider << "Event Window Rate:                                    0"
+		       << divider 
+			<< "Event Window Rate:                         0"
 		       << __E__;
 
 	result << "\n" << divider << thisCFO_->FormatRunPlanCurrentMode() << __E__;
@@ -3431,6 +3456,134 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 	val = thisCFO_->ReadTransmitPacketCount(CFOLib::CFO_Link_0);
 	result << "Event Window Markers Transmitted (16-bits): " << std::dec << val << " (0x"
 	       << std::hex << val << ")" << __E__;
+
+	//now readback current run plan
+	std::map<uint32_t /* address */,
+	         std::pair<uint32_t /* expected */, uint32_t /* actual */>>
+	    mismatches;
+	std::string binaryContents;
+	binaryContents.resize(sharedRunPlanSize_);
+	for(size_t i = 0; i < sharedRunPlanSize_; ++i) binaryContents[i] = (char)0xFF;
+	thisCFO_->CompareRunPlanData(
+		binaryContents, 0 /* address */, mismatches);
+	
+	result << "\n\n" << divider << "Run Plan Readback:\n";
+	
+	const std::string LOOP = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at((uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::LOOP);
+	const std::string DO_LOOP = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at((uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::DO_LOOP);
+	const std::string MARKER = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at((uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::MARKER);
+	const std::string OR_MODE_BITS = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at((uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::OR_MODE_BITS);
+	const std::string OR_SINGLESHOT_MODE_BITS = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at((uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::OR_SINGLESHOT_MODE_BITS);
+	const std::string AND_MODE_BITS = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at((uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::AND_MODE_BITS);
+
+	//============================
+	/// lambda function to create a comment for the bits set by OR_MODE_BITS and OR_SINGLESHOT_MODE_BITS instructions
+	auto formatSetBitsComment = [this](uint64_t data48) {
+		const uint64_t all48 = 0xFFFFFFFFFFFFULL;
+		if(data48 == all48)
+			return std::string("all bits");
+		if(data48 == 0)
+			return std::string("no bits");
+
+		std::map<uint16_t, std::string> subsystemBitName = {
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::CRV), "CRV"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo), "Calo"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo_inject), "Calo Inject"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Tracker), "Tracker"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::STM), "STM"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::ExtMon), "ExtMon"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::HWDev), "HWDev"}};
+
+		std::vector<std::string> bitDescriptions;
+		for(uint16_t b = 0; b < 48; ++b)
+			if((data48 >> b) & 0x1ULL)
+			{
+				auto it = subsystemBitName.find(b);
+				if(it != subsystemBitName.end())
+					bitDescriptions.push_back(std::to_string(b) + "(" + it->second + ")");
+				else
+					bitDescriptions.push_back(std::to_string(b));
+			}
+
+		if(bitDescriptions.size() == 1)
+			return std::string("bit-") + bitDescriptions.front();
+
+		std::stringstream bitsSs;
+		bitsSs << "bits-";
+		for(size_t i = 0; i < bitDescriptions.size(); ++i)
+		{
+			std::string entry = bitDescriptions[i];
+			bitsSs << (i ? "," : "") << entry;
+		}
+		return bitsSs.str();
+	}; //end lambda formatSetBitsComment()
+	
+	uint32_t expectedAddress = 0;	
+	std::stringstream loDataSs;
+	uint32_t loDataWord = 0;
+	std::string tabStr = "";
+	int markerCnt = 0;
+	for(const auto& mismatch : mismatches)
+	{
+		if(expectedAddress % 2 == 1) //groups of two words per address
+			result << "\n" << "Line #" << std::dec << std::setfill(' ') << std::setw(4) << mismatch.first/2
+			   << ":" << tabStr << "     0x"; 
+		
+		while(mismatch.first > expectedAddress) //pad with all F's (since not a mismatch)
+		{
+			if(expectedAddress % 2 == 0) //groups of two words per address
+			{
+				loDataSs.str(""); //clear for new line
+				loDataWord = 0xFFFFFFFF;
+				loDataSs << std::hex << std::setfill('0') << std::setw(8)
+				   << 0xFFFFFFFF << std::dec << " ";
+			}
+			else // should be impossible to have opcode 0xFF!
+				result << std::hex << std::setfill('0') << std::setw(8)
+					<< 0xFFFFFFFF << std::dec << " " << loDataSs.str() << "   // INVALID";
+
+			++expectedAddress;	
+			if(expectedAddress % 2 == 1) //groups of two words per address (hi then lo)
+			result << "\n" << "Line #" << std::dec << std::setfill(' ') << std::setw(4) << mismatch.first/2
+			   << ":" << tabStr << "     0x";
+		}
+
+		if(expectedAddress % 2 == 0) //groups of two words per address
+		{
+			loDataSs.str(""); //clear for new line
+			loDataWord = mismatch.second.second;
+			loDataSs << std::hex << std::setfill('0') << std::setw(8)
+			   << mismatch.second.second << std::dec << " ";
+		}
+		else
+		{
+			std::string op = "INVALID";
+			if(CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.find(mismatch.second.second>>24) != CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.end())
+				op = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(mismatch.second.second>>24);
+			
+			if (op == LOOP)
+				tabStr += '\t';
+			else if (op == DO_LOOP && tabStr.length())
+				tabStr = tabStr.substr(0, tabStr.length() - 1);
+			result << std::hex << std::setfill('0') << std::setw(8)
+			   << mismatch.second.second << std::dec << " " << loDataSs.str() << "   // " << op;
+			if(op == OR_MODE_BITS || op == OR_SINGLESHOT_MODE_BITS)
+			{
+				uint64_t data48 = (uint64_t(mismatch.second.second & 0xFFFF) << 32) | loDataWord;
+				result << " sets " << formatSetBitsComment(data48) << "";
+			}
+			else if(op == AND_MODE_BITS)
+			{
+				uint64_t data48 = (uint64_t(mismatch.second.second & 0xFFFF) << 32) | loDataWord;
+				result << " clears " << formatSetBitsComment(~(data48 |  (uint64_t(0xFFFF) << 48))) << "";
+			}
+			if (op == MARKER)
+				result << " -----> #" << ++markerCnt;   
+		}
+
+		expectedAddress = mismatch.first + 1;
+	} //end run plan readback loop
+	result << __E__; //closing new line
 
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanStatus()
@@ -3528,6 +3681,9 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	__FE_COUTV__(nPartRatio);
 
 	halt();
+	//halt may disable run plan, but let's make sure:
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_
 	    ->SoftReset();  //to reset event window tag starting point handling and mode = 0
 
@@ -3549,7 +3705,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		std::vector<uint64_t> emptyAndMasks(standardNValues_[0] + N_coarse_sz,
 		                                    0xFFFFFFFFFFFFULL);  //keep-all
 		std::vector<uint64_t> emptyOrMasks(
-		    2 * N_coarse_sz + 1 + standardNValues_[0], 0x0ULL);  //set-nothing
+		    N_coarse_sz + standardNValues_[0], 0x0ULL);  //set-nothing
 
 		//part-1: write the initial all-on mode plan
 		generateSharedRunPlanWithPeriodicModeOn(result,
@@ -3568,18 +3724,19 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 			CFOLib::CFO_Compiler compiler;
 			result << "\n\nRun Plan part-1:\n"
 			       << compiler.processFile(inFileName, outFileName);
-
+			__FE_COUT__ << result.str();
 			result << SetRunplan(outFileName);
 			thisCFO_->EnableEmbeddedClockMarker();
 			thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 			thisCFO_->EnableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			__FE_COUT__ << "Shared run plan part-1 started." << __E__;
 		}
 
 		//part-2: merge calo inject bit on top of part-1 (still fresh start, so empty masks are valid)
 		generateSharedRunPlanWithPeriodicModeOn(result,
 		                                        inFileName,
 		                                        initEventTag,
-		                                        16,          //start bit
+		                                        (uint16_t)SharedRunPlanSubsystemModeBit::Calo_inject,          //start bit
 		                                        1,           //bit count
 		                                        1,           //calo inject bit ON
 		                                        mPartRatio,  // duty M in M:N on
@@ -3593,8 +3750,10 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		result << "\n\nRun Plan part-2:\n"
 		       << compiler.processFile(inFileName, outFileName);
 		result << SetRunplan(outFileName);
+		__FE_COUT__ << "Shared run plan part-2 started." << __E__;
 	}  //end generate and set Run Plan
 
+	__FE_COUT_INFO__ << "Shared run plan started." << __E__;
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanStart()
 
@@ -3602,6 +3761,9 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 void CFOFrontEndInterface::SharedRunPlanStop(__ARGS__)
 {
 	halt();
+	//halt may disable run plan, but let's make sure:
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 	std::stringstream result;
 	result << "Done" << __E__;
@@ -3757,9 +3919,15 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
-		       << compiler.processFile(inFileName, outFileName);
+		       << compiler.processFile(inFileName, outFileName);		
 		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
+
+	result << "\n\nHere is the Run Plan Status after the single-shot join:\n";
+	std::vector<FEVInterface::frontEndMacroArg_t> statusArgsIn, statusArgsOut;
+	statusArgsOut.push_back(std::make_pair("Result", ""));
+	runSelfFrontEndMacro("Shared Run Plan Get Status", statusArgsIn, statusArgsOut);
+	result << statusArgsOut[0].second;
 
 	result << "\n\nSubsystem '" << subsystem << "' successfully joined with M:N ratio "
 	       << std::dec << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
@@ -3861,24 +4029,28 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	    (((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
 
 	const size_t N_coarse = standardNValues_.size() - 1;
+	std::vector<uint64_t> singleShotMasks(N_coarse + 1, 0ULL);
 
-	// Determine which loop level to use and set OR_SINGLESHOT + AND masks accordingly.
+	// Determine which loop level to use and set AND masks to clear after the count.
+	// OR_SINGLESHOT is transient and always 0 (already fired/cleared).
+	// We only need to control the AND mask to clear the bit after the desired count.
 	// Check coarse levels first (outermost = standardNValues_[2], then standardNValues_[1]).
 	bool usedCoarse = false;
-	for(size_t l = standardNValues_.size() - 1; l > 0; --l)
+	for(size_t l = N_coarse; l > 0; --l)
 	{
 		if(singleShotCount == standardNValues_[l])
 		{
 			size_t coarseIdx = standardNValues_.size() - 1 - l;  //0 for outermost
-			// Set OR_SINGLESHOT for this coarse loop (first op inside loop body)
-			existingOrMasks[coarseIdx * 2 + 1] |= setBitsMask48;
+			singleShotMasks[coarseIdx] = setBitsMask48;
+
 			// Set coarse end-AND to clear this bit after the loop completes
 			size_t coarseEndAndIdx = standardNValues_[0] + (l - 1);
 			existingAndMasks[coarseEndAndIdx] &= ~setBitsMask48;
 
 			result << "Using coarse loop (N=" << standardNValues_[l]
-			       << "): OR_SINGLESHOT at coarse orMasks[" << (coarseIdx * 2 + 1)
-			       << "] and clearing AND at andMasks[" << coarseEndAndIdx << "]" << __E__;
+			       << "): OR_SINGLESHOT at coarse singleShotMasks[" << coarseIdx
+			       << "], cleared by AND at andMasks["
+			       << coarseEndAndIdx << "]" << __E__;
 			usedCoarse = true;
 			break;
 		}
@@ -3898,14 +4070,13 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			__FE_SS_THROW__;
 		}
 
-		// Set fine OR_SINGLESHOT (fires once at start of the fine loop)
-		existingOrMasks[2 * N_coarse] |= setBitsMask48;
-		// Set fine AND at position `singleShotCount` to clear the bit
+		// Set fine AND at position `singleShotCount` to clear the bit after firing
 		existingAndMasks[singleShotCount] &= ~setBitsMask48;
+		singleShotMasks[N_coarse] = setBitsMask48;
 
-		result << "Using fine loop: OR_SINGLESHOT at fine orMasks[" << (2 * N_coarse)
-		       << "] and clearing AND at fine andMasks[" << singleShotCount << "] (AND mask #"
-		       << (singleShotCount + 1) << ")" << __E__;
+		result << "Using fine loop: OR_SINGLESHOT at fine singleShotMasks[" << N_coarse
+		       << "], cleared by AND at fine andMasks[" << singleShotCount << "]"
+		       << __E__;
 	}
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
@@ -3917,8 +4088,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	       << __E__;
 	result << __E__;  //space for readability
 
-	//generate Run Plan using the modified masks; pass offBits_bitCount=0 so
-	// generateSharedRunPlanWithPeriodicModeOff emits existingMasks unchanged
+	//generate Run Plan using modified AND/OR masks plus explicit OR_SINGLESHOT masks
 	{
 		result << "\n\nSubsystem '" << subsystem
 		       << "' single-shot joining for " << singleShotCount
@@ -3928,21 +4098,33 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		       << std::hex << onBits_value << std::dec << __E__;
 		result << __E__;  //space for readability
 
-		generateSharedRunPlanWithPeriodicModeOff(
+		generateSharedRunPlanWithPeriodicModeOn(
 		    result,
 		    inFileName,
-		    0,                                          //offBits_startBit (unused, bitCount=0)
-		    0,                                          //offBits_bitCount=0 → emit masks as-is
-		    std::to_string(eventDurationInClocks),      //eventDurationInClocks
-		    "clocks",                                   //eventDurationSplitUnits
+		    0,                                     //initEventTag ignored once run plan is looping
+		    0,                                     //onBits_startBit unused (onBits_value = 0)
+		    1,                                     //onBits_bitCount unused (onBits_value = 0)
+		    0,                                     //onBits_value = 0 (no periodic OR additions)
+		    1,                                     //mPartRatio (no-op because onBits_value = 0)
+		    1,                                     //nPartRatio (no-op because onBits_value = 0)
+		    std::to_string(eventDurationInClocks),
+		    "clocks",
 		    existingAndMasks,
-		    existingOrMasks);
+		    existingOrMasks,
+		    singleShotMasks);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan for single-shot join:\n"
 		       << compiler.processFile(inFileName, outFileName);
 		result << SetRunplan(outFileName);
+		
 	}  //end generate and set Run Plan
+
+	result << "\n\nHere is the Run Plan Status after the single-shot join:\n";
+	std::vector<FEVInterface::frontEndMacroArg_t> statusArgsIn, statusArgsOut;
+	statusArgsOut.push_back(std::make_pair("Result", ""));
+	runSelfFrontEndMacro("Shared Run Plan Get Status", statusArgsIn, statusArgsOut);
+	result << statusArgsOut[0].second;
 
 	result << "\n\nSubsystem '" << subsystem
 	       << "' successfully single-shot joined for " << std::dec << singleShotCount
@@ -4263,7 +4445,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
     const std::string&           eventDurationSplitNumber,
     const std::string&           eventDurationSplitUnits,
     const std::vector<uint64_t>& existingAndMasks,
-    const std::vector<uint64_t>& existingOrMasks)
+	const std::vector<uint64_t>& existingOrMasks,
+	const std::vector<uint64_t>& singleShotMasks)
 {
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
@@ -4273,13 +4456,21 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 
 	const size_t N_coarse = standardNValues_.size() - 1;
 	if(existingAndMasks.size() != standardNValues_[0] + N_coarse ||
-	   existingOrMasks.size() != 2 * N_coarse + 1 + standardNValues_[0])
+	   existingOrMasks.size() != N_coarse + standardNValues_[0])
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
 		          << standardNValues_[0] + N_coarse << " and "
-		          << 2 * N_coarse + 1 + standardNValues_[0]
+		          << N_coarse + standardNValues_[0]
 		          << " respectively. Got andMasks=" << existingAndMasks.size()
 		          << " orMasks=" << existingOrMasks.size() << __E__;
+		__FE_SS_THROW__;
+	}
+
+	if(singleShotMasks.size() && singleShotMasks.size() != N_coarse + 1)
+	{
+		__FE_SS__ << "singleShotMasks must have size " << (N_coarse + 1)
+		          << " when provided. Got singleShotMasks=" << singleShotMasks.size()
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
@@ -4299,8 +4490,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		// but allow 1 in 200, 500, 1000, etc. coarse granularity
 
 		//coarse granularity loops
-		//  existingOrMasks[2*coarseIdx] hold the existing coarse OR masks (before LOOP)
-		//  existingOrMasks[2*coarseIdx+1] hold the existing coarse OR_SINGLESHOT masks (first op in LOOP body)
+		//  existingOrMasks[coarseIdx] hold the existing coarse OR masks (before LOOP)
+		//  OR_SINGLESHOT_MODE_BITS values are transient and always 0 (already fired/cleared)
 		//  existingAndMasks[standardNValues_[0]+(l-1)] hold the existing coarse end-AND masks (after DO_LOOP)
 		for(size_t l = standardNValues_.size() - 1; l > 0; --l)
 		{
@@ -4308,9 +4499,14 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			uint32_t loopN     = standardNValues_[l] / standardNValues_[l - 1];
 			__FE_COUTTV__(loopN);
 
+			uint64_t coarseSingleShot =
+			    singleShotMasks.size() ? singleShotMasks[coarseIdx] : 0ULL;
+			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
+			    << coarseSingleShot << std::dec << __E__;
+
 			uint64_t new_coarse_or =
 			    (standardNValues_[l] == nPartRatio) ? setBitsMask48 : 0ULL;
-			uint64_t merged_coarse_or = existingOrMasks[coarseIdx * 2] | new_coarse_or;
+			uint64_t merged_coarse_or = existingOrMasks[coarseIdx] | new_coarse_or;
 			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
 			    << merged_coarse_or << std::dec << __E__;
 
@@ -4318,24 +4514,19 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			             << __E__;
 			OUT << "LOOP " << loopN << __E__;
 			PUSHTAB;
+		} //end coarse granularity loops
 
-			// OR_SINGLESHOT is the first operation inside each coarse loop body
-			uint64_t merged_coarse_ss = existingOrMasks[coarseIdx * 2 + 1];
-			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-			    << std::hex << merged_coarse_ss << std::dec << __E__;
-		}
 
-		// OR_SINGLESHOT is the first operation of the fine loop (before all fine iterations)
-		//  existingOrMasks[2*N_coarse] holds the fine OR_SINGLESHOT mask
-		uint64_t merged_fine_ss = existingOrMasks[2 * N_coarse];
+		//now fine granularity loop ------
+
+		uint64_t fineSingleShot = singleShotMasks.size() ? singleShotMasks[N_coarse] : 0ULL;
 		OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-		    << merged_fine_ss << std::dec << __E__;
-
-		//fine granularity loop
-		//  existingAndMasks[i] and existingOrMasks[2*N_coarse+1+i] are the existing fine masks
+		    << fineSingleShot << std::dec << __E__;
+		
+		//  existingAndMasks[i] and existingOrMasks[N_coarse+i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
-			size_t fineIdx = 2 * N_coarse + 1 + i;
+			size_t fineIdx = N_coarse + i;
 
 			//AND: clear this subsystem's bits during OFF positions; merge with existing mask.
 			// sub-fine (nPartRatio < standardNValues_[0], factor of it): repeating M:N pattern, clear when position within period >= M
@@ -4426,11 +4617,11 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 	// other subsystems' bits. When empty (e.g. internal dummy call), use legacy behavior.
 	const bool useMasks = !existingAndMasks.empty() || !existingOrMasks.empty();
 	if(useMasks && (existingAndMasks.size() != standardNValues_[0] + N_coarse ||
-	                existingOrMasks.size() != 2 * N_coarse + 1 + standardNValues_[0]))
+	                existingOrMasks.size() != N_coarse + standardNValues_[0]))
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
 		          << standardNValues_[0] + N_coarse << " and "
-		          << 2 * N_coarse + 1 + standardNValues_[0]
+		          << N_coarse + standardNValues_[0]
 		          << " respectively. Got andMasks=" << existingAndMasks.size()
 		          << " orMasks=" << existingOrMasks.size() << __E__;
 		__FE_SS_THROW__;
@@ -4453,8 +4644,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 		// but allow 1 in 200, 500, 1000, etc. coarse granularity
 
 		//coarse granularity loops
-		//  existingOrMasks[2*coarseIdx] hold the existing coarse OR masks (before LOOP)
-		//  existingOrMasks[2*coarseIdx+1] hold the existing coarse OR_SINGLESHOT masks (first op in LOOP body)
+		//  existingOrMasks[coarseIdx] hold the existing coarse OR masks (before LOOP)
+		//  OR_SINGLESHOT_MODE_BITS values are transient and always 0 (already fired/cleared)
 		//  existingAndMasks[standardNValues_[0]+(l-1)] hold the existing coarse end-AND masks (after DO_LOOP)
 		for(size_t l = standardNValues_.size() - 1; l > 0; --l)
 		{
@@ -4462,11 +4653,13 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 			uint32_t loopN     = standardNValues_[l] / standardNValues_[l - 1];
 			__FE_COUTTV__(loopN);
 
+			// OR_SINGLESHOT is transient in hardware; always cleared. Emit 0x0.
+			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0" << __E__;
+
 			if(useMasks)
 			{
 				// Keep existing coarse OR bits, but remove the leaving subsystem's bits
-				uint64_t merged_coarse_or =
-				    existingOrMasks[coarseIdx * 2] & ~clearBitsMask48;
+				uint64_t merged_coarse_or = existingOrMasks[coarseIdx] & ~clearBitsMask48;
 				OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
 				    << merged_coarse_or << std::dec << __E__;
 			}
@@ -4480,44 +4673,18 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 			             << __E__;
 			OUT << "LOOP " << loopN << __E__;
 			PUSHTAB;
-
-			// OR_SINGLESHOT is the first operation inside each coarse loop body
-			if(useMasks)
-			{
-				// Remove the leaving subsystem's OR_SINGLESHOT bits
-				uint64_t merged_coarse_ss =
-				    existingOrMasks[coarseIdx * 2 + 1] & ~clearBitsMask48;
-				OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-				    << std::hex << merged_coarse_ss << std::dec << __E__;
-			}
-			else
-			{
-				OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0"
-				    << __E__;
-			}
 		}
 
-		// OR_SINGLESHOT is the first operation of the fine loop (before all fine iterations)
-		//  existingOrMasks[2*N_coarse] holds the fine OR_SINGLESHOT mask
-		if(useMasks)
-		{
-			uint64_t merged_fine_ss = existingOrMasks[2 * N_coarse] & ~clearBitsMask48;
-			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-			    << std::hex << merged_fine_ss << std::dec << __E__;
-		}
-		else
-		{
-			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0"
-			    << __E__;
-		}
+		// OR_SINGLESHOT is transient in hardware; always cleared. Emit 0x0.
+		OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0" << __E__;
 
 		//fine granularity loop
-		//  existingAndMasks[i] and existingOrMasks[2*N_coarse+1+i] are the existing fine masks
+		//  existingAndMasks[i] and existingOrMasks[N_coarse+i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
 			if(useMasks)
 			{
-				size_t fineIdx = 2 * N_coarse + 1 + i;
+				size_t fineIdx = N_coarse + i;
 
 				// AND: clear the leaving subsystem's bits for all positions; merge with existing mask
 				uint64_t new_and    = 0xFFFFFFFFFFFFULL & ~clearBitsMask48;
@@ -4652,6 +4819,7 @@ try
 			std::rewind(fp);
 			std::fread(&binaryContents[0], 1, binaryContents.size(), fp);
 			std::fclose(fp);
+			sharedRunPlanSize_ = binaryContents.size();
 		}  //end load dummy plan data
 
 		thisCFO_->CompareRunPlanData(
@@ -4742,8 +4910,8 @@ try
 	__FE_COUTV__(eventDurationInClocks);
 
 	// Verify AND/OR mask vectors populated by CompareRunPlanData have the expected size.
-	// Expected: N_coarse coarse-OR slots + N_coarse coarse-OR_SINGLESHOT slots +
-	//           1 fine-OR_SINGLESHOT slot + standardNValues_[0] fine-loop AND+OR slots.
+	// Expected: N_coarse coarse-OR slots + standardNValues_[0] fine-loop AND+OR slots.
+	// Note: OR_SINGLESHOT values are NOT extracted (assumed always 0).
 	if(andMasks || orMasks)
 	{
 		const uint32_t N_coarse = standardNValues_.size() - 1;
@@ -4755,10 +4923,10 @@ try
 			__FE_SS_THROW__;
 		}
 
-		if(orMasks && orMasks->get().size() != 2 * N_coarse + 1 + standardNValues_[0])
+		if(orMasks && orMasks->get().size() != N_coarse + standardNValues_[0])
 		{
 			__FE_SS__ << "Internal error: extracted mask vector size mismatch. "
-			          << "Expected " << 2 * N_coarse + 1 + standardNValues_[0]
+			          << "Expected " << (N_coarse + standardNValues_[0])
 			          << ", got orMasks=" << orMasks->get().size() << __E__;
 			__FE_SS_THROW__;
 		}
@@ -4778,7 +4946,7 @@ catch(const std::runtime_error& e)
 	             "Start.'\n\nHere was the error:\n"
 	          << e.what() << __E__;
 	__FE_SS_THROW__;
-}
+} //end extractSharedRunPlanEventDuration() catch
 
 //========================================================================
 void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
@@ -4945,7 +5113,7 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 		      << std::string(__ENV__("OTSDAQ_DATA")) + "/macroOutput_*" << __E__;
 		outSs << "\n"
 		      << "To view binary data do "
-		         "hexdump -e '\"%08_ax \" 7/8 \"%016x \"' -e '\"\\n\"' "
+		         "hexdump -v -e '\"%08_ax \" 7/8 \"%016x \"' -e '\"\\n\"' "
 		      << std::string(__ENV__("OTSDAQ_DATA")) << "/macroOutput_*.bin" << __E__;
 	}
 	// outSs << ostr.str();
