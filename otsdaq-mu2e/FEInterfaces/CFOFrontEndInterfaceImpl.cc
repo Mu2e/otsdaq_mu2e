@@ -350,6 +350,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 							"Custom Mode Bit Value (Default = 0)",
 							// "Run Type (Supercycle Emulation = 1, Fixed-width Windows = 0) (Default = Fixed-width Windows)",
 							"Duty Cycle (% or M:N on:event ratio, Default = 100%)",
+							"Event Offset in Loop (Default = 0)",
 						},  // namesOfInputArgs
 						std::vector<std::string>{"Result"},
 						1,
@@ -3730,6 +3731,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		                                        initEventMode,  //init bits ON
 		                                        1,              // duty M in M:N on
 		                                        1,              // duty N in M:N on
+		                                        0,              //eventOffsetInLoop
 		                                        eventDurationSplitNumber,
 		                                        eventDurationSplitUnits,
 		                                        emptyAndMasks,
@@ -3756,6 +3758,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		    1,                                                     //calo inject bit ON
 		    mPartRatio,                                            // duty M in M:N on
 		    nPartRatio,                                            // duty N in M:N on
+		    0,                                                     //eventOffsetInLoop
 		    eventDurationSplitNumber,
 		    eventDurationSplitUnits,
 		    emptyAndMasks,
@@ -3804,6 +3807,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	// std::string runType = __GET_ARG_IN__("Run Type (Supercycle Emulation = 1, Fixed-width Windows = 0) (Default = Fixed-width Windows)",std::string,"Fixed-width Windows");
 	std::string dutyCycle = __GET_ARG_IN__(
 	    "Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
+	uint32_t eventOffsetInLoop =
+	    __GET_ARG_IN__("Event Offset in Loop (Default = 0)", uint32_t);
 
 	std::stringstream result;
 	result << "\nAdding subsystem '" << subsystem << "' to the Shared Run Plan with " <<
@@ -3837,6 +3842,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	// }
 
 	__FE_COUTV__(dutyCycle);
+	__FE_COUTV__(eventOffsetInLoop);
 	uint32_t mPartRatio, nPartRatio;
 	if(dutyCycle.size() && dutyCycle[dutyCycle.size() - 1] == '%')
 	{
@@ -3915,7 +3921,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		result << "\n\nSubsystem '" << subsystem << "' joining with M:N ratio "
 		       << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
 		       << "\n\tonBits_startBit = " << onBits_startBit
-		       << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
+		       << "\n\tonBits_bitCount = " << onBits_bitCount
+		       << "\n\teventOffsetInLoop = " << eventOffsetInLoop
+		       << "\n\tonBits_value = 0x"
 		       << std::hex << onBits_value << std::dec << __E__;
 		result << __E__;  //space for readability
 		generateSharedRunPlanWithPeriodicModeOn(
@@ -3927,6 +3935,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		    onBits_value,     //calo inject bit ON
 		    mPartRatio,       // duty M in M:N on
 		    nPartRatio,       // duty N in M:N on
+		    eventOffsetInLoop,
 		    std::to_string(eventDurationInClocks),  //eventDurationInClocks,
 		    "clocks",                               //eventDurationSplitUnits
 		    existingAndMasks,
@@ -3947,7 +3956,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	result << "\n\nSubsystem '" << subsystem << "' successfully joined with M:N ratio "
 	       << std::dec << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
 	       << "\n\tonBits_startBit = " << onBits_startBit
-	       << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
+	       << "\n\tonBits_bitCount = " << onBits_bitCount
+	       << "\n\teventOffsetInLoop = " << eventOffsetInLoop
+	       << "\n\tonBits_value = 0x"
 	       << std::hex << onBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
@@ -4047,6 +4058,14 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	std::vector<uint64_t> singleShotMasks(N_coarse + 1, 0ULL);
 
 	// Determine which loop level to use and set AND masks to clear after the count.
+	// First, restore the target bit in ALL existing AND mask positions back to 1
+	// (pass-through / no-clear), so that a repeated SingleShotJoin does not
+	// accumulate stale clearing positions from a prior call.
+	// This mirrors what SharedRunPlanSubsystemJoin does via the generator, which
+	// recomputes every AND mask position for the target bit from scratch.
+	for(auto& mask : existingAndMasks)
+		mask |= setBitsMask48;
+
 	// OR_SINGLESHOT is transient and always 0 (already fired/cleared).
 	// We only need to control the AND mask to clear the bit after the desired count.
 	// Check coarse levels first (outermost = standardNValues_[2], then standardNValues_[1]).
@@ -4119,6 +4138,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		    0,  //onBits_value = 0 (no periodic OR additions)
 		    1,  //mPartRatio (no-op because onBits_value = 0)
 		    1,  //nPartRatio (no-op because onBits_value = 0)
+		    0,  //eventOffsetInLoop (no-op because onBits_value = 0)
 		    std::to_string(eventDurationInClocks),
 		    "clocks",
 		    existingAndMasks,
@@ -4453,6 +4473,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
     const uint64_t               onBits_value,
     uint32_t                     mPartRatio,
     uint32_t                     nPartRatio,
+	uint32_t                     eventOffsetInLoop,
     const std::string&           eventDurationSplitNumber,
     const std::string&           eventDurationSplitUnits,
     const std::vector<uint64_t>& existingAndMasks,
@@ -4461,6 +4482,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 {
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
+	__FE_COUTV__(eventOffsetInLoop);
 	mnFixRatio(logResult, mPartRatio, nPartRatio);
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
@@ -4538,15 +4560,25 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
 			size_t fineIdx = N_coarse + i;
+			// Shift the fine-loop phase by eventOffsetInLoop so that "ON window" starts at
+			// i = eventOffsetInLoop (mod 100). This phase is then used by both decisions:
+			//  - shouldSet  => finePhase100 <  M (OR applies during ON portion)
+			//  - shouldClear=> finePhase100 >= M (AND clears during OFF portion)
+			uint32_t finePhase100 =
+			    (i + standardNValues_[0] - (eventOffsetInLoop % standardNValues_[0])) %
+			    standardNValues_[0];
+			uint32_t subFineOffset = nPartRatio ? (eventOffsetInLoop % nPartRatio) : 0;
+			uint32_t subFinePhase =
+			    nPartRatio ? ((i + nPartRatio - subFineOffset) % nPartRatio) : 0;
 
 			//AND: clear this subsystem's bits during OFF positions; merge with existing mask.
 			// sub-fine (nPartRatio < standardNValues_[0], factor of it): repeating M:N pattern, clear when position within period >= M
-			// fine      (nPartRatio == standardNValues_[0])             : clear once at transition i >= M
+			// fine      (nPartRatio == standardNValues_[0])             : clear when offset-adjusted phase >= M
 			// coarse    (nPartRatio > standardNValues_[0])              : clear every i > 0 (bit was set by outer LOOP's OR)
 			bool shouldClear =
 			    (nPartRatio > standardNValues_[0] && i > 0) ||
-			    (nPartRatio == standardNValues_[0] && i >= mPartRatio) ||
-			    (nPartRatio < standardNValues_[0] && (i % nPartRatio) >= mPartRatio);
+			    (nPartRatio == standardNValues_[0] && finePhase100 >= mPartRatio) ||
+			    (nPartRatio < standardNValues_[0] && subFinePhase >= mPartRatio);
 			uint64_t new_and =
 			    shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
 			uint64_t merged_and = existingAndMasks[i] & new_and;
@@ -4555,11 +4587,11 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			    << __E__;  // bit positions with 1 keep, 0 remove
 
 			//OR: set this subsystem's bits during ON positions; merge with existing mask.
-			// fine:     first M of N events
-			// sub-fine: repeating M:N pattern
+			// fine:     first M of N events, with optional phase offset
+			// sub-fine: repeating M:N pattern, with optional phase offset
 			bool shouldSet =
-			    (nPartRatio == standardNValues_[0] && i < mPartRatio) ||
-			    (nPartRatio < standardNValues_[0] && (i % nPartRatio) < mPartRatio);
+			    (nPartRatio == standardNValues_[0] && finePhase100 < mPartRatio) ||
+			    (nPartRatio < standardNValues_[0] && subFinePhase < mPartRatio);
 			uint64_t new_or    = shouldSet ? setBitsMask48 : 0ULL;
 			uint64_t merged_or = existingOrMasks[fineIdx] | new_or;
 			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex

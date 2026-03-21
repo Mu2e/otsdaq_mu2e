@@ -125,6 +125,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	                                             const uint64_t               onBits_value,
 	                                             uint32_t                     mPartRatio,
 	                                             uint32_t                     nPartRatio,
+	                                             uint32_t                     eventOffsetInLoop,
 	                                             const std::string&           eventDurationSplitNumber,
 	                                             const std::string&           eventDurationSplitUnits,
 	                                             const std::vector<uint64_t>& existingAndMasks,
@@ -206,13 +207,13 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 		ExtMon      = 39,
 		HWDev       = 7
 	};
-	size_t sharedRunPlanSize_ = 0;         //populated by extractSharedRunPlanEventDuration()
-	void   SharedRunPlanStatus(__ARGS__);  ///< Get Event Mode, Tag, Active Subsystems, and running status
-	void   SharedRunPlanStart(__ARGS__);
-	void   SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
-	void   SharedRunPlanSubsystemJoin(__ARGS__);
-	void   SharedRunPlanSubsystemSingleShotJoin(__ARGS__);  ///< Join for a single-shot event count using OR_SINGLESHOT opcode
-	void   SharedRunPlanSubsystemLeave(__ARGS__);
+	size_t sharedRunPlanSize_ = 0;  ///< populated by extractSharedRunPlanEventDuration()
+	void SharedRunPlanStatus(__ARGS__);  ///< Get Event Mode, Tag, Active Subsystems, and running status
+	void SharedRunPlanStart(__ARGS__);
+	void SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
+	void SharedRunPlanSubsystemJoin(__ARGS__);
+	void SharedRunPlanSubsystemSingleShotJoin(__ARGS__);  ///< Join for a single-shot event count using OR_SINGLESHOT opcode
+	void SharedRunPlanSubsystemLeave(__ARGS__);
 
 	void BufferTest_detached(__ARGS__);
 
