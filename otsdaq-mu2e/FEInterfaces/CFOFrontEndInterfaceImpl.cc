@@ -3923,8 +3923,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		       << "\n\tonBits_startBit = " << onBits_startBit
 		       << "\n\tonBits_bitCount = " << onBits_bitCount
 		       << "\n\teventOffsetInLoop = " << eventOffsetInLoop
-		       << "\n\tonBits_value = 0x"
-		       << std::hex << onBits_value << std::dec << __E__;
+		       << "\n\tonBits_value = 0x" << std::hex << onBits_value << std::dec
+		       << __E__;
 		result << __E__;  //space for readability
 		generateSharedRunPlanWithPeriodicModeOn(
 		    result,
@@ -3957,8 +3957,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	       << std::dec << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
 	       << "\n\tonBits_startBit = " << onBits_startBit
 	       << "\n\tonBits_bitCount = " << onBits_bitCount
-	       << "\n\teventOffsetInLoop = " << eventOffsetInLoop
-	       << "\n\tonBits_value = 0x"
+	       << "\n\teventOffsetInLoop = " << eventOffsetInLoop << "\n\tonBits_value = 0x"
 	       << std::hex << onBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
@@ -4473,7 +4472,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
     const uint64_t               onBits_value,
     uint32_t                     mPartRatio,
     uint32_t                     nPartRatio,
-	uint32_t                     eventOffsetInLoop,
+    uint32_t                     eventOffsetInLoop,
     const std::string&           eventDurationSplitNumber,
     const std::string&           eventDurationSplitUnits,
     const std::vector<uint64_t>& existingAndMasks,
