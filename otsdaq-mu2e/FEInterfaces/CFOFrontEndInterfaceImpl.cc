@@ -419,18 +419,11 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						"once in hardware, so the specified subsystem bit(s) are set for exactly "
 						"the requested count of events and then permanently cleared by the "
 						"corresponding AND mask.<br><br>"
-						"<b>Single-shot Event Count</b> can be:<br>"
-						"<ul>"
-						"<li>1 to " + std::to_string(standardNValues_[0] - 1) +
-							": uses the fine loop OR_SINGLESHOT; the subsystem bit is set once "
-							"at the start of the fine loop, then cleared by AND mask #(count+1).</li>"
-						"<li>" + std::to_string(standardNValues_[1]) +
-							": uses the innermost coarse loop OR_SINGLESHOT; bit is cleared by "
-							"AND at end of that coarse loop.</li>"
-						"<li>" + std::to_string(standardNValues_[2]) +
-							": uses the outermost coarse loop OR_SINGLESHOT; bit is cleared by "
-							"AND at end of that coarse loop.</li>"
-						"</ul><br>"
+						"<b>Single-shot Event Count</b> can be any count but will be built out of batches of " +
+								std::to_string(standardNValues_[0]) +
+								"/" + allCoareLoopValues + ".<br><br>"
+						"For example, if 143 events are requested you will get a batch of 100 and 43 (each batch managed by software)."
+						"<br><br>"
 						"Here are the corresponding <b>Subsystem Mode Bits</b> from docdb 4914:"
 						"<br><TAB>"
 						"<br>Tracker := bit " + std::to_string(static_cast<int>(SharedRunPlanSubsystemModeBit::Tracker)) +
