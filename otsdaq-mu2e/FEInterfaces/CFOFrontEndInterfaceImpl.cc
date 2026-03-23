@@ -4034,7 +4034,11 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 /// set for exactly the requested number of events and then permanently cleared
 /// by the corresponding AND mask.
 ///
-/// Single-shot Event Count:
+/// Single-shot Event Count is constructed from batches of fine and coarse loop counts:
+///   the requested count is decomposed into one fine-loop batch (at most standardNValues_[1st]
+///   events) and zero or more coarse-loop batches (each a multiple of standardNValues_[1st]),
+///   matching the nesting structure of the Shared Run Plan loop hierarchy.
+///
 ///   1 .. standardNValues_[1st]       : fine-loop OR_SINGLESHOT (count == standardNValues_[1st]
 ///                                      clears at the dedicated end-of-fine-loop AND slot)
 ///   standardNValues_[2nd..Nth]       : coarse loop OR_SINGLESHOT + coarse end-AND
