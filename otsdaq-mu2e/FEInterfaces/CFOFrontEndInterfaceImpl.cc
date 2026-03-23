@@ -391,11 +391,11 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						"</TAB>"
 		);  // requiredUserPermissions
 
-		std::string allCoareLoopValues = "";
+		std::string allCoarseLoopValues = "";
 		for(size_t i = 1; i < standardNValues_.size(); ++i)
 		{
-			allCoareLoopValues += std::to_string(standardNValues_[i]);
-			if(i != standardNValues_.size() - 1) allCoareLoopValues += "/";
+			allCoarseLoopValues += std::to_string(standardNValues_[i]);
+			if(i != standardNValues_.size() - 1) allCoarseLoopValues += "/";
 		}
 		registerFEMacroFunction(
 			"Shared Run Plan Single-shot Join",
@@ -408,7 +408,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 							"Custom Mode Bit Value (Default = 0)",
 							"Single-shot Event Count (Any count allowed, executed in chunks of 1-" +
 								std::to_string(standardNValues_[0]) +
-								"/" + allCoareLoopValues + ")",
+								"/" + allCoarseLoopValues + ")",
 						},  // namesOfInputArgs
 						std::vector<std::string>{"Result"}, // namesOfOutputArgs
 						1,
@@ -421,7 +421,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						"corresponding AND mask.<br><br>"
 						"<b>Single-shot Event Count</b> can be any count but will be built out of batches of " +
 								std::to_string(standardNValues_[0]) +
-								"/" + allCoareLoopValues + ".<br><br>"
+								"/" + allCoarseLoopValues + ".<br><br>"
 						"For example, if 143 events are requested you will get a batch of 100 and 43 (each batch managed by software)."
 						"<br><br>"
 						"Here are the corresponding <b>Subsystem Mode Bits</b> from docdb 4914:"
