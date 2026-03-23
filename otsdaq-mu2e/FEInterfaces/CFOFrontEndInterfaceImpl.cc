@@ -5169,7 +5169,7 @@ try
 
 			potentialEventDurationInClocks |= uint64_t(mismatch.second.second & 0xFFFF)
 			                                  << 32;  // actual hi 16-bits from CFO
-			__FE_COUT__ << "potentialEventDurationInClocks = "
+			__FE_COUTT__ << "potentialEventDurationInClocks = "
 			            << potentialEventDurationInClocks
 			            << " Address: " << mismatch.first
 			            << " Line #: " << mismatch.first / 2 + 1 << std::hex
