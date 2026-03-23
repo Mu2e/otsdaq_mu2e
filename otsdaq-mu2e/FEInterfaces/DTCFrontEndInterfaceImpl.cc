@@ -5905,6 +5905,9 @@ try
 }  //end detechedBufferTestThread()
 catch(...)
 {
+	__COUT_ERR__ << "Exception caught in detechedBufferTestThread()." << __E__;
+	threadStruct->running_ = false;
+
 	std::stringstream errSs;
 	errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
 	if(threadStruct->thisDTC_)
@@ -5920,7 +5923,6 @@ catch(...)
 		threadStruct->fp_ = nullptr;
 	}
 
-	threadStruct->running_ = false;
 	try
 	{
 		throw;
@@ -6073,7 +6075,10 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			bufferTestThreadStruct_->fp_ = nullptr;
 		}
 
-		outSs << "Detached Buffer Test thread exited. " << __E__;
+		if(!bufferTestThreadStruct_->running_)
+			outSs << "Detached Buffer Test thread exited. " << __E__;
+		else
+			outSs << "Detached Buffer Test thread is stuck running. " << __E__;
 		outSs << "Reading final status..." << __E__;
 		try
 		{

@@ -130,7 +130,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	                                             const std::string&           eventDurationSplitUnits,
 	                                             const std::vector<uint64_t>& existingAndMasks,
 	                                             const std::vector<uint64_t>& existingOrMasks,
-	                                             const std::vector<uint64_t>& singleShotMasks = {});
+	                                             const std::vector<uint64_t>& singleShotMasks = {},
+	                                             const bool                   applyPeriodicOrMasks = true);
 	void generateSharedRunPlanWithPeriodicModeOff(std::stringstream&           logResult,
 	                                              std::string&                 genFilename,
 	                                              const uint16_t               offBits_startBit,
@@ -172,6 +173,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void WriteCFO(__ARGS__);
 	void ReadCFO(__ARGS__);
+
+	void GetCFOCounters(__ARGS__);
 
 	void                     SuperOrchestrationStart(__ARGS__);
 	void                     SuperOrchestrationEnd(__ARGS__);
