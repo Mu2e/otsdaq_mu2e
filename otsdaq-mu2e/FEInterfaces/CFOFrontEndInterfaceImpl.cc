@@ -4002,7 +4002,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
-	result << "\n\nHere is the Run Plan Status after the single-shot join:\n";
+	result << "\n\nHere is the Run Plan Status after the join:\n";
 	std::vector<FEVInterface::frontEndMacroArg_t> statusArgsIn, statusArgsOut;
 	statusArgsOut.push_back(std::make_pair("Result", ""));
 	runSelfFrontEndMacro("Shared Run Plan Get Status", statusArgsIn, statusArgsOut);
