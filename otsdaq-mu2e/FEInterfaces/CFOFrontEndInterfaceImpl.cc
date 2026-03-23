@@ -4147,7 +4147,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	}
 
 	//========================================================================
-	/// local lamda function configureSingleShotChunk
+	/// local lambda function configureSingleShotChunk
 	auto configureSingleShotChunk = [&](uint32_t               chunkCount,
 	                                    std::vector<uint64_t>& chunkAndMasks,
 	                                    std::vector<uint64_t>& chunkSingleShotMasks,
