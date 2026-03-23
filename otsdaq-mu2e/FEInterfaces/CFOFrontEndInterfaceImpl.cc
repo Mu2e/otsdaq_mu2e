@@ -4035,10 +4035,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 /// by the corresponding AND mask.
 ///
 /// Single-shot Event Count:
-///   1 .. standardNValues_[0]    : fine-loop OR_SINGLESHOT (count == standardNValues_[0]
-///                                 clears at the dedicated end-of-fine-loop AND slot)
-///   standardNValues_[1]         : innermost coarse loop OR_SINGLESHOT + coarse end-AND
-///   standardNValues_[2]         : outermost coarse loop OR_SINGLESHOT + coarse end-AND
+///   1 .. standardNValues_[1st]       : fine-loop OR_SINGLESHOT (count == standardNValues_[1st]
+///                                      clears at the dedicated end-of-fine-loop AND slot)
+///   standardNValues_[2nd..Nth]       : coarse loop OR_SINGLESHOT + coarse end-AND
+///                                      for each entry n=2..N (N = standardNValues_.size())
 void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 {
 	if(!(thisCFO_->ReadBeamOnMode() || thisCFO_->ReadBeamOffMode()))
