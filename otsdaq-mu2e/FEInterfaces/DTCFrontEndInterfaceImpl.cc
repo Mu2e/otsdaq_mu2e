@@ -5299,13 +5299,16 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 		     << std::hex << std::setw(4) << std::setfill('0')
 		     << subevent->GetEventWindowTag().GetEventWindowTag(true) << ")";
 		__COUTT__ << ostr.str();
-		if(threadStruct->mismatchedEventTagJumps_.size() < 100) //else too many, stop recording
+		if(threadStruct->mismatchedEventTagJumps_.size() <
+		   100)  //else too many, stop recording
 			threadStruct->mismatchedEventTagJumps_.push_back(
-				std::make_pair<uint64_t, uint64_t>(
-					threadStruct->nextEventWindowTag_,
-					subevent->GetEventWindowTag().GetEventWindowTag(true)));
+			    std::make_pair<uint64_t, uint64_t>(
+			        threadStruct->nextEventWindowTag_,
+			        subevent->GetEventWindowTag().GetEventWindowTag(true)));
 		else
-			__COUTT__ << "Too many mismatches (" << threadStruct->mismatchedEventTagJumps_.size() << "), not recording this one." << __E__;
+			__COUTT__ << "Too many mismatches ("
+			          << threadStruct->mismatchedEventTagJumps_.size()
+			          << "), not recording this one." << __E__;
 
 		if(threadStruct->activeMatch_)
 		{
