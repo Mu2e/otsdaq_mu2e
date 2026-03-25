@@ -403,6 +403,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						&CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin),  // feMacroFunction
 						std::vector<std::string>{
 							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+							"Duty Cycle (% or M:N on:event ratio, Default = 100%)",
 							"Custom Mode Bit Position (0-47, Default = 0)",
 							"Custom Mode Bit Count (1-48, Default = 48)",
 							"Custom Mode Bit Value (Default = 0)",
@@ -419,6 +420,12 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						"once in hardware, so the specified subsystem bit(s) are set for exactly "
 						"the requested count of events and then permanently cleared by the "
 						"corresponding AND mask.<br><br>"
+						"<b>Duty Cycle</b> supports the same syntax as <b>Shared Run Plan Join</b>: "
+						"either a percentage or M:N ratio. For single-shot, however, the resolved N in any "
+						"M:N ratio is limited to N &le; " + std::to_string(standardNValues_[0]) +
+						", so very coarse ratios (e.g., 1:200) are not allowed. This determines how many "
+						"events are set per fine-loop pass before software batches additional passes."
+						"<br><br>"
 						"<b>Single-shot Event Count</b> can be any count but will be built out of batches of " +
 								std::to_string(standardNValues_[0]) +
 								"/" + allCoarseLoopValues + ".<br><br>"
@@ -3823,10 +3830,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	    __GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
 	                   std::string,
 	                   "Custom");
-
-	// std::string runType = __GET_ARG_IN__("Run Type (Supercycle Emulation = 1, Fixed-width Windows = 0) (Default = Fixed-width Windows)",std::string,"Fixed-width Windows");
 	std::string dutyCycle = __GET_ARG_IN__(
 	    "Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
+
+	// std::string runType = __GET_ARG_IN__("Run Type (Supercycle Emulation = 1, Fixed-width Windows = 0) (Default = Fixed-width Windows)",std::string,"Fixed-width Windows");
 	uint32_t eventOffsetInLoop =
 	    __GET_ARG_IN__("Event Offset in Loop (Default = 0)", uint32_t);
 
@@ -3836,6 +3843,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	    "dutyCycle '" << dutyCycle << "'..." << __E__;
 
 	__FE_COUTV__(subsystem);
+	__FE_COUTV__(dutyCycle);
 	if(supportedSubsystems_.find(subsystem) == supportedSubsystems_.end())
 	{
 		__FE_SS__ << "Specified subsystem '" << subsystem
@@ -4050,6 +4058,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	    __GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
 	                   std::string,
 	                   "Custom");
+	std::string dutyCycle = __GET_ARG_IN__(
+	    "Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
 
 	std::stringstream result;
 	result << "\nSingle-shot joining subsystem '" << subsystem
@@ -4112,95 +4122,232 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	    extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
+	// Parse and resolve single-shot duty cycle using the same syntax/logic as periodic join.
+	uint32_t mPartRatio = 0, nPartRatio = 0;
+	if(dutyCycle.size() && dutyCycle[dutyCycle.size() - 1] == '%')
+	{
+		mPartRatio = std::strtoul(dutyCycle.c_str(), nullptr, 10);
+		nPartRatio = 100;
+
+		if(mPartRatio > 100)
+		{
+			__FE_SS__ << "Illegal duty cycle percentage '" << dutyCycle
+			          << "'.. expecting a percentage less than or equal to 100%."
+			          << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+	else  //assume in M:N ratio format
+	{
+		std::vector<std::string> dutyCycleSplit =
+		    StringMacros::getVectorFromString(dutyCycle, {':'});
+		__FE_COUTV__(StringMacros::vectorToString(dutyCycleSplit));
+		if(dutyCycleSplit.size() != 2)
+		{
+			__FE_SS__ << "Illegal duty cycle ratio '" << dutyCycle
+			          << "'.. expecting M:N format, e.g. 1:200." << __E__;
+			__FE_SS_THROW__;
+		}
+		mPartRatio = std::strtoul(dutyCycleSplit[0].c_str(), nullptr, 10);
+		nPartRatio = std::strtoul(dutyCycleSplit[1].c_str(), nullptr, 10);
+	}
+
+	mnFixRatio(result, mPartRatio, nPartRatio);
+	__FE_COUT__ << "Resolved single-shot duty cycle M:N = " << mPartRatio << ":"
+	            << nPartRatio << __E__;
+
+	if(nPartRatio > standardNValues_[0])
+	{
+		__FE_SS__ << "Single-shot duty cycle currently supports resolved N <= "
+		          << standardNValues_[0] << ". Resolved M:N = " << mPartRatio << ":"
+		          << nPartRatio << " from input '" << dutyCycle << "'." << __E__;
+		__FE_SS_THROW__;
+	}
+
 	//48-bit pattern of bits this subsystem sets when active
 	const uint64_t setBitsMask48 =
 	    (onBits_value << onBits_startBit) &
 	    (((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
 
-	const size_t          N_coarse = standardNValues_.size() - 1;
-	std::vector<uint32_t> chunkCounts;
-	for(uint32_t remainingCount = singleShotCount; remainingCount > 0;)
+	const size_t N_coarse = standardNValues_.size() - 1;
+
+	// Build fine-loop ON-slot map from resolved duty cycle (eventOffsetInLoop = 0).
+	std::vector<size_t> onFineSlots;
+	onFineSlots.reserve(standardNValues_[0]);
+	for(size_t i = 0; i < standardNValues_[0]; ++i)
 	{
-		bool usedCoarseChunk = false;
-		for(size_t l = N_coarse; l > 0; --l)
-		{
-			if(standardNValues_[l] <= remainingCount)
+		const uint32_t finePhase100 = i;
+		const uint32_t subFinePhase = nPartRatio ? (i % nPartRatio) : 0;
+		bool           shouldSet =
+		    (nPartRatio == standardNValues_[0] && finePhase100 < mPartRatio) ||
+		    (nPartRatio < standardNValues_[0] && subFinePhase < mPartRatio);
+		if(shouldSet)
+			onFineSlots.push_back(i);
+	}
+
+	if(onFineSlots.empty())
+	{
+		__FE_SS__ << "Resolved duty cycle M:N = " << mPartRatio << ":" << nPartRatio
+		          << " produced zero active fine-loop slots for single-shot join."
+		          << __E__;
+		__FE_SS_THROW__;
+	}
+
+	const uint32_t activePerFinePass = static_cast<uint32_t>(onFineSlots.size());
+	const bool     isFullDutyCycle   = (mPartRatio == nPartRatio);
+
+	// Build available coarse batch sizes (from largest to smallest, excluding fine loop size).
+	// Track both event count and coarse OR_SINGLESHOT mask index for each size.
+	std::vector<uint32_t> coarseBatchSizes;
+	std::vector<int32_t>  coarseBatchMaskIndices;
+	for(size_t i = standardNValues_.size() - 1; i > 0; --i)
+	{
+		coarseBatchSizes.push_back(standardNValues_[i]);
+		coarseBatchMaskIndices.push_back(
+		    static_cast<int32_t>(standardNValues_.size() - 1 - i));
+	}
+
+	// Decompose the requested count into chunks.
+	// For duty < 100%, only fine chunks are allowed so the requested duty is respected.
+	// For full duty, coarse chunks are allowed and chosen greedily largest-first.
+	std::vector<uint32_t> chunkCounts;
+	// For each chunk: -1 means fine chunk; >=0 is coarse OR_SINGLESHOT mask index.
+	std::vector<int32_t> chunkCoarseMaskIndices;
+	uint32_t             remainingCount = singleShotCount;
+
+	while(remainingCount > 0)
+	{
+		uint32_t chunkCount          = remainingCount;  // default: use entire remainder
+		bool     isCoarse            = false;
+		int32_t  coarseMaskIndexUsed = -1;
+
+		// Try to find a coarse batch size that fits (full duty only).
+		if(isFullDutyCycle)
+			for(size_t i = 0; i < coarseBatchSizes.size(); ++i)
 			{
-				chunkCounts.push_back(standardNValues_[l]);
-				remainingCount -= standardNValues_[l];
-				usedCoarseChunk = true;
-				break;
+				uint32_t coarseSize = coarseBatchSizes[i];
+				if(coarseSize <= remainingCount)
+				{
+					chunkCount          = coarseSize;
+					isCoarse            = true;
+					coarseMaskIndexUsed = coarseBatchMaskIndices[i];
+					break;
+				}
 			}
+
+		// If no coarse batch fits and remainder > activePerFinePass, use active fine batch
+		if(!isCoarse && chunkCount > activePerFinePass)
+		{
+			chunkCount = activePerFinePass;
 		}
 
-		if(usedCoarseChunk)
-			continue;
-
-		uint32_t fineChunk = std::min<uint32_t>(remainingCount, standardNValues_[0]);
-		chunkCounts.push_back(fineChunk);
-		remainingCount -= fineChunk;
+		// Final chunk (remainder) uses duty-filtered fine slots
+		chunkCounts.push_back(chunkCount);
+		chunkCoarseMaskIndices.push_back(isCoarse ? coarseMaskIndexUsed : -1);
+		remainingCount -= chunkCount;
 	}
 
 	if(chunkCounts.size() > 1)
 	{
-		result << "Requested single-shot count " << singleShotCount
-		       << " will be executed in " << chunkCounts.size() << " chunks: ";
+		result << "Requested single-shot count " << singleShotCount << " with duty "
+		       << mPartRatio << ":" << nPartRatio << " will be executed in "
+		       << chunkCounts.size() << " chunks: ";
 		for(size_t i = 0; i < chunkCounts.size(); ++i)
-			result << (i ? ", " : "") << chunkCounts[i];
+			result << (i ? ", " : "") << chunkCounts[i]
+			       << (chunkCoarseMaskIndices[i] >= 0 ? "(coarse)" : "(fine)");
 		result << __E__;
 	}
+	if(!isFullDutyCycle)
+		result
+		    << "Duty is below 100%; single-shot chunking is constrained to fine batches "
+		    << "to preserve duty-cycle semantics." << __E__;
 
 	//========================================================================
 	/// local lambda function configureSingleShotChunk
-	auto configureSingleShotChunk = [&](uint32_t               chunkCount,
+	auto configureSingleShotChunk = [&](uint32_t               chunkIndex,
+	                                    uint32_t               chunkCount,
 	                                    std::vector<uint64_t>& chunkAndMasks,
 	                                    std::vector<uint64_t>& chunkSingleShotMasks,
 	                                    std::stringstream&     chunkLog) {
 		chunkAndMasks = existingAndMasks;
-		chunkSingleShotMasks.assign(N_coarse + 1, 0ULL);
+		chunkSingleShotMasks.assign(N_coarse + standardNValues_[0], 0ULL);
 
-		// Restore the target bit in all AND masks before selecting the one clear point
-		// for this chunk. This avoids stale clear positions from any previous launch.
-		for(auto& mask : chunkAndMasks)
-			mask |= setBitsMask48;
-
-		for(size_t l = N_coarse; l > 0; --l)
+		if(chunkIndex >= chunkCoarseMaskIndices.size())
 		{
-			if(chunkCount == standardNValues_[l])
-			{
-				size_t coarseIdx = standardNValues_.size() - 1 - l;  //0 for outermost
-				chunkSingleShotMasks[coarseIdx] = setBitsMask48;
-
-				// Clear this bit once the matching coarse loop completes.
-				size_t coarseEndAndIdx = standardNValues_[0] + 1 + (l - 1);
-				chunkAndMasks[coarseEndAndIdx] &= ~setBitsMask48;
-
-				chunkLog << "Using coarse loop chunk N=" << standardNValues_[l]
-				         << ": OR_SINGLESHOT at coarse singleShotMasks[" << coarseIdx
-				         << "], cleared by AND at andMasks[" << coarseEndAndIdx << "]"
-				         << __E__;
-				return;
-			}
-		}
-
-		if(chunkCount < 1 || chunkCount > standardNValues_[0])
-		{
-			__FE_SS__ << "Internal error: unsupported single-shot chunk count "
-			          << chunkCount << "." << __E__;
+			__FE_SS__ << "Internal error: invalid single-shot chunk index " << chunkIndex
+			          << " (chunkCoarseMaskIndices size=" << chunkCoarseMaskIndices.size()
+			          << ")." << __E__;
 			__FE_SS_THROW__;
 		}
 
-		// Fine chunk: for 1..99, clear at fine position `chunkCount`; for 100,
-		// clear at the dedicated end-of-fine-loop AND slot.
-		size_t fineClearAndIdx =
-		    (chunkCount == standardNValues_[0]) ? standardNValues_[0] : chunkCount;
-		chunkAndMasks[fineClearAndIdx] &= ~setBitsMask48;
-		chunkSingleShotMasks[N_coarse] = setBitsMask48;
+		const int32_t coarseMaskIndex = chunkCoarseMaskIndices[chunkIndex];
+		if(coarseMaskIndex >= 0)
+		{
+			size_t coarseIdx = static_cast<size_t>(coarseMaskIndex);
+			if(coarseIdx >= N_coarse)
+			{
+				__FE_SS__ << "Internal error: coarse mask index out of range "
+				          << coarseIdx << " (N_coarse=" << N_coarse << ")." << __E__;
+				__FE_SS_THROW__;
+			}
 
-		chunkLog << "Using fine loop chunk N=" << chunkCount
-		         << ": OR_SINGLESHOT at fine singleShotMasks[" << N_coarse
-		         << "], cleared by AND at fine andMasks[" << fineClearAndIdx << "]"
-		         << __E__;
+			// Map coarse OR mask index back to loop level l and its coarse-end AND slot.
+			size_t coarseLevelL    = standardNValues_.size() - 1 - coarseIdx;
+			size_t coarseEndAndIdx = standardNValues_[0] + coarseLevelL;
+			if(coarseEndAndIdx >= chunkAndMasks.size())
+			{
+				__FE_SS__ << "Internal error: coarse end-AND index out of range "
+				          << coarseEndAndIdx << " (andMasks size=" << chunkAndMasks.size()
+				          << ")." << __E__;
+				__FE_SS_THROW__;
+			}
+
+			// Coarse chunk behavior:
+			//  - force this subsystem bit to be KEPT at all AND points
+			//  - arm OR_SINGLESHOT at the targeted coarse loop level
+			//  - clear this subsystem only at that level's end-AND boundary
+			// This yields exactly one coarse-sized contiguous pulse (e.g. 2000 events).
+			for(auto& mask : chunkAndMasks)
+				mask |= setBitsMask48;
+
+			chunkSingleShotMasks[coarseIdx] = setBitsMask48;
+			chunkAndMasks[coarseEndAndIdx] &= ~setBitsMask48;
+
+			chunkLog << "Using coarse-batch chunk N=" << chunkCount
+			         << " with coarse OR_SINGLESHOT index " << coarseIdx
+			         << " (loop N=" << standardNValues_[coarseLevelL]
+			         << "): keep forced at all AND points, clear applied only at coarse "
+			            "end-AND index "
+			         << coarseEndAndIdx << "." << __E__;
+		}
+		else
+		{
+			// Fine chunk behavior: clear at all AND points so each selected fine-slot
+			// OR_SINGLESHOT pulse only affects its intended event window.
+			for(auto& mask : chunkAndMasks)
+				mask &= ~setBitsMask48;
+
+			// Fine batch: fire OR_SINGLESHOT at duty-filtered fine slots
+			if(chunkCount < 1 || chunkCount > onFineSlots.size())
+			{
+				__FE_SS__
+				    << "Internal error: unsupported duty-based fine-batch chunk count "
+				    << chunkCount << " (activePerFinePass=" << onFineSlots.size() << ")."
+				    << __E__;
+				__FE_SS_THROW__;
+			}
+
+			for(size_t k = 0; k < chunkCount; ++k)
+			{
+				size_t fineSlot                           = onFineSlots[k];
+				chunkSingleShotMasks[N_coarse + fineSlot] = setBitsMask48;
+			}
+			chunkLog << "Using duty-based fine-batch chunk N=" << chunkCount
+			         << " (activePerFinePass=" << onFineSlots.size() << ")"
+			         << ": OR_SINGLESHOT set at " << chunkCount
+			         << " fine locations, AND clears applied at all loop AND points."
+			         << __E__;
+		}
 	};  //end configureSingleShotChunk()
 
 	//========================================================================
@@ -4256,34 +4403,70 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	//========================================================================
 	/// local lamda function waitForSingleShotReady
 	auto waitForSingleShotReady = [&](uint32_t chunkCount, size_t chunkIndex) {
-		double chunkDurationUs = static_cast<double>(chunkCount) * eventDurationInClocks *
+		// Batch completion is defined as one full fine loop for sub-100% duty,
+		// or the exact coarse/full-duty chunk size otherwise.
+		uint32_t expectedEventCount =
+		    isFullDutyCycle ? chunkCount : static_cast<uint32_t>(standardNValues_[0]);
+
+		// Read the 48-bit current tag to detect batch completion without 16-bit wraparound.
+		uint64_t initialRunPlanTag = thisCFO_->ReadRunPlanCurrentTag();
+
+		// Use expectedEventCount so timing aligns with the completion definition
+		double chunkDurationUs = static_cast<double>(expectedEventCount) *
+		                         eventDurationInClocks *
 		                         CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
 		uint64_t pollIntervalUs = chunkDurationUs < 20000.0
 		                              ? 1000
 		                              : (chunkDurationUs < 200000.0 ? 5000 : 50000);
-		uint64_t maxWaitUs      = std::max<uint64_t>(
-            500000, static_cast<uint64_t>(chunkDurationUs * 10.0) + pollIntervalUs);
+		uint64_t maxWaitUs      = static_cast<uint64_t>(chunkDurationUs * 1.2) + 5000000;
 
 		std::string unclearedDetails;
+		bool        singleShotCleared = false;
+		uint64_t    eventCountDelta   = 0;
+
 		for(uint64_t waitedUs = 0; waitedUs <= maxWaitUs; waitedUs += pollIntervalUs)
 		{
-			if(areSingleShotValuesCleared(unclearedDetails))
+			// Check condition 1: OR_SINGLESHOT values are cleared
+			singleShotCleared = areSingleShotValuesCleared(unclearedDetails);
+
+			// Check condition 2: current run-plan tag has advanced by the expected number of events.
+			uint64_t currentRunPlanTag = thisCFO_->ReadRunPlanCurrentTag();
+			eventCountDelta            = currentRunPlanTag - initialRunPlanTag;
+			uint64_t expectedEventCountDelta =
+			    expectedEventCount *
+			    2;  //allow for the possibility of the worst case current position when the batch starts, and have to walk through entire coarse or fine loop before starting batch
+			bool eventCountValid = (eventCountDelta >= expectedEventCountDelta);
+
+			if(singleShotCleared && eventCountValid)
 			{
-				result << "Chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
-				       << " completed; OR_SINGLESHOT readback values cleared after "
-				       << waitedUs / 1000.0 << " ms." << __E__;
+				if(chunkIndex > 25 && chunkIndex != chunkCounts.size() - 1)
+					result << ".";  //add a single dot, when too many
+				else
+				{
+					if(chunkIndex == chunkCounts.size() - 1)
+						result << "\n\n";  //end spacer
+					result << "Chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
+					       << " completed; OR_SINGLESHOT readback values cleared and "
+					       << "run-plan current tag increased by " << eventCountDelta
+					       << " (expected " << expectedEventCountDelta << ") after "
+					       << waitedUs / 1000.0 << " ms." << __E__;
+				}
 				return;
 			}
 
 			usleep(pollIntervalUs);
 		}
 
-		__FE_SS__ << "Timed out waiting for OR_SINGLESHOT readback values to clear after "
-		          << "chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
-		          << " (count=" << chunkCount << "). Uncleared values: "
-		          << (unclearedDetails.empty() ? std::string("<none reported>")
-		                                       : unclearedDetails)
-		          << __E__;
+		// Timeout: report final state
+		__FE_SS__ << "Timed out waiting for chunk " << (chunkIndex + 1) << "/"
+		          << chunkCounts.size() << " (count=" << chunkCount << ") to complete. ";
+		if(!singleShotCleared)
+			ss << "OR_SINGLESHOT values not cleared: "
+			   << (unclearedDetails.empty() ? std::string("<none reported>")
+			                                : unclearedDetails)
+			   << " ";
+		ss << "Run-plan current tag delta=" << eventCountDelta << " (expected "
+		   << expectedEventCount << ")." << __E__;
 		__FE_SS_THROW__;
 	};  //end lamda waitForSingleShotReady()
 
@@ -4305,19 +4488,35 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	       << std::hex << onBits_value << std::dec << __E__;
 	result << __E__;
 
+	uint64_t runningCount = 0;
 	for(size_t chunkIndex = 0; chunkIndex < chunkCounts.size(); ++chunkIndex)
 	{
 		std::vector<uint64_t> chunkAndMasks;
 		std::vector<uint64_t> singleShotMasks;
-		std::vector<uint64_t> prepSingleShotMasks(N_coarse + 1, 0ULL);
-		result << "\n*** Launching chunk " << (chunkIndex + 1) << "/"
-		       << chunkCounts.size() << " with count " << chunkCounts[chunkIndex]
-		       << __E__;
-		configureSingleShotChunk(
-		    chunkCounts[chunkIndex], chunkAndMasks, singleShotMasks, result);
+		std::vector<uint64_t> prepSingleShotMasks(N_coarse + standardNValues_[0], 0ULL);
+
+		if(chunkIndex > 25 && chunkIndex != chunkCounts.size() - 1)
+		{
+			if(chunkIndex == 26)
+				result << "\n";  //start spacer
+			result << ".";       //add a single dot, when too many
+		}
+		else
+			result << "\n*** Launching chunk " << (chunkIndex + 1) << "/"
+			       << chunkCounts.size() << " with count " << chunkCounts[chunkIndex]
+			       << " (events so far = " << runningCount << ")" << __E__;
+		runningCount += chunkCounts[chunkIndex];
+
+		std::stringstream subResult;
+
+		configureSingleShotChunk(chunkIndex,
+		                         chunkCounts[chunkIndex],
+		                         chunkAndMasks,
+		                         singleShotMasks,
+		                         subResult);
 
 		generateSharedRunPlanWithPeriodicModeOn(
-		    result,
+		    subResult,
 		    inFileName,
 		    0,  //initEventTag ignored once run plan is looping
 		    0,  //onBits_startBit unused (onBits_value = 0)
@@ -4336,13 +4535,16 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			CFOLib::CFO_Compiler compiler;
 			compiler.processFile(inFileName, outFileName);
 			SetRunplan(outFileName);
-			result << "Set preparation Run Plan for single-shot chunk "
-			       << (chunkIndex + 1)
-			       << " with updated AND masks and cleared OR_SINGLESHOT bits.\n";
+
+			if(chunkIndex == 0)
+				result << "Set preparation Run Plan for single-shot chunk "
+				       << (chunkIndex + 1) << " (with " << chunkCounts.size() - 1
+				       << " chunks to follow)"
+				       << " with updated AND masks and cleared OR_SINGLESHOT bits.\n";
 		}
 
 		generateSharedRunPlanWithPeriodicModeOn(
-		    result,
+		    subResult,
 		    inFileName,
 		    0,  //initEventTag ignored once run plan is looping
 		    0,  //onBits_startBit unused (onBits_value = 0)
@@ -4360,10 +4562,15 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		{
 			CFOLib::CFO_Compiler compiler;
 			compiler.processFile(inFileName, outFileName);
-			result << SetRunplan(outFileName);
-			result << "Set armed Run Plan for single-shot chunk " << (chunkIndex + 1)
-			       << " with the same AND masks and the requested OR_SINGLESHOT bits.\n";
+			subResult << SetRunplan(outFileName);
+			subResult
+			    << "Set armed Run Plan for single-shot chunk " << (chunkIndex + 1)
+			    << " (with " << chunkCounts.size() - 1 << " chunks to follow)"
+			    << " with the same AND masks and the requested OR_SINGLESHOT bits.\n";
 		}
+
+		if(chunkIndex == 0)
+			result << subResult.str();
 		waitForSingleShotReady(chunkCounts[chunkIndex], chunkIndex);
 	}  //end chunk loop
 
@@ -4699,7 +4906,10 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
 	__FE_COUTV__(eventOffsetInLoop);
-	mnFixRatio(logResult, mPartRatio, nPartRatio);
+	if(!onBits_value && mPartRatio == 1 && nPartRatio == 1)
+		__FE_COUT__ << "Ignoring m:n ratio with no on-bits." << __E__;
+	else
+		mnFixRatio(logResult, mPartRatio, nPartRatio);
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
 
@@ -4715,9 +4925,9 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		__FE_SS_THROW__;
 	}
 
-	if(singleShotMasks.size() && singleShotMasks.size() != N_coarse + 1)
+	if(singleShotMasks.size() && singleShotMasks.size() != N_coarse + standardNValues_[0])
 	{
-		__FE_SS__ << "singleShotMasks must have size " << (N_coarse + 1)
+		__FE_SS__ << "singleShotMasks must have size " << (N_coarse + standardNValues_[0])
 		          << " when provided. Got singleShotMasks=" << singleShotMasks.size()
 		          << __E__;
 		__FE_SS_THROW__;
@@ -4769,15 +4979,11 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 
 		//now fine granularity loop ------
 
-		uint64_t fineSingleShot =
-		    singleShotMasks.size() ? singleShotMasks[N_coarse] : 0ULL;
-		OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-		    << fineSingleShot << std::dec << __E__;
-
 		//  existingAndMasks[i] and existingOrMasks[N_coarse+i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
 		{
 			size_t fineIdx = N_coarse + i;
+
 			// Shift the fine-loop phase by eventOffsetInLoop so that "ON window" starts at
 			// i = eventOffsetInLoop (mod 100). This phase is then used by both decisions:
 			//  - shouldSet  => finePhase100 <  M (OR applies during ON portion)
@@ -4815,6 +5021,13 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			uint64_t merged_or = existingOrMasks[fineIdx] | new_or;
 			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
 			    << merged_or << std::dec << __E__;
+
+			// Apply fine-slot OR_SINGLESHOT after clear/set mask ops so the pulse is
+			// present for this event window's HEARTBEAT.
+			uint64_t fineSingleShot =
+			    singleShotMasks.size() ? singleShotMasks[fineIdx] : 0ULL;
+			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
+			    << std::hex << fineSingleShot << std::dec << __E__;
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
@@ -4945,9 +5158,6 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 			PUSHTAB;
 		}
 
-		// OR_SINGLESHOT is transient in hardware; always cleared. Emit 0x0.
-		OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0" << __E__;
-
 		//fine granularity loop
 		//  existingAndMasks[i] and existingOrMasks[N_coarse+i] are the existing fine masks
 		for(size_t i = 0; i < standardNValues_[0]; ++i)
@@ -4978,6 +5188,11 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
 				    << " value= " << 0 << __E__;
 			}
+
+			// Keep one OR_SINGLESHOT op per fine slot to preserve shared run-plan opcode
+			// structure; value is 0 because single-shot payload is transient/cleared.
+			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0"
+			    << __E__;
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
