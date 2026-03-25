@@ -4410,9 +4410,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		uint32_t initialEventMarkerCount = thisCFO_->ReadTransmitEventWindowMarkerCount();
 
 		// Use expectedEventCount so timing aligns with the completion definition
-		double chunkDurationUs =
-		    static_cast<double>(expectedEventCount) * eventDurationInClocks *
-		    CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
+		double chunkDurationUs = static_cast<double>(expectedEventCount) *
+		                         eventDurationInClocks *
+		                         CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
 		uint64_t pollIntervalUs = chunkDurationUs < 20000.0
 		                              ? 1000
 		                              : (chunkDurationUs < 200000.0 ? 5000 : 50000);
@@ -4437,18 +4437,17 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			if(singleShotCleared && eventCountValid)
 			{
 				if(chunkIndex > 25 && chunkIndex != chunkCounts.size() - 1)
-				{
 					result << ".";  //add a single dot, when too many
-
+				else
+				{
 					if(chunkIndex == chunkCounts.size() - 1)
 						result << "\n\n";  //end spacer
-				}
-				else
 					result << "Chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
 					       << " completed; OR_SINGLESHOT readback values cleared and "
 					       << "event marker count increased by " << eventCountDelta
 					       << " (expected " << expectedEventCountDelta << ") after "
 					       << waitedUs / 1000.0 << " ms." << __E__;
+				}
 				return;
 			}
 
