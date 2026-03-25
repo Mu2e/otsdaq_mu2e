@@ -4906,7 +4906,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	__FE_COUTV__(nPartRatio);
 	__FE_COUTV__(eventOffsetInLoop);
 	if(!onBits_value && mPartRatio == 1 && nPartRatio == 1)
-		__FE_COUT__ << "Ingoring m:n ratio with no on-bits." << __E__;
+		__FE_COUT__ << "Ignoring m:n ratio with no on-bits." << __E__;
 	else
 		mnFixRatio(logResult, mPartRatio, nPartRatio);
 	__FE_COUTV__(mPartRatio);
