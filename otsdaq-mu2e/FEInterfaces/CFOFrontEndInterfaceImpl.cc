@@ -4432,7 +4432,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			// Check condition 2: current run-plan tag has advanced by the expected number of events.
 			uint64_t currentRunPlanTag = thisCFO_->ReadRunPlanCurrentTag();
 			eventCountDelta = currentRunPlanTag - initialRunPlanTag;
-			uint64_t expectedEventCountDelta = expectedEventCount;
+			uint64_t expectedEventCountDelta = expectedEventCount * 2; //allow for the possibility of the worst case current position when the batch starts, and have to walk through entire coarse or fine loop before starting batch
 			bool     eventCountValid = (eventCountDelta >= expectedEventCountDelta);
 
 			if(singleShotCleared && eventCountValid)
