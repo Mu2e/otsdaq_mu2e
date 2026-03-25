@@ -4408,8 +4408,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		uint32_t expectedEventCount =
 		    isFullDutyCycle ? chunkCount : static_cast<uint32_t>(standardNValues_[0]);
 
-		// Read initial event marker count to detect batch completion
-		uint32_t initialEventMarkerCount = thisCFO_->ReadTransmitEventWindowMarkerCount();
+		// Read the 48-bit current tag to detect batch completion without 16-bit wraparound.
+		uint64_t initialRunPlanTag = thisCFO_->ReadRunPlanCurrentTag();
 
 		// Use expectedEventCount so timing aligns with the completion definition
 		double chunkDurationUs = static_cast<double>(expectedEventCount) *
@@ -4422,18 +4422,17 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 
 		std::string unclearedDetails;
 		bool        singleShotCleared = false;
-		uint32_t    eventCountDelta   = 0;
+		uint64_t    eventCountDelta   = 0;
 
 		for(uint64_t waitedUs = 0; waitedUs <= maxWaitUs; waitedUs += pollIntervalUs)
 		{
 			// Check condition 1: OR_SINGLESHOT values are cleared
 			singleShotCleared = areSingleShotValuesCleared(unclearedDetails);
 
-			// Check condition 2: Event marker count has increased by 2x expected count
-			uint32_t currentEventMarkerCount =
-			    thisCFO_->ReadTransmitEventWindowMarkerCount();
-			eventCountDelta = currentEventMarkerCount - initialEventMarkerCount;
-			uint32_t expectedEventCountDelta = 2 * expectedEventCount;
+			// Check condition 2: current run-plan tag has advanced by the expected number of events.
+			uint64_t currentRunPlanTag = thisCFO_->ReadRunPlanCurrentTag();
+			eventCountDelta = currentRunPlanTag - initialRunPlanTag;
+			uint64_t expectedEventCountDelta = expectedEventCount;
 			bool     eventCountValid = (eventCountDelta >= expectedEventCountDelta);
 
 			if(singleShotCleared && eventCountValid)
@@ -4446,7 +4445,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 						result << "\n\n";  //end spacer
 					result << "Chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
 					       << " completed; OR_SINGLESHOT readback values cleared and "
-					       << "event marker count increased by " << eventCountDelta
+					       << "run-plan current tag increased by " << eventCountDelta
 					       << " (expected " << expectedEventCountDelta << ") after "
 					       << waitedUs / 1000.0 << " ms." << __E__;
 				}
@@ -4464,8 +4463,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			   << (unclearedDetails.empty() ? std::string("<none reported>")
 			                                : unclearedDetails)
 			   << " ";
-		ss << "Event marker count delta=" << eventCountDelta << " (expected "
-		   << (2 * expectedEventCount) << ")." << __E__;
+		ss << "Run-plan current tag delta=" << eventCountDelta << " (expected "
+		   << expectedEventCount << ")." << __E__;
 		__FE_SS_THROW__;
 	};  //end lamda waitForSingleShotReady()
 
