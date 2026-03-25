@@ -421,7 +421,9 @@ void CFOFrontEndInterface::registerFEMacros(void)
 						"the requested count of events and then permanently cleared by the "
 						"corresponding AND mask.<br><br>"
 						"<b>Duty Cycle</b> supports the same syntax as <b>Shared Run Plan Join</b>: "
-						"either a percentage or M:N ratio. For single-shot, this determines how many "
+						"either a percentage or M:N ratio. For single-shot, however, the resolved N in any "
+						"M:N ratio is limited to N &le; " + std::to_string(standardNValues_[0]) +
+						", so very coarse ratios (e.g., 1:200) are not allowed. This determines how many "
 						"events are set per fine-loop pass before software batches additional passes."
 						"<br><br>"
 						"<b>Single-shot Event Count</b> can be any count but will be built out of batches of " +
