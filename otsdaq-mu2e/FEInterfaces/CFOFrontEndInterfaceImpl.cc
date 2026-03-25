@@ -24,20 +24,20 @@ using namespace ots;
 
 //===========================================================================================
 CFOFrontEndInterface::CFOFrontEndInterface(
-	const std::string&       interfaceUID,
-	const ConfigurationTree& theXDAQContextConfigTree,
-	const std::string&       interfaceConfigurationPath)
-	: CFOandDTCCoreVInterface(
-		  interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
+    const std::string&       interfaceUID,
+    const ConfigurationTree& theXDAQContextConfigTree,
+    const std::string&       interfaceConfigurationPath)
+    : CFOandDTCCoreVInterface(
+          interfaceUID, theXDAQContextConfigTree, interfaceConfigurationPath)
 {
 	__FE_COUT__ << "instantiate CFO... " << getInterfaceUID() << " "
-				<< theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
+	            << theXDAQContextConfigTree << " " << interfaceConfigurationPath << __E__;
 
 	std::string expectedDesignVersion = "";
 	try
 	{
 		expectedDesignVersion =
-			getSelfNode().getNode("ExpectedFirmwareVersion").getValueWithDefault("");
+		    getSelfNode().getNode("ExpectedFirmwareVersion").getValueWithDefault("");
 	}
 	catch(const std::runtime_error& e)
 	{
@@ -53,7 +53,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	__COUT__ << "END CFO arguments..." << std::endl;
 	//Note: if we do not skip init, then the CFO::SetSimMode writes registers!
 	thisCFO_ = new CFOLib::CFO(
-		mode, deviceIndex_, expectedDesignVersion, true /*skipInit*/, getInterfaceUID());
+	    mode, deviceIndex_, expectedDesignVersion, true /*skipInit*/, getInterfaceUID());
 
 	registerFEMacros();
 
@@ -63,11 +63,11 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 		__FE_COUTV__(designVersion);
 	}
 	catch(
-		...)  //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
+	    ...)  //hide exception to finish instantiation (likely exception is from a need to reset PCIe)
 	{
 		__FE_COUT_WARN__
-			<< "Failed to read the firmware version, likely a PCIe reset is needed!"
-			<< __E__;
+		    << "Failed to read the firmware version, likely a PCIe reset is needed!"
+		    << __E__;
 	}
 
 	__FE_COUTV__(StringMacros::systemVariables_["ActiveStateMachine"]["name"]);
@@ -79,7 +79,7 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 			//test an extra field (e.g. to use System Vars in tree, add value '${OTS.ActiveStateMachine.name}')
 			std::string test = getSelfNode().getNode("DefaultColumnName").getValue();
 			__FE_COUT__ << getSelfNode().getNode("DefaultColumnName").getValueAsString()
-						<< " ==> " << test << __E__;
+			            << " ==> " << test << __E__;
 		}
 		catch(const std::runtime_error& e)
 		{
@@ -88,9 +88,9 @@ CFOFrontEndInterface::CFOFrontEndInterface(
 	}
 
 	__FE_COUT_INFO__ << "CFO instantiated with name: " << getInterfaceUID()
-					 << " talking to /dev/mu2e" << deviceIndex_ << __E__;
+	                 << " talking to /dev/mu2e" << deviceIndex_ << __E__;
 	__FE_COUT__ << "Linux Kernel Driver Version: "
-				<< thisCFO_->GetDevice()->get_driver_version() << __E__;
+	            << thisCFO_->GetDevice()->get_driver_version() << __E__;
 }  // end constructor()
 
 //===========================================================================================
@@ -584,30 +584,30 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 	// parameters
 	const int numberOfLoopbacksExp = __GET_ARG_IN__(
-		"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
-		uint32_t,
-		3);
+	    "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+	    uint32_t,
+	    3);
 	const int numberOfLoopbackTests =
-		__GET_ARG_IN__("Number of Loopback tests (Default := 1)", uint32_t, 1);
+	    __GET_ARG_IN__("Number of Loopback tests (Default := 1)", uint32_t, 1);
 	const int targetLink =
-		__GET_ARG_IN__("Target Link (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
+	    __GET_ARG_IN__("Target Link (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
 	const int targetROC =
-		__GET_ARG_IN__("Target ROC (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
+	    __GET_ARG_IN__("Target ROC (-1 for all, Default := -1)", uint8_t, uint8_t(-1));
 	const bool writeFile =
-		__GET_ARG_IN__("Write ROOT file (Default := false)", bool, false);
+	    __GET_ARG_IN__("Write ROOT file (Default := false)", bool, false);
 	const std::string fileName =
-		__GET_ARG_IN__("ROOT file name (Default := CFO_loopback.root)",
-					   std::string,
-					   "CFO_loopback.root");
+	    __GET_ARG_IN__("ROOT file name (Default := CFO_loopback.root)",
+	                   std::string,
+	                   "CFO_loopback.root");
 
 	__FE_COUTV__(numberOfLoopbacksExp);
 	__FE_COUTV__(targetLink);
 
 	ostr << "Number of Loopback Markers to Send: " << (1 << numberOfLoopbacksExp)
-		 << __E__;
+	     << __E__;
 	ostr << "Number of Loopback Tests to Perform: " << numberOfLoopbackTests << __E__;
 	ostr << "Target CFO Chain/Link: "
-		 << (targetLink == uint8_t(-1) ? "All" : (std::to_string(targetLink))) << __E__;
+	     << (targetLink == uint8_t(-1) ? "All" : (std::to_string(targetLink))) << __E__;
 
 	const bool clockMarkerWasOn = thisCFO_->ReadEmbeddedClockMarkerEnable();
 	__FE_COUTV__(clockMarkerWasOn);
@@ -622,7 +622,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	if(writeFile)
 	{
 		f = new TFile((std::string(__ENV__("OTSDAQ_DATA")) + "/" + fileName).c_str(),
-					  "RECREATE");
+		              "RECREATE");
 		f->cd();
 		tree = new TTree("loopback", "Loopback test results");
 		// clang-format off
@@ -646,10 +646,10 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			graph = new TGraph();
 			graph->SetName(std::format("g_d{}_r{}", dtc, roc).c_str());
 			graph->SetTitle(
-				std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", dtc, roc)
-					.c_str());
+			    std::format("DTC {} ROC {} delay measurements;Test;Delay [ns]", dtc, roc)
+			        .c_str());
 			graph->SetMarkerStyle(20);  // default to being more visible when drawn
-										// graph->SetMarkerColor(dtc + 1);
+			                            // graph->SetMarkerColor(dtc + 1);
 		}
 
 		// add a data point
@@ -766,9 +766,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 					// retrieve the measurement result
 					measuredDelay =
-						delay_unit *
-						thisCFO_->ReadCableDelayMeasurement(
-							CFOLib::CFO_Link_ID(link), roc, cableDelayMeasureDone);
+					    delay_unit *
+					    thisCFO_->ReadCableDelayMeasurement(
+					        CFOLib::CFO_Link_ID(link), roc, cableDelayMeasureDone);
 
 					// a delay was measured
 					if(cableDelayMeasureDone)
@@ -777,7 +777,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 						{
 							cableDelayMeasureAnyDone = true;
 							usleep(
-								wait_time);  //sleep after the first is found to ensure all respond, then re-check
+							    wait_time);  //sleep after the first is found to ensure all respond, then re-check
 							++retries;
 							link = -1;
 							break;
@@ -788,9 +788,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 					}
 
 					__FE_COUT__
-						<< "Link=" << link << " ROC=" << roc << " retriesLeft=" << retries
-						<< " done=" << cableDelayMeasureDone << " delay=" << measuredDelay
-						<< std::hex << "ns 0x" << measuredDelay << __E__;
+					    << "Link=" << link << " ROC=" << roc << " retriesLeft=" << retries
+					    << " done=" << cableDelayMeasureDone << " delay=" << measuredDelay
+					    << std::hex << "ns 0x" << measuredDelay << __E__;
 
 					// if(cableDelayMeasureDone)
 					//   {
@@ -801,7 +801,7 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 				}  //end ROC delay measure loop
 			}      //end DTC loop
 			__COUTT__ << "Loopback try cableDelayMeasureAnyDone="
-					  << cableDelayMeasureAnyDone << " retries=" << retries << __E__;
+			          << cableDelayMeasureAnyDone << " retries=" << retries << __E__;
 		}  //end result check loop
 	}      //end tests loop
 
@@ -818,12 +818,12 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 		if(counts > 0)
 		{
 			ostr << "CFO-Link=" << dtc_id << " ROC=" << roc_id << " delay "
-				 << std::format("{:8.3f} +- {:5.3f}, range = {:4.1f} ({:4} responses)",
-								output_time,
-								output_unc,
-								results.get_max() - results.get_min(),
-								counts)
-				 << __E__;
+			     << std::format("{:8.3f} +- {:5.3f}, range = {:4.1f} ({:4} responses)",
+			                    output_time,
+			                    output_unc,
+			                    results.get_max() - results.get_min(),
+			                    counts)
+			     << __E__;
 			if(writeFile)
 			{
 				tree->Fill();
@@ -926,9 +926,9 @@ void CFOFrontEndInterface::TestMarker(__ARGS__)
 	uint32_t            link_delay = measureDelay(link);
 
 	ostr << "Marker sent on link: " << link << std::endl
-		 << "\t Delay: " << link_delay << std::endl;
+	     << "\t Delay: " << link_delay << std::endl;
 	__FE_COUT__ << "Marker sent on link: " << link << std::endl
-				<< "\t Delay: " << link_delay << std::endl;
+	            << "\t Delay: " << link_delay << std::endl;
 
 	ostr << std::endl << std::endl;
 	__SET_ARG_OUT__("Response", ostr.str());
@@ -1124,7 +1124,7 @@ void CFOFrontEndInterface::configure(void)
 		return;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-			operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
 		configureEventBuildingMode();
@@ -1137,8 +1137,8 @@ void CFOFrontEndInterface::configure(void)
 	else
 	{
 		__FE_SS__ << "Unknown system operating mode: " << operatingMode_ << __E__
-				  << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
-				  << __E__;
+		          << " Please specify a valid operating mode in the 'Mu2eGlobalsTable.'"
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
@@ -1150,14 +1150,14 @@ void CFOFrontEndInterface::configure(void)
 	// links in the chain of CFO->DTC0->DTC1->...DTCN
 
 	const int number_of_system_configs = 2;  // if < 0, keep trying until links are OK.
-		// If > 0, go through configuration steps this many times
+	    // If > 0, go through configuration steps this many times
 	int       config_clock = configure_clock_;  // 1 = yes, 0 = no
 	const int reset_tx     = 1;                 // 1 = yes, 0 = no
 
 	const int number_of_dtc_config_steps = 7;
 
 	int number_of_total_config_steps =
-		number_of_system_configs * number_of_dtc_config_steps;
+	    number_of_system_configs * number_of_dtc_config_steps;
 
 	int config_step = getIterationIndex();
 
@@ -1200,9 +1200,9 @@ void CFOFrontEndInterface::configure(void)
 
 			// set RST_REG bit
 			thisCFO_->WriteSERDESIICInterface(
-				DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */,
-				0x87 /* address */,
-				0x01 /* data */);
+			    DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */,
+			    0x87 /* address */,
+			    0x01 /* data */);
 			// registerWrite(0x9168, 0x55870100);
 			// registerWrite(0x916c, 0x00000001);
 
@@ -1223,7 +1223,7 @@ void CFOFrontEndInterface::configure(void)
 			// timing card)
 
 			__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
-						<< targetFrequency << " MHz" << __E__;
+			            << targetFrequency << " MHz" << __E__;
 
 			thisCFO_->SetNewOscillatorFrequency(targetFrequency);
 
@@ -1235,7 +1235,7 @@ void CFOFrontEndInterface::configure(void)
 		else
 		{
 			__FE_COUT_INFO__ << "Step " << config_step << ": CFO do NOT reset clock..."
-							 << __E__;
+			                 << __E__;
 		}
 	}
 	else if((config_step % number_of_dtc_config_steps) == 3)
@@ -1260,15 +1260,15 @@ void CFOFrontEndInterface::configure(void)
 		else
 		{
 			__FE_COUT_INFO__ << "Step " << config_step << "CFO do NOT reset TX..."
-							 << __E__;
+			                 << __E__;
 		}
 	}
 	else if((config_step % number_of_dtc_config_steps) == 6)
 	{
 		__FE_COUT_INFO__ << "Step " << config_step
-						 << ": CFO enable Event start characters, SERDES Tx "
-							"and Rx, and event window interval"
-						 << __E__;
+		                 << ": CFO enable Event start characters, SERDES Tx "
+		                    "and Rx, and event window interval"
+		                 << __E__;
 
 		__FE_COUT__ << "CFO reset serdes RX " << __E__;
 		thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -1286,8 +1286,8 @@ void CFOFrontEndInterface::configure(void)
 		// registerWrite(0x9114, 0x0000ffff);
 
 		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, "
-					   "as of Firmware version: Nov/09/2023 11:00"
-					<< __E__;
+		               "as of Firmware version: Nov/09/2023 11:00"
+		            << __E__;
 		// thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */); //0x154 = 1.7us, 0x1f40 = 40us, 0 = NO markers
 		//    registerWrite(0x91a0,0x154);   //1.7us
 		// registerWrite(0x91a0, 0x1f40);  // 40us
@@ -1306,7 +1306,7 @@ void CFOFrontEndInterface::configure(void)
 		if(thisCFO_->ReadSERDESRXCDRLock(CFOLib::CFO_Link_ID::CFO_Link_0))
 		{
 			__FE_COUT_INFO__ << "CFO links OK \n"
-							 << thisCFO_->FormatSERDESRXCDRLock() << __E__;
+			                 << thisCFO_->FormatSERDESRXCDRLock() << __E__;
 
 			if(number_of_system_configs < 0)
 			{
@@ -1316,16 +1316,16 @@ void CFOFrontEndInterface::configure(void)
 		else
 		{
 			__FE_COUT_INFO__ << "CFO links not OK \n"
-							 << thisCFO_->FormatSERDESRXCDRLock() << __E__;
+			                 << thisCFO_->FormatSERDESRXCDRLock() << __E__;
 		}
 		__FE_COUT__ << __E__;
 	}
 
 	__FE_COUT__
-		<< "\n"
-		<< thisCFO_->FormattedRegDump(
-			   130,
-			   thisCFO_->formattedDumpFunctions_);  // spit out link status at every step
+	    << "\n"
+	    << thisCFO_->FormattedRegDump(
+	           130,
+	           thisCFO_->formattedDumpFunctions_);  // spit out link status at every step
 	indicateIterationWork();  // indicate still more configure transition work to do
 	return;
 }  //end configure()
@@ -1348,20 +1348,20 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		indicateIterationWork();
 	}
 	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-					   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	                   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
 	{
 		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-						CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
 	{
 		__FE_COUT__ << "CFO reset serdes TX " << __E__;
 		thisCFO_->ResetAllSERDESTx();
 		indicateIterationWork();
 	}
 	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-						CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
 	{
 		__FE_COUT__ << "Enable communication over links" << __E__;
 		thisCFO_->EnableEmbeddedClockMarker();
@@ -1370,8 +1370,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, "
-					   "as of Firmware version: Nov/09/2023 11:00"
-					<< __E__;
+		               "as of Firmware version: Nov/09/2023 11:00"
+		            << __E__;
 		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
@@ -1463,8 +1463,8 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 		//	need to configure crystal!
 
 		__FE_COUT__ << "CFO Design Version:\t" << designVersion << __E__
-					<< "Expected version:\t" << matchDesignVersion << __E__ << "Match:\t"
-					<< (designVersion.compare(matchDesignVersion) == 0) << __E__;
+		            << "Expected version:\t" << matchDesignVersion << __E__ << "Match:\t"
+		            << (designVersion.compare(matchDesignVersion) == 0) << __E__;
 
 		if(configure_clock_ &&
 		   thisCFO_->ReadDesignDate() == "Jun/13/2023 16:00   raw-data: 0x23061316")
@@ -1481,9 +1481,9 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 
 				// set RST_REG bit
 				thisCFO_->WriteSERDESIICInterface(
-					DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */,
-					0x87 /* address */,
-					0x01 /* data */);
+				    DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */,
+				    0x87 /* address */,
+				    0x01 /* data */);
 			}
 
 			// registerWrite(0x9168, 0x55870100);
@@ -1506,7 +1506,7 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 			// timing card)
 
 			__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
-						<< targetFrequency << " MHz" << __E__;
+			            << targetFrequency << " MHz" << __E__;
 
 			thisCFO_->SetNewOscillatorFrequency(targetFrequency);
 
@@ -1526,13 +1526,13 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 			try
 			{
 				select = getSelfNode()
-							 .getNode("JitterAttenuatorInputSource")
-							 .getValue<uint32_t>();
+				             .getNode("JitterAttenuatorInputSource")
+				             .getValue<uint32_t>();
 			}
 			catch(...)
 			{
 				__FE_COUT__ << "Defaulting Jitter Attenuator Input Source to select = "
-							<< select << __E__;
+				            << select << __E__;
 			}
 			__FE_COUTV__(select);
 			//For CFO - 0 ==> Local oscillator
@@ -1798,9 +1798,9 @@ void CFOFrontEndInterface::stop(void)
 	}
 
 	int numberOfCAPTANPulses =
-		getConfigurationManager()
-			->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
-			.getValue<unsigned int>();
+	    getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
+	        .getValue<unsigned int>();
 
 	__FE_COUTV__(numberOfCAPTANPulses);
 
@@ -1836,7 +1836,7 @@ void CFOFrontEndInterface::stop(void)
 				break;
 			if(nlines1 < 10)
 				__FE_COUT__ << "iteration " << iteration_source1[nlines1] << " "
-							<< timestamp_source1[nlines1] << __E__;
+				            << timestamp_source1[nlines1] << __E__;
 			nlines1++;
 		}
 
@@ -1860,7 +1860,7 @@ void CFOFrontEndInterface::stop(void)
 				break;
 			if(nlines2 < 10)
 				__FE_COUT__ << "iteration " << iteration_source2[nlines2] << " "
-							<< timestamp_source2[nlines2] << __E__;
+				            << timestamp_source2[nlines2] << __E__;
 			nlines2++;
 		}
 
@@ -1895,7 +1895,7 @@ void CFOFrontEndInterface::stop(void)
 			else
 			{
 				timestamp_diff[i] =
-					(timestamp_source2[i] - timestamp_source1[i]) + offset;
+				    (timestamp_source2[i] - timestamp_source1[i]) + offset;
 
 				if(timestamp_diff[i] >= 0 &&
 				   timestamp_diff[i] < 1000)  // crossed from one event window to another
@@ -1909,15 +1909,15 @@ void CFOFrontEndInterface::stop(void)
 					{
 						max_distribution = timestamp_diff[i];
 						__FE_COUT__ << i << " new max    " << timestamp_source1[i]
-									<< "   " << timestamp_source2[i] << "   "
-									<< timestamp_diff[i] << __E__;
+						            << "   " << timestamp_source2[i] << "   "
+						            << timestamp_diff[i] << __E__;
 					}
 
 					if(timestamp_diff[i] < min_distribution)
 					{
 						__FE_COUT__ << i << " new min    " << timestamp_source1[i]
-									<< "   " << timestamp_source2[i] << "   "
-									<< timestamp_diff[i] << __E__;
+						            << "   " << timestamp_source2[i] << "   "
+						            << timestamp_diff[i] << __E__;
 
 						min_distribution = timestamp_diff[i];
 					}
@@ -1956,7 +1956,7 @@ void CFOFrontEndInterface::stop(void)
 		{
 			int display = n - offset;
 			__FE_COUT_INFO__ << " diff [ " << display << " ] = " << distribution[n]
-							 << __E__;
+			                 << __E__;
 		}
 		__FE_COUT_INFO__ << "--------------------------------------------" << __E__;
 
@@ -2007,7 +2007,7 @@ void CFOFrontEndInterface::WriteCFO(__ARGS__)
 	if(errorCode != 0)
 	{
 		__FE_SS__ << "Error writing register 0x" << std::hex
-				  << static_cast<uint32_t>(address) << " " << errorCode;
+		          << static_cast<uint32_t>(address) << " " << errorCode;
 		__SS_THROW__;
 	}
 
@@ -2024,7 +2024,7 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 	if(errorCode != 0)
 	{
 		__FE_SS__ << "Error reading register 0x" << std::hex
-				  << static_cast<uint32_t>(address) << " " << errorCode;
+		          << static_cast<uint32_t>(address) << " " << errorCode;
 		__SS_THROW__;
 	}
 
@@ -2040,7 +2040,7 @@ void CFOFrontEndInterface::ReadCFO(__ARGS__)
 void CFOFrontEndInterface::SuperOrchestrationStart(__ARGS__)
 {
 	theSuperParameters_.numberOfEventWindows =
-		__GET_ARG_IN__("Number of Event Window Markers (Default: 10)", uint64_t, 10);
+	    __GET_ARG_IN__("Number of Event Window Markers (Default: 10)", uint64_t, 10);
 	theSuperParameters_.go = true;
 
 	__FE_COUTV__(theSuperParameters_.numberOfEventWindows);
@@ -2072,29 +2072,29 @@ void CFOFrontEndInterface::SuperOrchestration(__ARGS__)
 
 //========================================================================
 void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
-											  bool doCaloReset,
-											  bool doCaloWrites)
+                                              bool doCaloReset,
+                                              bool doCaloWrites)
 {
 	// acquire enabled DTCs by priority
 	ConfigurationTree dtcTable =
-		Configurable::getConfigurationManager()->getNode("DTCInterfaceTable");
+	    Configurable::getConfigurationManager()->getNode("DTCInterfaceTable");
 	std::vector<std::string> dtcs =
-		dtcTable.getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
+	    dtcTable.getChildrenNames(true /*byPriority*/, true /*onlyStatusTrue*/);
 
 	__CFG_COUTV__(StringMacros::vectorToString(dtcs));
 	for(const auto& dtc : dtcs)
 	{
 		std::vector<std::pair<std::string, ConfigurationTree>> rocChildren =
-			dtcTable.getNode(dtc).getNode("LinkToROCGroupTable").getChildren();
+		    dtcTable.getNode(dtc).getNode("LinkToROCGroupTable").getChildren();
 
 		// for each ROC
 		for(auto& roc : rocChildren)
 			if(roc.second.isEnabled())
 			{
 				std::string rocType =
-					roc.second.getNode("ROCInterfacePluginName").getValue<std::string>();
+				    roc.second.getNode("ROCInterfacePluginName").getValue<std::string>();
 				__FE_COUT__ << "ROC Name: " << dtc << "/" << roc.first << ":" << rocType
-							<< __E__;
+				            << __E__;
 			}
 	}  //end DTC example loop
 
@@ -2107,10 +2107,10 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ07DTC1",                 //const std::string& targetInterfaceID,
-			"ROC FEMacro - Soft Reset",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ07DTC1",                 //const std::string& targetInterfaceID,
+		    "ROC FEMacro - Soft Reset",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2123,14 +2123,14 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 		__SET_ARG_IN__("Target ROC (Default = -1 := all ROCs)", (unsigned int)-1);
 		__SET_ARG_IN__("Set Threshold? [bool, Default := 0]", (unsigned int)1);
 		__SET_ARG_IN__("Threshold [units of adccounts, Default := 2300]",
-					   (unsigned int)2250);
+		               (unsigned int)2250);
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ07DTC0",  //const std::string& targetInterfaceID,
-			"ROC FEMacro - Setup for ADCs Data Taking",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC FEMacro - Setup for ADCs Data Taking",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2143,14 +2143,14 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 		__SET_ARG_IN__("Target ROC (Default = -1 := all ROCs)", (unsigned int)-1);
 		__SET_ARG_IN__("Set Threshold? [bool, Default := 0]", (unsigned int)1);
 		__SET_ARG_IN__("Threshold [units of adccounts, Default := 2300]",
-					   (unsigned int)2250);
+		               (unsigned int)2250);
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ14DTC0",  //const std::string& targetInterfaceID,
-			"ROC FEMacro - Setup for ADCs Data Taking",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC FEMacro - Setup for ADCs Data Taking",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2166,10 +2166,10 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ14DTC0",  //const std::string& targetInterfaceID,
-			"ROC Write",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2185,10 +2185,10 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ14DTC0",  //const std::string& targetInterfaceID,
-			"ROC Write",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2204,10 +2204,10 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ07DTC0",  //const std::string& targetInterfaceID,
-			"ROC Write",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2223,10 +2223,10 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ07DTC0",  //const std::string& targetInterfaceID,
-			"ROC Write",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2242,10 +2242,10 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ07DTC0",  //const std::string& targetInterfaceID,
-			"ROC Write",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ07DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
@@ -2261,25 +2261,25 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 
 		__FE_COUTV__(StringMacros::vectorToString(argsIn));
 		runFrontEndMacro(
-			"DAQ14DTC0",  //const std::string& targetInterfaceID,
-			"ROC Write",  //const std::string& feMacroName,
-			argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
-			argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
+		    "DAQ14DTC0",  //const std::string& targetInterfaceID,
+		    "ROC Write",  //const std::string& feMacroName,
+		    argsIn,    //const std::vector<FEVInterface::frontEndMacroArg_t>& inputArgs,
+		    argsOut);  //std::vector<FEVInterface::frontEndMacroArg_t>& outputArgs) const;
 
 		__FE_COUTV__(StringMacros::vectorToString(argsOut));
 	}
 
 	CompileSetAndLaunchTemplateFixedWidthRunPlan(
-		1,  //__GET_ARG_IN__("Enable CFO Run Plan Execution (Default := false)",bool,false),
-		0,        //__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
-		"100us",  //__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
-		theSuperParameters_.numberOfEventWindows,  //numberOfEvents,
-		next_starting_event_window_tag_,           //startTag,
-		1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
-		0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
-		0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
-		0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
-		0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
+	    1,  //__GET_ARG_IN__("Enable CFO Run Plan Execution (Default := false)",bool,false),
+	    0,        //__GET_ARG_IN__("Use Detached Buffer Test (Default := false)",bool),
+	    "100us",  //__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := 25ns]",std::string),
+	    theSuperParameters_.numberOfEventWindows,  //numberOfEvents,
+	    next_starting_event_window_tag_,           //startTag,
+	    1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
+	    0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
+	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
+	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
+	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
 	);
 	next_starting_event_window_tag_ += theSuperParameters_.numberOfEventWindows;
 }  //end SuperOrchestration()
@@ -2307,12 +2307,12 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 	__FE_COUT__ << "Compile CFO Run Plan" << __E__;
 
 	const std::string SOURCE_BASE_PATH =
-		std::string(__ENV__("OTS_SOURCE")) + "/mu2e-pcie-utils/cfoInterfaceLib/";
+	    std::string(__ENV__("OTS_SOURCE")) + "/mu2e-pcie-utils/cfoInterfaceLib/";
 
 	std::string inFileName =
-		__GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
+	    __GET_ARG_IN__("Input Text File", std::string, SOURCE_BASE_PATH + "Commands.txt");
 	std::string outFileName = __GET_ARG_IN__(
-		"Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
+	    "Output Binary File", std::string, SOURCE_BASE_PATH + "Commands.bin");
 
 	CFOLib::CFO_Compiler compiler;
 	__SET_ARG_OUT__("Result", "\n" + compiler.processFile(inFileName, outFileName));
@@ -2323,11 +2323,11 @@ void CFOFrontEndInterface::CompileRunplan(__ARGS__)
 void CFOFrontEndInterface::SetRunplan(__ARGS__)
 {
 	const std::string SOURCE_BASE_PATH =
-		std::string(__ENV__("OTS_SOURCE")) + "/mu2e-pcie-utils/cfoInterfaceLib/";
+	    std::string(__ENV__("OTS_SOURCE")) + "/mu2e-pcie-utils/cfoInterfaceLib/";
 	__SET_ARG_OUT__(
-		"Result",
-		SetRunplan(__GET_ARG_IN__(
-			"Binary Run File", std::string, SOURCE_BASE_PATH + "Commands.bin")));
+	    "Result",
+	    SetRunplan(__GET_ARG_IN__(
+	        "Binary Run File", std::string, SOURCE_BASE_PATH + "Commands.bin")));
 }  //end SetRunplan()
 
 //========================================================================
@@ -2344,7 +2344,7 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 	if(!fp)
 	{
 		__SS__ << "Could not open file at " << binFilename << ". Error: " << errno
-			   << " - " << strerror(errno) << __E__;
+		       << " - " << strerror(errno) << __E__;
 		__SS_THROW__;
 	}
 
@@ -2362,8 +2362,8 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 
 	thisCFO_->SetLinuxTimestampPreset();
 	resultSs << "\n\nInitialized CFO Linux Timestamp to "
-			 << StringMacros::getTimestampString(thisCFO_->ReadLinuxTimestamp()) << __E__
-			 << __E__;
+	         << StringMacros::getTimestampString(thisCFO_->ReadLinuxTimestamp()) << __E__
+	         << __E__;
 	resultSs << "Downloaded to CFO binary run plan file: " << binFilename << __E__;
 	return resultSs.str();
 }  //end SetRunplan()
@@ -2372,9 +2372,9 @@ std::string CFOFrontEndInterface::SetRunplan(const std::string& binFilename)
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__)
 {
 	uint64_t startTag = __GET_ARG_IN__(
-		"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-		uint64_t,
-		-1);
+	    "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
+	    uint64_t,
+	    -1);
 	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
 	{
 		__FE_COUTV__(next_starting_event_window_tag_);
@@ -2385,7 +2385,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__
 	__FE_COUTV__(startTag);
 
 	uint32_t numberOfCycles = __GET_ARG_IN__(
-		"Number of 1.4s super cycle repetitions (0 := infinite)", uint32_t);
+	    "Number of 1.4s super cycle repetitions (0 := infinite)", uint32_t);
 	__FE_COUTV__(numberOfCycles);
 
 	//setup next tag calculation
@@ -2393,36 +2393,36 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__
 	__FE_COUTV__(next_starting_event_window_tag_);
 
 	__SET_ARG_OUT__(
-		"response",
-		CompileSetAndLaunchTemplateSuperCycleRunPlan(
-			__GET_ARG_IN__(
-				"Enable CFO Run Plan Execution (Default := false)", bool, false),
-			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)", uint32_t),
-			numberOfCycles,
-			startTag,
-			__GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
-			__GET_ARG_IN__(
-				"For Detached Buffer Test, Save Binary Data to File (Default: false)",
-				bool),
-			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary "
-						   "File (Default: false)",
-						   bool),
-			__GET_ARG_IN__(
-				"For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
-				bool)));
+	    "response",
+	    CompileSetAndLaunchTemplateSuperCycleRunPlan(
+	        __GET_ARG_IN__(
+	            "Enable CFO Run Plan Execution (Default := false)", bool, false),
+	        __GET_ARG_IN__("Use Detached Buffer Test (Default := false)", uint32_t),
+	        numberOfCycles,
+	        startTag,
+	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__(
+	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
+	            bool),
+	        __GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary "
+	                       "File (Default: false)",
+	                       bool),
+	        __GET_ARG_IN__(
+	            "For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
+	            bool)));
 }  //end CompileSetAndLaunchTemplateSuperCycleRunPlan()
 
 //========================================================================
 // OnOff spill Run Plan is represented as 235K on-spill events and 10K off-spill events
 std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
-	bool     enable,
-	bool     useDetachedBufferTest,
-	uint32_t numberOfSuperCycles,
-	uint64_t initialEventWindowTag,
-	bool     enableClockMarkers,
-	bool     saveBinaryDataToFile,
-	bool     saveSubeventHeadersToDataFile,
-	bool     doNotResetBufferTestCounters)
+    bool     enable,
+    bool     useDetachedBufferTest,
+    uint32_t numberOfSuperCycles,
+    uint64_t initialEventWindowTag,
+    bool     enableClockMarkers,
+    bool     saveBinaryDataToFile,
+    bool     saveSubeventHeadersToDataFile,
+    bool     doNotResetBufferTestCounters)
 {
 	__FE_COUTV__(enable);
 
@@ -2487,8 +2487,8 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 		if(!fp)
 		{
 			__FE_SS__ << "Error - please check path. Generated Run Plan file from "
-						 "template could not be created at "
-					  << inFileName << __E__;
+			             "template could not be created at "
+			          << inFileName << __E__;
 			__FE_SS_THROW__;
 		}
 		fputs(out.str().c_str(), fp);
@@ -2504,9 +2504,9 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 	if(useDetachedBufferTest)
 	{
 		initDetachedBufferTest(initialEventWindowTag,
-							   saveBinaryDataToFile,
-							   saveSubeventHeadersToDataFile,
-							   doNotResetBufferTestCounters);
+		                       saveBinaryDataToFile,
+		                       saveSubeventHeadersToDataFile,
+		                       doNotResetBufferTestCounters);
 
 		sleep(1);  //allow detached thread to start
 	}
@@ -2529,7 +2529,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 {
 	bool enableClockMarkers =
-		__GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false);
+	    __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false);
 	__FE_COUTV__(enableClockMarkers);
 	if(enableClockMarkers)
 		thisCFO_->EnableEmbeddedClockMarker();
@@ -2541,9 +2541,9 @@ void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__)
 {
 	uint64_t startTag = __GET_ARG_IN__(
-		"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-		uint64_t,
-		-1);
+	    "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
+	    uint64_t,
+	    -1);
 	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
 	{
 		__FE_COUTV__(next_starting_event_window_tag_);
@@ -2554,7 +2554,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	__FE_COUTV__(startTag);
 
 	uint32_t numberOfEvents = __GET_ARG_IN__(
-		"Number of Event Window Markers to generate (0 := infinite)", uint32_t);
+	    "Number of Event Window Markers to generate (0 := infinite)", uint32_t);
 	__FE_COUTV__(numberOfEvents);
 
 	//setup next tag calculation
@@ -2562,49 +2562,49 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	__FE_COUTV__(next_starting_event_window_tag_);
 
 	std::string modeStr =
-		__GET_ARG_IN__("Event Window Mode (Default := 1)", std::string, "1");
+	    __GET_ARG_IN__("Event Window Mode (Default := 1)", std::string, "1");
 
 	__SET_ARG_OUT__(
-		"response",
-		CompileSetAndLaunchTemplateFixedWidthRunPlan(
-			__GET_ARG_IN__(
-				"Enable CFO Run Plan Execution (Default := false)", bool, false),
-			__GET_ARG_IN__("Use Detached Buffer Test (Default := false)", bool),
-			__GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks "
-						   "allowed) [clocks := 25ns]",
-						   std::string),
-			numberOfEvents,
-			startTag,
-			modeStr == "0"
-				? 0
-				: __GET_ARG_IN__(
-					  "Event Window Mode (Default := 1)",
-					  uint64_t,
-					  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
-			__GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
-			__GET_ARG_IN__(
-				"For Detached Buffer Test, Save Binary Data to File (Default: false)",
-				bool),
-			__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary "
-						   "File (Default: false)",
-						   bool),
-			__GET_ARG_IN__(
-				"For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
-				bool)));
+	    "response",
+	    CompileSetAndLaunchTemplateFixedWidthRunPlan(
+	        __GET_ARG_IN__(
+	            "Enable CFO Run Plan Execution (Default := false)", bool, false),
+	        __GET_ARG_IN__("Use Detached Buffer Test (Default := false)", bool),
+	        __GET_ARG_IN__("Fixed-width Event Window Duration (s, ms, us, ns, and clocks "
+	                       "allowed) [clocks := 25ns]",
+	                       std::string),
+	        numberOfEvents,
+	        startTag,
+	        modeStr == "0"
+	            ? 0
+	            : __GET_ARG_IN__(
+	                  "Event Window Mode (Default := 1)",
+	                  uint64_t,
+	                  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
+	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__(
+	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
+	            bool),
+	        __GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary "
+	                       "File (Default: false)",
+	                       bool),
+	        __GET_ARG_IN__(
+	            "For Detached Buffer Test, Do NOT Reset Counters (Default: false)",
+	            bool)));
 }  //end CompileSetAndLaunchTemplateFixedWidthRunPlan()
 
 //========================================================================
 std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
-	bool        enable,
-	bool        useDetachedBufferTest,
-	std::string eventDuration,
-	uint32_t    numberOfEventWindowMarkers,
-	uint64_t    initialEventWindowTag,
-	uint64_t    eventWindowMode,
-	bool        enableClockMarkers,
-	bool        saveBinaryDataToFile,
-	bool        saveSubeventHeadersToDataFile,
-	bool        doNotResetBufferTestCounters)
+    bool        enable,
+    bool        useDetachedBufferTest,
+    std::string eventDuration,
+    uint32_t    numberOfEventWindowMarkers,
+    uint64_t    initialEventWindowTag,
+    uint64_t    eventWindowMode,
+    bool        enableClockMarkers,
+    bool        saveBinaryDataToFile,
+    bool        saveSubeventHeadersToDataFile,
+    bool        doNotResetBufferTestCounters)
 {
 	__FE_COUTV__(enable);
 	__FE_COUTV__(eventWindowMode);
@@ -2613,11 +2613,11 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 	if(eventWindowMode == (uint64_t)-1)
 	{
 		__FE_SS__ << "Error - invalid eventWindowMode value. The value -1 is reserved "
-					 "in the CFO Run Plan to mean 'leave the current event window mode "
-					 "unchanged' "
-					 "and is not allowed for a fixed-width run plan. Please use a value "
-					 "other than -1."
-				  << __E__;
+		             "in the CFO Run Plan to mean 'leave the current event window mode "
+		             "unchanged' "
+		             "and is not allowed for a fixed-width run plan. Please use a value "
+		             "other than -1."
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
@@ -2661,17 +2661,17 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			OUT << "HEARTBEAT event_mode= " << eventWindowMode << __E__;
 		else
 			OUT << "HEARTBEAT event_mode= " << 0 << " // null heartbeat!"
-				<< __E__;  //null
+			    << __E__;  //null
 		OUT << "MARKER" << __E__;
 
 		std::string eventDurationSplitNumber, eventDurationSplitUnits;
 		__FE_COUTV__(eventDuration);
 		parseEventDurationForRunPlan(
-			eventDuration, eventDurationSplitNumber, eventDurationSplitUnits);
+		    eventDuration, eventDurationSplitNumber, eventDurationSplitUnits);
 		__FE_COUTV__(eventDurationSplitNumber);
 		__FE_COUTV__(eventDurationSplitUnits);
 		OUT << "WAIT " << eventDurationSplitNumber << " " << eventDurationSplitUnits
-			<< __E__;
+		    << __E__;
 
 		if(0)
 		{  //apply fixed width duration
@@ -2690,12 +2690,12 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			if(!foundUnits)
 			{
 				__FE_SS__ << "No units were found in the input parameters 'Fixed-width "
-							 "Event Window Duration' value: "
-						  << eventDuration
-						  << ". Please use units when specifying event window duration "
-							 "(s, ms, us, ns, and clocks are allowed). For example "
-							 "'1.7us' or '1675ns' would be valid."
-						  << __E__;
+				             "Event Window Duration' value: "
+				          << eventDuration
+				          << ". Please use units when specifying event window duration "
+				             "(s, ms, us, ns, and clocks are allowed). For example "
+				             "'1.7us' or '1675ns' would be valid."
+				          << __E__;
 				__FE_SS_THROW__;
 			}
 			std::string eventDurationSplitNumber = eventDuration.substr(0, i);
@@ -2703,7 +2703,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			__FE_COUTV__(eventDurationSplitNumber);
 			__FE_COUTV__(eventDurationSplitUnits);
 			OUT << "WAIT " << eventDurationSplitNumber << " " << eventDurationSplitUnits
-				<< __E__;
+			    << __E__;
 		}  //end apply fixed width duration
 		OUT << "INC_TAG //increment event window tag" << __E__;
 		POPTAB;
@@ -2715,7 +2715,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			if(numberOfEventWindowMarkers > 0)
 			{
 				OUT << "HEARTBEAT event_mode= " << 0 << " // null heartbeat!"
-					<< __E__;  //null
+				    << __E__;  //null
 				OUT << "MARKER" << __E__;
 			}
 			OUT << "END" << __E__;
@@ -2727,8 +2727,8 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 		if(!fp)
 		{
 			__FE_SS__ << "Error - please check path. Generated Run Plan file from "
-						 "template could not be created at "
-					  << inFileName << __E__;
+			             "template could not be created at "
+			          << inFileName << __E__;
 			__FE_SS_THROW__;
 		}
 		fputs(out.str().c_str(), fp);
@@ -2744,9 +2744,9 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(
 	if(useDetachedBufferTest)
 	{
 		initDetachedBufferTest(initialEventWindowTag,
-							   saveBinaryDataToFile,
-							   saveSubeventHeadersToDataFile,
-							   doNotResetBufferTestCounters);
+		                       saveBinaryDataToFile,
+		                       saveSubeventHeadersToDataFile,
+		                       doNotResetBufferTestCounters);
 
 		sleep(1);  //allow detached thread to start
 	}
@@ -2784,16 +2784,16 @@ void CFOFrontEndInterface::GetCFOCounters(__ARGS__)
 	__FE_COUT__ << "Getting CFO Counters" << __E__;
 
 	__SET_ARG_OUT__(
-		"Counters",
-		thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
+	    "Counters",
+	    thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
 
 }  //end GetCFOCounters()
 
 //==============================================================================
 void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag,
-												  bool     saveBinaryDataToFile,
-												  bool     saveSubeventHeadersToDataFile,
-												  bool     doNotResetBufferTestCounters)
+                                                  bool     saveBinaryDataToFile,
+                                                  bool     saveSubeventHeadersToDataFile,
+                                                  bool     doNotResetBufferTestCounters)
 {
 	__FE_COUTV__(saveBinaryDataToFile);
 	__FE_COUTV__(doNotResetBufferTestCounters);
@@ -2801,12 +2801,12 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 
 	if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
 		bufferTestThreadStruct_ =
-			std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+		    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
 
 	if(bufferTestThreadStruct_->running_)
 	{
 		__FE_COUT__ << "Found buffer test thread already running... so re-initializing"
-					<< __E__;
+		            << __E__;
 
 		// start mutex scope
 		{
@@ -2814,18 +2814,18 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
 			bufferTestThreadStruct_->publish_ =
-				static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
+			    static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
 			bufferTestThreadStruct_->feSupervisor_ =
-				static_cast<ots::FESupervisor*>(parentSupervisor_);
+			    static_cast<ots::FESupervisor*>(parentSupervisor_);
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = true;
 			bufferTestThreadStruct_->doNotResetCounters_ = doNotResetBufferTestCounters;
 			bufferTestThreadStruct_->error_              = "";
 		}
 		__FE_COUT__ << "Found buffer test thread already running... so re-initializing "
-					   "and reading data starting at event tag "
-					<< initialEventWindowTag << " (0x" << std::hex
-					<< initialEventWindowTag << ")" << __E__;
+		               "and reading data starting at event tag "
+		            << initialEventWindowTag << " (0x" << std::hex
+		            << initialEventWindowTag << ")" << __E__;
 	}
 	else
 	{
@@ -2836,9 +2836,9 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 			bufferTestThreadStruct_->expectedEventTag_ = initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
 			bufferTestThreadStruct_->publish_ =
-				static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
+			    static_cast<ots::FESupervisor*>(parentSupervisor_)->isPublishingData();
 			bufferTestThreadStruct_->feSupervisor_ =
-				static_cast<ots::FESupervisor*>(parentSupervisor_);
+			    static_cast<ots::FESupervisor*>(parentSupervisor_);
 			bufferTestThreadStruct_->exitThread_         = false;
 			bufferTestThreadStruct_->resetStartEventTag_ = false;
 			bufferTestThreadStruct_->thisCFO_            = thisCFO_;
@@ -2847,16 +2847,16 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 			bufferTestThreadStruct_->error_              = "";
 		}
 		std::thread(
-			[](std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>
-				   threadStruct) {
-				CFOFrontEndInterface::detechedBufferTestThread(threadStruct);
-			},
-			bufferTestThreadStruct_)
-			.detach();
+		    [](std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>
+		           threadStruct) {
+			    CFOFrontEndInterface::detechedBufferTestThread(threadStruct);
+		    },
+		    bufferTestThreadStruct_)
+		    .detach();
 		__FE_COUT__ << "Launched detached Buffer Test thread and reading data DMA-0 "
-					   "starting at event tag "
-					<< initialEventWindowTag << " (0x" << std::hex
-					<< initialEventWindowTag << ")" << __E__;
+		               "starting at event tag "
+		            << initialEventWindowTag << " (0x" << std::hex
+		            << initialEventWindowTag << ")" << __E__;
 	}
 
 	sleep(1);  //give time for buffer reading to be ready
@@ -2864,14 +2864,14 @@ void CFOFrontEndInterface::initDetachedBufferTest(uint64_t initialEventWindowTag
 
 //==============================================================================
 uint64_t CFOFrontEndInterface::getDetachedBufferTestReceivedCount(
-	std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
+    std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
 	return threadStruct->subeventsCount_;
 }  //end getDetachedBufferTestReceivedCount()
 
 //==============================================================================
 std::string CFOFrontEndInterface::getDetachedBufferTestStatus(
-	std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
+    std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
 	__COUT__ << "Get detached buffer test status..." << __E__;
 
@@ -2885,73 +2885,73 @@ std::string CFOFrontEndInterface::getDetachedBufferTestStatus(
 		if(threadStruct->error_ != "")
 			statusSs << "Detached thread caught error:" << threadStruct->error_ << __E__;
 		statusSs << "Detached thread running:"
-				 << (threadStruct->running_ ? "true" : "false") << __E__;
+		         << (threadStruct->running_ ? "true" : "false") << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
 
 		statusSs << "Total CFO Subevent Bytes Transferred: "
-				 << threadStruct->totalSubeventBytesTransferred_ << " bytes" << __E__;
+		         << threadStruct->totalSubeventBytesTransferred_ << " bytes" << __E__;
 
 		long long ns =
-			std::chrono::duration_cast<std::chrono::nanoseconds>(
-				threadStruct->transferEndTime_ - threadStruct->transferStartTime_)
-				.count();
+		    std::chrono::duration_cast<std::chrono::nanoseconds>(
+		        threadStruct->transferEndTime_ - threadStruct->transferStartTime_)
+		        .count();
 		if(ns > 1000)  //prevent divide by 0
 		{
 			statusSs << "Data Transfer Duration: " << ns / 1000.0 / 1000.0 << " ms"
-					 << __E__;
+			         << __E__;
 			statusSs << "Average Data Rate: "
-					 << ((double)threadStruct->totalSubeventBytesTransferred_) /
-							(ns / 1000.0)
-					 << " MB/s" << __E__;
+			         << ((double)threadStruct->totalSubeventBytesTransferred_) /
+			                (ns / 1000.0)
+			         << " MB/s" << __E__;
 		}
 		else
 			statusSs << "Data Transfer Duration too short to establish date rate."
-					 << __E__;
+			         << __E__;
 
 		statusSs << "Starting Event Window Tag:" << threadStruct->expectedEventTag_
-				 << __E__;
+		         << __E__;
 		statusSs << "Next Expected Event Window Tag:" << threadStruct->nextEventWindowTag_
-				 << __E__;
+		         << __E__;
 		if(ns > 1000)  //prevent divide by 0
 		{
 			statusSs << "Average Event Rate: "
-					 << (long long)((threadStruct->nextEventWindowTag_ -
-									 threadStruct->expectedEventTag_) /
-									(ns / 1000.0 / 1000.0 / 1000.0))
-					 << " Events/s" << __E__;
+			         << (long long)((threadStruct->nextEventWindowTag_ -
+			                         threadStruct->expectedEventTag_) /
+			                        (ns / 1000.0 / 1000.0 / 1000.0))
+			         << " Events/s" << __E__;
 		}
 		statusSs << "Mismatched Event Tags count:"
-				 << threadStruct->mismatchedEventTagsCount_ << __E__;
+		         << threadStruct->mismatchedEventTagsCount_ << __E__;
 
 		if(threadStruct->mismatchedEventTagJumps_.size() < 20)
 		{
 			statusSs << "\t Mismatched Tag Jumps..." << __E__;
 			for(size_t i = 0; i < threadStruct->mismatchedEventTagJumps_.size(); ++i)
 				statusSs << "\t\t Mismatch Jump-" << i << " Expected:"
-						 << threadStruct->mismatchedEventTagJumps_[i].first << std::hex
-						 << "(0x" << threadStruct->mismatchedEventTagJumps_[i].first
-						 << ")" << std::dec << " Received:"
-						 << threadStruct->mismatchedEventTagJumps_[i].second << std::hex
-						 << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second
-						 << ")" << std::dec << __E__;
+				         << threadStruct->mismatchedEventTagJumps_[i].first << std::hex
+				         << "(0x" << threadStruct->mismatchedEventTagJumps_[i].first
+				         << ")" << std::dec << " Received:"
+				         << threadStruct->mismatchedEventTagJumps_[i].second << std::hex
+				         << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second
+				         << ")" << std::dec << __E__;
 		}
 		else
 		{
 			statusSs << "\t TOO MANY Mismatched Tag Jumps (showing 10)..." << __E__;
 			for(size_t i = 0; i < 10; ++i)
 				statusSs << "\t\t Mismatch Jump-" << i << " Expected:"
-						 << threadStruct->mismatchedEventTagJumps_[i].first << std::hex
-						 << "(0x" << threadStruct->mismatchedEventTagJumps_[i].first
-						 << ")" << std::dec << " Received:"
-						 << threadStruct->mismatchedEventTagJumps_[i].second << std::hex
-						 << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second
-						 << ")" << std::dec << __E__;
+				         << threadStruct->mismatchedEventTagJumps_[i].first << std::hex
+				         << "(0x" << threadStruct->mismatchedEventTagJumps_[i].first
+				         << ")" << std::dec << " Received:"
+				         << threadStruct->mismatchedEventTagJumps_[i].second << std::hex
+				         << "(0x" << threadStruct->mismatchedEventTagJumps_[i].second
+				         << ")" << std::dec << __E__;
 		}
 
 		if(threadStruct->error_ != "")
 		{
 			__SS__ << "Error identified in the detached buffer status: "
-				   << statusSs.str();
+			       << statusSs.str();
 			__SS_THROW__;
 		}
 	}
@@ -2962,8 +2962,8 @@ std::string CFOFrontEndInterface::getDetachedBufferTestStatus(
 
 //==============================================================================
 void CFOFrontEndInterface::handleDetachedSubevent(
-	const CFOLib::CFO_Event&                                              subeventIn,
-	std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
+    const CFOLib::CFO_Event&                                              subeventIn,
+    std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
 	const CFOLib::CFO_Event* subevent = &subeventIn;
 
@@ -2977,16 +2977,16 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 		++(threadStruct->mismatchedEventTagsCount_);
 		std::stringstream ostr;
 		ostr << "Mismatched event tag. Expected = " << threadStruct->nextEventWindowTag_
-			 << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-			 << threadStruct->nextEventWindowTag_ << "), Received = " << std::dec
-			 << subevent->GetEventWindowTag().GetEventWindowTag(true) << " (0x"
-			 << std::hex << std::setw(4) << std::setfill('0')
-			 << subevent->GetEventWindowTag().GetEventWindowTag(true) << ")";
+		     << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+		     << threadStruct->nextEventWindowTag_ << "), Received = " << std::dec
+		     << subevent->GetEventWindowTag().GetEventWindowTag(true) << " (0x"
+		     << std::hex << std::setw(4) << std::setfill('0')
+		     << subevent->GetEventWindowTag().GetEventWindowTag(true) << ")";
 		__COUTT__ << ostr.str();
 		threadStruct->mismatchedEventTagJumps_.push_back(
-			std::make_pair<uint64_t, uint64_t>(
-				threadStruct->nextEventWindowTag_,
-				subevent->GetEventWindowTag().GetEventWindowTag(true)));
+		    std::make_pair<uint64_t, uint64_t>(
+		        threadStruct->nextEventWindowTag_,
+		        subevent->GetEventWindowTag().GetEventWindowTag(true)));
 		__SS__ << ostr.str();
 		__SS_THROW__;
 		//to freeze TRACE
@@ -2996,7 +2996,7 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 #endif
 
 	threadStruct->nextEventWindowTag_ =
-		subevent->GetEventWindowTag().GetEventWindowTag(true) + 1;  //increment for next
+	    subevent->GetEventWindowTag().GetEventWindowTag(true) + 1;  //increment for next
 
 	// print the subevent header
 	// ostr << subevent->toJson() << std::endl;
@@ -3009,7 +3009,7 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 		threadStruct->transferStartTime_ = std::chrono::steady_clock::now();
 
 	threadStruct->totalSubeventBytesTransferred_ +=
-		sizeof(CFOLib::CFO_EventRecord);  //for subevent header
+	    sizeof(CFOLib::CFO_EventRecord);  //for subevent header
 
 #if 1
 	//save binary CFO event record data
@@ -3026,7 +3026,7 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 		// 	artdaqDriver -c srcs/artdaq-mu2e/tools/fcl/cfo_driver.fcl
 		if(threadStruct->publish_)
 			threadStruct->feSupervisor_->publishData((const char*)dataPtr,
-													 sizeof(CFOLib::CFO_EventRecord));
+			                                         sizeof(CFOLib::CFO_EventRecord));
 	}
 #endif
 
@@ -3039,7 +3039,7 @@ void CFOFrontEndInterface::handleDetachedSubevent(
 //==============================================================================
 // detechedBufferTestThread
 void CFOFrontEndInterface::detechedBufferTestThread(
-	std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
+    std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 try
 {
 	__COUT__ << "Buffer test thread established..." << __E__;
@@ -3053,14 +3053,14 @@ try
 	if(threadStruct->saveBinaryData_)
 	{
 		std::string filename = "/macroOutput_" + std::to_string(time(0)) + "_" +
-							   std::to_string(clock()) + ".bin";
+		                       std::to_string(clock()) + ".bin";
 		filename = std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
 		__COUTV__(filename);
 		threadStruct->fp_ = fopen(filename.c_str(), "wb");
 		if(!threadStruct->fp_)
 		{
 			__SS__ << "Failed to open file to save macro output '" << filename << "'..."
-				   << __E__;
+			       << __E__;
 			__SS_THROW__;
 		}
 	}
@@ -3074,11 +3074,11 @@ try
 	{
 		std::lock_guard<std::mutex> lock(threadStruct->lock_);
 		threadStruct->nextEventWindowTag_.store(
-			threadStruct->expectedEventTag_.load(std::memory_order_relaxed),
-			std::memory_order_relaxed);
+		    threadStruct->expectedEventTag_.load(std::memory_order_relaxed),
+		    std::memory_order_relaxed);
 		__COUT_INFO__
-			<< "Starting detached buffer test thread looking for Event Window Tag = "
-			<< threadStruct->nextEventWindowTag_ << std::endl;
+		    << "Starting detached buffer test thread looking for Event Window Tag = "
+		    << threadStruct->nextEventWindowTag_ << std::endl;
 
 		threadStruct->error_                    = "";
 		threadStruct->subeventsCount_           = 0;
@@ -3101,22 +3101,22 @@ try
 			{
 				if(threadStruct->doNotResetCounters_)
 					__COUT_INFO__
-						<< "NOT Resetting counters; previous status was as follows: \n"
-						<< getDetachedBufferTestStatus(threadStruct) << __E__;
+					    << "NOT Resetting counters; previous status was as follows: \n"
+					    << getDetachedBufferTestStatus(threadStruct) << __E__;
 				else
 					__COUT_INFO__
-						<< "Resetting counters; previous status was as follows: \n"
-						<< getDetachedBufferTestStatus(threadStruct) << __E__;
+					    << "Resetting counters; previous status was as follows: \n"
+					    << getDetachedBufferTestStatus(threadStruct) << __E__;
 
 				// start mutex scope
 				{
 					std::lock_guard<std::mutex> lock(threadStruct->lock_);
 					threadStruct->nextEventWindowTag_.store(
-						threadStruct->expectedEventTag_.load(std::memory_order_relaxed),
-						std::memory_order_relaxed);
+					    threadStruct->expectedEventTag_.load(std::memory_order_relaxed),
+					    std::memory_order_relaxed);
 					__COUT_INFO__ << "Restarting detached buffer test thread looking for "
-									 "Event Window Tag = "
-								  << threadStruct->nextEventWindowTag_ << std::endl;
+					                 "Event Window Tag = "
+					              << threadStruct->nextEventWindowTag_ << std::endl;
 
 					//reset counts and (re)open file
 					if(!threadStruct->doNotResetCounters_)
@@ -3131,16 +3131,16 @@ try
 						if(threadStruct->saveBinaryData_)
 						{
 							std::string filename = "/macroOutput_" +
-												   std::to_string(time(0)) + "_" +
-												   std::to_string(clock()) + ".bin";
+							                       std::to_string(time(0)) + "_" +
+							                       std::to_string(clock()) + ".bin";
 							filename =
-								std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
+							    std::string(__ENV__("OTSDAQ_DATA")) + "/" + filename;
 							__COUTV__(filename);
 							threadStruct->fp_ = fopen(filename.c_str(), "wb");
 							if(!threadStruct->fp_)
 							{
 								__SS__ << "Failed to open file to save macro output '"
-									   << filename << "'..." << __E__;
+								       << filename << "'..." << __E__;
 								__SS_THROW__;
 							}
 						}
@@ -3151,9 +3151,9 @@ try
 						threadStruct->mismatchedEventTagJumps_.clear();
 						threadStruct->totalSubeventBytesTransferred_ = 0;
 						threadStruct->transferStartTime_ =
-							std::chrono::steady_clock::time_point::min();
+						    std::chrono::steady_clock::time_point::min();
 						threadStruct->transferEndTime_ =
-							std::chrono::steady_clock::time_point::min();
+						    std::chrono::steady_clock::time_point::min();
 					}
 					else  //do not reset counters and do not close file unless no longer saving binary data
 					{
@@ -3178,13 +3178,13 @@ try
 		//CFO Records are a "subevent" (i.e. there is no opportunity for hardware event building including the CFO)
 		{
 			__COUTT__ << __COUT_HDR__
-					  << "get the data requested as events via ->GetSubEventData(...)";
+			          << "get the data requested as events via ->GetSubEventData(...)";
 			//GetData will clear subevents first
 			while(threadStruct->thisCFO_->GetData(subevents) && subevents.size())
 			{
 				__COUTT__ << __COUT_HDR__ << "Read iteration #" << ii++
-						  << ": SubEvents returned by the DTC: " << subevents.size()
-						  << std::endl;
+				          << ": SubEvents returned by the DTC: " << subevents.size()
+				          << std::endl;
 
 				if(subevents.empty())
 					continue;  //impossible!
@@ -3204,10 +3204,10 @@ try
 			if(lastCount != threadStruct->subeventsCount_ || ii % 100 == 0)
 			{
 				__COUTT__
-					<< "No more subevents found in DMA bufferr... waiting... iteration #"
-					<< ii
-					<< ", SubEvents received so far = " << threadStruct->subeventsCount_
-					<< __E__;
+				    << "No more subevents found in DMA bufferr... waiting... iteration #"
+				    << ii
+				    << ", SubEvents received so far = " << threadStruct->subeventsCount_
+				    << __E__;
 				lastCount = threadStruct->subeventsCount_;
 
 				// threadStruct->thisCFO_->GetDevice()->spy(DTC_DMA_Engine_DAQ, 3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
@@ -3228,8 +3228,8 @@ try
 	}
 
 	__COUT_INFO__ << "Buffer test thread exited. "
-				  << " CFO Event Record SubEvents received = "
-				  << threadStruct->subeventsCount_ << __E__;
+	              << " CFO Event Record SubEvents received = "
+	              << threadStruct->subeventsCount_ << __E__;
 	threadStruct->running_ = false;
 
 }  //end detechedBufferTestThread()
@@ -3238,8 +3238,8 @@ catch(...)
 	std::stringstream errSs;
 	errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
 	threadStruct->thisCFO_->GetDevice()->spy(
-		DTC_DMA_Engine_DAQ,
-		3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
+	    DTC_DMA_Engine_DAQ,
+	    3 /* for once */ | 8 /* for wide view */ | 16 /* for stack trace */);
 
 	threadStruct->running_ = false;
 	try
@@ -3270,10 +3270,10 @@ void CFOFrontEndInterface::CFOReset(__ARGS__)
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 	getCFOandDTCRegisters()->SetJitterAttenuatorSelect(1 /* select RJ45 */,
-													   false /* alsoResetJA */);
+	                                                   false /* alsoResetJA */);
 	sleep(1);
 	__FE_COUT_INFO__ << "JA Status = "
-					 << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+	                 << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 
 	thisCFO_->CFOandDTC_Registers::ResetSERDES();
 	thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -3299,7 +3299,7 @@ void CFOFrontEndInterface::CFOHalt(__ARGS__)
 void CFOFrontEndInterface::GetCounters(__ARGS__)
 {
 	__SET_ARG_OUT__(
-		"Status", thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
+	    "Status", thisCFO_->FormattedRegDump(130, thisCFO_->formattedCounterFunctions_));
 }  //end GetCounters()
 
 //========================================================================
@@ -3316,16 +3316,16 @@ void CFOFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 {
 	__FE_COUT__ << "Starting loopback test for run " << runNumber << ", step " << step
-				<< __E__;
+	            << __E__;
 	// TODO: read from configuratione
 
 	const int          ROCsPerDTC = 6;
 	const unsigned int n_loopbacks =
-		getConfigurationManager()
-			->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
-			.getValue<unsigned int>();
+	    getConfigurationManager()
+	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfLoopbacks")
+	        .getValue<unsigned int>();
 	const unsigned int DTCsPerChain = 8;  //getConfigurationManager()
-		//->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
+	    //->getNode("/Mu2eGlobalsTable/SyncDemoConfig/DTCsPerChain").getValue<unsigned int>();
 
 	const int    alignment_marker = 10;  // TODO: check with the firmware
 	unsigned int n_steps          = DTCsPerChain * ROCsPerDTC;
@@ -3354,7 +3354,7 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 	int active_ROC = loopback_step % ROCsPerDTC;
 
 	__FE_COUT__ << "step " << loopback_step << ") active DTC: " << active_DTC
-				<< " active ROC on link: " << active_ROC << __E__;
+	            << " active ROC on link: " << active_ROC << __E__;
 
 	// TODO: put it in a directory
 	FILE*       fp       = 0;
@@ -3364,8 +3364,8 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 	for(auto link : CFOLib::CFO_Links)
 	{
 		__FE_COUT__ << "step " << loopback_step << ") CFO sending markers on" << __E__
-					<< "CFO link:\t" << link << __E__ << "target DTC:\t" << active_DTC
-					<< __E__ << "target ROC:\t" << active_ROC << __E__;
+		            << "CFO link:\t" << link << __E__ << "target DTC:\t" << active_DTC
+		            << __E__ << "target ROC:\t" << active_ROC << __E__;
 		unsigned int comulative_delay = 0;
 		float        average_delay    = 0.0;
 		bool         timeout          = false;
@@ -3388,12 +3388,12 @@ void CFOFrontEndInterface::loopbackTest(std::string runNumber, int step)
 			}
 			comulative_delay += delay.to_ulong();
 			__FE_COUT__ << "step " << loopback_step << ") Delay measured on link " << link
-						<< ": " << delay.to_ulong() << __E__;
+			            << ": " << delay.to_ulong() << __E__;
 		}
 		// compute the average
 		average_delay = comulative_delay / n_loopbacks;
 		__FE_COUT__ << "step " << loopback_step << ") Average Delay on link " << link
-					<< ": " << average_delay << __E__;
+		            << ": " << average_delay << __E__;
 
 		// save the results on file
 		try
@@ -3449,18 +3449,18 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 
 	uint64_t eventDurationInClocks = extractSharedRunPlanEventDuration();
 	result << "\n"
-		   << divider
-		   << "Event Window Duration:                      " << eventDurationInClocks
-		   << " 0x" << std::hex << eventDurationInClocks << std::dec << " clocks ("
-		   << (eventDurationInClocks * FPGAClock_ / 1000.0) << " us)" << __E__;
+	       << divider
+	       << "Event Window Duration:                      " << eventDurationInClocks
+	       << " 0x" << std::hex << eventDurationInClocks << std::dec << " clocks ("
+	       << (eventDurationInClocks * FPGAClock_ / 1000.0) << " us)" << __E__;
 	if(eventDurationInClocks > 0)
 		result << "\n"
-			   << divider << "Event Window Rate:                         "
-			   << (1000.0 / (eventDurationInClocks * FPGAClock_ / 1000.0)) << " kHz"
-			   << __E__;
+		       << divider << "Event Window Rate:                         "
+		       << (1000.0 / (eventDurationInClocks * FPGAClock_ / 1000.0)) << " kHz"
+		       << __E__;
 	else
 		result << "\n"
-			   << divider << "Event Window Rate:                         0" << __E__;
+		       << divider << "Event Window Rate:                         0" << __E__;
 
 	result << "\n" << divider << thisCFO_->FormatRunPlanCurrentMode() << __E__;
 	result << "\n" << divider << thisCFO_->FormatBeamOnMode() << __E__;
@@ -3471,18 +3471,18 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 	result << "\n" << divider << __E__;
 	uint64_t val = thisCFO_->ReadReceiveRF0MarkerCount();
 	result << "RF-0 Markers Received (16-bits):            " << std::dec << val << " (0x"
-		   << std::hex << val << ")" << __E__;
+	       << std::hex << val << ")" << __E__;
 	val = thisCFO_->ReadTransmitHeartbeatPacketCount();
 	result << "Heartbeats Transmitted (16-bits):           " << std::dec << val << " (0x"
-		   << std::hex << val << ")" << __E__;
+	       << std::hex << val << ")" << __E__;
 	val = thisCFO_->ReadTransmitEventWindowMarkerCount();
 	result << "Event Window Markers Transmitted (16-bits): " << std::dec << val << " (0x"
-		   << std::hex << val << ")" << __E__;
+	       << std::hex << val << ")" << __E__;
 
 	//now readback current run plan
 	std::map<uint32_t /* address */,
-			 std::pair<uint32_t /* expected */, uint32_t /* actual */>>
-				mismatches;
+	         std::pair<uint32_t /* expected */, uint32_t /* actual */>>
+	            mismatches;
 	std::string binaryContents;
 	binaryContents.resize(sharedRunPlanSize_);
 	for(size_t i = 0; i < sharedRunPlanSize_; ++i)
@@ -3492,18 +3492,18 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 	result << "\n\n" << divider << "Run Plan Readback:\n";
 
 	const std::string LOOP = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-		(uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::LOOP);
+	    (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::LOOP);
 	const std::string DO_LOOP = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-		(uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::DO_LOOP);
+	    (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::DO_LOOP);
 	const std::string MARKER = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-		(uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::MARKER);
+	    (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::MARKER);
 	const std::string OR_MODE_BITS = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-		(uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::OR_MODE_BITS);
+	    (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::OR_MODE_BITS);
 	const std::string OR_SINGLESHOT_MODE_BITS =
-		CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-			(uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::OR_SINGLESHOT_MODE_BITS);
+	    CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
+	        (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::OR_SINGLESHOT_MODE_BITS);
 	const std::string AND_MODE_BITS = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-		(uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::AND_MODE_BITS);
+	    (uint8_t)CFOLib::CFO_Compiler::CFO_INSTR::AND_MODE_BITS);
 
 	//============================
 	/// lambda function to create a comment for the bits set by OR_MODE_BITS and OR_SINGLESHOT_MODE_BITS instructions
@@ -3515,14 +3515,14 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 			return std::string("no bits");
 
 		std::map<uint16_t, std::string> subsystemBitName = {
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::CRV), "CRV"},
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo), "Calo"},
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo_inject),
-			 "Calo Inject"},
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Tracker), "Tracker"},
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::STM), "STM"},
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::ExtMon), "ExtMon"},
-			{static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::HWDev), "HWDev"}};
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::CRV), "CRV"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo), "Calo"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Calo_inject),
+		     "Calo Inject"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::Tracker), "Tracker"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::STM), "STM"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::ExtMon), "ExtMon"},
+		    {static_cast<uint16_t>(SharedRunPlanSubsystemModeBit::HWDev), "HWDev"}};
 
 		std::vector<std::string> bitDescriptions;
 		for(uint16_t b = 0; b < 48; ++b)
@@ -3557,8 +3557,8 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 	{
 		if(expectedAddress % 2 == 1)  //groups of two words per address
 			result << "\n"
-				   << "Line #" << std::dec << std::setfill(' ') << std::setw(4)
-				   << mismatch.first / 2 << ":" << tabStr << "     0x";
+			       << "Line #" << std::dec << std::setfill(' ') << std::setw(4)
+			       << mismatch.first / 2 << ":" << tabStr << "     0x";
 
 		while(mismatch.first > expectedAddress)  //pad with all F's (since not a mismatch)
 		{
@@ -3567,17 +3567,17 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 				loDataSs.str("");  //clear for new line
 				loDataWord = 0xFFFFFFFF;
 				loDataSs << std::hex << std::setfill('0') << std::setw(8) << 0xFFFFFFFF
-						 << std::dec << " ";
+				         << std::dec << " ";
 			}
 			else  // should be impossible to have opcode 0xFF!
 				result << std::hex << std::setfill('0') << std::setw(8) << 0xFFFFFFFF
-					   << std::dec << " " << loDataSs.str() << "   // INVALID";
+				       << std::dec << " " << loDataSs.str() << "   // INVALID";
 
 			++expectedAddress;
 			if(expectedAddress % 2 == 1)  //groups of two words per address (hi then lo)
 				result << "\n"
-					   << "Line #" << std::dec << std::setfill(' ') << std::setw(4)
-					   << mismatch.first / 2 << ":" << tabStr << "     0x";
+				       << "Line #" << std::dec << std::setfill(' ') << std::setw(4)
+				       << mismatch.first / 2 << ":" << tabStr << "     0x";
 		}
 
 		if(expectedAddress % 2 == 0)  //groups of two words per address
@@ -3585,37 +3585,37 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 			loDataSs.str("");  //clear for new line
 			loDataWord = mismatch.second.second;
 			loDataSs << std::hex << std::setfill('0') << std::setw(8)
-					 << mismatch.second.second << std::dec << " ";
+			         << mismatch.second.second << std::dec << " ";
 		}
 		else
 		{
 			std::string op = "INVALID";
 			if(CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.find(mismatch.second.second >>
-																 24) !=
+			                                                     24) !=
 			   CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.end())
 				op = CFOLib::CFO_Compiler::CODE_to_OP_TRANSLATION.at(
-					mismatch.second.second >> 24);
+				    mismatch.second.second >> 24);
 
 			if(op == LOOP)
 				tabStr += '\t';
 			else if(op == DO_LOOP && tabStr.length())
 				tabStr = tabStr.substr(0, tabStr.length() - 1);
 			result << std::hex << std::setfill('0') << std::setw(8)
-				   << mismatch.second.second << std::dec << " " << loDataSs.str()
-				   << "   // " << op;
+			       << mismatch.second.second << std::dec << " " << loDataSs.str()
+			       << "   // " << op;
 			if(op == OR_MODE_BITS || op == OR_SINGLESHOT_MODE_BITS)
 			{
 				uint64_t data48 =
-					(uint64_t(mismatch.second.second & 0xFFFF) << 32) | loDataWord;
+				    (uint64_t(mismatch.second.second & 0xFFFF) << 32) | loDataWord;
 				result << " sets " << formatSetBitsComment(data48) << "";
 			}
 			else if(op == AND_MODE_BITS)
 			{
 				uint64_t data48 =
-					(uint64_t(mismatch.second.second & 0xFFFF) << 32) | loDataWord;
+				    (uint64_t(mismatch.second.second & 0xFFFF) << 32) | loDataWord;
 				result << " clears "
-					   << formatSetBitsComment(~(data48 | (uint64_t(0xFFFF) << 48)))
-					   << "";
+				       << formatSetBitsComment(~(data48 | (uint64_t(0xFFFF) << 48)))
+				       << "";
 			}
 			if(op == MARKER)
 				result << " -----> #" << ++markerCnt;
@@ -3634,18 +3634,18 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	if(thisCFO_->ReadBeamOnMode() || thisCFO_->ReadBeamOffMode())
 	{
 		__SS__ << "Error: CFO is already in a Run Plan. Please do 'CFO Halt' to halt the "
-				  "current Run Plan before starting a new one."
-			   << __E__;
+		          "current Run Plan before starting a new one."
+		       << __E__;
 		__SS_THROW__;
 	}
 
 	uint64_t initEventMode = __GET_ARG_IN__("Initial Event Mode (Default = 0)", uint64_t);
 	uint64_t initEventTag  = __GET_ARG_IN__("Initial Event Tag  (Default = 0)", uint64_t);
 	std::string eventDuration = __GET_ARG_IN__(
-		"Run Plan Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := "
-		"25ns] (Default = 1.8 us)",
-		std::string,
-		"1.8 us");
+	    "Run Plan Event Window Duration (s, ms, us, ns, and clocks allowed) [clocks := "
+	    "25ns] (Default = 1.8 us)",
+	    std::string,
+	    "1.8 us");
 
 	const double CALO_INJECT_RATE_PER_SEC = 1.0 / 1.5;  //1 injection per 1.5 seconds
 
@@ -3689,11 +3689,11 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	std::string eventDurationSplitNumber, eventDurationSplitUnits;
 	__FE_COUTV__(eventDuration);
 	parseEventDurationForRunPlan(
-		eventDuration, eventDurationSplitNumber, eventDurationSplitUnits);
+	    eventDuration, eventDurationSplitNumber, eventDurationSplitUnits);
 	__FE_COUTV__(eventDurationSplitNumber);
 	__FE_COUTV__(eventDurationSplitUnits);
 	uint32_t eventDurationInClocks =
-		CFOandDTCCoreVInterface::convertEventDurationToClocks(eventDuration);
+	    CFOandDTCCoreVInterface::convertEventDurationToClocks(eventDuration);
 	__FE_COUTV__(eventDurationInClocks);
 
 	//calculate number of clocks per Calo Inject
@@ -3706,7 +3706,7 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	//			... * (ns / clock) = (inject / clock)
 
 	double caloInjectClocks =
-		CALO_INJECT_RATE_PER_SEC * (1 / 1e9) * CFOandDTCCoreVInterface::FPGAClock_;
+	    CALO_INJECT_RATE_PER_SEC * (1 / 1e9) * CFOandDTCCoreVInterface::FPGAClock_;
 	__FE_COUTV__(caloInjectClocks);
 	uint32_t caloClocksPerInject = 1 / caloInjectClocks;
 	__FE_COUTV__(caloClocksPerInject);
@@ -3714,9 +3714,9 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	//determine M:N on ratio for calo inject
 	uint32_t mPartRatio, nPartRatio;
 	getRatioOfOnPerEvents(caloClocksPerInject,    //target (clocks / on) rate
-						  eventDurationInClocks,  // (clocks / event)
-						  mPartRatio,
-						  nPartRatio);
+	                      eventDurationInClocks,  // (clocks / event)
+	                      mPartRatio,
+	                      nPartRatio);
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
 
@@ -3725,14 +3725,14 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	thisCFO_
-		->SoftReset();  //to reset event window tag starting point handling and mode = 0
+	    ->SoftReset();  //to reset event window tag starting point handling and mode = 0
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
 	std::string       outFileName = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.bin";
 	result << "Generated Run Plan text file: <FILE>" << inFileName << "</FILE>" << __E__;
 	result << "Compiled Run Plan binary file: <FILE>" << outFileName << "</FILE>"
-		   << __E__;
+	       << __E__;
 	__FE_COUT__ << "Generated Run Plan text file: " << inFileName << __E__;
 	__FE_COUT__ << "Compiled Run Plan binary file: " << outFileName << __E__;
 
@@ -3743,28 +3743,28 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 		//Start overwrites whatever is in hardware; use empty/default masks for both parts.
 		const size_t          N_coarse_sz = standardNValues_.size() - 1;
 		std::vector<uint64_t> emptyAndMasks(standardNValues_[0] + 1 + N_coarse_sz,
-											0xFFFFFFFFFFFFULL);  //keep-all
+		                                    0xFFFFFFFFFFFFULL);  //keep-all
 		std::vector<uint64_t> emptyOrMasks(N_coarse_sz + standardNValues_[0],
-										   0x0ULL);  //set-nothing
+		                                   0x0ULL);  //set-nothing
 
 		//part-1: write the initial all-on mode plan
 		generateSharedRunPlanWithPeriodicModeOn(result,
-												inFileName,
-												initEventTag,
-												0,              //start bit
-												48,             //bit count
-												initEventMode,  //init bits ON
-												1,              // duty M in M:N on
-												1,              // duty N in M:N on
-												0,              //eventOffsetInLoop
-												eventDurationSplitNumber,
-												eventDurationSplitUnits,
-												emptyAndMasks,
-												emptyOrMasks);
+		                                        inFileName,
+		                                        initEventTag,
+		                                        0,              //start bit
+		                                        48,             //bit count
+		                                        initEventMode,  //init bits ON
+		                                        1,              // duty M in M:N on
+		                                        1,              // duty N in M:N on
+		                                        0,              //eventOffsetInLoop
+		                                        eventDurationSplitNumber,
+		                                        eventDurationSplitUnits,
+		                                        emptyAndMasks,
+		                                        emptyOrMasks);
 		{
 			CFOLib::CFO_Compiler compiler;
 			result << "\n\nRun Plan part-1:\n"
-				   << compiler.processFile(inFileName, outFileName);
+			       << compiler.processFile(inFileName, outFileName);
 			__FE_COUT__ << result.str();
 			result << SetRunplan(outFileName);
 			thisCFO_->EnableEmbeddedClockMarker();
@@ -3775,23 +3775,23 @@ void CFOFrontEndInterface::SharedRunPlanStart(__ARGS__)
 
 		//part-2: merge calo inject bit on top of part-1 (still fresh start, so empty masks are valid)
 		generateSharedRunPlanWithPeriodicModeOn(
-			result,
-			inFileName,
-			initEventTag,
-			(uint16_t)SharedRunPlanSubsystemModeBit::Calo_inject,  //start bit
-			1,                                                     //bit count
-			1,                                                     //calo inject bit ON
-			mPartRatio,                                            // duty M in M:N on
-			nPartRatio,                                            // duty N in M:N on
-			0,                                                     //eventOffsetInLoop
-			eventDurationSplitNumber,
-			eventDurationSplitUnits,
-			emptyAndMasks,
-			emptyOrMasks);
+		    result,
+		    inFileName,
+		    initEventTag,
+		    (uint16_t)SharedRunPlanSubsystemModeBit::Calo_inject,  //start bit
+		    1,                                                     //bit count
+		    1,                                                     //calo inject bit ON
+		    mPartRatio,                                            // duty M in M:N on
+		    nPartRatio,                                            // duty N in M:N on
+		    0,                                                     //eventOffsetInLoop
+		    eventDurationSplitNumber,
+		    eventDurationSplitUnits,
+		    emptyAndMasks,
+		    emptyOrMasks);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan part-2:\n"
-			   << compiler.processFile(inFileName, outFileName);
+		       << compiler.processFile(inFileName, outFileName);
 		result << SetRunplan(outFileName);
 		__FE_COUT__ << "Shared run plan part-2 started." << __E__;
 	}  //end generate and set Run Plan
@@ -3819,33 +3819,33 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	if(!(thisCFO_->ReadBeamOnMode() || thisCFO_->ReadBeamOffMode()))
 	{
 		__SS__ << "Error: CFO is not currently in a Run Plan. Please do 'Shared Run Plan "
-				  "Start' to start the shared Run Plan before adding subsystems."
-			   << __E__;
+		          "Start' to start the shared Run Plan before adding subsystems."
+		       << __E__;
 		__SS_THROW__;
 	}
 
 	std::string subsystem =
-		__GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
-					   std::string,
-					   "Custom");
+	    __GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+	                   std::string,
+	                   "Custom");
 	std::string dutyCycle = __GET_ARG_IN__(
-		"Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
+	    "Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
 
 	// std::string runType = __GET_ARG_IN__("Run Type (Supercycle Emulation = 1, Fixed-width Windows = 0) (Default = Fixed-width Windows)",std::string,"Fixed-width Windows");
 	uint32_t eventOffsetInLoop =
-		__GET_ARG_IN__("Event Offset in Loop (Default = 0)", uint32_t);
+	    __GET_ARG_IN__("Event Offset in Loop (Default = 0)", uint32_t);
 
 	std::stringstream result;
 	result << "\nAdding subsystem '" << subsystem << "' to the Shared Run Plan with " <<
-		// "type='" << runType << "' " <<
-		"dutyCycle '" << dutyCycle << "'..." << __E__;
+	    // "type='" << runType << "' " <<
+	    "dutyCycle '" << dutyCycle << "'..." << __E__;
 
 	__FE_COUTV__(subsystem);
 	__FE_COUTV__(dutyCycle);
 	if(supportedSubsystems_.find(subsystem) == supportedSubsystems_.end())
 	{
 		__FE_SS__ << "Specified subsystem '" << subsystem
-				  << "' was not found in the set of supported subsystems: ";
+		          << "' was not found in the set of supported subsystems: ";
 		for(auto& subsystemPair : supportedSubsystems_)
 			ss << "\t" << subsystemPair.first << __E__;
 		__FE_SS_THROW__;
@@ -3878,20 +3878,20 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 		if(mPartRatio > 100)
 		{
 			__FE_SS__ << "Illegal duty cycle percentage '" << dutyCycle
-					  << "'.. expecting a percentage less than or equal to 100%."
-					  << __E__;
+			          << "'.. expecting a percentage less than or equal to 100%."
+			          << __E__;
 			__FE_SS_THROW__;
 		}
 	}
 	else  //assume in M:N ratio format
 	{
 		std::vector<std::string> dutyCycleSplit =
-			StringMacros::getVectorFromString(dutyCycle, {':'});
+		    StringMacros::getVectorFromString(dutyCycle, {':'});
 		__FE_COUTV__(StringMacros::vectorToString(dutyCycleSplit));
 		if(dutyCycleSplit.size() != 2)
 		{
 			__FE_SS__ << "Illegal duty cycle ratio '" << dutyCycle
-					  << "'.. expecting M:N format, e.g. 1:200." << __E__;
+			          << "'.. expecting M:N format, e.g. 1:200." << __E__;
 			__FE_SS_THROW__;
 		}
 		mPartRatio = std::strtoul(dutyCycleSplit[0].c_str(), nullptr, 10);
@@ -3901,7 +3901,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	//extract and/or op values to be modified in the join
 	std::vector<uint64_t> existingAndMasks, existingOrMasks;
 	uint64_t              eventDurationInClocks =
-		extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
+	    extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
 	//now need to insert subsystems enable bit in run plan at duty cycle
@@ -3914,9 +3914,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	{
 		__FE_COUTT__ << "Custom subsystem identified!" << __E__;
 		onBits_startBit =
-			__GET_ARG_IN__("Custom Mode Bit Position (Default = 0)", uint16_t, 0);
+		    __GET_ARG_IN__("Custom Mode Bit Position (Default = 0)", uint16_t, 0);
 		onBits_bitCount =
-			__GET_ARG_IN__("Custom Mode Bit Count (Default = 48)", uint16_t, 48);
+		    __GET_ARG_IN__("Custom Mode Bit Count (Default = 48)", uint16_t, 48);
 		onBits_value = __GET_ARG_IN__("Custom Mode Bit Value (Default = 0)", uint64_t, 0);
 	}
 	else
@@ -3928,8 +3928,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	}
 
 	__FE_COUT__ << "onBits_startBit = " << onBits_startBit
-				<< " onBits_bitCount = " << onBits_bitCount << " onBits_value = 0x"
-				<< std::hex << onBits_value << __E__;
+	            << " onBits_bitCount = " << onBits_bitCount << " onBits_value = 0x"
+	            << std::hex << onBits_value << __E__;
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
@@ -3937,7 +3937,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	result << __E__;  //space for readability
 	result << "Generated Run Plan text file: <FILE>" << inFileName << "</FILE>" << __E__;
 	result << "Compiled Run Plan binary file: <FILE>" << outFileName << "</FILE>"
-		   << __E__;
+	       << __E__;
 	result << __E__;  //space for readability
 
 	//generate Run Plan and write to input file for compiler
@@ -3945,33 +3945,33 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	//	Set Run Plan checks BRAM size indirectly, by reading back and validating the instruction set written!
 	{
 		result << "\n\nSubsystem '" << subsystem << "' joining with M:N ratio "
-			   << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
-			   << "\n\tonBits_startBit = " << onBits_startBit
-			   << "\n\tonBits_bitCount = " << onBits_bitCount
-			   << "\n\teventOffsetInLoop = " << eventOffsetInLoop
-			   << "\n\tonBits_value = 0x" << std::hex << onBits_value << std::dec
-			   << __E__;
+		       << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
+		       << "\n\tonBits_startBit = " << onBits_startBit
+		       << "\n\tonBits_bitCount = " << onBits_bitCount
+		       << "\n\teventOffsetInLoop = " << eventOffsetInLoop
+		       << "\n\tonBits_value = 0x" << std::hex << onBits_value << std::dec
+		       << __E__;
 		result << __E__;  //space for readability
 
 		// Pass 1: write all updated AND masks first while suppressing new OR additions.
 		// This avoids a window where OR bits could be interpreted before the new clear
 		// points are in place in the always-running run plan feeder.
 		generateSharedRunPlanWithPeriodicModeOn(
-			result,
-			inFileName,
-			0,                //initEventTag does not matter (already in loops)
-			onBits_startBit,  //start bit
-			onBits_bitCount,  //bit count
-			onBits_value,     //calo inject bit ON
-			mPartRatio,       // duty M in M:N on
-			nPartRatio,       // duty N in M:N on
-			eventOffsetInLoop,
-			std::to_string(eventDurationInClocks),  //eventDurationInClocks,
-			"clocks",                               //eventDurationSplitUnits
-			existingAndMasks,
-			existingOrMasks,
-			{},    //singleShotMasks
-			false  //applyPeriodicOrMasks
+		    result,
+		    inFileName,
+		    0,                //initEventTag does not matter (already in loops)
+		    onBits_startBit,  //start bit
+		    onBits_bitCount,  //bit count
+		    onBits_value,     //calo inject bit ON
+		    mPartRatio,       // duty M in M:N on
+		    nPartRatio,       // duty N in M:N on
+		    eventOffsetInLoop,
+		    std::to_string(eventDurationInClocks),  //eventDurationInClocks,
+		    "clocks",                               //eventDurationSplitUnits
+		    existingAndMasks,
+		    existingOrMasks,
+		    {},    //singleShotMasks
+		    false  //applyPeriodicOrMasks
 		);
 
 		{
@@ -3979,32 +3979,32 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 			compiler.processFile(inFileName, outFileName);
 			result << SetRunplan(outFileName);
 			result
-				<< "Set preparation Run Plan for subsystem join with updated AND masks "
-				   "and suppressed OR additions.\n";
+			    << "Set preparation Run Plan for subsystem join with updated AND masks "
+			       "and suppressed OR additions.\n";
 		}
 
 		// Pass 2: write AND+OR plan, now that AND safeguards are already present.
 		generateSharedRunPlanWithPeriodicModeOn(
-			result,
-			inFileName,
-			0,                //initEventTag does not matter (already in loops)
-			onBits_startBit,  //start bit
-			onBits_bitCount,  //bit count
-			onBits_value,     //calo inject bit ON
-			mPartRatio,       // duty M in M:N on
-			nPartRatio,       // duty N in M:N on
-			eventOffsetInLoop,
-			std::to_string(eventDurationInClocks),  //eventDurationInClocks,
-			"clocks",                               //eventDurationSplitUnits
-			existingAndMasks,
-			existingOrMasks,
-			{},   //singleShotMasks
-			true  //applyPeriodicOrMasks
+		    result,
+		    inFileName,
+		    0,                //initEventTag does not matter (already in loops)
+		    onBits_startBit,  //start bit
+		    onBits_bitCount,  //bit count
+		    onBits_value,     //calo inject bit ON
+		    mPartRatio,       // duty M in M:N on
+		    nPartRatio,       // duty N in M:N on
+		    eventOffsetInLoop,
+		    std::to_string(eventDurationInClocks),  //eventDurationInClocks,
+		    "clocks",                               //eventDurationSplitUnits
+		    existingAndMasks,
+		    existingOrMasks,
+		    {},   //singleShotMasks
+		    true  //applyPeriodicOrMasks
 		);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
-			   << compiler.processFile(inFileName, outFileName);
+		       << compiler.processFile(inFileName, outFileName);
 		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
@@ -4015,11 +4015,11 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemJoin(__ARGS__)
 	result << statusArgsOut[0].second;
 
 	result << "\n\nSubsystem '" << subsystem << "' successfully joined with M:N ratio "
-		   << std::dec << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
-		   << "\n\tonBits_startBit = " << onBits_startBit
-		   << "\n\tonBits_bitCount = " << onBits_bitCount
-		   << "\n\teventOffsetInLoop = " << eventOffsetInLoop << "\n\tonBits_value = 0x"
-		   << std::hex << onBits_value << std::dec << __E__;
+	       << std::dec << mPartRatio << ":" << nPartRatio << " with mode bit parameters: "
+	       << "\n\tonBits_startBit = " << onBits_startBit
+	       << "\n\tonBits_bitCount = " << onBits_bitCount
+	       << "\n\teventOffsetInLoop = " << eventOffsetInLoop << "\n\tonBits_value = 0x"
+	       << std::hex << onBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanSubsystemJoin()
@@ -4047,27 +4047,27 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	if(!(thisCFO_->ReadBeamOnMode() || thisCFO_->ReadBeamOffMode()))
 	{
 		__SS__ << "Error: CFO is not currently in a Run Plan. Please do 'Shared Run Plan "
-				  "Start' to start the shared Run Plan before adding subsystems."
-			   << __E__;
+		          "Start' to start the shared Run Plan before adding subsystems."
+		       << __E__;
 		__SS_THROW__;
 	}
 
 	std::string subsystem =
-		__GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
-					   std::string,
-					   "Custom");
+	    __GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+	                   std::string,
+	                   "Custom");
 	std::string dutyCycle = __GET_ARG_IN__(
-		"Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
+	    "Duty Cycle (% or M:N on:event ratio, Default = 100%)", std::string, "100%");
 
 	std::stringstream result;
 	result << "\nSingle-shot joining subsystem '" << subsystem
-		   << "' to the Shared Run Plan..." << __E__;
+	       << "' to the Shared Run Plan..." << __E__;
 
 	__FE_COUTV__(subsystem);
 	if(supportedSubsystems_.find(subsystem) == supportedSubsystems_.end())
 	{
 		__FE_SS__ << "Specified subsystem '" << subsystem
-				  << "' was not found in the set of supported subsystems: ";
+		          << "' was not found in the set of supported subsystems: ";
 		for(auto& subsystemPair : supportedSubsystems_)
 			ss << "\t" << subsystemPair.first << __E__;
 		__FE_SS_THROW__;
@@ -4076,10 +4076,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	// Single-shot count can be any positive integer. Exact coarse counts use one coarse
 	// chunk; larger/non-exact values are decomposed into repeated coarse/fine chunks.
 	uint32_t singleShotCount = __GET_ARG_IN__(
-		"Single-shot Event Count (positive integer; larger values are split into "
-		"coarse/fine chunks)",
-		uint32_t,
-		1);
+	    "Single-shot Event Count (positive integer; larger values are split into "
+	    "coarse/fine chunks)",
+	    uint32_t,
+	    1);
 	__FE_COUTV__(singleShotCount);
 	if(singleShotCount < 1)
 	{
@@ -4097,9 +4097,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	{
 		__FE_COUTT__ << "Custom subsystem identified!" << __E__;
 		onBits_startBit =
-			__GET_ARG_IN__("Custom Mode Bit Position (Default = 0)", uint16_t, 0);
+		    __GET_ARG_IN__("Custom Mode Bit Position (Default = 0)", uint16_t, 0);
 		onBits_bitCount =
-			__GET_ARG_IN__("Custom Mode Bit Count (Default = 48)", uint16_t, 48);
+		    __GET_ARG_IN__("Custom Mode Bit Count (Default = 48)", uint16_t, 48);
 		onBits_value = __GET_ARG_IN__("Custom Mode Bit Value (Default = 0)", uint64_t, 0);
 	}
 	else
@@ -4111,13 +4111,13 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	}
 
 	__FE_COUT__ << "onBits_startBit = " << onBits_startBit
-				<< " onBits_bitCount = " << onBits_bitCount << " onBits_value = 0x"
-				<< std::hex << onBits_value << __E__;
+	            << " onBits_bitCount = " << onBits_bitCount << " onBits_value = 0x"
+	            << std::hex << onBits_value << __E__;
 
 	//extract and/or op values to be modified in the single-shot join
 	std::vector<uint64_t> existingAndMasks, existingOrMasks;
 	uint64_t              eventDurationInClocks =
-		extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
+	    extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
 	// Parse and resolve single-shot duty cycle using the same syntax/logic as periodic join.
@@ -4130,20 +4130,20 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		if(mPartRatio > 100)
 		{
 			__FE_SS__ << "Illegal duty cycle percentage '" << dutyCycle
-					  << "'.. expecting a percentage less than or equal to 100%."
-					  << __E__;
+			          << "'.. expecting a percentage less than or equal to 100%."
+			          << __E__;
 			__FE_SS_THROW__;
 		}
 	}
 	else  //assume in M:N ratio format
 	{
 		std::vector<std::string> dutyCycleSplit =
-			StringMacros::getVectorFromString(dutyCycle, {':'});
+		    StringMacros::getVectorFromString(dutyCycle, {':'});
 		__FE_COUTV__(StringMacros::vectorToString(dutyCycleSplit));
 		if(dutyCycleSplit.size() != 2)
 		{
 			__FE_SS__ << "Illegal duty cycle ratio '" << dutyCycle
-					  << "'.. expecting M:N format, e.g. 1:200." << __E__;
+			          << "'.. expecting M:N format, e.g. 1:200." << __E__;
 			__FE_SS_THROW__;
 		}
 		mPartRatio = std::strtoul(dutyCycleSplit[0].c_str(), nullptr, 10);
@@ -4152,20 +4152,20 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 
 	mnFixRatio(result, mPartRatio, nPartRatio);
 	__FE_COUT__ << "Resolved single-shot duty cycle M:N = " << mPartRatio << ":"
-				<< nPartRatio << __E__;
+	            << nPartRatio << __E__;
 
 	if(nPartRatio > standardNValues_[0])
 	{
 		__FE_SS__ << "Single-shot duty cycle currently supports resolved N <= "
-				  << standardNValues_[0] << ". Resolved M:N = " << mPartRatio << ":"
-				  << nPartRatio << " from input '" << dutyCycle << "'." << __E__;
+		          << standardNValues_[0] << ". Resolved M:N = " << mPartRatio << ":"
+		          << nPartRatio << " from input '" << dutyCycle << "'." << __E__;
 		__FE_SS_THROW__;
 	}
 
 	//48-bit pattern of bits this subsystem sets when active
 	const uint64_t setBitsMask48 =
-		(onBits_value << onBits_startBit) &
-		(((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
+	    (onBits_value << onBits_startBit) &
+	    (((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
 
 	const size_t N_coarse = standardNValues_.size() - 1;
 
@@ -4177,8 +4177,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		const uint32_t finePhase100 = i;
 		const uint32_t subFinePhase = nPartRatio ? (i % nPartRatio) : 0;
 		bool           shouldSet =
-			(nPartRatio == standardNValues_[0] && finePhase100 < mPartRatio) ||
-			(nPartRatio < standardNValues_[0] && subFinePhase < mPartRatio);
+		    (nPartRatio == standardNValues_[0] && finePhase100 < mPartRatio) ||
+		    (nPartRatio < standardNValues_[0] && subFinePhase < mPartRatio);
 		if(shouldSet)
 			onFineSlots.push_back(i);
 	}
@@ -4186,8 +4186,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	if(onFineSlots.empty())
 	{
 		__FE_SS__ << "Resolved duty cycle M:N = " << mPartRatio << ":" << nPartRatio
-				  << " produced zero active fine-loop slots for single-shot join."
-				  << __E__;
+		          << " produced zero active fine-loop slots for single-shot join."
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
@@ -4202,7 +4202,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	{
 		coarseBatchSizes.push_back(standardNValues_[i]);
 		coarseBatchMaskIndices.push_back(
-			static_cast<int32_t>(standardNValues_.size() - 1 - i));
+		    static_cast<int32_t>(standardNValues_.size() - 1 - i));
 	}
 
 	// Decompose the requested count into chunks.
@@ -4248,33 +4248,33 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	if(chunkCounts.size() > 1)
 	{
 		result << "Requested single-shot count " << singleShotCount << " with duty "
-			   << mPartRatio << ":" << nPartRatio << " will be executed in "
-			   << chunkCounts.size() << " chunks: ";
+		       << mPartRatio << ":" << nPartRatio << " will be executed in "
+		       << chunkCounts.size() << " chunks: ";
 		for(size_t i = 0; i < chunkCounts.size(); ++i)
 			result << (i ? ", " : "") << chunkCounts[i]
-				   << (chunkCoarseMaskIndices[i] >= 0 ? "(coarse)" : "(fine)");
+			       << (chunkCoarseMaskIndices[i] >= 0 ? "(coarse)" : "(fine)");
 		result << __E__;
 	}
 	if(!isFullDutyCycle)
 		result
-			<< "Duty is below 100%; single-shot chunking is constrained to fine batches "
-			<< "to preserve duty-cycle semantics." << __E__;
+		    << "Duty is below 100%; single-shot chunking is constrained to fine batches "
+		    << "to preserve duty-cycle semantics." << __E__;
 
 	//========================================================================
 	/// local lambda function configureSingleShotChunk
 	auto configureSingleShotChunk = [&](uint32_t               chunkIndex,
-										uint32_t               chunkCount,
-										std::vector<uint64_t>& chunkAndMasks,
-										std::vector<uint64_t>& chunkSingleShotMasks,
-										std::stringstream&     chunkLog) {
+	                                    uint32_t               chunkCount,
+	                                    std::vector<uint64_t>& chunkAndMasks,
+	                                    std::vector<uint64_t>& chunkSingleShotMasks,
+	                                    std::stringstream&     chunkLog) {
 		chunkAndMasks = existingAndMasks;
 		chunkSingleShotMasks.assign(N_coarse + standardNValues_[0], 0ULL);
 
 		if(chunkIndex >= chunkCoarseMaskIndices.size())
 		{
 			__FE_SS__ << "Internal error: invalid single-shot chunk index " << chunkIndex
-					  << " (chunkCoarseMaskIndices size=" << chunkCoarseMaskIndices.size()
-					  << ")." << __E__;
+			          << " (chunkCoarseMaskIndices size=" << chunkCoarseMaskIndices.size()
+			          << ")." << __E__;
 			__FE_SS_THROW__;
 		}
 
@@ -4285,7 +4285,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			if(coarseIdx >= N_coarse)
 			{
 				__FE_SS__ << "Internal error: coarse mask index out of range "
-						  << coarseIdx << " (N_coarse=" << N_coarse << ")." << __E__;
+				          << coarseIdx << " (N_coarse=" << N_coarse << ")." << __E__;
 				__FE_SS_THROW__;
 			}
 
@@ -4295,8 +4295,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			if(coarseEndAndIdx >= chunkAndMasks.size())
 			{
 				__FE_SS__ << "Internal error: coarse end-AND index out of range "
-						  << coarseEndAndIdx << " (andMasks size=" << chunkAndMasks.size()
-						  << ")." << __E__;
+				          << coarseEndAndIdx << " (andMasks size=" << chunkAndMasks.size()
+				          << ")." << __E__;
 				__FE_SS_THROW__;
 			}
 
@@ -4312,11 +4312,11 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			chunkAndMasks[coarseEndAndIdx] &= ~setBitsMask48;
 
 			chunkLog << "Using coarse-batch chunk N=" << chunkCount
-					 << " with coarse OR_SINGLESHOT index " << coarseIdx
-					 << " (loop N=" << standardNValues_[coarseLevelL]
-					 << "): keep forced at all AND points, clear applied only at coarse "
-						"end-AND index "
-					 << coarseEndAndIdx << "." << __E__;
+			         << " with coarse OR_SINGLESHOT index " << coarseIdx
+			         << " (loop N=" << standardNValues_[coarseLevelL]
+			         << "): keep forced at all AND points, clear applied only at coarse "
+			            "end-AND index "
+			         << coarseEndAndIdx << "." << __E__;
 		}
 		else
 		{
@@ -4329,9 +4329,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			if(chunkCount < 1 || chunkCount > onFineSlots.size())
 			{
 				__FE_SS__
-					<< "Internal error: unsupported duty-based fine-batch chunk count "
-					<< chunkCount << " (activePerFinePass=" << onFineSlots.size() << ")."
-					<< __E__;
+				    << "Internal error: unsupported duty-based fine-batch chunk count "
+				    << chunkCount << " (activePerFinePass=" << onFineSlots.size() << ")."
+				    << __E__;
 				__FE_SS_THROW__;
 			}
 
@@ -4341,10 +4341,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 				chunkSingleShotMasks[N_coarse + fineSlot] = setBitsMask48;
 			}
 			chunkLog << "Using duty-based fine-batch chunk N=" << chunkCount
-					 << " (activePerFinePass=" << onFineSlots.size() << ")"
-					 << ": OR_SINGLESHOT set at " << chunkCount
-					 << " fine locations, AND clears applied at all loop AND points."
-					 << __E__;
+			         << " (activePerFinePass=" << onFineSlots.size() << ")"
+			         << ": OR_SINGLESHOT set at " << chunkCount
+			         << " fine locations, AND clears applied at all loop AND points."
+			         << __E__;
 		}
 	};  //end configureSingleShotChunk()
 
@@ -4352,8 +4352,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	/// local lamda function areSingleShotValuesCleared
 	auto areSingleShotValuesCleared = [&](std::string& unclearedDetails) {
 		std::map<uint32_t /* address */,
-				 std::pair<uint32_t /* expected */, uint32_t /* actual */>>
-					mismatches;
+		         std::pair<uint32_t /* expected */, uint32_t /* actual */>>
+		            mismatches;
 		std::string binaryContents(sharedRunPlanSize_, static_cast<char>(0xFF));
 		thisCFO_->CompareRunPlanData(binaryContents, 0 /* address */, mismatches);
 
@@ -4372,25 +4372,25 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			uint32_t hiDataWord = mismatch.second.second;
 			uint8_t  opCode     = (hiDataWord >> 24) & 0xFF;
 			if(opCode != static_cast<uint8_t>(
-							 CFOLib::CFO_Compiler::CFO_INSTR::OR_SINGLESHOT_MODE_BITS))
+			                 CFOLib::CFO_Compiler::CFO_INSTR::OR_SINGLESHOT_MODE_BITS))
 				continue;
 
 			foundSingleShot = true;
 			uint64_t data48 = static_cast<uint64_t>(loDataWord) |
-							  (static_cast<uint64_t>(hiDataWord & 0xFFFF) << 32);
+			                  (static_cast<uint64_t>(hiDataWord & 0xFFFF) << 32);
 			if(data48 != 0)
 			{
 				allCleared = false;
 				details << (details.tellp() > 0 ? ", " : "") << "line#" << std::dec
-						<< mismatch.first / 2 << "=0x" << std::hex << data48 << std::dec;
+				        << mismatch.first / 2 << "=0x" << std::hex << data48 << std::dec;
 			}
 		}
 
 		if(!foundSingleShot)
 		{
 			__FE_SS__
-				<< "Failed to locate OR_SINGLESHOT instructions in run plan readback."
-				<< __E__;
+			    << "Failed to locate OR_SINGLESHOT instructions in run plan readback."
+			    << __E__;
 			__FE_SS_THROW__;
 		}
 
@@ -4404,18 +4404,17 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		// Batch completion is defined as one full fine loop for sub-100% duty,
 		// or the exact coarse/full-duty chunk size otherwise.
 		uint32_t expectedEventCount =
-			isFullDutyCycle ? chunkCount : static_cast<uint32_t>(standardNValues_[0]);
+		    isFullDutyCycle ? chunkCount : static_cast<uint32_t>(standardNValues_[0]);
 
 		// Read initial event marker count to detect batch completion
 		uint32_t initialEventMarkerCount = thisCFO_->ReadTransmitEventWindowMarkerCount();
 
 		double chunkDurationUs = static_cast<double>(chunkCount) * eventDurationInClocks *
-								 CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
+		                         CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
 		uint64_t pollIntervalUs = chunkDurationUs < 20000.0
-									  ? 1000
-									  : (chunkDurationUs < 200000.0 ? 5000 : 50000);
-		uint64_t maxWaitUs      =
-			static_cast<uint64_t>(chunkDurationUs * 1.2) + 5000000;
+		                              ? 1000
+		                              : (chunkDurationUs < 200000.0 ? 5000 : 50000);
+		uint64_t maxWaitUs      = static_cast<uint64_t>(chunkDurationUs * 1.2) + 5000000;
 
 		std::string unclearedDetails;
 		bool        singleShotCleared = false;
@@ -4427,10 +4426,11 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			singleShotCleared = areSingleShotValuesCleared(unclearedDetails);
 
 			// Check condition 2: Event marker count has increased by 2x expected count
-			uint32_t currentEventMarkerCount  = thisCFO_->ReadTransmitEventWindowMarkerCount();
-			eventCountDelta                   = currentEventMarkerCount - initialEventMarkerCount;
-			uint32_t expectedEventCountDelta  = 2 * expectedEventCount;
-			bool     eventCountValid          = (eventCountDelta >= expectedEventCountDelta);
+			uint32_t currentEventMarkerCount =
+			    thisCFO_->ReadTransmitEventWindowMarkerCount();
+			eventCountDelta = currentEventMarkerCount - initialEventMarkerCount;
+			uint32_t expectedEventCountDelta = 2 * expectedEventCount;
+			bool     eventCountValid = (eventCountDelta >= expectedEventCountDelta);
 
 			if(singleShotCleared && eventCountValid)
 			{
@@ -4443,10 +4443,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 				}
 				else
 					result << "Chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
-						   << " completed; OR_SINGLESHOT readback values cleared and "
-						   << "event marker count increased by " << eventCountDelta
-						   << " (expected " << expectedEventCountDelta << ") after "
-						   << waitedUs / 1000.0 << " ms." << __E__;
+					       << " completed; OR_SINGLESHOT readback values cleared and "
+					       << "event marker count increased by " << eventCountDelta
+					       << " (expected " << expectedEventCountDelta << ") after "
+					       << waitedUs / 1000.0 << " ms." << __E__;
 				return;
 			}
 
@@ -4455,13 +4455,14 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 
 		// Timeout: report final state
 		__FE_SS__ << "Timed out waiting for chunk " << (chunkIndex + 1) << "/"
-				  << chunkCounts.size() << " (count=" << chunkCount << ") to complete. ";
+		          << chunkCounts.size() << " (count=" << chunkCount << ") to complete. ";
 		if(!singleShotCleared)
 			ss << "OR_SINGLESHOT values not cleared: "
-					  << (unclearedDetails.empty() ? std::string("<none reported>") : unclearedDetails)
-					  << " ";
-		ss << "Event marker count delta=" << eventCountDelta
-				  << " (expected " << (2 * expectedEventCount) << ")." << __E__;
+			   << (unclearedDetails.empty() ? std::string("<none reported>")
+			                                : unclearedDetails)
+			   << " ";
+		ss << "Event marker count delta=" << eventCountDelta << " (expected "
+		   << (2 * expectedEventCount) << ")." << __E__;
 		__FE_SS_THROW__;
 	};  //end lamda waitForSingleShotReady()
 
@@ -4471,16 +4472,16 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	result << __E__;  //space for readability
 	result << "Generated Run Plan text file: <FILE>" << inFileName << "</FILE>" << __E__;
 	result << "Compiled Run Plan binary file: <FILE>" << outFileName << "</FILE>"
-		   << __E__;
+	       << __E__;
 	result << __E__;  //space for readability
 
 	//generate and set one run plan per chunk, waiting for OR_SINGLESHOT auto-clear
 	//between launches before arming the next chunk.
 	result << "\n\nSubsystem '" << subsystem << "' single-shot joining for "
-		   << singleShotCount << " events with mode bit parameters: "
-		   << "\n\tonBits_startBit = " << onBits_startBit
-		   << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
-		   << std::hex << onBits_value << std::dec << __E__;
+	       << singleShotCount << " events with mode bit parameters: "
+	       << "\n\tonBits_startBit = " << onBits_startBit
+	       << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
+	       << std::hex << onBits_value << std::dec << __E__;
 	result << __E__;
 
 	uint64_t runningCount = 0;
@@ -4498,33 +4499,33 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		}
 		else
 			result << "\n*** Launching chunk " << (chunkIndex + 1) << "/"
-				   << chunkCounts.size() << " with count " << chunkCounts[chunkIndex]
-				   << " (events so far = " << runningCount << ")" << __E__;
+			       << chunkCounts.size() << " with count " << chunkCounts[chunkIndex]
+			       << " (events so far = " << runningCount << ")" << __E__;
 		runningCount += chunkCounts[chunkIndex];
 
 		std::stringstream subResult;
 
 		configureSingleShotChunk(chunkIndex,
-								 chunkCounts[chunkIndex],
-								 chunkAndMasks,
-								 singleShotMasks,
-								 subResult);
+		                         chunkCounts[chunkIndex],
+		                         chunkAndMasks,
+		                         singleShotMasks,
+		                         subResult);
 
 		generateSharedRunPlanWithPeriodicModeOn(
-			subResult,
-			inFileName,
-			0,  //initEventTag ignored once run plan is looping
-			0,  //onBits_startBit unused (onBits_value = 0)
-			1,  //onBits_bitCount unused (onBits_value = 0)
-			0,  //onBits_value = 0 (no periodic OR additions)
-			1,  //mPartRatio (no-op because onBits_value = 0)
-			1,  //nPartRatio (no-op because onBits_value = 0)
-			0,  //eventOffsetInLoop (no-op because onBits_value = 0)
-			std::to_string(eventDurationInClocks),
-			"clocks",
-			chunkAndMasks,
-			existingOrMasks,
-			prepSingleShotMasks);
+		    subResult,
+		    inFileName,
+		    0,  //initEventTag ignored once run plan is looping
+		    0,  //onBits_startBit unused (onBits_value = 0)
+		    1,  //onBits_bitCount unused (onBits_value = 0)
+		    0,  //onBits_value = 0 (no periodic OR additions)
+		    1,  //mPartRatio (no-op because onBits_value = 0)
+		    1,  //nPartRatio (no-op because onBits_value = 0)
+		    0,  //eventOffsetInLoop (no-op because onBits_value = 0)
+		    std::to_string(eventDurationInClocks),
+		    "clocks",
+		    chunkAndMasks,
+		    existingOrMasks,
+		    prepSingleShotMasks);
 
 		{
 			CFOLib::CFO_Compiler compiler;
@@ -4533,35 +4534,35 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 
 			if(chunkIndex == 0)
 				result << "Set preparation Run Plan for single-shot chunk "
-					   << (chunkIndex + 1) << " (with " << chunkCounts.size() - 1
-					   << " chunks to follow)"
-					   << " with updated AND masks and cleared OR_SINGLESHOT bits.\n";
+				       << (chunkIndex + 1) << " (with " << chunkCounts.size() - 1
+				       << " chunks to follow)"
+				       << " with updated AND masks and cleared OR_SINGLESHOT bits.\n";
 		}
 
 		generateSharedRunPlanWithPeriodicModeOn(
-			subResult,
-			inFileName,
-			0,  //initEventTag ignored once run plan is looping
-			0,  //onBits_startBit unused (onBits_value = 0)
-			1,  //onBits_bitCount unused (onBits_value = 0)
-			0,  //onBits_value = 0 (no periodic OR additions)
-			1,  //mPartRatio (no-op because onBits_value = 0)
-			1,  //nPartRatio (no-op because onBits_value = 0)
-			0,  //eventOffsetInLoop (no-op because onBits_value = 0)
-			std::to_string(eventDurationInClocks),
-			"clocks",
-			chunkAndMasks,
-			existingOrMasks,
-			singleShotMasks);
+		    subResult,
+		    inFileName,
+		    0,  //initEventTag ignored once run plan is looping
+		    0,  //onBits_startBit unused (onBits_value = 0)
+		    1,  //onBits_bitCount unused (onBits_value = 0)
+		    0,  //onBits_value = 0 (no periodic OR additions)
+		    1,  //mPartRatio (no-op because onBits_value = 0)
+		    1,  //nPartRatio (no-op because onBits_value = 0)
+		    0,  //eventOffsetInLoop (no-op because onBits_value = 0)
+		    std::to_string(eventDurationInClocks),
+		    "clocks",
+		    chunkAndMasks,
+		    existingOrMasks,
+		    singleShotMasks);
 
 		{
 			CFOLib::CFO_Compiler compiler;
 			compiler.processFile(inFileName, outFileName);
 			subResult << SetRunplan(outFileName);
 			subResult
-				<< "Set armed Run Plan for single-shot chunk " << (chunkIndex + 1)
-				<< " (with " << chunkCounts.size() - 1 << " chunks to follow)"
-				<< " with the same AND masks and the requested OR_SINGLESHOT bits.\n";
+			    << "Set armed Run Plan for single-shot chunk " << (chunkIndex + 1)
+			    << " (with " << chunkCounts.size() - 1 << " chunks to follow)"
+			    << " with the same AND masks and the requested OR_SINGLESHOT bits.\n";
 		}
 
 		if(chunkIndex == 0)
@@ -4576,10 +4577,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	result << statusArgsOut[0].second;
 
 	result << "\n\nSubsystem '" << subsystem << "' successfully single-shot joined for "
-		   << std::dec << singleShotCount << " events with mode bit parameters: "
-		   << "\n\tonBits_startBit = " << onBits_startBit
-		   << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
-		   << std::hex << onBits_value << std::dec << __E__;
+	       << std::dec << singleShotCount << " events with mode bit parameters: "
+	       << "\n\tonBits_startBit = " << onBits_startBit
+	       << "\n\tonBits_bitCount = " << onBits_bitCount << "\n\tonBits_value = 0x"
+	       << std::hex << onBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanSubsystemSingleShotJoin()
@@ -4590,25 +4591,25 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	if(!(thisCFO_->ReadBeamOnMode() || thisCFO_->ReadBeamOffMode()))
 	{
 		__SS__
-			<< "Error: CFO is not currently in a Run Plan. No active Run Plan to leave!"
-			<< __E__;
+		    << "Error: CFO is not currently in a Run Plan. No active Run Plan to leave!"
+		    << __E__;
 		__SS_THROW__;
 	}
 
 	std::string subsystem =
-		__GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
-					   std::string,
-					   "Custom");
+	    __GET_ARG_IN__("Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+	                   std::string,
+	                   "Custom");
 
 	std::stringstream result;
 	result << "\nRemoving subsystem '" << subsystem << "' from the Shared Run Plan..."
-		   << __E__;
+	       << __E__;
 
 	__FE_COUTV__(subsystem);
 	if(supportedSubsystems_.find(subsystem) == supportedSubsystems_.end())
 	{
 		__FE_SS__ << "Specified subsystem '" << subsystem
-				  << "' was not found in the set of supported subsystems: ";
+		          << "' was not found in the set of supported subsystems: ";
 		for(auto& subsystemPair : supportedSubsystems_)
 			ss << "\t" << subsystemPair.first << __E__;
 		__FE_SS_THROW__;
@@ -4617,7 +4618,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	//extract and/or op values to be modified in the leave
 	std::vector<uint64_t> existingAndMasks, existingOrMasks;
 	uint64_t              eventDurationInClocks =
-		extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
+	    extractSharedRunPlanEventDuration(existingAndMasks, existingOrMasks);
 	__FE_COUTV__(eventDurationInClocks);
 
 	//now need to remove subsystems enable bit in run plan
@@ -4630,9 +4631,9 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	{
 		__FE_COUTT__ << "Custom subsystem identified!" << __E__;
 		offBits_startBit =
-			__GET_ARG_IN__("Custom Mode Bit Position (Default = 0)", uint16_t, 0);
+		    __GET_ARG_IN__("Custom Mode Bit Position (Default = 0)", uint16_t, 0);
 		offBits_bitCount =
-			__GET_ARG_IN__("Custom Mode Bit Count (Default = 48)", uint16_t, 48);
+		    __GET_ARG_IN__("Custom Mode Bit Count (Default = 48)", uint16_t, 48);
 	}
 	else
 	{
@@ -4642,8 +4643,8 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	}
 
 	__FE_COUT__ << "offBits_startBit = " << offBits_startBit
-				<< " offBits_bitCount = " << offBits_bitCount << " offBits_value = 0x"
-				<< std::hex << offBits_value << __E__;
+	            << " offBits_bitCount = " << offBits_bitCount << " offBits_value = 0x"
+	            << std::hex << offBits_value << __E__;
 
 	const std::string SOURCE_BASE_PATH = std::string(__ENV__("OTSDAQ_DATA")) + "/";
 	std::string       inFileName  = SOURCE_BASE_PATH + "Mu2eCFORunPlanFromTEMPLATE.txt";
@@ -4651,7 +4652,7 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	result << __E__;  //space for readability
 	result << "Generated Run Plan text file: <FILE>" << inFileName << "</FILE>" << __E__;
 	result << "Compiled Run Plan binary file: <FILE>" << outFileName << "</FILE>"
-		   << __E__;
+	       << __E__;
 	result << __E__;  //space for readability
 
 	//generate Run Plan and write to input file for compiler
@@ -4659,41 +4660,41 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemLeave(__ARGS__)
 	//	Set Run Plan checks BRAM size indirectly, by reading back and validating the instruction set written!
 	{
 		result << "\n\nSubsystem '" << subsystem
-			   << "' leaving with mode off bit parameters: "
-			   << "\n\toffBits_startBit = " << offBits_startBit
-			   << "\n\toffBits_bitCount = " << offBits_bitCount
-			   << "\n\toffBits_value = 0x" << std::hex << offBits_value << std::dec
-			   << __E__;
+		       << "' leaving with mode off bit parameters: "
+		       << "\n\toffBits_startBit = " << offBits_startBit
+		       << "\n\toffBits_bitCount = " << offBits_bitCount
+		       << "\n\toffBits_value = 0x" << std::hex << offBits_value << std::dec
+		       << __E__;
 		result << __E__;  //space for readability
 		generateSharedRunPlanWithPeriodicModeOff(
-			result,
-			inFileName,
-			offBits_startBit,                       //start bit
-			offBits_bitCount,                       //bit count
-			std::to_string(eventDurationInClocks),  //eventDurationInClocks,
-			"clocks",                               //eventDurationSplitUnits
-			existingAndMasks,
-			existingOrMasks);
+		    result,
+		    inFileName,
+		    offBits_startBit,                       //start bit
+		    offBits_bitCount,                       //bit count
+		    std::to_string(eventDurationInClocks),  //eventDurationInClocks,
+		    "clocks",                               //eventDurationSplitUnits
+		    existingAndMasks,
+		    existingOrMasks);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nRun Plan to join:\n"
-			   << compiler.processFile(inFileName, outFileName);
+		       << compiler.processFile(inFileName, outFileName);
 		result << SetRunplan(outFileName);
 	}  //end generate and set Run Plan to join
 
 	result << "\nSubsystem '" << subsystem
-		   << "' successfully removed from the Shared Run Plan with mode bit parameters: "
-		   << "\n\toffBits_startBit = " << std::dec << offBits_startBit
-		   << "\n\toffBits_bitCount = " << offBits_bitCount << "\n\toffBits_value = 0x"
-		   << std::hex << offBits_value << std::dec << __E__;
+	       << "' successfully removed from the Shared Run Plan with mode bit parameters: "
+	       << "\n\toffBits_startBit = " << std::dec << offBits_startBit
+	       << "\n\toffBits_bitCount = " << offBits_bitCount << "\n\toffBits_value = 0x"
+	       << std::hex << offBits_value << std::dec << __E__;
 
 	__SET_ARG_OUT__("Result", result.str());
 }  //end SharedRunPlanSubsystemLeave()
 
 //========================================================================
 void CFOFrontEndInterface::parseEventDurationForRunPlan(const std::string& eventDuration,
-														std::string&       durationValue,
-														std::string&       durationUnits)
+                                                        std::string&       durationValue,
+                                                        std::string&       durationUnits)
 {
 	__FE_COUTV__(eventDuration);
 	bool   foundUnits = false;
@@ -4709,12 +4710,12 @@ void CFOFrontEndInterface::parseEventDurationForRunPlan(const std::string& event
 	if(!foundUnits)
 	{
 		__FE_SS__ << "No units were found in the input parameters 'Fixed-width "
-					 "Event Window Duration' value: "
-				  << eventDuration
-				  << ". Please use units when specifying event window duration "
-					 "(s, ms, us, ns, and clocks are allowed). For example "
-					 "'1.7us' or '1675ns' would be valid."
-				  << __E__;
+		             "Event Window Duration' value: "
+		          << eventDuration
+		          << ". Please use units when specifying event window duration "
+		             "(s, ms, us, ns, and clocks are allowed). For example "
+		             "'1.7us' or '1675ns' would be valid."
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 	durationValue = eventDuration.substr(0, i);
@@ -4726,11 +4727,11 @@ void CFOFrontEndInterface::parseEventDurationForRunPlan(const std::string& event
 //========================================================================
 // return M:N ratio of M events on per N events
 void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
-									  uint32_t&          mPartRatio,
-									  uint32_t&          nPartRatio)
+                                      uint32_t&          mPartRatio,
+                                      uint32_t&          nPartRatio)
 {
 	logResult << "Resolving input ratio M:N = " << mPartRatio << ":" << nPartRatio
-			  << " to N in  {";
+	          << " to N in  {";
 
 	bool first = true;
 	for(uint32_t n : standardNValues_)
@@ -4752,19 +4753,19 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 		if(mPartRatio == 0 || mPartRatio > nPartRatio)
 		{
 			__FE_SS__ << "Invalid sub-fine ratio M:N = " << mPartRatio << ":"
-					  << nPartRatio << ". M must satisfy 0 < M <= N." << __E__;
+			          << nPartRatio << ". M must satisfy 0 < M <= N." << __E__;
 			__FE_SS_THROW__;
 		}
 		if(standardNValues_[0] % nPartRatio != 0)
 		{
 			__FE_SS__ << "Invalid sub-fine ratio M:N = " << mPartRatio << ":"
-					  << nPartRatio << ". N must satisfy " << standardNValues_[0]
-					  << " % N = 0." << __E__;
+			          << nPartRatio << ". N must satisfy " << standardNValues_[0]
+			          << " % N = 0." << __E__;
 			__FE_SS_THROW__;
 		}
 		logResult << "Sub-fine ratio accepted: M:N = " << mPartRatio << ":" << nPartRatio
-				  << " repeats " << standardNValues_[0] / nPartRatio
-				  << " times per super-cycle." << __E__;
+		          << " repeats " << standardNValues_[0] / nPartRatio
+		          << " times per super-cycle." << __E__;
 		return;
 	}
 
@@ -4775,8 +4776,8 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 	double actualRatio = static_cast<double>(mPartRatio) / nPartRatio;
 	double errPct      = std::abs(actualRatio - targetRatio) / targetRatio * 100;
 	logResult << "\nResolved input ratio to " << mPartRatio << ":" << nPartRatio
-			  << ". Target Ratio = " << targetRatio << ", Actual Ratio = " << actualRatio
-			  << ", Err Pct = " << errPct << " %" << __E__;
+	          << ". Target Ratio = " << targetRatio << ", Actual Ratio = " << actualRatio
+	          << ", Err Pct = " << errPct << " %" << __E__;
 	__FE_COUT__ << logResult.str() << __E__;
 
 	// Validate that N is a standard value
@@ -4793,7 +4794,7 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 	if(!validN)
 	{
 		__FE_SS__ << "Failed to resolve target ratio M:N = " << mPartRatio << ":"
-				  << nPartRatio << __E__;
+		          << nPartRatio << __E__;
 		ss << "\n\n" << logResult.str() << __E__;
 		__FE_SS_THROW__;
 	}
@@ -4801,8 +4802,8 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 	if(nPartRatio != standardNValues_[0] && mPartRatio != 1)
 	{
 		__FE_SS__ << "Invalid M:N ratio: " << mPartRatio << ":" << nPartRatio
-				  << ". For N > " << standardNValues_[0]
-				  << ", M must be 1 to ensure periodicity." << __E__;
+		          << ". For N > " << standardNValues_[0]
+		          << ", M must be 1 to ensure periodicity." << __E__;
 		ss << "\n\n" << logResult.str() << __E__;
 		__FE_SS_THROW__;
 	}
@@ -4811,9 +4812,9 @@ void CFOFrontEndInterface::mnFixRatio(std::stringstream& logResult,
 //========================================================================
 // return M:N ratio of M events on per N events
 void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
-												 uint32_t  clocksPerEvent,
-												 uint32_t& mPartRatio,
-												 uint32_t& nPartRatio)
+                                                 uint32_t  clocksPerEvent,
+                                                 uint32_t& mPartRatio,
+                                                 uint32_t& nPartRatio)
 {
 	if(clocksPerEvent == 0)
 	{
@@ -4827,7 +4828,7 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 	}
 
 	double eventsPerOn =  // (events / on) = (clocks / on) * (event / clocks)
-		static_cast<double>(clocksPerOn) / static_cast<double>(clocksPerEvent);
+	    static_cast<double>(clocksPerOn) / static_cast<double>(clocksPerEvent);
 	__FE_COUTV__(clocksPerOn);
 	__FE_COUTV__(clocksPerEvent);
 	__FE_COUTV__(eventsPerOn);
@@ -4857,8 +4858,8 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 	if(mPartRatio == 0)
 	{
 		__FE_COUT_WARN__ << "Target ratio is too low to achieve with standard N values. "
-							"Setting M:N ratio to 1:"
-						 << standardNValues_.back() << __E__;
+		                    "Setting M:N ratio to 1:"
+		                 << standardNValues_.back() << __E__;
 		mPartRatio = 1;
 		nPartRatio = standardNValues_.back();
 	}
@@ -4870,8 +4871,8 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 	double errPct      = std::abs(actualRatio - targetRatio) / targetRatio * 100;
 
 	__FE_COUT__ << "M:N ratio = " << mPartRatio << ":" << nPartRatio
-				<< " (target ratio = " << targetRatio << ", errPct = " << errPct << " %)"
-				<< __E__;
+	            << " (target ratio = " << targetRatio << ", errPct = " << errPct << " %)"
+	            << __E__;
 }  //end getRatioOfOnPerEvents()
 
 //========================================================================
@@ -4882,21 +4883,21 @@ void CFOFrontEndInterface::getRatioOfOnPerEvents(uint32_t  clocksPerOn,
 // The concept is that the Shared Run Plan ops never change
 //	only the AND and OR parameters change to add/remove bits
 void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
-	std::stringstream&           logResult,
-	std::string&                 genFilename,
-	const uint64_t               initEventTag,
-	const uint16_t               onBits_startBit,
-	const uint16_t               onBits_bitCount,
-	const uint64_t               onBits_value,
-	uint32_t                     mPartRatio,
-	uint32_t                     nPartRatio,
-	uint32_t                     eventOffsetInLoop,
-	const std::string&           eventDurationSplitNumber,
-	const std::string&           eventDurationSplitUnits,
-	const std::vector<uint64_t>& existingAndMasks,
-	const std::vector<uint64_t>& existingOrMasks,
-	const std::vector<uint64_t>& singleShotMasks,
-	const bool                   applyPeriodicOrMasks)
+    std::stringstream&           logResult,
+    std::string&                 genFilename,
+    const uint64_t               initEventTag,
+    const uint16_t               onBits_startBit,
+    const uint16_t               onBits_bitCount,
+    const uint64_t               onBits_value,
+    uint32_t                     mPartRatio,
+    uint32_t                     nPartRatio,
+    uint32_t                     eventOffsetInLoop,
+    const std::string&           eventDurationSplitNumber,
+    const std::string&           eventDurationSplitUnits,
+    const std::vector<uint64_t>& existingAndMasks,
+    const std::vector<uint64_t>& existingOrMasks,
+    const std::vector<uint64_t>& singleShotMasks,
+    const bool                   applyPeriodicOrMasks)
 {
 	__FE_COUTV__(mPartRatio);
 	__FE_COUTV__(nPartRatio);
@@ -4913,25 +4914,25 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	   existingOrMasks.size() != N_coarse + standardNValues_[0])
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
-				  << standardNValues_[0] + 1 + N_coarse << " and "
-				  << N_coarse + standardNValues_[0]
-				  << " respectively. Got andMasks=" << existingAndMasks.size()
-				  << " orMasks=" << existingOrMasks.size() << __E__;
+		          << standardNValues_[0] + 1 + N_coarse << " and "
+		          << N_coarse + standardNValues_[0]
+		          << " respectively. Got andMasks=" << existingAndMasks.size()
+		          << " orMasks=" << existingOrMasks.size() << __E__;
 		__FE_SS_THROW__;
 	}
 
 	if(singleShotMasks.size() && singleShotMasks.size() != N_coarse + standardNValues_[0])
 	{
 		__FE_SS__ << "singleShotMasks must have size " << (N_coarse + standardNValues_[0])
-				  << " when provided. Got singleShotMasks=" << singleShotMasks.size()
-				  << __E__;
+		          << " when provided. Got singleShotMasks=" << singleShotMasks.size()
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
 	//48-bit pattern of bits this subsystem sets when ON
 	const uint64_t setBitsMask48 =
-		(onBits_value << onBits_startBit) &
-		(((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
+	    (onBits_value << onBits_startBit) &
+	    (((uint64_t(1) << onBits_bitCount) - 1) << onBits_startBit);
 
 	std::stringstream out;
 	std::string       tabStr, commentStr;
@@ -4954,20 +4955,20 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			__FE_COUTTV__(loopN);
 
 			uint64_t coarseSingleShot =
-				singleShotMasks.size() ? singleShotMasks[coarseIdx] : 0ULL;
+			    singleShotMasks.size() ? singleShotMasks[coarseIdx] : 0ULL;
 			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-				<< std::hex << coarseSingleShot << std::dec << __E__;
+			    << std::hex << coarseSingleShot << std::dec << __E__;
 
 			uint64_t new_coarse_or =
-				(applyPeriodicOrMasks && standardNValues_[l] == nPartRatio)
-					? setBitsMask48
-					: 0ULL;
+			    (applyPeriodicOrMasks && standardNValues_[l] == nPartRatio)
+			        ? setBitsMask48
+			        : 0ULL;
 			uint64_t merged_coarse_or = existingOrMasks[coarseIdx] | new_coarse_or;
 			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-				<< merged_coarse_or << std::dec << __E__;
+			    << merged_coarse_or << std::dec << __E__;
 
 			__FE_COUTT__ << "LOOP " << loopN << " // for N = " << standardNValues_[l]
-						 << __E__;
+			             << __E__;
 			OUT << "LOOP " << loopN << __E__;
 			PUSHTAB;
 		}  //end coarse granularity loops
@@ -4984,50 +4985,50 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			//  - shouldSet  => finePhase100 <  M (OR applies during ON portion)
 			//  - shouldClear=> finePhase100 >= M (AND clears during OFF portion)
 			uint32_t finePhase100 =
-				(i + standardNValues_[0] - (eventOffsetInLoop % standardNValues_[0])) %
-				standardNValues_[0];
+			    (i + standardNValues_[0] - (eventOffsetInLoop % standardNValues_[0])) %
+			    standardNValues_[0];
 			uint32_t subFineOffset = nPartRatio ? (eventOffsetInLoop % nPartRatio) : 0;
 			uint32_t subFinePhase =
-				nPartRatio ? ((i + nPartRatio - subFineOffset) % nPartRatio) : 0;
+			    nPartRatio ? ((i + nPartRatio - subFineOffset) % nPartRatio) : 0;
 
 			//AND: clear this subsystem's bits during OFF positions; merge with existing mask.
 			// sub-fine (nPartRatio < standardNValues_[0], factor of it): repeating M:N pattern, clear when position within period >= M
 			// fine      (nPartRatio == standardNValues_[0])             : clear when offset-adjusted phase >= M
 			// coarse    (nPartRatio > standardNValues_[0])              : clear every i > 0 (bit was set by outer LOOP's OR)
 			bool shouldClear =
-				(nPartRatio > standardNValues_[0] && i > 0) ||
-				(nPartRatio == standardNValues_[0] && finePhase100 >= mPartRatio) ||
-				(nPartRatio < standardNValues_[0] && subFinePhase >= mPartRatio);
+			    (nPartRatio > standardNValues_[0] && i > 0) ||
+			    (nPartRatio == standardNValues_[0] && finePhase100 >= mPartRatio) ||
+			    (nPartRatio < standardNValues_[0] && subFinePhase >= mPartRatio);
 			uint64_t new_and =
-				shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
+			    shouldClear ? (0xFFFFFFFFFFFFULL & ~setBitsMask48) : 0xFFFFFFFFFFFFULL;
 			uint64_t merged_and = existingAndMasks[i] & new_and;
 			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-				<< merged_and << std::dec
-				<< __E__;  // bit positions with 1 keep, 0 remove
+			    << merged_and << std::dec
+			    << __E__;  // bit positions with 1 keep, 0 remove
 
 			//OR: set this subsystem's bits during ON positions; merge with existing mask.
 			// fine:     first M of N events, with optional phase offset
 			// sub-fine: repeating M:N pattern, with optional phase offset
 			bool shouldSet =
-				applyPeriodicOrMasks &&
-				((nPartRatio == standardNValues_[0] && finePhase100 < mPartRatio) ||
-				 (nPartRatio < standardNValues_[0] && subFinePhase < mPartRatio));
+			    applyPeriodicOrMasks &&
+			    ((nPartRatio == standardNValues_[0] && finePhase100 < mPartRatio) ||
+			     (nPartRatio < standardNValues_[0] && subFinePhase < mPartRatio));
 			uint64_t new_or    = shouldSet ? setBitsMask48 : 0ULL;
 			uint64_t merged_or = existingOrMasks[fineIdx] | new_or;
 			OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-				<< merged_or << std::dec << __E__;
+			    << merged_or << std::dec << __E__;
 
 			// Apply fine-slot OR_SINGLESHOT after clear/set mask ops so the pulse is
 			// present for this event window's HEARTBEAT.
 			uint64_t fineSingleShot =
-				singleShotMasks.size() ? singleShotMasks[fineIdx] : 0ULL;
+			    singleShotMasks.size() ? singleShotMasks[fineIdx] : 0ULL;
 			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x"
-				<< std::hex << fineSingleShot << std::dec << __E__;
+			    << std::hex << fineSingleShot << std::dec << __E__;
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
 			OUT << "WAIT " << eventDurationSplitNumber << " " << eventDurationSplitUnits
-				<< __E__;
+			    << __E__;
 			OUT << "INC_TAG //increment event window tag" << __E__;
 		}
 
@@ -5036,12 +5037,12 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 		size_t   fineEndAndIdx   = standardNValues_[0];
 		uint64_t merged_fine_end = existingAndMasks[fineEndAndIdx];
 		OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-			<< merged_fine_end << std::dec << __E__;
+		    << merged_fine_end << std::dec << __E__;
 
 		for(size_t l = 1; l < standardNValues_.size(); ++l)
 		{
 			__FE_COUTT__ << "End loop " << l << " --> " << standardNValues_[l] << "x"
-						 << __E__;
+			             << __E__;
 			OUT << "DO_LOOP" << __E__;
 			POPTAB;
 
@@ -5050,7 +5051,7 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 			size_t   coarseEndAndIdx   = standardNValues_[0] + 1 + (l - 1);
 			uint64_t merged_coarse_and = existingAndMasks[coarseEndAndIdx];
 			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-				<< merged_coarse_and << std::dec << __E__;
+			    << merged_coarse_and << std::dec << __E__;
 		}
 
 	}  //end infinite loop ops
@@ -5063,8 +5064,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 	if(!fp)
 	{
 		__FE_SS__ << "Error - please check path. Generated Run Plan file from "
-					 "template could not be created at "
-				  << genFilename << __E__;
+		             "template could not be created at "
+		          << genFilename << __E__;
 		__FE_SS_THROW__;
 	}
 	fputs(out.str().c_str(), fp);
@@ -5079,14 +5080,14 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOn(
 // The concept is that the Shared Run Plan ops never change
 //	only the AND and OR parameters change to add/remove bits
 void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
-	std::stringstream&           logResult,
-	std::string&                 genFilename,
-	const uint16_t               offBits_startBit,
-	const uint16_t               offBits_bitCount,
-	const std::string&           eventDurationSplitNumber,
-	const std::string&           eventDurationSplitUnits,
-	const std::vector<uint64_t>& existingAndMasks,
-	const std::vector<uint64_t>& existingOrMasks)
+    std::stringstream&           logResult,
+    std::string&                 genFilename,
+    const uint16_t               offBits_startBit,
+    const uint16_t               offBits_bitCount,
+    const std::string&           eventDurationSplitNumber,
+    const std::string&           eventDurationSplitUnits,
+    const std::vector<uint64_t>& existingAndMasks,
+    const std::vector<uint64_t>& existingOrMasks)
 {
 	const size_t N_coarse = standardNValues_.size() - 1;
 
@@ -5094,21 +5095,21 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 	// other subsystems' bits. When empty (e.g. internal dummy call), use legacy behavior.
 	const bool useMasks = !existingAndMasks.empty() || !existingOrMasks.empty();
 	if(useMasks && (existingAndMasks.size() != standardNValues_[0] + 1 + N_coarse ||
-					existingOrMasks.size() != N_coarse + standardNValues_[0]))
+	                existingOrMasks.size() != N_coarse + standardNValues_[0]))
 	{
 		__FE_SS__ << "existingAndMasks and existingOrMasks must each have size "
-				  << standardNValues_[0] + 1 + N_coarse << " and "
-				  << N_coarse + standardNValues_[0]
-				  << " respectively. Got andMasks=" << existingAndMasks.size()
-				  << " orMasks=" << existingOrMasks.size() << __E__;
+		          << standardNValues_[0] + 1 + N_coarse << " and "
+		          << N_coarse + standardNValues_[0]
+		          << " respectively. Got andMasks=" << existingAndMasks.size()
+		          << " orMasks=" << existingOrMasks.size() << __E__;
 		__FE_SS_THROW__;
 	}
 
 	// 48-bit mask of bits this subsystem clears when leaving
 	const uint64_t clearBitsMask48 =
-		offBits_bitCount > 0
-			? (((uint64_t(1) << offBits_bitCount) - 1) << offBits_startBit)
-			: 0ULL;
+	    offBits_bitCount > 0
+	        ? (((uint64_t(1) << offBits_bitCount) - 1) << offBits_startBit)
+	        : 0ULL;
 
 	std::stringstream out;
 	std::string       tabStr, commentStr;
@@ -5132,23 +5133,23 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 
 			// OR_SINGLESHOT is transient in hardware; always cleared. Emit 0x0.
 			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0"
-				<< __E__;
+			    << __E__;
 
 			if(useMasks)
 			{
 				// Keep existing coarse OR bits, but remove the leaving subsystem's bits
 				uint64_t merged_coarse_or = existingOrMasks[coarseIdx] & ~clearBitsMask48;
 				OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-					<< merged_coarse_or << std::dec << __E__;
+				    << merged_coarse_or << std::dec << __E__;
 			}
 			else
 			{
 				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
-					<< " value= " << 0 << __E__;  // no change to mode bits for this loop
+				    << " value= " << 0 << __E__;  // no change to mode bits for this loop
 			}
 
 			__FE_COUTT__ << "LOOP " << loopN << " // for N = " << standardNValues_[l]
-						 << __E__;
+			             << __E__;
 			OUT << "LOOP " << loopN << __E__;
 			PUSHTAB;
 		}
@@ -5165,34 +5166,34 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 				uint64_t new_and    = 0xFFFFFFFFFFFFULL & ~clearBitsMask48;
 				uint64_t merged_and = existingAndMasks[i] & new_and;
 				OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-					<< merged_and << std::dec
-					<< __E__;  // bit positions with 1 keep, 0 remove
+				    << merged_and << std::dec
+				    << __E__;  // bit positions with 1 keep, 0 remove
 
 				// OR: remove the leaving subsystem's bits from existing OR mask
 				uint64_t merged_or = existingOrMasks[fineIdx] & ~clearBitsMask48;
 				OUT << "OR_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-					<< merged_or << std::dec << __E__;
+				    << merged_or << std::dec << __E__;
 			}
 			else
 			{
 				//clear bits on first in iteration
 				OUT << "AND_MODE_BITS start_bit= " << offBits_startBit
-					<< " bit_count= " << offBits_bitCount << " value= " << 0
-					<< __E__;  // bit positions with 1 keep, 0 remove
+				    << " bit_count= " << offBits_bitCount << " value= " << 0
+				    << __E__;  // bit positions with 1 keep, 0 remove
 
 				OUT << "OR_MODE_BITS start_bit= " << 0 << " bit_count= " << 1
-					<< " value= " << 0 << __E__;
+				    << " value= " << 0 << __E__;
 			}
 
 			// Keep one OR_SINGLESHOT op per fine slot to preserve shared run-plan opcode
 			// structure; value is 0 because single-shot payload is transient/cleared.
 			OUT << "OR_SINGLESHOT_MODE_BITS start_bit= 0 bit_count= 48 value= 0x0"
-				<< __E__;
+			    << __E__;
 
 			OUT << "HEARTBEAT event_mode = registered // use existing run mode" << __E__;
 			OUT << "MARKER" << __E__;
 			OUT << "WAIT " << eventDurationSplitNumber << " " << eventDurationSplitUnits
-				<< __E__;
+			    << __E__;
 			OUT << "INC_TAG //increment event window tag" << __E__;
 		}
 
@@ -5202,18 +5203,18 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 			size_t   fineEndAndIdx   = standardNValues_[0];
 			uint64_t merged_fine_end = existingAndMasks[fineEndAndIdx] | clearBitsMask48;
 			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-				<< merged_fine_end << std::dec << __E__;
+			    << merged_fine_end << std::dec << __E__;
 		}
 		else
 		{
 			OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0xFFFFFFFFFFFF"
-				<< __E__;
+			    << __E__;
 		}
 
 		for(size_t l = 1; l < standardNValues_.size(); ++l)
 		{
 			__FE_COUTT__ << "End loop " << l << " --> " << standardNValues_[l] << "x"
-						 << __E__;
+			             << __E__;
 			OUT << "DO_LOOP" << __E__;
 			POPTAB;
 
@@ -5224,14 +5225,14 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 				// Restore leaving subsystem's bit to 1 in coarse end-AND (no longer clearing it)
 				size_t   coarseEndAndIdx = standardNValues_[0] + 1 + (l - 1);
 				uint64_t merged_coarse_and =
-					existingAndMasks[coarseEndAndIdx] | clearBitsMask48;
+				    existingAndMasks[coarseEndAndIdx] | clearBitsMask48;
 				OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0x" << std::hex
-					<< merged_coarse_and << std::dec << __E__;
+				    << merged_coarse_and << std::dec << __E__;
 			}
 			else
 			{
 				OUT << "AND_MODE_BITS start_bit= 0 bit_count= 48 value= 0xFFFFFFFFFFFF"
-					<< __E__;
+				    << __E__;
 			}
 		}
 
@@ -5245,8 +5246,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 	if(!fp)
 	{
 		__FE_SS__ << "Error - please check path. Generated Run Plan file from "
-					 "template could not be created at "
-				  << genFilename << __E__;
+		             "template could not be created at "
+		          << genFilename << __E__;
 		__FE_SS_THROW__;
 	}
 	fputs(out.str().c_str(), fp);
@@ -5256,8 +5257,8 @@ void CFOFrontEndInterface::generateSharedRunPlanWithPeriodicModeOff(
 //========================================================================
 // return M:N ratio of M events on per N events
 uint64_t CFOFrontEndInterface::extractSharedRunPlanEventDuration(
-	std::optional<std::reference_wrapper<std::vector<uint64_t>>> andMasks,
-	std::optional<std::reference_wrapper<std::vector<uint64_t>>> orMasks)
+    std::optional<std::reference_wrapper<std::vector<uint64_t>>> andMasks,
+    std::optional<std::reference_wrapper<std::vector<uint64_t>>> orMasks)
 try
 {
 	//make a dummy shared run plan, and use to compare against current run plan
@@ -5266,8 +5267,8 @@ try
 	//
 
 	std::map<uint32_t /* address */,
-			 std::pair<uint32_t /* expected */, uint32_t /* actual */>>
-		mismatches;
+	         std::pair<uint32_t /* expected */, uint32_t /* actual */>>
+	    mismatches;
 
 	//generate dummy Run Plan and diff with current CFO Run Plan data read back from CFO
 	// Note: as of 22-Feb-2026, Run Plan BRAM is 1024 ops
@@ -5281,17 +5282,17 @@ try
 		dummyDuration |= 1;  //put a value in hi and lo 32-bits to show diff
 		std::stringstream result;
 		generateSharedRunPlanWithPeriodicModeOff(
-			result,
-			inFileName,
-			0,                              //start bit
-			1,                              //bit count
-			std::to_string(dummyDuration),  //eventDurationInClocks
-			"clocks"                        //eventDurationSplitUnits
+		    result,
+		    inFileName,
+		    0,                              //start bit
+		    1,                              //bit count
+		    std::to_string(dummyDuration),  //eventDurationInClocks
+		    "clocks"                        //eventDurationSplitUnits
 		);
 
 		CFOLib::CFO_Compiler compiler;
 		result << "\n\nDummy Run Plan:\n"
-			   << compiler.processFile(inFileName, outFileName);
+		       << compiler.processFile(inFileName, outFileName);
 
 		__COUT_MULTI__(1, result.str());
 
@@ -5303,7 +5304,7 @@ try
 			if(!fp)
 			{
 				__SS__ << "Could not open file at " << outFileName << ". Error: " << errno
-					   << " - " << strerror(errno) << __E__;
+				       << " - " << strerror(errno) << __E__;
 				__SS_THROW__;
 			}
 
@@ -5316,27 +5317,27 @@ try
 		}  //end load dummy plan data
 
 		thisCFO_->CompareRunPlanData(
-			binaryContents, 0 /* address */, mismatches, andMasks, orMasks);
+		    binaryContents, 0 /* address */, mismatches, andMasks, orMasks);
 	}  //end generate and Run Plan diff
 
 	//look for a WAIT op to find event duration
 	if(!mismatches.size())
 	{
 		__FE_SS__
-			<< "IMPOSSIBLE!! No mismatches were found when comparing the generated Run "
-			   "Plan to the current CFO Run Plan data read back from the CFO. This "
-			   "indicates that the CFO is currently running the expected shared Run "
-			   "Plan, and that reading back the Run Plan data from the CFO."
-			<< __E__;
+		    << "IMPOSSIBLE!! No mismatches were found when comparing the generated Run "
+		       "Plan to the current CFO Run Plan data read back from the CFO. This "
+		       "indicates that the CFO is currently running the expected shared Run "
+		       "Plan, and that reading back the Run Plan data from the CFO."
+		    << __E__;
 		__FE_SS_THROW__;
 	}
 
 	__FE_SS__
-		<< "Mismatches were found when comparing the generated Run Plan to the current "
-		   "CFO Run Plan data read back from the CFO. This likely indicates that the CFO "
-		   "is not currently running the expected shared Run Plan, or that there is an "
-		   "issue with reading back the Run Plan data from the CFO."
-		<< __E__;
+	    << "Mismatches were found when comparing the generated Run Plan to the current "
+	       "CFO Run Plan data read back from the CFO. This likely indicates that the CFO "
+	       "is not currently running the expected shared Run Plan, or that there is an "
+	       "issue with reading back the Run Plan data from the CFO."
+	    << __E__;
 	uint64_t eventDurationInClocks          = 0;
 	uint32_t lastMismatchAddress            = 0;
 	uint64_t potentialEventDurationInClocks = 0;  //build from 2 32-bit words
@@ -5345,7 +5346,7 @@ try
 		if(mismatch.first % 2 == 0)  // only look at top-32 bits for ops
 		{
 			potentialEventDurationInClocks =
-				mismatch.second.second;  // actual low 32-bits from CFO
+			    mismatch.second.second;  // actual low 32-bits from CFO
 			lastMismatchAddress = mismatch.first;
 			continue;
 		}
@@ -5367,34 +5368,34 @@ try
 			if(lastMismatchAddress != mismatch.first - 1)
 			{
 				__FE_SS__
-					<< "Unexpected mismatch pattern found when comparing the generated "
-					   "Run Plan to the current CFO Run Plan data read back from the "
-					   "CFO. Expected mismatches for WAIT op to be in consecutive "
-					   "addresses with the first address containing the low 32-bits of "
-					   "event duration and the second address containing the high "
-					   "32-bits of event duration. Found mismatch at address "
-					<< lastMismatchAddress
-					<< " followed by mismatch at non-consecutive address "
-					<< mismatch.first << __E__;
+				    << "Unexpected mismatch pattern found when comparing the generated "
+				       "Run Plan to the current CFO Run Plan data read back from the "
+				       "CFO. Expected mismatches for WAIT op to be in consecutive "
+				       "addresses with the first address containing the low 32-bits of "
+				       "event duration and the second address containing the high "
+				       "32-bits of event duration. Found mismatch at address "
+				    << lastMismatchAddress
+				    << " followed by mismatch at non-consecutive address "
+				    << mismatch.first << __E__;
 				__FE_SS_THROW__;
 			}
 
 			potentialEventDurationInClocks |= uint64_t(mismatch.second.second & 0xFFFF)
-											  << 32;  // actual hi 16-bits from CFO
+			                                  << 32;  // actual hi 16-bits from CFO
 			__FE_COUTT__ << "potentialEventDurationInClocks = "
-						 << potentialEventDurationInClocks
-						 << " Address: " << mismatch.first
-						 << " Line #: " << mismatch.first / 2 + 1 << std::hex
-						 << " Expected: 0x" << mismatch.second.first << " Actual: 0x"
-						 << mismatch.second.second << std::dec << __E__;
+			             << potentialEventDurationInClocks
+			             << " Address: " << mismatch.first
+			             << " Line #: " << mismatch.first / 2 + 1 << std::hex
+			             << " Expected: 0x" << mismatch.second.first << " Actual: 0x"
+			             << mismatch.second.second << std::dec << __E__;
 			if(!eventDurationInClocks)
 				eventDurationInClocks = potentialEventDurationInClocks;
 			else if(eventDurationInClocks != potentialEventDurationInClocks)
 			{
 				__FE_SS__ << "Inconsistent event duration values found in CFO Run Plan "
-							 "mismatches. Expected: "
-						  << eventDurationInClocks
-						  << ", Found: " << potentialEventDurationInClocks << __E__;
+				             "mismatches. Expected: "
+				          << eventDurationInClocks
+				          << ", Found: " << potentialEventDurationInClocks << __E__;
 				__FE_SS_THROW__;
 			}
 		}
@@ -5412,22 +5413,22 @@ try
 		if(andMasks && andMasks->get().size() != standardNValues_[0] + 1 + N_coarse)
 		{
 			__FE_SS__ << "Extracted AND ops size mismatch. "
-					  << "Expected " << standardNValues_[0] + 1 + N_coarse
-					  << ", got andMasks=" << andMasks->get().size() << __E__;
+			          << "Expected " << standardNValues_[0] + 1 + N_coarse
+			          << ", got andMasks=" << andMasks->get().size() << __E__;
 			__FE_SS_THROW__;
 		}
 
 		if(orMasks && orMasks->get().size() != N_coarse + standardNValues_[0])
 		{
 			__FE_SS__ << "Internal error: extracted mask vector size mismatch. "
-					  << "Expected " << (N_coarse + standardNValues_[0])
-					  << ", got orMasks=" << orMasks->get().size() << __E__;
+			          << "Expected " << (N_coarse + standardNValues_[0])
+			          << ", got orMasks=" << orMasks->get().size() << __E__;
 			__FE_SS_THROW__;
 		}
 
 		__FE_COUT__ << "Extracted " << (andMasks ? andMasks->get().size() : 0)
-					<< " AND masks and " << (orMasks ? orMasks->get().size() : 0)
-					<< " OR masks from current CFO run plan." << __E__;
+		            << " AND masks and " << (orMasks ? orMasks->get().size() : 0)
+		            << " OR masks from current CFO run plan." << __E__;
 	}
 
 	return eventDurationInClocks;
@@ -5435,10 +5436,10 @@ try
 catch(const std::runtime_error& e)
 {
 	__FE_SS__ << "Error extracting event duration for the Shared Run Plan - please make "
-				 "sure there is an active Shared Run Plan (i.e. common operation set). "
-				 "To start a Shared Run Plan, do 'CFO Halt' and then 'Share Run Plan "
-				 "Start.'\n\nHere was the error:\n"
-			  << e.what() << __E__;
+	             "sure there is an active Shared Run Plan (i.e. common operation set). "
+	             "To start a Shared Run Plan, do 'CFO Halt' and then 'Share Run Plan "
+	             "Start.'\n\nHere was the error:\n"
+	          << e.what() << __E__;
 	__FE_SS_THROW__;
 }  //end extractSharedRunPlanEventDuration() catch
 
@@ -5449,19 +5450,19 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 
 	// arguments
 	std::string command = __GET_ARG_IN__(
-		"Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: "
-		"Status)",
-		std::string,
-		"Status");
+	    "Command to 0/Status (to read counters, etc.), 1/Start, or 2/Halt (Default: "
+	    "Status)",
+	    std::string,
+	    "Status");
 
 	// bool dataAreSubEvents =
 	//     __GET_ARG_IN__("Data are SubEvents (Default: true)", bool, true);
 	// unsigned int numberOfEvents = __GET_ARG_IN__("Number of [Sub]Events (Default: 1)", uint32_t, 1);
 	// bool         activeMatch = __GET_ARG_IN__("Match Event Tags (Default: false)", bool);
 	unsigned int timestampStart =
-		__GET_ARG_IN__("Starting Event Window Tag (Default: 0)", unsigned int);
+	    __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", unsigned int);
 	bool saveBinaryDataToFile =
-		__GET_ARG_IN__("Save Binary Data to File (Default: false)", bool);
+	    __GET_ARG_IN__("Save Binary Data to File (Default: false)", bool);
 	// std::string saveBinaryDataFilename =
 	//     __GET_ARG_IN__("Save Binary Data Filename", std::string);
 	// bool saveSubeventHeadersToDataFile =
@@ -5485,18 +5486,18 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 	if(command == "1" || command == "Start")
 	{
 		__FE_COUT__ << "Detaching thread and reading data DMA-0 starting at event tag "
-					<< timestampStart << " (0x" << std::hex << timestampStart << ")"
-					<< __E__;
+		            << timestampStart << " (0x" << std::hex << timestampStart << ")"
+		            << __E__;
 
 		if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
 			bufferTestThreadStruct_ =
-				std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+			    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
 
 		if(bufferTestThreadStruct_->running_)
 			outSs
-				<< "Found buffer test thread already running, doing nothing. Please "
-				   "'Halt' before restarting. Or run 'Status' to read the latest status."
-				<< __E__;
+			    << "Found buffer test thread already running, doing nothing. Please "
+			       "'Halt' before restarting. Or run 'Status' to read the latest status."
+			    << __E__;
 		else
 		{
 			__FE_COUT__ << "Launching detached Buffer Test thread..." << __E__;
@@ -5508,10 +5509,10 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->expectedEventTag_ = timestampStart;
 				bufferTestThreadStruct_->saveBinaryData_   = saveBinaryDataToFile;
 				bufferTestThreadStruct_->publish_ =
-					static_cast<ots::FESupervisor*>(parentSupervisor_)
-						->isPublishingData();
+				    static_cast<ots::FESupervisor*>(parentSupervisor_)
+				        ->isPublishingData();
 				bufferTestThreadStruct_->feSupervisor_ =
-					static_cast<ots::FESupervisor*>(parentSupervisor_);
+				    static_cast<ots::FESupervisor*>(parentSupervisor_);
 				bufferTestThreadStruct_->exitThread_         = false;
 				bufferTestThreadStruct_->resetStartEventTag_ = false;
 				bufferTestThreadStruct_->thisCFO_            = thisCFO_;
@@ -5520,21 +5521,21 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 				bufferTestThreadStruct_->error_              = "";
 			}
 			std::thread(
-				[](std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>
-					   threadStruct) {
-					CFOFrontEndInterface::detechedBufferTestThread(threadStruct);
-				},
-				bufferTestThreadStruct_)
-				.detach();
+			    [](std::shared_ptr<CFOFrontEndInterface::DetachedBufferTestThreadStruct>
+			           threadStruct) {
+				    CFOFrontEndInterface::detechedBufferTestThread(threadStruct);
+			    },
+			    bufferTestThreadStruct_)
+			    .detach();
 			outSs << "Launched detached Buffer Test thread and reading data DMA-0 "
-					 "starting at event tag "
-				  << timestampStart << " (0x" << std::hex << timestampStart << ")"
-				  << __E__;
+			         "starting at event tag "
+			      << timestampStart << " (0x" << std::hex << timestampStart << ")"
+			      << __E__;
 		}
 		sleep(1);
 		outSs << "Reading status..." << __E__;
 		outSs << CFOFrontEndInterface::getDetachedBufferTestStatus(
-			bufferTestThreadStruct_);
+		    bufferTestThreadStruct_);
 	}
 	else if(command == "0" || command == "Status")
 	{
@@ -5543,10 +5544,10 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 
 		if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
 			bufferTestThreadStruct_ =
-				std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+			    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
 
 		outSs << CFOFrontEndInterface::getDetachedBufferTestStatus(
-			bufferTestThreadStruct_);
+		    bufferTestThreadStruct_);
 	}
 	else if(command == "2" || command == "Halt")
 	{
@@ -5554,7 +5555,7 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 
 		if(!bufferTestThreadStruct_)  //initialize shared pointer for first time
 			bufferTestThreadStruct_ =
-				std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
+			    std::make_shared<CFOFrontEndInterface::DetachedBufferTestThreadStruct>();
 
 		// start mutex scope
 		{
@@ -5574,7 +5575,7 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 		if(bufferTestThreadStruct_->fp_)
 		{
 			__FE_COUT_WARN__ << "Buffer Test thread file was left open?! Closing..."
-							 << __E__;
+			                 << __E__;
 
 			fclose(bufferTestThreadStruct_->fp_);
 			bufferTestThreadStruct_->fp_ = nullptr;
@@ -5585,18 +5586,18 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 		try
 		{
 			outSs << CFOFrontEndInterface::getDetachedBufferTestStatus(
-				bufferTestThreadStruct_);
+			    bufferTestThreadStruct_);
 		}
 		catch(const std::runtime_error& e)
 		{
 			__FE_COUT_WARN__ << "Ignoring buffer status error during HALT: " << e.what()
-							 << __E__;
+			                 << __E__;
 		}
 	}
 	else
 	{
 		outSs << "Unrecognized command '" << command
-			  << "' found. Valid commands are Start, Status, and Halt." << __E__;
+		      << "' found. Valid commands are Start, Status, and Halt." << __E__;
 	}
 	// outSs << "Active Event Match: " << (activeMatch?"true":"false") << __E__;
 	// outSs << "Event Duration: " << cfoDelay << " = " << cfoDelay*25 << " ns" << __E__;
@@ -5604,11 +5605,11 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 	if(saveBinaryDataToFile)
 	{
 		outSs << "Binary data file saved to: "
-			  << std::string(__ENV__("OTSDAQ_DATA")) + "/macroOutput_*" << __E__;
+		      << std::string(__ENV__("OTSDAQ_DATA")) + "/macroOutput_*" << __E__;
 		outSs << "\n"
-			  << "To view binary data do "
-				 "hexdump -v -e '\"%08_ax \" 7/8 \"%016x \"' -e '\"\\n\"' "
-			  << std::string(__ENV__("OTSDAQ_DATA")) << "/macroOutput_*.bin" << __E__;
+		      << "To view binary data do "
+		         "hexdump -v -e '\"%08_ax \" 7/8 \"%016x \"' -e '\"\\n\"' "
+		      << std::string(__ENV__("OTSDAQ_DATA")) << "/macroOutput_*.bin" << __E__;
 	}
 	// outSs << ostr.str();
 
