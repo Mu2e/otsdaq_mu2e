@@ -1,6 +1,6 @@
 #include "otsdaq-mu2e/ArtModules/HistoReceiver.hh"
 #include "TBufferFile.h"
-#include "TH1.h"
+                  #include "TH1.h"
 #include "otsdaq/Macros/CoutMacros.h"
 
 namespace ots
