@@ -4409,8 +4409,10 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 		// Read initial event marker count to detect batch completion
 		uint32_t initialEventMarkerCount = thisCFO_->ReadTransmitEventWindowMarkerCount();
 
-		double chunkDurationUs = static_cast<double>(chunkCount) * eventDurationInClocks *
-		                         CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
+		// Use expectedEventCount so timing aligns with the completion definition
+		double chunkDurationUs =
+		    static_cast<double>(expectedEventCount) * eventDurationInClocks *
+		    CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
 		uint64_t pollIntervalUs = chunkDurationUs < 20000.0
 		                              ? 1000
 		                              : (chunkDurationUs < 200000.0 ? 5000 : 50000);
