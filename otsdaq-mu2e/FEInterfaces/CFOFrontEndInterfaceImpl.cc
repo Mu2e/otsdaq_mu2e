@@ -4401,29 +4401,51 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 	//========================================================================
 	/// local lamda function waitForSingleShotReady
 	auto waitForSingleShotReady = [&](uint32_t chunkCount, size_t chunkIndex) {
+		// Batch completion is defined as one full fine loop for sub-100% duty,
+		// or the exact coarse/full-duty chunk size otherwise.
+		uint32_t expectedEventCount =
+			isFullDutyCycle ? chunkCount : static_cast<uint32_t>(standardNValues_[0]);
+
+		// Read initial event marker count to detect batch completion
+		uint32_t initialEventMarkerCount = thisCFO_->ReadTransmitEventWindowMarkerCount();
+
 		double chunkDurationUs = static_cast<double>(chunkCount) * eventDurationInClocks *
 								 CFOandDTCCoreVInterface::FPGAClock_ / 1000.0;
 		uint64_t pollIntervalUs = chunkDurationUs < 20000.0
 									  ? 1000
 									  : (chunkDurationUs < 200000.0 ? 5000 : 50000);
-		uint64_t maxWaitUs      = std::max<uint64_t>(
-			500000, static_cast<uint64_t>(chunkDurationUs * 10.0) + pollIntervalUs);
+		uint64_t maxWaitUs      =
+			static_cast<uint64_t>(chunkDurationUs * 1.2) + 5000000;
 
 		std::string unclearedDetails;
+		bool        singleShotCleared = false;
+		uint32_t    eventCountDelta   = 0;
+
 		for(uint64_t waitedUs = 0; waitedUs <= maxWaitUs; waitedUs += pollIntervalUs)
 		{
-			if(areSingleShotValuesCleared(unclearedDetails))
+			// Check condition 1: OR_SINGLESHOT values are cleared
+			singleShotCleared = areSingleShotValuesCleared(unclearedDetails);
+
+			// Check condition 2: Event marker count has increased by 2x expected count
+			uint32_t currentEventMarkerCount  = thisCFO_->ReadTransmitEventWindowMarkerCount();
+			eventCountDelta                   = currentEventMarkerCount - initialEventMarkerCount;
+			uint32_t expectedEventCountDelta  = 2 * expectedEventCount;
+			bool     eventCountValid          = (eventCountDelta >= expectedEventCountDelta);
+
+			if(singleShotCleared && eventCountValid)
 			{
 				if(chunkIndex > 25 && chunkIndex != chunkCounts.size() - 1)
 				{
 					result << ".";  //add a single dot, when too many
 
 					if(chunkIndex == chunkCounts.size() - 1)
-						result << "\n";  //end spacer
+						result << "\n\n";  //end spacer
 				}
 				else
 					result << "Chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
-						   << " completed; OR_SINGLESHOT readback values cleared after "
+						   << " completed; OR_SINGLESHOT readback values cleared and "
+						   << "event marker count increased by " << eventCountDelta
+						   << " (expected " << expectedEventCountDelta << ") after "
 						   << waitedUs / 1000.0 << " ms." << __E__;
 				return;
 			}
@@ -4431,12 +4453,15 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			usleep(pollIntervalUs);
 		}
 
-		__FE_SS__ << "Timed out waiting for OR_SINGLESHOT readback values to clear after "
-				  << "chunk " << (chunkIndex + 1) << "/" << chunkCounts.size()
-				  << " (count=" << chunkCount << "). Uncleared values: "
-				  << (unclearedDetails.empty() ? std::string("<none reported>")
-											   : unclearedDetails)
-				  << __E__;
+		// Timeout: report final state
+		__FE_SS__ << "Timed out waiting for chunk " << (chunkIndex + 1) << "/"
+				  << chunkCounts.size() << " (count=" << chunkCount << ") to complete. ";
+		if(!singleShotCleared)
+			ss << "OR_SINGLESHOT values not cleared: "
+					  << (unclearedDetails.empty() ? std::string("<none reported>") : unclearedDetails)
+					  << " ";
+		ss << "Event marker count delta=" << eventCountDelta
+				  << " (expected " << (2 * expectedEventCount) << ")." << __E__;
 		__FE_SS_THROW__;
 	};  //end lamda waitForSingleShotReady()
 
