@@ -719,7 +719,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    std::vector<std::string>{
 	        "Enable CFO Emulator (Default := true)",
 	        "Number of 1.4s super cycle repetitions (0 := infinite)",
-	        "Starting Event Window Tag (Default: 0)",
+	        "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 	        "Enable Auto-generation of Data Request Packets (Default := false)",
 	        "Enable Clock Markers (Default := false)",
 	        "Use Detached Buffer Test (Default := false)",
@@ -748,7 +748,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "Fixed-width Event Window Duration (s, ms, us, ns, and clocks allowed) "
 	        "[clocks := 25ns]",
 	        "Number of Event Window Markers to generate (0 := infinite)",
-	        "Starting Event Window Tag (Default: 0)",
+	        "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 	        "Event Window Mode (Default := 1)",
 	        "Enable Auto-generation of Data Request Packets (Default := false)",
 	        "Enable Clock Markers (Default := false)",
@@ -4686,14 +4686,34 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 {
+	uint64_t startTag = __GET_ARG_IN__(
+	    "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
+	    uint64_t,
+	    -1);
+	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
+	{
+		__FE_COUTV__(next_starting_cfoem_event_window_tag_);
+		startTag = next_starting_cfoem_event_window_tag_;
+	}
+	//else take user input
+
+	__FE_COUTV__(startTag);
+
+	uint32_t numberOfSuperCycles = __GET_ARG_IN__(
+	    "Number of 1.4s super cycle repetitions (0 := infinite)", uint32_t);
+	__FE_COUTV__(numberOfSuperCycles);
+
+	//setup next tag calculation (245000 events per super cycle: 235K on-spill + 10K off-spill)
+	next_starting_cfoem_event_window_tag_ = startTag + numberOfSuperCycles * 245000;
+	__FE_COUTV__(next_starting_cfoem_event_window_tag_);
+
 	__SET_ARG_OUT__(
 	    "Result",
 	    SetCFOEmulatorOnOffSpillEmulation(
 	        __GET_ARG_IN__("Enable CFO Emulator (Default := true)", bool, true),
 	        __GET_ARG_IN__("Use Detached Buffer Test (Default := false)", uint32_t),
-	        __GET_ARG_IN__("Number of 1.4s super cycle repetitions (0 := infinite)",
-	                       uint32_t),
-	        __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", uint64_t),
+	        numberOfSuperCycles,
+	        startTag,
 	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
 	        __GET_ARG_IN__(
 	            "Enable Auto-generation of Data Request Packets (Default := false)",
@@ -4829,6 +4849,27 @@ void DTCFrontEndInterface::PunchedClock(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 {
+	uint64_t startTag = __GET_ARG_IN__(
+	    "Starting Event Window Tag (Default or -1 := start from 0 and continue)",
+	    uint64_t,
+	    -1);
+	if(startTag == (uint64_t)-1)  //if DEFAULT, then continue from next tag position
+	{
+		__FE_COUTV__(next_starting_cfoem_event_window_tag_);
+		startTag = next_starting_cfoem_event_window_tag_;
+	}
+	//else take user input
+
+	__FE_COUTV__(startTag);
+
+	uint32_t numberOfEventWindowMarkers = __GET_ARG_IN__(
+	    "Number of Event Window Markers to generate (0 := infinite)", uint32_t);
+	__FE_COUTV__(numberOfEventWindowMarkers);
+
+	//setup next tag calculation
+	next_starting_cfoem_event_window_tag_ = startTag + numberOfEventWindowMarkers;
+	__FE_COUTV__(next_starting_cfoem_event_window_tag_);
+
 	__SET_ARG_OUT__(
 	    "Result",
 	    SetCFOEmulatorFixedWidthEmulation(
@@ -4838,9 +4879,8 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 	                       "allowed) [clocks := 25ns]",
 	                       std::string,
 	                       "0x44 clocks"),
-	        __GET_ARG_IN__("Number of Event Window Markers to generate (0 := infinite)",
-	                       uint32_t),
-	        __GET_ARG_IN__("Starting Event Window Tag (Default: 0)", uint64_t),
+	        numberOfEventWindowMarkers,
+	        startTag,
 	        __GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
 	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
 	        __GET_ARG_IN__(

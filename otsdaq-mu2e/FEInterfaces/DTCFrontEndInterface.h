@@ -165,6 +165,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	unsigned int            roc_emulated_mask_     = 0;
 	bool                    emulate_cfo_           = true;
 	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
+	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 
 	std::ofstream datafile_[8];
 
