@@ -72,20 +72,6 @@ find_package(otsdaq-components 2.06.08 REQUIRED EXPORT)
 find_package(artdaq-mu2e 1.05.02 REQUIRED EXPORT)
 find_package(PostgreSQL 13.2 REQUIRED)
 
- # XDAQ Extra setup
- include_directories($ENV{XDAQ_ROOT}/include/linux $ENV{XDAQ_ROOT}/include)
-link_directories($ENV{XDAQ_ROOT}/lib)
-set(XDAQ_BASIC_LIB_LIST
-   xcept
-   xoap
-   xdaq
-   toolbox
-   xerces-c
-   cgicc
- )
- set(XDAQ_XERCES-C xerces-c)
-
-
 # macros for art_dictionary and simple_plugin
 
 include(BuildPlugins)
