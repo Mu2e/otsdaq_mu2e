@@ -5,16 +5,6 @@ cet_make_exec(NAME DTCFrontEndInterface_TestMain
 	otsdaq::FECore
     otsdaq::Macros
 	otsdaq-mu2e::DTCFrontEndInterface
-	${XDAQ_BASIC_LIB_LIST}
-	config # From XDAQ
-	b2innub # From XDAQ
-	i2outils # From XDAQ
-	executive # From XDAQ
-	b2inutils # From XDAQ
-	pthttp # From XDAQ
-	ptfifo # From XDAQ
-	xrelay # From XDAQ
-	hyperdaq # From XDAQ
 )
 
 cet_make_exec(NAME CFOFrontEndInterface_TestMain
@@ -22,16 +12,6 @@ cet_make_exec(NAME CFOFrontEndInterface_TestMain
 	otsdaq::FECore
     otsdaq::Macros
 	  otsdaq-mu2e::CFOFrontEndInterface
-	${XDAQ_BASIC_LIB_LIST}
-	config # From XDAQ
-	b2innub # From XDAQ
-	i2outils # From XDAQ
-	executive # From XDAQ
-	b2inutils # From XDAQ
-	pthttp # From XDAQ
-	ptfifo # From XDAQ
-	xrelay # From XDAQ
-	hyperdaq # From XDAQ
 )
 
 cet_make_exec(NAME DTCFrontEndInterface_ExtCFOMain
@@ -39,16 +19,6 @@ cet_make_exec(NAME DTCFrontEndInterface_ExtCFOMain
 	otsdaq::FECore
     otsdaq::Macros
 	  otsdaq-mu2e::DTCFrontEndInterface
-	${XDAQ_BASIC_LIB_LIST}
-	config # From XDAQ
-	b2innub # From XDAQ
-	i2outils # From XDAQ
-	executive # From XDAQ
-	b2inutils # From XDAQ
-	pthttp # From XDAQ
-	ptfifo # From XDAQ
-	xrelay # From XDAQ
-	hyperdaq # From XDAQ
 )
 
 
@@ -57,16 +27,6 @@ cet_make_exec(NAME DTCFrontEndInterface_HWEventBuilding
 	otsdaq::FECore
     otsdaq::Macros
 	  otsdaq-mu2e::DTCFrontEndInterface
-	${XDAQ_BASIC_LIB_LIST}
-	config # From XDAQ
-	b2innub # From XDAQ
-	i2outils # From XDAQ
-	executive # From XDAQ
-	b2inutils # From XDAQ
-	pthttp # From XDAQ
-	ptfifo # From XDAQ
-	xrelay # From XDAQ
-	hyperdaq # From XDAQ
 )
 
 cet_script(ALWAYS_COPY test_DCS.sh) #wrapper around DCS_test to hide printouts
@@ -75,16 +35,6 @@ cet_make_exec(NAME DCS_test
 	otsdaq::FECore
     otsdaq::Macros
 	  otsdaq-mu2e::DTCFrontEndInterface
-	${XDAQ_BASIC_LIB_LIST}
-	config # From XDAQ
-	b2innub # From XDAQ
-	i2outils # From XDAQ
-	executive # From XDAQ
-	b2inutils # From XDAQ
-	pthttp # From XDAQ
-	ptfifo # From XDAQ
-	xrelay # From XDAQ
-	hyperdaq # From XDAQ
 )
 
 install_headers()
