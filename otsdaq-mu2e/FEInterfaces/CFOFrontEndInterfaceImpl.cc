@@ -5658,8 +5658,10 @@ void CFOFrontEndInterface::RunplanSubrunConfigSetup(__ARGS__)
 {
 	__FE_COUT__ << "Setting Runplan Subrun Config" << __E__;
 
-	uint32_t subrunEvtLimit = __GET_ARG_IN__("Subrun Event Limit (Default: 0)", uint32_t, 0);
-	uint32_t subrunPredOffset = __GET_ARG_IN__("Subrun Prediction Offset (Default: 0)", uint32_t, 0);
+	uint32_t subrunEvtLimit =
+	    __GET_ARG_IN__("Subrun Event Limit (Default: 0)", uint32_t, 0);
+	uint32_t subrunPredOffset =
+	    __GET_ARG_IN__("Subrun Prediction Offset (Default: 0)", uint32_t, 0);
 
 	__FE_COUTV__(subrunEvtLimit);
 	__FE_COUTV__(subrunPredOffset);
@@ -5675,7 +5677,7 @@ void CFOFrontEndInterface::RunplanSubrunConfigRead(__ARGS__)
 {
 	__FE_COUT__ << "Reading Runplan Subrun Config" << __E__;
 
-	uint32_t subrunEvtLimit = thisCFO_->ReadRunPlanSubrunEvtLimit();
+	uint32_t subrunEvtLimit   = thisCFO_->ReadRunPlanSubrunEvtLimit();
 	uint32_t subrunPredOffset = thisCFO_->ReadRunPlanSubrunPredOffset();
 
 	__FE_COUTV__(subrunEvtLimit);

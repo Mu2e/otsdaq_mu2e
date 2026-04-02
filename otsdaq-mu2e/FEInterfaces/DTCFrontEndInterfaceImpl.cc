@@ -18,7 +18,14 @@ using namespace ots;
 #define __MF_SUBJECT__ "DTCFrontEndInterface"
 
 #undef LOCAL_COUT_HDR
-#define LOCAL_COUT_HDR 	(threadStruct->thisDTC_?("FE:" "DTCFrontEndInterface" + std::string(":") + threadStruct->thisDTC_->getDeviceUID() + ":dev" + std::to_string(threadStruct->thisDTC_->GetDevice()->getDeviceIndex()) + "\t<> "):"")
+#define LOCAL_COUT_HDR                                                              \
+	(threadStruct->thisDTC_                                                         \
+	     ? ("FE:"                                                                   \
+	        "DTCFrontEndInterface" +                                                \
+	        std::string(":") + threadStruct->thisDTC_->getDeviceUID() + ":dev" +    \
+	        std::to_string(threadStruct->thisDTC_->GetDevice()->getDeviceIndex()) + \
+	        "\t<> ")                                                                \
+	     : "")
 
 // // some global variables, probably a bad idea. But temporary
 // std::string RunDataFN = "";
@@ -4408,25 +4415,35 @@ void DTCFrontEndInterface::DTCInstantiate()
 	__FE_COUT__ << "END DTC arguments..." << std::endl;
 
 	size_t dtcPos = getInterfaceUID().find("DTC");
-	if(dtcPos != std::string::npos && dtcPos+3 < getInterfaceUID().size())
+	if(dtcPos != std::string::npos && dtcPos + 3 < getInterfaceUID().size())
 	{
-		__FE_COUT__ << "Checking that PCIe device matches guidance in UID '" << getInterfaceUID() << "'..." << __E__;
+		__FE_COUT__ << "Checking that PCIe device matches guidance in UID '"
+		            << getInterfaceUID() << "'..." << __E__;
 
 		bool mismatch = false;
-		if(getInterfaceUID()[dtcPos+3] == '_' || getInterfaceUID()[dtcPos+3] == '-')
+		if(getInterfaceUID()[dtcPos + 3] == '_' || getInterfaceUID()[dtcPos + 3] == '-')
 		{
-			__FE_COUTT__ << "Checking that PCIe device matches guidance in UID with _/- '" << getInterfaceUID() << "'..." << __E__;
-			if(dtcPos+4 < getInterfaceUID().size() &&
-					uint8_t(getInterfaceUID()[dtcPos+4])-48 != uint8_t(deviceIndex_)) //convert ascii '0' '1' .. to number deviceIndex_ 
+			__FE_COUTT__ << "Checking that PCIe device matches guidance in UID with _/- '"
+			             << getInterfaceUID() << "'..." << __E__;
+			if(dtcPos + 4 < getInterfaceUID().size() &&
+			   uint8_t(getInterfaceUID()[dtcPos + 4]) - 48 !=
+			       uint8_t(
+			           deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
 				mismatch = true;
 		}
-		else if(uint8_t(getInterfaceUID()[dtcPos+3])-48 != uint8_t(deviceIndex_)) //convert ascii '0' '1' .. to number deviceIndex_
+		else if(uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 !=
+		        uint8_t(deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
 			mismatch = true;
 
 		if(mismatch)
 		{
-			__FE_SS__ << "PCIe device index '" << deviceIndex_ << "' does not match guidance in UID '" << getInterfaceUID()  << 
-				"' - would expect 'DTC" << deviceIndex_ << "' in the UID string for this device. Please use DTC<device index> in your naming convention, or remove the 'DTC' keyword from the UID." << __E__;
+			__FE_SS__
+			    << "PCIe device index '" << deviceIndex_
+			    << "' does not match guidance in UID '" << getInterfaceUID()
+			    << "' - would expect 'DTC" << deviceIndex_
+			    << "' in the UID string for this device. Please use DTC<device index> in "
+			       "your naming convention, or remove the 'DTC' keyword from the UID."
+			    << __E__;
 			__FE_SS_THROW__;
 		}
 	}
@@ -5379,8 +5396,8 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 			        subevent->GetEventWindowTag().GetEventWindowTag(true)));
 		else
 			__GEN_COUTT__ << "Too many mismatches ("
-			          << threadStruct->mismatchedEventTagJumps_.size()
-			          << "), not recording this one." << __E__;
+			              << threadStruct->mismatchedEventTagJumps_.size()
+			              << "), not recording this one." << __E__;
 
 		if(threadStruct->activeMatch_)
 		{
@@ -5503,8 +5520,8 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	if(dataBlocks.size() != 6)
 	{
 		__GEN_SS__ << "Unexpected number of ROC fragments found in subevent (EWT="
-		       << subevent->GetEventWindowTag() << "): " << dataBlocks.size()
-		       << " ROC fragments found (expected 6)";
+		           << subevent->GetEventWindowTag() << "): " << dataBlocks.size()
+		           << " ROC fragments found (expected 6)";
 		__GEN_SS_THROW__;
 	}
 
@@ -5566,14 +5583,15 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 		}
 
 		__GEN_COUTT__ << "Link-" << dataHeader->GetLinkID() << " Fragment #"
-		          << threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]
-		          << "\n"
-		             " Timeout #"
-		          << threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()]
-		          << "\n"
-		             " Empty #"
-		          << threadStruct->rocPayloadEmptyCount_[dataHeader->GetLinkID()] << "\n"
-		          << dataHeader->toJSON() << __E__;
+		              << threadStruct->rocFragmentsCount_[dataHeader->GetLinkID()]
+		              << "\n"
+		                 " Timeout #"
+		              << threadStruct->rocHeaderTimeoutsCount_[dataHeader->GetLinkID()]
+		              << "\n"
+		                 " Empty #"
+		              << threadStruct->rocPayloadEmptyCount_[dataHeader->GetLinkID()]
+		              << "\n"
+		              << dataHeader->toJSON() << __E__;
 	}  //end Data Block ROC fragment loop
 
 	// ostr << std::endl << std::endl;
@@ -5587,7 +5605,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 void DTCFrontEndInterface::detechedBufferTestThread(
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 try
-{	
+{
 	//use mfSubject_ to label FE UID in GEN output marcos
 	std::string mfSubject_ = LOCAL_COUT_HDR;
 	__GEN_COUT__ << "Buffer test thread established..." << __E__;
@@ -5622,7 +5640,7 @@ try
 				threadStruct->saveBinaryDataFilename_ = "SIM_" + tmp;
 		}
 		__GEN_COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" +
-		          threadStruct->saveBinaryDataFilename_);
+		              threadStruct->saveBinaryDataFilename_);
 		threadStruct->fp_ = fopen((std::string(__ENV__("OTSDAQ_DATA")) + "/" +
 		                           threadStruct->saveBinaryDataFilename_)
 		                              .c_str(),
@@ -5630,9 +5648,9 @@ try
 		if(!threadStruct->fp_)
 		{
 			__GEN_SS__ << "Failed to open file to save macro output '"
-			       << (std::string(__ENV__("OTSDAQ_DATA")) + "/" +
-			           threadStruct->saveBinaryDataFilename_)
-			       << "'..." << __E__;
+			           << (std::string(__ENV__("OTSDAQ_DATA")) + "/" +
+			               threadStruct->saveBinaryDataFilename_)
+			           << "'..." << __E__;
 			__GEN_SS_THROW__;
 		}
 	}
@@ -5709,9 +5727,10 @@ try
 					threadStruct->nextEventWindowTag_.store(
 					    threadStruct->expectedEventTag_.load(std::memory_order_relaxed),
 					    std::memory_order_relaxed);
-					__GEN_COUT_INFO__ << "Restarting detached buffer test thread looking for "
-					                 "Event Window Tag = "
-					              << threadStruct->nextEventWindowTag_ << std::endl;
+					__GEN_COUT_INFO__
+					    << "Restarting detached buffer test thread looking for "
+					       "Event Window Tag = "
+					    << threadStruct->nextEventWindowTag_ << std::endl;
 
 					__GEN_COUTV__(threadStruct->saveBinaryDataFilename_);
 
@@ -5751,7 +5770,7 @@ try
 									threadStruct->saveBinaryDataFilename_ = "SIM_" + tmp;
 							}
 							__GEN_COUTV__(std::string(__ENV__("OTSDAQ_DATA")) + "/" +
-							          threadStruct->saveBinaryDataFilename_);
+							              threadStruct->saveBinaryDataFilename_);
 							threadStruct->fp_ =
 							    fopen((std::string(__ENV__("OTSDAQ_DATA")) + "/" +
 							           threadStruct->saveBinaryDataFilename_)
@@ -5824,7 +5843,8 @@ try
 
 		if(!threadStruct->inSubeventMode_)  //treat as an Event
 		{
-			__GEN_COUTT__ << "get the data requested as events via ->GetData(...)" << __E__;
+			__GEN_COUTT__ << "get the data requested as events via ->GetData(...)"
+			              << __E__;
 
 			while((events = threadStruct->thisDTC_->GetData(
 			           DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
@@ -5838,8 +5858,8 @@ try
 				}
 
 				__GEN_COUTT__ << "Read iteration #" << ii++
-				          << ": Events returned by the DTC: " << events.size()
-				          << std::endl;
+				              << ": Events returned by the DTC: " << events.size()
+				              << std::endl;
 				if(events.empty())
 					break;  //impossible!
 
@@ -5913,7 +5933,8 @@ try
 		}
 		else  //Treat as Subevent
 		{
-			__GEN_COUT__ << "get the data requested as subevents via ->GetSubEventData(...)";
+			__GEN_COUT__
+			    << "get the data requested as subevents via ->GetSubEventData(...)";
 
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(
 			           DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
@@ -5927,8 +5948,8 @@ try
 				}
 
 				__GEN_COUTT__ << "Read iteration #" << ii++
-				          << ": SubEvents returned by the DTC: " << subevents.size()
-				          << std::endl;
+				              << ": SubEvents returned by the DTC: " << subevents.size()
+				              << std::endl;
 
 				if(subevents.empty())
 					continue;  //impossible!
@@ -5976,14 +5997,16 @@ try
 	}
 
 	__GEN_COUT_INFO__ << "Buffer test thread exited. "
-	              << " Events received = " << threadStruct->eventsCount_
-	              << ", SubEvents received = " << threadStruct->subeventsCount_ << __E__;
+	                  << " Events received = " << threadStruct->eventsCount_
+	                  << ", SubEvents received = " << threadStruct->subeventsCount_
+	                  << __E__;
 	threadStruct->running_ = false;
 
 }  //end detechedBufferTestThread()
 catch(...)
 {
-	__COUT_ERR__ << LOCAL_COUT_HDR << "Exception caught in detechedBufferTestThread()." << __E__;
+	__COUT_ERR__ << LOCAL_COUT_HDR << "Exception caught in detechedBufferTestThread()."
+	             << __E__;
 	threadStruct->running_ = false;
 
 	std::stringstream errSs;

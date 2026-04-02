@@ -250,10 +250,10 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	    "Get Device Index",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &CFOandDTCCoreVInterface::GetDeviceIndex),
-	    std::vector<std::string>{},           // namesOfInputArgs
+	    std::vector<std::string>{},                // namesOfInputArgs
 	    std::vector<std::string>{"Device Index"},  // namesOfOutputArgs
-	    1,                                    // requiredUserPermissions
-	    "*",                                  // allowedCallingFEs
+	    1,                                         // requiredUserPermissions
+	    "*",                                       // allowedCallingFEs
 	    "Returns the PCIe device index for this CFO/DTC instance.");
 
 	// registerFEMacroFunction(
