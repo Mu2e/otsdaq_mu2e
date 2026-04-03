@@ -5218,7 +5218,7 @@ uint64_t DTCFrontEndInterface::getDetachedBufferTestReceivedCount(
 std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
-	//use mfSubject_ to label FE UID in GEN output marcos
+	//use mfSubject_ to label FE UID in GEN output macros
 	std::string mfSubject_ = LOCAL_COUT_HDR;
 	__GEN_COUT__ << "Get detached buffer test status..." << __E__;
 
