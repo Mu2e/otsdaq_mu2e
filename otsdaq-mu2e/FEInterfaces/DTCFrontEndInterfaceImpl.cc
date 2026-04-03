@@ -5975,7 +5975,7 @@ try
 			if(lastCount != threadStruct->subeventsCount_ || ii % 100 == 0)
 			{
 				__GEN_COUT__
-				    << "No more subevents found in DMA bufferr... waiting... iteration #"
+				    << "No more subevents found in DMA buffer... waiting... iteration #"
 				    << ii
 				    << ", SubEvents received so far = " << threadStruct->subeventsCount_
 				    << __E__;
