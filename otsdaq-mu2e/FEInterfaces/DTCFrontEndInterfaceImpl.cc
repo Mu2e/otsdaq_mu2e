@@ -5925,7 +5925,7 @@ try
 			if(lastCount != threadStruct->eventsCount_ || ii % 100 == 0)
 			{
 				__GEN_COUT__
-				    << "No more events found in DMA bufferr... waiting... iteration #"
+				    << "No more events found in DMA buffer... waiting... iteration #"
 				    << ii << ", Events received so far = " << threadStruct->eventsCount_
 				    << __E__;
 				lastCount = threadStruct->eventsCount_;
