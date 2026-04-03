@@ -5367,7 +5367,7 @@ void DTCFrontEndInterface::handleDetachedSubevent(
     const DTCLib::DTC_SubEvent&                                           subeventIn,
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
-	//use mfSubject_ to label FE UID in GEN output marcos
+	//use mfSubject_ to label FE UID in GEN output macros
 	std::string mfSubject_ = LOCAL_COUT_HDR;
 
 	const DTCLib::DTC_SubEvent* subevent = &subeventIn;
@@ -5606,7 +5606,7 @@ void DTCFrontEndInterface::detechedBufferTestThread(
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 try
 {
-	//use mfSubject_ to label FE UID in GEN output marcos
+	//use mfSubject_ to label FE UID in GEN output macros
 	std::string mfSubject_ = LOCAL_COUT_HDR;
 	__GEN_COUT__ << "Buffer test thread established..." << __E__;
 
