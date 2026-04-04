@@ -1327,8 +1327,8 @@ void CFOFrontEndInterface::configure(void)
 		// 	registerWrite(0x91a0,0x00000000); 	// for NO markers, write these
 		// values
 
-		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+		// __FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
+		// thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 		// registerWrite(0x9154, 0x0800);
 		// 	registerWrite(0x9154,0x00000000); 	// for NO markers, write these
 		// values
