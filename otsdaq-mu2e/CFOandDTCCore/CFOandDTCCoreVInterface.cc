@@ -246,6 +246,16 @@ void CFOandDTCCoreVInterface::registerCFOandDTCFEMacros(void)
 	    "The RTF (RJ45 Timing Fanout) is a separate board to alleviate jitter "
 	    "accumulation. <b>Not all DTCs are connected to the RTF</b>. ");
 
+	registerFEMacroFunction(
+	    "Get Device Index",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &CFOandDTCCoreVInterface::GetDeviceIndex),
+	    std::vector<std::string>{},                // namesOfInputArgs
+	    std::vector<std::string>{"Device Index"},  // namesOfOutputArgs
+	    1,                                         // requiredUserPermissions
+	    "*",                                       // allowedCallingFEs
+	    "Returns the PCIe device index for this CFO/DTC instance.");
+
 	// registerFEMacroFunction(
 	// 	"Reset Link Rx",
 	// 		static_cast<FEVInterface::frontEndMacroFunction_t>(
@@ -593,6 +603,12 @@ void CFOandDTCCoreVInterface::HardReset(__ARGS__)
 {
 	getCFOandDTCRegisters()->HardReset();
 }  //end HardReset()
+
+//========================================================================
+void CFOandDTCCoreVInterface::GetDeviceIndex(__ARGS__)
+{
+	__SET_ARG_OUT__("Device Index", getDevice()->getDeviceIndex());
+}  //end GetDeviceIndex()
 
 //========================================================================
 uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
