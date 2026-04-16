@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 SCRIPT_DIR="$(
@@ -49,7 +49,7 @@ vivado_lab -mode batch -source ${SCRIPT_DIR}/boot_from_flash_both_DTCs.tcl
 
 #now reset
 echo "Resetting PCIe on ${HOSTNAME}..."
-source ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 
 echo echo
 echo echo

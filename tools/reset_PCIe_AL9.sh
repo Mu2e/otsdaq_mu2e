@@ -29,8 +29,8 @@ while ! ln -s "$$" "$lockfile" 2>/dev/null; do
 
         pid=$(readlink "$lockfile")
         ps=`ps aux`
-	    # Look for others possibly running already, ignoring the program_all script that makes underlying program calls
-        possible_parent=`echo "$ps" | grep -E ':[0-9]* [a-z/]*bash .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AP\.sh)'|grep -v program_all_FPGA|awk '{print$2}'`
+	    # Look for others possibly running already, ignoring the program_all and boot_from_flash scripts that make underlying program calls
+        possible_parent=`echo "$ps" | grep -E ':[0-9]* [a-z/]*sh .*([p]rogram_.*AL9\.sh|[b]oot_from_flash.*AL9\.sh)'|grep -v program_all_FPGA|awk '{print$2}'`
         echo -e "$(date +%d%b%y.%T) reset_PCIe_AL9.sh:${LINENO} |  \t pid=$pid possible_parent=$possible_parent"
 
         if [ -n "$pid"  ] && kill -0 "$pid" 2>/dev/null; then
