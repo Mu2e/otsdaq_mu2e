@@ -1281,6 +1281,7 @@ void CFOFrontEndInterface::configure(void)
 		__FE_COUT__ << "CFO enable Event Start character output " << __E__;
 		thisCFO_->EnableEmbeddedClockMarker();
 		thisCFO_->EnableAcceleratorRF0();
+		thisCFO_->EnablePunchedClock();
 		// registerWrite(0x9100, 0x5); //bit-0 is clock enable, bit-2 enables accelerator RF-0 input
 
 		__FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
@@ -1368,6 +1369,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		__FE_COUT__ << "Enable communication over links" << __E__;
 		thisCFO_->EnableEmbeddedClockMarker();
 		thisCFO_->EnableAcceleratorRF0();
+		thisCFO_->EnablePunchedClock();
 
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
