@@ -206,6 +206,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 		Calo        = 23,
 		Calo_inject = 16,
 		Tracker     = 15,
+		Subrun      = 33,  //subrun transition bit
+		SubrunPred  = 34,  //subrun transition predecessor bit (used to ensure subrun transitions happen cleanly some constant offset later for operations with latency requirements)
 		STM         = 37,
 		ExtMon      = 39,
 		HWDev       = 7
@@ -223,6 +225,9 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void ConfigureForTimingChain(__ARGS__);
 	void LoopbackTest(__ARGS__);
 	void TestMarker(__ARGS__);
+
+	void RunplanSubrunConfigSetup(__ARGS__);
+	void RunplanSubrunConfigRead(__ARGS__);
 };
 
 }  // namespace ots

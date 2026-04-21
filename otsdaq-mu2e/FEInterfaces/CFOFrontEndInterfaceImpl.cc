@@ -535,6 +535,37 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		// "Send a request for a number of events and waits for the respective responses. "
 		// "Currently, the responses are simulated data (a counter)."
 	);
+
+	registerFEMacroFunction(
+		"Runplan Subrun Config Setup",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::RunplanSubrunConfigSetup),  // feMacroFunction
+		std::vector<std::string>{
+			"Subrun Event Limit (Default: 0)",
+			"Subrun Prediction Offset (Default: 0)"
+		},  // namesOfInputArgs
+		std::vector<std::string>{},  // namesOfOutputArgs
+		1,  // requiredUserPermissions
+		"*",  // allowedCallingFEs
+		"Set the Run Plan Subrun configuration registers. "
+		"The Subrun Event Limit sets the maximum number of events per subrun. "
+		"The Subrun Prediction Offset sets the prediction offset for subrun transitions."
+	);
+
+	registerFEMacroFunction(
+		"Runplan Subrun Config Read",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::RunplanSubrunConfigRead),  // feMacroFunction
+		std::vector<std::string>{},  // namesOfInputArgs
+		std::vector<std::string>{
+			"Subrun Event Limit",
+			"Subrun Prediction Offset"
+		},  // namesOfOutputArgs
+		1,  // requiredUserPermissions
+		"*",  // allowedCallingFEs
+		"Read the Run Plan Subrun configuration registers. "
+		"Returns the Subrun Event Limit and Subrun Prediction Offset values."
+	);
 	// clang-format on
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
@@ -1297,8 +1328,8 @@ void CFOFrontEndInterface::configure(void)
 		// 	registerWrite(0x91a0,0x00000000); 	// for NO markers, write these
 		// values
 
-		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+		// __FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
+		// thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 		// registerWrite(0x9154, 0x0800);
 		// 	registerWrite(0x9154,0x00000000); 	// for NO markers, write these
 		// values
@@ -5623,5 +5654,39 @@ void CFOFrontEndInterface::BufferTest_detached(__ARGS__)
 
 	__SET_ARG_OUT__("Result", outSs.str());
 }  //end BufferTest_detached()
+
+//========================================================================
+void CFOFrontEndInterface::RunplanSubrunConfigSetup(__ARGS__)
+{
+	__FE_COUT__ << "Setting Runplan Subrun Config" << __E__;
+
+	uint32_t subrunEvtLimit =
+	    __GET_ARG_IN__("Subrun Event Limit (Default: 0)", uint32_t, 0);
+	uint32_t subrunPredOffset =
+	    __GET_ARG_IN__("Subrun Prediction Offset (Default: 0)", uint32_t, 0);
+
+	__FE_COUTV__(subrunEvtLimit);
+	__FE_COUTV__(subrunPredOffset);
+
+	thisCFO_->SetRunPlanSubrunEvtLimit(subrunEvtLimit);
+	thisCFO_->SetRunPlanSubrunPredOffset(subrunPredOffset);
+
+	__FE_COUT__ << "Runplan Subrun Config set successfully." << __E__;
+}  //end RunplanSubrunConfigSetup()
+
+//========================================================================
+void CFOFrontEndInterface::RunplanSubrunConfigRead(__ARGS__)
+{
+	__FE_COUT__ << "Reading Runplan Subrun Config" << __E__;
+
+	uint32_t subrunEvtLimit   = thisCFO_->ReadRunPlanSubrunEvtLimit();
+	uint32_t subrunPredOffset = thisCFO_->ReadRunPlanSubrunPredOffset();
+
+	__FE_COUTV__(subrunEvtLimit);
+	__FE_COUTV__(subrunPredOffset);
+
+	__SET_ARG_OUT__("Subrun Event Limit", subrunEvtLimit);
+	__SET_ARG_OUT__("Subrun Prediction Offset", subrunPredOffset);
+}  //end RunplanSubrunConfigRead()
 
 // DEFINE_OTS_INTERFACE(CFOFrontEndInterface)
