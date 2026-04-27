@@ -6,9 +6,9 @@ on:
     - cron: "0 * * * *"
   push:
     branches:
-      - main
+      - develop
     paths:
-      - 'scripts/**'
+      - 'github-ci/**'
 
 jobs:
   make_dashboard:
@@ -69,10 +69,10 @@ jobs:
 
     - name: Copy artifacts and generate dashboard
       run: |
-        mkdir -p ci-dashboard/scripts/github-ci/site
-        cp -r ${{ steps.set_paths.outputs.lcov_html_report_path }} ci-dashboard/scripts/github-ci/site/code_coverage
-        cp -r ${{ steps.set_paths.outputs.doxy_html_path }} ci-dashboard/scripts/github-ci/site/doxygen
-        cd ci-dashboard/scripts/github-ci/
+        mkdir -p ci-dashboard/github-ci/site
+        cp -r ${{ steps.set_paths.outputs.lcov_html_report_path }} ci-dashboard/github-ci/site/code_coverage
+        cp -r ${{ steps.set_paths.outputs.doxy_html_path }} ci-dashboard/github-ci/site/doxygen
+        cd ci-dashboard/github-ci/
         ./collect-ci-metrics.sh
         echo "CI Summary JSON:"
         cat ci_summary.json
@@ -81,7 +81,7 @@ jobs:
     - name: Upload pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ${{ github.workspace }}/ci-dashboard/scripts/github-ci/site
+        path: ${{ github.workspace }}/ci-dashboard/github-ci/site
 
     - name: Remove test directory
       if: '!cancelled()'
