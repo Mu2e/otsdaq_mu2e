@@ -1,0 +1,223 @@
+<!-- templates/index_template.html -->
+{% extends "base_template.html" %}
+
+{% block title %}Mu2e CI Summary{% endblock %}
+
+{% block content %}
+<div style="text-align: right; font-size: 0.9em; color: #666;">
+    Last updated: {{ last_updated }}
+</div>
+
+<h1>Mu2e CI Summary</h1>
+
+<h2>Workflow Statuses</h2>
+<div class="badge-summary">
+    {% for badge in workflow_badges %}
+    <a href="{{ badge.link }}">
+        <img src="{{ badge.image }}" alt="{{ badge.alt }}">
+    </a>
+    {% endfor %}
+</div>
+
+<h2>Individual Repo Summaries</h2>
+<div class="individual-repo-summary">
+    <p>
+        There are <strong>{{ total_issues }}</strong> open issues and
+        <strong>{{ total_prs }}</strong> open pull requests.
+    </p>
+    <p>
+        <strong class="{{ 'status-success' if passing_percentage == 100 else 'status-failure' }}">
+            {{ passing_percentage }}%
+        </strong> of repos are passing their Develop CI builds.
+    </p>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Repository</th>
+            <th>Last Commit</th>
+            <th>Open Issues</th>
+            <th>Open PRs</th>
+            <th>Branches</th>
+            <th>Develop Build Status</th>
+            <th>Single-Pkg Build Status</th>
+            <th>Single-Pkg Test Status</th>
+            <th>Clang-Format Status</th>
+            <th>Git Whitespace Check Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for repo in ci_repos %}
+        <tr>
+            <td>
+                <a href="https://github.com/Mu2e/{{ repo.repo }}">{{ repo.repo }}</a>
+                {% if repo.repo_info.isPrivate %}
+                <span class="duration-verylong">(private)</span>
+                {% endif %}
+            </td>
+            <td>
+                <span class="duration-{{repo.repo_info.updatedAt | get_time_class}}">{{repo.repo_info.updatedAt | format_time}}</span>
+            </td>
+            <td><a href="https://github.com/Mu2e/{{ repo.repo }}/issues">{{ repo.open_issues }}</a></td>
+            <td><a href="https://github.com/Mu2e/{{ repo.repo }}/pulls">{{ repo.open_prs }}</a></td>
+            <td class="branch-count-{{repo.branches | get_branch_pr_count(repo.open_prs)}}">
+                <a href="https://github.com/Mu2e/{{ repo.repo }}/branches/all">
+                    {{ repo.branches }}
+                </a>
+            </td>
+            <td>
+                <a href="{{ repo.build_develop.url }}">
+                    <span class="status-{{ repo.build_develop.conclusion }}">
+                        {% if repo.build_develop.conclusion | length %}
+                        {{ repo.build_develop.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.build_develop.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.build_develop.createdAt | get_duration_class(repo.build_develop.updatedAt)}}">
+                    {{repo.build_develop.createdAt | format_duration(repo.build_develop.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.build_develop.createdAt | get_time_class}}">
+                    {{repo.build_develop.createdAt | format_time}}
+                </span>
+            </td>
+            <td>
+                <a href="{{ repo.build_single.url }}">
+                    <span class="status-{{ repo.build_single.conclusion }}">
+                        {% if repo.build_single.conclusion | length %}
+                        {{ repo.build_single.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.build_single.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.build_single.createdAt | get_duration_class(repo.build_single.updatedAt)}}">
+                    {{repo.build_single.createdAt | format_duration(repo.build_single.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.build_single.createdAt | get_time_class}}">
+                    {{repo.build_single.createdAt | format_time}}
+                </span>
+            </td>
+            <td>
+                <a href="{{ repo.test_single.url }}">
+                    <span class="status-{{ repo.test_single.conclusion }}">
+                        {% if repo.test_single.conclusion | length %}
+                        {{ repo.test_single.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.test_single.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.test_single.createdAt | get_duration_class(repo.test_single.updatedAt)}}">
+                    {{repo.test_single.createdAt | format_duration(repo.test_single.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.test_single.createdAt | get_time_class}}">
+                    {{repo.test_single.createdAt | format_time}}
+                </span>
+            </td>
+            <td>
+                <a href="{{ repo.format.url }}">
+                    <span class="status-{{ repo.format.conclusion }}">
+                        {% if repo.format.conclusion | length %}
+                        {{ repo.format.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.format.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.format.createdAt | get_duration_class(repo.format.updatedAt)}}">
+                    {{repo.format.createdAt | format_duration(repo.format.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.format.createdAt | get_time_class}}">
+                    {{repo.format.createdAt | format_time}}
+                </span>
+            </td>
+            <td>
+                <a href="{{ repo.whitespace.url }}">
+                    <span class="status-{{ repo.whitespace.conclusion }}">
+                        {% if repo.whitespace.conclusion | length %}
+                        {{ repo.whitespace.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.whitespace.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.whitespace.createdAt | get_duration_class(repo.whitespace.updatedAt)}}">
+                    {{repo.whitespace.createdAt | format_duration(repo.whitespace.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.whitespace.createdAt | get_time_class}}">
+                    {{repo.whitespace.createdAt | format_time}}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+        {% for repo in noci_repos %}
+        <tr>
+            <td>
+                <a href="https://github.com/Mu2e/{{ repo.repo }}">{{ repo.repo }}</a>
+                {% if repo.repo_info.isPrivate %}
+                <span class="duration-verylong">(private)</span>
+                {% endif %}
+            </td>
+            <td>
+                <span class="duration-{{repo.repo_info.updatedAt | get_time_class}}">{{repo.repo_info.updatedAt | format_time}}</span>
+            </td>
+            <td><a href="https://github.com/Mu2e/{{ repo.repo }}/issues">{{ repo.open_issues }}</a></td>
+            <td><a href="https://github.com/Mu2e/{{ repo.repo }}/pulls">{{ repo.open_prs }}</a></td>
+            <td class="branch-count-{{repo.branches | get_branch_pr_count(repo.open_prs)}}">
+                <a href="https://github.com/Mu2e/{{ repo.repo }}/branches/all">
+                    {{ repo.branches }}
+                </a>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <a href="{{ repo.format.url }}">
+                    <span class="status-{{ repo.format.conclusion }}">
+                        {% if repo.format.conclusion | length %}
+                        {{ repo.format.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.format.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.format.createdAt | get_duration_class(repo.format.updatedAt)}}">
+                    {{repo.format.createdAt | format_duration(repo.format.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.format.createdAt | get_time_class}}">
+                    {{repo.format.createdAt | format_time}}
+                </span>
+            </td>
+            <td>
+                <a href="{{ repo.whitespace.url }}">
+                    <span class="status-{{ repo.whitespace.conclusion }}">
+                        {% if repo.whitespace.conclusion | length %}
+                        {{ repo.whitespace.conclusion | capitalize }}
+                        {% else %}
+                        {{ repo.whitespace.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </a>
+                <span class="duration-{{repo.whitespace.createdAt | get_duration_class(repo.whitespace.updatedAt)}}">
+                    {{repo.whitespace.createdAt | format_duration(repo.whitespace.updatedAt)}}
+                </span>
+                <span class="duration-{{repo.whitespace.createdAt | get_time_class}}">
+                    {{repo.whitespace.createdAt | format_time}}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td><strong>Total</strong></td>
+            <td></td>
+            <td><strong>{{ total_issues }}</strong></td>
+            <td><strong>{{ total_prs }}</strong></td>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}

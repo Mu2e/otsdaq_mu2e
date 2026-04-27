@@ -1,0 +1,107 @@
+name: Nightly CI Dashboard Publication
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
+
+jobs:
+  make_dashboard:
+    name: Prepare Dashboard
+    runs-on: ubuntu-latest
+    outputs:
+      lcov_html_report_path: ${{ steps.set_paths.outputs.lcov_html_report_path }}
+      doxy_html_path: ${{ steps.set_paths.outputs.doxy_html_path }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      GH_TOKEN: ${{ secrets.BOT_CI_ISSUES }}
+    steps:
+    - name: Set paths to artifacts
+      id: set_paths
+      run : |
+        echo "lcov_html_report_path=lcov_report" >> "$GITHUB_OUTPUT"
+        echo "doxy_html_path=doxygen" >> "$GITHUB_OUTPUT"
+
+    - name: Get workflow run IDs
+      id: run_ids
+      run: |
+        doxy_id=$(gh run list --repo Mu2e/otsdaq-mu2e -b develop \
+                              --workflow "mu2e-develop-cpp-ci.yml" \
+                              --limit 1 --status success \
+                              --json databaseId --jq '.[0].databaseId')
+        lcov_id=$(gh run list --repo Mu2e/.github \
+                              --workflow "Create Mu2e LCOV coverage report" \
+                              --limit 1 --status success \
+                              --json databaseId --jq '.[0].databaseId')
+        echo "doxy_id=$doxy_id" | tee -a "$GITHUB_OUTPUT"
+        echo "lcov_id=$lcov_id" | tee -a "$GITHUB_OUTPUT"
+
+    - name: Fetch Doxygen docs
+      uses: actions/download-artifact@v4
+      with:
+        name: doxygen
+        github-token: ${{ secrets.BOT_CI_ISSUES }}
+        repository: Mu2e/otsdaq-mu2e
+        path: ${{ steps.set_paths.outputs.doxy_html_path }}
+        run-id: ${{ steps.run_ids.outputs.doxy_id }}
+
+    - name: Download lcov html report
+      id: download_lcov
+      uses: actions/download-artifact@v4
+      with:
+        name: code_coverage
+        github-token: ${{ secrets.BOT_CI_ISSUES }}
+        path: ${{ steps.set_paths.outputs.lcov_html_report_path }}
+        run-id: ${{ steps.run_ids.outputs.lcov_id }}
+        repository: "Mu2e/.github"
+
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        path: ci-dashboard
+
+    - name: Copy artifacts and generate dashboard
+      run: |
+        mkdir -p ci-dashboard/scripts/github-ci/site
+        cp -r ${{ steps.set_paths.outputs.lcov_html_report_path }} ci-dashboard/scripts/github-ci/site/code_coverage
+        cp -r ${{ steps.set_paths.outputs.doxy_html_path }} ci-dashboard/scripts/github-ci/site/doxygen
+        cd ci-dashboard/scripts/github-ci/
+        ./collect-ci-metrics.sh
+        echo "CI Summary JSON:"
+        cat ci_summary.json
+        python generate_ci_site.py --json_input ci_summary.json
+
+    - name: Upload pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ${{ github.workspace }}/ci-dashboard/scripts/github-ci/site
+
+    - name: Remove test directory
+      if: '!cancelled()'
+      run: |
+        rm -rf ci-dashboard/
+
+  deploy_to_github_pages:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: make_dashboard
+    permissions:
+        contents: read
+        pages: write
+        id-token: write
+    environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Configure GitHub Pages
+      uses: actions/configure-pages@v5
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

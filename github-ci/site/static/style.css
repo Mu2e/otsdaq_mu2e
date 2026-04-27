@@ -1,0 +1,114 @@
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.sidebar {
+    width: 220px;
+    background-color: #f4f4f4;
+    padding: 1em;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+}
+
+.content {
+    margin-left: 240px;
+    padding: 2em;
+    flex-grow: 1;
+}
+
+.summary-section {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.summary-block {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-radius: 8px;
+    flex: 1 1 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.summary-block h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+h2 {
+    margin-top: 1;
+    margin-bottom: 1;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 1em;
+}
+
+th, td {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background-color: #eee;
+}
+
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.status-success {
+    color: green;
+}
+
+.status-failure {
+    color: red;
+}
+
+.status-error {
+    color: darkorange;
+}
+
+.duration-short {
+    color: green;
+}
+
+.duration-medium {
+    color: yellowgreen;
+}
+
+.duration-long {
+    color: orange;
+}
+
+.duration-verylong {
+    color: red;
+}
+
+.branch-count-good {
+    background-color: palegreen;
+}
+
+.branch-count-bad {
+    background-color: wheat;
+}
+
+.branch-count-verybad {
+    background-color: lightcoral;
+}

@@ -1,0 +1,24 @@
+<!-- templates/base_template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}DAQ Report{% endblock %}</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Navigation</h2>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="doxygen/otsdaq-mu2e/index.html">Doxygen Browser</a></li>
+        <li><a href="code_coverage/index.html" target="_blank">Code Coverage Report</a></li>
+        <li><a href="https://art-daq.github.io">ARTDAQ CI Dashboard</a></li>
+        <!-- TODO: Add more links -->
+    </ul>
+  </div>
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
