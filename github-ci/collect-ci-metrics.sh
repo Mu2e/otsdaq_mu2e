@@ -53,6 +53,22 @@ for REPO in "${packages_with_ci[@]}"; do
   #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-format-single-pkg.yml/enable"
   #gh api -X PUT "repos/$FULL_NAME/actions/workflows/git-whitespace.yml/enable"
 
+  echo "DEBUG:    jq -n"
+  echo "DEBUG:    --arg repo \"$REPO\""
+  echo "DEBUG:    --argjson repo_info \"$REPO_INFO\""
+  echo "DEBUG:    --argjson issues \"$OPEN_ISSUES\""
+  echo "DEBUG:    --arg issues_url \"$ISSUES_URL\""
+  echo "DEBUG:    --argjson prs \"$OPEN_PRS\""
+  echo "DEBUG:    --arg prs_url \"$PRS_URL\""
+  echo "DEBUG:    --argjson branches \"$BRANCHES\""
+  echo "DEBUG:    --arg ranches_url \"$BRANCH_URL\""
+  echo "DEBUG:    --argjson build_develop \"$BUILD_DEVELOP_STATUS\""
+  echo "DEBUG:    --argjson build_single \"$BUILD_SINGLE_STATUS\""
+  echo "DEBUG:    --argjson test_single \"$TEST_SINGLE_STATUS\""
+  echo "DEBUG:    --argjson format \"$FORMAT_STATUS\""
+  echo "DEBUG:    --argjson whitespace \"$WHITESPACE_STATUS\""
+
+
   # Prepare JSON fragment
   JSON_ENTRY=$(jq -n \
     --arg repo "$REPO" \
