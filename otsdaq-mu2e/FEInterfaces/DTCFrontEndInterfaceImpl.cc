@@ -2466,6 +2466,12 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 		getDTC()->SoftReset();  //reset counters
+		for(auto& roc : rocs_)
+		{
+			__FE_COUT__ << "Starting ROC " << __E__;
+			roc.second->start(runNumber);
+			__FE_COUT__ << "Done starting ROC" << __E__;
+		}
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
@@ -4444,7 +4450,7 @@ void DTCFrontEndInterface::DTCInstantiate()
 			    << "' in the UID string for this device. Please use DTC<device index> in "
 			       "your naming convention, or remove the 'DTC' keyword from the UID."
 			    << __E__;
-			__FE_SS_THROW__;
+			__FE_COUT_WARN__ << ss.str();
 		}
 	}
 
