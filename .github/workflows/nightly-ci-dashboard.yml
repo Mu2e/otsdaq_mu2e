@@ -79,7 +79,7 @@ jobs:
         python generate_ci_site.py --json_input ci_summary.json
 
     - name: Upload pages artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v5
       with:
         path: ${{ github.workspace }}/ci-dashboard/github-ci/site
 
