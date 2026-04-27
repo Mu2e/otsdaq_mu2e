@@ -27,24 +27,26 @@ for REPO in "${packages_with_ci[@]}"; do
     BRANCHES=`git branch -r |grep -vE 'origin/(HEAD|main|stable|develop|artdaq/Spack0\.28|artdaq/Spack1\.1)$'|wc -l`
     cd ..
   fi
+  branch=`git branch -a|grep origin/HEAD|cut -d'>' -f'2'|sed 's|\s*origin/||'`
 
   OPEN_ISSUES=$(gh issue list -R "$FULL_NAME" --state open --limit 1000 --json number --jq 'length' || echo 0)
   ISSUES_URL=$(echo "https://github.com/Mu2e/$REPO/issues")
   OPEN_PRS=$(gh pr list -R "$FULL_NAME" --state open --limit 1000 --json number --jq 'length' || echo 0)
   PRS_URL=$(echo "https://github.com/Mu2e/$REPO/pulls")
   REPO_INFO=$(gh repo view "$FULL_NAME" --json isPrivate,updatedAt)
-  BUILD_DEVELOP_STATUS="{}"
-  BUILD_SINGLE_STATUS="{}"
-  TEST_SINGLE_STATUS="{}"
-  FORMAT_STATUS="{}"
-  WHITESPACE_STATUS="{}"
 
   # Get most recent single-repo CI build status
-  BUILD_DEVELOP_STATUS=$(gh run list -R "$FULL_NAME" -b develop --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-develop-cpp-ci.yml -q '.[0]')
-  BUILD_SINGLE_STATUS=$(gh run list -R "$FULL_NAME" -b develop --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-build-single-pkg.yml -q '.[0]')
-  TEST_SINGLE_STATUS=$(gh run list -R "$FULL_NAME" -b develop --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-test-single-pkg.yml -q '.[0]')
-  FORMAT_STATUS=$(gh run list -R "$FULL_NAME" -b develop --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-format-single-pkg.yml -q '.[0]')
-  WHITESPACE_STATUS=$(gh run list -R "$FULL_NAME" -b develop --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow git-whitespace.yml -q '.[0]')
+  BUILD_DEVELOP_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-develop-cpp-ci.yml -q '.[0]')
+  BUILD_SINGLE_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-build-single-pkg.yml -q '.[0]')
+  TEST_SINGLE_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-test-single-pkg.yml -q '.[0]')
+  FORMAT_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-format-single-pkg.yml -q '.[0]')
+  WHITESPACE_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow git-whitespace.yml -q '.[0]')
+
+  BUILD_DEVEOP_STATUS=${BUILD_DEVELOP_STATUS:-"{}"}
+  BUILD_SINGLE_STATUS=${BUILD_SINGLE_STATUS:-"{}"}
+  TEST_SINGLE_STATUS=${TEST_SINGLE_STATUS:-"{}"}
+  FORMAT_STATUS=${FORMAT_STATUS:-"{}"}
+  WHITESPACE_STATUS=${WHITESPACE_STATUS:-"{}"}
 
   # Reset inactivity timers
   #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-develop-cpp-ci.yml/enable"
