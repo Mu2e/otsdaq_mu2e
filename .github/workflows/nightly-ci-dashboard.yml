@@ -63,7 +63,7 @@ jobs:
         repository: "Mu2e/.github"
 
     - name: Checkout repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: ci-dashboard
 
