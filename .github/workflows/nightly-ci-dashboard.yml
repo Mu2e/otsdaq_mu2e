@@ -44,7 +44,7 @@ jobs:
         echo "lcov_id=$lcov_id" | tee -a "$GITHUB_OUTPUT"
 
     - name: Fetch Doxygen docs
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: doxygen
         github-token: ${{ secrets.BOT_CI_ISSUES }}
@@ -54,7 +54,7 @@ jobs:
 
     - name: Download lcov html report
       id: download_lcov
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: code_coverage
         github-token: ${{ secrets.BOT_CI_ISSUES }}
