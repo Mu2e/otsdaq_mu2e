@@ -94,10 +94,14 @@ def generate_site(json_input_path):
 
     total_repos = len(ci_repos)
     passing_repos = sum(
-        1 for repo in ci_repos if repo.get("build_develop", {}).get("conclusion") == "success"
+        1
+        for repo in ci_repos
+        if repo.get("build_develop", {}).get("conclusion") == "success"
     )
 
-    passing_percentage = round((passing_repos / total_repos) * 100, 1) if total_repos else 0
+    passing_percentage = (
+        round((passing_repos / total_repos) * 100, 1) if total_repos else 0
+    )
 
     last_updated = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     workflow_badges = [
@@ -134,7 +138,9 @@ def generate_site(json_input_path):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate CI HTML site from a JSON summary file.")
+    parser = argparse.ArgumentParser(
+        description="Generate CI HTML site from a JSON summary file."
+    )
     parser.add_argument(
         "--json_input",
         required=True,
