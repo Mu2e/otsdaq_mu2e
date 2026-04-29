@@ -11,18 +11,21 @@ def format_datetime(value):
 
 
 def get_time_class(time_started):
-    dtime_started = format_datetime(time_started)
-    diff = datetime.now(UTC) - dtime_started
-    if diff.total_seconds() < 3600 * 24:
-        return "short"
-    if diff.total_seconds() < 3600 * 24 * 7:
-        return "medium"
-    if diff.total_seconds() < 3600 * 24 * 30:
-        return "long"
+    if time_started is not None and time_started != "":
+        dtime_started = format_datetime(time_started)
+        diff = datetime.now(UTC) - dtime_started
+        if diff.total_seconds() < 3600 * 24:
+            return "short"
+        if diff.total_seconds() < 3600 * 24 * 7:
+            return "medium"
+        if diff.total_seconds() < 3600 * 24 * 30:
+            return "long"
     return "verylong"
 
 
 def format_time(time_started):
+    if time_started is None or time_started == "":
+        return "unknown"
     dtime_started = format_datetime(time_started)
     diff = datetime.now(UTC) - dtime_started
     if diff.total_seconds() < 3600 * 24:
@@ -35,15 +38,16 @@ def format_time(time_started):
 
 
 def get_duration_class(time_started, time_ended):
-    dtime_started = format_datetime(time_started)
-    dtime_ended = format_datetime(time_ended)
-    diff = dtime_ended - dtime_started
-    if diff.total_seconds() < 300:
-        return "short"
-    if diff.total_seconds() < 600:
-        return "medium"
-    if diff.total_seconds() < 3600:
-        return "long"
+    if time_started is not None and time_started != "" and time_ended is not None and time_ended != "":
+        dtime_started = format_datetime(time_started)
+        dtime_ended = format_datetime(time_ended)
+        diff = dtime_ended - dtime_started
+        if diff.total_seconds() < 300:
+            return "short"
+        if diff.total_seconds() < 600:
+            return "medium"
+        if diff.total_seconds() < 3600:
+            return "long"
     return "verylong"
 
 
@@ -56,14 +60,16 @@ def get_branch_pr_count(branch_count, pr_count):
 
 
 def format_duration(time_started, time_ended):
-    dtime_started = format_datetime(time_started)
-    dtime_ended = format_datetime(time_ended)
-    diff = dtime_ended - dtime_started
-    if diff.total_seconds() < 60:
-        return f"in {diff.total_seconds():.0f} s"
-    if diff.total_seconds() < 3600:
-        return f"in {diff.total_seconds() / 60.0:.2f} m"
-    return f"in {diff.total_seconds() / 3600.0:.2f} h"
+    if time_started is not None and time_started != "" and time_ended is not None and time_ended != "":
+        dtime_started = format_datetime(time_started)
+        dtime_ended = format_datetime(time_ended)
+        diff = dtime_ended - dtime_started
+        if diff.total_seconds() < 60:
+            return f"in {diff.total_seconds():.0f} s"
+        if diff.total_seconds() < 3600:
+            return f"in {diff.total_seconds() / 60.0:.2f} m"
+        return f"in {diff.total_seconds() / 3600.0:.2f} h"
+    return "unknown"
 
 
 def generate_site(json_input_path):
