@@ -7,25 +7,25 @@ from datetime import datetime, UTC
 
 
 def format_datetime(value):
-    return datetime.fromisoformat(value)
+    try:
+        return datetime.fromisoformat(value)
+    except TypeError:
+        return datetime.now(UTC)
 
 
 def get_time_class(time_started):
-    if time_started is not None and time_started != "":
-        dtime_started = format_datetime(time_started)
-        diff = datetime.now(UTC) - dtime_started
-        if diff.total_seconds() < 3600 * 24:
-            return "short"
-        if diff.total_seconds() < 3600 * 24 * 7:
-            return "medium"
-        if diff.total_seconds() < 3600 * 24 * 30:
-            return "long"
+    dtime_started = format_datetime(time_started)
+    diff = datetime.now(UTC) - dtime_started
+    if diff.total_seconds() < 3600 * 24:
+        return "short"
+    if diff.total_seconds() < 3600 * 24 * 7:
+        return "medium"
+    if diff.total_seconds() < 3600 * 24 * 30:
+        return "long"
     return "verylong"
 
 
 def format_time(time_started):
-    if time_started is None or time_started == "":
-        return "unknown"
     dtime_started = format_datetime(time_started)
     diff = datetime.now(UTC) - dtime_started
     if diff.total_seconds() < 3600 * 24:
@@ -38,21 +38,15 @@ def format_time(time_started):
 
 
 def get_duration_class(time_started, time_ended):
-    if (
-        time_started is not None
-        and time_started != ""
-        and time_ended is not None
-        and time_ended != ""
-    ):
-        dtime_started = format_datetime(time_started)
-        dtime_ended = format_datetime(time_ended)
-        diff = dtime_ended - dtime_started
-        if diff.total_seconds() < 300:
-            return "short"
-        if diff.total_seconds() < 600:
-            return "medium"
-        if diff.total_seconds() < 3600:
-            return "long"
+    dtime_started = format_datetime(time_started)
+    dtime_ended = format_datetime(time_ended)
+    diff = dtime_ended - dtime_started
+    if diff.total_seconds() < 300:
+        return "short"
+    if diff.total_seconds() < 600:
+        return "medium"
+    if diff.total_seconds() < 3600:
+        return "long"
     return "verylong"
 
 
@@ -65,21 +59,14 @@ def get_branch_pr_count(branch_count, pr_count):
 
 
 def format_duration(time_started, time_ended):
-    if (
-        time_started is not None
-        and time_started != ""
-        and time_ended is not None
-        and time_ended != ""
-    ):
-        dtime_started = format_datetime(time_started)
-        dtime_ended = format_datetime(time_ended)
-        diff = dtime_ended - dtime_started
-        if diff.total_seconds() < 60:
-            return f"in {diff.total_seconds():.0f} s"
-        if diff.total_seconds() < 3600:
-            return f"in {diff.total_seconds() / 60.0:.2f} m"
-        return f"in {diff.total_seconds() / 3600.0:.2f} h"
-    return "unknown"
+    dtime_started = format_datetime(time_started)
+    dtime_ended = format_datetime(time_ended)
+    diff = dtime_ended - dtime_started
+    if diff.total_seconds() < 60:
+        return f"in {diff.total_seconds():.0f} s"
+    if diff.total_seconds() < 3600:
+        return f"in {diff.total_seconds() / 60.0:.2f} m"
+    return f"in {diff.total_seconds() / 3600.0:.2f} h"
 
 
 def generate_site(json_input_path):
@@ -103,7 +90,7 @@ def generate_site(json_input_path):
     ci_repos = []
     noci_repos = []
     for repo in repos:
-        if repo.get("build_develop") != None:
+        if repo.get("build_develop"):
             ci_repos.append(repo)
         else:
             noci_repos.append(repo)

@@ -16,6 +16,7 @@ PROJECT_NUMBER=6
 echo "[" > "$OUTFILE"
 FIRST=true
 
+echo "Collecting statistics for CI-enabled repos"
 for REPO in "${packages_with_ci[@]}"; do
   FULL_NAME="$ORG/$REPO"
   echo "This repo: $FULL_NAME"
@@ -36,7 +37,7 @@ for REPO in "${packages_with_ci[@]}"; do
   PRS_URL=$(echo "https://github.com/Mu2e/$REPO/pulls")
   REPO_INFO=$(gh repo view "$FULL_NAME" --json isPrivate,updatedAt)
 
-  echo "Add missing Issues and PRs to Project"
+  #echo "Add missing Issues and PRs to Project"
   gh issue list -R "$FULL_NAME" --search "no:project" --state all --limit 1000 --json url \
   | jq -r '.[].url' \
   | while read -r URL; do
@@ -57,13 +58,13 @@ for REPO in "${packages_with_ci[@]}"; do
   FORMAT_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-format-single-pkg.yml -q '.[0]')
   WHITESPACE_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow git-whitespace.yml -q '.[0]')
 
-  BUILD_DEVEOP_STATUS=${BUILD_DEVELOP_STATUS:-"{}"}
-  BUILD_SINGLE_STATUS=${BUILD_SINGLE_STATUS:-"{}"}
-  TEST_SINGLE_STATUS=${TEST_SINGLE_STATUS:-"{}"}
-  FORMAT_STATUS=${FORMAT_STATUS:-"{}"}
-  WHITESPACE_STATUS=${WHITESPACE_STATUS:-"{}"}
+  BUILD_DEVELOP_STATUS=${BUILD_DEVELOP_STATUS:-null}
+  BUILD_SINGLE_STATUS=${BUILD_SINGLE_STATUS:-null}
+  TEST_SINGLE_STATUS=${TEST_SINGLE_STATUS:-null}
+  FORMAT_STATUS=${FORMAT_STATUS:-null}
+  WHITESPACE_STATUS=${WHITESPACE_STATUS:-null}
 
-  echo "Reset inactivity timers"
+  #echo "Reset inactivity timers"
   gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-develop-cpp-ci.yml/enable"
   gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-build-single-pkg.yml/enable"
   gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-test-single-pkg.yml/enable"
@@ -117,6 +118,7 @@ for REPO in "${packages_with_ci[@]}"; do
   echo "$JSON_ENTRY" >> "$OUTFILE"
 done
 
+echo "Collecting statistics for non-CI-enabled repos"
 for REPO in "${packages_without_ci[@]}"; do
   FULL_NAME="$ORG/$REPO"
   echo "This repo: $FULL_NAME"
@@ -138,8 +140,9 @@ for REPO in "${packages_without_ci[@]}"; do
 
   FORMAT_STATUS=$(gh run list -R "$FULL_NAME" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-format-single-pkg.yml -q '.[0]')
   WHITESPACE_STATUS=$(gh run list -R "$FULL_NAME" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow git-whitespace.yml -q '.[0]')
-  FORMAT_STATUS=${FORMAT_STATUS:-"{}"}
-  WHITESPACE_STATUS=${WHITESPACE_STATUS:-"{}"}
+
+  FORMAT_STATUS=${FORMAT_STATUS:-null}
+  WHITESPACE_STATUS=${WHITESPACE_STATUS:-null}
 
   echo "Add missing Issues and PRs to Project"
   gh issue list -R "$FULL_NAME" --search "no:project" --state all --limit 1000 --json url \

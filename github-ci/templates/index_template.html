@@ -15,7 +15,7 @@
     {% for badge in workflow_badges %}
     <a href="{{ badge.link }}">
         <img src="{{ badge.image }}" alt="{{ badge.alt }}">
-    </a>
+    </a><br />
     {% endfor %}
 </div>
 
@@ -67,6 +67,7 @@
                 </a>
             </td>
             <td>
+                {% if repo.build_develop %}
                 <a href="{{ repo.build_develop.url }}">
                     <span class="status-{{ repo.build_develop.conclusion }}">
                         {% if repo.build_develop.conclusion | length %}
@@ -82,8 +83,10 @@
                 <span class="duration-{{repo.build_develop.createdAt | get_time_class}}">
                     {{repo.build_develop.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
             <td>
+                {% if repo.build_single %}
                 <a href="{{ repo.build_single.url }}">
                     <span class="status-{{ repo.build_single.conclusion }}">
                         {% if repo.build_single.conclusion | length %}
@@ -99,8 +102,10 @@
                 <span class="duration-{{repo.build_single.createdAt | get_time_class}}">
                     {{repo.build_single.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
             <td>
+                {% if repo.test_single %}
                 <a href="{{ repo.test_single.url }}">
                     <span class="status-{{ repo.test_single.conclusion }}">
                         {% if repo.test_single.conclusion | length %}
@@ -116,8 +121,10 @@
                 <span class="duration-{{repo.test_single.createdAt | get_time_class}}">
                     {{repo.test_single.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
             <td>
+                {% if repo.format %}
                 <a href="{{ repo.format.url }}">
                     <span class="status-{{ repo.format.conclusion }}">
                         {% if repo.format.conclusion | length %}
@@ -133,8 +140,10 @@
                 <span class="duration-{{repo.format.createdAt | get_time_class}}">
                     {{repo.format.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
             <td>
+                {% if repo.whitespace %}
                 <a href="{{ repo.whitespace.url }}">
                     <span class="status-{{ repo.whitespace.conclusion }}">
                         {% if repo.whitespace.conclusion | length %}
@@ -150,6 +159,7 @@
                 <span class="duration-{{repo.whitespace.createdAt | get_time_class}}">
                     {{repo.whitespace.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
@@ -175,6 +185,7 @@
             <td></td>
             <td></td>
             <td>
+                {% if repo.format %}
                 <a href="{{ repo.format.url }}">
                     <span class="status-{{ repo.format.conclusion }}">
                         {% if repo.format.conclusion | length %}
@@ -190,8 +201,10 @@
                 <span class="duration-{{repo.format.createdAt | get_time_class}}">
                     {{repo.format.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
             <td>
+                {% if repo.whitespace %}
                 <a href="{{ repo.whitespace.url }}">
                     <span class="status-{{ repo.whitespace.conclusion }}">
                         {% if repo.whitespace.conclusion | length %}
@@ -207,6 +220,7 @@
                 <span class="duration-{{repo.whitespace.createdAt | get_time_class}}">
                     {{repo.whitespace.createdAt | format_time}}
                 </span>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
