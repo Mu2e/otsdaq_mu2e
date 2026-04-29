@@ -11,6 +11,7 @@ source $SCRIPT_DIR/repo.sh || exit $?
 ORG="Mu2e"
 REPOS=$(gh repo list "$ORG" --limit 100 --json name -q '.[].name')
 OUTFILE="ci_summary.json"
+PROJECT_NUMBER=6
 
 echo "[" > "$OUTFILE"
 FIRST=true
@@ -35,6 +36,20 @@ for REPO in "${packages_with_ci[@]}"; do
   PRS_URL=$(echo "https://github.com/Mu2e/$REPO/pulls")
   REPO_INFO=$(gh repo view "$FULL_NAME" --json isPrivate,updatedAt)
 
+  echo "Add missing Issues and PRs to Project"
+  gh issue list -R "$FULL_NAME" --search "no:project" --state all --limit 1000 --json url \
+  | jq -r '.[].url' \
+  | while read -r URL; do
+    echo "Adding $URL to project $PROJECT_NUMBER"
+    gh project item-add "$PROJECT_NUMBER" --owner "$ORG" --url "$URL" >/dev/null || true
+  done
+  gh pr list -R "$FULL_NAME" --search "no:project" --state all --limit 1000 --json url \
+  | jq -r '.[].url' \
+  | while read -r URL; do
+    echo "Adding $URL to project $PROJECT_NUMBER"
+    gh project item-add "$PROJECT_NUMBER" --owner "$ORG" --url "$URL" >/dev/null || true
+  done
+
   # Get most recent single-repo CI build status
   BUILD_DEVELOP_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-develop-cpp-ci.yml -q '.[0]')
   BUILD_SINGLE_STATUS=$(gh run list -R "$FULL_NAME" -b "$branch" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-build-single-pkg.yml -q '.[0]')
@@ -48,27 +63,13 @@ for REPO in "${packages_with_ci[@]}"; do
   FORMAT_STATUS=${FORMAT_STATUS:-"{}"}
   WHITESPACE_STATUS=${WHITESPACE_STATUS:-"{}"}
 
-  # Reset inactivity timers
-  #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-develop-cpp-ci.yml/enable"
-  #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-build-single-pkg.yml/enable"
-  #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-test-single-pkg.yml/enable"
-  #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-format-single-pkg.yml/enable"
-  #gh api -X PUT "repos/$FULL_NAME/actions/workflows/git-whitespace.yml/enable"
+  echo "Reset inactivity timers"
+  gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-develop-cpp-ci.yml/enable"
+  gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-build-single-pkg.yml/enable"
+  gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-test-single-pkg.yml/enable"
+  gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-format-single-pkg.yml/enable"
+  gh api -X PUT "repos/$FULL_NAME/actions/workflows/git-whitespace.yml/enable"
 
-  #echo "DEBUG:    jq -n"
-  #echo "DEBUG:    --arg repo \"$REPO\""
-  #echo "DEBUG:    --argjson repo_info \"$REPO_INFO\""
-  #echo "DEBUG:    --argjson issues \"$OPEN_ISSUES\""
-  #echo "DEBUG:    --arg issues_url \"$ISSUES_URL\""
-  #echo "DEBUG:    --argjson prs \"$OPEN_PRS\""
-  #echo "DEBUG:    --arg prs_url \"$PRS_URL\""
-  #echo "DEBUG:    --argjson branches \"$BRANCHES\""
-  #echo "DEBUG:    --arg ranches_url \"$BRANCH_URL\""
-  #echo "DEBUG:    --argjson build_develop \"$BUILD_DEVELOP_STATUS\""
-  #echo "DEBUG:    --argjson build_single \"$BUILD_SINGLE_STATUS\""
-  #echo "DEBUG:    --argjson test_single \"$TEST_SINGLE_STATUS\""
-  #echo "DEBUG:    --argjson format \"$FORMAT_STATUS\""
-  #echo "DEBUG:    --argjson whitespace \"$WHITESPACE_STATUS\""
 
   # Prepare JSON fragment
   JSON_ENTRY=$(jq -n \
@@ -134,8 +135,25 @@ for REPO in "${packages_without_ci[@]}"; do
   OPEN_PRS=$(gh pr list -R "$FULL_NAME" --state open --limit 1000 --json number --jq 'length' || echo 0)
   PRS_URL=$(echo "https://github.com/Mu2e/$REPO/pulls")
   REPO_INFO=$(gh repo view "$FULL_NAME" --json isPrivate,updatedAt)
+
   FORMAT_STATUS=$(gh run list -R "$FULL_NAME" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-format-single-pkg.yml -q '.[0]')
   WHITESPACE_STATUS=$(gh run list -R "$FULL_NAME" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow git-whitespace.yml -q '.[0]')
+  FORMAT_STATUS=${FORMAT_STATUS:-"{}"}
+  WHITESPACE_STATUS=${WHITESPACE_STATUS:-"{}"}
+
+  echo "Add missing Issues and PRs to Project"
+  gh issue list -R "$FULL_NAME" --search "no:project" --state all --limit 1000 --json url \
+  | jq -r '.[].url' \
+  | while read -r URL; do
+    echo "Adding $URL to project $PROJECT_NUMBER"
+    gh project item-add "$PROJECT_NUMBER" --owner "$ORG" --url "$URL" >/dev/null || true
+  done
+  gh pr list -R "$FULL_NAME" --search "no:project" --state all --limit 1000 --json url \
+  | jq -r '.[].url' \
+  | while read -r URL; do
+    echo "Adding $URL to project $PROJECT_NUMBER"
+    gh project item-add "$PROJECT_NUMBER" --owner "$ORG" --url "$URL" >/dev/null || true
+  done
 
   #gh api -X PUT "repos/$FULL_NAME/actions/workflows/mu2e-format-single-pkg.yml/enable"
   #gh api -X PUT "repos/$FULL_NAME/actions/workflows/git-whitespace.yml/enable"

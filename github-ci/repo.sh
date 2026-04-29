@@ -30,10 +30,12 @@ packages_with_ci=(
 )
 
 packages_without_ci=(
+  ".github"
   "daq-operations"
   "otsdaq-mu2e-config"
   "TDAQFirmware"
   "mu2e-spack"
+  "mu2e-tdaq-suite"
   "daq-shifter-tools"
 )
 
