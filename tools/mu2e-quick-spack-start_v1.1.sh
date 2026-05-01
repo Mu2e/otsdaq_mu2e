@@ -30,18 +30,20 @@ prompted for this location.
 --spackdir    Install Spack in this directory (or use existing installation)
 --all-packages Install all packages including Offline and otsdaq-mu2e-trigger
 --trigger     Synonym for --all-packages
+--otsdaq      Also install the otsdaq suite in srcs
+--artdaq      Also install the artdaq suite in srcs
 -a            Artdaq version number (e.g. 31300 for v3_13_00)
 -o            Otsdaq version number (e.g. 20800 for v2_08_00)
 -s            Use specific qualifiers when building ots
 -v            Be more verbose
 -x            set -x this script
 -w            Check out repositories read/write
---no-extra-products  Skip the automatic use of central product areas, such as CVMFS
 --upstream    Use <dir> as a Spack upstream (repeatable)
 --padding     Pad directories to 255 characters for relocatability
 --arch        Set architechture for build (ex. linux-almalinux9-x86_64_v3)
 --no-kmod     Do not build TRACE kernel module (for Docker builds)
 --no-view     Do not create a Spack environment view
+--no-extra-products  Skip the automatic use of central product areas, such as CVMFS
 --no-use-mu2e Do not search /mu2e/spack_v1.1 for upstreams
 --no-use-cvmfs Do not search /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v1.1 for upstreams
               Note that CVMFS will not be used if /mu2e is available and active (i.e. --no-use-mu2e is not passed)
@@ -61,39 +63,41 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_no_view=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_otsdaq=0; opt_artdaq=0; opt_no_view=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0
 while [ -n "${1-}" ];do
     if expr "x${1-}" : 'x-' >/dev/null;then
         op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
         leq=`expr "x$op" : 'x-[^=]*\(=\)'` lev=`expr "x$op" : 'x-[^=]*=\(.*\)'`
         test -n "$leq"&&eval "set -- \"\$lev\" \"\$@\""&&op=`expr "x$op" : 'x\([^=]*\)'`
         case "$op" in
-            \?*|h*)     eval $op1chr; do_help=1;;
-            v*)         eval $op1chr; opt_v=`expr $opt_v + 1`;;
-            x*)         eval $op1chr; set -x;;
-            a*)         eval $op1arg; aqualifier=$1; shift;;
-            o*)         eval $op1arg; oqualifier=$1; shift;;
-            s*)         eval $op1arg; squalifier=$1; shift;;
-            w*)         eval $op1chr; opt_w=`expr $opt_w + 1`;;
-            -debug)     opt_debug=--debug;;
-            -develop) opt_develop=1;;
-            -dev-only)   opt_dev_only=1;;
-            -tag)       eval $reqarg; tag=$1; shift;;
-            -spackdir)  eval $op1arg; spackdir=$1; shift;;
+            \?*|h*)              eval $op1chr; do_help=1;;
+            v*)                  eval $op1chr; opt_v=`expr $opt_v + 1`;;
+            x*)                  eval $op1chr; set -x;;
+            a*)                  eval $op1arg; aqualifier=$1; shift;;
+            o*)                  eval $op1arg; oqualifier=$1; shift;;
+            s*)                  eval $op1arg; squalifier=$1; shift;;
+            w*)                  eval $op1chr; opt_w=`expr $opt_w + 1`;;
+            -debug)              opt_debug=--debug;;
+            -develop)            opt_develop=1;;
+            -dev-only)           opt_dev_only=1;;
+            -tag)                eval $reqarg; tag=$1; shift;;
+            -spackdir)           eval $op1arg; spackdir=$1; shift;;
             -no-extra-products)  opt_skip_extra_products=1;;
-            -no-emacs)  ;; # No emacs support, so ignore this option if given
-            -no-pull)   opt_no_pull=1;;
-            -upstream)  eval $op1arg; upstreams+=($1); opt_use_mu2e=0; opt_use_cvmfs=0; shift;;
-            -padding)   opt_padding=1;;
-            -arch)      eval $op1arg; arch=$1; shift;;
-            -no-kmod)   opt_no_kmod=1;;
-            -no-use-mu2e)  opt_use_mu2e=0;;
-            -no-use-cvmfs) opt_use_cvmfs=0;;
-            -all-packages) opt_all_packages=1;;
-        -trigger)   opt_all_packages=1;;
-            -no-view)   opt_no_view=1;;
-	    -g4)        opt_g4=1;;
-            *)          echo "Unknown option -$op"; do_help=1;;
+            -no-emacs)           ;; # No emacs support, so ignore this option if given
+            -no-pull)            opt_no_pull=1;;
+            -upstream)           eval $op1arg; upstreams+=($1); opt_use_mu2e=0; opt_use_cvmfs=0; shift;;
+            -padding)            opt_padding=1;;
+            -arch)               eval $op1arg; arch=$1; shift;;
+            -no-kmod)            opt_no_kmod=1;;
+            -no-use-mu2e)        opt_use_mu2e=0;;
+            -no-use-cvmfs)       opt_use_cvmfs=0;;
+            -all-packages)       opt_all_packages=1;;
+            -trigger)            opt_all_packages=1;;
+            -otsdaq)             opt_otsdaq=1;;
+            -artdaq)             opt_artdaq=1;;
+            -no-view)            opt_no_view=1;;
+            -g4)                 opt_g4=1;;
+            *)                   echo "Unknown option -$op"; do_help=1;;
         esac
     else
         aa=`echo "$1" | sed -e"s/'/'\"'\"'/g"` args="$args '$aa'"; shift
@@ -142,7 +146,7 @@ if [ $opt_no_view -eq 1 ];then
     view_opt="--without-view"
 fi
 
-build_system_script=`find $Base -type f -name setup_spack_build_system_v1.1.sh`
+build_system_script=`find $Base -maxdepth 4 -type f -name setup_spack_build_system_v1.1.sh`
 if [[ "x$build_system_script" == "x" ]];then
   echo "WARNING: setup_spack_build_system_v1.1.sh not found, downloading from https://github.com/art-daq/artdaq-demo"
   cd $Base
@@ -150,7 +154,7 @@ if [[ "x$build_system_script" == "x" ]];then
   build_system_script=$Base/setup_spack_build_system_v1.1.sh
 fi
 
-echo "924add2e07a0ff2acb5ca7915f0ba20074f9881a *$build_system_script" | sha1sum -c -
+echo "ce1d0c139329e507b81af324aff6682880c184d5 *$build_system_script" | sha1sum -c -
 if [ $? -ne 0 ]; then
   echo "ERROR: setup_spack_build_system_v1.1.sh does not have the expected checksum! Please check Github for updates to this script!"
   exit 1
@@ -274,11 +278,12 @@ fi
 function checkout_package()
 {
     pkg=$1
+    org=${2:-Mu2e}
     if ! [ -d $pkg ]; then
         if [ $opt_w -eq 0 ];then
-            git clone https://github.com/Mu2e/$pkg.git $pkg
+            git clone https://github.com/$org/$pkg.git $pkg
         else
-            git clone git@github.com:Mu2e/$pkg.git $pkg
+            git clone git@github.com:$org/$pkg.git $pkg
         fi
     else
         cd $pkg
@@ -311,6 +316,16 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
             git pull
             cd ..
         fi
+    fi
+    if [[ ${opt_otsdaq:-0} -eq 1 ]] ; then
+        for pkg in otsdaq otsdaq-utilities otsdaq-components otsdaq-epics otsdaq-suite;do
+            checkout_package $pkg art-daq
+        done
+    fi
+    if [[ ${opt_artdaq:-0} -eq 1 ]] ; then
+        for pkg in artdaq artdaq-core artdaq-database artdaq-epics-plugin artdaq-mfextensions artdaq-utilities artdaq-daqinterface trace artdaq-suite;do
+            checkout_package $pkg art-daq
+        done
     fi
     cd $Base
 fi

@@ -1,7 +1,9 @@
 #ifndef _ots_CFOFrontEndInterface_h_
 #define _ots_CFOFrontEndInterface_h_
 
+#include <functional>
 #include <map>
+#include <optional>
 #include <string>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/CoreSupervisors/FESupervisor.h"
@@ -112,28 +114,37 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void     parseEventDurationForRunPlan(const std::string& eventDuration, std::string& durationValue, std::string& durationUnits);
 	void     getRatioOfOnPerEvents(uint32_t clocksPerOn, uint32_t clocksPerEvent, uint32_t& mPartRatio, uint32_t& nPartRatio);
 	void     mnFixRatio(std::stringstream& logResult, uint32_t& mPartRatio, uint32_t& nPartRatio);
-	uint64_t extractSharedRunPlanEventDuration(void);
-	void     generateSharedRunPlanWithPeriodicModeOn(std::stringstream& logResult,
-	                                                 std::string&       genFilename,
-	                                                 const uint64_t     initEventTag,
-	                                                 const uint16_t     onBits_startBit,
-	                                                 const uint16_t     onBits_bitCount,
-	                                                 const uint64_t     onBits_value,
-	                                                 uint32_t           mPartRatio,
-	                                                 uint32_t           nPartRatio,
-	                                                 const std::string& eventDurationSplitNumber,
-	                                                 const std::string& eventDurationSplitUnits);
-	void     generateSharedRunPlanWithPeriodicModeOff(std::stringstream& logResult,
-	                                                  std::string&       genFilename,
-	                                                  const uint16_t     onBits_startBit,
-	                                                  const uint16_t     onBits_bitCount,
-	                                                  const std::string& eventDurationSplitNumber,
-	                                                  const std::string& eventDurationSplitUnits);
+	uint64_t extractSharedRunPlanEventDuration(
+	    std::optional<std::reference_wrapper<std::vector<uint64_t>>> andMasks = std::nullopt,
+	    std::optional<std::reference_wrapper<std::vector<uint64_t>>> orMasks  = std::nullopt);
+	void generateSharedRunPlanWithPeriodicModeOn(std::stringstream&           logResult,
+	                                             std::string&                 genFilename,
+	                                             const uint64_t               initEventTag,
+	                                             const uint16_t               onBits_startBit,
+	                                             const uint16_t               onBits_bitCount,
+	                                             const uint64_t               onBits_value,
+	                                             uint32_t                     mPartRatio,
+	                                             uint32_t                     nPartRatio,
+	                                             uint32_t                     eventOffsetInLoop,
+	                                             const std::string&           eventDurationSplitNumber,
+	                                             const std::string&           eventDurationSplitUnits,
+	                                             const std::vector<uint64_t>& existingAndMasks,
+	                                             const std::vector<uint64_t>& existingOrMasks,
+	                                             const std::vector<uint64_t>& singleShotMasks      = {},
+	                                             const bool                   applyPeriodicOrMasks = true);
+	void generateSharedRunPlanWithPeriodicModeOff(std::stringstream&           logResult,
+	                                              std::string&                 genFilename,
+	                                              const uint16_t               offBits_startBit,
+	                                              const uint16_t               offBits_bitCount,
+	                                              const std::string&           eventDurationSplitNumber,
+	                                              const std::string&           eventDurationSplitUnits,
+	                                              const std::vector<uint64_t>& existingAndMasks = {},
+	                                              const std::vector<uint64_t>& existingOrMasks  = {});
 	/// -- end helper functions for Shared Run Plan ---------
 
 	int                         timing_chain_first_substep_     = -1;
 	uint64_t                    next_starting_event_window_tag_ = 0;
-	const std::vector<uint32_t> standardNValues_                = {100, 200, uint32_t(1e3)};  //, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
+	const std::vector<uint32_t> standardNValues_                = {100, 200, uint32_t(1e3), 2 * uint32_t(1e3)};  //, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
 	const std::map<std::string,
 	               uint16_t>
 	    supportedSubsystems_ = {
@@ -163,6 +174,8 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void WriteCFO(__ARGS__);
 	void ReadCFO(__ARGS__);
 
+	void GetCFOCounters(__ARGS__);
+
 	void                     SuperOrchestrationStart(__ARGS__);
 	void                     SuperOrchestrationEnd(__ARGS__);
 	void                     SuperOrchestration(__ARGS__);
@@ -189,24 +202,32 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	/// Shared Run Plan related functions and declarations
 	enum class SharedRunPlanSubsystemModeBit
 	{
-		CRV     = 31,
-		Calo    = 23,
-		Tracker = 15,
-		STM     = 37,
-		ExtMon  = 39,
-		HWDev   = 7
+		CRV         = 31,
+		Calo        = 23,
+		Calo_inject = 16,
+		Tracker     = 15,
+		Subrun      = 33,  //subrun transition bit
+		SubrunPred  = 34,  //subrun transition predecessor bit (used to ensure subrun transitions happen cleanly some constant offset later for operations with latency requirements)
+		STM         = 37,
+		ExtMon      = 39,
+		HWDev       = 7
 	};
-	void SharedRunPlanStatus(__ARGS__);  ///< Get Event Mode, Tag, Active Subsystems, and running status
-	void SharedRunPlanStart(__ARGS__);
-	void SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
-	void SharedRunPlanSubsystemJoin(__ARGS__);
-	void SharedRunPlanSubsystemLeave(__ARGS__);
+	size_t sharedRunPlanSize_ = 0;         ///< populated by extractSharedRunPlanEventDuration()
+	void   SharedRunPlanStatus(__ARGS__);  ///< Get Event Mode, Tag, Active Subsystems, and running status
+	void   SharedRunPlanStart(__ARGS__);
+	void   SharedRunPlanStop(__ARGS__);  ///< Halts Run Plan
+	void   SharedRunPlanSubsystemJoin(__ARGS__);
+	void   SharedRunPlanSubsystemSingleShotJoin(__ARGS__);  ///< Join for a single-shot event count using OR_SINGLESHOT opcode
+	void   SharedRunPlanSubsystemLeave(__ARGS__);
 
 	void BufferTest_detached(__ARGS__);
 
 	void ConfigureForTimingChain(__ARGS__);
 	void LoopbackTest(__ARGS__);
 	void TestMarker(__ARGS__);
+
+	void RunplanSubrunConfigSetup(__ARGS__);
+	void RunplanSubrunConfigRead(__ARGS__);
 };
 
 }  // namespace ots

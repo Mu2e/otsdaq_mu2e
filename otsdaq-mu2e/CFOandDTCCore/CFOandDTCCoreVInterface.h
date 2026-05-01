@@ -96,6 +96,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void GetFireflyTemperature(__ARGS__);
 	void GetFPGATemperature(__ARGS__);
 	void SelectJitterAttenuatorSource(__ARGS__);
+	void GetDeviceIndex(__ARGS__);
 
 	// void								ResetLinkRx					(__ARGS__);
 	// void								ShutdownLinkTx				(__ARGS__);

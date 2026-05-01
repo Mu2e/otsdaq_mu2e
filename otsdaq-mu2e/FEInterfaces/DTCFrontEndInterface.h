@@ -21,6 +21,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                     const ConfigurationTree& theXDAQContextConfigTree,
 	                     const std::string&       interfaceConfigurationPath);
 	virtual ~DTCFrontEndInterface(void);
+	void setParentPointers(CoreSupervisorBase*   supervisor,
+	                       FEVInterfacesManager* manager) override;
 
 	void DTCInstantiate();
 
@@ -163,6 +165,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	unsigned int            roc_emulated_mask_     = 0;
 	bool                    emulate_cfo_           = true;
 	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
+	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 
 	std::ofstream datafile_[8];
 
@@ -201,6 +204,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void SelectJitterAttenuatorSource(__ARGS__);
 	void WriteDTC(__ARGS__);
 	void ReadDTC(__ARGS__);
+	void SetCFOEventModeRequiredMask(__ARGS__);
+	void ReadCFOEventModeRequiredMask(__ARGS__);
 
 	void configureHardwareDevMode(__ARGS__);
 	void ConfigureForTimingChain(__ARGS__);
