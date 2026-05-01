@@ -293,7 +293,8 @@ unsigned int DBRunInfo::insertRunCondition(
 							debugFile.close();
 						}
 
-						__SS__ << "Failed to parse JSON for subsystem '" << subsystem << "', field '" << field << "'. "
+						__SS__ << "Failed to parse JSON for subsystem '" << subsystem
+						       << "', field '" << field << "'. "
 						       << "Value dumped to " << fullPath << __E__;
 						__SS_THROW__;
 					}

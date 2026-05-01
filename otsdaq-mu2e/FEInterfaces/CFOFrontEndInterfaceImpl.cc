@@ -1832,7 +1832,7 @@ void CFOFrontEndInterface::stop(void)
 		return;
 	}
 
-    // TODO: add CFO Halt or Leave
+	// TODO: add CFO Halt or Leave
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()

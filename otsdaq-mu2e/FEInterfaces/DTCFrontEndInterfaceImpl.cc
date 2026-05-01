@@ -4437,8 +4437,10 @@ void DTCFrontEndInterface::DTCInstantiate()
 			           deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
 				mismatch = true;
 		}
-		else if(uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 < 4 && uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 !=
-		        uint8_t(deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
+		else if(uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 < 4 &&
+		        uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 !=
+		            uint8_t(
+		                deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
 			mismatch = true;
 
 		if(mismatch)
