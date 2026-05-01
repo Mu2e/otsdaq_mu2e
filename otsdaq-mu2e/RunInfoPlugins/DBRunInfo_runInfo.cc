@@ -293,10 +293,15 @@ unsigned int DBRunInfo::insertRunCondition(
 							debugFile.close();
 						}
 
-						__SS__ << "Failed to parse JSON for field '" << field << "'. "
+						__SS__ << "Failed to parse JSON for subsystem '" << subsystem
+						       << "', field '" << field << "'. "
 						       << "Value dumped to " << fullPath << __E__;
 						__SS_THROW__;
 					}
+				}
+				else
+				{
+					jsonObj[field] = value;
 				}
 
 				/*
@@ -306,7 +311,8 @@ unsigned int DBRunInfo::insertRunCondition(
 					try {
 						jsonObj[field] = nlohmann::json::parse(value);
 					} catch (...) { // Fallback, store as string
-						__SS__ <<  value.substr(1730, 50) << __E__;
+						__SS__ << "Failed to parse JSON for subsystem '" << subsystem << "', field '" << field << "'. "
+						       << "Value dumped to " << fullPath << __E__;
 						__SS_THROW__;
 					}
 

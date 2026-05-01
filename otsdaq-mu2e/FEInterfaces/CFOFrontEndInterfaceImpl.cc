@@ -1832,6 +1832,8 @@ void CFOFrontEndInterface::stop(void)
 		return;
 	}
 
+	// TODO: add CFO Halt or Leave
+
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
 	        ->getNode("/Mu2eGlobalsTable/SyncDemoConfig/NumberOfCAPTANPulses")
