@@ -19,6 +19,7 @@ cet_make_exec(NAME DTCFrontEndInterface_ExtCFOMain
 	otsdaq::FECore
     otsdaq::Macros
 	  otsdaq-mu2e::DTCFrontEndInterface
+    XDAQ::xdaq
 )
 
 
