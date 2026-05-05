@@ -4186,7 +4186,9 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 			    __GET_ARG_IN__(
 			        "Block Null Heartbeats to ALL ROCs (Default := false)", bool, false),
 			    __GET_ARG_IN__(
-			        "Resequence Non-null Events for ALL ROCs (Default := false)", bool, false));
+			        "Resequence Non-null Events for ALL ROCs (Default := false)",
+			        bool,
+			        false));
 
 			if(result.size())
 				result += ", ";
