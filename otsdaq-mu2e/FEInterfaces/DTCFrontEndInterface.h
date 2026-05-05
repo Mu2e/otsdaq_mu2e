@@ -186,7 +186,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                      bool                           rocTimingEnable,
 	                      bool                           rocEmulationEnable,
 	                      DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
-	                      uint32_t                       size);
+	                      uint32_t                       size,
+	                      bool                           blockNullHeartbeats = false,
+	                      bool                           resequenceNonNullEvents = false);
 	void        ReadROC(__ARGS__);
 	void        WriteROC(__ARGS__);
 	void        BlockReadROC(__ARGS__);

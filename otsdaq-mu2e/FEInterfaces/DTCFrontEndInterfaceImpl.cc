@@ -149,6 +149,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "Set ROC Emulation Enable (Default := false)",
 	        "ROC Emulation Type (Default = 0: Internal, 1: Fiber-Loopback, 2: External)",
 	        "ROC generated Data Payload fragment packet count (11-bits, Default := 16)",
+	        "Block Null Heartbeats to ALL ROCs (Default := false)",
+	        "Resequence Non-null Events for ALL ROCs (Default := false)",
 	    },
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
@@ -4180,7 +4182,11 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 			        "ROC generated Data Payload fragment packet count (11-bits, "
 			        "Default := 16)",
 			        uint32_t,
-			        16));
+			        16),
+			    __GET_ARG_IN__(
+			        "Block Null Heartbeats to ALL ROCs (Default := false)", bool, false),
+			    __GET_ARG_IN__(
+			        "Resequence Non-null Events for ALL ROCs (Default := false)", bool, false));
 
 			if(result.size())
 				result += ", ";
@@ -4213,7 +4219,9 @@ std::string DTCFrontEndInterface::SetupROCs(
     bool                           rocTimingEnable,
     bool                           rocEmulationEnable,
     DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
-    uint32_t                       size)
+    uint32_t                       size,
+    bool                           blockNullHeartbeats,
+    bool                           resequenceNonNullEvents)
 {
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__(rocRxTxEnable);
@@ -4279,6 +4287,10 @@ std::string DTCFrontEndInterface::SetupROCs(
 	    link <= (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5) : rocLinkIndex);
 	    ++link)
 		getDTC()->SetROCEmulationNumPackets(rocLinkIndex, wsize);
+
+	// Set Block Null Heartbeats and Resequence Non-null Events (one bit for all ROCs)
+	getDTC()->SetBlockNullHeartbeatsToROC(blockNullHeartbeats);
+	getDTC()->SetResequenceNonNullEvents(resequenceNonNullEvents);
 
 	return getDTC()->FormattedRegDump(0, getDTC()->formattedROCEmulationFunctions_);
 
