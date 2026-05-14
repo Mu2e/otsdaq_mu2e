@@ -5955,10 +5955,13 @@ try
 		}
 		else  //Treat as Subevent
 		{
-			__GEN_COUT__
-			    << "get the data requested as subevents via ->GetSubEventData(...)";
+			__GEN_COUTT__
+			    << "get the data requested as subevents via ->GetSubEventData2(...)"
+			    << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
+			    << " iteration=" << ii
+			    << " subeventsCount=" << threadStruct->subeventsCount_;
 
-			while((subevents = threadStruct->thisDTC_->GetSubEventData(
+			while((subevents = threadStruct->thisDTC_->GetSubEventData2( //GetSubEventData
 			           DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
 			           false /* EWT match */))
 			          .size())
@@ -5989,12 +5992,33 @@ try
 						__GEN_COUT_ERR__ << "Error: Subevent Null pointer!" << std::endl;
 						continue;
 					}
+
+					// Print first and last 8 qwords of the returned subevent to confirm data is copied correctly
+					{
+						const uint8_t* raw      = reinterpret_cast<const uint8_t*>(subeventPtr->GetRawBufferPointer());
+						const size_t   rawBytes = subeventPtr->GetSubEventByteCount();
+						std::stringstream fss, lss;
+						fss << "GetSubEventData2 returned subevent rawBytes=" << rawBytes
+						    << " first 8 qwords: ";
+						for(int _i = 0; _i < 8 && (size_t)(_i * 8) < rawBytes; ++_i)
+							fss << std::hex << std::setw(16) << std::setfill('0')
+							    << *reinterpret_cast<const uint64_t*>(raw + _i * 8) << " ";
+						__GEN_COUTT__ << fss.str() << __E__;
+
+						lss << "GetSubEventData2 returned subevent last 8 qwords: ";
+						const size_t lastStart = (rawBytes >= 64) ? rawBytes - 64 : 0;
+						for(size_t _i = lastStart; _i + 8 <= rawBytes; _i += 8)
+							lss << std::hex << std::setw(16) << std::setfill('0')
+							    << *reinterpret_cast<const uint64_t*>(raw + _i) << " ";
+						__GEN_COUTT__ << lss.str() << __E__;
+					}
+
 					handleDetachedSubevent(*(subeventPtr.get()), threadStruct);
 				}
 				//threadStruct->thisDTC_->ReleaseBuffers(DTC_DMA_Engine_DAQ,subevents.size()); // This currently does not exist, but it would be most efficient to release here
 			}  //end primary Sub Event loop
 			//if here, no more data in DMA buffer
-			if(lastCount != threadStruct->subeventsCount_ || ii % 100 == 0)
+			if(lastCount != threadStruct->subeventsCount_ || ii % 2000 == 0)
 			{
 				__GEN_COUT__
 				    << "No more subevents found in DMA buffer... waiting... iteration #"
