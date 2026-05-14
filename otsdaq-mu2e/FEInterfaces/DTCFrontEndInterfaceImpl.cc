@@ -149,6 +149,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "Set ROC Emulation Enable (Default := false)",
 	        "ROC Emulation Type (Default = 0: Internal, 1: Fiber-Loopback, 2: External)",
 	        "ROC generated Data Payload fragment packet count (11-bits, Default := 16)",
+	        "Block Null Heartbeats to ALL ROCs (Default := false)",
+	        "Resequence Non-null Events for ALL ROCs (Default := false)",
 	    },
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
@@ -2466,6 +2468,12 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 		getDTC()->SoftReset();  //reset counters
+		for(auto& roc : rocs_)
+		{
+			__FE_COUT__ << "Starting ROC " << __E__;
+			roc.second->start(runNumber);
+			__FE_COUT__ << "Done starting ROC" << __E__;
+		}
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
@@ -4174,7 +4182,13 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 			        "ROC generated Data Payload fragment packet count (11-bits, "
 			        "Default := 16)",
 			        uint32_t,
-			        16));
+			        16),
+			    __GET_ARG_IN__(
+			        "Block Null Heartbeats to ALL ROCs (Default := false)", bool, false),
+			    __GET_ARG_IN__(
+			        "Resequence Non-null Events for ALL ROCs (Default := false)",
+			        bool,
+			        false));
 
 			if(result.size())
 				result += ", ";
@@ -4207,7 +4221,9 @@ std::string DTCFrontEndInterface::SetupROCs(
     bool                           rocTimingEnable,
     bool                           rocEmulationEnable,
     DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
-    uint32_t                       size)
+    uint32_t                       size,
+    bool                           blockNullHeartbeats,
+    bool                           resequenceNonNullEvents)
 {
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__(rocRxTxEnable);
@@ -4273,6 +4289,10 @@ std::string DTCFrontEndInterface::SetupROCs(
 	    link <= (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5) : rocLinkIndex);
 	    ++link)
 		getDTC()->SetROCEmulationNumPackets(rocLinkIndex, wsize);
+
+	// Set Block Null Heartbeats and Resequence Non-null Events (one bit for all ROCs)
+	getDTC()->SetBlockNullHeartbeatsToROC(blockNullHeartbeats);
+	getDTC()->SetResequenceNonNullEvents(resequenceNonNullEvents);
 
 	return getDTC()->FormattedRegDump(0, getDTC()->formattedROCEmulationFunctions_);
 
@@ -4431,8 +4451,10 @@ void DTCFrontEndInterface::DTCInstantiate()
 			           deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
 				mismatch = true;
 		}
-		else if(uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 !=
-		        uint8_t(deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
+		else if(uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 < 4 &&
+		        uint8_t(getInterfaceUID()[dtcPos + 3]) - 48 !=
+		            uint8_t(
+		                deviceIndex_))  //convert ascii '0' '1' .. to number deviceIndex_
 			mismatch = true;
 
 		if(mismatch)
@@ -4444,7 +4466,7 @@ void DTCFrontEndInterface::DTCInstantiate()
 			    << "' in the UID string for this device. Please use DTC<device index> in "
 			       "your naming convention, or remove the 'DTC' keyword from the UID."
 			    << __E__;
-			__FE_SS_THROW__;
+			__FE_COUT_WARN__ << ss.str();
 		}
 	}
 
