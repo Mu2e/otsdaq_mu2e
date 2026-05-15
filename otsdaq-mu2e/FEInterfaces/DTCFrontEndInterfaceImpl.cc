@@ -5962,7 +5962,7 @@ try
 			    << " subeventsCount=" << threadStruct->subeventsCount_;
 
 			while(
-			    (subevents = threadStruct->thisDTC_->GetSubEventData2(  //GetSubEventData
+			    (subevents = threadStruct->thisDTC_->GetSubEventData(
 			         DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
 			         false /* EWT match */))
 			        .size())
@@ -5995,6 +5995,7 @@ try
 					}
 
 					// Print first and last 8 qwords of the returned subevent to confirm data is copied correctly
+					if(TTEST(1))
 					{
 						const uint8_t* raw = reinterpret_cast<const uint8_t*>(
 						    subeventPtr->GetRawBufferPointer());
