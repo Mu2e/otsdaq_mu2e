@@ -5961,11 +5961,10 @@ try
 			    << " iteration=" << ii
 			    << " subeventsCount=" << threadStruct->subeventsCount_;
 
-			while(
-			    (subevents = threadStruct->thisDTC_->GetSubEventData(
-			         DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
-			         false /* EWT match */))
-			        .size())
+			while((subevents = threadStruct->thisDTC_->GetSubEventData(
+			           DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
+			           false /* EWT match */))
+			          .size())
 			{
 				if(threadStruct->exitThread_)
 				{
