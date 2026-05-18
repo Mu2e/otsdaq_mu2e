@@ -6252,7 +6252,8 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	// if(fp) outSs << "Binary data file saved at: " << filename << __E__;
 	// outSs << ostr.str();
 
-	std::cout << "Untruncated output: \n" << outSs.str() << __E__;  //for no truncation!
+	if(TTEST(1))
+		std::cout << "Untruncated output: \n" << outSs.str() << __E__;  //for no truncation!
 
 	__SET_ARG_OUT__("Result", outSs.str());
 }  //end BufferTest_detached()
