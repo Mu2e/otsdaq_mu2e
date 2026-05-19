@@ -99,6 +99,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<bool> running_            = false;
 		std::atomic<bool> exitThread_         = false;
 		std::atomic<bool> resetStartEventTag_ = false;
+		std::atomic<bool> releaseAllComplete_ = false;  ///< Set true by the detached buffer-test thread immediately after its ReleaseAllBuffers() returns; consumers (e.g. SetCFOEmulatorFixedWidthEmulation) wait on this before enabling CFO emulation so emulation does not start while the driver is still draining DMA buffers.
 
 		DTCLib::DTC* thisDTC_;
 
@@ -202,6 +203,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void DTCSendHeartbeatAndDataRequest(__ARGS__);
 	void ResetLossOfLockCounter(__ARGS__);
 	void ReadLossOfLockCounter(__ARGS__);
+	void SpyBuffer(__ARGS__);
+	void ReleaseAllDAQBuffers(__ARGS__);
 	void GetLinkLockStatus(__ARGS__);
 	void SelectJitterAttenuatorSource(__ARGS__);
 	void WriteDTC(__ARGS__);
