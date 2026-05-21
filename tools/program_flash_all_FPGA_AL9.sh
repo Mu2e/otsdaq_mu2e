@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Call the FPGA programming script for each JTAG found
-# Usage: ./program_flash all_FPGA_AL9.sh <mcs file> [<optional d for dryrun>]
+# Usage: ./program_flash_all_FPGA_AL9.sh [NORESET] [NOKILL] <mcs file> [<dryrun flag>]
 
 if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     echo "Error: this script must be executed, not sourced." >&2
