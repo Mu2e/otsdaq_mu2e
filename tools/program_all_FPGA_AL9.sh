@@ -58,6 +58,10 @@ for d in /sys/bus/usb/devices/*; do
   fi
 done
 
+if [[ "${INDEX}" -eq 0 ]]; then
+  echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t WARNING: No JTAG cables matched the filter (vendor/product 0403:6014 or 03fd:0008)."
+fi
+
 
 if [[ "$DORESET" -eq 0 ]]; then
     echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
