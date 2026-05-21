@@ -3853,13 +3853,13 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 void DTCFrontEndInterface::SpyBuffer(__ARGS__)
 {
 	auto* device = getDTC()->GetDevice();
-	device->resetSpyHasOccurred();  // allow repeated invocations from the GUI
+	__SS__ << "Triggered spy dump of DAQ DMA buffers:" << __E__;
 	device->spy(DTC_DMA_Engine_DAQ,
-	            3 /* for once */ | 8 /* for wide view */ | 16 /* stack trace */);
-	device->resetSpyHasOccurred();  // allow repeated invocations from the GUI
+	            3 /* for once */ | 8 /* for wide view */ | (1<<28) /* force spy */, ss);
+	
+	__COUT_MULTI_LBL__(0,ss.str(),"spy");
 	__SET_ARG_OUT__("Result",
-	                "Spy dump of DAQ DMA buffers triggered (see TRACE/MF logs); "
-	                "DTC SoftReset issued.");
+	                ss.str());
 }  // end SpyBuffer()
 
 //========================================================================
