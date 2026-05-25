@@ -2155,7 +2155,6 @@ void DTCFrontEndInterface::halt(void)
 		return;
 	__FE_COUTV__(transitionStr);
 
-
 	if(bufferTestThreadStruct_)
 	{
 		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
@@ -2214,7 +2213,7 @@ void DTCFrontEndInterface::halt(void)
 void DTCFrontEndInterface::pause(void)
 {
 	const std::string transitionStr = "Pausing";
-	
+
 	__FE_COUTV__(skipInit_);
 	if(skipInit_)
 		return;
@@ -2740,7 +2739,7 @@ bool DTCFrontEndInterface::running(void)
 {
 	__FE_COUTV__(skipInit_);
 	if(skipInit_)
-		return false;	
+		return false;
 
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
@@ -3891,11 +3890,11 @@ void DTCFrontEndInterface::SpyBuffer(__ARGS__)
 	auto* device = getDTC()->GetDevice();
 	__SS__ << "Triggered spy dump of DAQ DMA buffers:" << __E__;
 	device->spy(DTC_DMA_Engine_DAQ,
-	            3 /* for once */ | 8 /* for wide view */ | (1<<28) /* force spy */, ss);
-	
-	__COUT_MULTI_LBL__(0,ss.str(),"spy");
-	__SET_ARG_OUT__("Result",
-	                ss.str());
+	            3 /* for once */ | 8 /* for wide view */ | (1 << 28) /* force spy */,
+	            ss);
+
+	__COUT_MULTI_LBL__(0, ss.str(), "spy");
+	__SET_ARG_OUT__("Result", ss.str());
 }  // end SpyBuffer()
 
 //========================================================================
