@@ -2150,6 +2150,12 @@ void DTCFrontEndInterface::halt(void)
 {
 	const std::string transitionStr = "Halting";
 
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
+
+
 	if(bufferTestThreadStruct_)
 	{
 		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
@@ -2208,6 +2214,11 @@ void DTCFrontEndInterface::halt(void)
 void DTCFrontEndInterface::pause(void)
 {
 	const std::string transitionStr = "Pausing";
+	
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
@@ -2247,6 +2258,11 @@ void DTCFrontEndInterface::pause(void)
 void DTCFrontEndInterface::stop(void)
 {
 	const std::string transitionStr = "Stopping";
+
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
@@ -2376,6 +2392,11 @@ void DTCFrontEndInterface::resume(void)
 {
 	const std::string transitionStr = "Resuming";
 
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
+
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
@@ -2440,6 +2461,11 @@ void DTCFrontEndInterface::resume(void)
 void DTCFrontEndInterface::start(std::string runNumber)
 {
 	const std::string transitionStr = "Starting";
+
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
 
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
@@ -2712,6 +2738,10 @@ void DTCFrontEndInterface::start(std::string runNumber)
 // return true to keep running
 bool DTCFrontEndInterface::running(void)
 {
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return false;	
+
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
@@ -2735,7 +2765,13 @@ bool DTCFrontEndInterface::running(void)
 		__FE_SS_THROW__;
 	}
 
-	return false;
+	bool stillRunning = false;
+	for(auto& roc : rocs_)
+		stillRunning = stillRunning || roc.second->running();
+
+	__FE_COUTV__(stillRunning);
+
+	return stillRunning;
 
 	// /////////////////////////////
 	// /////////////////////////////
