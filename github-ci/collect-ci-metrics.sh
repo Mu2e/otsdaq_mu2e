@@ -19,7 +19,7 @@ FIRST=true
 echo "Collecting \"special\" job statuses"
 NIGHTLY_STATUS=$(gh run list -R "Mu2e/otsdaq-mu2e" --limit 2 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow nightly-ci-dashboard.yml -q '.[1]')
 MU2E_STATUS=$(gh run list -R "Mu2e/daq-docker" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-spack-selfhosted.yaml -q '.[0]')
-LCOV_STATUS=$(gh run list -R "art-daq/.github" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-lcov.yml -q '.[0]')
+LCOV_STATUS=$(gh run list -R "Mu2e/.github" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-lcov.yml -q '.[0]')
 
 #echo "Prepare JSON fragment"
 JSON_ENTRY=$(jq -n \
