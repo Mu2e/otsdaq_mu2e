@@ -6147,7 +6147,7 @@ try
 		else  //extract Subevent as Events
 		{
 			__GEN_COUTT__
-			    << "get the data requested as subevents via ->GetSubEventData2(...)"
+			    << "get the data requested as subevents via ->GetSubEventDataAsEvents(...)"
 			    << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
 			    << " iteration=" << ii
 			    << " subeventsCount=" << threadStruct->subeventsCount_;
