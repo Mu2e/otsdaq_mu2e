@@ -72,7 +72,9 @@ def format_duration(time_started, time_ended):
 def generate_site(json_input_path):
     """Render html files from templates to generate the site."""
     with open(json_input_path, "r") as f:
-        repos = json.load(f)
+        json_content = json.load(f)
+        repos = json_content.get("repos", [])
+        jobs = json_content.get("jobs", [])
 
     env = Environment(loader=FileSystemLoader("templates"))
     env.filters["format_datetime"] = format_datetime
@@ -107,18 +109,6 @@ def generate_site(json_input_path):
     )
 
     last_updated = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
-    workflow_badges = [
-        {
-            "image": "https://github.com/Mu2e/.github/actions/workflows/mu2e-lcov.yml/badge.svg",
-            "link": "https://github.com/Mu2e/.github/actions/workflows/mu2e-lcov.yml",
-            "alt": "Create LCOV coverage report",
-        },
-        {
-            "image": "https://github.com/Mu2e/daq-docker/actions/workflows/mu2e-spack-selfhosted.yaml/badge.svg",
-            "link": "https://github.com/Mu2e/daq-docker/actions/workflows/mu2e-spack-selfhosted.yaml",
-            "alt": "Build mu2e-spack docker image (self hosted)",
-        },
-    ]
 
     # Content of the index page
     context = {
@@ -128,7 +118,7 @@ def generate_site(json_input_path):
         "total_issues": total_issues,
         "total_prs": total_prs,
         "passing_percentage": passing_percentage,
-        "workflow_badges": workflow_badges,
+        "workflow_badges": jobs,
     }
 
     index_template = env.get_template("index_template.html")

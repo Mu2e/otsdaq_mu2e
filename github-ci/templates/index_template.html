@@ -12,11 +12,47 @@
 
 <h2>Workflow Statuses</h2>
 <div class="badge-summary">
-    {% for badge in workflow_badges %}
-    <a href="{{ badge.link }}">
-        <img src="{{ badge.image }}" alt="{{ badge.alt }}">
-    </a><br />
-    {% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th>Workflow</th>
+                <th>Status</th>
+                <th>Duration</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for badge in workflow_badges %}
+            <tr>
+                <td>
+                    <a href="{{ badge.url }}">
+                        {{ badge.name }}
+                    </a>
+                </td>
+                <td>
+                    <span class="status-{{ badge.conclusion }}">
+                        {% if badge.conclusion | length %}
+                        {{ badge.conclusion | capitalize }}
+                        {% else %}
+                        {{ badge.status | capitalize }}
+                        {% endif %}
+                    </span>
+                </td>
+                <td>
+                    <span class="duration-{{badge.createdAt | get_duration_class(badge.updatedAt)}}">
+                        {{badge.createdAt | format_duration(badge.updatedAt)}}
+                    </span>
+                </td>
+                <td>
+                    <span class="duration-{{badge.createdAt | get_time_class}}">
+                        {{badge.createdAt | format_time}}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br />
 </div>
 
 <h2>Individual Repo Summaries</h2>
