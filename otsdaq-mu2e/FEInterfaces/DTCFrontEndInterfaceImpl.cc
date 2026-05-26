@@ -6146,11 +6146,11 @@ try
 		}     // end Sub Event handling
 		else  //extract Subevent as Events
 		{
-			__GEN_COUTT__
-			    << "get the data requested as subevents via ->GetSubEventDataAsEvents(...)"
-			    << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
-			    << " iteration=" << ii
-			    << " subeventsCount=" << threadStruct->subeventsCount_;
+			__GEN_COUTT__ << "get the data requested as subevents via "
+			                 "->GetSubEventDataAsEvents(...)"
+			              << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
+			              << " iteration=" << ii
+			              << " subeventsCount=" << threadStruct->subeventsCount_;
 
 			if(threadStruct->exitThread_)
 			{
