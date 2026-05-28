@@ -5321,7 +5321,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 		std::thread(
 		    [](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 		           threadStruct) {
-			    DTCFrontEndInterface::detechedBufferTestThread(threadStruct);
+			    DTCFrontEndInterface::detachedBufferTestThread(threadStruct);
 		    },
 		    bufferTestThreadStruct_)
 		    .detach();
@@ -5731,8 +5731,8 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 }  //end handleDetachedSubevent()
 
 //==============================================================================
-// detechedBufferTestThread
-void DTCFrontEndInterface::detechedBufferTestThread(
+// detachedBufferTestThread
+void DTCFrontEndInterface::detachedBufferTestThread(
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 try
 {
@@ -6224,10 +6224,10 @@ try
 	                  << __E__;
 	threadStruct->running_ = false;
 
-}  //end detechedBufferTestThread()
+}  //end detachedBufferTestThread()
 catch(...)
 {
-	__COUT_ERR__ << LOCAL_COUT_HDR << "Exception caught in detechedBufferTestThread()."
+	__COUT_ERR__ << LOCAL_COUT_HDR << "Exception caught in detachedBufferTestThread()."
 	             << __E__;
 	threadStruct->running_ = false;
 
@@ -6245,7 +6245,7 @@ catch(...)
 	}
 
 	std::stringstream errSs;
-	errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
+	errSs << "Exception caught. Exiting detachedBufferTestThread()." << __E__;
 	try
 	{
 		throw;
@@ -6264,7 +6264,7 @@ catch(...)
 	}
 	threadStruct->error_ += errSs.str();
 	__COUT_ERR__ << LOCAL_COUT_HDR << errSs.str();
-}  //end detechedBufferTestThread() exception handling
+}  //end detachedBufferTestThread() exception handling
 
 //========================================================================
 void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
@@ -6344,7 +6344,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			std::thread(
 			    [](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 			           threadStruct) {
-				    DTCFrontEndInterface::detechedBufferTestThread(threadStruct);
+				    DTCFrontEndInterface::detachedBufferTestThread(threadStruct);
 			    },
 			    bufferTestThreadStruct_)
 			    .detach();

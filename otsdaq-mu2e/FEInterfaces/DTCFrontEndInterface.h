@@ -176,7 +176,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>
 	    rocFEMacroMap_;
 
-	static void detechedBufferTestThread(
+	static void detachedBufferTestThread(
 	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	        threadStruct);
 
