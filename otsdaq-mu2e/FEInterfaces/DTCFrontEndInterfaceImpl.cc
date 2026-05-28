@@ -455,6 +455,30 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "the DTC will also reset this register.");
 
 	registerFEMacroFunction(
+	    "Spy Buffer",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::SpyBuffer),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Dump the current DAQ DMA C2S buffers to the log (mu2edev::spy with "
+	    "once|wide|stacktrace flags), then issue a DTC SoftReset. Useful for "
+	    "diagnosing parser desync — captures whatever is sitting in the DMA "
+	    "buffers right now and resets the DTC so subsequent reads start clean.");
+
+	registerFEMacroFunction(
+	    "Release All Data DMA Buffers",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::ReleaseAllDAQBuffers),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Release all currently-held DAQ DMA buffers back to the driver "
+	    "(getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DAQ)).");
+
+	registerFEMacroFunction(
 	    "Get DTC Counters",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::DTCCounters),
@@ -1684,7 +1708,7 @@ void DTCFrontEndInterface::configureCommon(void)
 	__FE_COUT_INFO__ << "configureCommon()" << __E__;
 
 	getDTC()->SoftReset();
-	getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+	getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DCS);
 
 	// setup ROCs and check if any ROCs should be DTC-hardware emulated ROCs
 	{
@@ -2126,6 +2150,11 @@ void DTCFrontEndInterface::halt(void)
 {
 	const std::string transitionStr = "Halting";
 
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
+
 	if(bufferTestThreadStruct_)
 	{
 		__FE_COUT__ << "Attempting to halt Buffer Test thread... " << __E__;
@@ -2185,6 +2214,11 @@ void DTCFrontEndInterface::pause(void)
 {
 	const std::string transitionStr = "Pausing";
 
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
@@ -2223,6 +2257,11 @@ void DTCFrontEndInterface::pause(void)
 void DTCFrontEndInterface::stop(void)
 {
 	const std::string transitionStr = "Stopping";
+
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
@@ -2352,6 +2391,11 @@ void DTCFrontEndInterface::resume(void)
 {
 	const std::string transitionStr = "Resuming";
 
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
+
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
@@ -2416,6 +2460,11 @@ void DTCFrontEndInterface::resume(void)
 void DTCFrontEndInterface::start(std::string runNumber)
 {
 	const std::string transitionStr = "Starting";
+
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+	__FE_COUTV__(transitionStr);
 
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
@@ -2688,6 +2737,10 @@ void DTCFrontEndInterface::start(std::string runNumber)
 // return true to keep running
 bool DTCFrontEndInterface::running(void)
 {
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return false;
+
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
@@ -2711,7 +2764,13 @@ bool DTCFrontEndInterface::running(void)
 		__FE_SS_THROW__;
 	}
 
-	return false;
+	bool stillRunning = false;
+	for(auto& roc : rocs_)
+		stillRunning = stillRunning || roc.second->running();
+
+	__FE_COUTV__(stillRunning);
+
+	return stillRunning;
 
 	// /////////////////////////////
 	// /////////////////////////////
@@ -3824,6 +3883,26 @@ void DTCFrontEndInterface::ReadLossOfLockCounter(__ARGS__)
 	        "... JA = " + JAsrc);
 
 }  // end ReadLossOfLockCounter()
+
+//========================================================================
+void DTCFrontEndInterface::SpyBuffer(__ARGS__)
+{
+	auto* device = getDTC()->GetDevice();
+	__SS__ << "Triggered spy dump of DAQ DMA buffers:" << __E__;
+	device->spy(DTC_DMA_Engine_DAQ,
+	            3 /* for once */ | 8 /* for wide view */ | (1 << 28) /* force spy */,
+	            ss);
+
+	__COUT_MULTI_LBL__(0, ss.str(), "spy");
+	__SET_ARG_OUT__("Result", ss.str());
+}  // end SpyBuffer()
+
+//========================================================================
+void DTCFrontEndInterface::ReleaseAllDAQBuffers(__ARGS__)
+{
+	getDTC()->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+	__SET_ARG_OUT__("Result", "ReleaseAllBuffers(DTC_DMA_Engine_DAQ) called.");
+}  // end ReleaseAllDAQBuffers()
 
 //========================================================================
 void DTCFrontEndInterface::GetLinkLockStatus(__ARGS__)
@@ -5134,6 +5213,31 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
 
 	getDTC()->EnableReceiveCFOLink();  //enable forwarding if CFO timing link to ROCs
 
+	// If the detached buffer-test thread is running, wait until it has finished
+	// its ReleaseAllBuffers() before turning on CFO emulation — otherwise emulation
+	// can start filling DMA buffers while the driver is still draining the old ones.
+	if(bufferTestThreadStruct_ && bufferTestThreadStruct_->running_)
+	{
+		constexpr int kWaitMs    = 10;
+		constexpr int kTimeoutMs = 7000;  // > release_all's 5s internal cap, with slack
+		int           waited     = 0;
+		while(!bufferTestThreadStruct_->releaseAllComplete_ && waited < kTimeoutMs)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(kWaitMs));
+			waited += kWaitMs;
+		}
+		if(!bufferTestThreadStruct_->releaseAllComplete_)
+		{
+			__SS__ << "Timed out (" << kTimeoutMs
+			       << " ms) waiting for buffer-test thread ReleaseAllBuffers to complete!"
+			       << __E__;
+			__SS_THROW__;
+		}
+		else
+			__COUTT__ << "Buffer-test thread ReleaseAllBuffers complete after " << waited
+			          << " ms; proceeding to enable CFO emulation." << __E__;
+	}
+
 	__COUTT__ << "Enabling CFO Emulation!" << __E__;
 	getDTC()->EnableCFOEmulation();
 
@@ -5177,8 +5281,10 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
 			bufferTestThreadStruct_->saveSubeventHeadersToBinaryData_ =
 			    saveSubeventHeadersToDataFile;
-			bufferTestThreadStruct_->exitThread_            = false;
-			bufferTestThreadStruct_->resetStartEventTag_    = true;
+			bufferTestThreadStruct_->exitThread_         = false;
+			bufferTestThreadStruct_->resetStartEventTag_ = true;
+			bufferTestThreadStruct_->releaseAllComplete_ =
+			    false;  // arm; thread will set true after its next ReleaseAllBuffers
 			bufferTestThreadStruct_->doNotResetCounters_    = doNotResetCounters;
 			bufferTestThreadStruct_->skipBy32_              = skipBy32;
 			bufferTestThreadStruct_->packetThresholdToSave_ = packetThresholdToSave;
@@ -5201,8 +5307,10 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 			bufferTestThreadStruct_->saveBinaryDataFilename_ = saveBinaryDataFilename;
 			bufferTestThreadStruct_->saveSubeventHeadersToBinaryData_ =
 			    saveSubeventHeadersToDataFile;
-			bufferTestThreadStruct_->exitThread_            = false;
-			bufferTestThreadStruct_->resetStartEventTag_    = false;
+			bufferTestThreadStruct_->exitThread_         = false;
+			bufferTestThreadStruct_->resetStartEventTag_ = false;
+			bufferTestThreadStruct_->releaseAllComplete_ =
+			    false;  // arm; thread will set true after its initial ReleaseAllBuffers
 			bufferTestThreadStruct_->thisDTC_               = thisDTC_;
 			bufferTestThreadStruct_->running_               = true;
 			bufferTestThreadStruct_->error_                 = "";
@@ -5213,7 +5321,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 		std::thread(
 		    [](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 		           threadStruct) {
-			    DTCFrontEndInterface::detechedBufferTestThread(threadStruct);
+			    DTCFrontEndInterface::detachedBufferTestThread(threadStruct);
 		    },
 		    bufferTestThreadStruct_)
 		    .detach();
@@ -5623,8 +5731,8 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 }  //end handleDetachedSubevent()
 
 //==============================================================================
-// detechedBufferTestThread
-void DTCFrontEndInterface::detechedBufferTestThread(
+// detachedBufferTestThread
+void DTCFrontEndInterface::detachedBufferTestThread(
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 try
 {
@@ -5679,7 +5787,9 @@ try
 	//start with clean release
 	if(threadStruct->thisDTC_)
 	{
+		threadStruct->releaseAllComplete_ = false;  // arm flag before the release
 		threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+		threadStruct->releaseAllComplete_ = true;
 		__GEN_COUTT__ << "ReleaseAllBuffers called!" << __E__;
 
 		//latch link enable status for use in accounting (ignoring timeout errors)
@@ -5842,7 +5952,10 @@ try
 				//release buffers for restart
 				if(threadStruct->thisDTC_)
 				{
+					threadStruct->releaseAllComplete_ =
+					    false;  // arm flag before the release
 					threadStruct->thisDTC_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
+					threadStruct->releaseAllComplete_ = true;
 					__GEN_COUTT__ << "ReleaseAllBuffers called!" << __E__;
 
 					//latch link enable status for use in accounting (ignoring timeout errors)
@@ -5953,10 +6066,13 @@ try
 				lastCount = threadStruct->eventsCount_;
 			}
 		}
-		else  //Treat as Subevent
+		else if(0)  //Treat as Subevent
 		{
-			__GEN_COUT__
-			    << "get the data requested as subevents via ->GetSubEventData(...)";
+			__GEN_COUTT__
+			    << "get the data requested as subevents via ->GetSubEventData2(...)"
+			    << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
+			    << " iteration=" << ii
+			    << " subeventsCount=" << threadStruct->subeventsCount_;
 
 			while((subevents = threadStruct->thisDTC_->GetSubEventData(
 			           DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
@@ -5989,12 +6105,36 @@ try
 						__GEN_COUT_ERR__ << "Error: Subevent Null pointer!" << std::endl;
 						continue;
 					}
+
+					// Print first and last 8 qwords of the returned subevent to confirm data is copied correctly
+					if(TTEST(1))
+					{
+						const uint8_t* raw = reinterpret_cast<const uint8_t*>(
+						    subeventPtr->GetRawBufferPointer());
+						const size_t      rawBytes = subeventPtr->GetSubEventByteCount();
+						std::stringstream fss, lss;
+						fss << "GetSubEventData2 returned subevent rawBytes=" << rawBytes
+						    << " first 8 qwords: ";
+						for(int _i = 0; _i < 8 && (size_t)(_i * 8) < rawBytes; ++_i)
+							fss << std::hex << std::setw(16) << std::setfill('0')
+							    << *reinterpret_cast<const uint64_t*>(raw + _i * 8)
+							    << " ";
+						__GEN_COUTT__ << fss.str() << __E__;
+
+						lss << "GetSubEventData2 returned subevent last 8 qwords: ";
+						const size_t lastStart = (rawBytes >= 64) ? rawBytes - 64 : 0;
+						for(size_t _i = lastStart; _i + 8 <= rawBytes; _i += 8)
+							lss << std::hex << std::setw(16) << std::setfill('0')
+							    << *reinterpret_cast<const uint64_t*>(raw + _i) << " ";
+						__GEN_COUTT__ << lss.str() << __E__;
+					}
+
 					handleDetachedSubevent(*(subeventPtr.get()), threadStruct);
 				}
 				//threadStruct->thisDTC_->ReleaseBuffers(DTC_DMA_Engine_DAQ,subevents.size()); // This currently does not exist, but it would be most efficient to release here
 			}  //end primary Sub Event loop
 			//if here, no more data in DMA buffer
-			if(lastCount != threadStruct->subeventsCount_ || ii % 100 == 0)
+			if(lastCount != threadStruct->subeventsCount_ || ii % 2000 == 0)
 			{
 				__GEN_COUT__
 				    << "No more subevents found in DMA buffer... waiting... iteration #"
@@ -6003,7 +6143,67 @@ try
 				    << __E__;
 				lastCount = threadStruct->subeventsCount_;
 			}
-		}  // end Sub Event handling
+		}     // end Sub Event handling
+		else  //extract Subevent as Events
+		{
+			__GEN_COUTT__ << "get the data requested as subevents via "
+			                 "->GetSubEventDataAsEvents(...)"
+			              << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
+			              << " iteration=" << ii
+			              << " subeventsCount=" << threadStruct->subeventsCount_;
+
+			if(threadStruct->exitThread_)
+			{
+				__GEN_COUT_INFO__ << "exitThread received in Buffer Test" << __E__;
+				break;
+			}
+			auto events = threadStruct->thisDTC_->GetSubEventDataAsEvents(
+			    DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
+			    false /* EWT match */);
+
+			++ii;
+
+			if(events.empty())
+				continue;
+
+			__GEN_COUTT__ << "Read iteration #" << ii
+			              << ": Events returned by the DTC: " << events.size()
+			              << std::endl;
+
+			for(auto& eventPtr : events)
+			{
+				if(threadStruct->exitThread_)
+				{
+					__GEN_COUT__ << "exitThread received in Buffer Test" << __E__;
+					break;
+				}
+
+				__GEN_COUTT__ << "Read iteration #" << ii
+				              << ": EWT=" << eventPtr->GetEventWindowTag()
+				              << ", w/Subevent count = "
+				              << eventPtr->GetSubEvents().size() << std::endl;
+
+				if(eventPtr->GetSubEvents().empty())
+				{
+					__SS__ << "Error: No subevents found in extracted event! EWT="
+					       << eventPtr->GetEventWindowTag();
+					__SS_THROW__;
+				}
+
+				handleDetachedSubevent(eventPtr->GetSubEvents().at(0), threadStruct);
+			}  //end event extraction and subevent parsing loop
+
+			//if here, no more data in DMA buffer
+			if(lastCount != threadStruct->subeventsCount_ || ii % 2000 == 0)
+			{
+				__GEN_COUT__
+				    << "No more subevents found in DMA buffer... waiting... iteration #"
+				    << ii
+				    << ", SubEvents received so far = " << threadStruct->subeventsCount_
+				    << __E__;
+				lastCount = threadStruct->subeventsCount_;
+			}
+		}  // end Sub Event as Event handling
 
 		if(threadStruct->fp_)
 			fflush(threadStruct->fp_);
@@ -6024,15 +6224,13 @@ try
 	                  << __E__;
 	threadStruct->running_ = false;
 
-}  //end detechedBufferTestThread()
+}  //end detachedBufferTestThread()
 catch(...)
 {
-	__COUT_ERR__ << LOCAL_COUT_HDR << "Exception caught in detechedBufferTestThread()."
+	__COUT_ERR__ << LOCAL_COUT_HDR << "Exception caught in detachedBufferTestThread()."
 	             << __E__;
 	threadStruct->running_ = false;
 
-	std::stringstream errSs;
-	errSs << "Exception caught. Exiting detechedBufferTestThread()." << __E__;
 	if(threadStruct->thisDTC_)
 		threadStruct->thisDTC_->GetDevice()->spy(
 		    DTC_DMA_Engine_DAQ,
@@ -6046,11 +6244,17 @@ catch(...)
 		threadStruct->fp_ = nullptr;
 	}
 
+	std::stringstream errSs;
+	errSs << "Exception caught. Exiting detachedBufferTestThread()." << __E__;
 	try
 	{
 		throw;
 	}
 	catch(const std::runtime_error& e)
+	{
+		errSs << "Error message: " << e.what() << __E__;
+	}
+	catch(const std::exception& e)
 	{
 		errSs << "Error message: " << e.what() << __E__;
 	}
@@ -6060,7 +6264,7 @@ catch(...)
 	}
 	threadStruct->error_ += errSs.str();
 	__COUT_ERR__ << LOCAL_COUT_HDR << errSs.str();
-}  //end detechedBufferTestThread() exception handling
+}  //end detachedBufferTestThread() exception handling
 
 //========================================================================
 void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
@@ -6140,7 +6344,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			std::thread(
 			    [](std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 			           threadStruct) {
-				    DTCFrontEndInterface::detechedBufferTestThread(threadStruct);
+				    DTCFrontEndInterface::detachedBufferTestThread(threadStruct);
 			    },
 			    bufferTestThreadStruct_)
 			    .detach();
@@ -6225,7 +6429,9 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	// if(fp) outSs << "Binary data file saved at: " << filename << __E__;
 	// outSs << ostr.str();
 
-	std::cout << "Untruncated output: \n" << outSs.str() << __E__;  //for no truncation!
+	if(TTEST(1))
+		std::cout << "Untruncated output: \n"
+		          << outSs.str() << __E__;  //for no truncation!
 
 	__SET_ARG_OUT__("Result", outSs.str());
 }  //end BufferTest_detached()
