@@ -71,8 +71,7 @@ done
 if [[ "$DORESET" -eq 0 ]]; then
     echo -e "$(date +%d%b%y.%T) boot_from_flash_all_DTCs_AL9.sh:${LINENO} |  \t Skipping reset of PCIe. Done."
     echo
-    return  >/dev/null 2>&1 #return is used if script is sourced
-        exit  #exit is used if script is run
+    exit 0
 fi
 
 echo -e "$(date +%d%b%y.%T) boot_from_flash_all_DTCs_AL9.sh:${LINENO} |  \t Handling reset of PCIe as ${USER} on ${HOSTNAME}."
