@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Call this logbook posting script with a message (in quotes)
-# Usage: ./post_to_ecl.sh "message"
+# Call this logbook posting script with a title and message (in quotes)
+# Usage: ./post_to_ecl.sh "title" "message"
 #
 # This script will decorate your post with your username
 #
