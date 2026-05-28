@@ -13,10 +13,33 @@ REPOS=$(gh repo list "$ORG" --limit 100 --json name -q '.[].name')
 OUTFILE="ci_summary.json"
 PROJECT_NUMBER=6
 
-echo "[" > "$OUTFILE"
+echo "{" > "$OUTFILE"
 FIRST=true
 
+echo "Collecting \"special\" job statuses"
+NIGHTLY_STATUS=$(gh run list -R "Mu2e/otsdaq-mu2e" --limit 2 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow nightly-ci-dashboard.yml -q '.[1]')
+MU2E_STATUS=$(gh run list -R "Mu2e/daq-docker" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-spack-selfhosted.yaml -q '.[0]')
+LCOV_STATUS=$(gh run list -R "Mu2e/.github" --limit 1 --json conclusion,createdAt,event,name,status,updatedAt,url --workflow mu2e-lcov.yml -q '.[0]')
+
+#echo "Prepare JSON fragment"
+JSON_ENTRY=$(jq -n \
+  --argjson nightly "$NIGHTLY_STATUS" \
+  --argjson mu2e "$MU2E_STATUS" \
+  --argjson lcov "$LCOV_STATUS" \
+  '[ $nightly, $mu2e, $lcov ]'\
+)
+retval=$?
+
+if [[ $retval == 0 ]]; then
+  echo '"jobs": ' >> "$OUTFILE"
+  echo "$JSON_ENTRY" >> "$OUTFILE"
+  echo "," >> "$OUTFILE"
+else
+  echo "Non-zero return value for central CI jobs. Skipping..."
+fi
+
 echo "Collecting statistics for CI-enabled repos"
+echo '"repos": [' >> "$OUTFILE"
 for REPO in "${packages_with_ci[@]}"; do
   FULL_NAME="$ORG/$REPO"
   echo "This repo: $FULL_NAME"
@@ -202,5 +225,6 @@ for REPO in "${packages_without_ci[@]}"; do
 done
 
 echo "]" >> "$OUTFILE"
+echo "}" >> "$OUTFILE"
 
 echo "Results saved to $OUTFILE"

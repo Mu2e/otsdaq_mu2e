@@ -1,5 +1,8 @@
 name: Nightly CI Dashboard Publication
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   schedule:
@@ -74,9 +77,16 @@ jobs:
         cp -r ${{ steps.set_paths.outputs.doxy_html_path }} ci-dashboard/github-ci/site/doxygen
         cd ci-dashboard/github-ci/
         ./collect-ci-metrics.sh
-        echo "CI Summary JSON:"
-        cat ci_summary.json
+        #echo "CI Summary JSON:"
+        #cat ci_summary.json
         python generate_ci_site.py --json_input ci_summary.json
+
+    - name: upload summary json file
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      with:
+        name: ci_summary
+        path: ${{ github.workspace }}/ci-dashboard/github-ci/ci_summary.json
 
     - name: Upload pages artifact
       uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
