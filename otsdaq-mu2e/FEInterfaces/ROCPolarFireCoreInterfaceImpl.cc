@@ -349,27 +349,37 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 			writeBlock(
 			    commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-			//wait for action to complete
-			size_t i = 0;
-			while(!isActionDone())
-			{
-				if(i > 5 * 100 /* 5 seconds */)
+				// wait for both DONE and the expected TX word count. Register 128 can
+				// still contain DONE from the previous action for a short time after
+				// writeBlock(), so DONE alone is not a safe completion condition here.
+				const size_t expectedReadCount = numberOfBytes / 2 + 4;
+				size_t       readCount         = 0;
+				size_t       i                 = 0;
+				while(true)
 				{
-					// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-					__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
-					             "for more info with ROC Read to "
-					          << ROC_ADDRESS_ACTION_DONE << __E__;
-					__FE_SS_THROW__;
-				}
-				usleep(1000 * 10 /* 10 ms */);
-			}
-			__FE_COUT__ << "Action done, reading status..." << __E__;
+					const bool done = isActionDone();
+					readCount       = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
+					    0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
 
-			//check read count, it will be different by 4
-			size_t readCount =
-			    readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
-			    0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
-			__FE_COUTV__(readCount);
+					if(done && readCount == expectedReadCount)
+						break;
+
+					if(i > 5 * 100 /* 5 seconds */)
+					{
+						// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
+						__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
+						             "for more info with ROC Read to "
+						          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
+						          << readCount << " expected 0x" << expectedReadCount << __E__;
+						__FE_SS_THROW__;
+					}
+					usleep(1000 * 10 /* 10 ms */);
+					++i;
+				}
+				__FE_COUT__ << "Action done, reading status..." << __E__;
+
+				//check read count, it will be different by 4
+				__FE_COUTV__(readCount);
 			if(readCount - 4 != numberOfBytes / 2)  //readCount == 4096)
 			{
 				__FE_SS__ << "Illegal read count received after SPI flash directory read "
