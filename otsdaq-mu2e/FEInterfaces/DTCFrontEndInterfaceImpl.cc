@@ -7980,66 +7980,31 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					__FE_COUTV__(roc);
 					__FE_COUTV__(rocs_.at(roc)->getLinkID());
 					rocs_.at(roc)->writeSPIFlashBlock(
-					    writeData, startAddress + i, false /* waitForDone */);
-				}  //end launch of ROC erase SPI block loop
+					    writeData, startAddress + i, true /* waitForDone */);
+					// Note: writeSPIFlashBlock with waitForDone=true already
+					// waits for completion, checks status, and throws on error.
+					// No second polling loop needed (it was causing a double-unlock
+					// of actionLock_ leading to undefined behavior and 0xffff reads).
+					__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
+					            << ", done with write SPI block." << __E__;
+				}  //end ROC write SPI block loop
 			}
 
-			__FE_COUT__ << "Checking that write is done..." << __E__;
-			// return;
-			//then check for writing done
-			{
-				bool                                                 allDone    = true;
-				DTCLib::roc_data_t                                   readStatus = 0;
-				std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
-				size_t                                               attempt = 0;
-				do
-				{
-					allDone = true;
-					for(auto& roc : targetROCs)
-					{
-						if(doneMap[roc])
-							continue;  //skip those done
-
-						doneMap[roc] = rocs_.at(roc)->isActionDone(
-						    &readStatus, true /* releaseLockOnDone */);
-						// rocs_.at(roc)->forceClearActionLock();
-						if(!doneMap[roc])
-						{
-							allDone = false;
-							__FE_COUTS__(10) << "Waiting..." << attempt << __E__;
-						}
-						else
-						{
-							if(readStatus)
-							{
-								__FE_SS__ << "At roc '" << roc
-								          << "' link=" << rocs_.at(roc)->getLinkID()
-								          << ", Non-zero status received after SPI flash "
-								             "write action: 0x"
-								          << std::hex << readStatus << __E__;
-								__FE_SS_THROW__;
-							}
-							__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
-							            << ", done with write SPI block." << __E__;
-						}
-					}  //end launch of ROC erase SPI block loop
-
-					if(!allDone && ++attempt > 120 * 300 /* 3 mins */)
-					{
-						__FE_SS__ << "Timeout waiting for SPI flash write action! Check "
-						             "for more info with ROC Read to 128."
-						          << __E__;
-						__FE_SS_THROW__;
-					}
-					else if(!allDone)
-						usleep(1000 * 5 /* 5 ms */);
-				} while(!allDone);
-			}  //end check for erase done
-
 			if(writeSize)
-				__FE_COUT__ << "Write chunk #" << int(i / writeSize)
+			{
+				size_t currentPercent = (i + writeSize) * 100 / contents.size();
+				size_t prevPercent    = i > 0 ? (i * 100 / contents.size()) : 0;
+
+				__FE_COUT__ << "Write chunk #" << int(i / 1024)
 				            << " done at offset=" << i << " and size=" << writeSize
-				            << " / " << contents.size() << __E__;
+				            << " / " << contents.size()
+				            << " (" << currentPercent << "%)" << __E__;
+
+				// Log at INFO level every 10% so it is visible in the message viewer
+				if(currentPercent / 10 != prevPercent / 10 || i + writeSize >= contents.size())
+					__FE_COUT_INFO__ << "SPI write progress: " << currentPercent << "% "
+					                 << "(" << (i + writeSize) << "/" << contents.size() << " bytes)" << __E__;
+			}
 
 			long long ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
 			                   std::chrono::steady_clock::now() - transferStartTime)
@@ -8065,27 +8030,44 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// return; //for debug
 
-	// h. If verify read back the all flash sector using action 7, in blocks of 128 bytes
+	// h. If verify read back the all flash sector using action 7, in blocks of 254 bytes
+	constexpr size_t VERIFY_CHUNK_SIZE = 254;
 	if(verify && contents.size())
 	{
-		__FE_COUT__ << "Start reading back SPI... " << contents.size() << " bytes"
-		            << __E__;
+		__FE_COUT_INFO__ << "Start reading back SPI for verify... " << contents.size() 
+		                 << " bytes, chunk size=" << VERIFY_CHUNK_SIZE << __E__;
 
 		for(auto& roc : targetROCs)
 		{
 			__FE_COUTV__(roc);
 			__FE_COUTV__(rocs_.at(roc)->getLinkID());
 			std::vector<uint16_t> readData;  //full bitfile is assembled here
+			size_t lastVerifyPercent = 0;
 
-			for(size_t i = 0; i < contents.size(); i += 254)
+			for(size_t i = 0; i < contents.size(); i += VERIFY_CHUNK_SIZE)
 			{
 				size_t readSize = contents.size() - i;
-				if(readSize > 254)
-					readSize = 254;
-				__FE_COUTV__(i);
+				if(readSize > VERIFY_CHUNK_SIZE)
+					readSize = VERIFY_CHUNK_SIZE;
+
+				__FE_COUT__ << "Verify readback chunk at offset=" << i 
+				            << " size=" << readSize 
+				            << " / " << contents.size() << __E__;
 
 				//append to readData
 				rocs_.at(roc)->readSPIFlashBlock(readData, startAddress + i, readSize);
+
+				__FE_COUT__ << "Verify readback chunk at offset=" << i 
+				            << " completed, readData.size()=" << readData.size() << __E__;
+
+				// Log verify progress at INFO level every 10%
+				size_t currentPercent = (i + readSize) * 100 / contents.size();
+				if(currentPercent / 10 != lastVerifyPercent / 10 || i + readSize >= contents.size())
+				{
+					__FE_COUT_INFO__ << "SPI verify progress: " << currentPercent << "% "
+					                 << "(" << (i + readSize) << "/" << contents.size() << " bytes)" << __E__;
+					lastVerifyPercent = currentPercent;
+				}
 
 				//partial word verify loop
 				for(size_t j = i; j < i + readSize; j += 2)
@@ -8093,16 +8075,36 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					if(uint8_t(contents[j]) != uint8_t(readData[j / 2]) ||
 					   uint8_t(contents[j + 1]) != uint8_t(readData[j / 2] >> 8))
 					{
+						// Diagnostic: read ROC registers at time of mismatch
+						auto doneAtMismatch   = rocs_.at(roc)->readRegister(128 /*ROC_ADDRESS_ACTION_DONE*/);
+						auto countAtMismatch  = rocs_.at(roc)->readRegister(129 /*ROC_ADDRESS_ACTION_READ_SIZE*/);
+						auto statusAtMismatch = rocs_.at(roc)->readRegister(132 /*ROC_ADDRESS_ACTION_STATUS*/);
+
 						__FE_SS__ << "At roc '" << roc
 						          << "' link=" << rocs_.at(roc)->getLinkID()
-						          << ", Bitfile readback mismatch at offset=" << j
-						          << " + size=" << readSize << " / " << contents.size()
+						          << ", Bitfile readback mismatch at offset=" << std::dec << j
+						          << " (flashAddr=0x" << std::hex << (startAddress + j) << ")"
+						          << " + size=" << std::dec << readSize << " / " << contents.size()
+						          << " (chunk size=" << VERIFY_CHUNK_SIZE << ")"
 						          << ", expected 0x" << std::hex << std::setw(2)
 						          << std::setfill('0')
 						          << (uint16_t(contents[j + 1]) & 0xFF)
 						          << (uint16_t(contents[j]) & 0xFF) << ", got 0x"
 						          << (uint16_t(readData[j / 2] >> 8) & 0xFF)
-						          << (uint16_t(readData[j / 2]) & 0xFF) << __E__;
+						          << (uint16_t(readData[j / 2]) & 0xFF)
+						          << ". ROC regs at mismatch: reg128=0x" << doneAtMismatch
+						          << " reg129=0x" << countAtMismatch
+						          << " reg132=0x" << statusAtMismatch;
+
+						// Dump surrounding readback words for context
+						ss << ". Readback around mismatch (word index, value):";
+						size_t dumpStart = (j / 2 >= 4) ? (j / 2 - 4) : 0;
+						size_t dumpEnd   = std::min(j / 2 + 5, readData.size());
+						for(size_t d = dumpStart; d < dumpEnd; ++d)
+							ss << " [" << std::dec << d << "]=0x" << std::hex 
+							   << std::setw(4) << std::setfill('0') << readData[d];
+						ss << __E__;
+
 						__FE_SS_THROW__;
 					}
 				}  //end partial verify loop

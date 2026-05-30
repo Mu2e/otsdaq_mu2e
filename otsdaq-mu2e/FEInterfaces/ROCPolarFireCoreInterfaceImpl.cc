@@ -277,8 +277,17 @@ bool ROCPolarFireCoreInterface::isActionDone(
 {
 	DTCLib::roc_data_t readValue = readRegister(ROC_ADDRESS_ACTION_DONE);
 	bool               done      = (readValue >> 15) & 1;
-	__FE_COUT__ << "done=" << done << " " << StringMacros::stackTrace() << __E__;
-	;
+	__FE_COUT__ << "done=" << done << " readValue=0x" << std::hex << readValue
+	            << " " << StringMacros::stackTrace() << __E__;
+
+	// Detect communication failure: 0xffff means all bits set,
+	// which typically indicates the ROC is not responding over DCS.
+	if(readValue == 0xffff)
+	{
+		__FE_COUT_WARN__ << "WARNING: register " << ROC_ADDRESS_ACTION_DONE
+		                 << " returned 0xffff - possible ROC communication failure!"
+		                 << __E__;
+	}
 
 	if(done && readStatus)  //check status also
 	{
@@ -343,11 +352,33 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 
 		try
 		{
-			// std::lock_guard<std::mutex> lock(actionLock_); // protect/lock this link/ROC from starting more than one action
-			// __FE_COUTT__ << "Have ROC action lock" << __E__;
-			// getDevice()->begin_dcs_transaction(); //block other DCS transactions while getting status
+			// Diagnostic: read state of ROC registers BEFORE sending read command
+			{
+				auto doneBefore   = readRegister(ROC_ADDRESS_ACTION_DONE);
+				auto countBefore  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
+				auto statusBefore = readRegister(ROC_ADDRESS_ACTION_STATUS);
+
+				__FE_COUT_INFO__ << "SPI READ before command: reg128=0x" << std::hex << doneBefore
+				                 << " reg129=0x" << countBefore
+				                 << " reg132=0x" << statusBefore
+				                 << " startAddr=0x" << startAddress
+				                 << " nBytes=" << std::dec << (int)numberOfBytes << __E__;
+			}
+
 			writeBlock(
 			    commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
+
+			// Diagnostic: read state of ROC registers 1ms AFTER sending read command
+			usleep(1000);
+			{
+				auto doneAfter   = readRegister(ROC_ADDRESS_ACTION_DONE);
+				auto countAfter  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
+				auto statusAfter = readRegister(ROC_ADDRESS_ACTION_STATUS);
+
+				__FE_COUT_INFO__ << "SPI READ after command +1ms: reg128=0x" << std::hex << doneAfter
+				                 << " reg129=0x" << countAfter
+				                 << " reg132=0x" << statusAfter << __E__;
+			}
 
 				// wait for both DONE and the expected TX word count. Register 128 can
 				// still contain DONE from the previous action for a short time after
@@ -366,11 +397,18 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 
 					if(i > 5 * 100 /* 5 seconds */)
 					{
-						// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
+						// Diagnostic: dump final register state on timeout
+						auto doneFinal   = readRegister(ROC_ADDRESS_ACTION_DONE);
+						auto countFinal  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
+						auto statusFinal = readRegister(ROC_ADDRESS_ACTION_STATUS);
+
 						__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
 						             "for more info with ROC Read to "
 						          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
-						          << readCount << " expected 0x" << expectedReadCount << __E__;
+						          << readCount << " expected 0x" << expectedReadCount
+						          << ". Final state: reg128=0x" << doneFinal
+						          << " reg129=0x" << countFinal
+						          << " reg132=0x" << statusFinal << __E__;
 						__FE_SS_THROW__;
 					}
 					usleep(1000 * 10 /* 10 ms */);
@@ -610,20 +648,51 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		__FE_COUTT__ << "Have ROC action lock" << __E__;
 		writeBlock(commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-		//wait for action to complete
-		size_t i = 0;
-		while(!isActionDone())
+		// Wait for DONE transition: 1 -> 0 -> 1
+		// After writeBlock(), reg128 may still be 0x8000 (DONE) from the
+		// previous action. We must first wait for DONE to go LOW (command
+		// accepted by the processor), then wait for DONE to go HIGH again
+		// (command completed).
+
+		// Phase 1: wait for DONE to clear (command accepted)
 		{
-			if(i > 5 * 100 /* 5 seconds */)
+			size_t i = 0;
+			while(isActionDone())
 			{
-				__FE_SS__ << "Timeout waiting for SPI flash write action! Check for more "
-				             "info with ROC Read to "
-				          << ROC_ADDRESS_ACTION_DONE << __E__;
-				__FE_SS_THROW__;
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
+					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
+					__FE_SS__ << "Timeout waiting for SPI flash write command to be "
+					             "accepted (DONE stuck high)! reg128=0x"
+					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
 			}
-			usleep(1000 * 10 /* 10 ms */);
+			__FE_COUT__ << "Command accepted (DONE went low) after " << i << " polls" << __E__;
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
+
+		// Phase 2: wait for DONE to set (command completed)
+		{
+			size_t i = 0;
+			while(!isActionDone())
+			{
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
+					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
+					__FE_SS__ << "Timeout waiting for SPI flash write action to complete! "
+					             "reg128=0x"
+					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
+			}
+			__FE_COUT__ << "Action done after " << i << " polls, reading status..." << __E__;
+		}
 
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 	}  //end action lock
@@ -691,20 +760,45 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 		__FE_COUTT__ << "Have ROC action lock" << __E__;
 		writeBlock(commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-		//wait for action to complete
-		size_t i = 0;
-		while(!isActionDone())
+		// Phase 1: wait for DONE to clear (command accepted)
 		{
-			if(i > 5 * 100 /* 5 seconds */)
+			size_t i = 0;
+			while(isActionDone())
 			{
-				__FE_SS__ << "Timeout waiting for SPI flash erase action! Check for more "
-				             "info with ROC Read to "
-				          << ROC_ADDRESS_ACTION_DONE << __E__;
-				__FE_SS_THROW__;
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
+					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
+					__FE_SS__ << "Timeout waiting for SPI flash erase command to be "
+					             "accepted (DONE stuck high)! reg128=0x"
+					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
 			}
-			usleep(1000 * 10 /* 10 ms */);
+			__FE_COUT__ << "Erase command accepted (DONE went low) after " << i << " polls" << __E__;
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
+
+		// Phase 2: wait for DONE to set (erase completed)
+		{
+			size_t i = 0;
+			while(!isActionDone())
+			{
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
+					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
+					__FE_SS__ << "Timeout waiting for SPI flash erase action to complete! "
+					             "reg128=0x"
+					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
+			}
+			__FE_COUT__ << "Erase done after " << i << " polls" << __E__;
+		}
 
 		// readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 	}  //end action lock
@@ -757,27 +851,43 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index,
 		std::lock_guard<std::mutex> lock(
 		    actionLock_);  // protect/lock this link/ROC from starting more than one action
 		__FE_COUTT__ << "Have ROC action lock" << __E__;
-		// getDevice()->begin_dcs_transaction(); //block other transactions while getting status
 		writeBlock(commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-		//wait for action to complete
-		size_t i = 0;
-		while(!isActionDone())
+		// Phase 1: wait for DONE to clear (command accepted)
 		{
-			if(i > 5 * 100 /* 5 seconds */)
+			size_t i = 0;
+			while(isActionDone())
 			{
-				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for action to program from SPI flash by "
-				             "index! Check for more info with ROC Read to "
-				          << ROC_ADDRESS_ACTION_DONE << __E__;
-				__FE_SS_THROW__;
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					__FE_SS__ << "Timeout waiting for programFromSPIByIndex command to be "
+					             "accepted (DONE stuck high)!" << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
 			}
-			usleep(1000 * 10 /* 10 ms */);
+		}
+
+		// Phase 2: wait for DONE to set (command completed)
+		{
+			size_t i = 0;
+			while(!isActionDone())
+			{
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					__FE_SS__ << "Timeout waiting for action to program from SPI flash by "
+					             "index! Check for more info with ROC Read to "
+					          << ROC_ADDRESS_ACTION_DONE << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
+			}
 		}
 		__FE_COUT__ << "Action done, reading status..." << __E__;
 
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
-		// getDevice()->end_dcs_transaction(); //re-allow other transactions
 	}  //end action lock
 
 	__FE_COUTV__(readStatus);
@@ -829,34 +939,50 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress,
 		std::lock_guard<std::mutex> lock(
 		    actionLock_);  // protect/lock this link/ROC from starting more than one action
 		__FE_COUTT__ << "Have ROC action lock" << __E__;
-		// getDevice()->begin_dcs_transaction(); //block other transactions while getting status
 		writeBlock(commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-		//wait for action to complete
-		size_t i = 0;
-		while(!isActionDone())
+		// Phase 1: wait for DONE to clear (command accepted)
 		{
-			if(i > 5 * 100 /* 5 seconds */)
+			size_t i = 0;
+			while(isActionDone())
 			{
-				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for action to program from SPI flash by "
-				             "index! Check for more info with ROC Read to "
-				          << ROC_ADDRESS_ACTION_DONE << __E__;
-				__FE_SS_THROW__;
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					__FE_SS__ << "Timeout waiting for programFromSPIByAddress command to be "
+					             "accepted (DONE stuck high)!" << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
 			}
-			usleep(1000 * 10 /* 10 ms */);
+		}
+
+		// Phase 2: wait for DONE to set (command completed)
+		{
+			size_t i = 0;
+			while(!isActionDone())
+			{
+				if(i > 5 * 100 /* 5 seconds */)
+				{
+					__FE_SS__ << "Timeout waiting for action to program from SPI flash by "
+					             "address! Check for more info with ROC Read to "
+					          << ROC_ADDRESS_ACTION_DONE << __E__;
+					__FE_SS_THROW__;
+				}
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
+			}
 		}
 		__FE_COUT__ << "Action done, reading status..." << __E__;
 
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
-		// getDevice()->end_dcs_transaction(); //re-allow other transactions
 	}  //end action lock
 
 	__FE_COUTV__(readStatus);
 	if(readStatus)
 	{
 		__FE_SS__ << "Non-zero status received after action to program from SPI flash by "
-		             "index: 0x"
+		             "address: 0x"
 		          << std::hex << readStatus << __E__;
 		__FE_SS_THROW__;
 	}
