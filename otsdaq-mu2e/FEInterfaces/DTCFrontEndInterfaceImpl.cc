@@ -7945,6 +7945,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			} while(!allDone);
 		}  //end check for erase done
 
+		__FE_COUT__ << "Waiting 1 second after SPI erase before starting write..."
+		            << __E__;
+		usleep(1000 * 1000);
+
 		// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
 		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
 		// return; //block writing bitfile
