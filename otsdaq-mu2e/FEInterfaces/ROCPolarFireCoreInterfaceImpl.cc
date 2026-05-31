@@ -277,8 +277,8 @@ bool ROCPolarFireCoreInterface::isActionDone(
 {
 	DTCLib::roc_data_t readValue = readRegister(ROC_ADDRESS_ACTION_DONE);
 	bool               done      = (readValue >> 15) & 1;
-	__FE_COUT__ << "done=" << done << " readValue=0x" << std::hex << readValue
-	            << " " << StringMacros::stackTrace() << __E__;
+	__FE_COUT__ << "done=" << done << " readValue=0x" << std::hex << readValue << " "
+	            << StringMacros::stackTrace() << __E__;
 
 	// Detect communication failure: 0xffff means all bits set,
 	// which typically indicates the ROC is not responding over DCS.
@@ -365,7 +365,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 			{
 				const bool done = isActionDone();
 				readCount       = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
-				    0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
+				            0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
 
 				if(done && readCount == expectedReadCount)
 					break;
@@ -381,9 +381,8 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 					             "for more info with ROC Read to "
 					          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
 					          << readCount << " expected 0x" << expectedReadCount
-					          << ". Final state: reg128=0x" << doneFinal
-					          << " reg129=0x" << countFinal
-					          << " reg132=0x" << statusFinal << __E__;
+					          << ". Final state: reg128=0x" << doneFinal << " reg129=0x"
+					          << countFinal << " reg132=0x" << statusFinal << __E__;
 					__FE_SS_THROW__;
 				}
 				usleep(1000 * 10 /* 10 ms */);
@@ -646,7 +645,8 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Command accepted (DONE went low) after " << i << " polls" << __E__;
+			__FE_COUT__ << "Command accepted (DONE went low) after " << i << " polls"
+			            << __E__;
 		}
 
 		// Phase 2: wait for DONE to set (command completed)
@@ -665,7 +665,8 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Action done after " << i << " polls, reading status..." << __E__;
+			__FE_COUT__ << "Action done after " << i << " polls, reading status..."
+			            << __E__;
 		}
 
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
@@ -751,7 +752,8 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Erase command accepted (DONE went low) after " << i << " polls" << __E__;
+			__FE_COUT__ << "Erase command accepted (DONE went low) after " << i
+			            << " polls" << __E__;
 		}
 
 		// Phase 2: wait for DONE to set (erase completed)
@@ -763,8 +765,9 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 				{
 					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
 					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
-					__FE_SS__ << "SPI ERASE TIMEOUT: phase=complete timeout=180s reg128=0x"
-					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
+					__FE_SS__
+					    << "SPI ERASE TIMEOUT: phase=complete timeout=180s reg128=0x"
+					    << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
 					__FE_SS_THROW__;
 				}
 				usleep(1000 * 10 /* 10 ms */);
@@ -833,8 +836,10 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index,
 			{
 				if(i > 5 * 100 /* 5 seconds */)
 				{
-					__FE_SS__ << "Timeout waiting for programFromSPIByIndex command to be "
-					             "accepted (DONE stuck high)!" << __E__;
+					__FE_SS__
+					    << "Timeout waiting for programFromSPIByIndex command to be "
+					       "accepted (DONE stuck high)!"
+					    << __E__;
 					__FE_SS_THROW__;
 				}
 				usleep(1000 * 10 /* 10 ms */);
@@ -849,9 +854,10 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index,
 			{
 				if(i > 5 * 100 /* 5 seconds */)
 				{
-					__FE_SS__ << "Timeout waiting for action to program from SPI flash by "
-					             "index! Check for more info with ROC Read to "
-					          << ROC_ADDRESS_ACTION_DONE << __E__;
+					__FE_SS__
+					    << "Timeout waiting for action to program from SPI flash by "
+					       "index! Check for more info with ROC Read to "
+					    << ROC_ADDRESS_ACTION_DONE << __E__;
 					__FE_SS_THROW__;
 				}
 				usleep(1000 * 10 /* 10 ms */);
@@ -921,8 +927,10 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress,
 			{
 				if(i > 5 * 100 /* 5 seconds */)
 				{
-					__FE_SS__ << "Timeout waiting for programFromSPIByAddress command to be "
-					             "accepted (DONE stuck high)!" << __E__;
+					__FE_SS__
+					    << "Timeout waiting for programFromSPIByAddress command to be "
+					       "accepted (DONE stuck high)!"
+					    << __E__;
 					__FE_SS_THROW__;
 				}
 				usleep(1000 * 10 /* 10 ms */);
@@ -937,9 +945,10 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress,
 			{
 				if(i > 5 * 100 /* 5 seconds */)
 				{
-					__FE_SS__ << "Timeout waiting for action to program from SPI flash by "
-					             "address! Check for more info with ROC Read to "
-					          << ROC_ADDRESS_ACTION_DONE << __E__;
+					__FE_SS__
+					    << "Timeout waiting for action to program from SPI flash by "
+					       "address! Check for more info with ROC Read to "
+					    << ROC_ADDRESS_ACTION_DONE << __E__;
 					__FE_SS_THROW__;
 				}
 				usleep(1000 * 10 /* 10 ms */);
