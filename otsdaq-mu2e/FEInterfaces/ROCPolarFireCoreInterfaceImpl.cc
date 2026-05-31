@@ -785,7 +785,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 			size_t i = 0;
 			while(!isActionDone())
 			{
-				if(i > 5 * 100 /* 5 seconds */)
+				if(i > 180 * 100 /* 180 seconds */)
 				{
 					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
 					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);

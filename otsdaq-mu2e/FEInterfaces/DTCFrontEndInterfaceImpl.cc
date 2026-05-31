@@ -7895,59 +7895,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			__FE_COUTV__(roc);
 			__FE_COUTV__(rocs_.at(roc)->getLinkID());
 			rocs_.at(roc)->eraseSPIFlashBlock(
-			    contents.size(), startAddress, false /* waitForDone */);
-		}  //end launch of ROC erase SPI block loop
-
-		__FE_COUT__ << "Checking that erase is done..." << __E__;
-		//then check for erase done
-		{
-			bool allDone = true;
-			// DTCLib::roc_data_t readStatus;
-			std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
-			size_t                                               attempt = 0;
-			do
-			{
-				allDone = true;
-				for(auto& roc : targetROCs)
-				{
-					if(doneMap[roc])
-						continue;  //skip those done
-
-					doneMap[roc] = rocs_.at(roc)->isActionDone(
-					    nullptr /*&readStatus*/,  //erase does not give status
-					    true /* releaseLockOnDone */);
-					if(!doneMap[roc])
-						allDone = false;
-					else
-					{
-						//Erase action does not have status...
-						// if(readStatus)
-						// {
-						// 	__FE_SS__ << "At roc '" << roc << "' link=" <<
-						// 		rocs_.at(roc)->getLinkID() <<
-						// 		", Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
-						// 	__FE_SS_THROW__;
-						// }
-						__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
-						            << ", done with erase SPI block." << __E__;
-					}
-				}  //end launch of ROC erase SPI block loop
-
-				if(!allDone && ++attempt > 120 /* 60 s */)
-				{
-					__FE_SS__ << "Timeout waiting for SPI flash erase action! Check for "
-					             "more info with ROC Read to 128."
-					          << __E__;
-					__FE_SS_THROW__;
-				}
-				else if(!allDone)
-					usleep(1000 * 500 /* 500 ms */);
-			} while(!allDone);
-		}  //end check for erase done
-
-		__FE_COUT__ << "Waiting 1 second after SPI erase before starting write..."
-		            << __E__;
-		usleep(1000 * 1000);
+			    contents.size(), startAddress, true /* waitForDone */);
+			__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
+			            << ", done with erase SPI block." << __E__;
+		}  //end ROC erase SPI block loop
 
 		// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
 		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
