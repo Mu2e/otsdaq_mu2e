@@ -8010,8 +8010,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// return; //for debug
 
-	// h. If verify read back the all flash sector using action 7, in blocks of 254 bytes
-	constexpr size_t VERIFY_CHUNK_SIZE = 254;
+	// h. If verify read back the all flash sector using action 7, in blocks of 1016 bytes
+	constexpr size_t VERIFY_CHUNK_SIZE = 1016;
 	if(verify && contents.size())
 	{
 		__FE_COUT_INFO__ << "SPI verify start: bytes=" << contents.size()

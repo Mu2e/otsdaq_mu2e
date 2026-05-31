@@ -308,12 +308,12 @@ bool ROCPolarFireCoreInterface::isActionDone(
 /// DTC block read of Nbytes/2 from register 384, since each block read word concatenates
 /// two bytes read from consecutive addresses.
 ///
-/// Note: The maximum allowed number of words to read is 254
+/// Note: The maximum allowed number of bytes to read is 1016
 void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readData,
                                                   uint32_t               startAddress,
-                                                  uint8_t                numberOfBytes)
+                                                  uint16_t               numberOfBytes)
 {
-	if(numberOfBytes > 254)
+	if(numberOfBytes > 1016)
 	{
 		__FE_SS__ << "Illegal number of bytes requested for read SPI flash action: "
 		          << numberOfBytes << __E__;

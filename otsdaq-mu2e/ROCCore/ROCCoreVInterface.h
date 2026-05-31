@@ -143,7 +143,7 @@ class ROCCoreVInterface : public FEVInterface
 	};  // virtual, must define in inheriting children /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
 	virtual void readSPIFlashBlock(std::vector<uint16_t>& readData,
 	                               uint32_t               startAddress,
-	                               uint8_t                numberOfWords)
+	                               uint16_t               numberOfWords)
 	{
 		__SS__ << "TODO";
 		__SS_THROW__;
