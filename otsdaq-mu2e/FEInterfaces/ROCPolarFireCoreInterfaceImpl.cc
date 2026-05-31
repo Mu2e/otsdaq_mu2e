@@ -277,8 +277,6 @@ bool ROCPolarFireCoreInterface::isActionDone(
 {
 	DTCLib::roc_data_t readValue = readRegister(ROC_ADDRESS_ACTION_DONE);
 	bool               done      = (readValue >> 15) & 1;
-	__FE_COUT__ << "done=" << done << " readValue=0x" << std::hex << readValue << " "
-	            << StringMacros::stackTrace() << __E__;
 
 	// Detect communication failure: 0xffff means all bits set,
 	// which typically indicates the ROC is not responding over DCS.
@@ -291,9 +289,7 @@ bool ROCPolarFireCoreInterface::isActionDone(
 
 	if(done && readStatus)  //check status also
 	{
-		__FE_COUT__ << "Action done, reading status..." << __E__;
 		*readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
-		__FE_COUTV__(*readStatus);
 	}
 	if(done && releaseLockOnDone)
 	{
@@ -522,13 +518,10 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(
 			}
 			usleep(1000 * 10 /* 10 ms */);
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
-
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 		// getDevice()->end_dcs_transaction(); //re-allow other transactions
 	}  //end action lock
 
-	__FE_COUTV__(readStatus);
 	if(readStatus)
 	{
 		__FE_SS__ << "Non-zero status received after SPI flash directory write action: 0x"
@@ -645,8 +638,6 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Command accepted (DONE went low) after " << i << " polls"
-			            << __E__;
 		}
 
 		// Phase 2: wait for DONE to set (command completed)
@@ -665,14 +656,11 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Action done after " << i << " polls, reading status..."
-			            << __E__;
 		}
 
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 	}  //end action lock
 
-	__FE_COUTV__(readStatus);
 	if(readStatus)
 	{
 		__FE_SS__ << "Non-zero status received after SPI flash write action: 0x"
@@ -752,8 +740,6 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Erase command accepted (DONE went low) after " << i
-			            << " polls" << __E__;
 		}
 
 		// Phase 2: wait for DONE to set (erase completed)
@@ -773,7 +759,6 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 				usleep(1000 * 10 /* 10 ms */);
 				++i;
 			}
-			__FE_COUT__ << "Erase done after " << i << " polls" << __E__;
 		}
 
 		// readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
@@ -864,12 +849,9 @@ void ROCPolarFireCoreInterface::programFromSPIByIndex(uint8_t index,
 				++i;
 			}
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
-
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 	}  //end action lock
 
-	__FE_COUTV__(readStatus);
 	if(readStatus)
 	{
 		__FE_SS__ << "Non-zero status received after action to program from SPI flash by "
@@ -955,12 +937,9 @@ void ROCPolarFireCoreInterface::programFromSPIByAddress(uint32_t startAddress,
 				++i;
 			}
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
-
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 	}  //end action lock
 
-	__FE_COUTV__(readStatus);
 	if(readStatus)
 	{
 		__FE_SS__ << "Non-zero status received after action to program from SPI flash by "
@@ -1025,13 +1004,10 @@ void ROCPolarFireCoreInterface::autoProgramFromSPI(bool waitForDone /* = true */
 			}
 			usleep(1000 * 10 /* 10 ms */);
 		}
-		__FE_COUT__ << "Action done, reading status..." << __E__;
-
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 		// getDevice()->end_dcs_transaction(); //re-allow other transactions
 	}  //end action lock
 
-	__FE_COUTV__(readStatus);
 	if(readStatus)
 	{
 		__FE_SS__ << "Non-zero status received after action to program from SPI flash by "

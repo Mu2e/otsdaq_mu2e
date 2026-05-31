@@ -7755,6 +7755,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	std::vector<uint32_t> mapWriteData;
 	if(mapPath != "Default" && mapPath != "")
 	{
+		__FE_COUT_INFO__ << "SPI directory map load start: path='" << mapPath << "'"
+		                 << " writeMap=" << writeMap << " verifyMap=" << verifyMap
+		                 << " targetROCs=" << targetROCs.size() << __E__;
 		__COUTV__(mapPath);
 
 		char       line[100];
@@ -7775,25 +7778,37 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		}
 		fclose(fp);
 
+		__FE_COUT_INFO__ << "SPI directory map loaded: entries=" << mapWriteData.size()
+		                 << __E__;
 		__FE_COUTV__(StringMacros::vectorToString(mapWriteData));
 		if(writeMap)
 		{
-			__FE_COUT__ << "WriteSPIFlashDirectory" << __E__;
+			__FE_COUT_INFO__ << "SPI directory map write start: targetROCs="
+			                 << targetROCs.size() << __E__;
 			for(auto& roc : targetROCs)
 			{
+				__FE_COUT_INFO__ << "SPI directory map write ROC start: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 				__FE_COUTV__(roc);
 				__FE_COUTV__(rocs_.at(roc)->getLinkID());
 				rocs_.at(roc)->writeSPIFlashDirectory(mapWriteData);
+				__FE_COUT_INFO__ << "SPI directory map write ROC done: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 			}  //end roc loop to write map
-			__FE_COUT__ << "end WriteSPIFlashDirectory" << __E__;
+			__FE_COUT_INFO__ << "SPI directory map write done: targetROCs="
+			                 << targetROCs.size() << __E__;
 		}
 		else
-			__FE_COUT__ << "skip WriteSPIFlashDirectory" << __E__;
+			__FE_COUT_INFO__ << "SPI directory map write skipped" << __E__;
 
 		if(verifyMap)
 		{
+			__FE_COUT_INFO__ << "SPI directory map verify start: targetROCs="
+			                 << targetROCs.size() << __E__;
 			for(auto& roc : targetROCs)
 			{
+				__FE_COUT_INFO__ << "SPI directory map verify ROC start: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 				__FE_COUTV__(roc);
 				__FE_COUTV__(rocs_.at(roc)->getLinkID());
 
@@ -7831,11 +7846,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						__FE_SS_THROW__;
 					}
 
-				__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
-				            << ", Directory map verified." << __E__;
+				__FE_COUT_INFO__ << "SPI directory map verify ROC done: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 				resultsSs << roc << " link=" << rocs_.at(roc)->getLinkID()
 				          << ", Directory map verified." << __E__;
 			}  //end roc loop to verify map
+			__FE_COUT_INFO__ << "SPI directory map verify done: targetROCs="
+			                 << targetROCs.size() << __E__;
 		}
 	}  //end directory map handling
 
@@ -7847,8 +7864,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	}
 	uint32_t startAddress = mapWriteData[imageIndex];
 
-	__FE_COUT__ << "startAddress = " << startAddress << " 0x" << std::hex << std::setw(8)
-	            << std::setfill('0') << startAddress << __E__;
+	__FE_COUT_INFO__ << "SPI start address selected: imageIndex=" << int(imageIndex)
+	                 << " startAddress=0x" << std::hex << std::setw(8) << std::setfill('0')
+	                 << startAddress << std::dec << __E__;
 
 	std::string contents, fullpath;
 	if(bitfilePath != "Default" && bitfilePath != "")
@@ -7856,6 +7874,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	if(fullpath != "")
 	{
+		__FE_COUT_INFO__ << "SPI bitfile load start: path='" << fullpath << "'" << __E__;
 		__COUTV__(fullpath);
 
 		std::FILE* fp = std::fopen(fullpath.c_str(), "rb");
@@ -7874,6 +7893,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 		__FE_COUTV__(contents.size());
 
+		__FE_COUT_INFO__ << "SPI bitfile load done: bytes=" << contents.size() << __E__;
 		resultsSs << "Loaded file '" << fullpath << "' of size=" << contents.size()
 		          << __E__;
 	}
