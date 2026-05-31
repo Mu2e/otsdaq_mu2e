@@ -7923,11 +7923,11 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			std::chrono::time_point<std::chrono::steady_clock> transferStartTime =
 			    std::chrono::steady_clock::now();
 
-		for(size_t i = 0; i < contents.size(); i += 1024)
-		{
-			size_t writeSize = contents.size() - i;
-			if(writeSize > 1024)
-				writeSize = 1024;
+			for(size_t i = 0; i < contents.size(); i += 1024)
+			{
+				size_t writeSize = contents.size() - i;
+				if(writeSize > 1024)
+					writeSize = 1024;
 				__FE_COUTT__ << "SPI write chunk start: offset=" << i
 				             << " size=" << writeSize << " flashAddr=0x"
 				             << std::hex << (startAddress + i) << std::dec << __E__;
@@ -7971,10 +7971,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				size_t currentPercent = (i + writeSize) * 100 / contents.size();
 				size_t prevPercent    = i > 0 ? (i * 100 / contents.size()) : 0;
 
-					__FE_COUTT__ << "SPI write chunk #" << int(i / 1024)
-					             << " done: offset=" << i << " size=" << writeSize
-					             << " totalBytes=" << contents.size()
-					             << " progress=" << currentPercent << "%" << __E__;
+				__FE_COUTT__ << "SPI write chunk #" << int(i / 1024)
+				             << " done: offset=" << i << " size=" << writeSize
+				             << " totalBytes=" << contents.size()
+				             << " progress=" << currentPercent << "%" << __E__;
 
 				// Log at INFO level every 10% so it is visible in the message viewer
 				if(currentPercent / 10 != prevPercent / 10 || i + writeSize >= contents.size())
@@ -7987,10 +7987,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			                   .count();
 			if(ns > 1000)  //prevent divide by 0
 			{
-					__FE_COUTT__ << "SPI write elapsedMs=" << ns / 1000.0 / 1000.0
-					             << " averageRateMBps="
-					             << ((double)(i + writeSize)) / (ns / 1000.0) << __E__;
-				}
+				__FE_COUTT__ << "SPI write elapsedMs=" << ns / 1000.0 / 1000.0
+				             << " averageRateMBps="
+				             << ((double)(i + writeSize)) / (ns / 1000.0) << __E__;
+			}
 
 			// if (i > 4000)
 			// 	break; //debug, stop after first write
@@ -8014,19 +8014,19 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	constexpr size_t VERIFY_CHUNK_SIZE = 254;
 	if(verify && contents.size())
 	{
-			__FE_COUT_INFO__ << "SPI verify start: bytes=" << contents.size()
-			                 << " chunkSize=" << VERIFY_CHUNK_SIZE
-			                 << " startAddress=0x" << std::hex << startAddress << std::dec
-			                 << __E__;
+		__FE_COUT_INFO__ << "SPI verify start: bytes=" << contents.size()
+		                 << " chunkSize=" << VERIFY_CHUNK_SIZE
+		                 << " startAddress=0x" << std::hex << startAddress << std::dec
+		                 << __E__;
 
-			for(auto& roc : targetROCs)
-			{
-				__FE_COUTV__(roc);
-				__FE_COUTV__(rocs_.at(roc)->getLinkID());
-				std::vector<uint16_t> readData;  //full bitfile is assembled here
-				size_t lastVerifyPercent = 0;
-				std::chrono::time_point<std::chrono::steady_clock> verifyStartTime =
-				    std::chrono::steady_clock::now();
+		for(auto& roc : targetROCs)
+		{
+			__FE_COUTV__(roc);
+			__FE_COUTV__(rocs_.at(roc)->getLinkID());
+			std::vector<uint16_t> readData;  //full bitfile is assembled here
+			size_t lastVerifyPercent = 0;
+			std::chrono::time_point<std::chrono::steady_clock> verifyStartTime =
+			    std::chrono::steady_clock::now();
 
 			for(size_t i = 0; i < contents.size(); i += VERIFY_CHUNK_SIZE)
 			{
@@ -8034,19 +8034,19 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				if(readSize > VERIFY_CHUNK_SIZE)
 					readSize = VERIFY_CHUNK_SIZE;
 
-					__FE_COUTT__ << "SPI verify chunk start: roc='" << roc
-					             << "' link=" << rocs_.at(roc)->getLinkID()
-					             << " offset=" << i << " size=" << readSize
-					             << " flashAddr=0x" << std::hex << (startAddress + i)
-					             << std::dec << " totalBytes=" << contents.size() << __E__;
+				__FE_COUTT__ << "SPI verify chunk start: roc='" << roc
+				             << "' link=" << rocs_.at(roc)->getLinkID()
+				             << " offset=" << i << " size=" << readSize
+				             << " flashAddr=0x" << std::hex << (startAddress + i)
+				             << std::dec << " totalBytes=" << contents.size() << __E__;
 
 				//append to readData
 				rocs_.at(roc)->readSPIFlashBlock(readData, startAddress + i, readSize);
 
-					__FE_COUTT__ << "SPI verify chunk done: roc='" << roc
-					             << "' link=" << rocs_.at(roc)->getLinkID()
-					             << " offset=" << i << " readWords=" << readData.size()
-					             << __E__;
+				__FE_COUTT__ << "SPI verify chunk done: roc='" << roc
+				             << "' link=" << rocs_.at(roc)->getLinkID()
+				             << " offset=" << i << " readWords=" << readData.size()
+				             << __E__;
 
 				// Log verify progress at INFO level every 10%
 				size_t currentPercent = (i + readSize) * 100 / contents.size();
@@ -8111,13 +8111,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				__FE_SS_THROW__;
 			}
 
-				long long verifyMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-				                         std::chrono::steady_clock::now() - verifyStartTime)
-				                         .count();
-				__FE_COUT_INFO__ << "SPI verify done: roc='" << roc
-				                 << "' link=" << rocs_.at(roc)->getLinkID()
-				                 << " bytes=" << contents.size()
-				                 << " elapsedMs=" << verifyMs << __E__;
+			long long verifyMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+			                         std::chrono::steady_clock::now() - verifyStartTime)
+			                         .count();
+			__FE_COUT_INFO__ << "SPI verify done: roc='" << roc
+			                 << "' link=" << rocs_.at(roc)->getLinkID()
+			                 << " bytes=" << contents.size()
+			                 << " elapsedMs=" << verifyMs << __E__;
 
 			resultsSs << "At roc '" << roc << "' link=" << rocs_.at(roc)->getLinkID()
 			          << ", SPI data verified." << __E__;
