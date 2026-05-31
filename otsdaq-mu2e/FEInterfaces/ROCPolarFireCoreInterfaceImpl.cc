@@ -663,8 +663,8 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 				{
 					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
 					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
-					__FE_SS__ << "Timeout waiting for SPI flash write command to be "
-					             "accepted (DONE stuck high)! reg128=0x"
+					__FE_SS__ << "SPI WRITE TIMEOUT: phase=command-accepted timeout=5s "
+					             "(DONE stuck high) reg128=0x"
 					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
 					__FE_SS_THROW__;
 				}
@@ -683,8 +683,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 				{
 					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
 					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
-					__FE_SS__ << "Timeout waiting for SPI flash write action to complete! "
-					             "reg128=0x"
+					__FE_SS__ << "SPI WRITE TIMEOUT: phase=complete timeout=5s reg128=0x"
 					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
 					__FE_SS_THROW__;
 				}
@@ -769,8 +768,8 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 				{
 					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
 					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
-					__FE_SS__ << "Timeout waiting for SPI flash erase command to be "
-					             "accepted (DONE stuck high)! reg128=0x"
+					__FE_SS__ << "SPI ERASE TIMEOUT: phase=command-accepted timeout=5s "
+					             "(DONE stuck high) reg128=0x"
 					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
 					__FE_SS_THROW__;
 				}
@@ -789,8 +788,7 @@ void ROCPolarFireCoreInterface::eraseSPIFlashBlock(uint32_t eraseSize,
 				{
 					auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
 					auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
-					__FE_SS__ << "Timeout waiting for SPI flash erase action to complete! "
-					             "reg128=0x"
+					__FE_SS__ << "SPI ERASE TIMEOUT: phase=complete timeout=180s reg128=0x"
 					          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
 					__FE_SS_THROW__;
 				}
