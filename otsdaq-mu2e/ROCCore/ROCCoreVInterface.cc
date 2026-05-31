@@ -99,7 +99,7 @@ ROCCoreVInterface::~ROCCoreVInterface(void)
 void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
                                       DTCLib::roc_data_t    writeData)
 {
-	__FE_COUT__ << "Calling write ROC register: link number " << std::dec << linkID_
+	__FE_COUTT__ << "Calling write ROC register: link number " << std::dec << linkID_
 	            << ", address = " << address << ", write data = " << writeData << __E__;
 
 	return writeROCRegister(address, writeData);
@@ -109,14 +109,14 @@ void ROCCoreVInterface::writeRegister(DTCLib::roc_address_t address,
 DTCLib::roc_data_t ROCCoreVInterface::readRegister(DTCLib::roc_address_t address)
 try
 {
-	__FE_COUT__ << "Calling read ROC register: link number = " << std::dec << linkID_
+	__FE_COUTT__ << "Calling read ROC register: link number = " << std::dec << linkID_
 	            << ", address = " << address << __E__;
 
 	return readROCRegister(address);
 }  // end readRegister()
 catch(...)
 {
-	__SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
+	__FE_SS__ << "read exception caught: \n\n" << StringMacros::stackTrace() << __E__;
 	try
 	{
 		throw;

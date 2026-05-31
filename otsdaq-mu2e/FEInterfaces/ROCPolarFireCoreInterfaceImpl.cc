@@ -277,14 +277,14 @@ bool ROCPolarFireCoreInterface::isActionDone(
 {
 	DTCLib::roc_data_t readValue = readRegister(ROC_ADDRESS_ACTION_DONE);
 	bool               done      = (readValue >> 15) & 1;
-	__FE_COUT__ << "done=" << done << " " << StringMacros::stackTrace() << __E__;
+	__FE_COUTS__(2) << "done=" << done << " " << StringMacros::stackTrace() << __E__;
 	;
 
 	if(done && readStatus)  //check status also
 	{
-		__FE_COUT__ << "Action done, reading status..." << __E__;
+		__FE_COUTT__ << "Action done, reading status..." << __E__;
 		*readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
-		__FE_COUTV__(*readStatus);
+		__FE_COUTTV__(*readStatus);
 	}
 	if(done && releaseLockOnDone)
 	{
@@ -536,7 +536,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
                                                    uint32_t startAddress,
                                                    bool     waitForDone /* = true */)
 {
-	__FE_COUTV__(writeData.size());
+	__FE_COUTTV__(writeData.size());
 	if(writeData.size() > 512)
 	{
 		__FE_SS__ << "Illegal number of write words requested for SPI flash write: "
@@ -544,7 +544,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		__FE_SS_THROW__;
 	}
 
-	__FE_COUT__ << "startAddress " << startAddress << " 0x" << std::hex << std::setw(8)
+	__FE_COUTT__ << "startAddress " << startAddress << " 0x" << std::hex << std::setw(8)
 	            << std::setfill('0') << startAddress << __E__;
 
 	std::vector<DTCLib::roc_data_t> commandData = {
@@ -574,7 +574,7 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 		outss << __E__;
 		__FE_COUTTV__(outss.str());
 	}
-	__FE_COUTV__(commandData.size());
+	__FE_COUTTV__(commandData.size());
 
 	if(!waitForDone)
 	{

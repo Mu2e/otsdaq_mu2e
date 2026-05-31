@@ -7957,7 +7957,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			size_t writeSize = contents.size() - i;
 			if(writeSize > 1024)
 				writeSize = 1024;
-			__FE_COUTV__(i);
+			__FE_COUTTV__(i);
 
 			{
 				std::vector<uint16_t> writeData;
@@ -7972,19 +7972,19 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					std::stringstream outss;
 					for(auto& val : writeData)
 						outss << std::hex << " 0x" << val;
-					__FE_COUTV__(outss.str());
+					__FE_COUTVS__(32,outss.str());
 				}
 
 				for(auto& roc : targetROCs)
 				{
-					__FE_COUTV__(roc);
-					__FE_COUTV__(rocs_.at(roc)->getLinkID());
+					__FE_COUTTV__(roc);
+					__FE_COUTTV__(rocs_.at(roc)->getLinkID());
 					rocs_.at(roc)->writeSPIFlashBlock(
 					    writeData, startAddress + i, false /* waitForDone */);
 				}  //end launch of ROC erase SPI block loop
 			}
 
-			__FE_COUT__ << "Checking that write is done..." << __E__;
+			__FE_COUTT__ << "Checking that write is done..." << __E__;
 			// return;
 			//then check for writing done
 			{
@@ -8010,7 +8010,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						}
 						else
 						{
-							if(readStatus)
+							if(readStatus && readStatus != 0xbd84) //0xbd84 is what emulated ROC returns
 							{
 								__FE_SS__ << "At roc '" << roc
 								          << "' link=" << rocs_.at(roc)->getLinkID()
@@ -8021,6 +8021,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 							}
 							__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
 							            << ", done with write SPI block." << __E__;
+
+							if(readStatus == 0xbd84)
+								sleep(10); //debug 300 second timeout
 						}
 					}  //end launch of ROC erase SPI block loop
 
@@ -8037,9 +8040,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			}  //end check for erase done
 
 			if(writeSize)
-				__FE_COUT__ << "Write chunk #" << int(i / writeSize)
+				__FE_COUT_TYPE__((int(i / writeSize)%100 == 0)? TLVL_INFO : TLVL_DEBUG) <<
+							", Write chunk #" << int(i / writeSize)
 				            << " done at offset=" << i << " and size=" << writeSize
-				            << " / " << contents.size() << __E__;
+				            << " / " << contents.size() << " --> pct = " << int(i * 100 / contents.size()) << __E__;
 
 			long long ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
 			                   std::chrono::steady_clock::now() - transferStartTime)
