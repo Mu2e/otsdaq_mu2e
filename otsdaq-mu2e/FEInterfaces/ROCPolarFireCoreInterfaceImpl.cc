@@ -352,72 +352,47 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 
 		try
 		{
-			// Diagnostic: read state of ROC registers BEFORE sending read command
-			{
-				auto doneBefore   = readRegister(ROC_ADDRESS_ACTION_DONE);
-				auto countBefore  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
-				auto statusBefore = readRegister(ROC_ADDRESS_ACTION_STATUS);
-
-				__FE_COUT_INFO__ << "SPI READ before command: reg128=0x" << std::hex << doneBefore
-				                 << " reg129=0x" << countBefore
-				                 << " reg132=0x" << statusBefore
-				                 << " startAddr=0x" << startAddress
-				                 << " nBytes=" << std::dec << (int)numberOfBytes << __E__;
-			}
-
 			writeBlock(
 			    commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-			// Diagnostic: read state of ROC registers 1ms AFTER sending read command
-			usleep(1000);
+			// wait for both DONE and the expected TX word count. Register 128 can
+			// still contain DONE from the previous action for a short time after
+			// writeBlock(), so DONE alone is not a safe completion condition here.
+			const size_t expectedReadCount = numberOfBytes / 2 + 4;
+			size_t       readCount         = 0;
+			size_t       i                 = 0;
+			while(true)
 			{
-				auto doneAfter   = readRegister(ROC_ADDRESS_ACTION_DONE);
-				auto countAfter  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
-				auto statusAfter = readRegister(ROC_ADDRESS_ACTION_STATUS);
+				const bool done = isActionDone();
+				readCount       = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
+				    0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
 
-				__FE_COUT_INFO__ << "SPI READ after command +1ms: reg128=0x" << std::hex << doneAfter
-				                 << " reg129=0x" << countAfter
-				                 << " reg132=0x" << statusAfter << __E__;
-			}
+				if(done && readCount == expectedReadCount)
+					break;
 
-				// wait for both DONE and the expected TX word count. Register 128 can
-				// still contain DONE from the previous action for a short time after
-				// writeBlock(), so DONE alone is not a safe completion condition here.
-				const size_t expectedReadCount = numberOfBytes / 2 + 4;
-				size_t       readCount         = 0;
-				size_t       i                 = 0;
-				while(true)
+				if(i > 5 * 100 /* 5 seconds */)
 				{
-					const bool done = isActionDone();
-					readCount       = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
-					    0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
+					// Diagnostic: dump final register state on timeout
+					auto doneFinal   = readRegister(ROC_ADDRESS_ACTION_DONE);
+					auto countFinal  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
+					auto statusFinal = readRegister(ROC_ADDRESS_ACTION_STATUS);
 
-					if(done && readCount == expectedReadCount)
-						break;
-
-					if(i > 5 * 100 /* 5 seconds */)
-					{
-						// Diagnostic: dump final register state on timeout
-						auto doneFinal   = readRegister(ROC_ADDRESS_ACTION_DONE);
-						auto countFinal  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
-						auto statusFinal = readRegister(ROC_ADDRESS_ACTION_STATUS);
-
-						__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
-						             "for more info with ROC Read to "
-						          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
-						          << readCount << " expected 0x" << expectedReadCount
-						          << ". Final state: reg128=0x" << doneFinal
-						          << " reg129=0x" << countFinal
-						          << " reg132=0x" << statusFinal << __E__;
-						__FE_SS_THROW__;
-					}
-					usleep(1000 * 10 /* 10 ms */);
-					++i;
+					__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
+					             "for more info with ROC Read to "
+					          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
+					          << readCount << " expected 0x" << expectedReadCount
+					          << ". Final state: reg128=0x" << doneFinal
+					          << " reg129=0x" << countFinal
+					          << " reg132=0x" << statusFinal << __E__;
+					__FE_SS_THROW__;
 				}
-				__FE_COUT__ << "Action done, reading status..." << __E__;
+				usleep(1000 * 10 /* 10 ms */);
+				++i;
+			}
+			__FE_COUTT__ << "SPI read action done, reading status..." << __E__;
 
-				//check read count, it will be different by 4
-				__FE_COUTV__(readCount);
+			//check read count, it will be different by 4
+			__FE_COUTV__(readCount);
 			if(readCount - 4 != numberOfBytes / 2)  //readCount == 4096)
 			{
 				__FE_SS__ << "Illegal read count received after SPI flash directory read "
