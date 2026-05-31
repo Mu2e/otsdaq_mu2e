@@ -7892,6 +7892,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	                 << " program=" << program << " targetROCs=" << targetROCs.size()
 	                 << __E__;
 
+	setFEMacroPercentDone(0);
+
 	//first launch erase
 	if(write && contents.size())
 	{
@@ -7913,6 +7915,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			                 << "' link=" << rocs_.at(roc)->getLinkID()
 			                 << " elapsedMs=" << eraseMs << __E__;
 		}  //end ROC erase SPI block loop
+
+		setFEMacroPercentDone(10);
 
 		// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
 		__FE_COUT_INFO__ << "SPI write start: bytes=" << contents.size()
@@ -7968,6 +7972,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 			if(writeSize)
 			{
+				setFEMacroPercentDone(10 + 70 * (i + writeSize) / contents.size());
 				size_t currentPercent = (i + writeSize) * 100 / contents.size();
 				size_t prevPercent    = i > 0 ? (i * 100 / contents.size()) : 0;
 
@@ -8016,6 +8021,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	constexpr size_t VERIFY_CHUNK_SIZE = 1016;
 	if(verify && contents.size())
 	{
+		setFEMacroPercentDone(80);
 		__FE_COUT_INFO__ << "SPI verify start: bytes=" << contents.size()
 		                 << " chunkSize=" << VERIFY_CHUNK_SIZE << " startAddress=0x"
 		                 << std::hex << startAddress << std::dec << __E__;
@@ -8135,6 +8141,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// 3) start programming the fpga with action 4 (index)
 	//first launch program
+	setFEMacroPercentDone(90);
 	__FE_COUT__ << "Start programing from SPI..." << __E__;
 	for(auto& roc : targetROCs)
 	{
@@ -8216,6 +8223,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		} while(!allDone);
 	}  //end check for program done
 
+	setFEMacroPercentDone(100);
 	__SET_ARG_OUT__("Result", resultsSs.str());
 	__FE_COUT__ << "Done with all program actions!" << __E__;
 }  //end ProgramROCs()
