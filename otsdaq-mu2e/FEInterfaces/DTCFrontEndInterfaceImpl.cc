@@ -7894,108 +7894,6 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	setFEMacroPercentDone(0);
 
-	std::map<std::string, bool> lockedROCs;
-	auto                        forceClearLockedROCs = [&]() {
-        for(auto& rocLock : lockedROCs)
-            if(rocLock.second)
-            {
-                __FE_COUT_WARN__ << "Force-clearing pending ROC action lock for '"
-                                 << rocLock.first << "'" << __E__;
-                rocs_.at(rocLock.first)->forceClearActionLock();
-                rocLock.second = false;
-            }
-	};
-
-	auto waitForSPIActionsAccepted = [&](const std::vector<std::string>& rocs,
-	                                     const std::string&              actionName) {
-		std::map<std::string, bool> acceptedMap;
-		size_t                      pollCount = 0;
-		bool                        allAccepted;
-		do
-		{
-			allAccepted = true;
-			for(auto& roc : rocs)
-			{
-				if(acceptedMap[roc])
-					continue;
-
-				if(!rocs_.at(roc)->isActionDone())
-				{
-					acceptedMap[roc] = true;
-					__FE_COUTT__ << "SPI " << actionName << " accepted: roc='" << roc
-					             << "' link=" << rocs_.at(roc)->getLinkID()
-					             << " polls=" << pollCount << __E__;
-				}
-				else
-					allAccepted = false;
-			}
-
-			if(allAccepted)
-				break;
-
-			if(pollCount > 5 * 100 /* 5 seconds */)
-			{
-				__FE_SS__ << "SPI " << actionName
-				          << " timeout waiting for command acceptance on all ROCs"
-				          << __E__;
-				__FE_SS_THROW__;
-			}
-			usleep(1000 * 10 /* 10 ms */);
-			++pollCount;
-		} while(true);
-	};
-
-	auto waitForSPIActionsDone = [&](const std::vector<std::string>& rocs,
-	                                 const std::string&              actionName,
-	                                 size_t                          timeoutPolls,
-	                                 bool                            checkStatus) {
-		std::map<std::string, bool> doneMap;
-		size_t                      pollCount = 0;
-		bool                        allDone;
-		do
-		{
-			allDone = true;
-			for(auto& roc : rocs)
-			{
-				if(doneMap[roc])
-					continue;
-
-				DTCLib::roc_data_t readStatus = 0;
-				if(rocs_.at(roc)->isActionDone(&readStatus, true /* releaseLockOnDone */))
-				{
-					lockedROCs[roc] = false;
-					doneMap[roc]    = true;
-					__FE_COUTT__ << "SPI " << actionName << " done: roc='" << roc
-					             << "' link=" << rocs_.at(roc)->getLinkID()
-					             << " polls=" << pollCount << " status=0x" << std::hex
-					             << readStatus << std::dec << __E__;
-					if(checkStatus && readStatus)
-					{
-						__FE_SS__ << "At roc '" << roc
-						          << "' link=" << rocs_.at(roc)->getLinkID()
-						          << ", Non-zero status received after SPI " << actionName
-						          << " action: 0x" << std::hex << readStatus << __E__;
-						__FE_SS_THROW__;
-					}
-				}
-				else
-					allDone = false;
-			}
-
-			if(allDone)
-				break;
-
-			if(pollCount > timeoutPolls)
-			{
-				__FE_SS__ << "SPI " << actionName
-				          << " timeout waiting for completion on all ROCs" << __E__;
-				__FE_SS_THROW__;
-			}
-			usleep(1000 * 10 /* 10 ms */);
-			++pollCount;
-		} while(true);
-	};
-
 	//first launch erase
 	if(write && contents.size())
 	{
@@ -8004,32 +7902,19 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		                 << " targetROCs=" << targetROCs.size() << __E__;
 		std::chrono::time_point<std::chrono::steady_clock> eraseStartTime =
 		    std::chrono::steady_clock::now();
-		try
+		for(auto& roc : targetROCs)
 		{
-			for(auto& roc : targetROCs)
-			{
-				__FE_COUTV__(roc);
-				__FE_COUTV__(rocs_.at(roc)->getLinkID());
-				rocs_.at(roc)->eraseSPIFlashBlock(
-				    contents.size(), startAddress, false /* waitForDone */);
-				lockedROCs[roc] = true;
-			}
-			waitForSPIActionsAccepted(targetROCs, "erase");
-			waitForSPIActionsDone(targetROCs,
-			                      "erase",
-			                      180 * 100 /* 180 seconds */,
-			                      false /* checkStatus */);
-		}
-		catch(...)
-		{
-			forceClearLockedROCs();
-			throw;
-		}
-		long long eraseMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-		                        std::chrono::steady_clock::now() - eraseStartTime)
-		                        .count();
-		__FE_COUT_INFO__ << "SPI erase done: targetROCs=" << targetROCs.size()
-		                 << " elapsedMs=" << eraseMs << __E__;
+			__FE_COUTV__(roc);
+			__FE_COUTV__(rocs_.at(roc)->getLinkID());
+			rocs_.at(roc)->eraseSPIFlashBlock(
+			    contents.size(), startAddress, true /* waitForDone */);
+			long long eraseMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+			                        std::chrono::steady_clock::now() - eraseStartTime)
+			                        .count();
+			__FE_COUT_INFO__ << "SPI erase done: roc='" << roc
+			                 << "' link=" << rocs_.at(roc)->getLinkID()
+			                 << " elapsedMs=" << eraseMs << __E__;
+		}  //end ROC erase SPI block loop
 
 		setFEMacroPercentDone(10);
 
@@ -8067,27 +7952,22 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					__FE_COUTV__(outss.str());
 				}
 
-				try
+				for(auto& roc : targetROCs)
 				{
-					for(auto& roc : targetROCs)
-					{
-						__FE_COUTV__(roc);
-						__FE_COUTV__(rocs_.at(roc)->getLinkID());
-						rocs_.at(roc)->writeSPIFlashBlock(
-						    writeData, startAddress + i, false /* waitForDone */);
-						lockedROCs[roc] = true;
-					}
-					waitForSPIActionsAccepted(targetROCs, "write");
-					waitForSPIActionsDone(targetROCs,
-					                      "write",
-					                      5 * 100 /* 5 seconds */,
-					                      true /* checkStatus */);
-				}
-				catch(...)
-				{
-					forceClearLockedROCs();
-					throw;
-				}
+					__FE_COUTV__(roc);
+					__FE_COUTV__(rocs_.at(roc)->getLinkID());
+					rocs_.at(roc)->writeSPIFlashBlock(
+					    writeData, startAddress + i, true /* waitForDone */);
+					// Note: writeSPIFlashBlock with waitForDone=true already
+					// waits for completion, checks status, and throws on error.
+					// No second polling loop needed (it was causing a double-unlock
+					// of actionLock_ leading to undefined behavior and 0xffff reads).
+					__FE_COUTT__ << "SPI write chunk done: roc='" << roc
+					             << "' link=" << rocs_.at(roc)->getLinkID()
+					             << " offset=" << i << " size=" << writeSize
+					             << " flashAddr=0x" << std::hex << (startAddress + i)
+					             << std::dec << __E__;
+				}  //end ROC write SPI block loop
 			}
 
 			if(writeSize)
