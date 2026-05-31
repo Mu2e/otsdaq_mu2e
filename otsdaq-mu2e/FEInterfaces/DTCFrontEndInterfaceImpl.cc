@@ -7886,6 +7886,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		contents.resize(debugForceSize);  //force for debugging
 	}
 
+	setFEMacroPercentDone(0);
+
 	//first launch erase
 	if(write && contents.size())
 	{
@@ -7944,6 +7946,8 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					usleep(1000 * 500 /* 500 ms */);
 			} while(!allDone);
 		}  //end check for erase done
+
+		setFEMacroPercentDone(10);
 
 		// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
 		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
@@ -8023,7 +8027,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 							            << ", done with write SPI block." << __E__;
 
 							if(readStatus == 0xbd84)
-								sleep(10); //debug 300 second timeout
+								usleep(10000 /* 10 ms*/); //debug 300 second timeout
 						}
 					}  //end launch of ROC erase SPI block loop
 
@@ -8040,10 +8044,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			}  //end check for erase done
 
 			if(writeSize)
+			{
+				setFEMacroPercentDone(10 + 70 * (i + writeSize) / contents.size());
 				__FE_COUT_TYPE__((int(i / writeSize)%100 == 0)? TLVL_INFO : TLVL_DEBUG) <<
 							", Write chunk #" << int(i / writeSize)
 				            << " done at offset=" << i << " and size=" << writeSize
 				            << " / " << contents.size() << " --> pct = " << int(i * 100 / contents.size()) << __E__;
+			}
 
 			long long ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
 			                   std::chrono::steady_clock::now() - transferStartTime)
@@ -8072,6 +8079,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	// h. If verify read back the all flash sector using action 7, in blocks of 128 bytes
 	if(verify && contents.size())
 	{
+		setFEMacroPercentDone(80);
 		__FE_COUT__ << "Start reading back SPI... " << contents.size() << " bytes"
 		            << __E__;
 
@@ -8138,6 +8146,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// 3) start programming the fpga with action 4 (index)
 	//first launch program
+	setFEMacroPercentDone(90);
 	__FE_COUT__ << "Start programing from SPI..." << __E__;
 	for(auto& roc : targetROCs)
 	{
@@ -8219,6 +8228,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		} while(!allDone);
 	}  //end check for program done
 
+	setFEMacroPercentDone(100);
 	__SET_ARG_OUT__("Result", resultsSs.str());
 	__FE_COUT__ << "Done with all program actions!" << __E__;
 }  //end ProgramROCs()
