@@ -8025,22 +8025,83 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					__FE_COUTV__(outss.str());
 				}
 
-				for(auto& roc : targetROCs)
+				std::map<std::string, bool> writeLockHeld;
+				try
 				{
-					__FE_COUTV__(roc);
-					__FE_COUTV__(rocs_.at(roc)->getLinkID());
-					rocs_.at(roc)->writeSPIFlashBlock(
-					    writeData, startAddress + i, true /* waitForDone */);
-					// Note: writeSPIFlashBlock with waitForDone=true already
-					// waits for completion, checks status, and throws on error.
-					// No second polling loop needed (it was causing a double-unlock
-					// of actionLock_ leading to undefined behavior and 0xffff reads).
-					__FE_COUTT__ << "SPI write chunk done: roc='" << roc
-					             << "' link=" << rocs_.at(roc)->getLinkID()
-					             << " offset=" << i << " size=" << writeSize
-					             << " flashAddr=0x" << std::hex << (startAddress + i)
-					             << std::dec << __E__;
-				}  //end ROC write SPI block loop
+					for(auto& roc : targetROCs)
+					{
+						__FE_COUTT__ << "SPI write chunk launch: roc='" << roc
+						             << "' link=" << rocs_.at(roc)->getLinkID()
+						             << " offset=" << i << " size=" << writeSize
+						             << " flashAddr=0x" << std::hex << (startAddress + i)
+						             << std::dec << __E__;
+						rocs_.at(roc)->writeSPIFlashBlock(
+						    writeData, startAddress + i, false /* waitForDone */);
+						writeLockHeld[roc] = true;
+
+						size_t acceptPolls = 0;
+						while(rocs_.at(roc)->isActionDone())
+						{
+							if(acceptPolls > 5 * 100 /* 5 seconds */)
+							{
+								__FE_SS__ << "SPI WRITE TIMEOUT: roc='" << roc
+								          << "' link=" << rocs_.at(roc)->getLinkID()
+								          << " offset=" << i
+								          << " phase=command-accepted timeout=5s" << __E__;
+								__FE_SS_THROW__;
+							}
+							usleep(1000 * 10 /* 10 ms */);
+							++acceptPolls;
+						}
+					}
+
+					for(auto& roc : targetROCs)
+					{
+						DTCLib::roc_data_t readStatus = 0;
+						size_t             donePolls  = 0;
+						while(!rocs_.at(roc)->isActionDone(
+						    &readStatus, true /* releaseLockOnDone */))
+						{
+							if(donePolls > 5 * 100 /* 5 seconds */)
+							{
+								__FE_SS__ << "SPI WRITE TIMEOUT: roc='" << roc
+								          << "' link=" << rocs_.at(roc)->getLinkID()
+								          << " offset=" << i << " phase=complete timeout=5s"
+								          << __E__;
+								__FE_SS_THROW__;
+							}
+							usleep(1000 * 10 /* 10 ms */);
+							++donePolls;
+						}
+						writeLockHeld[roc] = false;
+						if(readStatus)
+						{
+							__FE_SS__ << "At roc '" << roc
+							          << "' link=" << rocs_.at(roc)->getLinkID()
+							          << ", Non-zero status received after SPI write action "
+							             "at offset "
+							          << i << ": 0x" << std::hex << readStatus << __E__;
+							__FE_SS_THROW__;
+						}
+						__FE_COUTT__ << "SPI write chunk done: roc='" << roc
+						             << "' link=" << rocs_.at(roc)->getLinkID()
+						             << " offset=" << i << " size=" << writeSize
+						             << " flashAddr=0x" << std::hex << (startAddress + i)
+						             << std::dec << __E__;
+					}
+				}
+				catch(...)
+				{
+					for(auto& rocLock : writeLockHeld)
+						if(rocLock.second)
+						{
+							__FE_COUT_WARN__
+							    << "Force-clearing pending ROC action lock for '"
+							    << rocLock.first << "'" << __E__;
+							rocs_.at(rocLock.first)->forceClearActionLock();
+						}
+					throw;
+				}
 			}
 
 			if(writeSize)
@@ -8132,9 +8193,10 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				if(currentPercent / 10 != lastVerifyPercent / 10 ||
 				   i + readSize >= contents.size())
 				{
-					__FE_COUT_INFO__ << "SPI verify progress: " << currentPercent << "% "
-					                 << "(" << (i + readSize) << "/" << contents.size()
-					                 << " bytes)" << __E__;
+					__FE_COUT_INFO__ << "SPI verify progress: roc='" << roc
+					                 << "' link=" << rocs_.at(roc)->getLinkID() << " "
+					                 << currentPercent << "% (" << (i + readSize) << "/"
+					                 << contents.size() << " bytes)" << __E__;
 					lastVerifyPercent = currentPercent;
 				}
 
