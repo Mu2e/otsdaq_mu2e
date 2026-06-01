@@ -7922,19 +7922,72 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		                 << " targetROCs=" << targetROCs.size() << __E__;
 		std::chrono::time_point<std::chrono::steady_clock> eraseStartTime =
 		    std::chrono::steady_clock::now();
-		for(auto& roc : targetROCs)
+		std::map<std::string, bool> eraseLockHeld;
+		try
 		{
-			__FE_COUTV__(roc);
-			__FE_COUTV__(rocs_.at(roc)->getLinkID());
-			rocs_.at(roc)->eraseSPIFlashBlock(
-			    contents.size(), startAddress, true /* waitForDone */);
-			long long eraseMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-			                        std::chrono::steady_clock::now() - eraseStartTime)
-			                        .count();
-			__FE_COUT_INFO__ << "SPI erase done: roc='" << roc
-			                 << "' link=" << rocs_.at(roc)->getLinkID()
-			                 << " elapsedMs=" << eraseMs << __E__;
-		}  //end ROC erase SPI block loop
+			for(auto& roc : targetROCs)
+			{
+				__FE_COUT_INFO__ << "SPI erase launch: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
+				rocs_.at(roc)->eraseSPIFlashBlock(
+				    contents.size(), startAddress, false /* waitForDone */);
+				eraseLockHeld[roc] = true;
+			}
+
+			for(auto& roc : targetROCs)
+			{
+				size_t acceptPolls = 0;
+				while(rocs_.at(roc)->isActionDone())
+				{
+					if(acceptPolls > 5 * 100 /* 5 seconds */)
+					{
+						__FE_SS__ << "SPI ERASE TIMEOUT: roc='" << roc
+						          << "' link=" << rocs_.at(roc)->getLinkID()
+						          << " phase=command-accepted timeout=5s" << __E__;
+						__FE_SS_THROW__;
+					}
+					usleep(1000 * 10 /* 10 ms */);
+					++acceptPolls;
+				}
+				__FE_COUT_INFO__ << "SPI erase accepted: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
+			}
+
+			for(auto& roc : targetROCs)
+			{
+				size_t donePolls = 0;
+				while(!rocs_.at(roc)->isActionDone(nullptr, true /* releaseLockOnDone */))
+				{
+					if(donePolls > 180 * 100 /* 180 seconds */)
+					{
+						__FE_SS__ << "SPI ERASE TIMEOUT: roc='" << roc
+						          << "' link=" << rocs_.at(roc)->getLinkID()
+						          << " phase=complete timeout=180s" << __E__;
+						__FE_SS_THROW__;
+					}
+					usleep(1000 * 10 /* 10 ms */);
+					++donePolls;
+				}
+				eraseLockHeld[roc] = false;
+				long long eraseMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+				                        std::chrono::steady_clock::now() - eraseStartTime)
+				                        .count();
+				__FE_COUT_INFO__ << "SPI erase done: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID()
+				                 << " elapsedMs=" << eraseMs << __E__;
+			}
+		}
+		catch(...)
+		{
+			for(auto& rocLock : eraseLockHeld)
+				if(rocLock.second)
+				{
+					__FE_COUT_WARN__ << "Force-clearing pending ROC action lock for '"
+					                 << rocLock.first << "'" << __E__;
+					rocs_.at(rocLock.first)->forceClearActionLock();
+				}
+			throw;
+		}
 
 		setFEMacroPercentDone(10);
 

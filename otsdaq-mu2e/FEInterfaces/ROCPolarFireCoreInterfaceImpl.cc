@@ -504,19 +504,36 @@ void ROCPolarFireCoreInterface::writeSPIFlashDirectory(
 		// getDevice()->begin_dcs_transaction(); //block other transactions while getting status
 		writeBlock(commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
 
-		//wait for action to complete
-		i = 0;
-		while(!isActionDone())
+		size_t acceptPolls = 0;
+		while(isActionDone())
 		{
-			if(i > 5 * 100 /* 5 seconds */)
+			if(acceptPolls > 30 * 100 /* 30 seconds */)
 			{
-				// getDevice()->end_dcs_transaction(true /* force */); //re-allow other transactions
-				__FE_SS__ << "Timeout waiting for SPI flash directory write action! "
-				             "Check for more info with ROC Read to "
-				          << ROC_ADDRESS_ACTION_DONE << __E__;
+				auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
+				auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
+				__FE_SS__ << "SPI DIRECTORY WRITE TIMEOUT: phase=command-accepted "
+				             "timeout=30s (DONE stuck high) reg128=0x"
+				          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
 				__FE_SS_THROW__;
 			}
 			usleep(1000 * 10 /* 10 ms */);
+			++acceptPolls;
+		}
+
+		size_t donePolls = 0;
+		while(!isActionDone())
+		{
+			if(donePolls > 30 * 100 /* 30 seconds */)
+			{
+				auto reg128 = readRegister(ROC_ADDRESS_ACTION_DONE);
+				auto reg132 = readRegister(ROC_ADDRESS_ACTION_STATUS);
+				__FE_SS__ << "SPI DIRECTORY WRITE TIMEOUT: phase=complete "
+				             "timeout=30s reg128=0x"
+				          << std::hex << reg128 << " reg132=0x" << reg132 << __E__;
+				__FE_SS_THROW__;
+			}
+			usleep(1000 * 10 /* 10 ms */);
+			++donePolls;
 		}
 		readStatus = readRegister(ROC_ADDRESS_ACTION_STATUS);
 		// getDevice()->end_dcs_transaction(); //re-allow other transactions
