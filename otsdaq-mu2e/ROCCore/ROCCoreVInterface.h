@@ -148,6 +148,17 @@ class ROCCoreVInterface : public FEVInterface
 		__SS__ << "TODO";
 		__SS_THROW__;
 	};  // virtual, must define in inheriting children
+	virtual void launchSPIFlashBlockRead(uint32_t startAddress, uint16_t numberOfBytes)
+	{
+		__SS__ << "TODO";
+		__SS_THROW__;
+	};  // virtual, must define in inheriting children
+	virtual void collectSPIFlashBlockRead(std::vector<uint16_t>& readData,
+	                                      uint16_t               numberOfBytes)
+	{
+		__SS__ << "TODO";
+		__SS_THROW__;
+	};  // virtual, must define in inheriting children
 	virtual void writeSPIFlashDirectory(const std::vector<uint32_t>& imageAddresses,
 	                                    bool                         waitForDone = true)
 	{

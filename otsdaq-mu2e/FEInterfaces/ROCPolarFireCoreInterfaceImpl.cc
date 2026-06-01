@@ -309,6 +309,15 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
                                                   uint32_t               startAddress,
                                                   uint16_t               numberOfBytes)
 {
+	launchSPIFlashBlockRead(startAddress, numberOfBytes);
+	collectSPIFlashBlockRead(readData, numberOfBytes);
+
+}  //end readSPIFlashBlock()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::launchSPIFlashBlockRead(uint32_t startAddress,
+                                                        uint16_t numberOfBytes)
+{
 	if(numberOfBytes > 1016)
 	{
 		__FE_SS__ << "Illegal number of bytes requested for read SPI flash action: "
@@ -330,92 +339,94 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 	};
 
 	__FE_COUTV__(StringMacros::vectorToString(commandData));
-	__FE_COUTV__(readData.size());
 
+	if(actionLock_.try_lock())
+	{
+		__FE_COUTT__ << "Have ROC action lock" << __E__;
+	}
+	else
+	{
+		__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+		__FE_SS_THROW__;
+	}
+
+	try
+	{
+		writeBlock(commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
+	}
+	catch(const std::exception& e)
+	{
+		__FE_COUT__ << "Caught exception, releasing action lock..." << __E__;
+		actionLock_.unlock();
+		throw;
+	}
+
+}  //end launchSPIFlashBlockRead()
+
+//==================================================================================================
+void ROCPolarFireCoreInterface::collectSPIFlashBlockRead(std::vector<uint16_t>& readData,
+                                                         uint16_t               numberOfBytes)
+{
 	std::vector<uint16_t> tmpReadData;
-	{  //start action lock
+	try
+	{
+		// wait for both DONE and the expected TX word count. Register 128 can
+		// still contain DONE from the previous action for a short time after
+		// writeBlock(), so DONE alone is not a safe completion condition here.
+		const size_t expectedReadCount = numberOfBytes / 2 + 4;
+		size_t       readCount         = 0;
+		size_t       i                 = 0;
+		while(true)
+		{
+			const bool done = isActionDone();
+			readCount       = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
+			            0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
 
-		if(actionLock_.try_lock())
-		{
-			__FE_COUTT__ << "Have ROC action lock" << __E__;
+			if(done && readCount == expectedReadCount)
+				break;
+
+			if(i > 5 * 100 /* 5 seconds */)
+			{
+				auto doneFinal   = readRegister(ROC_ADDRESS_ACTION_DONE);
+				auto countFinal  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
+				auto statusFinal = readRegister(ROC_ADDRESS_ACTION_STATUS);
+
+				__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
+				             "for more info with ROC Read to "
+				          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
+				          << readCount << " expected 0x" << expectedReadCount
+				          << ". Final state: reg128=0x" << doneFinal << " reg129=0x"
+				          << countFinal << " reg132=0x" << statusFinal << __E__;
+				__FE_SS_THROW__;
+			}
+			usleep(1000 * 10 /* 10 ms */);
+			++i;
 		}
-		else
+		__FE_COUTT__ << "SPI read action done, reading status..." << __E__;
+
+		__FE_COUTV__(readCount);
+		if(readCount - 4 != numberOfBytes / 2)
 		{
-			__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!"
+			__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x"
+			          << std::hex << readCount << " expected 0x" << numberOfBytes / 2 + 4
+			          << __E__ << "Consider emptying manually by reading 0x" << readCount - 4
+			          << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND
 			          << __E__;
 			__FE_SS_THROW__;
 		}
 
-		try
-		{
-			writeBlock(
-			    commandData, ROC_ADDRESS_ACTION_COMMAND, false /* incrementAddress */);
-
-			// wait for both DONE and the expected TX word count. Register 128 can
-			// still contain DONE from the previous action for a short time after
-			// writeBlock(), so DONE alone is not a safe completion condition here.
-			const size_t expectedReadCount = numberOfBytes / 2 + 4;
-			size_t       readCount         = 0;
-			size_t       i                 = 0;
-			while(true)
-			{
-				const bool done = isActionDone();
-				readCount       = readRegister(ROC_ADDRESS_ACTION_READ_SIZE) &
-				            0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
-
-				if(done && readCount == expectedReadCount)
-					break;
-
-				if(i > 5 * 100 /* 5 seconds */)
-				{
-					// Diagnostic: dump final register state on timeout
-					auto doneFinal   = readRegister(ROC_ADDRESS_ACTION_DONE);
-					auto countFinal  = readRegister(ROC_ADDRESS_ACTION_READ_SIZE);
-					auto statusFinal = readRegister(ROC_ADDRESS_ACTION_STATUS);
-
-					__FE_SS__ << "Timeout waiting for SPI flash block read action! Check "
-					             "for more info with ROC Read to "
-					          << ROC_ADDRESS_ACTION_DONE << ", read count 0x" << std::hex
-					          << readCount << " expected 0x" << expectedReadCount
-					          << ". Final state: reg128=0x" << doneFinal << " reg129=0x"
-					          << countFinal << " reg132=0x" << statusFinal << __E__;
-					__FE_SS_THROW__;
-				}
-				usleep(1000 * 10 /* 10 ms */);
-				++i;
-			}
-			__FE_COUTT__ << "SPI read action done, reading status..." << __E__;
-
-			//check read count, it will be different by 4
-			__FE_COUTV__(readCount);
-			if(readCount - 4 != numberOfBytes / 2)  //readCount == 4096)
-			{
-				__FE_SS__ << "Illegal read count received after SPI flash directory read "
-				             "action: 0x"
-				          << std::hex << readCount << " expected 0x"
-				          << numberOfBytes / 2 + 4 << __E__
-				          << "Consider emptying manually by reading 0x" << readCount - 4
-				          << " words with Block Read from address 0x"
-				          << ROC_ADDRESS_ACTION_COMMAND << __E__;
-				;
-				__FE_SS_THROW__;
-			}
-
-			//now read back
-			readBlock(tmpReadData,
-			          ROC_ADDRESS_ACTION_COMMAND,
-			          readCount - 4,
-			          false /* incrementAddress */);
-			// getDevice()->end_dcs_transaction(); //re-allow other transactions
-		}
-		catch(const std::exception& e)
-		{
-			__FE_COUT__ << "Caught exception, releasing action lock..." << __E__;
-			actionLock_.unlock();
-			throw;
-		}
+		readBlock(tmpReadData,
+		          ROC_ADDRESS_ACTION_COMMAND,
+		          readCount - 4,
+		          false /* incrementAddress */);
+	}
+	catch(const std::exception& e)
+	{
+		__FE_COUT__ << "Caught exception, releasing action lock..." << __E__;
 		actionLock_.unlock();
-	}  //end action lock
+		throw;
+	}
+	actionLock_.unlock();
 
 	__FE_COUTV__(tmpReadData.size());
 
@@ -427,7 +438,7 @@ void ROCPolarFireCoreInterface::readSPIFlashBlock(std::vector<uint16_t>& readDat
 	                   0x7ff;  //only low 11-bits are size (12 is empty, 14 is full)
 	__FE_COUTV__(readCount);
 
-}  //end readSPIFlashBlock()
+}  //end collectSPIFlashBlockRead()
 
 //==================================================================================================
 /// 32 programming words = each pair of programming words contain a programming image

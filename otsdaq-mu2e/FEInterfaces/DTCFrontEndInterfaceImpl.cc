@@ -8160,104 +8160,152 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		                 << " chunkSize=" << VERIFY_CHUNK_SIZE << " startAddress=0x"
 		                 << std::hex << startAddress << std::dec << __E__;
 
-		for(auto& roc : targetROCs)
+		std::chrono::time_point<std::chrono::steady_clock> verifyStartTime =
+		    std::chrono::steady_clock::now();
+		size_t lastVerifyPercent = 0;
+
+		for(size_t i = 0; i < contents.size(); i += VERIFY_CHUNK_SIZE)
 		{
-			__FE_COUTV__(roc);
-			__FE_COUTV__(rocs_.at(roc)->getLinkID());
-			std::vector<uint16_t> readData;  //full bitfile is assembled here
-			size_t                lastVerifyPercent = 0;
-			std::chrono::time_point<std::chrono::steady_clock> verifyStartTime =
-			    std::chrono::steady_clock::now();
+			size_t readSize = contents.size() - i;
+			if(readSize > VERIFY_CHUNK_SIZE)
+				readSize = VERIFY_CHUNK_SIZE;
 
-			for(size_t i = 0; i < contents.size(); i += VERIFY_CHUNK_SIZE)
+			std::map<std::string, bool>                  readLockHeld;
+			std::map<std::string, std::vector<uint16_t>> readDataByROC;
+
+			try
 			{
-				size_t readSize = contents.size() - i;
-				if(readSize > VERIFY_CHUNK_SIZE)
-					readSize = VERIFY_CHUNK_SIZE;
-
-				__FE_COUTT__ << "SPI verify chunk start: roc='" << roc
-				             << "' link=" << rocs_.at(roc)->getLinkID() << " offset=" << i
-				             << " size=" << readSize << " flashAddr=0x" << std::hex
-				             << (startAddress + i) << std::dec
-				             << " totalBytes=" << contents.size() << __E__;
-
-				//append to readData
-				rocs_.at(roc)->readSPIFlashBlock(readData, startAddress + i, readSize);
-
-				__FE_COUTT__ << "SPI verify chunk done: roc='" << roc
-				             << "' link=" << rocs_.at(roc)->getLinkID() << " offset=" << i
-				             << " readWords=" << readData.size() << __E__;
-
-				// Log verify progress at INFO level every 10%
-				size_t currentPercent = (i + readSize) * 100 / contents.size();
-				if(currentPercent / 10 != lastVerifyPercent / 10 ||
-				   i + readSize >= contents.size())
+				for(auto& roc : targetROCs)
 				{
-					__FE_COUT_INFO__ << "SPI verify progress: roc='" << roc
-					                 << "' link=" << rocs_.at(roc)->getLinkID() << " "
-					                 << currentPercent << "% (" << (i + readSize) << "/"
-					                 << contents.size() << " bytes)" << __E__;
-					lastVerifyPercent = currentPercent;
+					__FE_COUTT__ << "SPI verify chunk launch: roc='" << roc
+					             << "' link=" << rocs_.at(roc)->getLinkID()
+					             << " offset=" << i << " size=" << readSize
+					             << " flashAddr=0x" << std::hex << (startAddress + i)
+					             << std::dec << " totalBytes=" << contents.size() << __E__;
+					rocs_.at(roc)->launchSPIFlashBlockRead(startAddress + i, readSize);
+					readLockHeld[roc] = true;
+
+					size_t acceptPolls = 0;
+					while(rocs_.at(roc)->isActionDone())
+					{
+						size_t readCount = rocs_.at(roc)->readRegister(129 /*ACTION_READ_SIZE*/) &
+						                   0x7ff;
+						if(readCount == readSize / 2 + 4)
+							break;
+
+						if(acceptPolls > 5 * 100 /* 5 seconds */)
+						{
+							__FE_SS__ << "SPI VERIFY TIMEOUT: roc='" << roc
+							          << "' link=" << rocs_.at(roc)->getLinkID()
+							          << " offset=" << i
+							          << " phase=command-accepted timeout=5s" << __E__;
+							__FE_SS_THROW__;
+						}
+						usleep(1000 * 10 /* 10 ms */);
+						++acceptPolls;
+					}
 				}
 
-				//partial word verify loop
-				for(size_t j = i; j < i + readSize; j += 2)
+				for(auto& roc : targetROCs)
 				{
-					if(uint8_t(contents[j]) != uint8_t(readData[j / 2]) ||
-					   uint8_t(contents[j + 1]) != uint8_t(readData[j / 2] >> 8))
+					try
 					{
-						// Diagnostic: read ROC registers at time of mismatch
-						auto doneAtMismatch =
-						    rocs_.at(roc)->readRegister(128 /*ROC_ADDRESS_ACTION_DONE*/);
-						auto countAtMismatch = rocs_.at(roc)->readRegister(
-						    129 /*ROC_ADDRESS_ACTION_READ_SIZE*/);
-						auto statusAtMismatch = rocs_.at(roc)->readRegister(
-						    132 /*ROC_ADDRESS_ACTION_STATUS*/);
+						rocs_.at(roc)->collectSPIFlashBlockRead(readDataByROC[roc], readSize);
+						readLockHeld[roc] = false;
+					}
+					catch(...)
+					{
+						readLockHeld[roc] = false;
+						throw;
+					}
 
-						__FE_SS__
-						    << "SPI VERIFY MISMATCH: roc='" << roc
-						    << "' link=" << rocs_.at(roc)->getLinkID()
-						    << " offset=" << std::dec << j << " flashAddr=0x" << std::hex
-						    << (startAddress + j) << " chunkOffset=" << std::dec << i
-						    << " chunkSize=" << readSize
-						    << " totalBytes=" << contents.size()
-						    << " verifyChunkSize=" << VERIFY_CHUNK_SIZE << " expected=0x"
-						    << std::hex << std::setw(2) << std::setfill('0')
-						    << (uint16_t(contents[j + 1]) & 0xFF)
-						    << (uint16_t(contents[j]) & 0xFF) << " got=0x"
-						    << (uint16_t(readData[j / 2] >> 8) & 0xFF)
-						    << (uint16_t(readData[j / 2]) & 0xFF) << " reg128=0x"
-						    << doneAtMismatch << " reg129=0x" << countAtMismatch
-						    << " reg132=0x" << statusAtMismatch;
+					__FE_COUTT__ << "SPI verify chunk done: roc='" << roc
+					             << "' link=" << rocs_.at(roc)->getLinkID() << " offset=" << i
+					             << " readWords=" << readDataByROC[roc].size() << __E__;
 
-						// Dump surrounding readback words for context
-						ss << ". Readback around mismatch (word index, value):";
-						size_t dumpStart = (j / 2 >= 4) ? (j / 2 - 4) : 0;
-						size_t dumpEnd   = std::min(j / 2 + 5, readData.size());
-						for(size_t d = dumpStart; d < dumpEnd; ++d)
-							ss << " [" << std::dec << d << "]=0x" << std::hex
-							   << std::setw(4) << std::setfill('0') << readData[d];
-						ss << __E__;
-
+					if(readDataByROC[roc].size() * 2 != readSize)
+					{
+						__FE_SS__ << "At roc '" << roc
+						          << "' link=" << rocs_.at(roc)->getLinkID()
+						          << ", SPI VERIFY CHUNK SIZE MISMATCH: offset=" << i
+						          << " expectedBytes=" << readSize
+						          << " readBytes=" << readDataByROC[roc].size() * 2
+						          << __E__;
 						__FE_SS_THROW__;
 					}
-				}  //end partial verify loop
 
-			}  //end read check
+					for(size_t j = 0; j < readSize; j += 2)
+					{
+						if(uint8_t(contents[i + j]) != uint8_t(readDataByROC[roc][j / 2]) ||
+						   uint8_t(contents[i + j + 1]) !=
+						       uint8_t(readDataByROC[roc][j / 2] >> 8))
+						{
+							auto doneAtMismatch =
+							    rocs_.at(roc)->readRegister(128 /*ROC_ADDRESS_ACTION_DONE*/);
+							auto countAtMismatch = rocs_.at(roc)->readRegister(
+							    129 /*ROC_ADDRESS_ACTION_READ_SIZE*/);
+							auto statusAtMismatch = rocs_.at(roc)->readRegister(
+							    132 /*ROC_ADDRESS_ACTION_STATUS*/);
 
-			// now verify size
-			if(readData.size() * 2 != contents.size())
+							__FE_SS__
+							    << "SPI VERIFY MISMATCH: roc='" << roc
+							    << "' link=" << rocs_.at(roc)->getLinkID()
+							    << " offset=" << std::dec << (i + j) << " flashAddr=0x"
+							    << std::hex << (startAddress + i + j)
+							    << " chunkOffset=" << std::dec << i
+							    << " chunkSize=" << readSize
+							    << " totalBytes=" << contents.size()
+							    << " verifyChunkSize=" << VERIFY_CHUNK_SIZE << " expected=0x"
+							    << std::hex << std::setw(2) << std::setfill('0')
+							    << (uint16_t(contents[i + j + 1]) & 0xFF)
+							    << (uint16_t(contents[i + j]) & 0xFF) << " got=0x"
+							    << (uint16_t(readDataByROC[roc][j / 2] >> 8) & 0xFF)
+							    << (uint16_t(readDataByROC[roc][j / 2]) & 0xFF)
+							    << " reg128=0x" << doneAtMismatch << " reg129=0x"
+							    << countAtMismatch << " reg132=0x" << statusAtMismatch;
+
+							ss << ". Readback around mismatch (chunk word index, value):";
+							size_t dumpStart = (j / 2 >= 4) ? (j / 2 - 4) : 0;
+							size_t dumpEnd   = std::min(j / 2 + 5, readDataByROC[roc].size());
+							for(size_t d = dumpStart; d < dumpEnd; ++d)
+								ss << " [" << std::dec << d << "]=0x" << std::hex
+								   << std::setw(4) << std::setfill('0')
+								   << readDataByROC[roc][d];
+							ss << __E__;
+
+							__FE_SS_THROW__;
+						}
+					}
+				}
+			}
+			catch(...)
 			{
-				__FE_SS__ << "At roc '" << roc << "' link=" << rocs_.at(roc)->getLinkID()
-				          << ", SPI VERIFY SIZE MISMATCH: expectedBytes="
-				          << contents.size() << " readBytes=" << readData.size() * 2
-				          << __E__;
-				__FE_SS_THROW__;
+				for(auto& rocLock : readLockHeld)
+					if(rocLock.second)
+					{
+						__FE_COUT_WARN__ << "Force-clearing pending ROC action lock for '"
+						                 << rocLock.first << "'" << __E__;
+						rocs_.at(rocLock.first)->forceClearActionLock();
+					}
+				throw;
 			}
 
-			long long verifyMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-			                         std::chrono::steady_clock::now() - verifyStartTime)
-			                         .count();
+			size_t currentPercent = (i + readSize) * 100 / contents.size();
+			if(currentPercent / 10 != lastVerifyPercent / 10 ||
+			   i + readSize >= contents.size())
+			{
+				__FE_COUT_INFO__ << "SPI verify progress: all target ROCs " << currentPercent
+				                 << "% (" << (i + readSize) << "/" << contents.size()
+				                 << " bytes)" << __E__;
+				lastVerifyPercent = currentPercent;
+			}
+		}
+
+		long long verifyMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+		                         std::chrono::steady_clock::now() - verifyStartTime)
+		                         .count();
+		for(auto& roc : targetROCs)
+		{
 			__FE_COUT_INFO__ << "SPI verify done: roc='" << roc
 			                 << "' link=" << rocs_.at(roc)->getLinkID()
 			                 << " bytes=" << contents.size() << " elapsedMs=" << verifyMs
@@ -8265,7 +8313,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 			resultsSs << "At roc '" << roc << "' link=" << rocs_.at(roc)->getLinkID()
 			          << ", SPI data verified." << __E__;
-		}  //end launch of ROC erase SPI block loop
+		}
 	}  //end verify
 
 	if(!program)

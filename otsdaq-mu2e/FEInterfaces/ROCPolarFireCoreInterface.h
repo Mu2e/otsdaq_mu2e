@@ -77,6 +77,9 @@ class ROCPolarFireCoreInterface : public ROCCoreVInterface
 	void readSPIFlashBlock(std::vector<uint16_t>& readData,
 	                       uint32_t               startAddress,
 	                       uint16_t               numberOfBytes) override;
+	void launchSPIFlashBlockRead(uint32_t startAddress, uint16_t numberOfBytes) override;
+	void collectSPIFlashBlockRead(std::vector<uint16_t>& readData,
+	                              uint16_t               numberOfBytes) override;
 	void writeSPIFlashDirectory(const std::vector<uint32_t>& imageAddresses,
 	                            bool                         waitForDone = true) override;
 	void writeSPIFlashBlock(const std::vector<uint16_t>& writeData,
