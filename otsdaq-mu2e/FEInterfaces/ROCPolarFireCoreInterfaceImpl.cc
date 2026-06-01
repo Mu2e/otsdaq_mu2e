@@ -691,8 +691,10 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 
 	if(readStatus)
 	{
-		__FE_SS__ << "Non-zero status received after SPI flash write action: 0x"
-		          << std::hex << readStatus << __E__;
+		__FE_SS__ << "SPI local write verify failed at flashAddr=0x" << std::hex
+		          << startAddress << " failMask=0x" << readStatus
+		          << " (bit N flags 128-byte subblock N within this 1KB chunk)" << std::dec
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 

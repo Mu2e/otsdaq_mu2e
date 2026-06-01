@@ -8078,9 +8078,12 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						{
 							__FE_SS__ << "At roc '" << roc
 							          << "' link=" << rocs_.at(roc)->getLinkID()
-							          << ", Non-zero status received after SPI write action "
-							             "at offset "
-							          << i << ": 0x" << std::hex << readStatus << __E__;
+							          << ", SPI local write verify failed at offset " << i
+							          << " flashAddr=0x" << std::hex << (startAddress + i)
+							          << " failMask=0x" << readStatus
+							          << " (bit N flags 128-byte subblock N within this "
+							             "1KB chunk)"
+							          << std::dec << __E__;
 							__FE_SS_THROW__;
 						}
 						__FE_COUTT__ << "SPI write chunk done: roc='" << roc
