@@ -346,7 +346,8 @@ void ROCPolarFireCoreInterface::launchSPIFlashBlockRead(uint32_t startAddress,
 	}
 	else
 	{
-		__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!" << __E__;
+		__FE_SS__ << "Could not get ROC action lock (is there an incomplete action?)!"
+		          << __E__;
 		__FE_SS_THROW__;
 	}
 
@@ -365,7 +366,7 @@ void ROCPolarFireCoreInterface::launchSPIFlashBlockRead(uint32_t startAddress,
 
 //==================================================================================================
 void ROCPolarFireCoreInterface::collectSPIFlashBlockRead(std::vector<uint16_t>& readData,
-                                                         uint16_t               numberOfBytes)
+                                                         uint16_t numberOfBytes)
 {
 	std::vector<uint16_t> tmpReadData;
 	try
@@ -407,11 +408,12 @@ void ROCPolarFireCoreInterface::collectSPIFlashBlockRead(std::vector<uint16_t>& 
 		__FE_COUTV__(readCount);
 		if(readCount - 4 != numberOfBytes / 2)
 		{
-			__FE_SS__ << "Illegal read count received after SPI flash directory read action: 0x"
-			          << std::hex << readCount << " expected 0x" << numberOfBytes / 2 + 4
-			          << __E__ << "Consider emptying manually by reading 0x" << readCount - 4
-			          << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND
-			          << __E__;
+			__FE_SS__
+			    << "Illegal read count received after SPI flash directory read action: 0x"
+			    << std::hex << readCount << " expected 0x" << numberOfBytes / 2 + 4
+			    << __E__ << "Consider emptying manually by reading 0x" << readCount - 4
+			    << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND
+			    << __E__;
 			__FE_SS_THROW__;
 		}
 
@@ -693,8 +695,8 @@ void ROCPolarFireCoreInterface::writeSPIFlashBlock(const std::vector<uint16_t>& 
 	{
 		__FE_SS__ << "SPI local write verify failed at flashAddr=0x" << std::hex
 		          << startAddress << " failMask=0x" << readStatus
-		          << " (bit N flags 128-byte subblock N within this 1KB chunk)" << std::dec
-		          << __E__;
+		          << " (bit N flags 128-byte subblock N within this 1KB chunk)"
+		          << std::dec << __E__;
 		__FE_SS_THROW__;
 	}
 
