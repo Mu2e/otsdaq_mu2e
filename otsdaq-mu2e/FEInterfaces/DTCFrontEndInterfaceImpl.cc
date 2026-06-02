@@ -10,6 +10,7 @@
 #include "TGraph.h"
 #include "TH1.h"
 
+#include <mutex>
 #include <thread>
 
 using namespace ots;
@@ -5483,8 +5484,9 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 				ss << ". Check the ROC Errors (Timeouts + others) section for details: ";
 			else
 				ss << ": ";
-			ss << statusSs.str();
-			__SS_THROW__;
+			__COUT_ERR__ << ss.str();
+			ss << "\n" << statusSs.str();
+			return ss.str();
 		}
 	}
 	__GEN_COUT__ << "Done getting detached buffer test status..." << __E__;
@@ -7934,47 +7936,79 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				eraseLockHeld[roc] = true;
 			}
 
-			for(auto& roc : targetROCs)
+			// Poll all ROCs in parallel for command-accepted
 			{
+				std::map<std::string, bool> acceptedMap;
 				size_t acceptPolls = 0;
-				while(rocs_.at(roc)->isActionDone())
+				bool allAccepted;
+				do
 				{
-					if(acceptPolls > 5 * 100 /* 5 seconds */)
+					allAccepted = true;
+					for(auto& roc : targetROCs)
 					{
-						__FE_SS__ << "SPI ERASE TIMEOUT: roc='" << roc
-						          << "' link=" << rocs_.at(roc)->getLinkID()
-						          << " phase=command-accepted timeout=5s" << __E__;
+						if(acceptedMap[roc])
+							continue;
+						if(!rocs_.at(roc)->isActionDone())
+						{
+							acceptedMap[roc] = true;
+							__FE_COUT_INFO__ << "SPI erase accepted: roc='" << roc
+							                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
+						}
+						else
+							allAccepted = false;
+					}
+					if(!allAccepted && ++acceptPolls > 5 * 100 /* 5 seconds */)
+					{
+						__FE_SS__ << "SPI ERASE TIMEOUT: phase=command-accepted timeout=5s, ROCs not accepted:";
+						for(auto& roc : targetROCs)
+							if(!acceptedMap[roc])
+								ss << " '" << roc << "' link=" << rocs_.at(roc)->getLinkID();
+						ss << __E__;
 						__FE_SS_THROW__;
 					}
-					usleep(1000 * 10 /* 10 ms */);
-					++acceptPolls;
-				}
-				__FE_COUT_INFO__ << "SPI erase accepted: roc='" << roc
-				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
+					else if(!allAccepted)
+						usleep(1000 * 10 /* 10 ms */);
+				} while(!allAccepted);
 			}
 
-			for(auto& roc : targetROCs)
+			// Poll all ROCs in parallel for erase completion
 			{
+				std::map<std::string, bool> doneMap;
 				size_t donePolls = 0;
-				while(!rocs_.at(roc)->isActionDone(nullptr, true /* releaseLockOnDone */))
+				bool allDone;
+				do
 				{
-					if(donePolls > 180 * 100 /* 180 seconds */)
+					allDone = true;
+					for(auto& roc : targetROCs)
 					{
-						__FE_SS__ << "SPI ERASE TIMEOUT: roc='" << roc
-						          << "' link=" << rocs_.at(roc)->getLinkID()
-						          << " phase=complete timeout=180s" << __E__;
+						if(doneMap[roc])
+							continue;
+						if(rocs_.at(roc)->isActionDone(nullptr, true /* releaseLockOnDone */))
+						{
+							doneMap[roc] = true;
+							eraseLockHeld[roc] = false;
+							long long eraseMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+							                        std::chrono::steady_clock::now() - eraseStartTime)
+							                        .count();
+							__FE_COUT_INFO__ << "SPI erase done: roc='" << roc
+							                 << "' link=" << rocs_.at(roc)->getLinkID()
+							                 << " elapsedMs=" << eraseMs << __E__;
+						}
+						else
+							allDone = false;
+					}
+					if(!allDone && ++donePolls > 180 * 100 /* 180 seconds */)
+					{
+						__FE_SS__ << "SPI ERASE TIMEOUT: phase=complete timeout=180s, ROCs not done:";
+						for(auto& roc : targetROCs)
+							if(!doneMap[roc])
+								ss << " '" << roc << "' link=" << rocs_.at(roc)->getLinkID();
+						ss << __E__;
 						__FE_SS_THROW__;
 					}
-					usleep(1000 * 10 /* 10 ms */);
-					++donePolls;
-				}
-				eraseLockHeld[roc] = false;
-				long long eraseMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-				                        std::chrono::steady_clock::now() - eraseStartTime)
-				                        .count();
-				__FE_COUT_INFO__ << "SPI erase done: roc='" << roc
-				                 << "' link=" << rocs_.at(roc)->getLinkID()
-				                 << " elapsedMs=" << eraseMs << __E__;
+					else if(!allDone)
+						usleep(1000 * 10 /* 10 ms */);
+				} while(!allDone);
 			}
 		}
 		catch(...)
@@ -8028,6 +8062,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 				std::map<std::string, bool> writeLockHeld;
 				try
 				{
+					// Launch write on all ROCs (non-blocking)
 					for(auto& roc : targetROCs)
 					{
 						__FE_COUTT__ << "SPI write chunk launch: roc='" << roc
@@ -8038,59 +8073,98 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						rocs_.at(roc)->writeSPIFlashBlock(
 						    writeData, startAddress + i, false /* waitForDone */);
 						writeLockHeld[roc] = true;
-
-						size_t acceptPolls = 0;
-						while(rocs_.at(roc)->isActionDone())
-						{
-							if(acceptPolls > 5 * 100 /* 5 seconds */)
-							{
-								__FE_SS__ << "SPI WRITE TIMEOUT: roc='" << roc
-								          << "' link=" << rocs_.at(roc)->getLinkID()
-								          << " offset=" << i
-								          << " phase=command-accepted timeout=5s" << __E__;
-								__FE_SS_THROW__;
-							}
-							usleep(1000 * 10 /* 10 ms */);
-							++acceptPolls;
-						}
 					}
 
-					for(auto& roc : targetROCs)
+					// Poll all ROCs in parallel for command-accepted
 					{
-						DTCLib::roc_data_t readStatus = 0;
-						size_t             donePolls  = 0;
-						while(!rocs_.at(roc)->isActionDone(
-						    &readStatus, true /* releaseLockOnDone */))
+						std::map<std::string, bool> acceptedMap;
+						size_t acceptPolls = 0;
+						bool allAccepted;
+						do
 						{
-							if(donePolls > 5 * 100 /* 5 seconds */)
+							allAccepted = true;
+							for(auto& roc : targetROCs)
 							{
-								__FE_SS__ << "SPI WRITE TIMEOUT: roc='" << roc
-								          << "' link=" << rocs_.at(roc)->getLinkID()
-								          << " offset=" << i << " phase=complete timeout=5s"
-								          << __E__;
+								if(acceptedMap[roc])
+									continue;
+								if(!rocs_.at(roc)->isActionDone())
+									acceptedMap[roc] = true;
+								else
+									allAccepted = false;
+							}
+							if(!allAccepted && ++acceptPolls > 5 * 100 /* 5 seconds */)
+							{
+								__FE_SS__ << "SPI WRITE TIMEOUT: phase=command-accepted timeout=5s offset=" << i
+								          << ", ROCs not accepted:";
+								for(auto& roc : targetROCs)
+									if(!acceptedMap[roc])
+										ss << " '" << roc << "' link=" << rocs_.at(roc)->getLinkID();
+								ss << __E__;
 								__FE_SS_THROW__;
 							}
-							usleep(1000 * 10 /* 10 ms */);
-							++donePolls;
-						}
-						writeLockHeld[roc] = false;
-						if(readStatus)
+							else if(!allAccepted)
+								usleep(1000 * 10 /* 10 ms */);
+						} while(!allAccepted);
+					}
+
+					// Poll all ROCs in parallel for write completion
+					{
+						std::map<std::string, bool> doneMap;
+						std::map<std::string, DTCLib::roc_data_t> statusMap;
+						size_t donePolls = 0;
+						bool allDone;
+						do
 						{
-							__FE_SS__ << "At roc '" << roc
-							          << "' link=" << rocs_.at(roc)->getLinkID()
-							          << ", SPI local write verify failed at offset " << i
-							          << " flashAddr=0x" << std::hex << (startAddress + i)
-							          << " failMask=0x" << readStatus
-							          << " (bit N flags 128-byte subblock N within this "
-							             "1KB chunk)"
-							          << std::dec << __E__;
-							__FE_SS_THROW__;
+							allDone = true;
+							for(auto& roc : targetROCs)
+							{
+								if(doneMap[roc])
+									continue;
+								DTCLib::roc_data_t readStatus = 0;
+								if(rocs_.at(roc)->isActionDone(
+								    &readStatus, true /* releaseLockOnDone */))
+								{
+									doneMap[roc] = true;
+									statusMap[roc] = readStatus;
+									writeLockHeld[roc] = false;
+								}
+								else
+									allDone = false;
+							}
+							if(!allDone && ++donePolls > 5 * 100 /* 5 seconds */)
+							{
+								__FE_SS__ << "SPI WRITE TIMEOUT: phase=complete timeout=5s offset=" << i
+								          << ", ROCs not done:";
+								for(auto& roc : targetROCs)
+									if(!doneMap[roc])
+										ss << " '" << roc << "' link=" << rocs_.at(roc)->getLinkID();
+								ss << __E__;
+								__FE_SS_THROW__;
+							}
+							else if(!allDone)
+								usleep(1000 * 10 /* 10 ms */);
+						} while(!allDone);
+
+						for(auto& roc : targetROCs)
+						{
+							if(statusMap[roc])
+							{
+								__FE_SS__ << "At roc '" << roc
+								          << "' link=" << rocs_.at(roc)->getLinkID()
+								          << ", SPI local write verify failed at offset " << i
+								          << " flashAddr=0x" << std::hex << (startAddress + i)
+								          << " failMask=0x" << statusMap[roc]
+								          << " (bit N flags 128-byte subblock N within this "
+								             "1KB chunk)"
+								          << std::dec << __E__;
+								__FE_SS_THROW__;
+							}
+							__FE_COUTT__ << "SPI write chunk done: roc='" << roc
+							             << "' link=" << rocs_.at(roc)->getLinkID()
+							             << " offset=" << i << " size=" << writeSize
+							             << " flashAddr=0x" << std::hex << (startAddress + i)
+							             << std::dec << __E__;
 						}
-						__FE_COUTT__ << "SPI write chunk done: roc='" << roc
-						             << "' link=" << rocs_.at(roc)->getLinkID()
-						             << " offset=" << i << " size=" << writeSize
-						             << " flashAddr=0x" << std::hex << (startAddress + i)
-						             << std::dec << __E__;
 					}
 				}
 				catch(...)
@@ -8178,6 +8252,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 			try
 			{
+				// Launch read on all ROCs (non-blocking)
 				for(auto& roc : targetROCs)
 				{
 					__FE_COUTT__ << "SPI verify chunk launch: roc='" << roc
@@ -8187,28 +8262,50 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					             << std::dec << " totalBytes=" << contents.size() << __E__;
 					rocs_.at(roc)->launchSPIFlashBlockRead(startAddress + i, readSize);
 					readLockHeld[roc] = true;
-
-					size_t acceptPolls = 0;
-					while(rocs_.at(roc)->isActionDone())
-					{
-						size_t readCount = rocs_.at(roc)->readRegister(129 /*ACTION_READ_SIZE*/) &
-						                   0x7ff;
-						if(readCount == readSize / 2 + 4)
-							break;
-
-						if(acceptPolls > 5 * 100 /* 5 seconds */)
-						{
-							__FE_SS__ << "SPI VERIFY TIMEOUT: roc='" << roc
-							          << "' link=" << rocs_.at(roc)->getLinkID()
-							          << " offset=" << i
-							          << " phase=command-accepted timeout=5s" << __E__;
-							__FE_SS_THROW__;
-						}
-						usleep(1000 * 10 /* 10 ms */);
-						++acceptPolls;
-					}
 				}
 
+				// Poll all ROCs in parallel for data-ready
+				{
+					std::map<std::string, bool> readyMap;
+					size_t acceptPolls = 0;
+					bool allReady;
+					do
+					{
+						allReady = true;
+						for(auto& roc : targetROCs)
+						{
+							if(readyMap[roc])
+								continue;
+							if(!rocs_.at(roc)->isActionDone())
+							{
+								readyMap[roc] = true;
+							}
+							else
+							{
+								size_t readCount = rocs_.at(roc)->readRegister(129 /*ACTION_READ_SIZE*/) &
+								                   0x7ff;
+								if(readCount == readSize / 2 + 4)
+									readyMap[roc] = true;
+								else
+									allReady = false;
+							}
+						}
+						if(!allReady && ++acceptPolls > 5 * 100 /* 5 seconds */)
+						{
+							__FE_SS__ << "SPI VERIFY TIMEOUT: phase=command-accepted timeout=5s offset=" << i
+							          << ", ROCs not ready:";
+							for(auto& roc : targetROCs)
+								if(!readyMap[roc])
+									ss << " '" << roc << "' link=" << rocs_.at(roc)->getLinkID();
+							ss << __E__;
+							__FE_SS_THROW__;
+						}
+						else if(!allReady)
+							usleep(1000 * 10 /* 10 ms */);
+					} while(!allReady);
+				}
+
+				// Collect and verify from all ROCs
 				for(auto& roc : targetROCs)
 				{
 					try

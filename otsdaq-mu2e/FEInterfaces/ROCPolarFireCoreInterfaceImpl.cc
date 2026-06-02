@@ -174,30 +174,30 @@ try
 	                 << " Set delay = " << delay_ << ", readback = " << this->readDelay()
 	                 << "... " << __E__;
 
-	__FE_COUT__ << "Debugging ROC-DCS" << __E__;
+	// __FE_COUT__ << "Debugging ROC-DCS" << __E__;
 
-	unsigned int val;
+	// unsigned int val;
 
-	// read 6 should read back 0x12fc
-	for(int i = 0; i < 1; i++)
-	{
-		val = this->readRegister(6);
+	// // read 6 should read back 0x12fc
+	// for(int i = 0; i < 1; i++)
+	// {
+	// 	val = this->readRegister(6);
 
-		//__FE_COUT_INFO__ << i << " read register 6 = " << val << __E__;
-		if(val != 4860)
-		{
-			__FE_SS__ << "Bad read not 4860! val = " << val << __E__;
-			//__FE_SS_THROW__;   disable for the moment, so we can debug
-		}
+	// 	//__FE_COUT_INFO__ << i << " read register 6 = " << val << __E__;
+	// 	if(val != 4860)
+	// 	{
+	// 		__FE_SS__ << "Bad read not 4860! val = " << val << __E__;
+	// 		//__FE_SS_THROW__;   disable for the moment, so we can debug
+	// 	}
 
-		val = this->readDelay();
-		//__FE_COUT_INFO__ << i << " read register 7 = " << val << __E__;
-		if(val != delay_)
-		{
-			__FE_SS__ << "Bad read not " << delay_ << "! val = " << val << __E__;
-			//__FE_SS_THROW__;   disable for the moment, so we can debug
-		}
-	}
+	// 	val = this->readDelay();
+	// 	//__FE_COUT_INFO__ << i << " read register 7 = " << val << __E__;
+	// 	if(val != delay_)
+	// 	{
+	// 		__FE_SS__ << "Bad read not " << delay_ << "! val = " << val << __E__;
+	// 		//__FE_SS_THROW__;   disable for the moment, so we can debug
+	// 	}
+	// }
 
 	__FE_COUT_INFO__ << "......... reset DTC link loss counter ... " << __E__;
 	resetDTCLinkLossCounter();
