@@ -10,6 +10,7 @@
 #include "TGraph.h"
 #include "TH1.h"
 
+#include <iomanip>
 #include <mutex>
 #include <thread>
 
@@ -193,6 +194,18 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    1,  // requiredUserPermissions
 	    "*",
 	    "This FE Macro reads data from a ROC given a link and address.");
+
+	registerFEMacroFunction(
+	    "ROC Firmware Inventory",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::ROCFirmwareInventory),
+	    std::vector<std::string>{
+	        "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)"},
+	    std::vector<std::string>{"Status"},
+	    1,
+	    "*",
+	    "This FE Macro reads firmware and board identity registers from selected ROCs "
+	    "and returns a per-DTC inventory table.");
 
 	registerFEMacroFunction(
 	    "ROC Block Read",
@@ -3122,6 +3135,80 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 	          << __E__;
 	__FE_SS_THROW__;
 }  // end ReadROC()
+
+//==============================================================================
+void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
+{
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+		usingRocMask = true;
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+
+	std::stringstream result;
+	result << "ROC Firmware Inventory\n";
+	result << "======================\n";
+	result << "\n";
+
+	bool found       = false;
+	bool wroteHeader = false;
+
+	for(auto& roc : rocs_)
+	{
+		const auto linkID = roc.second->getLinkID();
+		if((!usingRocMask &&
+		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		     linkID == rocLinkIndex)) ||
+		   (usingRocMask && ((1 << (int(linkID) * 4)) & rocLinkIndexVal)))
+		{
+			found = true;
+			try
+			{
+				if(!wroteHeader)
+				{
+					const std::string header = roc.second->getFirmwareInventoryHeader();
+					result << std::left << std::setw(6) << "Link"
+					       << std::setw(24) << "ROC_UID" << header << "\n";
+					result << std::string(6 + 24 + header.size(), '-') << "\n";
+					wroteHeader = true;
+				}
+				result << std::left << std::setw(6)
+				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				       << std::setw(24) << roc.first
+				       << roc.second->getFirmwareInventoryRow() << "\n";
+			}
+			catch(const std::exception& e)
+			{
+				if(!wroteHeader)
+				{
+					result << std::left << std::setw(6) << "Link"
+					       << std::setw(24) << "ROC_UID" << "Status\n";
+					result << std::string(70, '-') << "\n";
+					wroteHeader = true;
+				}
+				result << std::left << std::setw(6)
+				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				       << std::setw(24) << roc.first << "ERROR: " << e.what()
+				       << "\n";
+			}
+		}
+	}
+
+	if(!found)
+	{
+		__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal
+		          << " not found!" << __E__;
+		__FE_SS_THROW__;
+	}
+
+	__FE_COUT__ << result.str() << __E__;
+	__SET_ARG_OUT__("Status", result.str());
+}
 
 //==============================================================================
 // DTCStatus

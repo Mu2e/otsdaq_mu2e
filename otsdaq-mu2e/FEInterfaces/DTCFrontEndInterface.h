@@ -191,6 +191,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                      bool                           blockNullHeartbeats     = false,
 	                      bool                           resequenceNonNullEvents = false);
 	void        ReadROC(__ARGS__);
+	void        ROCFirmwareInventory(__ARGS__);
 	void        WriteROC(__ARGS__);
 	void        BlockReadROC(__ARGS__);
 	void        BlockWriteROC(__ARGS__);

@@ -106,6 +106,16 @@ class ROCCoreVInterface : public FEVInterface
 		__SS_THROW__;
 		return "";
 	}  // virtual, must define in inheriting children
+	virtual std::string getFirmwareInventoryHeader(void)
+	{
+		return "";
+	}
+	virtual std::string getFirmwareInventoryRow(void)
+	{
+		__SS__ << "TODO";
+		__SS_THROW__;
+		return "";
+	}  // virtual, must define in inheriting children
 
 	virtual int readInjectedPulseTimestamp(void)
 	{
