@@ -116,6 +116,10 @@ class ROCCoreVInterface : public FEVInterface
 		__SS_THROW__;
 		return "";
 	}  // virtual, must define in inheriting children
+	virtual std::string getFirmwareInventoryJSON(void)
+	{
+		return "{}";
+	}  // virtual, returns JSON object with firmware inventory fields
 
 	virtual int readInjectedPulseTimestamp(void)
 	{

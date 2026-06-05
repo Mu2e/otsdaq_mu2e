@@ -201,11 +201,12 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        &DTCFrontEndInterface::ROCFirmwareInventory),
 	    std::vector<std::string>{
 	        "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)"},
-	    std::vector<std::string>{"Status"},
+	    std::vector<std::string>{"Status", "InventoryJSON"},
 	    1,
 	    "*",
 	    "This FE Macro reads firmware and board identity registers from selected ROCs "
-	    "and returns a per-DTC inventory table.");
+	    "and returns a per-DTC inventory table. InventoryJSON contains a JSON array of "
+	    "per-ROC objects for programmatic consumption.");
 
 	registerFEMacroFunction(
 	    "ROC Block Read",
@@ -3155,6 +3156,10 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 	result << "======================\n";
 	result << "\n";
 
+	std::stringstream jsonArray;
+	jsonArray << "[";
+	bool jsonFirst = true;
+
 	bool found       = false;
 	bool wroteHeader = false;
 
@@ -3181,6 +3186,17 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
 				       << std::setw(24) << roc.first
 				       << roc.second->getFirmwareInventoryRow() << "\n";
+
+				// Build JSON entry
+				std::string rocJson = roc.second->getFirmwareInventoryJSON();
+				if(!jsonFirst)
+					jsonArray << ",";
+				jsonFirst = false;
+				// Wrap ROC JSON with link and rocUID fields
+				jsonArray << "{\"link\":" << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				          << ",\"rocUID\":\"" << roc.first << "\""
+				          << ",\"error\":false"
+				          << ",\"data\":" << rocJson << "}";
 			}
 			catch(const std::exception& e)
 			{
@@ -3195,9 +3211,25 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
 				       << std::setw(24) << roc.first << "ERROR: " << e.what()
 				       << "\n";
+
+				// JSON entry for error case
+				if(!jsonFirst)
+					jsonArray << ",";
+				jsonFirst = false;
+				// Escape quotes in error message
+				std::string errMsg = e.what();
+				for(size_t pos = 0; (pos = errMsg.find('"', pos)) != std::string::npos; pos += 2)
+					errMsg.insert(pos, "\\");
+				jsonArray << "{\"link\":" << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				          << ",\"rocUID\":\"" << roc.first << "\""
+				          << ",\"error\":true"
+				          << ",\"errorMessage\":\"" << errMsg << "\""
+				          << ",\"data\":{}}";
 			}
 		}
 	}
+
+	jsonArray << "]";
 
 	if(!found)
 	{
@@ -3206,8 +3238,60 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 		__FE_SS_THROW__;
 	}
 
+	// Build DTC self-info JSON using public API
+	std::stringstream dtcJson;
+	try
+	{
+		auto* dtc = getDTC();
+		std::string designVersion = dtc->ReadDesignVersionNumber();
+		std::string designDate    = dtc->ReadDesignDate();
+		std::string designType    = dtc->ReadDesignType();
+		std::string linkSpeed     = dtc->ReadDesignLinkSpeed();
+		std::string vivadoVersion = dtc->ReadVivadoVersionNumber();
+		double      fpgaTemp      = dtc->ReadFPGATemperature();
+		int         devIndex      = dtc->GetDevice()->getDeviceIndex();
+		std::string driverVersion = dtc->GetDevice()->get_driver_version();
+
+		// Escape quotes in strings for JSON safety
+		auto jsonEscape = [](std::string& s) {
+			for(size_t pos = 0; (pos = s.find('"', pos)) != std::string::npos; pos += 2)
+				s.insert(pos, "\\");
+		};
+		jsonEscape(designVersion);
+		jsonEscape(designDate);
+		jsonEscape(designType);
+		jsonEscape(linkSpeed);
+		jsonEscape(vivadoVersion);
+		jsonEscape(driverVersion);
+
+		dtcJson << "{";
+		dtcJson << "\"designVersion\":\"" << designVersion << "\"";
+		dtcJson << ",\"designDate\":\"" << designDate << "\"";
+		dtcJson << ",\"designType\":\"" << designType << "\"";
+		dtcJson << ",\"linkSpeed\":\"" << linkSpeed << "\"";
+		dtcJson << ",\"vivadoVersion\":\"" << vivadoVersion << "\"";
+		dtcJson << ",\"fpgaTemp\":" << std::fixed << std::setprecision(1) << fpgaTemp;
+		dtcJson << ",\"deviceIndex\":" << devIndex;
+		dtcJson << ",\"driverVersion\":\"" << driverVersion << "\"";
+		dtcJson << "}";
+	}
+	catch(const std::exception& e)
+	{
+		std::string errMsg = e.what();
+		for(size_t pos = 0; (pos = errMsg.find('"', pos)) != std::string::npos; pos += 2)
+			errMsg.insert(pos, "\\");
+		dtcJson.str("");
+		dtcJson << "{\"error\":true,\"errorMessage\":\"" << errMsg << "\"}";
+	}
+
+	// Wrap everything in a top-level JSON object
+	std::stringstream fullJson;
+	fullJson << "{\"dtc\":" << dtcJson.str()
+	         << ",\"rocs\":" << jsonArray.str() << "}";
+
 	__FE_COUT__ << result.str() << __E__;
 	__SET_ARG_OUT__("Status", result.str());
+	__SET_ARG_OUT__("InventoryJSON", fullJson.str());
 }
 
 //==============================================================================
