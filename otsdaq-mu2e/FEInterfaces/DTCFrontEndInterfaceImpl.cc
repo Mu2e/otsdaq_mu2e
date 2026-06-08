@@ -595,7 +595,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "Loopback Manual Setup",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::ManualLoopbackSetup),
-	    std::vector<std::string>{"setAsPassthrough"}, //, "ROC_Link"},
+	    std::vector<std::string>{"setAsPassthrough"},  //, "ROC_Link"},
 	    std::vector<std::string>{},
 	    1,  // requiredUserPermissions
 	    "*",
@@ -4391,20 +4391,20 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 	std::ostringstream protocol;
 
 	protocol << getDTC()->FormattedRegDump(
-	    130, {[dtc] { return dtc->FormatCFOTXClockMarkerCountLink6(); },
-	          [dtc] { return dtc->FormatTXEventWindowMarkerCountLink(DTCLib::DTC_Link_CFO); },
-	          [dtc] { return dtc->FormatTXHeartbeatPacketCountLink(DTCLib::DTC_Link_CFO); },
-	          [dtc] { return dtc->FormatCFOLinkError(); }});
+	    130,
+	    {[dtc] { return dtc->FormatCFOTXClockMarkerCountLink6(); },
+	     [dtc] { return dtc->FormatTXEventWindowMarkerCountLink(DTCLib::DTC_Link_CFO); },
+	     [dtc] { return dtc->FormatTXHeartbeatPacketCountLink(DTCLib::DTC_Link_CFO); },
+	     [dtc] { return dtc->FormatCFOLinkError(); }});
 
-	auto csvLinkCounts = [dtc](
-	    const std::string& label,
-	    std::function<uint32_t(DTCLib::DTC_Link_ID)> readFn)
-	{
+	auto csvLinkCounts = [dtc](const std::string&                           label,
+	                           std::function<uint32_t(DTCLib::DTC_Link_ID)> readFn) {
 		std::ostringstream line;
 		line << label << ": ";
 		for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
 		{
-			if(i) line << ", ";
+			if(i)
+				line << ", ";
 			line << readFn(DTCLib::DTC_ROC_Links[i]);
 		}
 		line << "\n";
@@ -4413,20 +4413,28 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 
 	std::ostringstream performance;
 	performance << "=== ROC Link Counters [Links 0-5] ===\n";
-	performance << csvLinkCounts("    TX EWM Count         ",
+	performance << csvLinkCounts(
+	    "    TX EWM Count         ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXEventWindowMarkerCount(l); });
-	performance << csvLinkCounts("    TX Data Request Count",
+	performance << csvLinkCounts(
+	    "    TX Data Request Count",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXDataRequestPacketCount(l); });
-	performance << csvLinkCounts("    TX Heartbeat Count   ",
+	performance << csvLinkCounts(
+	    "    TX Heartbeat Count   ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXHeartbeatPacketCount(l); });
-	performance << csvLinkCounts("    TX Null HBP Count    ",
+	performance << csvLinkCounts(
+	    "    TX Null HBP Count    ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXNullHeartbeatCount(l); });
-	performance << csvLinkCounts("    TX non-Null HBP Diff ",
-	    [dtc](DTCLib::DTC_Link_ID l) { return static_cast<uint32_t>(static_cast<uint16_t>(
-	        dtc->ReadTXHeartbeatPacketCount(l) - dtc->ReadTXNullHeartbeatCount(l))); });
-	performance << csvLinkCounts("    RX Data Header Count ",
+	performance << csvLinkCounts(
+	    "    TX non-Null HBP Diff ", [dtc](DTCLib::DTC_Link_ID l) {
+		    return static_cast<uint32_t>(static_cast<uint16_t>(
+		        dtc->ReadTXHeartbeatPacketCount(l) - dtc->ReadTXNullHeartbeatCount(l)));
+	    });
+	performance << csvLinkCounts(
+	    "    RX Data Header Count ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadRXDataHeaderPacketCount(l); });
-	performance << csvLinkCounts("    RX Data Packet Count ",
+	performance << csvLinkCounts(
+	    "    RX Data Packet Count ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadRXDataPacketCount(l); });
 
 	__SET_ARG_OUT__("Protocol Counters", protocol.str());
@@ -7415,7 +7423,7 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTests(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 {
-	bool      setAsPassthrough = __GET_ARG_IN__("setAsPassthrough", bool);
+	bool setAsPassthrough = __GET_ARG_IN__("setAsPassthrough", bool);
 	__COUTV__(setAsPassthrough);
 
 	if(setAsPassthrough)
@@ -7429,7 +7437,7 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 	//as of June 2026, do not target one ROC (all done at once)
 	return;
 
-	const int ROC_Link         = __GET_ARG_IN__("ROC_Link", int);
+	const int ROC_Link = __GET_ARG_IN__("ROC_Link", int);
 
 	__COUTV__(ROC_Link);
 

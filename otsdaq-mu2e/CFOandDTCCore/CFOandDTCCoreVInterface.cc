@@ -61,9 +61,9 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 			skipInit_ = mu2eGlobalRecords[0]
 			                .second.getNode("SkipCFOandDTCConfigureSteps")
 			                .getValue<bool>();
-			__FE_COUTV__( mu2eGlobalRecords[0]
-								.second.getNode("SkipCFOandDTCConfigureSteps")
-								.getValue<bool>());
+			__FE_COUTV__(mu2eGlobalRecords[0]
+			                 .second.getNode("SkipCFOandDTCConfigureSteps")
+			                 .getValue<bool>());
 		}
 		__FE_COUTV__(mu2eGlobalRecords.size());
 	}
@@ -372,8 +372,10 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 // GetFirmwareVersion
 void CFOandDTCCoreVInterface::GetFirmwareVersion(__ARGS__)
 {
-	__SET_ARG_OUT__("Firmware Version Date", getCFOandDTCRegisters()->FormattedRegDump(
-		130, {[this] { return getCFOandDTCRegisters()->FormatDeviceTimeAlive(); }}));
+	__SET_ARG_OUT__(
+	    "Firmware Version Date",
+	    getCFOandDTCRegisters()->FormattedRegDump(
+	        130, {[this] { return getCFOandDTCRegisters()->FormatDeviceTimeAlive(); }}));
 }  // end GetFirmwareVersion()
 
 //========================================================================
