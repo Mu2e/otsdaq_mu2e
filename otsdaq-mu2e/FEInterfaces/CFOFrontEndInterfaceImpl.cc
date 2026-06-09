@@ -355,7 +355,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&CFOFrontEndInterface::SharedRunPlanSubsystemJoin),              	// feMacroFunction
 						std::vector<std::string>{
-							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Default = Custom)",
 							"Custom Mode Bit Position (0-47, Default = 0)",
 							"Custom Mode Bit Count (1-48, Default = 48)",
 							"Custom Mode Bit Value (Default = 0)",
@@ -402,7 +402,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin),  // feMacroFunction
 						std::vector<std::string>{
-							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Default = Custom)",
 							"Duty Cycle (% or M:N on:event ratio, Default = 100%)",
 							"Custom Mode Bit Position (0-47, Default = 0)",
 							"Custom Mode Bit Count (1-48, Default = 48)",
