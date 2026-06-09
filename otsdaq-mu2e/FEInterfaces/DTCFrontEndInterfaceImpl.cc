@@ -595,16 +595,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "Loopback Manual Setup",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::ManualLoopbackSetup),
-	    std::vector<std::string>{"setAsPassthrough"},  //, "ROC_Link"},
+	    std::vector<std::string>{"setAsPassthrough"},
 	    std::vector<std::string>{},
 	    1,  // requiredUserPermissions
 	    "*",
-	    "Sets the DTC in loopback mode. This is accomplished by disabling all links "
-	    "except for <b>ROC_Link</b>. "
-	    "If <b>setAsPassThrough</b> is enabled, CFO markers will be transmitted to the "
-	    "next DTC (Normal operation). "
-	    "If <b>setAsPassThrough</b> is disabled, the CFO Link SERDES output is routed "
-	    "back to the source. "
+	    "Toggles the DTC CFO loopback mode. "
+	    "If <b>setAsPassthrough</b> is enabled, CFO loopback is disabled and CFO markers "
+	    "will be transmitted to the next DTC (Normal operation). "
+	    "If <b>setAsPassthrough</b> is disabled, CFO loopback is enabled and the CFO Link "
+	    "SERDES output is routed back to the source. "
 	    "The loopback functionality is managed through the DTC Control Register bit 28.");
 
 	registerFEMacroFunction(
