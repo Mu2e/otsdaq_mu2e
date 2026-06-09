@@ -106,6 +106,20 @@ class ROCCoreVInterface : public FEVInterface
 		__SS_THROW__;
 		return "";
 	}  // virtual, must define in inheriting children
+	virtual std::string getFirmwareInventoryHeader(void)
+	{
+		return "";
+	}
+	virtual std::string getFirmwareInventoryRow(void)
+	{
+		__SS__ << "TODO";
+		__SS_THROW__;
+		return "";
+	}  // virtual, must define in inheriting children
+	virtual std::string getFirmwareInventoryJSON(void)
+	{
+		return "{}";
+	}  // virtual, returns JSON object with firmware inventory fields
 
 	virtual int readInjectedPulseTimestamp(void)
 	{
@@ -143,7 +157,18 @@ class ROCCoreVInterface : public FEVInterface
 	};  // virtual, must define in inheriting children /// consider using actionLock_ to protect/lock this link/ROC from starting more than one action
 	virtual void readSPIFlashBlock(std::vector<uint16_t>& readData,
 	                               uint32_t               startAddress,
-	                               uint8_t                numberOfWords)
+	                               uint16_t               numberOfBytes)
+	{
+		__SS__ << "TODO";
+		__SS_THROW__;
+	};  // virtual, must define in inheriting children
+	virtual void launchSPIFlashBlockRead(uint32_t startAddress, uint16_t numberOfBytes)
+	{
+		__SS__ << "TODO";
+		__SS_THROW__;
+	};  // virtual, must define in inheriting children
+	virtual void collectSPIFlashBlockRead(std::vector<uint16_t>& readData,
+	                                      uint16_t               numberOfBytes)
 	{
 		__SS__ << "TODO";
 		__SS_THROW__;

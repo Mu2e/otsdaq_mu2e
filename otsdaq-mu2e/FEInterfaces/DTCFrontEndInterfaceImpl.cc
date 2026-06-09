@@ -10,6 +10,10 @@
 #include "TGraph.h"
 #include "TH1.h"
 
+#include <dirent.h>
+#include <sys/stat.h>
+#include <iomanip>
+#include <mutex>
 #include <thread>
 
 using namespace ots;
@@ -192,6 +196,30 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    1,  // requiredUserPermissions
 	    "*",
 	    "This FE Macro reads data from a ROC given a link and address.");
+
+	registerFEMacroFunction(
+	    "ROC Firmware Inventory",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::ROCFirmwareInventory),
+	    std::vector<std::string>{
+	        "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)"},
+	    std::vector<std::string>{"Status", "InventoryJSON"},
+	    1,
+	    "*",
+	    "This FE Macro reads firmware and board identity registers from selected ROCs "
+	    "and returns a per-DTC inventory table. InventoryJSON contains a JSON array of "
+	    "per-ROC objects for programmatic consumption.");
+
+	registerFEMacroFunction(
+	    "List Firmware Directory",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::ListFirmwareDirectory),
+	    std::vector<std::string>{"DirectoryPath"},
+	    std::vector<std::string>{"DirectoryJSON"},
+	    1,
+	    "*",
+	    "Lists subdirectories and files in a firmware directory path. "
+	    "Returns JSON array of entries.");
 
 	registerFEMacroFunction(
 	    "ROC Block Read",
@@ -3123,6 +3151,308 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 }  // end ReadROC()
 
 //==============================================================================
+void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
+{
+	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
+	bool usingRocMask = false;
+	if(rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5)
+		usingRocMask = true;
+
+	DTCLib::DTC_Link_ID rocLinkIndex =
+	    DTCLib::DTC_Link_ID(usingRocMask ? -1 : rocLinkIndexVal);
+
+	std::stringstream result;
+	result << "ROC Firmware Inventory\n";
+	result << "======================\n";
+	result << "\n";
+
+	std::stringstream jsonArray;
+	jsonArray << "[";
+	bool jsonFirst = true;
+
+	bool found       = false;
+	bool wroteHeader = false;
+
+	for(auto& roc : rocs_)
+	{
+		const auto linkID = roc.second->getLinkID();
+		if((!usingRocMask && (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		                      linkID == rocLinkIndex)) ||
+		   (usingRocMask && ((1 << (int(linkID) * 4)) & rocLinkIndexVal)))
+		{
+			found = true;
+			try
+			{
+				if(!wroteHeader)
+				{
+					const std::string header = roc.second->getFirmwareInventoryHeader();
+					result << std::left << std::setw(6) << "Link" << std::setw(24)
+					       << "ROC_UID" << header << "\n";
+					result << std::string(6 + 24 + header.size(), '-') << "\n";
+					wroteHeader = true;
+				}
+				result << std::left << std::setw(6)
+				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				       << std::setw(24) << roc.first
+				       << roc.second->getFirmwareInventoryRow() << "\n";
+
+				// Build JSON entry
+				std::string rocJson = roc.second->getFirmwareInventoryJSON();
+				if(!jsonFirst)
+					jsonArray << ",";
+				jsonFirst = false;
+				// Wrap ROC JSON with link and rocUID fields
+				jsonArray << "{\"link\":"
+				          << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				          << ",\"rocUID\":\"" << roc.first << "\""
+				          << ",\"error\":false"
+				          << ",\"data\":" << rocJson << "}";
+			}
+			catch(const std::exception& e)
+			{
+				if(!wroteHeader)
+				{
+					result << std::left << std::setw(6) << "Link" << std::setw(24)
+					       << "ROC_UID"
+					       << "Status\n";
+					result << std::string(70, '-') << "\n";
+					wroteHeader = true;
+				}
+				result << std::left << std::setw(6)
+				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				       << std::setw(24) << roc.first << "ERROR: " << e.what() << "\n";
+
+				// JSON entry for error case
+				if(!jsonFirst)
+					jsonArray << ",";
+				jsonFirst = false;
+				// Escape error message for JSON
+				std::string errMsg = e.what();
+				{
+					std::string eo;
+					eo.reserve(errMsg.size());
+					for(size_t ei = 0; ei < errMsg.size(); ++ei)
+					{
+						char c = errMsg[ei];
+						if(c == '"')
+							eo += "\\\"";
+						else if(c == '\\')
+							eo += "\\\\";
+						else if(c == '\n')
+							eo += "\\n";
+						else if(c == '\r')
+							eo += "\\r";
+						else if(c == '\t')
+							eo += "\\t";
+						else if(static_cast<unsigned char>(c) < 0x20)
+							eo += ' ';
+						else
+							eo += c;
+					}
+					errMsg = eo;
+				}
+				jsonArray << "{\"link\":"
+				          << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				          << ",\"rocUID\":\"" << roc.first << "\""
+				          << ",\"error\":true"
+				          << ",\"errorMessage\":\"" << errMsg << "\""
+				          << ",\"data\":{}}";
+			}
+		}
+	}
+
+	jsonArray << "]";
+
+	if(!found)
+	{
+		__FE_COUT_WARN__ << "No ROCs found for Target ROC or Mask 0x" << std::hex
+		                 << rocLinkIndexVal << std::dec
+		                 << ". Returning DTC self-info only." << __E__;
+		result << "No ROCs found for this DTC.\n";
+	}
+
+	// Build DTC self-info JSON using public API
+	std::stringstream dtcJson;
+	try
+	{
+		auto*       dtc           = getDTC();
+		std::string designVersion = dtc->ReadDesignVersionNumber();
+		std::string designDate    = dtc->ReadDesignDate();
+		std::string designType    = dtc->ReadDesignType();
+		std::string linkSpeed     = dtc->ReadDesignLinkSpeed();
+		std::string vivadoVersion = dtc->ReadVivadoVersionNumber();
+		double      fpgaTemp      = dtc->ReadFPGATemperature();
+		int         devIndex      = dtc->GetDevice()->getDeviceIndex();
+		std::string driverVersion = dtc->GetDevice()->get_driver_version();
+
+		// Escape strings for JSON safety (quotes, backslashes, control chars)
+		auto jsonEscape = [](std::string& s) {
+			std::string out;
+			out.reserve(s.size());
+			for(size_t i = 0; i < s.size(); ++i)
+			{
+				char c = s[i];
+				switch(c)
+				{
+				case '"':
+					out += "\\\"";
+					break;
+				case '\\':
+					out += "\\\\";
+					break;
+				case '\n':
+					out += "\\n";
+					break;
+				case '\r':
+					out += "\\r";
+					break;
+				case '\t':
+					out += "\\t";
+					break;
+				default:
+					if(static_cast<unsigned char>(c) < 0x20)
+						out += ' ';  // replace other control chars with space
+					else
+						out += c;
+				}
+			}
+			s = out;
+		};
+		jsonEscape(designVersion);
+		jsonEscape(designDate);
+		jsonEscape(designType);
+		jsonEscape(linkSpeed);
+		jsonEscape(vivadoVersion);
+		jsonEscape(driverVersion);
+
+		dtcJson << "{";
+		dtcJson << "\"designVersion\":\"" << designVersion << "\"";
+		dtcJson << ",\"designDate\":\"" << designDate << "\"";
+		dtcJson << ",\"designType\":\"" << designType << "\"";
+		dtcJson << ",\"linkSpeed\":\"" << linkSpeed << "\"";
+		dtcJson << ",\"vivadoVersion\":\"" << vivadoVersion << "\"";
+		dtcJson << ",\"fpgaTemp\":" << std::fixed << std::setprecision(1) << fpgaTemp;
+		dtcJson << ",\"deviceIndex\":" << devIndex;
+		dtcJson << ",\"driverVersion\":\"" << driverVersion << "\"";
+		dtcJson << "}";
+	}
+	catch(const std::exception& e)
+	{
+		std::string errMsg = e.what();
+		{
+			std::string eo;
+			eo.reserve(errMsg.size());
+			for(size_t ei = 0; ei < errMsg.size(); ++ei)
+			{
+				char c = errMsg[ei];
+				if(c == '"')
+					eo += "\\\"";
+				else if(c == '\\')
+					eo += "\\\\";
+				else if(c == '\n')
+					eo += "\\n";
+				else if(c == '\r')
+					eo += "\\r";
+				else if(c == '\t')
+					eo += "\\t";
+				else if(static_cast<unsigned char>(c) < 0x20)
+					eo += ' ';
+				else
+					eo += c;
+			}
+			errMsg = eo;
+		}
+		dtcJson.str("");
+		dtcJson << "{\"error\":true,\"errorMessage\":\"" << errMsg << "\"}";
+	}
+
+	// Wrap everything in a top-level JSON object
+	std::stringstream fullJson;
+	fullJson << "{\"dtc\":" << dtcJson.str() << ",\"rocs\":" << jsonArray.str() << "}";
+
+	__FE_COUT__ << result.str() << __E__;
+	__SET_ARG_OUT__("Status", result.str());
+	__SET_ARG_OUT__("InventoryJSON", fullJson.str());
+}
+
+//==============================================================================
+// ListFirmwareDirectory
+//	Lists subdirectories and files in a given path, returns JSON array.
+//	Used by Firmware Manager GUI to browse firmware releases without CodeEditor.
+void DTCFrontEndInterface::ListFirmwareDirectory(__ARGS__)
+{
+	std::string dirPath = __GET_ARG_IN__("DirectoryPath", std::string);
+	__FE_COUT__ << "ListFirmwareDirectory path: " << dirPath << __E__;
+
+	std::stringstream json;
+	json << "{\"path\":\"";
+	// Escape path for JSON
+	for(size_t i = 0; i < dirPath.size(); ++i)
+	{
+		char c = dirPath[i];
+		if(c == '"')
+			json << "\\\"";
+		else if(c == '\\')
+			json << "\\\\";
+		else
+			json << c;
+	}
+	json << "\",\"entries\":[";
+
+	DIR* dir = opendir(dirPath.c_str());
+	if(!dir)
+	{
+		json << "],\"error\":\"Cannot open directory\"}";
+		__SET_ARG_OUT__("DirectoryJSON", json.str());
+		return;
+	}
+
+	bool           first = true;
+	struct dirent* entry;
+	while((entry = readdir(dir)) != nullptr)
+	{
+		std::string name = entry->d_name;
+		if(name == "." || name == "..")
+			continue;
+
+		if(!first)
+			json << ",";
+		first = false;
+
+		// Determine type
+		bool isDir = (entry->d_type == DT_DIR);
+		if(entry->d_type == DT_LNK || entry->d_type == DT_UNKNOWN)
+		{
+			// Resolve symlinks and unknown types with stat
+			struct stat st;
+			std::string fullPath = dirPath + "/" + name;
+			if(stat(fullPath.c_str(), &st) == 0)
+				isDir = S_ISDIR(st.st_mode);
+		}
+
+		json << "{\"name\":\"";
+		for(size_t i = 0; i < name.size(); ++i)
+		{
+			char c = name[i];
+			if(c == '"')
+				json << "\\\"";
+			else if(c == '\\')
+				json << "\\\\";
+			else
+				json << c;
+		}
+		json << "\",\"type\":\"" << (isDir ? "dir" : "file") << "\"}";
+	}
+	closedir(dir);
+
+	json << "]}";
+	__SET_ARG_OUT__("DirectoryJSON", json.str());
+}
+
+//==============================================================================
 // DTCStatus
 //	FEMacro 'DTCStatus' generated, Oct-22-2018 03:16:46, by 'admin' using
 // MacroMaker.	Macro Notes:
@@ -5530,8 +5860,9 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 				ss << ". Check the ROC Errors (Timeouts + others) section for details: ";
 			else
 				ss << ": ";
-			ss << statusSs.str();
-			__SS_THROW__;
+			__COUT_ERR__ << ss.str();
+			ss << "\n" << statusSs.str();
+			return ss.str();
 		}
 	}
 	__GEN_COUT__ << "Done getting detached buffer test status..." << __E__;
@@ -7806,6 +8137,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	std::vector<uint32_t> mapWriteData;
 	if(mapPath != "Default" && mapPath != "")
 	{
+		__FE_COUT_INFO__ << "SPI directory map load start: path='" << mapPath << "'"
+		                 << " writeMap=" << writeMap << " verifyMap=" << verifyMap
+		                 << " targetROCs=" << targetROCs.size() << __E__;
 		__COUTV__(mapPath);
 
 		char       line[100];
@@ -7826,25 +8160,37 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		}
 		fclose(fp);
 
+		__FE_COUT_INFO__ << "SPI directory map loaded: entries=" << mapWriteData.size()
+		                 << __E__;
 		__FE_COUTV__(StringMacros::vectorToString(mapWriteData));
 		if(writeMap)
 		{
-			__FE_COUT__ << "WriteSPIFlashDirectory" << __E__;
+			__FE_COUT_INFO__ << "SPI directory map write start: targetROCs="
+			                 << targetROCs.size() << __E__;
 			for(auto& roc : targetROCs)
 			{
+				__FE_COUT_INFO__ << "SPI directory map write ROC start: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 				__FE_COUTV__(roc);
 				__FE_COUTV__(rocs_.at(roc)->getLinkID());
 				rocs_.at(roc)->writeSPIFlashDirectory(mapWriteData);
+				__FE_COUT_INFO__ << "SPI directory map write ROC done: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 			}  //end roc loop to write map
-			__FE_COUT__ << "end WriteSPIFlashDirectory" << __E__;
+			__FE_COUT_INFO__ << "SPI directory map write done: targetROCs="
+			                 << targetROCs.size() << __E__;
 		}
 		else
-			__FE_COUT__ << "skip WriteSPIFlashDirectory" << __E__;
+			__FE_COUT_INFO__ << "SPI directory map write skipped" << __E__;
 
 		if(verifyMap)
 		{
+			__FE_COUT_INFO__ << "SPI directory map verify start: targetROCs="
+			                 << targetROCs.size() << __E__;
 			for(auto& roc : targetROCs)
 			{
+				__FE_COUT_INFO__ << "SPI directory map verify ROC start: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 				__FE_COUTV__(roc);
 				__FE_COUTV__(rocs_.at(roc)->getLinkID());
 
@@ -7882,11 +8228,13 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 						__FE_SS_THROW__;
 					}
 
-				__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
-				            << ", Directory map verified." << __E__;
+				__FE_COUT_INFO__ << "SPI directory map verify ROC done: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
 				resultsSs << roc << " link=" << rocs_.at(roc)->getLinkID()
 				          << ", Directory map verified." << __E__;
 			}  //end roc loop to verify map
+			__FE_COUT_INFO__ << "SPI directory map verify done: targetROCs="
+			                 << targetROCs.size() << __E__;
 		}
 	}  //end directory map handling
 
@@ -7898,8 +8246,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 	}
 	uint32_t startAddress = mapWriteData[imageIndex];
 
-	__FE_COUT__ << "startAddress = " << startAddress << " 0x" << std::hex << std::setw(8)
-	            << std::setfill('0') << startAddress << __E__;
+	__FE_COUT_INFO__ << "SPI start address selected: imageIndex=" << int(imageIndex)
+	                 << " startAddress=0x" << std::hex << std::setw(8)
+	                 << std::setfill('0') << startAddress << std::dec << __E__;
 
 	std::string contents, fullpath;
 	if(bitfilePath != "Default" && bitfilePath != "")
@@ -7907,6 +8256,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	if(fullpath != "")
 	{
+		__FE_COUT_INFO__ << "SPI bitfile load start: path='" << fullpath << "'" << __E__;
 		__COUTV__(fullpath);
 
 		std::FILE* fp = std::fopen(fullpath.c_str(), "rb");
@@ -7925,6 +8275,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 		__FE_COUTV__(contents.size());
 
+		__FE_COUT_INFO__ << "SPI bitfile load done: bytes=" << contents.size() << __E__;
 		resultsSs << "Loaded file '" << fullpath << "' of size=" << contents.size()
 		          << __E__;
 	}
@@ -7937,67 +8288,143 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		contents.resize(debugForceSize);  //force for debugging
 	}
 
+	// the write/verify flow packs contents as 16-bit words, so pad odd-length
+	// bitfiles with 0xFF (erased-flash value) to avoid reading past the end
+	if(contents.size() % 2)
+	{
+		__FE_COUT_INFO__ << "SPI bitfile byte count is odd (" << contents.size()
+		                 << "), padding with 0xFF to 16-bit word boundary." << __E__;
+		contents.push_back(char(0xFF));
+	}
+
+	__FE_COUT_INFO__ << "SPI programming request: bytes=" << contents.size()
+	                 << " startAddress=0x" << std::hex << startAddress << std::dec
+	                 << " write=" << write << " verify=" << verify
+	                 << " program=" << program << " targetROCs=" << targetROCs.size()
+	                 << __E__;
+
+	setFEMacroPercentDone(0);
+
 	//first launch erase
 	if(write && contents.size())
 	{
-		__FE_COUT__ << "Start erasing SPI..." << __E__;
-		for(auto& roc : targetROCs)
+		__FE_COUT_INFO__ << "SPI erase start: bytes=" << contents.size()
+		                 << " startAddress=0x" << std::hex << startAddress << std::dec
+		                 << " targetROCs=" << targetROCs.size() << __E__;
+		std::chrono::time_point<std::chrono::steady_clock> eraseStartTime =
+		    std::chrono::steady_clock::now();
+		std::map<std::string, bool> eraseLockHeld;
+		try
 		{
-			__FE_COUTV__(roc);
-			__FE_COUTV__(rocs_.at(roc)->getLinkID());
-			rocs_.at(roc)->eraseSPIFlashBlock(
-			    contents.size(), startAddress, false /* waitForDone */);
-		}  //end launch of ROC erase SPI block loop
-
-		__FE_COUT__ << "Checking that erase is done..." << __E__;
-		//then check for erase done
-		{
-			bool allDone = true;
-			// DTCLib::roc_data_t readStatus;
-			std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
-			size_t                                               attempt = 0;
-			do
+			for(auto& roc : targetROCs)
 			{
-				allDone = true;
-				for(auto& roc : targetROCs)
-				{
-					if(doneMap[roc])
-						continue;  //skip those done
+				__FE_COUT_INFO__ << "SPI erase launch: roc='" << roc
+				                 << "' link=" << rocs_.at(roc)->getLinkID() << __E__;
+				rocs_.at(roc)->eraseSPIFlashBlock(
+				    contents.size(), startAddress, false /* waitForDone */);
+				eraseLockHeld[roc] = true;
+			}
 
-					doneMap[roc] = rocs_.at(roc)->isActionDone(
-					    nullptr /*&readStatus*/,  //erase does not give status
-					    true /* releaseLockOnDone */);
-					if(!doneMap[roc])
-						allDone = false;
-					else
+			// Poll all ROCs in parallel for command-accepted
+			{
+				std::map<std::string, bool> acceptedMap;
+				size_t                      acceptPolls = 0;
+				bool                        allAccepted;
+				do
+				{
+					allAccepted = true;
+					for(auto& roc : targetROCs)
 					{
-						//Erase action does not have status...
-						// if(readStatus)
-						// {
-						// 	__FE_SS__ << "At roc '" << roc << "' link=" <<
-						// 		rocs_.at(roc)->getLinkID() <<
-						// 		", Non-zero status received after SPI flash erase action: 0x" << std::hex << readStatus << __E__;
-						// 	__FE_SS_THROW__;
-						// }
-						__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
-						            << ", done with erase SPI block." << __E__;
+						if(acceptedMap[roc])
+							continue;
+						if(!rocs_.at(roc)->isActionDone())
+						{
+							acceptedMap[roc] = true;
+							__FE_COUT_INFO__ << "SPI erase accepted: roc='" << roc
+							                 << "' link=" << rocs_.at(roc)->getLinkID()
+							                 << __E__;
+						}
+						else
+							allAccepted = false;
 					}
-				}  //end launch of ROC erase SPI block loop
+					if(!allAccepted && ++acceptPolls > 5 * 100 /* 5 seconds */)
+					{
+						__FE_SS__ << "SPI ERASE TIMEOUT: phase=command-accepted "
+						             "timeout=5s, ROCs not accepted:";
+						for(auto& roc : targetROCs)
+							if(!acceptedMap[roc])
+								ss << " '" << roc
+								   << "' link=" << rocs_.at(roc)->getLinkID();
+						ss << __E__;
+						__FE_SS_THROW__;
+					}
+					else if(!allAccepted)
+						usleep(1000 * 10 /* 10 ms */);
+				} while(!allAccepted);
+			}
 
-				if(!allDone && ++attempt > 120 /* 60 s */)
+			// Poll all ROCs in parallel for erase completion
+			{
+				std::map<std::string, bool> doneMap;
+				size_t                      donePolls = 0;
+				bool                        allDone;
+				do
 				{
-					__FE_SS__ << "Timeout waiting for SPI flash erase action! Check for "
-					             "more info with ROC Read to 128."
-					          << __E__;
-					__FE_SS_THROW__;
+					allDone = true;
+					for(auto& roc : targetROCs)
+					{
+						if(doneMap[roc])
+							continue;
+						if(rocs_.at(roc)->isActionDone(nullptr,
+						                               true /* releaseLockOnDone */))
+						{
+							doneMap[roc]       = true;
+							eraseLockHeld[roc] = false;
+							long long eraseMs =
+							    std::chrono::duration_cast<std::chrono::milliseconds>(
+							        std::chrono::steady_clock::now() - eraseStartTime)
+							        .count();
+							__FE_COUT_INFO__ << "SPI erase done: roc='" << roc
+							                 << "' link=" << rocs_.at(roc)->getLinkID()
+							                 << " elapsedMs=" << eraseMs << __E__;
+						}
+						else
+							allDone = false;
+					}
+					if(!allDone && ++donePolls > 180 * 100 /* 180 seconds */)
+					{
+						__FE_SS__ << "SPI ERASE TIMEOUT: phase=complete timeout=180s, "
+						             "ROCs not done:";
+						for(auto& roc : targetROCs)
+							if(!doneMap[roc])
+								ss << " '" << roc
+								   << "' link=" << rocs_.at(roc)->getLinkID();
+						ss << __E__;
+						__FE_SS_THROW__;
+					}
+					else if(!allDone)
+						usleep(1000 * 10 /* 10 ms */);
+				} while(!allDone);
+			}
+		}
+		catch(...)
+		{
+			for(auto& rocLock : eraseLockHeld)
+				if(rocLock.second)
+				{
+					__FE_COUT_WARN__ << "Force-clearing pending ROC action lock for '"
+					                 << rocLock.first << "'" << __E__;
+					rocs_.at(rocLock.first)->forceClearActionLock();
 				}
-				else if(!allDone)
-					usleep(1000 * 500 /* 500 ms */);
-			} while(!allDone);
-		}  //end check for erase done
+			throw;
+		}
+
+		setFEMacroPercentDone(10);
 
 		// d. Start writing blocks in 1 KB size calling action 8 (address+ offset)
-		__FE_COUT__ << "Start writing bitfile to SPI..." << __E__;
+		__FE_COUT_INFO__ << "SPI write start: bytes=" << contents.size()
+		                 << " blockSize=1024 startAddress=0x" << std::hex << startAddress
+		                 << std::dec << __E__;
 		// return; //block writing bitfile
 
 		std::chrono::time_point<std::chrono::steady_clock> transferStartTime =
@@ -8008,7 +8435,9 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 			size_t writeSize = contents.size() - i;
 			if(writeSize > 1024)
 				writeSize = 1024;
-			__FE_COUTV__(i);
+			__FE_COUTT__ << "SPI write chunk start: offset=" << i << " size=" << writeSize
+			             << " flashAddr=0x" << std::hex << (startAddress + i) << std::dec
+			             << __E__;
 
 			{
 				std::vector<uint16_t> writeData;
@@ -8026,82 +8455,160 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 					__FE_COUTV__(outss.str());
 				}
 
-				for(auto& roc : targetROCs)
+				std::map<std::string, bool> writeLockHeld;
+				try
 				{
-					__FE_COUTV__(roc);
-					__FE_COUTV__(rocs_.at(roc)->getLinkID());
-					rocs_.at(roc)->writeSPIFlashBlock(
-					    writeData, startAddress + i, false /* waitForDone */);
-				}  //end launch of ROC erase SPI block loop
-			}
-
-			__FE_COUT__ << "Checking that write is done..." << __E__;
-			// return;
-			//then check for writing done
-			{
-				bool                                                 allDone    = true;
-				DTCLib::roc_data_t                                   readStatus = 0;
-				std::map<std::string /* ROC UIC */, bool /* done */> doneMap;
-				size_t                                               attempt = 0;
-				do
-				{
-					allDone = true;
+					// Launch write on all ROCs (non-blocking)
 					for(auto& roc : targetROCs)
 					{
-						if(doneMap[roc])
-							continue;  //skip those done
+						__FE_COUTT__ << "SPI write chunk launch: roc='" << roc
+						             << "' link=" << rocs_.at(roc)->getLinkID()
+						             << " offset=" << i << " size=" << writeSize
+						             << " flashAddr=0x" << std::hex << (startAddress + i)
+						             << std::dec << __E__;
+						rocs_.at(roc)->writeSPIFlashBlock(
+						    writeData, startAddress + i, false /* waitForDone */);
+						writeLockHeld[roc] = true;
+					}
 
-						doneMap[roc] = rocs_.at(roc)->isActionDone(
-						    &readStatus, true /* releaseLockOnDone */);
-						// rocs_.at(roc)->forceClearActionLock();
-						if(!doneMap[roc])
+					// Poll all ROCs in parallel for command-accepted
+					{
+						std::map<std::string, bool> acceptedMap;
+						size_t                      acceptPolls = 0;
+						bool                        allAccepted;
+						do
 						{
-							allDone = false;
-							__FE_COUTS__(10) << "Waiting..." << attempt << __E__;
-						}
-						else
-						{
-							if(readStatus)
+							allAccepted = true;
+							for(auto& roc : targetROCs)
 							{
-								__FE_SS__ << "At roc '" << roc
-								          << "' link=" << rocs_.at(roc)->getLinkID()
-								          << ", Non-zero status received after SPI flash "
-								             "write action: 0x"
-								          << std::hex << readStatus << __E__;
+								if(acceptedMap[roc])
+									continue;
+								if(!rocs_.at(roc)->isActionDone())
+									acceptedMap[roc] = true;
+								else
+									allAccepted = false;
+							}
+							if(!allAccepted && ++acceptPolls > 5 * 100 /* 5 seconds */)
+							{
+								__FE_SS__ << "SPI WRITE TIMEOUT: phase=command-accepted "
+								             "timeout=5s offset="
+								          << i << ", ROCs not accepted:";
+								for(auto& roc : targetROCs)
+									if(!acceptedMap[roc])
+										ss << " '" << roc
+										   << "' link=" << rocs_.at(roc)->getLinkID();
+								ss << __E__;
 								__FE_SS_THROW__;
 							}
-							__FE_COUT__ << roc << " link=" << rocs_.at(roc)->getLinkID()
-							            << ", done with write SPI block." << __E__;
-						}
-					}  //end launch of ROC erase SPI block loop
-
-					if(!allDone && ++attempt > 120 * 300 /* 3 mins */)
-					{
-						__FE_SS__ << "Timeout waiting for SPI flash write action! Check "
-						             "for more info with ROC Read to 128."
-						          << __E__;
-						__FE_SS_THROW__;
+							else if(!allAccepted)
+								usleep(1000 * 10 /* 10 ms */);
+						} while(!allAccepted);
 					}
-					else if(!allDone)
-						usleep(1000 * 5 /* 5 ms */);
-				} while(!allDone);
-			}  //end check for erase done
+
+					// Poll all ROCs in parallel for write completion
+					{
+						std::map<std::string, bool>               doneMap;
+						std::map<std::string, DTCLib::roc_data_t> statusMap;
+						size_t                                    donePolls = 0;
+						bool                                      allDone;
+						do
+						{
+							allDone = true;
+							for(auto& roc : targetROCs)
+							{
+								if(doneMap[roc])
+									continue;
+								DTCLib::roc_data_t readStatus = 0;
+								if(rocs_.at(roc)->isActionDone(
+								       &readStatus, true /* releaseLockOnDone */))
+								{
+									doneMap[roc]       = true;
+									statusMap[roc]     = readStatus;
+									writeLockHeld[roc] = false;
+								}
+								else
+									allDone = false;
+							}
+							if(!allDone && ++donePolls > 5 * 100 /* 5 seconds */)
+							{
+								__FE_SS__ << "SPI WRITE TIMEOUT: phase=complete "
+								             "timeout=5s offset="
+								          << i << ", ROCs not done:";
+								for(auto& roc : targetROCs)
+									if(!doneMap[roc])
+										ss << " '" << roc
+										   << "' link=" << rocs_.at(roc)->getLinkID();
+								ss << __E__;
+								__FE_SS_THROW__;
+							}
+							else if(!allDone)
+								usleep(1000 * 10 /* 10 ms */);
+						} while(!allDone);
+
+						for(auto& roc : targetROCs)
+						{
+							if(statusMap[roc])
+							{
+								__FE_SS__
+								    << "At roc '" << roc
+								    << "' link=" << rocs_.at(roc)->getLinkID()
+								    << ", SPI local write verify failed at offset " << i
+								    << " flashAddr=0x" << std::hex << (startAddress + i)
+								    << " failMask=0x" << statusMap[roc]
+								    << " (bit N flags 128-byte subblock N within this "
+								       "1KB chunk)"
+								    << std::dec << __E__;
+								__FE_SS_THROW__;
+							}
+							__FE_COUTT__ << "SPI write chunk done: roc='" << roc
+							             << "' link=" << rocs_.at(roc)->getLinkID()
+							             << " offset=" << i << " size=" << writeSize
+							             << " flashAddr=0x" << std::hex
+							             << (startAddress + i) << std::dec << __E__;
+						}
+					}
+				}
+				catch(...)
+				{
+					for(auto& rocLock : writeLockHeld)
+						if(rocLock.second)
+						{
+							__FE_COUT_WARN__
+							    << "Force-clearing pending ROC action lock for '"
+							    << rocLock.first << "'" << __E__;
+							rocs_.at(rocLock.first)->forceClearActionLock();
+						}
+					throw;
+				}
+			}
 
 			if(writeSize)
-				__FE_COUT__ << "Write chunk #" << int(i / writeSize)
-				            << " done at offset=" << i << " and size=" << writeSize
-				            << " / " << contents.size() << __E__;
+			{
+				setFEMacroPercentDone(10 + 70 * (i + writeSize) / contents.size());
+				size_t currentPercent = (i + writeSize) * 100 / contents.size();
+				size_t prevPercent    = i > 0 ? (i * 100 / contents.size()) : 0;
+
+				__FE_COUTT__ << "SPI write chunk #" << int(i / 1024)
+				             << " done: offset=" << i << " size=" << writeSize
+				             << " totalBytes=" << contents.size()
+				             << " progress=" << currentPercent << "%" << __E__;
+
+				// Log at INFO level every 10% so it is visible in the message viewer
+				if(currentPercent / 10 != prevPercent / 10 ||
+				   i + writeSize >= contents.size())
+					__FE_COUT_INFO__ << "SPI write progress: " << currentPercent << "% "
+					                 << "(" << (i + writeSize) << "/" << contents.size()
+					                 << " bytes)" << __E__;
+			}
 
 			long long ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
 			                   std::chrono::steady_clock::now() - transferStartTime)
 			                   .count();
 			if(ns > 1000)  //prevent divide by 0
 			{
-				__FE_COUT__ << "Data Transfer Duration: " << ns / 1000.0 / 1000.0 << " ms"
-				            << __E__;
-				__FE_COUT__ << "Average Data Rate: "
-				            << ((double)(i + writeSize)) / (ns / 1000.0) << " MB/s"
-				            << __E__;
+				__FE_COUTT__ << "SPI write elapsedMs=" << ns / 1000.0 / 1000.0
+				             << " averageRateMBps="
+				             << ((double)(i + writeSize)) / (ns / 1000.0) << __E__;
 			}
 
 			// if (i > 4000)
@@ -8110,72 +8617,214 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 		resultsSs << "Write of bitfile to address 0x" << std::hex << std::setw(8)
 		          << std::setfill('0') << startAddress << __E__;
+		long long writeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+		                        std::chrono::steady_clock::now() - transferStartTime)
+		                        .count();
+		__FE_COUT_INFO__ << "SPI write done: bytes=" << contents.size()
+		                 << " elapsedMs=" << writeMs << __E__;
 	}
 	else
-		__FE_COUT__ << "Skipping erase and write action." << __E__;
+		__FE_COUT_INFO__ << "SPI erase/write skipped: write=" << write
+		                 << " bytes=" << contents.size() << __E__;
 
 	// return; //for debug
 
-	// h. If verify read back the all flash sector using action 7, in blocks of 128 bytes
+	// h. If verify read back the all flash sector using action 7, in blocks of 1016 bytes
+	constexpr size_t VERIFY_CHUNK_SIZE = 1016;
 	if(verify && contents.size())
 	{
-		__FE_COUT__ << "Start reading back SPI... " << contents.size() << " bytes"
-		            << __E__;
+		setFEMacroPercentDone(80);
+		__FE_COUT_INFO__ << "SPI verify start: bytes=" << contents.size()
+		                 << " chunkSize=" << VERIFY_CHUNK_SIZE << " startAddress=0x"
+		                 << std::hex << startAddress << std::dec << __E__;
 
-		for(auto& roc : targetROCs)
+		std::chrono::time_point<std::chrono::steady_clock> verifyStartTime =
+		    std::chrono::steady_clock::now();
+		size_t lastVerifyPercent = 0;
+
+		for(size_t i = 0; i < contents.size(); i += VERIFY_CHUNK_SIZE)
 		{
-			__FE_COUTV__(roc);
-			__FE_COUTV__(rocs_.at(roc)->getLinkID());
-			std::vector<uint16_t> readData;  //full bitfile is assembled here
+			size_t readSize = contents.size() - i;
+			if(readSize > VERIFY_CHUNK_SIZE)
+				readSize = VERIFY_CHUNK_SIZE;
 
-			for(size_t i = 0; i < contents.size(); i += 254)
+			std::map<std::string, bool>                  readLockHeld;
+			std::map<std::string, std::vector<uint16_t>> readDataByROC;
+
+			try
 			{
-				size_t readSize = contents.size() - i;
-				if(readSize > 254)
-					readSize = 254;
-				__FE_COUTV__(i);
-
-				//append to readData
-				rocs_.at(roc)->readSPIFlashBlock(readData, startAddress + i, readSize);
-
-				//partial word verify loop
-				for(size_t j = i; j < i + readSize; j += 2)
+				// Launch read on all ROCs (non-blocking)
+				for(auto& roc : targetROCs)
 				{
-					if(uint8_t(contents[j]) != uint8_t(readData[j / 2]) ||
-					   uint8_t(contents[j + 1]) != uint8_t(readData[j / 2] >> 8))
+					__FE_COUTT__ << "SPI verify chunk launch: roc='" << roc
+					             << "' link=" << rocs_.at(roc)->getLinkID()
+					             << " offset=" << i << " size=" << readSize
+					             << " flashAddr=0x" << std::hex << (startAddress + i)
+					             << std::dec << " totalBytes=" << contents.size()
+					             << __E__;
+					rocs_.at(roc)->launchSPIFlashBlockRead(startAddress + i, readSize);
+					readLockHeld[roc] = true;
+				}
+
+				// Poll all ROCs in parallel for data-ready
+				{
+					std::map<std::string, bool> readyMap;
+					size_t                      acceptPolls = 0;
+					bool                        allReady;
+					do
+					{
+						allReady = true;
+						for(auto& roc : targetROCs)
+						{
+							if(readyMap[roc])
+								continue;
+							if(!rocs_.at(roc)->isActionDone())
+							{
+								readyMap[roc] = true;
+							}
+							else
+							{
+								size_t readCount = rocs_.at(roc)->readRegister(
+								                       129 /*ACTION_READ_SIZE*/) &
+								                   0x7ff;
+								if(readCount == readSize / 2 + 4)
+									readyMap[roc] = true;
+								else
+									allReady = false;
+							}
+						}
+						if(!allReady && ++acceptPolls > 5 * 100 /* 5 seconds */)
+						{
+							__FE_SS__ << "SPI VERIFY TIMEOUT: phase=command-accepted "
+							             "timeout=5s offset="
+							          << i << ", ROCs not ready:";
+							for(auto& roc : targetROCs)
+								if(!readyMap[roc])
+									ss << " '" << roc
+									   << "' link=" << rocs_.at(roc)->getLinkID();
+							ss << __E__;
+							__FE_SS_THROW__;
+						}
+						else if(!allReady)
+							usleep(1000 * 10 /* 10 ms */);
+					} while(!allReady);
+				}
+
+				// Collect and verify from all ROCs
+				for(auto& roc : targetROCs)
+				{
+					try
+					{
+						rocs_.at(roc)->collectSPIFlashBlockRead(readDataByROC[roc],
+						                                        readSize);
+						readLockHeld[roc] = false;
+					}
+					catch(...)
+					{
+						readLockHeld[roc] = false;
+						throw;
+					}
+
+					__FE_COUTT__ << "SPI verify chunk done: roc='" << roc
+					             << "' link=" << rocs_.at(roc)->getLinkID()
+					             << " offset=" << i
+					             << " readWords=" << readDataByROC[roc].size() << __E__;
+
+					if(readDataByROC[roc].size() * 2 != readSize)
 					{
 						__FE_SS__ << "At roc '" << roc
 						          << "' link=" << rocs_.at(roc)->getLinkID()
-						          << ", Bitfile readback mismatch at offset=" << j
-						          << " + size=" << readSize << " / " << contents.size()
-						          << ", expected 0x" << std::hex << std::setw(2)
-						          << std::setfill('0')
-						          << (uint16_t(contents[j + 1]) & 0xFF)
-						          << (uint16_t(contents[j]) & 0xFF) << ", got 0x"
-						          << (uint16_t(readData[j / 2] >> 8) & 0xFF)
-						          << (uint16_t(readData[j / 2]) & 0xFF) << __E__;
+						          << ", SPI VERIFY CHUNK SIZE MISMATCH: offset=" << i
+						          << " expectedBytes=" << readSize
+						          << " readBytes=" << readDataByROC[roc].size() * 2
+						          << __E__;
 						__FE_SS_THROW__;
 					}
-				}  //end partial verify loop
 
-			}  //end read check
+					for(size_t j = 0; j < readSize; j += 2)
+					{
+						if(uint8_t(contents[i + j]) !=
+						       uint8_t(readDataByROC[roc][j / 2]) ||
+						   uint8_t(contents[i + j + 1]) !=
+						       uint8_t(readDataByROC[roc][j / 2] >> 8))
+						{
+							auto doneAtMismatch = rocs_.at(roc)->readRegister(
+							    128 /*ROC_ADDRESS_ACTION_DONE*/);
+							auto countAtMismatch = rocs_.at(roc)->readRegister(
+							    129 /*ROC_ADDRESS_ACTION_READ_SIZE*/);
+							auto statusAtMismatch = rocs_.at(roc)->readRegister(
+							    132 /*ROC_ADDRESS_ACTION_STATUS*/);
 
-			// now verify size
-			if(readData.size() * 2 != contents.size())
+							__FE_SS__
+							    << "SPI VERIFY MISMATCH: roc='" << roc
+							    << "' link=" << rocs_.at(roc)->getLinkID()
+							    << " offset=" << std::dec << (i + j) << " flashAddr=0x"
+							    << std::hex << (startAddress + i + j)
+							    << " chunkOffset=" << std::dec << i
+							    << " chunkSize=" << readSize
+							    << " totalBytes=" << contents.size()
+							    << " verifyChunkSize=" << VERIFY_CHUNK_SIZE
+							    << " expected=0x" << std::hex << std::setw(2)
+							    << std::setfill('0')
+							    << (uint16_t(contents[i + j + 1]) & 0xFF)
+							    << (uint16_t(contents[i + j]) & 0xFF) << " got=0x"
+							    << (uint16_t(readDataByROC[roc][j / 2] >> 8) & 0xFF)
+							    << (uint16_t(readDataByROC[roc][j / 2]) & 0xFF)
+							    << " reg128=0x" << doneAtMismatch << " reg129=0x"
+							    << countAtMismatch << " reg132=0x" << statusAtMismatch;
+
+							ss << ". Readback around mismatch (chunk word index, value):";
+							size_t dumpStart = (j / 2 >= 4) ? (j / 2 - 4) : 0;
+							size_t dumpEnd =
+							    std::min(j / 2 + 5, readDataByROC[roc].size());
+							for(size_t d = dumpStart; d < dumpEnd; ++d)
+								ss << " [" << std::dec << d << "]=0x" << std::hex
+								   << std::setw(4) << std::setfill('0')
+								   << readDataByROC[roc][d];
+							ss << __E__;
+
+							__FE_SS_THROW__;
+						}
+					}
+				}
+			}
+			catch(...)
 			{
-				__FE_SS__ << "At roc '" << roc << "' link=" << rocs_.at(roc)->getLinkID()
-				          << ", Bitfile readback mismatch size, expected "
-				          << contents.size() << ", got " << readData.size() * 2 << __E__;
-				__FE_SS_THROW__;
+				for(auto& rocLock : readLockHeld)
+					if(rocLock.second)
+					{
+						__FE_COUT_WARN__ << "Force-clearing pending ROC action lock for '"
+						                 << rocLock.first << "'" << __E__;
+						rocs_.at(rocLock.first)->forceClearActionLock();
+					}
+				throw;
 			}
 
-			__FE_COUT__ << "At roc '" << roc << "' link=" << rocs_.at(roc)->getLinkID()
-			            << ", SPI data verified." << __E__;
+			size_t currentPercent = (i + readSize) * 100 / contents.size();
+			if(currentPercent / 10 != lastVerifyPercent / 10 ||
+			   i + readSize >= contents.size())
+			{
+				__FE_COUT_INFO__ << "SPI verify progress: all target ROCs "
+				                 << currentPercent << "% (" << (i + readSize) << "/"
+				                 << contents.size() << " bytes)" << __E__;
+				lastVerifyPercent = currentPercent;
+			}
+		}
+
+		long long verifyMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+		                         std::chrono::steady_clock::now() - verifyStartTime)
+		                         .count();
+		for(auto& roc : targetROCs)
+		{
+			__FE_COUT_INFO__ << "SPI verify done: roc='" << roc
+			                 << "' link=" << rocs_.at(roc)->getLinkID()
+			                 << " bytes=" << contents.size() << " elapsedMs=" << verifyMs
+			                 << __E__;
 
 			resultsSs << "At roc '" << roc << "' link=" << rocs_.at(roc)->getLinkID()
 			          << ", SPI data verified." << __E__;
-		}  //end launch of ROC erase SPI block loop
-	}      //end verify
+		}
+	}  //end verify
 
 	if(!program)
 	{
@@ -8185,6 +8834,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 
 	// 3) start programming the fpga with action 4 (index)
 	//first launch program
+	setFEMacroPercentDone(90);
 	__FE_COUT__ << "Start programing from SPI..." << __E__;
 	for(auto& roc : targetROCs)
 	{
@@ -8266,6 +8916,7 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		} while(!allDone);
 	}  //end check for program done
 
+	setFEMacroPercentDone(100);
 	__SET_ARG_OUT__("Result", resultsSs.str());
 	__FE_COUT__ << "Done with all program actions!" << __E__;
 }  //end ProgramROCs()
