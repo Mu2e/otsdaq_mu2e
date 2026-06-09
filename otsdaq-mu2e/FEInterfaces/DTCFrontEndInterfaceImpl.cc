@@ -3179,9 +3179,8 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 	for(auto& roc : rocs_)
 	{
 		const auto linkID = roc.second->getLinkID();
-		if((!usingRocMask &&
-		    (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
-		     linkID == rocLinkIndex)) ||
+		if((!usingRocMask && (rocLinkIndex == DTCLib::DTC_Link_ID::DTC_Link_ALL ||
+		                      linkID == rocLinkIndex)) ||
 		   (usingRocMask && ((1 << (int(linkID) * 4)) & rocLinkIndexVal)))
 		{
 			found = true;
@@ -3190,8 +3189,8 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 				if(!wroteHeader)
 				{
 					const std::string header = roc.second->getFirmwareInventoryHeader();
-					result << std::left << std::setw(6) << "Link"
-					       << std::setw(24) << "ROC_UID" << header << "\n";
+					result << std::left << std::setw(6) << "Link" << std::setw(24)
+					       << "ROC_UID" << header << "\n";
 					result << std::string(6 + 24 + header.size(), '-') << "\n";
 					wroteHeader = true;
 				}
@@ -3206,7 +3205,8 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 					jsonArray << ",";
 				jsonFirst = false;
 				// Wrap ROC JSON with link and rocUID fields
-				jsonArray << "{\"link\":" << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				jsonArray << "{\"link\":"
+				          << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
 				          << ",\"rocUID\":\"" << roc.first << "\""
 				          << ",\"error\":false"
 				          << ",\"data\":" << rocJson << "}";
@@ -3215,15 +3215,15 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 			{
 				if(!wroteHeader)
 				{
-					result << std::left << std::setw(6) << "Link"
-					       << std::setw(24) << "ROC_UID" << "Status\n";
+					result << std::left << std::setw(6) << "Link" << std::setw(24)
+					       << "ROC_UID"
+					       << "Status\n";
 					result << std::string(70, '-') << "\n";
 					wroteHeader = true;
 				}
 				result << std::left << std::setw(6)
 				       << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
-				       << std::setw(24) << roc.first << "ERROR: " << e.what()
-				       << "\n";
+				       << std::setw(24) << roc.first << "ERROR: " << e.what() << "\n";
 
 				// JSON entry for error case
 				if(!jsonFirst)
@@ -3231,12 +3231,31 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 				jsonFirst = false;
 				// Escape error message for JSON
 				std::string errMsg = e.what();
-				{std::string eo; eo.reserve(errMsg.size());
-				for(size_t ei=0;ei<errMsg.size();++ei){char c=errMsg[ei];
-				if(c=='"')eo+="\\\"";else if(c=='\\')eo+="\\\\";else if(c=='\n')eo+="\\n";
-				else if(c=='\r')eo+="\\r";else if(c=='\t')eo+="\\t";
-				else if(static_cast<unsigned char>(c)<0x20)eo+=' ';else eo+=c;}errMsg=eo;}
-				jsonArray << "{\"link\":" << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
+				{
+					std::string eo;
+					eo.reserve(errMsg.size());
+					for(size_t ei = 0; ei < errMsg.size(); ++ei)
+					{
+						char c = errMsg[ei];
+						if(c == '"')
+							eo += "\\\"";
+						else if(c == '\\')
+							eo += "\\\\";
+						else if(c == '\n')
+							eo += "\\n";
+						else if(c == '\r')
+							eo += "\\r";
+						else if(c == '\t')
+							eo += "\\t";
+						else if(static_cast<unsigned char>(c) < 0x20)
+							eo += ' ';
+						else
+							eo += c;
+					}
+					errMsg = eo;
+				}
+				jsonArray << "{\"link\":"
+				          << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
 				          << ",\"rocUID\":\"" << roc.first << "\""
 				          << ",\"error\":true"
 				          << ",\"errorMessage\":\"" << errMsg << "\""
@@ -3259,7 +3278,7 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 	std::stringstream dtcJson;
 	try
 	{
-		auto* dtc = getDTC();
+		auto*       dtc           = getDTC();
 		std::string designVersion = dtc->ReadDesignVersionNumber();
 		std::string designDate    = dtc->ReadDesignDate();
 		std::string designType    = dtc->ReadDesignType();
@@ -3278,16 +3297,26 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 				char c = s[i];
 				switch(c)
 				{
-					case '"':  out += "\\\""; break;
-					case '\\': out += "\\\\"; break;
-					case '\n': out += "\\n";  break;
-					case '\r': out += "\\r";  break;
-					case '\t': out += "\\t";  break;
-					default:
-						if(static_cast<unsigned char>(c) < 0x20)
-							out += ' ';  // replace other control chars with space
-						else
-							out += c;
+				case '"':
+					out += "\\\"";
+					break;
+				case '\\':
+					out += "\\\\";
+					break;
+				case '\n':
+					out += "\\n";
+					break;
+				case '\r':
+					out += "\\r";
+					break;
+				case '\t':
+					out += "\\t";
+					break;
+				default:
+					if(static_cast<unsigned char>(c) < 0x20)
+						out += ' ';  // replace other control chars with space
+					else
+						out += c;
 				}
 			}
 			s = out;
@@ -3313,19 +3342,36 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 	catch(const std::exception& e)
 	{
 		std::string errMsg = e.what();
-		{std::string eo; eo.reserve(errMsg.size());
-		for(size_t ei=0;ei<errMsg.size();++ei){char c=errMsg[ei];
-		if(c=='"')eo+="\\\"";else if(c=='\\')eo+="\\\\";else if(c=='\n')eo+="\\n";
-		else if(c=='\r')eo+="\\r";else if(c=='\t')eo+="\\t";
-		else if(static_cast<unsigned char>(c)<0x20)eo+=' ';else eo+=c;}errMsg=eo;}
+		{
+			std::string eo;
+			eo.reserve(errMsg.size());
+			for(size_t ei = 0; ei < errMsg.size(); ++ei)
+			{
+				char c = errMsg[ei];
+				if(c == '"')
+					eo += "\\\"";
+				else if(c == '\\')
+					eo += "\\\\";
+				else if(c == '\n')
+					eo += "\\n";
+				else if(c == '\r')
+					eo += "\\r";
+				else if(c == '\t')
+					eo += "\\t";
+				else if(static_cast<unsigned char>(c) < 0x20)
+					eo += ' ';
+				else
+					eo += c;
+			}
+			errMsg = eo;
+		}
 		dtcJson.str("");
 		dtcJson << "{\"error\":true,\"errorMessage\":\"" << errMsg << "\"}";
 	}
 
 	// Wrap everything in a top-level JSON object
 	std::stringstream fullJson;
-	fullJson << "{\"dtc\":" << dtcJson.str()
-	         << ",\"rocs\":" << jsonArray.str() << "}";
+	fullJson << "{\"dtc\":" << dtcJson.str() << ",\"rocs\":" << jsonArray.str() << "}";
 
 	__FE_COUT__ << result.str() << __E__;
 	__SET_ARG_OUT__("Status", result.str());
@@ -3347,9 +3393,12 @@ void DTCFrontEndInterface::ListFirmwareDirectory(__ARGS__)
 	for(size_t i = 0; i < dirPath.size(); ++i)
 	{
 		char c = dirPath[i];
-		if(c == '"') json << "\\\"";
-		else if(c == '\\') json << "\\\\";
-		else json << c;
+		if(c == '"')
+			json << "\\\"";
+		else if(c == '\\')
+			json << "\\\\";
+		else
+			json << c;
 	}
 	json << "\",\"entries\":[";
 
@@ -3361,14 +3410,16 @@ void DTCFrontEndInterface::ListFirmwareDirectory(__ARGS__)
 		return;
 	}
 
-	bool first = true;
+	bool           first = true;
 	struct dirent* entry;
 	while((entry = readdir(dir)) != nullptr)
 	{
 		std::string name = entry->d_name;
-		if(name == "." || name == "..") continue;
+		if(name == "." || name == "..")
+			continue;
 
-		if(!first) json << ",";
+		if(!first)
+			json << ",";
 		first = false;
 
 		// Determine type
@@ -3386,9 +3437,12 @@ void DTCFrontEndInterface::ListFirmwareDirectory(__ARGS__)
 		for(size_t i = 0; i < name.size(); ++i)
 		{
 			char c = name[i];
-			if(c == '"') json << "\\\"";
-			else if(c == '\\') json << "\\\\";
-			else json << c;
+			if(c == '"')
+				json << "\\\"";
+			else if(c == '\\')
+				json << "\\\\";
+			else
+				json << c;
 		}
 		json << "\",\"type\":\"" << (isDir ? "dir" : "file") << "\"}";
 	}
