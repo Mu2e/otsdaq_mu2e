@@ -10,6 +10,8 @@
 #include "TGraph.h"
 #include "TH1.h"
 
+#include <dirent.h>
+#include <sys/stat.h>
 #include <iomanip>
 #include <mutex>
 #include <thread>
@@ -207,6 +209,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "This FE Macro reads firmware and board identity registers from selected ROCs "
 	    "and returns a per-DTC inventory table. InventoryJSON contains a JSON array of "
 	    "per-ROC objects for programmatic consumption.");
+
+	registerFEMacroFunction(
+	    "List Firmware Directory",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::ListFirmwareDirectory),
+	    std::vector<std::string>{"DirectoryPath"},
+	    std::vector<std::string>{"DirectoryJSON"},
+	    1,
+	    "*",
+	    "Lists subdirectories and files in a firmware directory path. "
+	    "Returns JSON array of entries.");
 
 	registerFEMacroFunction(
 	    "ROC Block Read",
@@ -3216,10 +3229,13 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 				if(!jsonFirst)
 					jsonArray << ",";
 				jsonFirst = false;
-				// Escape quotes in error message
+				// Escape error message for JSON
 				std::string errMsg = e.what();
-				for(size_t pos = 0; (pos = errMsg.find('"', pos)) != std::string::npos; pos += 2)
-					errMsg.insert(pos, "\\");
+				{std::string eo; eo.reserve(errMsg.size());
+				for(size_t ei=0;ei<errMsg.size();++ei){char c=errMsg[ei];
+				if(c=='"')eo+="\\\"";else if(c=='\\')eo+="\\\\";else if(c=='\n')eo+="\\n";
+				else if(c=='\r')eo+="\\r";else if(c=='\t')eo+="\\t";
+				else if(static_cast<unsigned char>(c)<0x20)eo+=' ';else eo+=c;}errMsg=eo;}
 				jsonArray << "{\"link\":" << static_cast<unsigned int>(static_cast<uint8_t>(linkID))
 				          << ",\"rocUID\":\"" << roc.first << "\""
 				          << ",\"error\":true"
@@ -3233,9 +3249,10 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 
 	if(!found)
 	{
-		__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal
-		          << " not found!" << __E__;
-		__FE_SS_THROW__;
+		__FE_COUT_WARN__ << "No ROCs found for Target ROC or Mask 0x" << std::hex
+		                 << rocLinkIndexVal << std::dec
+		                 << ". Returning DTC self-info only." << __E__;
+		result << "No ROCs found for this DTC.\n";
 	}
 
 	// Build DTC self-info JSON using public API
@@ -3252,10 +3269,28 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 		int         devIndex      = dtc->GetDevice()->getDeviceIndex();
 		std::string driverVersion = dtc->GetDevice()->get_driver_version();
 
-		// Escape quotes in strings for JSON safety
+		// Escape strings for JSON safety (quotes, backslashes, control chars)
 		auto jsonEscape = [](std::string& s) {
-			for(size_t pos = 0; (pos = s.find('"', pos)) != std::string::npos; pos += 2)
-				s.insert(pos, "\\");
+			std::string out;
+			out.reserve(s.size());
+			for(size_t i = 0; i < s.size(); ++i)
+			{
+				char c = s[i];
+				switch(c)
+				{
+					case '"':  out += "\\\""; break;
+					case '\\': out += "\\\\"; break;
+					case '\n': out += "\\n";  break;
+					case '\r': out += "\\r";  break;
+					case '\t': out += "\\t";  break;
+					default:
+						if(static_cast<unsigned char>(c) < 0x20)
+							out += ' ';  // replace other control chars with space
+						else
+							out += c;
+				}
+			}
+			s = out;
 		};
 		jsonEscape(designVersion);
 		jsonEscape(designDate);
@@ -3278,8 +3313,11 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 	catch(const std::exception& e)
 	{
 		std::string errMsg = e.what();
-		for(size_t pos = 0; (pos = errMsg.find('"', pos)) != std::string::npos; pos += 2)
-			errMsg.insert(pos, "\\");
+		{std::string eo; eo.reserve(errMsg.size());
+		for(size_t ei=0;ei<errMsg.size();++ei){char c=errMsg[ei];
+		if(c=='"')eo+="\\\"";else if(c=='\\')eo+="\\\\";else if(c=='\n')eo+="\\n";
+		else if(c=='\r')eo+="\\r";else if(c=='\t')eo+="\\t";
+		else if(static_cast<unsigned char>(c)<0x20)eo+=' ';else eo+=c;}errMsg=eo;}
 		dtcJson.str("");
 		dtcJson << "{\"error\":true,\"errorMessage\":\"" << errMsg << "\"}";
 	}
@@ -3292,6 +3330,72 @@ void DTCFrontEndInterface::ROCFirmwareInventory(__ARGS__)
 	__FE_COUT__ << result.str() << __E__;
 	__SET_ARG_OUT__("Status", result.str());
 	__SET_ARG_OUT__("InventoryJSON", fullJson.str());
+}
+
+//==============================================================================
+// ListFirmwareDirectory
+//	Lists subdirectories and files in a given path, returns JSON array.
+//	Used by Firmware Manager GUI to browse firmware releases without CodeEditor.
+void DTCFrontEndInterface::ListFirmwareDirectory(__ARGS__)
+{
+	std::string dirPath = __GET_ARG_IN__("DirectoryPath", std::string);
+	__FE_COUT__ << "ListFirmwareDirectory path: " << dirPath << __E__;
+
+	std::stringstream json;
+	json << "{\"path\":\"";
+	// Escape path for JSON
+	for(size_t i = 0; i < dirPath.size(); ++i)
+	{
+		char c = dirPath[i];
+		if(c == '"') json << "\\\"";
+		else if(c == '\\') json << "\\\\";
+		else json << c;
+	}
+	json << "\",\"entries\":[";
+
+	DIR* dir = opendir(dirPath.c_str());
+	if(!dir)
+	{
+		json << "],\"error\":\"Cannot open directory\"}";
+		__SET_ARG_OUT__("DirectoryJSON", json.str());
+		return;
+	}
+
+	bool first = true;
+	struct dirent* entry;
+	while((entry = readdir(dir)) != nullptr)
+	{
+		std::string name = entry->d_name;
+		if(name == "." || name == "..") continue;
+
+		if(!first) json << ",";
+		first = false;
+
+		// Determine type
+		bool isDir = (entry->d_type == DT_DIR);
+		if(entry->d_type == DT_LNK || entry->d_type == DT_UNKNOWN)
+		{
+			// Resolve symlinks and unknown types with stat
+			struct stat st;
+			std::string fullPath = dirPath + "/" + name;
+			if(stat(fullPath.c_str(), &st) == 0)
+				isDir = S_ISDIR(st.st_mode);
+		}
+
+		json << "{\"name\":\"";
+		for(size_t i = 0; i < name.size(); ++i)
+		{
+			char c = name[i];
+			if(c == '"') json << "\\\"";
+			else if(c == '\\') json << "\\\\";
+			else json << c;
+		}
+		json << "\",\"type\":\"" << (isDir ? "dir" : "file") << "\"}";
+	}
+	closedir(dir);
+
+	json << "]}";
+	__SET_ARG_OUT__("DirectoryJSON", json.str());
 }
 
 //==============================================================================
