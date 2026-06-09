@@ -409,7 +409,7 @@ void ROCPolarFireCoreInterface::collectSPIFlashBlockRead(std::vector<uint16_t>& 
 		if(readCount - 4 != numberOfBytes / 2)
 		{
 			__FE_SS__
-			    << "Illegal read count received after SPI flash directory read action: 0x"
+			    << "Illegal read count received after SPI flash block read action: 0x"
 			    << std::hex << readCount << " expected 0x" << numberOfBytes / 2 + 4
 			    << __E__ << "Consider emptying manually by reading 0x" << readCount - 4
 			    << " words with Block Read from address 0x" << ROC_ADDRESS_ACTION_COMMAND

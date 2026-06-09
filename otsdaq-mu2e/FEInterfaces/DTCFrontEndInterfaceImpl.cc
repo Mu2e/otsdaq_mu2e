@@ -8237,6 +8237,15 @@ void DTCFrontEndInterface::ProgramROCs(__ARGS__)
 		contents.resize(debugForceSize);  //force for debugging
 	}
 
+	// the write/verify flow packs contents as 16-bit words, so pad odd-length
+	// bitfiles with 0xFF (erased-flash value) to avoid reading past the end
+	if(contents.size() % 2)
+	{
+		__FE_COUT_INFO__ << "SPI bitfile byte count is odd (" << contents.size()
+		                 << "), padding with 0xFF to 16-bit word boundary." << __E__;
+		contents.push_back(char(0xFF));
+	}
+
 	__FE_COUT_INFO__ << "SPI programming request: bytes=" << contents.size()
 	                 << " startAddress=0x" << std::hex << startAddress << std::dec
 	                 << " write=" << write << " verify=" << verify
