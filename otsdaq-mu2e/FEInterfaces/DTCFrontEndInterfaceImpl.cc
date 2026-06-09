@@ -602,7 +602,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "Toggles the DTC CFO loopback mode. "
 	    "If <b>setAsPassthrough</b> is enabled, CFO loopback is disabled and CFO markers "
 	    "will be transmitted to the next DTC (Normal operation). "
-	    "If <b>setAsPassthrough</b> is disabled, CFO loopback is enabled and the CFO Link "
+	    "If <b>setAsPassthrough</b> is disabled, CFO loopback is enabled and the CFO "
+	    "Link "
 	    "SERDES output is routed back to the source. "
 	    "The loopback functionality is managed through the DTC Control Register bit 28.");
 
