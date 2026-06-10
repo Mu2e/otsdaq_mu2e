@@ -58,7 +58,7 @@ prompted for this location.
 eval env_opts=\${$env_opts_var-} # can be args too
 
 spackdir="${SPACK_ROOT:-$Base/spack}"
-arch="linux-almalinux9-x86_64_v3"
+arch=""
 upstreams=()
 tag=develop
 installStatus=0
