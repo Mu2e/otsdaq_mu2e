@@ -40,7 +40,8 @@ prompted for this location.
 -w            Check out repositories read/write
 --upstream    Use <dir> as a Spack upstream (repeatable)
 --padding     Pad directories to 255 characters for relocatability
---arch        Set architechture for build (ex. linux-almalinux9-x86_64_v3)
+--arch        Architecture for build (Defaults to linux-almalinux9-x86_64_v3)
+--host-arch   Use Spack-default arch
 --no-kmod     Do not build TRACE kernel module (for Docker builds)
 --no-view     Do not create a Spack environment view
 --no-extra-products  Skip the automatic use of central product areas, such as CVMFS
@@ -56,6 +57,7 @@ prompted for this location.
 eval env_opts=\${$env_opts_var-} # can be args too
 
 spackdir="${SPACK_ROOT:-$Base/spack}"
+arch=""
 upstreams=()
 tag=develop
 installStatus=0
@@ -63,7 +65,7 @@ eval "set -- $env_opts \"\$@\""
 op1chr='rest=`expr "$op" : "[^-]\(.*\)"`   && set -- "-$rest" "$@"'
 op1arg='rest=`expr "$op" : "[^-]\(.*\)"`   && set --  "$rest" "$@"'
 reqarg="$op1arg;"'test -z "${1+1}" &&echo opt -$op requires arg. &&echo "$USAGE" &&exit'
-args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_otsdaq=0; opt_artdaq=0; opt_no_view=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0
+args= do_help= opt_v=0; opt_w=0; opt_develop=0; opt_skip_extra_products=0; opt_no_pull=0; opt_padding=0; opt_no_kmod=0; opt_all_packages=0; opt_otsdaq=0; opt_artdaq=0; opt_no_view=0; opt_dev_only=0; opt_use_mu2e=1; opt_use_cvmfs=1; opt_g4=0; opt_host_arch=0
 while [ -n "${1-}" ];do
     if expr "x${1-}" : 'x-' >/dev/null;then
         op=`expr "x$1" : 'x-\(.*\)'`; shift   # done with $1
@@ -88,6 +90,7 @@ while [ -n "${1-}" ];do
             -upstream)           eval $op1arg; upstreams+=($1); opt_use_mu2e=0; opt_use_cvmfs=0; shift;;
             -padding)            opt_padding=1;;
             -arch)               eval $op1arg; arch=$1; shift;;
+            -host-arch)          opt_host_arch=1;;
             -no-kmod)            opt_no_kmod=1;;
             -no-use-mu2e)        opt_use_mu2e=0;;
             -no-use-cvmfs)       opt_use_cvmfs=0;;
@@ -136,17 +139,12 @@ if [ -n "${oqualifier-}" ]; then
     ovariant="otsdaq=${oqualifier}"
 fi
 
-arch_opt=""
-if [ "x$arch" != "x" ]; then
-   arch_opt="arch=$arch"
-fi
-
 view_opt=""
 if [ $opt_no_view -eq 1 ];then
     view_opt="--without-view"
 fi
 
-build_system_script=`find $Base -maxdepth 4 -type f -name setup_spack_build_system_v1.1.sh`
+build_system_script=`find $Base/srcs $Base -maxdepth 4 -type f -name setup_spack_build_system_v1.1.sh|head -1`
 if [[ "x$build_system_script" == "x" ]];then
   echo "WARNING: setup_spack_build_system_v1.1.sh not found, downloading from https://github.com/art-daq/artdaq-demo"
   cd $Base
@@ -171,6 +169,15 @@ fi
 concrete_include_cmd=
 
 os_long=$(spack arch -o)
+
+if [ $opt_host_arch -eq 1 ]; then
+    arch_opt=""
+elif [[ "x$arch" != "x" ]]; then
+    arch_opt="arch=$arch"
+else
+    arch_opt="arch=linux-${os_long}-x86_64_v3"
+fi
+
 os=$(echo ${os_long//./_}|sed 's/almalinux/al/;s/ubuntu/u/')
 # Auto-add upstreams from /mu2e
 if [ $opt_use_mu2e -eq 1 ] && [ -d /mu2e/spack_v1.1 ];then
