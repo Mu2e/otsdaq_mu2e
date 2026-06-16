@@ -2459,3 +2459,48 @@ uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
 // 	__SET_ARG_OUT__("Startup Status",rd.str());
 
 // } //end StartupFireflyTx()
+
+//========================================================================
+void CFOandDTCCoreVInterface::recordTimeAlive()
+{
+	lastTimeAliveValue_ = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	__FE_COUT__ << "Recorded Time Alive register value: " << lastTimeAliveValue_ << __E__;
+}  //end recordTimeAlive()
+
+//========================================================================
+void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transitionName)
+{
+	uint32_t currentTimeAliveValue =
+	    getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	if(currentTimeAliveValue <= lastTimeAliveValue_)
+	{
+		__FE_SS__ << "Time Alive register value has not increased during '"
+		          << transitionName
+		          << "' transition! Current value: " << currentTimeAliveValue
+		          << ", last recorded value: " << lastTimeAliveValue_
+		          << ". This likely indicates the board has rebooted." << __E__;
+		__FE_SS_THROW__;
+	}
+	lastTimeAliveValue_ = currentTimeAliveValue;
+	__FE_COUT__ << "Time Alive check passed during '" << transitionName
+	            << "', updated value: " << lastTimeAliveValue_ << __E__;
+}  //end testAndUpdateTimeAlive()
+
+//========================================================================
+void CFOandDTCCoreVInterface::testRTFClockInEventBuildingMode(
+    const std::string& transitionName)
+{
+	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING)
+		return;
+
+	uint32_t jaCSRValue      = getCFOandDTCRegisters()->FormatJitterAttenuatorCSR().value;
+	bool     rtfClockMissing = (jaCSRValue >> 10) & 1;
+	if(rtfClockMissing)
+	{
+		__FE_SS__ << "RTF (RJ45) clock is missing during '" << transitionName
+		          << "' transition! JA CSR register value: 0x" << std::hex << jaCSRValue
+		          << std::dec << __E__;
+		__FE_SS_THROW__;
+	}
+	__FE_COUT__ << "RTF clock check passed during '" << transitionName << "'" << __E__;
+}  //end testRTFClockInEventBuildingMode()
