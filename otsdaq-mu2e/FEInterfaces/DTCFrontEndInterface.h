@@ -172,7 +172,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	std::ofstream datafile_[8];
 
 	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
-	std::map<DTCLib::DTC_Link_ID, bool> rocRunningStatus_;
+	std::map<DTCLib::DTC_Link_ID, bool>                                   rocRunningStatus_;
 
 	std::map<std::string /*DTC's FEMacro name*/,
 	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>

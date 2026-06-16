@@ -72,11 +72,11 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void     testRTFClockInEventBuildingMode(const std::string& transitionName);
 
   protected:
-	int         deviceIndex_     = -1;  //PCIe index
-	bool        configure_clock_ = false;
-	bool        emulatorMode_    = false;
-	bool        skipInit_        = true;
-	std::string operatingMode_   = "";
+	int         deviceIndex_        = -1;  //PCIe index
+	bool        configure_clock_    = false;
+	bool        emulatorMode_       = false;
+	bool        skipInit_           = true;
+	std::string operatingMode_      = "";
 	uint32_t    lastTimeAliveValue_ = 0;
 
 	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;

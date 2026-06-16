@@ -2821,7 +2821,8 @@ bool DTCFrontEndInterface::running(void)
 		if(!roc.second->running())
 		{
 			rocRunningStatus_[linkID] = false;
-			__FE_COUT__ << "ROC '" << roc.first << "' on link " << linkID << " done running" << __E__;
+			__FE_COUT__ << "ROC '" << roc.first << "' on link " << linkID
+			            << " done running" << __E__;
 		}
 	}
 

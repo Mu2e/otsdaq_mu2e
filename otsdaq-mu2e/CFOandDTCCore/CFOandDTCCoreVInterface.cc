@@ -2470,10 +2470,12 @@ void CFOandDTCCoreVInterface::recordTimeAlive()
 //========================================================================
 void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transitionName)
 {
-	uint32_t currentTimeAliveValue = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	uint32_t currentTimeAliveValue =
+	    getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
 	if(currentTimeAliveValue <= lastTimeAliveValue_)
 	{
-		__FE_SS__ << "Time Alive register value has not increased during '" << transitionName
+		__FE_SS__ << "Time Alive register value has not increased during '"
+		          << transitionName
 		          << "' transition! Current value: " << currentTimeAliveValue
 		          << ", last recorded value: " << lastTimeAliveValue_
 		          << ". This likely indicates the board has rebooted." << __E__;
@@ -2485,12 +2487,13 @@ void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transiti
 }  //end testAndUpdateTimeAlive()
 
 //========================================================================
-void CFOandDTCCoreVInterface::testRTFClockInEventBuildingMode(const std::string& transitionName)
+void CFOandDTCCoreVInterface::testRTFClockInEventBuildingMode(
+    const std::string& transitionName)
 {
 	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING)
 		return;
 
-	uint32_t jaCSRValue = getCFOandDTCRegisters()->FormatJitterAttenuatorCSR().value;
+	uint32_t jaCSRValue      = getCFOandDTCRegisters()->FormatJitterAttenuatorCSR().value;
 	bool     rtfClockMissing = (jaCSRValue >> 10) & 1;
 	if(rtfClockMissing)
 	{
