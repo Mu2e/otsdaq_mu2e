@@ -1183,6 +1183,8 @@ try
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
+	recordTimeAlive();
+
 	__FE_COUTV__(skipInit_);
 	if(skipInit_)
 		return;
@@ -2284,6 +2286,9 @@ void DTCFrontEndInterface::pause(void)
 //==============================================================================
 void DTCFrontEndInterface::stop(void)
 {
+	testAndUpdateTimeAlive("Stop");
+	testRTFClockInEventBuildingMode("Stop");
+
 	const std::string transitionStr = "Stopping";
 
 	__FE_COUTV__(skipInit_);
@@ -2487,12 +2492,20 @@ void DTCFrontEndInterface::resume(void)
 //==============================================================================
 void DTCFrontEndInterface::start(std::string runNumber)
 {
+	testAndUpdateTimeAlive("Start");
+	testRTFClockInEventBuildingMode("Start");
+
 	const std::string transitionStr = "Starting";
 
 	__FE_COUTV__(skipInit_);
 	if(skipInit_)
 		return;
 	__FE_COUTV__(transitionStr);
+
+	runningCallCount_ = 0;
+	rocRunningStatus_.clear();
+	for(auto& roc : rocs_)
+		rocRunningStatus_[roc.second->getLinkID()] = true;
 
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
@@ -2769,6 +2782,14 @@ bool DTCFrontEndInterface::running(void)
 	if(skipInit_)
 		return false;
 
+	++runningCallCount_;
+
+	if(runningCallCount_ % 5 == 0)
+	{
+		testAndUpdateTimeAlive("Running");
+		testRTFClockInEventBuildingMode("Running");
+	}
+
 	__FE_COUTV__(operatingMode_);
 	__FE_COUTV__(emulatorMode_);
 
@@ -2792,13 +2813,21 @@ bool DTCFrontEndInterface::running(void)
 		__FE_SS_THROW__;
 	}
 
-	bool stillRunning = false;
 	for(auto& roc : rocs_)
-		stillRunning = stillRunning || roc.second->running();
+	{
+		DTCLib::DTC_Link_ID linkID = roc.second->getLinkID();
+		if(!rocRunningStatus_[linkID])
+			continue;
+		if(!roc.second->running())
+		{
+			rocRunningStatus_[linkID] = false;
+			__FE_COUT__ << "ROC '" << roc.first << "' on link " << linkID << " done running" << __E__;
+		}
+	}
 
-	__FE_COUTV__(stillRunning);
-
-	return stillRunning;
+	if(WorkLoop::continueWorkLoop_)
+		sleep(1);
+	return true;
 
 	// /////////////////////////////
 	// /////////////////////////////

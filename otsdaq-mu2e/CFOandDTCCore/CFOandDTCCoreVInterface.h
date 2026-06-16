@@ -67,6 +67,9 @@ class CFOandDTCCoreVInterface : public FEVInterface
   protected:
 	void     registerCFOandDTCFEMacros(void);
 	uint64_t convertEventDurationToClocks(const std::string& eventDuration);
+	void     recordTimeAlive();
+	void     testAndUpdateTimeAlive(const std::string& transitionName);
+	void     testRTFClockInEventBuildingMode(const std::string& transitionName);
 
   protected:
 	int         deviceIndex_     = -1;  //PCIe index
@@ -74,6 +77,7 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	bool        emulatorMode_    = false;
 	bool        skipInit_        = true;
 	std::string operatingMode_   = "";
+	uint32_t    lastTimeAliveValue_ = 0;
 
 	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
 	static const int CONFIG_DTC_TIMING_CHAIN_STEPS       = 3;

@@ -1148,6 +1148,8 @@ void CFOFrontEndInterface::configure(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
+	recordTimeAlive();
+
 	if(skipInit_)
 		return;
 
@@ -1644,6 +1646,9 @@ void CFOFrontEndInterface::resume(void)
 //==============================================================================
 void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 {
+	testAndUpdateTimeAlive("Start");
+	testRTFClockInEventBuildingMode("Start");
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO start for HW Dev mode." << __E__;
@@ -1826,6 +1831,9 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 //==============================================================================
 void CFOFrontEndInterface::stop(void)
 {
+	testAndUpdateTimeAlive("Stop");
+	testRTFClockInEventBuildingMode("Stop");
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO stop for HW Dev mode." << __E__;
@@ -2011,6 +2019,9 @@ bool CFOFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
 	{
+		testAndUpdateTimeAlive("Running");
+		testRTFClockInEventBuildingMode("Running");
+
 		if(!theSuperParameters_.go)
 		{
 			__FE_COUT__ << "Not running the Super Orchestration loop!" << __E__;

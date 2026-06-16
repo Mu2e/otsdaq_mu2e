@@ -162,6 +162,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void registerFEMacros(void);
 
 	int                     dtc_location_in_chain_ = -1;
+	unsigned int            runningCallCount_      = 0;
 	unsigned int            roc_mask_              = 0;
 	unsigned int            roc_emulated_mask_     = 0;
 	bool                    emulate_cfo_           = true;
@@ -171,6 +172,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	std::ofstream datafile_[8];
 
 	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
+	std::map<DTCLib::DTC_Link_ID, bool> rocRunningStatus_;
 
 	std::map<std::string /*DTC's FEMacro name*/,
 	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>
