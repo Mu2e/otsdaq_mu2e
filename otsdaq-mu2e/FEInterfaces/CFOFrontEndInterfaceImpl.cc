@@ -103,7 +103,8 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 //==============================================================================
 void CFOFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering CFO FE Macros... (inherited macro count = " << mapOfFEMacroFunctions_.size() << ")" << __E__;
+	__FE_COUT__ << "Registering CFO FE Macros... (inherited macro count = "
+	            << mapOfFEMacroFunctions_.size() << ")" << __E__;
 
 	// clang-format off
 
@@ -568,7 +569,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
-	__FE_COUT__ << "Done registering CFO FE Macros. Total macro count = " << mapOfFEMacroFunctions_.size() << __E__;
+	__FE_COUT__ << "Done registering CFO FE Macros. Total macro count = "
+	            << mapOfFEMacroFunctions_.size() << __E__;
 }  //end registerFEMacros()
 
 // //=====================================================================================
@@ -1162,8 +1164,8 @@ void CFOFrontEndInterface::configureSlowControls(void)
 	FEVInterface::configureSlowControls();
 
 	__FE_COUT__ << "CFO '" << getInterfaceUID()
-	            << "' slow controls channel count: "
-	            << getSlowControlsChannelCount() << __E__;
+	            << "' slow controls channel count: " << getSlowControlsChannelCount()
+	            << __E__;
 
 	__FE_COUT__ << "Done configuring CFO slow controls." << __E__;
 }  // end configureSlowControls()
