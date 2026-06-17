@@ -1149,8 +1149,8 @@ void CFOFrontEndInterface::configureSlowControls(void)
 	}
 	catch(...)
 	{
-		__FE_COUT__ << "Missing `slowControlsEnable` in configuration, "
-		               "slowControlsEnable defaults to "
+		__FE_COUT__ << "Missing `SlowControlsEnable` in configuration, "
+		               "SlowControlsEnable defaults to "
 		            << slowControlsEnable << __E__;
 	}
 
