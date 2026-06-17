@@ -138,9 +138,7 @@ void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
 //==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering DTC FE Macros..." << __E__;
-
-	mapOfFEMacroFunctions_.clear();
+	__FE_COUT__ << "Registering DTC FE Macros... (inherited macro count = " << mapOfFEMacroFunctions_.size() << ")" << __E__;
 
 	registerFEMacroFunction(
 	    "ROC Setup",
@@ -992,6 +990,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
+	__FE_COUT__ << "Done registering DTC FE Macros. Total macro count = " << mapOfFEMacroFunctions_.size() << __E__;
 }  // end registerFEMacros()
 
 //==============================================================================
