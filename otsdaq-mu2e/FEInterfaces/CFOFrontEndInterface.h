@@ -22,6 +22,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	// state machine
 	//----------------
 	void configure(void) override;
+	void configureSlowControls(void) override;
 	void halt(void) override;
 	void pause(void) override;
 	void resume(void) override;
