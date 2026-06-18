@@ -191,7 +191,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                      DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 	                      uint32_t                       size,
 	                      bool                           blockNullHeartbeats     = false,
-	                      bool                           resequenceNonNullEvents = false);
+	                      bool                           resequenceNonNullEvents = false,
+	                      bool                           autoGenDRPPerROC        = false);
 	void        ReadROC(__ARGS__);
 	void        ROCFirmwareInventory(__ARGS__);
 	void        ListFirmwareDirectory(__ARGS__);
