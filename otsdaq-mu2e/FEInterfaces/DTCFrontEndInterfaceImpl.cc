@@ -173,9 +173,11 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "take precedence."
 	    "\n\n"
 	    "Auto-Gen DRP per ROC: When enabled, the DTC generates Data Request Packets "
-	    "automatically per-ROC (bits [21:16] of register 0x9114). The global Autogenerate "
+	    "automatically per-ROC (bits [21:16] of register 0x9114). The global "
+	    "Autogenerate "
 	    "DRP bit (register 0x9100 bit 23) is automatically cleared when per-ROC mode is "
-	    "enabled, as the global override must be off for per-ROC control to take effect.");
+	    "enabled, as the global override must be off for per-ROC control to take "
+	    "effect.");
 
 	registerFEMacroFunction(
 	    "ROC Write",  // feMacroName
