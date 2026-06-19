@@ -58,12 +58,20 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 		    getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
 		if(mu2eGlobalRecords.size())  // take first record
 		{
-			skipInit_ = mu2eGlobalRecords[0]
-			                .second.getNode("SkipCFOandDTCConfigureSteps")
-			                .getValue<bool>();
-			__FE_COUTV__(mu2eGlobalRecords[0]
-			                 .second.getNode("SkipCFOandDTCConfigureSteps")
-			                 .getValue<bool>());
+			// Try new column name first, fall back to old name for backwards compatibility
+			try
+			{
+				skipInit_ = mu2eGlobalRecords[0]
+				                .second.getNode("GlobalSkipCFOandDTCConfigureSteps")
+				                .getValue<bool>();
+			}
+			catch(...)
+			{
+				skipInit_ = mu2eGlobalRecords[0]
+				                .second.getNode("SkipCFOandDTCConfigureSteps")
+				                .getValue<bool>();
+			}
+			__FE_COUTV__(skipInit_);
 		}
 		__FE_COUTV__(mu2eGlobalRecords.size());
 	}
