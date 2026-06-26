@@ -103,9 +103,8 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 //==============================================================================
 void CFOFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering CFO FE Macros..." << __E__;
-
-	mapOfFEMacroFunctions_.clear();
+	__FE_COUT__ << "Registering CFO FE Macros... (inherited macro count = "
+	            << mapOfFEMacroFunctions_.size() << ")" << __E__;
 
 	// clang-format off
 
@@ -570,6 +569,8 @@ void CFOFrontEndInterface::registerFEMacros(void)
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
+	__FE_COUT__ << "Done registering CFO FE Macros. Total macro count = "
+	            << mapOfFEMacroFunctions_.size() << __E__;
 }  //end registerFEMacros()
 
 // //=====================================================================================
@@ -1133,6 +1134,41 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 	return 0;  //average_loopback_;
 
 }  // end MeasureLoopback()
+
+//==============================================================================
+void CFOFrontEndInterface::configureSlowControls(void)
+{
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+
+	bool slowControlsEnable = true;
+	try
+	{
+		slowControlsEnable = getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+	}
+	catch(...)
+	{
+		__FE_COUT__ << "Missing `SlowControlsEnable` in configuration, "
+		               "SlowControlsEnable defaults to "
+		            << slowControlsEnable << __E__;
+	}
+
+	if(!slowControlsEnable)
+	{
+		__FE_COUT__ << "Slow controls are disabled..." << __E__;
+		return;
+	}
+	__FE_COUT__ << "Configuring slow controls..." << __E__;
+
+	FEVInterface::configureSlowControls();
+
+	__FE_COUT__ << "CFO '" << getInterfaceUID()
+	            << "' slow controls channel count: " << getSlowControlsChannelCount()
+	            << __E__;
+
+	__FE_COUT__ << "Done configuring CFO slow controls." << __E__;
+}  // end configureSlowControls()
 
 //===============================================================================================
 void CFOFrontEndInterface::configure(void)

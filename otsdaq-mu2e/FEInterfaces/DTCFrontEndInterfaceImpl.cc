@@ -138,9 +138,8 @@ void DTCFrontEndInterface::setParentPointers(CoreSupervisorBase*   supervisor,
 //==============================================================================
 void DTCFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering DTC FE Macros..." << __E__;
-
-	mapOfFEMacroFunctions_.clear();
+	__FE_COUT__ << "Registering DTC FE Macros... (inherited macro count = "
+	            << mapOfFEMacroFunctions_.size() << ")" << __E__;
 
 	registerFEMacroFunction(
 	    "ROC Setup",
@@ -155,6 +154,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "ROC generated Data Payload fragment packet count (11-bits, Default := 16)",
 	        "Block Null Heartbeats to ALL ROCs (Default := false)",
 	        "Resequence Non-null Events for ALL ROCs (Default := false)",
+	        "Set Auto-Gen DRP per ROC (Default := false)",
 	    },
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
@@ -170,7 +170,14 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "\n\n"
 	    "Note: Internal and External ROC emulation can co-exist on the same DTC link. "
 	    "While Fiber-Loopback ROC emulation is exclusive to the other two types and will "
-	    "take precedence.");
+	    "take precedence."
+	    "\n\n"
+	    "Auto-Gen DRP per ROC: When enabled, the DTC generates Data Request Packets "
+	    "automatically per-ROC (bits [21:16] of register 0x9114). The global "
+	    "Autogenerate "
+	    "DRP bit (register 0x9100 bit 23) is automatically cleared when per-ROC mode is "
+	    "enabled, as the global override must be off for per-ROC control to take "
+	    "effect.");
 
 	registerFEMacroFunction(
 	    "ROC Write",  // feMacroName
@@ -992,6 +999,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
+	__FE_COUT__ << "Done registering DTC FE Macros. Total macro count = "
+	            << mapOfFEMacroFunctions_.size() << __E__;
 }  // end registerFEMacros()
 
 //==============================================================================
@@ -4627,7 +4636,9 @@ void DTCFrontEndInterface::SetupROCs(__ARGS__)
 			    __GET_ARG_IN__(
 			        "Resequence Non-null Events for ALL ROCs (Default := false)",
 			        bool,
-			        false));
+			        false),
+			    __GET_ARG_IN__(
+			        "Set Auto-Gen DRP per ROC (Default := false)", bool, false));
 
 			if(result.size())
 				result += ", ";
@@ -4662,7 +4673,8 @@ std::string DTCFrontEndInterface::SetupROCs(
     DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
     uint32_t                       size,
     bool                           blockNullHeartbeats,
-    bool                           resequenceNonNullEvents)
+    bool                           resequenceNonNullEvents,
+    bool                           autoGenDRPPerROC)
 {
 	__FE_COUTV__(rocLinkIndex);
 	__FE_COUTV__(rocRxTxEnable);
@@ -4732,6 +4744,17 @@ std::string DTCFrontEndInterface::SetupROCs(
 	// Set Block Null Heartbeats and Resequence Non-null Events (one bit for all ROCs)
 	getDTC()->SetBlockNullHeartbeatsToROC(blockNullHeartbeats);
 	getDTC()->SetResequenceNonNullEvents(resequenceNonNullEvents);
+
+	// Set per-ROC Auto-Gen DRP (bits [21:16] of 0x9114)
+	__FE_COUTV__(autoGenDRPPerROC);
+	if(autoGenDRPPerROC)
+		getDTC()->DisableAutogenDRP();
+
+	for(DTC_Link_ID link =
+	        (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(0) : rocLinkIndex);
+	    link <= (rocLinkIndex == DTC_Link_ID(-1) ? DTC_Link_ID(5) : rocLinkIndex);
+	    ++link)
+		getDTC()->SetAutoGenDRPPerLink(link, autoGenDRPPerROC);
 
 	return getDTC()->FormattedRegDump(0, getDTC()->formattedROCEmulationFunctions_);
 
