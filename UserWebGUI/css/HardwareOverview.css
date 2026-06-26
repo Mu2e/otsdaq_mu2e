@@ -1,0 +1,580 @@
+/* HardwareOverview.css — Split layout: grid left, detail panel right */
+
+#hardwareOverviewContainer {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	font-family: 'Comfortaa', sans-serif;
+	font-size: 12px;
+	color: #222;
+}
+
+/* ---- Full-width page header ---- */
+
+#pageHeader {
+	padding: 5px 10px;
+	background: #f5f7fa;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+#pageHeader h3 {
+	margin: 0;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+#pageHeader button {
+	font-size: 11px;
+	padding: 3px 10px;
+	cursor: pointer;
+}
+
+.config-info {
+	font-size: 11px;
+	color: #555;
+	font-style: italic;
+	flex: 1;
+	text-align: right;
+}
+
+.save-btn {
+	font-size: 13px;
+	padding: 6px 24px;
+	cursor: pointer;
+	background: #e67e22;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-weight: bold;
+	animation: save-pulse 1.2s ease-in-out infinite;
+}
+
+.save-btn:hover {
+	background: #c56a15;
+}
+
+.save-btn:disabled {
+	background: #999;
+	cursor: default;
+	animation: none;
+}
+
+@keyframes save-pulse {
+	0%, 100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.5); }
+	50% { box-shadow: 0 0 0 6px rgba(230, 126, 34, 0); }
+}
+
+/* ---- Global actions ---- */
+
+.global-actions-bar {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex-wrap: wrap;
+	padding: 4px 0;
+}
+
+.global-output {
+	margin-top: 6px;
+	padding: 6px;
+	border: 1px solid #ddd;
+	background: #fafbfc;
+	font-family: 'Inconsolata', monospace;
+	font-size: 11px;
+	overflow-y: auto;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+/* ---- Two-panel area below header ---- */
+
+#panelsContainer {
+	display: flex;
+	flex-direction: row;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* ---- Left panel: hardware grid ---- */
+
+#gridPanel {
+	width: 38%;
+	min-width: 260px;
+	flex-shrink: 0;
+	border-right: 2px solid #ccc;
+	overflow-y: auto;
+}
+
+#gridContent {
+	padding: 10px 12px;
+}
+
+/* ---- Hardware grid table ---- */
+
+.hw-grid {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: 11px;
+}
+
+.hw-grid th,
+.hw-grid td {
+	border: 1px solid #ddd;
+	padding: 4px 6px;
+	vertical-align: top;
+	text-align: left;
+}
+
+.hw-grid thead th {
+	background: #e8ecf1;
+	font-weight: bold;
+	font-size: 11px;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.hw-grid-node-header {
+	min-width: 100px;
+}
+
+.hw-grid-dtc-header {
+	min-width: 90px;
+}
+
+.hw-grid-node {
+	font-size: 10px;
+	white-space: nowrap;
+	background: #f9fafb;
+	color: #555;
+}
+
+.hw-grid-dtc-cell {
+	background: #fff;
+	padding-bottom: 2px;
+}
+
+.hw-grid-dtc {
+	cursor: pointer;
+	padding: 1px 3px;
+	border-radius: 3px;
+	font-weight: bold;
+}
+
+.hw-grid-dtc:hover {
+	background: #e0ecf8;
+}
+
+.hw-grid-rocs {
+	padding-left: 10px;
+	border-left: 2px solid #ddd;
+	margin-left: 4px;
+}
+
+.hw-grid-roc {
+	cursor: pointer;
+	padding: 1px 4px;
+	border-radius: 2px;
+	font-size: 10px;
+	margin-bottom: 1px;
+}
+
+.hw-grid-roc:hover {
+	background: #e0ecf8;
+}
+
+.hw-grid-empty {
+	background: #f5f5f5;
+}
+
+.hw-grid-unsaved,
+.hw-grid-unsaved th,
+.hw-grid-unsaved td {
+	background: #fff3e0 !important;
+}
+
+.hw-grid-unsaved .hw-grid-cell-disabled {
+	background: #f5edd8 !important;
+}
+
+.hw-grid-cell-disabled {
+	background: #ededed;
+	color: #999;
+}
+
+.hw-grid-item-disabled {
+	color: #999;
+}
+
+/* Other FE interfaces */
+.hw-grid-other-header {
+	font-weight: bold;
+	font-size: 12px;
+	padding: 8px 0 4px;
+	color: #444;
+	border-bottom: 1px solid #eee;
+	margin-top: 8px;
+}
+
+.hw-grid-other {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding: 6px 0;
+}
+
+.hw-grid-other-group {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 6px 8px;
+	min-width: 120px;
+}
+
+.hw-grid-other-class {
+	font-weight: bold;
+	font-size: 11px;
+	color: #555;
+	margin-bottom: 4px;
+}
+
+.hw-grid-other-device {
+	cursor: pointer;
+	padding: 2px 4px;
+	border-radius: 2px;
+	font-size: 11px;
+}
+
+.hw-grid-other-device:hover {
+	background: #e0ecf8;
+}
+
+/* Selected node highlight */
+.tree-node-selected {
+	background: #cde0f5 !important;
+	font-weight: bold;
+}
+
+/* Status dots */
+.status-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.status-on {
+	background: #28a745;
+}
+
+.status-off {
+	background: #dc3545;
+}
+
+.status-unknown {
+	background: #999;
+}
+
+.status-dot-clickable {
+	cursor: pointer;
+}
+
+.status-dot-clickable:hover {
+	transform: scale(1.4);
+	box-shadow: 0 0 3px rgba(0,0,0,0.4);
+}
+
+/* ---- Right panel: detail view ---- */
+
+#detailPanel {
+	flex: 1;
+	overflow-y: auto;
+	min-width: 280px;
+	background: #f5f7fa;
+    margin: 10px;
+}
+
+#detailContent {
+	padding: 10px 12px;
+}
+
+/* Detail header */
+.detail-header {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-bottom: 8px;
+	padding-bottom: 4px;
+	border-bottom: 2px solid #0056b3;
+}
+
+.detail-uid {
+	font-size: 15px;
+	font-weight: bold;
+	color: #0056b3;
+}
+
+.detail-parent {
+	font-size: 11px;
+	color: #666;
+}
+
+.detail-parent a {
+	color: #0056b3;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+/* Accordion */
+.accordion-section {
+	margin-bottom: 2px;
+}
+
+.accordion-header {
+	font-weight: bold;
+	font-size: 11px;
+	color: #0056b3;
+	padding: 4px 6px;
+	background: #e8ecf1;
+	border: 1px solid #d0d8e0;
+	border-radius: 3px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.accordion-header:hover {
+	background: #dce3ed;
+}
+
+.accordion-count {
+	font-weight: normal;
+	color: #888;
+	font-size: 10px;
+}
+
+.accordion-body {
+	display: none;
+	padding: 2px 4px;
+}
+
+.accordion-body.accordion-open {
+	display: block;
+}
+
+/* Settings table */
+.settings-table {
+	border-collapse: collapse;
+	font-size: 10px;
+	width: 100%;
+}
+
+.settings-table td {
+	padding: 1px 4px;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-name {
+	color: #555;
+	white-space: nowrap;
+	width: 1%;
+}
+
+.settings-value {
+	font-family: 'Inconsolata', monospace;
+	font-weight: bold;
+	font-size: 10px;
+	color: #222;
+	word-break: break-all;
+}
+
+/* Bitmap grid for channel enable arrays */
+.bitmap-grid {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 1px;
+	vertical-align: middle;
+}
+
+.bitmap-cell {
+	display: block;
+	width: 10px;
+	height: 10px;
+	border-radius: 1px;
+	cursor: default;
+}
+
+.bitmap-on {
+	background: #28a745;
+}
+
+.bitmap-off {
+	background: #dc3545;
+}
+
+/* Channel tags */
+.channel-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	padding: 2px 0;
+}
+
+.channel-tag {
+	font-size: 10px;
+	padding: 1px 6px;
+	background: #e0ecf8;
+	border-radius: 3px;
+	color: #333;
+	white-space: nowrap;
+}
+
+/* Macro buttons */
+#macroButtons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.macro-btn {
+	font-size: 10px;
+	padding: 3px 8px;
+	cursor: pointer;
+	background: #6c757d;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+}
+
+.macro-btn:hover {
+	background: #545b62;
+}
+
+.macro-btn-primary {
+	font-size: 11px;
+	padding: 5px 12px;
+	cursor: pointer;
+	background: #0056b3;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+	font-weight: bold;
+}
+
+.macro-btn-primary:hover {
+	background: #003d80;
+}
+
+/* ROC mask selector */
+.roc-mask-selector {
+	display: flex;
+	gap: 3px;
+	flex-wrap: wrap;
+}
+
+.roc-mask-box {
+	font-size: 9px;
+	padding: 3px 6px;
+	border-radius: 3px;
+	cursor: pointer;
+	font-weight: bold;
+	user-select: none;
+	text-align: center;
+	min-width: 50px;
+}
+
+.roc-mask-on {
+	background: #28a745;
+	color: #fff;
+}
+
+.roc-mask-off {
+	background: #dc3545;
+	color: #fff;
+	opacity: 0.7;
+}
+
+/* Macro input form (shown when a macro with inputs is clicked) */
+.macro-input-form {
+	padding: 8px;
+	border: 1px solid #ddd;
+	background: #f9fafb;
+	border-radius: 4px;
+	margin-bottom: 8px;
+}
+
+.macro-input-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 4px 0;
+}
+
+.macro-input-row label {
+	font-weight: bold;
+	font-size: 11px;
+	min-width: 100px;
+}
+
+.macro-input-row input {
+	font-size: 12px;
+	padding: 2px 5px;
+	width: 140px;
+}
+
+.macro-run-btn {
+	font-size: 11px;
+	padding: 4px 14px;
+	cursor: pointer;
+	background: #28a745;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+	margin-top: 6px;
+}
+
+.macro-run-btn:hover {
+	background: #1e7e34;
+}
+
+/* Output area */
+#macroOutput {
+	margin-top: 8px;
+	padding: 8px;
+	border: 1px solid #ddd;
+	background: #fafbfc;
+	font-family: 'Inconsolata', monospace;
+	font-size: 12px;
+	min-height: 40px;
+	overflow-y: auto;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+#macroOutput:empty {
+	display: none;
+}
+
+/* Shared */
+.placeholder-text {
+	color: #888;
+	font-style: italic;
+	padding: 16px;
+	text-align: center;
+}
+
+.goodValue {
+	color: #28a745;
+	font-weight: bold;
+}
+
+.badValue {
+	color: #dc3545;
+	font-weight: bold;
+}
