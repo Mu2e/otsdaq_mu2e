@@ -157,7 +157,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{ // namesOfInputArgs
-						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+						// "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)", // as of June 2026 -- defaulting to 0 exponent always (first loopback is somehow different than 2+ loopbacks)
 						"Number of Loopback tests (Default := 1)",
 						"Target Link (-1 for all, Default := -1)",
 						"Target ROC (-1 for all, Default := -1)",
@@ -617,10 +617,11 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	ostr << std::endl;
 
 	// parameters
-	const int numberOfLoopbacksExp = __GET_ARG_IN__(
-	    "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
-	    uint32_t,
-	    3);
+	const int numberOfLoopbacksExp = 0;
+	//  __GET_ARG_IN__(
+	//     "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+	//     uint32_t,
+	//     3);
 	const int numberOfLoopbackTests =
 	    __GET_ARG_IN__("Number of Loopback tests (Default := 1)", uint32_t, 1);
 	const int targetLink =
@@ -932,6 +933,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	// __FE_COUT__ << "Average delay: " << avg_delay << __E__;
 
 	// ostr << std::endl << std::endl;
+
+	if(ostr.str().empty())
+		ostr << "No loopback measurements were successful. Check the link status of targeted links." << std::endl;
 
 	__SET_ARG_OUT__("Response", ostr.str());
 
