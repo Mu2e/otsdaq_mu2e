@@ -866,6 +866,44 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			}
 		}
 	}
+
+	// build Plotly histogram of delay measurements
+	{
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[)";
+
+		bool firstTrace = true;
+		for(const auto& [map_index, results] : roc_results)
+		{
+			const int counts = results.counts;
+			if(counts <= 0)
+				continue;
+
+			if(!firstTrace)
+				plotlySs << ",";
+			firstTrace = false;
+
+			plotlySs << R"({"x":[)";
+			for(int i = 0; i < counts; ++i)
+			{
+				if(i > 0)
+					plotlySs << ",";
+				plotlySs << results.graph->GetY()[i];
+			}
+			plotlySs << R"(],"type":"histogram","name":"Link )"
+			         << (map_index / 100) << " ROC " << (map_index % 100)
+			         << R"(","opacity":0.75})";
+		}
+
+		plotlySs << R"(],"layout":{)"
+		         << R"("title":{"text":"CFO Loopback Delay"},)"
+		         << R"("xaxis":{"title":{"text":"Delay [ns]"}},)"
+		         << R"("yaxis":{"title":{"text":"Count"}},)"
+		         << R"("barmode":"overlay"}})";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
+
 	if(writeFile)
 	{
 		tree->Write();
