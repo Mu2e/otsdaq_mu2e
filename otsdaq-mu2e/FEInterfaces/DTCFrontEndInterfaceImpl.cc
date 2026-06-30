@@ -7802,6 +7802,25 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTests(__ARGS__)
 	__SET_ARG_OUT__("Average", std::format("{:.2f} ns", result));
 	__SET_ARG_OUT__("Maximum", std::format("{:.2f} ns", max_value));
 	__SET_ARG_OUT__("Minimum", std::format("{:.2f} ns", min_value));
+
+	// build Plotly histogram of delay measurements
+	{
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[{"x":[)";
+		for(int i = 0; i < numberOfTests; ++i)
+		{
+			if(i > 0)
+				plotlySs << ",";
+			plotlySs << results[i];
+		}
+		plotlySs << R"(],"type":"histogram","name":"Loopback Delay","opacity":0.75}])"
+		         << R"(,"layout":{)"
+		         << R"("title":{"text":"CFO Emulator Loopback Delay"},)"
+		         << R"("xaxis":{"title":{"text":"Delay [ns]"}},)"
+		         << R"("yaxis":{"title":{"text":"Count"}}}})";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
 }  //end CFOEmulatorLoopbackTests()
 
 //========================================================================
