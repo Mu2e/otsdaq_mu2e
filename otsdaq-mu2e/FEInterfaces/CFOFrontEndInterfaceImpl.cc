@@ -890,9 +890,8 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 					plotlySs << ",";
 				plotlySs << results.graph->GetY()[i];
 			}
-			plotlySs << R"(],"type":"histogram","name":"Link )"
-			         << (map_index / 100) << " ROC " << (map_index % 100)
-			         << R"(","opacity":0.75})";
+			plotlySs << R"(],"type":"histogram","name":"Link )" << (map_index / 100)
+			         << " ROC " << (map_index % 100) << R"(","opacity":0.75})";
 		}
 
 		plotlySs << R"(],"layout":{)"
@@ -973,7 +972,9 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	// ostr << std::endl << std::endl;
 
 	if(ostr.str().empty())
-		ostr << "No loopback measurements were successful. Check the link status of targeted links." << std::endl;
+		ostr << "No loopback measurements were successful. Check the link status of "
+		        "targeted links."
+		     << std::endl;
 
 	__SET_ARG_OUT__("Response", ostr.str());
 
