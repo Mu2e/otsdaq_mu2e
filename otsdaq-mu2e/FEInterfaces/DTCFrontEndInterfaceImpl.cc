@@ -630,8 +630,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "Loopback Manual Setup",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::ManualLoopbackSetup),
-	    std::vector<std::string>{"setAsPassthrough"},
-	    std::vector<std::string>{},
+	    std::vector<std::string>{"setAsPassthrough (Default := false)"},
+	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
 	    "Toggles the DTC CFO loopback mode. "
@@ -7802,21 +7802,41 @@ void DTCFrontEndInterface::CFOEmulatorLoopbackTests(__ARGS__)
 	__SET_ARG_OUT__("Average", std::format("{:.2f} ns", result));
 	__SET_ARG_OUT__("Maximum", std::format("{:.2f} ns", max_value));
 	__SET_ARG_OUT__("Minimum", std::format("{:.2f} ns", min_value));
+
+	// build Plotly histogram of delay measurements
+	{
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[{"x":[)";
+		for(int i = 0; i < numberOfTests; ++i)
+		{
+			if(i > 0)
+				plotlySs << ",";
+			plotlySs << results[i];
+		}
+		plotlySs << R"(],"type":"histogram","name":"Loopback Delay","opacity":0.75}])"
+		         << R"(,"layout":{)"
+		         << R"("title":{"text":"CFO Emulator Loopback Delay"},)"
+		         << R"("xaxis":{"title":{"text":"Delay [ns]"}},)"
+		         << R"("yaxis":{"title":{"text":"Count"}}}})";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
 }  //end CFOEmulatorLoopbackTests()
 
 //========================================================================
 void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 {
-	bool setAsPassthrough = __GET_ARG_IN__("setAsPassthrough", bool);
+	bool setAsPassthrough = __GET_ARG_IN__("setAsPassthrough (Default := false)", bool);
 	__COUTV__(setAsPassthrough);
 
 	if(setAsPassthrough)
 	{
 		getDTC()->DisableCFOLoopback();
-		return;
 	}
 	else
 		getDTC()->EnableCFOLoopback();
+
+	__SET_ARG_OUT__("Result", getDTC()->FormatDTCControl());
 
 	//as of June 2026, do not target one ROC (all done at once)
 	return;
@@ -7831,7 +7851,6 @@ void DTCFrontEndInterface::ManualLoopbackSetup(__ARGS__)
 		getDTC()->DisableLink(DTCLib::DTC_ROC_Links[i]);
 
 	getDTC()->EnableLink(DTCLib::DTC_ROC_Links[ROC_Link]);
-
 }  //end ManualLoopbackSetup()
 
 //========================================================================

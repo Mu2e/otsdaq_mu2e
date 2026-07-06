@@ -157,7 +157,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{ // namesOfInputArgs
-						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+						// "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)", // as of June 2026 -- defaulting to 0 exponent always (first loopback is somehow different than 2+ loopbacks)
 						"Number of Loopback tests (Default := 1)",
 						"Target Link (-1 for all, Default := -1)",
 						"Target ROC (-1 for all, Default := -1)",
@@ -617,10 +617,11 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	ostr << std::endl;
 
 	// parameters
-	const int numberOfLoopbacksExp = __GET_ARG_IN__(
-	    "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
-	    uint32_t,
-	    3);
+	const int numberOfLoopbacksExp = 0;
+	//  __GET_ARG_IN__(
+	//     "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+	//     uint32_t,
+	//     3);
 	const int numberOfLoopbackTests =
 	    __GET_ARG_IN__("Number of Loopback tests (Default := 1)", uint32_t, 1);
 	const int targetLink =
@@ -865,6 +866,43 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			}
 		}
 	}
+
+	// build Plotly histogram of delay measurements
+	{
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[)";
+
+		bool firstTrace = true;
+		for(const auto& [map_index, results] : roc_results)
+		{
+			const int counts = results.counts;
+			if(counts <= 0)
+				continue;
+
+			if(!firstTrace)
+				plotlySs << ",";
+			firstTrace = false;
+
+			plotlySs << R"({"x":[)";
+			for(int i = 0; i < counts; ++i)
+			{
+				if(i > 0)
+					plotlySs << ",";
+				plotlySs << results.graph->GetY()[i];
+			}
+			plotlySs << R"(],"type":"histogram","name":"Link )" << (map_index / 100)
+			         << " ROC " << (map_index % 100) << R"(","opacity":0.75})";
+		}
+
+		plotlySs << R"(],"layout":{)"
+		         << R"("title":{"text":"CFO Loopback Delay"},)"
+		         << R"("xaxis":{"title":{"text":"Delay [ns]"}},)"
+		         << R"("yaxis":{"title":{"text":"Count"}},)"
+		         << R"("barmode":"overlay"}})";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
+
 	if(writeFile)
 	{
 		tree->Write();
@@ -932,6 +970,18 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	// __FE_COUT__ << "Average delay: " << avg_delay << __E__;
 
 	// ostr << std::endl << std::endl;
+
+	bool anySuccessful = false;
+	for(const auto& [map_index, results] : roc_results)
+		if(results.counts > 0)
+		{
+			anySuccessful = true;
+			break;
+		}
+	if(!anySuccessful)
+		ostr << "No loopback measurements were successful. Check the link status of "
+		        "targeted links."
+		     << std::endl;
 
 	__SET_ARG_OUT__("Response", ostr.str());
 
