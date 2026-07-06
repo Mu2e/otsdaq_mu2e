@@ -971,7 +971,14 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 	// ostr << std::endl << std::endl;
 
-	if(ostr.str().empty())
+	bool anySuccessful = false;
+	for(const auto& [map_index, results] : roc_results)
+		if(results.counts > 0)
+		{
+			anySuccessful = true;
+			break;
+		}
+	if(!anySuccessful)
 		ostr << "No loopback measurements were successful. Check the link status of "
 		        "targeted links."
 		     << std::endl;
