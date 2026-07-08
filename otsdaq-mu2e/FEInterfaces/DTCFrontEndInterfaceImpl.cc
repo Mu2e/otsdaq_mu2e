@@ -4782,13 +4782,14 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 //========================================================================
 std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 {
-	auto dtc = getDTC();
+	auto               dtc = getDTC();
 	std::ostringstream o;
 
-	auto jaSelect = dtc->ReadJitterAttenuatorSelect().to_ulong();
-	std::string jaSource = jaSelect == 0 ? "Internal CFO" : (jaSelect == 1 ? "RJ45" : "Timing Card");
-	int  edgeMode  = dtc->ReadExternalCFOSampleEdgeMode(std::nullopt);
-	bool cfoEmMode = dtc->ReadCFOEmulationMode();
+	auto        jaSelect = dtc->ReadJitterAttenuatorSelect().to_ulong();
+	std::string jaSource =
+	    jaSelect == 0 ? "Internal CFO" : (jaSelect == 1 ? "RJ45" : "Timing Card");
+	int  edgeMode   = dtc->ReadExternalCFOSampleEdgeMode(std::nullopt);
+	bool cfoEmMode  = dtc->ReadCFOEmulationMode();
 	bool cfoCDRLock = dtc->ReadSERDESRXCDRLock(DTCLib::DTC_Link_CFO);
 
 	uint32_t cfoErr;
@@ -4796,11 +4797,12 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	int measuredPos = (cfoErr >> 16) & 7;
 	int impliedPos  = 2 - measuredPos;
 
-	uint32_t cdcDiag = dtc->ReadCFOCDCDiag();
+	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
 	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
 	uint32_t batchSlip      = cdcDiag & 0xFFFF;
 
-	o << "=== CFO/RTF Settings & Status ===" << "\n";
+	o << "=== CFO/RTF Settings & Status ==="
+	  << "\n";
 	o << "  CFO Emulation Mode:    " << (cfoEmMode ? "ON" : "OFF")
 	  << "        JA Source: " << jaSource << "\n";
 	o << "  CFO-RTF Edge Select:   " << ((edgeMode & 1) ? "posedge" : "negedge")
@@ -4809,25 +4811,25 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
 	o << "  CFO Rx Clock Markers:  " << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
 
-	o << "\n=== CFO Interface Errors ===" << "\n";
-	o << "  ErrFlag   RTFPhase RTFMarker TxMarkers Rx-to-Tx |  CDR  JA    JA-Rec JA-Ext\n";
+	o << "\n=== CFO Interface Errors ==="
+	  << "\n";
+	o << "  ErrFlag   RTFPhase RTFMarker TxMarkers Rx-to-Tx |  CDR  JA    JA-Rec "
+	     "JA-Ext\n";
 	o << "  Sticky:     "
 	  << "[" << (((cfoErr >> 11) & 1) ? "x" : " ") << "]      "
 	  << "[" << (((cfoErr >> 12) & 1) ? "x" : " ") << "]       "
-	  << "[" << (((cfoErr >>  9) & 1) ? "x" : " ") << ":" << (((cfoErr >> 10) & 1) ? "x" : " ") << "]     "
+	  << "[" << (((cfoErr >> 9) & 1) ? "x" : " ") << ":"
+	  << (((cfoErr >> 10) & 1) ? "x" : " ") << "]     "
 	  << "[" << (((cfoErr >> 13) & 1) ? "x" : " ") << "]    ";
-	o << "|  "
-	  << dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO) << "     "
+	o << "|  " << dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO) << "     "
 	  << dtc->ReadJitterAttenuatorUnlockCount() << "     "
 	  << dtc->ReadJitterAttenuatorRecoveredClockLOSCount() << "      "
 	  << dtc->ReadJitterAttenuatorExternalClockLOSCount() << "\n";
 
 	o << "  EvtStart  40MHz  Parity  BatchSlip\n";
-	o << "  Count:    "
-	  << dtc->ReadRXCFOLinkEventStartCharacterErrorCount() << "      "
-	  << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       "
-	  << parityMismatch << "       "
-	  << batchSlip << "\n";
+	o << "  Count:    " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount() << "      "
+	  << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       " << parityMismatch
+	  << "       " << batchSlip << "\n";
 
 	return o.str();
 }  //end getCFORTFSettingsStatusAndErrors()
@@ -4926,20 +4928,22 @@ void DTCFrontEndInterface::GetRTFInterfaceStatus(__ARGS__)
 
 	outss << getCFORTFSettingsStatusAndErrors();
 
-	uint32_t rtfHist = getDTC()->ReadRTFHistIdelay();
+	uint32_t rtfHist   = getDTC()->ReadRTFHistIdelay();
 	uint32_t idelayTap = (rtfHist >> 27) & 0x1F;
 	bool     idelayRdy = (rtfHist >> 26) & 1;
 	bool     saturated = (rtfHist >> 10) & 1;
 	uint32_t satBin    = (rtfHist >> 7) & 0x7;
 
-	outss << "\n=== RTF Histogram & IDELAY ===" << "\n";
-	outss << "  IDELAY Tap: " << idelayTap
-	      << "  Ready: " << (idelayRdy ? "YES" : "NO")
-	      << "  Saturated: " << (saturated ? "YES (bin " + std::to_string(satBin) + ")" : "NO") << "\n";
+	outss << "\n=== RTF Histogram & IDELAY ==="
+	      << "\n";
+	outss << "  IDELAY Tap: " << idelayTap << "  Ready: " << (idelayRdy ? "YES" : "NO")
+	      << "  Saturated: "
+	      << (saturated ? "YES (bin " + std::to_string(satBin) + ")" : "NO") << "\n";
 	outss << "  Bins [0-4]: ";
 	for(int bin = 0; bin < 5; ++bin)
 	{
-		if(bin) outss << ", ";
+		if(bin)
+			outss << ", ";
 		outss << ((rtfHist >> (11 + bin * 3)) & 0x7);
 	}
 	outss << "\n";
@@ -5273,7 +5277,8 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 	            bool,
 	            false),
 	        __GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0),
-	        __GET_ARG_IN__("IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1)));
+	        __GET_ARG_IN__(
+	            "IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1)));
 }  //end SetupCFOInterface()
 
 //========================================================================
@@ -5283,7 +5288,7 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
                                                     bool cfoRxTxEnable,
                                                     bool enableAutogenDRP,
                                                     int  permanentOffset /* = 0 */,
-                                                    int  idelayTapValue  /* = -1 */)
+                                                    int  idelayTapValue /* = -1 */)
 {
 	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
