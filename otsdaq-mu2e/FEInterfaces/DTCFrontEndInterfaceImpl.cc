@@ -4792,9 +4792,13 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	bool cfoEmMode  = dtc->ReadCFOEmulationMode();
 	bool cfoCDRLock = dtc->ReadSERDESRXCDRLock(DTCLib::DTC_Link_CFO);
 
-	uint32_t cfoErr;
-	getDevice()->read_register(0x9398, 100, &cfoErr);
-	int measuredPos = (cfoErr >> 16) & 7;
+	uint32_t cfoErr = 0;
+	int      errorCode = getDevice()->read_register(0x9398, 100, &cfoErr);
+	if(errorCode != 0)
+	{
+		__SS__ << "Error reading register 0x9398. Error code = " << errorCode;
+		__SS_THROW__;
+	}
 	int impliedPos  = 2 - measuredPos;
 
 	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
