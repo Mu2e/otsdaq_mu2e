@@ -1,5 +1,6 @@
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
+#include "otsdaq/FiniteStateMachine/RunControlIterationConstants.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
 
@@ -1458,6 +1459,23 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	if(step == -1)
 		step = getIterationIndex();
 
+	const int cfoEventSendingStartIteration =
+	    CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION;
+	if(cfoEventSendingStartIteration <=
+	   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
+	       CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		__FE_SS__
+		    << "Invalid iteration ordering: CONFIG_CFO_EVENT_SENDING_START_ITERATION ("
+		    << cfoEventSendingStartIteration
+		    << ") must be larger than CONFIG_DTC_TIMING_CHAIN_START_INDEX + "
+		       "CONFIG_DTC_TIMING_CHAIN_STEPS ("
+		    << (CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
+		        CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+		    << ")." << __E__;
+		__FE_SS_THROW__;
+	}
+
 	__FE_COUT_INFO__ << "configureEventBuildingMode() " << step << __E__;
 
 	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
@@ -1475,15 +1493,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
 		indicateIterationWork();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		__FE_COUT__ << "CFO reset serdes TX " << __E__;
-		thisCFO_->ResetAllSERDESTx();
-		indicateIterationWork();
-	}
-	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	else if(step == cfoEventSendingStartIteration)
 	{
 		__FE_COUT__ << "Enable communication over links" << __E__;
 		thisCFO_->EnableEmbeddedClockMarker();
@@ -1499,6 +1509,24 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
 		//thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
+	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		if(cfoEventSendingStartIteration >
+		   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
+		       CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+		{
+			__FE_COUT__ << "CFO reset serdes TX " << __E__;
+			thisCFO_->ResetAllSERDESTx();
+		}
+		else
+		{
+			__FE_COUT__
+			    << "Skipping CFO TX reset because event sending was configured to start at iteration "
+			    << cfoEventSendingStartIteration << __E__;
+		}
+		indicateIterationWork();
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -1735,6 +1763,21 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	testAndUpdateTimeAlive("Start");
 	testRTFClockInEventBuildingMode("Start");
 
+	if(CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION <=
+	   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
+	       CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	{
+		__FE_SS__
+		    << "Invalid iteration ordering: RUN_START_READY_FOR_TRIGGERS_ITERATION ("
+		    << CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION
+		    << ") must be larger than CONFIG_DTC_TIMING_CHAIN_START_INDEX + "
+		       "CONFIG_DTC_TIMING_CHAIN_STEPS ("
+		    << (CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
+		        CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+		    << ")." << __E__;
+		__FE_SS_THROW__;
+	}
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO start for HW Dev mode." << __E__;
@@ -1755,6 +1798,83 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		__FE_COUT_INFO__ << "Start the loopback!" << __E__;
 		loopbackTest(runNumber);
 		__FE_COUT_INFO__ << "End the loopback!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	{
+		const int startIteration = getIterationIndex();
+		if(startIteration <
+		   RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION)
+		{
+			__FE_COUT_INFO__
+			    << "Delaying CFO run plan launch until start iteration >= "
+			    << RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION
+			    << __E__;
+			indicateIterationWork();
+			return;
+		}
+
+		if(startIteration ==
+		   RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION)
+		{
+			bool autoFixedWidthRunPlanEnable = false;
+			try
+			{
+				autoFixedWidthRunPlanEnable =
+				    getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>();
+			}
+			catch(...)
+			{
+				__FE_COUT_WARN__
+				    << "Missing CFOInterfaceTable AutoFixedWidthRunPlanEnable. "
+				       "Skipping startup run plan launch."
+				    << __E__;
+				return;
+			}
+
+			if(!autoFixedWidthRunPlanEnable)
+			{
+				__FE_COUT_INFO__
+				    << "AutoFixedWidthRunPlanEnable is disabled. Skipping startup run "
+				       "plan launch."
+				    << __E__;
+				return;
+			}
+
+			const uint32_t numberOfEventWindowMarkers = 0;  // 0 means infinite windows
+
+			std::string eventDuration = "100us";
+			try
+			{
+				eventDuration = getSelfNode()
+				                    .getNode("AutoFixedWidthRunPlanEventDuration")
+				                    .getValueWithDefault("100us");
+			}
+			catch(...)
+			{
+				__FE_COUT_WARN__
+				    << "Optional CFOInterfaceTable AutoFixedWidthRunPlanEventDuration "
+				       "was not found; defaulting to 100us."
+				    << __E__;
+			}
+
+			__FE_COUT_INFO__
+			    << "Launching startup fixed-width CFO run plan in infinite mode (count=0) "
+			    << "at duration " << eventDuration << __E__;
+
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			    true,
+			    false,
+			    eventDuration,
+			    numberOfEventWindowMarkers,
+			    next_starting_event_window_tag_,
+			    1,
+			    false,
+			    false,
+			    false,
+			    false);
+
+			next_starting_event_window_tag_ += numberOfEventWindowMarkers;
+		}
 	}
 
 	/* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
@@ -1926,7 +2046,10 @@ void CFOFrontEndInterface::stop(void)
 		return;
 	}
 
-	// TODO: add CFO Halt or Leave
+	// Apply explicit CFO halt behavior on stop transition.
+	halt();
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()

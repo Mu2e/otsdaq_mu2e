@@ -13,6 +13,7 @@
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
 #include "otsdaq/FECore/FEVInterface.h"
+#include "otsdaq/FiniteStateMachine/RunControlIterationConstants.h"
 
 namespace ots
 {
@@ -81,6 +82,22 @@ class CFOandDTCCoreVInterface : public FEVInterface
 
 	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
 	static const int CONFIG_DTC_TIMING_CHAIN_STEPS       = 3;
+	static const int RUN_START_READY_FOR_TRIGGERS_ITERATION =
+	    RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION;
+	static_assert(
+	    RUN_START_READY_FOR_TRIGGERS_ITERATION >
+	        CONFIG_DTC_TIMING_CHAIN_START_INDEX + CONFIG_DTC_TIMING_CHAIN_STEPS,
+	    "RUN_START_READY_FOR_TRIGGERS_ITERATION must be larger than "
+	    "CONFIG_DTC_TIMING_CHAIN_START_INDEX + CONFIG_DTC_TIMING_CHAIN_STEPS");
+	// Iteration where CFO enables event sending (clock marker/RF0/punch/link).
+	// Must be strictly after timing-chain steps complete.
+	static const int CONFIG_CFO_EVENT_SENDING_START_ITERATION =
+	    1 + CONFIG_DTC_TIMING_CHAIN_START_INDEX + CONFIG_DTC_TIMING_CHAIN_STEPS;
+	static_assert(
+	    CONFIG_CFO_EVENT_SENDING_START_ITERATION >
+	        CONFIG_DTC_TIMING_CHAIN_START_INDEX + CONFIG_DTC_TIMING_CHAIN_STEPS,
+	    "CONFIG_CFO_EVENT_SENDING_START_ITERATION must be larger than "
+	    "CONFIG_DTC_TIMING_CHAIN_START_INDEX + CONFIG_DTC_TIMING_CHAIN_STEPS");
 
 	bool artdaqMode_ = false;  // true to prevent run data file generation
 
