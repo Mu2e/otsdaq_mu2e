@@ -1,6 +1,6 @@
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
-#include "otsdaq/Macros/InterfacePluginMacros.h"
 #include "otsdaq/FiniteStateMachine/RunControlIterationConstants.h"
+#include "otsdaq/Macros/InterfacePluginMacros.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
 
@@ -1522,9 +1522,9 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		}
 		else
 		{
-			__FE_COUT__
-			    << "Skipping CFO TX reset because event sending was configured to start at iteration "
-			    << cfoEventSendingStartIteration << __E__;
+			__FE_COUT__ << "Skipping CFO TX reset because event sending was configured "
+			               "to start at iteration "
+			            << cfoEventSendingStartIteration << __E__;
 		}
 		indicateIterationWork();
 	}
@@ -1857,21 +1857,20 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 				    << __E__;
 			}
 
-			__FE_COUT_INFO__
-			    << "Launching startup fixed-width CFO run plan in infinite mode (count=0) "
-			    << "at duration " << eventDuration << __E__;
+			__FE_COUT_INFO__ << "Launching startup fixed-width CFO run plan in infinite "
+			                    "mode (count=0) "
+			                 << "at duration " << eventDuration << __E__;
 
-			CompileSetAndLaunchTemplateFixedWidthRunPlan(
-			    true,
-			    false,
-			    eventDuration,
-			    numberOfEventWindowMarkers,
-			    next_starting_event_window_tag_,
-			    1,
-			    false,
-			    false,
-			    false,
-			    false);
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(true,
+			                                             false,
+			                                             eventDuration,
+			                                             numberOfEventWindowMarkers,
+			                                             next_starting_event_window_tag_,
+			                                             1,
+			                                             false,
+			                                             false,
+			                                             false,
+			                                             false);
 
 			next_starting_event_window_tag_ += numberOfEventWindowMarkers;
 		}
