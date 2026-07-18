@@ -101,11 +101,12 @@ void HistoReceiver::readPacket(TDirectory* dir, std::string* buf)
 		}
 
 		// New framing: magic + object count per directory block.
-		auto    payloadOffset = message.Length();
-		UInt_t  magic = 0;
-		UInt_t  objectCount = 0;
-		bool    useCountFraming = false;
-		if(static_cast<size_t>(message.BufferSize() - message.Length()) >= sizeof(UInt_t) * 2)
+		auto   payloadOffset   = message.Length();
+		UInt_t magic           = 0;
+		UInt_t objectCount     = 0;
+		bool   useCountFraming = false;
+		if(static_cast<size_t>(message.BufferSize() - message.Length()) >=
+		   sizeof(UInt_t) * 2)
 		{
 			message >> magic;
 			if(magic == kHistoPacketMagic)
@@ -117,7 +118,7 @@ void HistoReceiver::readPacket(TDirectory* dir, std::string* buf)
 			{
 				message.SetBufferOffset(payloadOffset);
 			}
-}
+		}
 
 		if(useCountFraming)
 		{
@@ -126,9 +127,10 @@ void HistoReceiver::readPacket(TDirectory* dir, std::string* buf)
 				TObject* readObject = (TObject*)message.ReadObjectAny(TObject::Class());
 				if(readObject == nullptr)
 				{
-					__COUT__ << "[HistoReceiver::" << __func__
-					         << "] Unexpected null object in counted payload for directory "
-					         << directoryNameStdString << ", index " << i << std::endl;
+					__COUT__
+					    << "[HistoReceiver::" << __func__
+					    << "] Unexpected null object in counted payload for directory "
+					    << directoryNameStdString << ", index " << i << std::endl;
 					break;
 				}
 				addObject(readObject, subdir, mode);
