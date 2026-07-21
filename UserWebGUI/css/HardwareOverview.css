@@ -35,39 +35,10 @@
 	cursor: pointer;
 }
 
+/* config-info: extend shared .config-info with right-alignment */
 .config-info {
-	font-size: 11px;
-	color: #555;
-	font-style: italic;
 	flex: 1;
 	text-align: right;
-}
-
-.save-btn {
-	font-size: 13px;
-	padding: 6px 24px;
-	cursor: pointer;
-	background: #e67e22;
-	color: #fff;
-	border: none;
-	border-radius: 4px;
-	font-weight: bold;
-	animation: save-pulse 1.2s ease-in-out infinite;
-}
-
-.save-btn:hover {
-	background: #c56a15;
-}
-
-.save-btn:disabled {
-	background: #999;
-	cursor: default;
-	animation: none;
-}
-
-@keyframes save-pulse {
-	0%, 100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.5); }
-	50% { box-shadow: 0 0 0 6px rgba(230, 126, 34, 0); }
 }
 
 /* ---- Global actions ---- */
@@ -261,36 +232,6 @@
 	font-weight: bold;
 }
 
-/* Status dots */
-.status-dot {
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	flex-shrink: 0;
-}
-
-.status-on {
-	background: #28a745;
-}
-
-.status-off {
-	background: #dc3545;
-}
-
-.status-unknown {
-	background: #999;
-}
-
-.status-dot-clickable {
-	cursor: pointer;
-}
-
-.status-dot-clickable:hover {
-	transform: scale(1.4);
-	box-shadow: 0 0 3px rgba(0,0,0,0.4);
-}
-
 /* ---- Right panel: detail view ---- */
 
 #detailPanel {
@@ -332,143 +273,11 @@
 	text-decoration: underline;
 }
 
-/* Accordion */
-.accordion-section {
-	margin-bottom: 2px;
-}
-
-.accordion-header {
-	font-weight: bold;
-	font-size: 11px;
-	color: #0056b3;
-	padding: 4px 6px;
-	background: #e8ecf1;
-	border: 1px solid #d0d8e0;
-	border-radius: 3px;
-	cursor: pointer;
-	user-select: none;
-}
-
-.accordion-header:hover {
-	background: #dce3ed;
-}
-
-.accordion-count {
-	font-weight: normal;
-	color: #888;
-	font-size: 10px;
-}
-
-.accordion-body {
-	display: none;
-	padding: 2px 4px;
-}
-
-.accordion-body.accordion-open {
-	display: block;
-}
-
-/* Settings table */
-.settings-table {
-	border-collapse: collapse;
-	font-size: 10px;
-	width: 100%;
-}
-
-.settings-table td {
-	padding: 1px 4px;
-	border-bottom: 1px solid #f0f0f0;
-}
-
-.settings-name {
-	color: #555;
-	white-space: nowrap;
-	width: 1%;
-}
-
-.settings-value {
-	font-family: 'Inconsolata', monospace;
-	font-weight: bold;
-	font-size: 10px;
-	color: #222;
-	word-break: break-all;
-}
-
-/* Bitmap grid for channel enable arrays */
-.bitmap-grid {
-	display: inline-flex;
-	flex-wrap: wrap;
-	gap: 1px;
-	vertical-align: middle;
-}
-
-.bitmap-cell {
-	display: block;
-	width: 10px;
-	height: 10px;
-	border-radius: 1px;
-	cursor: default;
-}
-
-.bitmap-on {
-	background: #28a745;
-}
-
-.bitmap-off {
-	background: #dc3545;
-}
-
-/* Channel tags */
-.channel-list {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 3px;
-	padding: 2px 0;
-}
-
-.channel-tag {
-	font-size: 10px;
-	padding: 1px 6px;
-	background: #e0ecf8;
-	border-radius: 3px;
-	color: #333;
-	white-space: nowrap;
-}
-
-/* Macro buttons */
+/* Macro buttons container (page-specific ID) */
 #macroButtons {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 4px;
-}
-
-.macro-btn {
-	font-size: 10px;
-	padding: 3px 8px;
-	cursor: pointer;
-	background: #6c757d;
-	color: #fff;
-	border: none;
-	border-radius: 3px;
-}
-
-.macro-btn:hover {
-	background: #545b62;
-}
-
-.macro-btn-primary {
-	font-size: 11px;
-	padding: 5px 12px;
-	cursor: pointer;
-	background: #0056b3;
-	color: #fff;
-	border: none;
-	border-radius: 3px;
-	font-weight: bold;
-}
-
-.macro-btn-primary:hover {
-	background: #003d80;
 }
 
 /* ROC mask selector */
@@ -561,20 +370,4 @@
 	display: none;
 }
 
-/* Shared */
-.placeholder-text {
-	color: #888;
-	font-style: italic;
-	padding: 16px;
-	text-align: center;
-}
-
-.goodValue {
-	color: #28a745;
-	font-weight: bold;
-}
-
-.badValue {
-	color: #dc3545;
-	font-weight: bold;
-}
+/* (shared styles in Mu2e.css) */

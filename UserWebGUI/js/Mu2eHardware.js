@@ -666,6 +666,9 @@ var Mu2eHardware = Mu2eHardware || {};
 		if (_configGuiLid) DesktopContent._localUrnLid = _configGuiLid;
 	}
 
+	Mu2eHardware.setConfigGuiLid = function () { _setConfigGuiLid(); };
+	Mu2eHardware.discoverConfigGuiLid = function (cb) { _discoverConfigGuiLid(cb); };
+
 	function _setMacroMakerLid() {
 		_captureMacroMakerLid();
 		if (_macroMakerLid)
@@ -1439,6 +1442,8 @@ var Mu2eHardware = Mu2eHardware || {};
 
 	// Extract short hostname from parentApp string
 	// e.g. "https://mu2edaq09.fnal.gov:2015/ctx/app" → "mu2edaq09"
+	Mu2eHardware.extractHostname = _extractHostname;
+
 	function _extractHostname(parentApp) {
 		var host = parentApp;
 		// strip protocol
