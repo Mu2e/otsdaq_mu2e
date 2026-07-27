@@ -4792,14 +4792,9 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	bool cfoEmMode  = dtc->ReadCFOEmulationMode();
 	bool cfoCDRLock = dtc->ReadSERDESRXCDRLock(DTCLib::DTC_Link_CFO);
 
-	uint32_t cfoErr = 0;
-	int      errorCode = getDevice()->read_register(0x9398, 100, &cfoErr);
-	if(errorCode != 0)
-	{
-		__SS__ << "Error reading register 0x9398. Error code = " << errorCode;
-		__SS_THROW__;
-	}
-	int impliedPos  = 2 - measuredPos;
+	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
+	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
+	int      impliedPos  = 2 - measuredPos;
 
 	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
 	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
@@ -4807,11 +4802,12 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 
 	o << "=== CFO/RTF Settings & Status ==="
 	  << "\n";
-	o << "  CFO Emulation Mode:    " << (cfoEmMode ? "ON" : "OFF")
 	std::string edgeModeStr = (edgeMode == 0   ? "posedge"
 	                           : edgeMode == 1 ? "negedge"
 	                           : edgeMode == 2 ? "auto"
 	                                           : ("unknown(" + std::to_string(edgeMode) + ")"));
+	o << "  CFO Emulation Mode:    " << (cfoEmMode ? "ON" : "OFF")
+	  << "        JA Source: " << jaSource << "\n";
 	o << "  CFO-RTF Edge Select:   " << edgeModeStr
 	  << "    CFO CDR Lock: " << (cfoCDRLock ? "LOCKED" : "UNLOCKED") << "\n";
 	o << "  CFO Marker Pos:        " << measuredPos << " ==> " << impliedPos
@@ -4823,11 +4819,11 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	o << "  ErrFlag   RTFPhase RTFMarker TxMarkers Rx-to-Tx |  CDR  JA    JA-Rec "
 	     "JA-Ext\n";
 	o << "  Sticky:     "
-	  << "[" << (((cfoErr >> 11) & 1) ? "x" : " ") << "]      "
-	  << "[" << (((cfoErr >> 12) & 1) ? "x" : " ") << "]       "
-	  << "[" << (((cfoErr >> 9) & 1) ? "x" : " ") << ":"
-	  << (((cfoErr >> 10) & 1) ? "x" : " ") << "]     "
-	  << "[" << (((cfoErr >> 13) & 1) ? "x" : " ") << "]    ";
+	  << "[" << (dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr) ? "x" : " ") << "]      "
+	  << "[" << (dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ? "x" : " ") << "]       "
+	  << "[" << (dtc->ReadCFOEventStartMarkerTxError(cfoErr) ? "x" : " ") << ":"
+	  << (dtc->ReadCFOClockMarkerTxError(cfoErr) ? "x" : " ") << "]     "
+	  << "[" << (dtc->ReadCFORxToTxDataCorruptionError(cfoErr) ? "x" : " ") << "]    ";
 	o << "|  " << dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO) << "     "
 	  << dtc->ReadJitterAttenuatorUnlockCount() << "     "
 	  << dtc->ReadJitterAttenuatorRecoveredClockLOSCount() << "      "
