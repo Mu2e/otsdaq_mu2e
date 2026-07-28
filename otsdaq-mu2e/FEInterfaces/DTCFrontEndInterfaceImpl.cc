@@ -2085,8 +2085,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	//Jun/18/2023 14:00 raw-data: 0x23061814
 	switch(step)
 	{
-	case 0:
-	{
+	case 0: {
 		//put DTC in known state with DTC reset and control clear
 		getDTC()->SoftReset();
 
@@ -4810,10 +4809,12 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 
 	o << "=== CFO/RTF Settings & Status ==="
 	  << "\n";
-	std::string edgeModeStr = (edgeMode == 0   ? "posedge"
-	                           : edgeMode == 1 ? "negedge"
-	                           : edgeMode == 2 ? "auto"
-	                                           : ("unknown(" + std::to_string(edgeMode) + ")"));
+	std::string edgeModeStr =
+	    ((edgeMode & 1) == 0   ? "posedge"
+	     : (edgeMode & 1) == 1 ? "negedge"
+	     : edgeMode == 2
+	         ? "auto"  //as of July 2026, bit-1 is not used in the DTC firmware!
+	         : ("unknown(" + std::to_string(edgeMode) + ")"));
 	o << "  CFO Emulation Mode:    " << (cfoEmMode ? "ON" : "OFF")
 	  << "        JA Source: " << jaSource << "\n";
 	o << "  CFO-RTF Edge Select:   " << edgeModeStr
