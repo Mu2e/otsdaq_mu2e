@@ -2086,12 +2086,20 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 	case 0:
+	{
 		//put DTC in known state with DTC reset and control clear
 		getDTC()->SoftReset();
-		getDTC()->ClearControlRegister();
+
+		// Preserve control-register bits that are managed by this front-end but are
+		// NOT reconstructed by the configuration steps below, so ClearControlRegister
+		// does not wipe them. Bits 5 & 6 are the External CFO Sample Edge Mode.
+		// Add any future FE-managed-but-unreconstructed control bits to this mask.
+		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6);
+		getDTC()->ClearControlRegister(controlRegisterKeepMask);
 
 		indicateIterationWork();
 		break;
+	}
 	case 1:
 		//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 		//	So solution:
