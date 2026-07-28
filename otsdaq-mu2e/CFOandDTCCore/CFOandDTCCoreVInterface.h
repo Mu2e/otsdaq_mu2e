@@ -103,8 +103,8 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	    FPGAClock_;  //period of FPGA clock in ns (as of Feb 2026, was 25ns)
 
   public:
-	void SoftReset(__ARGS__);
-	void HardReset(__ARGS__);
+	virtual void SoftReset(__ARGS__);
+	void         HardReset(__ARGS__);
 
 	void GetFirmwareVersion(__ARGS__);
 	void ResetPCIe(__ARGS__);
