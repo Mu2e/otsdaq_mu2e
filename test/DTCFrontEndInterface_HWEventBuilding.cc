@@ -66,10 +66,13 @@ try
 	////////////////////////////////////////////////////
 
 	// // Variables
-	std::string supervisorContextUID_     = "FEContext_Calo14"; //"ContextCalo03";
-	std::string supervisorApplicationUID_ = "FESupervisor_Calo14"; //"FESupervisorCalo03";
+	std::string supervisorContextUID_ = "FEContext_Calo14";  //"ContextCalo03";
+	std::string supervisorApplicationUID_ =
+	    "FESupervisor_Calo14";  //"FESupervisorCalo03";
 	std::string feUID_ =
-	    deviceIndex == 0 ? "Calo14_DTC0" : "Calo14_DTC1"; //"DTC4" : "DTC5";  //DTC4 for Device0 and DTC5 for Device1
+	    deviceIndex == 0
+	        ? "Calo14_DTC0"
+	        : "Calo14_DTC1";  //"DTC4" : "DTC5";  //DTC4 for Device0 and DTC5 for Device1
 	std::string theConfigurationPath_ =
 	    supervisorContextUID_ + "/LinkToApplicationTable/" + supervisorApplicationUID_ +
 	    "/LinkToSupervisorTable/LinkToFEInterfaceTable/" + feUID_ + "/LinkToFETypeTable";
