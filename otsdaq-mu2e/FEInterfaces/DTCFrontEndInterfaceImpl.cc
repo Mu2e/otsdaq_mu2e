@@ -4839,6 +4839,10 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
 	int      impliedPos  = dtc->ReadCFOImpliedMarkerOffset(cfoErr);
 
+	uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
+	bool     saturated = (rtfHist >> 10) & 1;
+	uint32_t satBin    = (rtfHist >> 7) & 0x7;
+
 	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
 	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
 	uint32_t batchSlip      = cdcDiag & 0xFFFF;
@@ -4855,8 +4859,14 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << "        JA Source: " << jaSource << "\n";
 	o << "  CFO-RTF Edge Select:   " << edgeModeStr
 	  << "    CFO CDR Lock: " << (cfoCDRLock ? "LOCKED" : "UNLOCKED") << "\n";
-	o << "  CFO Marker Pos:        " << measuredPos << " ==> " << impliedPos
+	o << "  CFO Marker Pos:        " << measuredPos << " ==> "
+	  << (measuredPos == 7 ? "invalid" : std::to_string(impliedPos))
 	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
+	o << "  RTF Hist Sat Bin:      "
+	  << (saturated && satBin != 7
+	          ? std::to_string(satBin) + " ==> " + std::to_string(2 - static_cast<int>(satBin))
+	          : (satBin == 7 ? "invalid" : "N/A"))
+	  << "      Saturated: " << (saturated ? "YES" : "NO") << "\n";
 	o << "  CFO Rx Clock Markers:  " << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
 
 	o << "\n=== CFO Interface Errors ==="
@@ -5002,24 +5012,29 @@ void DTCFrontEndInterface::GetRTFInterfaceStatus(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::RTFMarkerOffsetApply(__ARGS__)
 {
-	auto     dtc         = getDTC();
-	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
-	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
-	int      impliedPos  = dtc->ReadCFOImpliedMarkerOffset(cfoErr);
+	auto     dtc     = getDTC();
+	uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
+	bool     saturated = (rtfHist >> 10) & 1;
+	uint32_t satBin    = (rtfHist >> 7) & 0x7;
 
-	// measured position should be 0..4 (=> implied -2..2); guard against illegal readings
-	if(measuredPos > 4)
+	if(!saturated || satBin == 7)
 	{
-		__SS__ << "Illegal CFO measured marker position " << measuredPos
-		       << " (expected 0-4); not applying Permanent Offset.";
+		__SS__ << "RTF histogram has not saturated (saturated="
+		       << saturated << ", bin=" << satBin << "); cannot apply offset.";
 		__SS_THROW__;
 	}
+
+	int impliedPos = 2 - static_cast<int>(satBin);
+
+	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
+	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
 
 	dtc->SetCFOSamplePermanentOffset(impliedPos);
 	int readback = dtc->ReadCFOSamplePermanentOffset();
 
 	std::ostringstream outss;
-	outss << "CFO Marker Pos: " << measuredPos << " ==> " << impliedPos
+	outss << "RTF Hist Sat Bin: " << satBin << " ==> " << impliedPos
+	      << "  (CFO Marker Pos: " << measuredPos << ")"
 	      << ";  Permanent Offset set to " << impliedPos << " (readback " << readback
 	      << ").";
 
@@ -5433,6 +5448,14 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 
 	getDTC()->DisableCFOEmulation();
 	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge);  //forceCFOedge is a 2-bit value
+
+	// always enable CFO-RTF offset control (bit 6) so measured_RTF_position updates
+	{
+		uint32_t ctrl;
+		getDevice()->read_register(0x9100, 100, &ctrl);
+		ctrl |= (1 << 6);
+		getDevice()->write_register(0x9100, 100, ctrl);
+	}
 
 	__FE_COUTV__(useCFOemulator);
 
