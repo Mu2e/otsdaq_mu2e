@@ -5050,9 +5050,8 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 
 	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge
 	// (RTFPhase is ignored — it can fire transiently and does not indicate a wrong edge):
-	bool txMarkers =
-	    dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
-	    dtc->ReadCFOClockMarkerTxError(cfoErr);
+	bool txMarkers = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+	                 dtc->ReadCFOClockMarkerTxError(cfoErr);
 	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);  // "Rx-to-Tx"
 
 	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
@@ -5066,10 +5065,8 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 		dtc->SoftReset();  // clear sticky errors/lock counters after changing the edge
 		outss << "CFO interface errors present ("
 		      << "TxMarkers=" << (txMarkers ? "x" : " ")
-		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ")
-		      << " Parity=" << parityMismatch
-		      << " BatchSlip=" << batchSlip
-		      << "); toggled CFO clock edge to "
+		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ") << " Parity=" << parityMismatch
+		      << " BatchSlip=" << batchSlip << "); toggled CFO clock edge to "
 		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
 		      << " and issued a DTC Soft Reset.";
 	}
