@@ -600,6 +600,42 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "and the RTF_HIST_IDELAY register (histogram bins, IDELAY tap "
 	    "readback, saturation info).");
 
+	registerFEMacroFunction(
+	    "RTF Marker Offset Apply",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::RTFMarkerOffsetApply),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"RTF Marker Offset Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Reads the CFO measured marker position (as shown by 'Get RTF Interface "
+	    "Status') and sets the CFO Sample Permanent Offset to the implied ( ==> ) "
+	    "value, centering the RTF marker.");
+
+	registerFEMacroFunction(
+	    "Fix CFO Clock Edge",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::FixCFOClockEdge),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"Fix CFO Clock Edge Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Checks the CFO interface sticky errors (as shown by 'Get RTF Interface "
+	    "Status'). If RTFPhase, TxMarkers, or Rx-to-Tx shows an error, toggles the "
+	    "current CFO clock edge (Control Register 0x9100 bit 5).");
+
+	registerFEMacroFunction(
+	    "EVB High Level Counters",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::EVBHighLevelCounters),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"EVB High Level Counters"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Reads and displays the six 16-bit EVB high-level word counters from "
+	    "registers 0x9200 (ROC input / Self-transfer), 0x9204 (DDR FIFO write / "
+	    "DDR->TX), and 0x9208 (Buffer manager output / DMA output).");
+
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS
 	               << " steps. So choose 1 step at a time, 0-"
@@ -4801,7 +4837,7 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 
 	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
 	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
-	int      impliedPos  = 2 - measuredPos;
+	int      impliedPos  = dtc->ReadCFOImpliedMarkerOffset(cfoErr);
 
 	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
 	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
@@ -4962,6 +4998,95 @@ void DTCFrontEndInterface::GetRTFInterfaceStatus(__ARGS__)
 
 	__SET_ARG_OUT__("RTF Interface Status", "\n" + outss.str());
 }  //end GetRTFInterfaceStatus()
+
+//========================================================================
+void DTCFrontEndInterface::RTFMarkerOffsetApply(__ARGS__)
+{
+	auto     dtc         = getDTC();
+	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
+	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
+	int      impliedPos  = dtc->ReadCFOImpliedMarkerOffset(cfoErr);
+
+	// measured position should be 0..4 (=> implied -2..2); guard against illegal readings
+	if(measuredPos > 4)
+	{
+		__SS__ << "Illegal CFO measured marker position " << measuredPos
+		       << " (expected 0-4); not applying Permanent Offset.";
+		__SS_THROW__;
+	}
+
+	dtc->SetCFOSamplePermanentOffset(impliedPos);
+	int readback = dtc->ReadCFOSamplePermanentOffset();
+
+	std::ostringstream outss;
+	outss << "CFO Marker Pos: " << measuredPos << " ==> " << impliedPos
+	      << ";  Permanent Offset set to " << impliedPos << " (readback " << readback
+	      << ").";
+
+	__FE_COUT_INFO__ << outss.str() << __E__;
+	__SET_ARG_OUT__("RTF Marker Offset Result", outss.str());
+}  //end RTFMarkerOffsetApply()
+
+//========================================================================
+void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
+{
+	auto     dtc    = getDTC();
+	uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
+
+	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge:
+	bool rtfPhase = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);  // "RTFPhase"
+	bool txMarkers =                                              // "TxMarkers"
+	    dtc->ReadCFOEventStartMarkerTxError(cfoErr) || dtc->ReadCFOClockMarkerTxError(cfoErr);
+	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);  // "Rx-to-Tx"
+
+	std::ostringstream outss;
+	if(rtfPhase || txMarkers || rxToTx)
+	{
+		int newEdge = dtc->ToggleExternalCFOSampleEdge();
+		dtc->SoftReset();  // clear sticky errors/lock counters after changing the edge
+		outss << "CFO interface errors present (RTFPhase=" << (rtfPhase ? "x" : " ")
+		      << " TxMarkers=" << (txMarkers ? "x" : " ") << " Rx-to-Tx="
+		      << (rxToTx ? "x" : " ") << "); toggled CFO clock edge to "
+		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
+		      << " and issued a DTC Soft Reset.";
+	}
+	else
+	{
+		outss << "No RTFPhase/TxMarkers/Rx-to-Tx errors present; CFO clock edge left "
+		         "unchanged.";
+	}
+
+	__FE_COUT_INFO__ << outss.str() << __E__;
+	__SET_ARG_OUT__("Fix CFO Clock Edge Result", outss.str());
+}  //end FixCFOClockEdge()
+
+//========================================================================
+void DTCFrontEndInterface::EVBHighLevelCounters(__ARGS__)
+{
+	auto dtc = getDTC();
+
+	// read each register once and decode both 16-bit fields from that snapshot
+	uint32_t reg9200 = dtc->ReadEVBHighLevelCounters0();
+	uint32_t reg9204 = dtc->ReadEVBHighLevelCounters1();
+	uint32_t reg9208 = dtc->ReadEVBHighLevelCounters2();
+
+	std::ostringstream o;
+	o << "=== EVB High Level Counters ===\n";
+	o << "  0x9200:  ROC input words:              "
+	  << dtc->ReadEVBROCInputWords(reg9200) << "\n";
+	o << "           Self-transfer words:          "
+	  << dtc->ReadEVBSelfTransferWords(reg9200) << "\n";
+	o << "  0x9204:  DDR FIFO write words:         "
+	  << dtc->ReadEVBDDRFIFOWriteWords(reg9204) << "\n";
+	o << "           DDR->TX words:                "
+	  << dtc->ReadEVBDDRToTXWords(reg9204) << "\n";
+	o << "  0x9208:  Buffer manager output words:  "
+	  << dtc->ReadEVBBufferManagerOutputWords(reg9208) << "\n";
+	o << "           DMA output words:             "
+	  << dtc->ReadEVBDMAOutputWords(reg9208) << "\n";
+
+	__SET_ARG_OUT__("EVB High Level Counters", "\n" + o.str());
+}  //end EVBHighLevelCounters()
 
 // //========================================================================
 // void DTCFrontEndInterface::ROCDestroy(__ARGS__)

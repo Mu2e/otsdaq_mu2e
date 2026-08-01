@@ -227,6 +227,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void readTxDiagFIFO(__ARGS__);
 	void GetLinkErrors(__ARGS__);
 	void GetRTFInterfaceStatus(__ARGS__);
+	void RTFMarkerOffsetApply(__ARGS__);
+	void FixCFOClockEdge(__ARGS__);
+	void EVBHighLevelCounters(__ARGS__);
 	void ROCResetLink(__ARGS__);
 	void HeaderFormatTest(__ARGS__);
 
