@@ -4871,7 +4871,7 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 
 	o << "\n=== CFO Interface Errors ==="
 	  << "\n";
-	o << "  ErrFlag   RTFPhase RTFMarker TxMarkers Rx-to-Tx |  CDR  JA    JA-Rec "
+	o << "  ErrFlag:  RTFPhase RTFMarker TxMarkers Rx-to-Tx |  CDR  JA    JA-Rec "
 	     "JA-Ext\n";
 	o << "  Sticky:     "
 	  << "[" << (dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr) ? "x" : " ") << "]      "
@@ -4885,7 +4885,7 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << dtc->ReadJitterAttenuatorExternalClockLOSCount() << "\n";
 
 	o << "            EvtStart  40MHz  Parity  BatchSlip\n";
-	o << "  Count:    " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount() << "      "
+	o << "  Count:       " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount() << "      "
 	  << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       " << parityMismatch
 	  << "       " << batchSlip << "\n";
 
