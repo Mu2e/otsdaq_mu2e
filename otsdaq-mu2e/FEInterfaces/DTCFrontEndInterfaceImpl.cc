@@ -5034,9 +5034,10 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 	uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
 
 	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge:
-	bool rtfPhase = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);  // "RTFPhase"
-	bool txMarkers =                                              // "TxMarkers"
-	    dtc->ReadCFOEventStartMarkerTxError(cfoErr) || dtc->ReadCFOClockMarkerTxError(cfoErr);
+	bool rtfPhase  = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);  // "RTFPhase"
+	bool txMarkers =                                               // "TxMarkers"
+	    dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+	    dtc->ReadCFOClockMarkerTxError(cfoErr);
 	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);  // "Rx-to-Tx"
 
 	std::ostringstream outss;
@@ -5045,8 +5046,8 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 		int newEdge = dtc->ToggleExternalCFOSampleEdge();
 		dtc->SoftReset();  // clear sticky errors/lock counters after changing the edge
 		outss << "CFO interface errors present (RTFPhase=" << (rtfPhase ? "x" : " ")
-		      << " TxMarkers=" << (txMarkers ? "x" : " ") << " Rx-to-Tx="
-		      << (rxToTx ? "x" : " ") << "); toggled CFO clock edge to "
+		      << " TxMarkers=" << (txMarkers ? "x" : " ")
+		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ") << "); toggled CFO clock edge to "
 		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
 		      << " and issued a DTC Soft Reset.";
 	}
@@ -5072,14 +5073,14 @@ void DTCFrontEndInterface::EVBHighLevelCounters(__ARGS__)
 
 	std::ostringstream o;
 	o << "=== EVB High Level Counters ===\n";
-	o << "  0x9200:  ROC input words:              "
-	  << dtc->ReadEVBROCInputWords(reg9200) << "\n";
+	o << "  0x9200:  ROC input words:              " << dtc->ReadEVBROCInputWords(reg9200)
+	  << "\n";
 	o << "           Self-transfer words:          "
 	  << dtc->ReadEVBSelfTransferWords(reg9200) << "\n";
 	o << "  0x9204:  DDR FIFO write words:         "
 	  << dtc->ReadEVBDDRFIFOWriteWords(reg9204) << "\n";
-	o << "           DDR->TX words:                "
-	  << dtc->ReadEVBDDRToTXWords(reg9204) << "\n";
+	o << "           DDR->TX words:                " << dtc->ReadEVBDDRToTXWords(reg9204)
+	  << "\n";
 	o << "  0x9208:  Buffer manager output words:  "
 	  << dtc->ReadEVBBufferManagerOutputWords(reg9208) << "\n";
 	o << "           DMA output words:             "
