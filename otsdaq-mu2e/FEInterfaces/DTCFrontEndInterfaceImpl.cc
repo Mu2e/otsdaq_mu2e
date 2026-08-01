@@ -4884,7 +4884,7 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << dtc->ReadJitterAttenuatorRecoveredClockLOSCount() << "      "
 	  << dtc->ReadJitterAttenuatorExternalClockLOSCount() << "\n";
 
-	o << "  EvtStart  40MHz  Parity  BatchSlip\n";
+	o << "            EvtStart  40MHz  Parity  BatchSlip\n";
 	o << "  Count:    " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount() << "      "
 	  << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       " << parityMismatch
 	  << "       " << batchSlip << "\n";
@@ -5048,28 +5048,35 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 	auto     dtc    = getDTC();
 	uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
 
-	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge:
-	bool rtfPhase  = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);  // "RTFPhase"
-	bool txMarkers =                                               // "TxMarkers"
+	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge
+	// (RTFPhase is ignored — it can fire transiently and does not indicate a wrong edge):
+	bool txMarkers =
 	    dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
 	    dtc->ReadCFOClockMarkerTxError(cfoErr);
 	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);  // "Rx-to-Tx"
 
+	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
+	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
+	uint32_t batchSlip      = cdcDiag & 0xFFFF;
+
 	std::ostringstream outss;
-	if(rtfPhase || txMarkers || rxToTx)
+	if(txMarkers || rxToTx || parityMismatch || batchSlip)
 	{
 		int newEdge = dtc->ToggleExternalCFOSampleEdge();
 		dtc->SoftReset();  // clear sticky errors/lock counters after changing the edge
-		outss << "CFO interface errors present (RTFPhase=" << (rtfPhase ? "x" : " ")
-		      << " TxMarkers=" << (txMarkers ? "x" : " ")
-		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ") << "); toggled CFO clock edge to "
+		outss << "CFO interface errors present ("
+		      << "TxMarkers=" << (txMarkers ? "x" : " ")
+		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ")
+		      << " Parity=" << parityMismatch
+		      << " BatchSlip=" << batchSlip
+		      << "); toggled CFO clock edge to "
 		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
 		      << " and issued a DTC Soft Reset.";
 	}
 	else
 	{
-		outss << "No RTFPhase/TxMarkers/Rx-to-Tx errors present; CFO clock edge left "
-		         "unchanged.";
+		outss << "No TxMarkers/Rx-to-Tx/Parity/BatchSlip errors present; CFO clock edge "
+		         "left unchanged.";
 	}
 
 	__FE_COUT_INFO__ << outss.str() << __E__;
