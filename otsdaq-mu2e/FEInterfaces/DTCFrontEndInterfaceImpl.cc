@@ -4863,9 +4863,9 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << (measuredPos == 7 ? "invalid" : std::to_string(impliedPos))
 	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
 	o << "  RTF Hist Sat Bin:      "
-	  << (saturated && satBin != 7
-	          ? std::to_string(satBin) + " ==> " + std::to_string(2 - static_cast<int>(satBin))
-	          : (satBin == 7 ? "invalid" : "N/A"))
+	  << (saturated && satBin != 7 ? std::to_string(satBin) + " ==> " +
+	                                     std::to_string(2 - static_cast<int>(satBin))
+	                               : (satBin == 7 ? "invalid" : "N/A"))
 	  << "      Saturated: " << (saturated ? "YES" : "NO") << "\n";
 	o << "  CFO Rx Clock Markers:  " << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
 
@@ -5012,15 +5012,15 @@ void DTCFrontEndInterface::GetRTFInterfaceStatus(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::RTFMarkerOffsetApply(__ARGS__)
 {
-	auto     dtc     = getDTC();
+	auto     dtc       = getDTC();
 	uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
 	bool     saturated = (rtfHist >> 10) & 1;
 	uint32_t satBin    = (rtfHist >> 7) & 0x7;
 
 	if(!saturated || satBin == 7)
 	{
-		__SS__ << "RTF histogram has not saturated (saturated="
-		       << saturated << ", bin=" << satBin << "); cannot apply offset.";
+		__SS__ << "RTF histogram has not saturated (saturated=" << saturated
+		       << ", bin=" << satBin << "); cannot apply offset.";
 		__SS_THROW__;
 	}
 
