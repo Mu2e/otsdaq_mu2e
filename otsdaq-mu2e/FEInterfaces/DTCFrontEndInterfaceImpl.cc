@@ -4858,7 +4858,7 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	o << "  CFO Emulation Mode:    " << (cfoEmMode ? "ON" : "OFF")
 	  << "        JA Source: " << jaSource << "\n";
 	o << "  CFO-RTF Edge Select:   " << edgeModeStr
-	  << "    CFO CDR Lock: " << (cfoCDRLock ? "LOCKED" : "UNLOCKED") << "\n";
+	  << "    CFO CDR Lock: " << (cfoCDRLock ? "LOCKED" : "Not Locked") << "\n";
 	o << "  CFO Marker Pos:        " << measuredPos << " ==> "
 	  << (measuredPos == 7 ? "invalid" : std::to_string(impliedPos))
 	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
