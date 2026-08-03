@@ -6098,6 +6098,7 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
+		statusSs << "Subrun Transition count:" << threadStruct->subrunTransitionCount_ << __E__;
 
 		if(threadStruct->saveBinaryData_ && threadStruct->packetThresholdToSave_ > 0)
 			statusSs << "Saved " << (threadStruct->inSubeventMode_ ? "subevent" : "event")
@@ -6285,6 +6286,13 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 
 	//start mutex scope to change non-atomic status counters
 	std::lock_guard<std::mutex> lock(threadStruct->lock_);
+
+	bool currentSubrunBit = (subevent->GetHeader()->event_mode >> 33) & 1;
+	if(currentSubrunBit != threadStruct->lastSubrunBit_)
+	{
+		++(threadStruct->subrunTransitionCount_);
+		threadStruct->lastSubrunBit_ = currentSubrunBit;
+	}
 
 	if(threadStruct->transferStartTime_ ==
 	   std::chrono::steady_clock::time_point::min())  //init start time
@@ -6551,6 +6559,8 @@ try
 		threadStruct->subeventsCount_           = 0;
 		threadStruct->mismatchedEventTagsCount_ = 0;
 		threadStruct->mismatchedEventTagJumps_.clear();
+		threadStruct->subrunTransitionCount_          = 0;
+		threadStruct->lastSubrunBit_                  = false;
 		threadStruct->rocFragmentsCount_             = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocPayloadEmptyCount_          = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocFragmentTimeoutsCount_      = {0, 0, 0, 0, 0, 0};
@@ -6650,6 +6660,8 @@ try
 						threadStruct->subeventsCount_           = 0;
 						threadStruct->mismatchedEventTagsCount_ = 0;
 						threadStruct->mismatchedEventTagJumps_.clear();
+						threadStruct->subrunTransitionCount_          = 0;
+						threadStruct->lastSubrunBit_                  = false;
 						threadStruct->rocFragmentsCount_             = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocPayloadEmptyCount_          = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocFragmentTimeoutsCount_      = {0, 0, 0, 0, 0, 0};

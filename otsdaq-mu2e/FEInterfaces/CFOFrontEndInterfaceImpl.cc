@@ -1,5 +1,7 @@
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
+#include <cmath>
+#include "otsdaq/ConfigurationInterface/ConfigurationManagerRW.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
 
@@ -565,6 +567,21 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Read the Run Plan Subrun configuration registers. "
 		"Returns the Subrun Event Limit and Subrun Prediction Offset values."
 	);
+
+	registerFEMacroFunction(
+		"Loopback Topology Discovery",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::LoopbackTopologyDiscovery),
+		std::vector<std::string>{
+			"Number of Loopback tests per DTC (Default := 100)",
+			"Save ROC Delay Offsets to Table (Default := false)"
+		},
+		std::vector<std::string>{"Response"},
+		1,
+		"*",
+		"Discovers timing chain topology by probing each DTC with CFO loopback markers. "
+		"Maps every DTC to a CFO link (chain index) and position in chain."
+	);
 	// clang-format on
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
@@ -986,6 +1003,601 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	__SET_ARG_OUT__("Response", ostr.str());
 
 }  // end LoopbackTest()
+
+//=====================================================================================
+void CFOFrontEndInterface::LoopbackTopologyDiscovery(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"Loopback Topology Discovery\"" << __E__;
+
+	const int numberOfTests =
+	    __GET_ARG_IN__("Number of Loopback tests per DTC (Default := 100)", uint32_t, 100);
+	const bool saveROCDelayOffsets =
+	    __GET_ARG_IN__("Save ROC Delay Offsets to Table (Default := false)", bool, false);
+
+	__FE_COUTV__(numberOfTests);
+	__FE_COUTV__(saveROCDelayOffsets);
+
+	std::stringstream ostr;
+	ostr << "\n";
+	ostr << "=== Loopback Topology Discovery ===" << "\n";
+	ostr << "Tests per DTC: " << numberOfTests << "\n\n";
+
+	// enumerate enabled DTC FE interfaces by traversing
+	// XDAQContextTable → enabled contexts → enabled apps → FESupervisorTable → FE interfaces
+	struct DTCInfo
+	{
+		std::string                          uid;
+		std::map<unsigned int, std::string>  rocByLink;  // linkID (0-5) → rocUID
+	};
+	std::vector<DTCInfo> dtcInfos;
+	{
+		auto cfgMgr  = Configurable::getConfigurationManager();
+		auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
+		for(const auto& ctx : contexts)
+		{
+			if(!ctx.second.isEnabled())
+				continue;
+
+			try
+			{
+				auto apps = ctx.second.getNode("LinkToApplicationTable").getChildren();
+				for(const auto& app : apps)
+				{
+					if(!app.second.isEnabled())
+						continue;
+
+					try
+					{
+						auto supNode = app.second.getNode("LinkToSupervisorTable");
+						auto feChildren = supNode.getNode("LinkToFEInterfaceTable").getChildren();
+						for(const auto& fe : feChildren)
+						{
+							if(!fe.second.isEnabled())
+								continue;
+							if(fe.second.getNode("FEInterfacePluginName")
+							       .getValue<std::string>() != "DTCFrontEndInterface")
+								continue;
+
+							DTCInfo info;
+							info.uid = fe.first;
+
+							try
+							{
+								auto rocChildren = fe.second.getNode("LinkToFETypeTable")
+								    .getNode("LinkToROCGroupTable").getChildren();
+								for(const auto& roc : rocChildren)
+								{
+									if(!roc.second.isEnabled())
+										continue;
+									unsigned int linkID =
+									    roc.second.getNode("linkID").getValue<unsigned int>();
+									info.rocByLink[linkID] = roc.first;
+								}
+							}
+							catch(...)
+							{
+							}
+
+							dtcInfos.push_back(std::move(info));
+						}
+					}
+					catch(...)
+					{
+					}
+				}
+			}
+			catch(...)
+			{
+			}
+		}
+	}
+
+	__FE_COUT__ << "Found " << dtcInfos.size() << " DTC FE interfaces." << __E__;
+	ostr << "Found " << dtcInfos.size() << " DTC FE interfaces:";
+	for(const auto& info : dtcInfos)
+		ostr << " " << info.uid;
+	ostr << "\n\n";
+
+	if(dtcInfos.empty())
+	{
+		ostr << "No DTC FE interfaces found. Nothing to map.\n";
+		__SET_ARG_OUT__("Response", ostr.str());
+		return;
+	}
+
+	// save and disable clock markers
+	const bool clockMarkerWasOn = thisCFO_->ReadEmbeddedClockMarkerEnable();
+	__FE_COUTV__(clockMarkerWasOn);
+	if(clockMarkerWasOn)
+		thisCFO_->DisableEmbeddedClockMarker();
+
+	// per-ROC measurement result
+	struct ROCMeasurement
+	{
+		std::string rocUID;
+		std::string dtcUID;
+		int         cfoLink  = -1;
+		int         rocIndex = -1;
+		double      delaySum = 0.0;
+		double      delaySumSq = 0.0;
+		int         hitCount = 0;
+
+		double avg() const { return hitCount > 0 ? delaySum / hitCount : 0.0; }
+		double stddev() const
+		{
+			if(hitCount < 2) return 0.0;
+			double mean = avg();
+			return std::sqrt(delaySumSq / hitCount - mean * mean);
+		}
+	};
+
+	// per-DTC probe result
+	struct DTCProbeResult
+	{
+		std::string                uid;
+		int                        cfoLink  = -1;
+		double                     avgDelay = 0.0;
+		bool                       error    = false;
+		std::string                errorMsg;
+		std::vector<ROCMeasurement> rocMeasurements;
+	};
+	std::vector<DTCProbeResult> probeResults;
+	probeResults.reserve(dtcInfos.size());
+
+	const double delay_unit = 5.0 / 8.0;
+
+	// set ALL DTCs to passthrough — track which are reachable
+	std::vector<size_t> reachableIndices;
+	std::vector<std::string> unreachableUIDs;
+	ostr << "Setting all DTCs to passthrough...\n";
+	for(size_t idx = 0; idx < dtcInfos.size(); ++idx)
+	{
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+			runFrontEndMacro(dtcInfos[idx].uid, "Loopback Manual Setup", argsIn, argsOut);
+			reachableIndices.push_back(idx);
+			__FE_COUT__ << "  " << dtcInfos[idx].uid << " set to passthrough." << __E__;
+		}
+		catch(const std::exception& e)
+		{
+			unreachableUIDs.push_back(dtcInfos[idx].uid);
+			__FE_COUT_WARN__ << "Unreachable: " << dtcInfos[idx].uid << __E__;
+		}
+	}
+	ostr << "Reachable: " << reachableIndices.size()
+	     << "  Unreachable: " << unreachableUIDs.size() << "\n";
+	if(!unreachableUIDs.empty())
+	{
+		ostr << "Unreachable DTCs (skipped):";
+		for(const auto& uid : unreachableUIDs)
+			ostr << " " << uid;
+		ostr << "\n";
+	}
+	ostr << "\n";
+
+	// probe only reachable DTCs
+	for(size_t idx : reachableIndices)
+	{
+		const auto& dtcInfo = dtcInfos[idx];
+		DTCProbeResult result;
+		result.uid = dtcInfo.uid;
+
+		__FE_COUT__ << "Probing DTC: " << dtcInfo.uid << __E__;
+		ostr << "Probing " << dtcInfo.uid << "... ";
+
+		// enable loopback on this DTC
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", false);
+			runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		}
+		catch(const std::exception& e)
+		{
+			result.error    = true;
+			result.errorMsg = e.what();
+			ostr << "FAILED (loopback enable): " << e.what() << "\n";
+			probeResults.push_back(result);
+			continue;
+		}
+
+		// per-(cfoLink, rocIndex) accumulators
+		std::map<int, std::map<int, ROCMeasurement>> linkRocMeas;
+
+		for(int itest = 0; itest < numberOfTests; ++itest)
+		{
+			thisCFO_->SetCableDelayMeasureExponentialCount(0);
+			thisCFO_->RunCableDelayLoopbackTest();
+			usleep(10000);
+
+			for(int link = 0; link < 8; ++link)
+			{
+				for(uint16_t roc = 0; roc < 6; ++roc)
+				{
+					bool     done;
+					uint32_t rawDelay =
+					    thisCFO_->ReadCableDelayMeasurement(
+					        CFOLib::CFO_Link_ID(link), roc, done);
+					if(done)
+					{
+						double delayNs = rawDelay * delay_unit;
+						auto& m = linkRocMeas[link][roc];
+						if(m.hitCount == 0)
+						{
+							m.cfoLink  = link;
+							m.rocIndex = roc;
+							m.dtcUID   = dtcInfo.uid;
+							auto it = dtcInfo.rocByLink.find(roc);
+							m.rocUID = (it != dtcInfo.rocByLink.end())
+							    ? it->second
+							    : "ROC_" + std::to_string(roc);
+						}
+						m.delaySum   += delayNs;
+						m.delaySumSq += delayNs * delayNs;
+						m.hitCount++;
+					}
+				}
+			}
+		}
+
+		// determine which CFO link responded (pick the one with most total hits)
+		int    bestLink     = -1;
+		int    bestTotalHits = 0;
+		double bestTotalSum = 0.0;
+		for(const auto& [link, rocMap] : linkRocMeas)
+		{
+			int totalHits = 0;
+			double totalSum = 0.0;
+			for(const auto& [roc, m] : rocMap)
+			{
+				totalHits += m.hitCount;
+				totalSum  += m.delaySum;
+			}
+			if(totalHits > bestTotalHits)
+			{
+				bestLink      = link;
+				bestTotalHits = totalHits;
+				bestTotalSum  = totalSum;
+			}
+		}
+
+		result.cfoLink  = bestLink;
+		result.avgDelay = bestTotalHits > 0 ? bestTotalSum / bestTotalHits : 0.0;
+
+		// collect ROC measurements for the responding link
+		if(bestLink >= 0)
+		{
+			for(auto& [roc, m] : linkRocMeas[bestLink])
+				result.rocMeasurements.push_back(std::move(m));
+		}
+
+		if(bestLink >= 0)
+			ostr << "Link " << bestLink
+			     << ", avg delay " << std::format("{:.1f}", result.avgDelay) << " ns"
+			     << " (" << result.rocMeasurements.size() << " ROCs responded)\n";
+		else
+			ostr << "no response\n";
+
+		probeResults.push_back(std::move(result));
+
+		// restore passthrough on this DTC
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+			runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		}
+		catch(const std::exception& e)
+		{
+			__FE_COUT_WARN__ << "Failed to restore passthrough on " << dtcInfo.uid
+			                 << ": " << e.what() << __E__;
+		}
+	}
+
+	// build topology: group by CFO link, sort by delay ascending
+	struct ChainEntry
+	{
+		std::string             dtcUID;
+		double                  avgDelay;
+		std::vector<ROCMeasurement> rocMeas;
+	};
+	std::map<int, std::vector<ChainEntry>> chainMap;
+	for(auto& r : probeResults)
+	{
+		if(r.cfoLink >= 0 && !r.error)
+			chainMap[r.cfoLink].push_back(
+			    {r.uid, r.avgDelay, std::move(r.rocMeasurements)});
+	}
+
+	for(auto& [link, entries] : chainMap)
+		std::sort(entries.begin(), entries.end(),
+		          [](const auto& a, const auto& b) { return a.avgDelay < b.avgDelay; });
+
+	// count discovered vs not discovered
+	size_t discoveredCount = 0;
+	for(const auto& r : probeResults)
+		if(r.cfoLink >= 0 && !r.error)
+			++discoveredCount;
+	size_t notDiscoveredCount = probeResults.size() - discoveredCount;
+
+	// format topology output (DTC-level)
+	ostr << "\n=== Timing Chain Topology ===\n";
+	ostr << "Discovered: " << discoveredCount << " of " << probeResults.size() << " DTCs\n";
+
+	if(chainMap.empty())
+	{
+		ostr << "\nNo DTCs responded to loopback. Check fiber connections.\n";
+	}
+	else
+	{
+		ostr << "\n";
+		for(const auto& [link, entries] : chainMap)
+		{
+			ostr << "Chain " << link << " --> ";
+			for(size_t i = 0; i < entries.size(); ++i)
+			{
+				if(i > 0)
+					ostr << ", ";
+				ostr << entries[i].dtcUID
+				     << " (" << std::format("{:.1f}", entries[i].avgDelay) << " ns)";
+			}
+			ostr << "\n";
+		}
+	}
+
+	// list any DTCs that were not discovered
+	if(notDiscoveredCount > 0)
+	{
+		ostr << "\nNot Discovered (" << notDiscoveredCount << "):";
+		for(const auto& r : probeResults)
+		{
+			if(r.cfoLink < 0 || r.error)
+			{
+				ostr << " " << r.uid;
+				if(r.error)
+					ostr << " (error)";
+				else
+					ostr << " (no loopback response)";
+			}
+		}
+		ostr << "\n";
+	}
+
+	// optionally save ROC delay offsets to ROCInterfaceTable
+	{
+		std::vector<ROCLoopbackResult> allROCResults;
+		for(const auto& [link, entries] : chainMap)
+			for(const auto& entry : entries)
+				for(const auto& rm : entry.rocMeas)
+					if(rm.hitCount > 0)
+						allROCResults.push_back({rm.rocUID, rm.avg(), rm.stddev()});
+
+		if(saveROCDelayOffsets && !allROCResults.empty())
+		{
+			ostr << "\n--- Modifying ROCInterfaceTable EventWindowDelayOffset ---\n";
+			TableVersion newVer = ModifyROCMarkerDelayOffsetConfiguration(ostr, allROCResults);
+			ostr << "New table version: " << newVer << "\n";
+		}
+		else
+		{
+			TableVersion activeVer = getConfigurationManager()
+			    ->getTableByName("ROCInterfaceTable")->getView().getVersion();
+			ostr << "\nDid not save ROC delay offsets to table (active version: "
+			     << activeVer << ")\n";
+		}
+	}
+
+	// build Plotly subplots: one histogram per chain position (hop)
+	{
+		// find max chain depth
+		size_t maxDepth = 0;
+		for(const auto& [link, entries] : chainMap)
+			maxDepth = std::max(maxDepth, entries.size());
+
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[)";
+
+		bool firstTrace = true;
+		for(size_t pos = 0; pos < maxDepth; ++pos)
+		{
+			int subplotIdx = static_cast<int>(pos) + 1;
+			std::string xaxis = (subplotIdx == 1) ? "x" : "x" + std::to_string(subplotIdx);
+			std::string yaxis = (subplotIdx == 1) ? "y" : "y" + std::to_string(subplotIdx);
+
+			for(const auto& [link, entries] : chainMap)
+			{
+				if(pos >= entries.size())
+					continue;
+				for(const auto& rm : entries[pos].rocMeas)
+				{
+					if(rm.hitCount == 0)
+						continue;
+					if(!firstTrace)
+						plotlySs << ",";
+					firstTrace = false;
+
+					plotlySs << R"({"x":[)" << std::format("{:.1f}", rm.avg())
+					         << R"(],"type":"histogram","name":")" << rm.rocUID
+					         << R"(","xaxis":")" << xaxis
+					         << R"(","yaxis":")" << yaxis
+					         << R"(","opacity":0.75})";
+				}
+			}
+		}
+
+		plotlySs << R"(],"layout":{)"
+		         << R"("title":{"text":"Loopback Delay by Chain Position"},)";
+
+		plotlySs << R"("grid":{"rows":)" << maxDepth
+		         << R"(,"columns":1,"pattern":"independent"},)";
+
+		for(size_t pos = 0; pos < maxDepth; ++pos)
+		{
+			int idx = static_cast<int>(pos) + 1;
+			std::string suffix = (idx == 1) ? "" : std::to_string(idx);
+			plotlySs << R"("xaxis)" << suffix << R"(":{"title":{"text":"Delay [ns]"}},)";
+			plotlySs << R"("yaxis)" << suffix << R"(":{"title":{"text":"Position )"
+			         << pos << R"( Count"}},)";
+		}
+
+		plotlySs << R"("barmode":"overlay"})";
+		plotlySs << "}";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
+
+	// leave all DTCs in passthrough
+	for(const auto& dtcInfo : dtcInfos)
+	{
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+			runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		}
+		catch(...)
+		{
+		}
+	}
+
+	// restore clock markers
+	if(clockMarkerWasOn)
+		thisCFO_->EnableEmbeddedClockMarker();
+
+	__SET_ARG_OUT__("Response", ostr.str());
+
+}  // end LoopbackTopologyDiscovery()
+
+//=====================================================================================
+TableVersion CFOFrontEndInterface::ModifyROCMarkerDelayOffsetConfiguration(
+    std::ostream&                         os,
+    const std::vector<ROCLoopbackResult>& rocResults,
+    int                                   minROCdelayOffset /* = 0 */)
+{
+	__FE_COUT__ << "ModifyROCMarkerDelayOffsetConfiguration()" << __E__;
+
+	if(rocResults.empty())
+	{
+		__FE_COUT_WARN__ << "No ROC results to process." << __E__;
+		os << "No ROC results to process.\n";
+		return TableVersion();
+	}
+
+	// find max delay across all ROCs
+	double maxDelay = 0.0;
+	for(const auto& roc : rocResults)
+		if(roc.avgDelay > maxDelay)
+			maxDelay = roc.avgDelay;
+
+	// compute offsets: max delay ROC gets minROCdelayOffset,
+	// all others get (maxDelay - theirDelay) + minROCdelayOffset
+	struct ROCOffset
+	{
+		std::string rocUID;
+		int         offset;
+	};
+	std::vector<ROCOffset> rocOffsets;
+	rocOffsets.reserve(rocResults.size());
+
+	os << "Max loopback delay: " << std::format("{:.1f}", maxDelay)
+	   << " ns, minROCdelayOffset: " << minROCdelayOffset << "\n";
+
+	for(const auto& roc : rocResults)
+	{
+		int offset = static_cast<int>(std::round(maxDelay - roc.avgDelay)) + minROCdelayOffset;
+		rocOffsets.push_back({roc.rocUID, offset});
+		os << "  " << roc.rocUID
+		   << "  avg=" << std::format("{:.1f}", roc.avgDelay)
+		   << " ns  stddev=" << std::format("{:.1f}", roc.stddev)
+		   << " ns  offset=" << offset << "\n";
+	}
+
+	// get active version from the state machine's config manager
+	const std::string tableName = "ROCInterfaceTable";
+	TableVersion activeVersion = getConfigurationManager()
+	    ->getTableByName(tableName)->getView().getVersion();
+	__FE_COUTV__(activeVersion);
+	os << "Active " << tableName << " version: " << activeVersion << "\n";
+
+	// create ConfigurationManagerRW (do NOT initializeActiveGroups)
+	std::string             author = "CFOTopologyDiscovery";
+	ConfigurationManagerRW  cfgMgrInst(author);
+	cfgMgrInst.getAllTableInfo(true /* refresh */,
+	                           0 /* accumulatedWarnings */,
+	                           "" /* errorFilterName */,
+	                           false /* getGroupKeys */,
+	                           false /* getGroupInfo */,
+	                           false /* initializeActiveGroups */);
+
+	// create temporary view from the active version
+	TableBase*   table            = cfgMgrInst.getTableByName(tableName);
+	TableVersion temporaryVersion = table->createTemporaryView(activeVersion);
+	TableView*   cfgView          = table->getTemporaryView(temporaryVersion);
+
+	// modify EventWindowDelayOffset for each ROC
+	const unsigned int colOffset = cfgView->findCol("EventWindowDelayOffset");
+	for(const auto& ro : rocOffsets)
+	{
+		try
+		{
+			unsigned int row = cfgView->findRow(cfgView->getColUID(), ro.rocUID);
+			cfgView->setValueAsString(std::to_string(ro.offset), row, colOffset);
+			__FE_COUT__ << "Set " << ro.rocUID << " EventWindowDelayOffset = " << ro.offset << __E__;
+		}
+		catch(const std::exception& e)
+		{
+			__FE_COUT_WARN__ << "ROC UID '" << ro.rocUID
+			                 << "' not found in " << tableName << ": " << e.what() << __E__;
+			os << "  WARNING: ROC '" << ro.rocUID << "' not found in table.\n";
+		}
+	}
+
+	// validate
+	try
+	{
+		cfgView->init();
+	}
+	catch(const std::runtime_error& e)
+	{
+		__FE_SS__ << "Error validating table: " << e.what() << __E__;
+		__FE_SS_THROW__;
+	}
+
+	// print for debugging
+	{
+		std::stringstream tableSs;
+		cfgView->print(tableSs);
+		__FE_COUTV__(tableSs.str());
+		os << "\n" << tableSs.str() << "\n";
+	}
+
+	// save as temporary version
+	bool         foundEquivalent;
+	TableVersion newVersion = cfgMgrInst.saveModifiedVersion(
+	    tableName,
+	    activeVersion,
+	    true /* makeTemporary */,
+	    table,
+	    cfgView->getVersion(),
+	    false /* ignoreDuplicates */,
+	    true /* lookForEquivalent */,
+	    &foundEquivalent);
+
+	// TODO: uncomment for permanent save once verified:
+	// TableVersion permVersion = cfgMgrInst.saveModifiedVersion(
+	//     tableName, activeVersion, false /* makeTemporary */,
+	//     table, cfgView->getVersion(),
+	//     false /* ignoreDuplicates */, true /* lookForEquivalent */, &foundEquivalent);
+
+	__FE_COUTV__(newVersion);
+	__FE_COUTV__(foundEquivalent);
+
+	os << "Saved temporary " << tableName << " version: " << newVersion << "\n";
+
+	return newVersion;
+}  // end ModifyROCMarkerDelayOffsetConfiguration()
 
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link

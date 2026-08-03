@@ -116,6 +116,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t>                      mismatchedEventTagsCount_;
 		std::vector<std::pair<uint64_t, uint64_t>> mismatchedEventTagJumps_;
 
+		std::atomic<uint64_t> subrunTransitionCount_;
+		bool                  lastSubrunBit_ = false;
+
 		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
 		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
 		    rocPayloadByteCount_;
