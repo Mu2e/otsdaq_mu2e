@@ -4885,9 +4885,9 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << dtc->ReadJitterAttenuatorExternalClockLOSCount() << "\n";
 
 	o << "            EvtStart  40MHz  Parity  BatchSlip\n";
-	o << "  Count:       " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount() << "      "
-	  << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       " << parityMismatch
-	  << "       " << batchSlip << "\n";
+	o << "  Count:       " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount()
+	  << "      " << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       "
+	  << parityMismatch << "       " << batchSlip << "\n";
 
 	return o.str();
 }  //end getCFORTFSettingsStatusAndErrors()
@@ -6098,7 +6098,8 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
-		statusSs << "Subrun Transition count:" << threadStruct->subrunTransitionCount_ << __E__;
+		statusSs << "Subrun Transition count:" << threadStruct->subrunTransitionCount_
+		         << __E__;
 
 		if(threadStruct->saveBinaryData_ && threadStruct->packetThresholdToSave_ > 0)
 			statusSs << "Saved " << (threadStruct->inSubeventMode_ ? "subevent" : "event")
@@ -6559,8 +6560,8 @@ try
 		threadStruct->subeventsCount_           = 0;
 		threadStruct->mismatchedEventTagsCount_ = 0;
 		threadStruct->mismatchedEventTagJumps_.clear();
-		threadStruct->subrunTransitionCount_          = 0;
-		threadStruct->lastSubrunBit_                  = false;
+		threadStruct->subrunTransitionCount_         = 0;
+		threadStruct->lastSubrunBit_                 = false;
 		threadStruct->rocFragmentsCount_             = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocPayloadEmptyCount_          = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocFragmentTimeoutsCount_      = {0, 0, 0, 0, 0, 0};
@@ -6660,8 +6661,8 @@ try
 						threadStruct->subeventsCount_           = 0;
 						threadStruct->mismatchedEventTagsCount_ = 0;
 						threadStruct->mismatchedEventTagJumps_.clear();
-						threadStruct->subrunTransitionCount_          = 0;
-						threadStruct->lastSubrunBit_                  = false;
+						threadStruct->subrunTransitionCount_         = 0;
+						threadStruct->lastSubrunBit_                 = false;
 						threadStruct->rocFragmentsCount_             = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocPayloadEmptyCount_          = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocFragmentTimeoutsCount_      = {0, 0, 0, 0, 0, 0};
