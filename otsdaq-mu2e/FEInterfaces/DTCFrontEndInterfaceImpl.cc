@@ -6289,6 +6289,10 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 	std::lock_guard<std::mutex> lock(threadStruct->lock_);
 
 	bool currentSubrunBit = (subevent->GetHeader()->event_mode >> 33) & 1;
+	__GEN_COUTT__ << "event_mode=0x" << std::hex << subevent->GetHeader()->event_mode
+	              << std::dec << " subrunBit=" << currentSubrunBit
+	              << " lastSubrunBit=" << threadStruct->lastSubrunBit_
+	              << " subrunTransitionCount=" << threadStruct->subrunTransitionCount_;
 	if(currentSubrunBit != threadStruct->lastSubrunBit_)
 	{
 		++(threadStruct->subrunTransitionCount_);
