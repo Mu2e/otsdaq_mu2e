@@ -1151,41 +1151,20 @@ void CFOFrontEndInterface::LoopbackTopologyDiscovery(__ARGS__)
 
 	const double delay_unit = 5.0 / 8.0;
 
-	// set ALL DTCs to passthrough — track which are reachable
-	std::vector<size_t>      reachableIndices;
-	std::vector<std::string> unreachableUIDs;
+	// set ALL DTCs to passthrough
 	ostr << "Setting all DTCs to passthrough...\n";
-	for(size_t idx = 0; idx < dtcInfos.size(); ++idx)
+	for(const auto& dtcInfo : dtcInfos)
 	{
-		try
-		{
-			std::vector<frontEndMacroArg_t> argsIn, argsOut;
-			__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
-			runFrontEndMacro(dtcInfos[idx].uid, "Loopback Manual Setup", argsIn, argsOut);
-			reachableIndices.push_back(idx);
-			__FE_COUT__ << "  " << dtcInfos[idx].uid << " set to passthrough." << __E__;
-		}
-		catch(const std::exception& e)
-		{
-			unreachableUIDs.push_back(dtcInfos[idx].uid);
-			__FE_COUT_WARN__ << "Unreachable: " << dtcInfos[idx].uid << __E__;
-		}
-	}
-	ostr << "Reachable: " << reachableIndices.size()
-	     << "  Unreachable: " << unreachableUIDs.size() << "\n";
-	if(!unreachableUIDs.empty())
-	{
-		ostr << "Unreachable DTCs (skipped):";
-		for(const auto& uid : unreachableUIDs)
-			ostr << " " << uid;
-		ostr << "\n";
+		std::vector<frontEndMacroArg_t> argsIn, argsOut;
+		__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+		runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		__FE_COUT__ << "  " << dtcInfo.uid << " set to passthrough." << __E__;
 	}
 	ostr << "\n";
 
-	// probe only reachable DTCs
-	for(size_t idx : reachableIndices)
+	// probe each DTC
+	for(const auto& dtcInfo : dtcInfos)
 	{
-		const auto&    dtcInfo = dtcInfos[idx];
 		DTCProbeResult result;
 		result.uid = dtcInfo.uid;
 

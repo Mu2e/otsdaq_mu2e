@@ -77,8 +77,9 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	bool        configure_clock_    = false;
 	bool        emulatorMode_       = false;
 	bool        skipInit_           = true;
-	std::string operatingMode_      = "";
-	uint32_t    lastTimeAliveValue_ = 0;
+	std::string operatingMode_           = "";
+	uint32_t    lastTimeAliveValue_      = 0;
+	time_t      lastTimeAliveReadTime_   = 0;  // only re-read if >= +2 seconds have elapsed
 
 	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
 	static const int CONFIG_DTC_TIMING_CHAIN_STEPS       = 3;
