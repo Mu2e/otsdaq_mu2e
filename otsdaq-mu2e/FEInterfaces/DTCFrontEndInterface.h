@@ -116,6 +116,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t>                      mismatchedEventTagsCount_;
 		std::vector<std::pair<uint64_t, uint64_t>> mismatchedEventTagJumps_;
 
+		std::atomic<uint64_t> subrunTransitionCount_;
+		bool                  lastSubrunBit_ = false;
+
 		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
 		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
 		    rocPayloadByteCount_;
@@ -227,6 +230,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void readTxDiagFIFO(__ARGS__);
 	void GetLinkErrors(__ARGS__);
 	void GetRTFInterfaceStatus(__ARGS__);
+	void RTFMarkerOffsetApply(__ARGS__);
+	void FixCFOClockEdge(__ARGS__);
+	void EVBHighLevelCounters(__ARGS__);
 	void ROCResetLink(__ARGS__);
 	void HeaderFormatTest(__ARGS__);
 
