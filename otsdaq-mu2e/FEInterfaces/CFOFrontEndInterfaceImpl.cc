@@ -1834,10 +1834,13 @@ void CFOFrontEndInterface::configure(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	recordTimeAlive();
+	if(getIterationIndex() == 0 && getSubIterationIndex() == 0)
+		recordTimeAlive();
 
 	if(skipInit_)
 		return;
+	
+	testAndUpdateTimeAlive("Configure");
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
@@ -2058,47 +2061,204 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	if(step == -1)
 		step = getIterationIndex();
 
-	__FE_COUT_INFO__ << "configureEventBuildingMode() " << step << __E__;
+	__FE_COUT_INFO__ << "configureEventBuildingMode() iteration=" << step << __E__;
 
-	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
+	if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A)
 	{
-		// in order to start from zero
+		// Phase 1a: CFO establishes clocks (DTCs w/o real ROCs also run at this iteration)
 		if(timing_chain_first_substep_ == -1)
 			timing_chain_first_substep_ = getSubIterationIndex();
 
 		configureForTimingChain();
 		indicateIterationWork();
 	}
-	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B)
 	{
-		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+		__FE_COUT__ << "Idle while DTCs with real ROCs establish clocks..." << __E__;
+		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN)
 	{
-		__FE_COUT__ << "CFO reset serdes TX " << __E__;
-		thisCFO_->ResetAllSERDESTx();
+		// Phase 2: Establish CFO Timing Chain
+		//  Sub-step 0: Enable all CFO link outputs + clock markers
+		//  Sub-step 1: Enumerate DTCs, check CFO CDR lock via "Get Link Lock Status" FE Macro;
+		//              if any unlocked → SERDES resets + retry
+		//  Sub-step 2: Retry CDR lock check; throw if still unlocked
+
+		if(timing_chain_first_substep_ == -1)
+			timing_chain_first_substep_ = getSubIterationIndex();
+
+		int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+		__FE_COUT_INFO__ << "Phase 2 — Establish CFO Timing Chain, sub-step=" << subStep
+		                 << __E__;
+
+		if(subStep == 0)
+		{
+			thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			thisCFO_->EnableEmbeddedClockMarker();
+			__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
+			indicateSubIterationWork();
+		}
+		else if(subStep == 1 || subStep == 2)
+		{
+			bool isRetry = (subStep == 2);
+			__FE_COUT__ << "Checking DTC CFO CDR lock ("
+			            << (isRetry ? "retry" : "1st attempt") << ")..." << __E__;
+
+			// Enumerate all enabled DTC FE interfaces
+			struct DTCLockInfo
+			{
+				std::string uid;
+				bool        cfoCDRLocked = false;
+			};
+			std::vector<DTCLockInfo> dtcLockInfos;
+			{
+				auto cfgMgr   = Configurable::getConfigurationManager();
+				auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
+				for(const auto& ctx : contexts)
+				{
+					if(!ctx.second.isEnabled())
+						continue;
+					try
+					{
+						auto apps =
+						    ctx.second.getNode("LinkToApplicationTable").getChildren();
+						for(const auto& app : apps)
+						{
+							if(!app.second.isEnabled())
+								continue;
+							try
+							{
+								auto supNode =
+								    app.second.getNode("LinkToSupervisorTable");
+								auto feChildren =
+								    supNode.getNode("LinkToFEInterfaceTable")
+								        .getChildren();
+								for(const auto& fe : feChildren)
+								{
+									if(!fe.second.isEnabled())
+										continue;
+									if(fe.second.getNode("FEInterfacePluginName")
+									       .getValue<std::string>() !=
+									   "DTCFrontEndInterface")
+										continue;
+									DTCLockInfo info;
+									info.uid = fe.first;
+									dtcLockInfos.push_back(std::move(info));
+								}
+							}
+							catch(...)
+							{
+							}
+						}
+					}
+					catch(...)
+					{
+					}
+				}
+			}
+
+			__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces."
+			            << __E__;
+
+			std::vector<std::string> unlockedDTCs;
+			for(auto& dtcLock : dtcLockInfos)
+			{
+				std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+				try
+				{
+					runFrontEndMacro(
+					    dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+				}
+				catch(const std::exception& e)
+				{
+					__FE_COUT_WARN__
+					    << "Failed to read lock status from DTC " << dtcLock.uid
+					    << ": " << e.what() << __E__;
+					unlockedDTCs.push_back(dtcLock.uid + " (unreachable)");
+					continue;
+				}
+
+				std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
+				__FE_COUT__ << "DTC " << dtcLock.uid
+				            << " Lock Status: " << lockStatus << __E__;
+
+				// Parse: look for "CFO CDR Lock" or "CFO Emulated CDR Lock" line with "[x]"
+				bool foundCFOLine = false;
+				std::istringstream iss(lockStatus);
+				std::string        line;
+				while(std::getline(iss, line))
+				{
+					if(line.find("CFO") != std::string::npos &&
+					   line.find("CDR Lock") != std::string::npos)
+					{
+						foundCFOLine = true;
+						if(line.find("[x]") != std::string::npos)
+							dtcLock.cfoCDRLocked = true;
+						break;
+					}
+				}
+
+				if(!foundCFOLine || !dtcLock.cfoCDRLocked)
+					unlockedDTCs.push_back(dtcLock.uid);
+			}
+
+			if(unlockedDTCs.empty())
+			{
+				__FE_COUT_INFO__ << "All DTCs have CFO CDR lock." << __E__;
+			}
+			else if(!isRetry)
+			{
+				__FE_COUT_WARN__ << unlockedDTCs.size()
+				                 << " DTC(s) missing CFO CDR lock:";
+				for(const auto& uid : unlockedDTCs)
+					__FE_COUT__ << "  " << uid;
+				__FE_COUT__ << "Performing SERDES resets and retrying..." << __E__;
+
+				thisCFO_->CFOandDTC_Registers::ResetSERDES();
+				thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+				indicateSubIterationWork();
+			}
+			else
+			{
+				__FE_SS__ << "Phase 2 failed: " << unlockedDTCs.size()
+				          << " DTC(s) still missing CFO CDR lock after retry:";
+				for(const auto& uid : unlockedDTCs)
+					ss << " " << uid;
+				__FE_SS_THROW__;
+			}
+		}
 		indicateIterationWork();
 	}
-	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_SYNC)
 	{
+		// Phase 3: placeholder
+		__FE_COUT__ << "Phase 3 — Establish Timing Chain Sync (placeholder)." << __E__;
+		timing_chain_first_substep_ = -1;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
+	{
+		// Phase 4: CFO idles while DTCs configure ROCs
+		__FE_COUT__ << "Idle while DTCs configure ROC links..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
+	{
+		__FE_COUT__ << "Final SoftReset to clear errors before enabling idle operation."
+		            << __E__;
+		thisCFO_->SoftReset();
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
+	{
+		// Phase 5: Enable CFO Idle Operation
 		__FE_COUT__ << "Enable communication over links" << __E__;
 		thisCFO_->EnableEmbeddedClockMarker();
 		thisCFO_->EnableAcceleratorRF0();
 		thisCFO_->SetPunchEnable();
-
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-
-		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, "
-		               "as of Firmware version: Nov/09/2023 11:00"
-		            << __E__;
-		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
-
-		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		//thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -2155,94 +2315,33 @@ void CFOFrontEndInterface::configureLoopbackMode(int step)
 }  // end configureLoopbackMode()
 
 //==============================================================================
+// Phase 1 (Establish Clocks) for the CFO.
+//	Sub-step 0: halt, disable beam modes, SoftReset, ClearControlRegister, DisableAllOutputs
+//	Sub-step 1: JA setup — check lock, full reset if unlocked, mux-only if locked
+//	Sub-steps 2+: JA lock polling (up to ~10 polls, 1s each)
 void CFOFrontEndInterface::configureForTimingChain(int step)
 {
-	//use sub-iteration index (but not the value of the index)
-	//	sub-iterations focus allow one entity to finish an iteration index, while others wait,
-	//	but can not be sure of starting sub-iteration index from entity to entity.
 	if(step == -1)
 		step = getSubIterationIndex() - timing_chain_first_substep_;
 
-	__FE_COUT_INFO__ << "configureForTimingChain() " << step << __E__;
+	__FE_COUT_INFO__ << "configureForTimingChain() sub-step=" << step << __E__;
 
-	std::string designVersion = thisCFO_->ReadDesignDate();
-	__FE_COUTV__(designVersion);
-	//Jun/13/2023 16:00 raw-data: 0x23061316
-	//DTC-style: Jun/13/2023 17:00 raw-data: 0x23061317
-
-	std::string matchDesignVersion = "Jun/13/2023 16:00   raw-data: 0x23061316";
 	switch(step)
 	{
 	case 0:
-		//put CFO in known state with DTC reset and control clear
+		next_starting_event_window_tag_ = 0;
+		halt();
+		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->SoftReset();
 		thisCFO_->ClearControlRegister();
-
 		thisCFO_->DisableAllOutputs();
-
-		__FE_COUTV__(configure_clock_);  //1
-
-		//NOTE on Jun/13/2023 16:00 raw-data: 0x23061316
-		//	need to configure crystal!
-
-		__FE_COUT__ << "CFO Design Version:\t" << designVersion << __E__
-		            << "Expected version:\t" << matchDesignVersion << __E__ << "Match:\t"
-		            << (designVersion.compare(matchDesignVersion) == 0) << __E__;
-
-		if(configure_clock_ &&
-		   thisCFO_->ReadDesignDate() == "Jun/13/2023 16:00   raw-data: 0x23061316")
-		{
-			// only configure the clock/crystal the first loop through...
-
-			__FE_COUT_INFO__ << "CFO reset clock..." << __E__;
-
-			if(1)
-			{
-				__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
-				thisCFO_->SetSERDESOscillatorFrequency(0x09502F90);
-				// registerWrite(0x9160, 0x09502F90);
-
-				// set RST_REG bit
-				thisCFO_->WriteSERDESIICInterface(
-				    DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */,
-				    0x87 /* address */,
-				    0x01 /* data */);
-			}
-
-			// registerWrite(0x9168, 0x55870100);
-			// registerWrite(0x916c, 0x00000001);
-
-			// sleep(5);
-
-			//-----begin code snippet pulled from: mu2eUtil program_clock -C 0 -F
-			// 200000000 ---
-			// C=0 = main board SERDES clock
-			// C=1 = DDR clock
-			// C=2 = Timing board SERDES clock
-
-			int targetFrequency = 200000000;
-
-			//auto oscillator = DTCLib::DTC_OscillatorType_SERDES;  //-C 0 = CFO (main
-			// board SERDES clock)
-			// auto oscillator = DTCLib::DTC_OscillatorType_DDR; //-C 1 (DDR clock)
-			// auto oscillator = DTCLib::DTC_OscillatorType_Timing; //-C 2 = DTC (with
-			// timing card)
-
-			__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
-			            << targetFrequency << " MHz" << __E__;
-
-			thisCFO_->SetNewOscillatorFrequency(targetFrequency);
-
-			//-----end code snippet pulled from: mu2eUtil program_clock -C 0 -F
-			// 200000000
-
-			sleep(5);
-		}  //end special behavior for "original" CFO version 0x23061316
-
 		indicateSubIterationWork();
 		break;
-	case 1: {
-		__FE_COUT__ << "CFO go to next sub-iteration! step: " << step << __E__;
+
+	case 1:
+	{
+		__FE_COUTV__(configure_clock_);
 		if(configure_clock_)
 		{
 			uint32_t select = 0;
@@ -2260,34 +2359,60 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUTV__(select);
 			//For CFO - 0 ==> Local oscillator
 			//For CFO - 1 ==> RTF copper clock
-			thisCFO_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
+
+			bool jaLocked = getCFOandDTCRegisters()->ReadJitterAttenuatorLocked();
+			__FE_COUT__ << "JA locked before setup: " << jaLocked << __E__;
+
+			bool alsoResetJA = !jaLocked;
+			__FE_COUT__ << "Setting JA select=" << select
+			            << " alsoResetJA=" << alsoResetJA << __E__;
+			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(select, alsoResetJA);
+			__FE_COUT__ << "JA CSR: " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR()
+			            << __E__;
+
+			indicateSubIterationWork();
 		}
 		else
 			__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
-	}
-	// indicateSubIterationWork(); //for now, not running case 2, saving ResetAllSERDESTx for after DTCs are configured
-	break;
-	case 2:  //for now, not running case 2
-
-		// __FE_COUT__ << "CFO reset serdes PLLs " << __E__;
-		// thisCFO_->ResetAllSERDESPlls();
-
-		__FE_COUT__ << "CFO reset serdes TX " << __E__;
-		thisCFO_->ResetAllSERDESTx();
-
-		// __FE_COUT__ << "CFO reset serdes RX " << __E__;
-		// thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-
-		// __FE_COUT__ << "CFO enable markers on link " << __E__;
-		// thisCFO_->EnableTiming();
-
-		// __FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
-		// thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-
 		break;
-	default:
-		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 	}
+
+	default:
+	{
+		if(!configure_clock_)
+		{
+			__FE_COUT__ << "Clock configuration not enabled, nothing to poll." << __E__;
+			break;
+		}
+
+		const int pollIndex = step - 2;
+		const int maxPolls  = 10;
+
+		if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+		{
+			__FE_COUT_INFO__ << "JA locked after " << pollIndex << " poll(s)." << __E__;
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+			break;
+		}
+
+		if(pollIndex < maxPolls)
+		{
+			sleep(1);
+			__FE_COUT__ << "JA not locked, poll " << (pollIndex + 1) << "/" << maxPolls
+			            << __E__;
+			indicateSubIterationWork();
+		}
+		else
+		{
+			__FE_COUT_WARN__ << "JA failed to lock after " << maxPolls
+			                 << " polls! Continuing anyway." << __E__;
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		}
+		break;
+	}
+	}  // end switch
 
 }  // end configureForTimingChain()
 
@@ -2334,6 +2459,18 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 {
 	testAndUpdateTimeAlive("Start");
 	testRTFClockInEventBuildingMode("Start");
+
+	if(CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION <=
+	   CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
+	{
+		__FE_SS__
+		    << "Invalid iteration ordering: RUN_START_READY_FOR_TRIGGERS_ITERATION ("
+		    << CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION
+		    << ") must be larger than CONFIG_CFO_EVENT_SENDING_START_ITERATION ("
+		    << CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION
+		    << ")." << __E__;
+		__FE_SS_THROW__;
+	}
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{

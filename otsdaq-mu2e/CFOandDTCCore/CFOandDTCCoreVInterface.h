@@ -80,8 +80,17 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	uint32_t    lastTimeAliveValue_      = 0;
 	time_t      lastTimeAliveReadTime_   = 0;  // only re-read if >= +2 seconds have elapsed
 
-	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
-	static const int CONFIG_DTC_TIMING_CHAIN_STEPS       = 3;
+	// Configure iteration layout for EventBuildingMode.
+	static const int CONFIG_PHASE_ESTABLISH_CLOCKS_A          = 0;  // Phase 1a: Establish Clocks — CFO + DTCs w/o real ROCs
+	static const int CONFIG_PHASE_ESTABLISH_CLOCKS_B          = 1;  // Phase 1b: Establish Clocks — DTCs w/ real ROCs
+	static const int CONFIG_PHASE_ESTABLISH_TIMING_CHAIN      = 2;  // Phase 2: Establish CFO Timing Chain (placeholder)
+	static const int CONFIG_PHASE_ESTABLISH_TIMING_SYNC       = 3;  // Phase 3: Establish Timing Chain Sync (placeholder)
+	static const int CONFIG_PHASE_ESTABLISH_ROC_CONFIG        = 4;  // Phase 4: Local ROC Config — DTCs w/ real ROCs only
+	static const int CONFIG_PHASE_FINAL_SOFT_RESET            = 5;  // Final SoftReset before enabling idle operation
+	static const int CONFIG_CFO_EVENT_SENDING_START_ITERATION = 6;  // Phase 5: Enable CFO Idle Operation — last iteration
+
+	static const int RUN_START_READY_FOR_TRIGGERS_ITERATION =
+	    RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION;
 
 	bool artdaqMode_ = false;  // true to prevent run data file generation
 
