@@ -9,9 +9,10 @@ using namespace ots;
 #undef __MF_SUBJECT__
 #define __MF_SUBJECT__ "CFOandDTCCoreVInterface"
 
-std::string CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV   = "HardwareDevMode";
-std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING = "EventBuildingMode";
-std::string CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK       = "LoopbackMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV            = "HardwareDevMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING          = "EventBuildingMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC = "EventBuildingAndSyncMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK                = "LoopbackMode";
 
 //=========================================================================================
 CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
@@ -2521,7 +2522,7 @@ void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transiti
 void CFOandDTCCoreVInterface::testRTFClockInEventBuildingMode(
     const std::string& transitionName)
 {
-	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING)
+	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 		return;
 
 	uint32_t jaCSRValue      = getCFOandDTCRegisters()->FormatJitterAttenuatorCSR().value;

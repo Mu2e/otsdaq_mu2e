@@ -1257,6 +1257,7 @@ try
 		configureHardwareDevMode();
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
 	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
@@ -2069,64 +2070,451 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 		indicateIterationWork();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_ENABLE)
 	{
-		// Phase 2: DTC self-check — verify CFO CDR lock
+		// Phase 2a: idle while CFO enables links + clock markers
+		__FE_COUT__ << "Phase 2a — idle while CFO enables links + clock markers." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
+	{
+		// Phase 2b: DTC self-check — verify CFO CDR lock
 		bool cfoCDRLocked =
 		    getDTC()->ReadSERDESRXCDRLock(DTCLib::DTC_Link_ID::DTC_Link_CFO);
-		__FE_COUT__ << "Phase 2 — CFO CDR lock self-check: "
+		__FE_COUT__ << "Phase 2b — CFO CDR lock self-check: "
 		            << (cfoCDRLocked ? "LOCKED" : "NOT LOCKED") << __E__;
 		if(!cfoCDRLocked)
 		{
 			__FE_SS__ << "DTC " << getInterfaceUID()
-			          << " CFO CDR lock not achieved during Phase 2.";
+			          << " CFO CDR lock not achieved during Phase 2b.";
 			__FE_SS_THROW__;
 		}
 		indicateIterationWork();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_SYNC)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
 	{
-		// Phase 3: placeholder
-		__FE_COUT__ << "Phase 3 — Establish Timing Chain Sync (placeholder)." << __E__;
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+		}
+		else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
+		        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B)
+		{
+			// Phase 3a/3b: Edge fix — split by DTC type
+			bool myEdgePhase =
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A && !hasRealROCs) ||
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B && hasRealROCs);
+
+			if(!myEdgePhase)
+			{
+				__FE_COUT__ << "Idle — waiting for "
+				            << (hasRealROCs ? "Phase 3a (no-ROC DTCs)"
+				                           : "Phase 3b (ROC DTCs)")
+				            << " to fix CFO clock edge." << __E__;
+			}
+			else
+			{
+				if(timing_chain_first_substep_ == -1)
+					timing_chain_first_substep_ = getSubIterationIndex();
+
+				int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+				__FE_COUT_INFO__ << "Phase 3 edge fix, sub-step=" << subStep << __E__;
+
+				auto dtc = getDTC();
+
+				if(subStep <= 2 && (subStep % 2) == 0)
+				{
+					uint32_t markers = dtc->ReadCFOTXClockMarkerCountLink6();
+					__FE_COUT__ << "CFO Rx Clock Markers = " << markers << __E__;
+					if(markers > 1000)
+					{
+						indicateSubIterationWork();
+					}
+					else if(subStep >= 2)
+					{
+						__FE_SS__ << "DTC " << getInterfaceUID()
+						          << " CFO Rx Clock Markers still <= 1000 (" << markers
+						          << ") after edge toggle + 3s wait.";
+						__FE_SS_THROW__;
+					}
+					else
+					{
+						sleep(1);
+						markers = dtc->ReadCFOTXClockMarkerCountLink6();
+						if(markers > 1000)
+						{
+							indicateSubIterationWork();
+						}
+						else
+						{
+							sleep(1);
+							markers = dtc->ReadCFOTXClockMarkerCountLink6();
+							if(markers > 1000)
+							{
+								indicateSubIterationWork();
+							}
+							else
+							{
+								__FE_SS__ << "DTC " << getInterfaceUID()
+								          << " CFO Rx Clock Markers <= 1000 (" << markers
+								          << ") after 3s wait — CFO clock not arriving.";
+								__FE_SS_THROW__;
+							}
+						}
+					}
+				}
+				else if(subStep == 1 || subStep == 3)
+				{
+					bool isRetry = (subStep == 3);
+
+					uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
+					bool txMarkers  = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+					                  dtc->ReadCFOClockMarkerTxError(cfoErr);
+					bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
+
+					uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
+					uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
+					uint32_t batchSlip      = cdcDiag & 0xFFFF;
+
+					if(txMarkers || rxToTx || parityMismatch || batchSlip)
+					{
+						if(isRetry)
+						{
+							__FE_SS__ << "DTC " << getInterfaceUID()
+							          << " CFO clock edge fix failed after 2 attempts."
+							          << " Errors: TxMarkers=" << txMarkers
+							          << " Rx-to-Tx=" << rxToTx
+							          << " Parity=" << parityMismatch
+							          << " BatchSlip=" << batchSlip;
+							__FE_SS_THROW__;
+						}
+
+						int newEdge = dtc->ToggleExternalCFOSampleEdge();
+						dtc->SoftReset();
+						__FE_COUT_INFO__ << "Toggled CFO clock edge to "
+						                 << (newEdge ? "negedge" : "posedge")
+						                 << " and issued SoftReset." << __E__;
+						indicateSubIterationWork();
+					}
+					else
+					{
+						__FE_COUT_INFO__ << "No CFO interface errors — clock edge is correct."
+						                 << __E__;
+					}
+				}
+			}
+		}
+		else  // SYNC_C or SYNC_D — RTF Marker Offset + verify, split by DTC type
+		{
+			bool myOffsetPhase =
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C && !hasRealROCs) ||
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D && hasRealROCs);
+
+			if(!myOffsetPhase)
+			{
+				__FE_COUT__ << "Idle — waiting for "
+				            << (hasRealROCs ? "Phase 3c (no-ROC DTCs)"
+				                           : "Phase 3d (ROC DTCs)")
+				            << " to apply RTF marker offset." << __E__;
+			}
+			else
+			{
+				if(timing_chain_first_substep_ == -1)
+					timing_chain_first_substep_ = getSubIterationIndex();
+
+				int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+				__FE_COUT_INFO__ << "Phase 3 RTF Marker Offset, sub-step=" << subStep << __E__;
+
+				auto dtc = getDTC();
+
+				if(subStep == 0)
+				{
+					uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
+					bool     saturated = (rtfHist >> 10) & 1;
+					uint32_t satBin    = (rtfHist >> 7) & 0x7;
+
+					if(!saturated || satBin == 7)
+					{
+						__FE_SS__ << "DTC " << getInterfaceUID()
+						          << " RTF histogram not saturated (saturated=" << saturated
+						          << ", bin=" << satBin << "); cannot apply offset.";
+						__FE_SS_THROW__;
+					}
+
+					int impliedPos = 2 - static_cast<int>(satBin);
+					dtc->SetCFOSamplePermanentOffset(impliedPos);
+					int readback = dtc->ReadCFOSamplePermanentOffset();
+					__FE_COUT_INFO__ << "RTF Marker Offset: satBin=" << satBin
+					                 << " => offset=" << impliedPos
+					                 << " (readback=" << readback << ")." << __E__;
+
+					dtc->SoftReset();
+					__FE_COUT__ << "SoftReset issued after marker offset apply." << __E__;
+					indicateSubIterationWork();
+				}
+				else
+				{
+					uint32_t markers = dtc->ReadCFOTXClockMarkerCountLink6();
+					__FE_COUT__ << "CFO Rx Clock Markers = " << markers << __E__;
+
+					if(markers <= 1000)
+					{
+						if(subStep >= 4)
+						{
+							__FE_SS__ << "DTC " << getInterfaceUID()
+							          << " CFO Rx Clock Markers <= 1000 (" << markers
+							          << ") after RTF offset apply + 3s wait.";
+							__FE_SS_THROW__;
+						}
+						sleep(1);
+						indicateSubIterationWork();
+					}
+					else
+					{
+						uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
+						bool hasErrors =
+						    dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr) ||
+						    dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ||
+						    dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+						    dtc->ReadCFOClockMarkerTxError(cfoErr) ||
+						    dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
+
+						uint32_t cdrUnlock = dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+						uint32_t jaUnlock  = dtc->ReadJitterAttenuatorUnlockCount();
+						uint32_t jaRecLOS  = dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
+						uint32_t jaExtLOS  = dtc->ReadJitterAttenuatorExternalClockLOSCount();
+						uint32_t evtStartErr = dtc->ReadRXCFOLinkEventStartCharacterErrorCount();
+						uint32_t clk40Err    = dtc->ReadRXCFOLink40MHzCharacterErrorCount();
+						uint32_t cdcDiag     = dtc->ReadCFOCDCDiag();
+						uint32_t parity      = (cdcDiag >> 16) & 0xFFFF;
+						uint32_t batchSlip   = cdcDiag & 0xFFFF;
+
+						bool hasCounterErrors = cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS ||
+						                        evtStartErr || clk40Err || parity || batchSlip;
+
+						if(hasErrors || hasCounterErrors)
+						{
+							__FE_SS__ << "DTC " << getInterfaceUID()
+							          << " RTF offset verify failed — CFO interface errors "
+							             "present after RTF offset apply:\n"
+							          << getCFORTFSettingsStatusAndErrors();
+							__FE_SS_THROW__;
+						}
+
+						__FE_COUT_INFO__ << "RTF offset verify passed — all CFO interface "
+						                    "errors and counters are 0."
+						                 << __E__;
+					}
+				}
+			}
+		}
+		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
 	{
-		// Phase 4: placeholder — only DTCs with real ROCs will act here
-		if(hasRealROCs)
-			__FE_COUT__ << "Phase 4 — Establish Local ROC Config (placeholder)." << __E__;
-		else
+		// Phase 4: ROC and DCS Setup — only DTCs with real ROCs act
+		if(!hasRealROCs)
+		{
 			__FE_COUT__ << "Idle — no real ROCs to configure." << __E__;
+		}
+		else
+		{
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
+
+			int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+			__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep << __E__;
+
+			auto dtc = getDTC();
+
+			if(subStep == 0)
+			{
+				// Step 1: SetupROCs per link
+				__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
+				            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
+				            << std::dec << __E__;
+
+				for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
+				{
+					bool enabled  = ((roc_mask_ >> i) & 1);
+					bool emulated = ((roc_emulated_mask_ >> i) & 1);
+
+					if(!enabled)
+						SetupROCs(DTCLib::DTC_Link_ID(i), 0, 1, 0,
+						          DTCLib::DTC_ROC_Emulation_Type(0), 0);
+					else if(!emulated)
+					{
+						bool clockMakersEnabled = false;
+						if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+							clockMakersEnabled = false;
+						SetupROCs(DTCLib::DTC_Link_ID(i), 1, clockMakersEnabled, 0,
+						          DTCLib::DTC_ROC_Emulation_Type(0), 0);
+					}
+					else
+						SetupROCs(DTCLib::DTC_Link_ID(i), 1, 1, 1,
+						          DTCLib::DTC_ROC_Emulation_Type(0), 16);
+				}
+
+				// Step 2: Enable DCS Reception
+				dtc->EnableDCSReception();
+
+				// Step 3: CRV Punched Clock
+				if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+				{
+					__FE_COUT__ << "Enable punched clock on CRV DTC." << __E__;
+					dtc->SetPunchEnable();
+				}
+
+				// Step 4: SoftReset to clear lock counters
+				dtc->SoftReset();
+
+				// Check if ROC configure is needed
+				bool doConfigureROCs = false;
+				try
+				{
+					doConfigureROCs = Configurable::getSelfNode()
+					                      .getNode("EnableROCConfigureStep")
+					                      .getValue<bool>();
+				}
+				catch(...)
+				{
+				}
+
+				if(doConfigureROCs)
+					indicateSubIterationWork();
+			}
+			else
+			{
+				// Step 5: ROC DCS-based configure (sub-iterations)
+				// DTC acts as FESupervisor for its ROCs
+				bool anyROCNeedsWork = false;
+
+				for(auto& roc : rocs_)
+				{
+					roc.second->VStateMachine::setIterationIndex(0);
+					roc.second->VStateMachine::setSubIterationIndex(subStep - 1);
+					roc.second->VStateMachine::clearIterationWork();
+					roc.second->VStateMachine::clearSubIterationWork();
+
+					if(subStep == 1)
+					{
+						if(!dtc->WaitForLinkReady(
+						       roc.second->getLinkID(), 1000, 2.0))
+						{
+							__FE_SS__ << "ROC " << roc.first << " on link "
+							          << roc.second->getLinkID()
+							          << " was not ready after 2s.";
+							__FE_SS_THROW__;
+						}
+					}
+
+					roc.second->configure();
+
+					if(roc.second->VStateMachine::getSubIterationWork())
+					{
+						anyROCNeedsWork = true;
+						__FE_COUT__ << "ROC " << roc.first
+						            << " needs another sub-iteration." << __E__;
+					}
+				}
+
+				if(anyROCNeedsWork)
+					indicateSubIterationWork();
+			}
+		}
+		timing_chain_first_substep_ = -1;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ROC_DATA_PATH)
+	{
+		// Phase 5: ROC Data Path Setup — only DTCs with real ROCs act
+		if(!hasRealROCs)
+		{
+			__FE_COUT__ << "Idle — no ROC data path to set up." << __E__;
+		}
+		else
+		{
+			__FE_COUT_INFO__ << "Phase 5 ROC Data Path Setup." << __E__;
+
+			auto dtc = getDTC();
+
+			// Step 1: EVB register setup
+			dtc->DisableLink(DTCLib::DTC_Link_EVB);
+			try
+			{
+				uint32_t dtcID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+				uint32_t mode  = getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
+				uint32_t partID =
+				    getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
+				uint32_t macIdx =
+				    getSelfNode().getNode("EventBuilderMACIndex").getValue<uint32_t>();
+				__FE_COUTV__(dtcID);
+				__FE_COUTV__(mode);
+				__FE_COUTV__(partID);
+				__FE_COUTV__(macIdx);
+				dtc->SetEVBInfo(dtcID, mode, partID, macIdx);
+			}
+			catch(...)
+			{
+				__FE_COUT_INFO__ << "Ignoring missing event building configuration values."
+				                 << __E__;
+			}
+
+			// Step 2: Software DRP mode
+			bool enableSoftwareDRP = false;
+			try
+			{
+				enableSoftwareDRP =
+				    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+			}
+			catch(...)
+			{
+			}
+			if(enableSoftwareDRP)
+			{
+				__FE_COUT__ << "Enabling Software Data Request Mode..." << __E__;
+				dtc->EnableSoftwareDRP();
+			}
+			else
+			{
+				__FE_COUT__ << "Enabling Auto-generation of Data Requests..." << __E__;
+				dtc->DisableSoftwareDRP();
+			}
+
+			// Step 3: Enable EVB link
+			dtc->EnableLink(DTCLib::DTC_Link_EVB);
+
+			// Step 4: Event Mode Required Mask
+			uint32_t eventModeRequiredMask = 0;
+			try
+			{
+				eventModeRequiredMask =
+				    getSelfNode().getNode("EventModeRequiredMask").getValue<uint32_t>();
+			}
+			catch(...)
+			{
+				__FE_COUT_INFO__ << "No 'EventModeRequiredMask' field found. Default to 0x"
+				                 << std::hex << eventModeRequiredMask << __E__;
+			}
+			dtc->SetCFOEventModeRequiredMask(eventModeRequiredMask);
+
+			__FE_COUT__ << "ROC Data Path Setup done." << __E__;
+		}
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
 	{
-		__FE_COUT__ << "Final SoftReset to clear errors before enabling idle operation."
+		__FE_COUT__ << "Final SoftReset to clear errors before enabling CFO operation."
 		            << __E__;
 		getDTC()->SoftReset();
 		indicateIterationWork();
-	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
-	{
-		// Phase 5: Enable EVB
-		configureCommon();
-
-		getDTC()->EnableLink(DTCLib::DTC_Link_EVB);
-
-		uint32_t EventModeRequiredMask = uint32_t(0);
-		try
-		{
-			EventModeRequiredMask =
-			    getSelfNode().getNode("EventModeRequiredMask").getValue<uint32_t>();
-		}
-		catch(...)
-		{
-			__FE_COUT_INFO__ << "No 'EventModeRequiredMask' field found. Default to 0x"
-			                 << std::hex << EventModeRequiredMask << __E__;
-		}
-		getDTC()->SetCFOEventModeRequiredMask(EventModeRequiredMask);
-
-		__FE_COUT__ << "Setup EVB parameters done." << __E__;
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -2167,14 +2555,18 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6);
 		getDTC()->ClearControlRegister(controlRegisterKeepMask);
 
-		getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
-
-		__FE_COUT__ << "Disabling configured ROC links (roc_mask_=0x" << std::hex
-		            << roc_mask_ << std::dec << "), leaving CFO link untouched." << __E__;
-		for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
+		if((roc_mask_ & ~roc_emulated_mask_) != 0)
 		{
-			if((roc_mask_ >> i) & 1)
-				getDTC()->DisableLink(DTCLib::DTC_ROC_Links[i]);
+			getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
+
+			__FE_COUT__ << "Disabling configured ROC links (roc_mask_=0x" << std::hex
+			            << roc_mask_ << std::dec << "), leaving CFO link untouched."
+			            << __E__;
+			for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
+			{
+				if((roc_mask_ >> i) & 1)
+					getDTC()->DisableLink(DTCLib::DTC_ROC_Links[i]);
+			}
 		}
 
 		getDTC()->DisableCFOLoopback();
@@ -2288,7 +2680,8 @@ void DTCFrontEndInterface::halt(void)
 
 		getDTC()->DisableCFOEmulation();  //stop Event Window Marker generation
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2341,7 +2734,8 @@ void DTCFrontEndInterface::pause(void)
 
 		getDTC()->DisableCFOEmulation();  //stop Event Window Marker generation
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2388,7 +2782,8 @@ void DTCFrontEndInterface::stop(void)
 
 		getDTC()->DisableCFOEmulation();  //stop Event Window Marker generation
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2547,7 +2942,8 @@ void DTCFrontEndInterface::resume(void)
 		    0                            //unint32_t packetThresholdToSave )
 		);
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2640,7 +3036,8 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 		getDTC()->SoftReset();  //reset counters
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 		getDTC()->SoftReset();  //reset counters
@@ -2883,7 +3280,8 @@ bool DTCFrontEndInterface::running(void)
 	{
 		__FE_COUT_INFO__ << "Running for hardware development mode!" << __E__;
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << "Running for Event Building mode!" << __E__;
 	}

@@ -1848,6 +1848,7 @@ void CFOFrontEndInterface::configure(void)
 		return;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
 	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
@@ -2078,41 +2079,169 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_ENABLE)
 	{
-		// Phase 2: Establish CFO Timing Chain
-		//  Sub-step 0: Enable all CFO link outputs + clock markers
-		//  Sub-step 1: Enumerate DTCs, check CFO CDR lock via "Get Link Lock Status" FE Macro;
-		//              if any unlocked → SERDES resets + retry
-		//  Sub-step 2: Retry CDR lock check; throw if still unlocked
-
+		// Phase 2a: Enable all CFO link outputs + clock markers
+		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		thisCFO_->EnableEmbeddedClockMarker();
+		__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
+	{
+		// Phase 2b: CDR lock check
 		if(timing_chain_first_substep_ == -1)
 			timing_chain_first_substep_ = getSubIterationIndex();
 
 		int subStep = getSubIterationIndex() - timing_chain_first_substep_;
-		__FE_COUT_INFO__ << "Phase 2 — Establish CFO Timing Chain, sub-step=" << subStep
-		                 << __E__;
+		__FE_COUT_INFO__ << "Phase 2b — CDR lock check, sub-step=" << subStep << __E__;
 
-		if(subStep == 0)
+		bool isRetry = (subStep == 1);
+		__FE_COUT__ << "Checking DTC CFO CDR lock ("
+		            << (isRetry ? "retry" : "1st attempt") << ")..." << __E__;
+
+		struct DTCLockInfo
 		{
-			thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-			thisCFO_->EnableEmbeddedClockMarker();
-			__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
+			std::string uid;
+			bool        cfoCDRLocked = false;
+		};
+		std::vector<DTCLockInfo> dtcLockInfos;
+		{
+			auto cfgMgr   = Configurable::getConfigurationManager();
+			auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
+			for(const auto& ctx : contexts)
+			{
+				if(!ctx.second.isEnabled())
+					continue;
+				try
+				{
+					auto apps =
+					    ctx.second.getNode("LinkToApplicationTable").getChildren();
+					for(const auto& app : apps)
+					{
+						if(!app.second.isEnabled())
+							continue;
+						try
+						{
+							auto supNode =
+							    app.second.getNode("LinkToSupervisorTable");
+							auto feChildren =
+							    supNode.getNode("LinkToFEInterfaceTable")
+							        .getChildren();
+							for(const auto& fe : feChildren)
+							{
+								if(!fe.second.isEnabled())
+									continue;
+								if(fe.second.getNode("FEInterfacePluginName")
+								       .getValue<std::string>() !=
+								   "DTCFrontEndInterface")
+									continue;
+								DTCLockInfo info;
+								info.uid = fe.first;
+								dtcLockInfos.push_back(std::move(info));
+							}
+						}
+						catch(...)
+						{
+						}
+					}
+				}
+				catch(...)
+				{
+				}
+			}
+		}
+
+		__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces."
+		            << __E__;
+
+		std::vector<std::string> unlockedDTCs;
+		for(auto& dtcLock : dtcLockInfos)
+		{
+			std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+			try
+			{
+				runFrontEndMacro(
+				    dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+			}
+			catch(const std::exception& e)
+			{
+				__FE_COUT_WARN__
+				    << "Failed to read lock status from DTC " << dtcLock.uid
+				    << ": " << e.what() << __E__;
+				unlockedDTCs.push_back(dtcLock.uid + " (unreachable)");
+				continue;
+			}
+
+			std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
+			__FE_COUT__ << "DTC " << dtcLock.uid
+			            << " Lock Status: " << lockStatus << __E__;
+
+			bool foundCFOLine = false;
+			std::istringstream iss(lockStatus);
+			std::string        line;
+			while(std::getline(iss, line))
+			{
+				if(line.find("CFO") != std::string::npos &&
+				   line.find("CDR Lock") != std::string::npos)
+				{
+					foundCFOLine = true;
+					if(line.find("[x]") != std::string::npos)
+						dtcLock.cfoCDRLocked = true;
+					break;
+				}
+			}
+
+			if(!foundCFOLine || !dtcLock.cfoCDRLocked)
+				unlockedDTCs.push_back(dtcLock.uid);
+		}
+
+		if(unlockedDTCs.empty())
+		{
+			__FE_COUT_INFO__ << "All DTCs have CFO CDR lock." << __E__;
+		}
+		else if(!isRetry)
+		{
+			__FE_COUT_WARN__ << unlockedDTCs.size()
+			                 << " DTC(s) missing CFO CDR lock:";
+			for(const auto& uid : unlockedDTCs)
+				__FE_COUT__ << "  " << uid;
+			__FE_COUT__ << "Performing SERDES resets and retrying..." << __E__;
+
+			thisCFO_->CFOandDTC_Registers::ResetSERDES();
+			thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 			indicateSubIterationWork();
 		}
-		else if(subStep == 1 || subStep == 2)
+		else
 		{
-			bool isRetry = (subStep == 2);
-			__FE_COUT__ << "Checking DTC CFO CDR lock ("
-			            << (isRetry ? "retry" : "1st attempt") << ")..." << __E__;
+			__FE_SS__ << "Phase 2b failed: " << unlockedDTCs.size()
+			          << " DTC(s) still missing CFO CDR lock after retry:";
+			for(const auto& uid : unlockedDTCs)
+				ss << " " << uid;
+			__FE_SS_THROW__;
+		}
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
 
-			// Enumerate all enabled DTC FE interfaces
-			struct DTCLockInfo
-			{
-				std::string uid;
-				bool        cfoCDRLocked = false;
-			};
-			std::vector<DTCLockInfo> dtcLockInfos;
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+		}
+		else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A)
+		{
+			// Phase 3a: Check all DTCs via "Get RTF Interface Status"
+			__FE_COUT_INFO__ << "Phase 3a — checking all DTCs via Get RTF Interface Status..."
+			                 << __E__;
+			timing_chain_first_substep_ = -1;
+
+			std::vector<std::string> dtcUIDs;
 			{
 				auto cfgMgr   = Configurable::getConfigurationManager();
 				auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
@@ -2143,9 +2272,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 									       .getValue<std::string>() !=
 									   "DTCFrontEndInterface")
 										continue;
-									DTCLockInfo info;
-									info.uid = fe.first;
-									dtcLockInfos.push_back(std::move(info));
+									dtcUIDs.push_back(fe.first);
 								}
 							}
 							catch(...)
@@ -2159,106 +2286,104 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				}
 			}
 
-			__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces."
-			            << __E__;
+			__FE_COUT__ << "Checking " << dtcUIDs.size()
+			            << " DTC(s) for RTF Interface Status..." << __E__;
 
-			std::vector<std::string> unlockedDTCs;
-			for(auto& dtcLock : dtcLockInfos)
+			for(const auto& dtcUID : dtcUIDs)
 			{
 				std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
 				try
 				{
 					runFrontEndMacro(
-					    dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+					    dtcUID, "Get RTF Interface Status", argsIn, argsOut);
 				}
 				catch(const std::exception& e)
 				{
-					__FE_COUT_WARN__
-					    << "Failed to read lock status from DTC " << dtcLock.uid
-					    << ": " << e.what() << __E__;
-					unlockedDTCs.push_back(dtcLock.uid + " (unreachable)");
-					continue;
+					__FE_SS__ << "Phase 3a: Failed to read RTF Interface Status from DTC "
+					          << dtcUID << ": " << e.what();
+					__FE_SS_THROW__;
 				}
 
-				std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
-				__FE_COUT__ << "DTC " << dtcLock.uid
-				            << " Lock Status: " << lockStatus << __E__;
+				std::string status = __GET_ARG_OUT__("RTF Interface Status", std::string);
+				__FE_COUT__ << "DTC " << dtcUID << " RTF status: " << status << __E__;
 
-				// Parse: look for "CFO CDR Lock" or "CFO Emulated CDR Lock" line with "[x]"
-				bool foundCFOLine = false;
-				std::istringstream iss(lockStatus);
-				std::string        line;
-				while(std::getline(iss, line))
+				struct Check
 				{
-					if(line.find("CFO") != std::string::npos &&
-					   line.find("CDR Lock") != std::string::npos)
+					std::string keyword;
+					std::string required;
+					std::string label;
+				};
+				std::vector<Check> checks = {
+				    {"CFO Emulation Mode", "OFF", "CFO Emulation Mode must be OFF"},
+				    {"JA Source", "RJ45", "JA Source must be RJ45"},
+				    {"Saturated", "YES", "RTF histogram must be Saturated"},
+				    {"CFO CDR Lock", "LOCKED", "CFO CDR Lock must be LOCKED"},
+				};
+
+				std::istringstream iss(status);
+				std::string        line;
+				for(auto& chk : checks)
+				{
+					bool found = false;
+					iss.clear();
+					iss.str(status);
+					while(std::getline(iss, line))
 					{
-						foundCFOLine = true;
-						if(line.find("[x]") != std::string::npos)
-							dtcLock.cfoCDRLocked = true;
-						break;
+						if(line.find(chk.keyword) != std::string::npos)
+						{
+							found = true;
+							if(line.find(chk.required) == std::string::npos)
+							{
+								__FE_SS__ << "Phase 3a: DTC " << dtcUID << " failed check: "
+								          << chk.label << ". Line: " << line;
+								__FE_SS_THROW__;
+							}
+							break;
+						}
+					}
+					if(!found)
+					{
+						__FE_SS__ << "Phase 3a: DTC " << dtcUID
+						          << " — could not find '" << chk.keyword
+						          << "' in RTF Interface Status output.";
+						__FE_SS_THROW__;
 					}
 				}
-
-				if(!foundCFOLine || !dtcLock.cfoCDRLocked)
-					unlockedDTCs.push_back(dtcLock.uid);
+				__FE_COUT__ << "DTC " << dtcUID << " passed all Phase 3a checks." << __E__;
 			}
 
-			if(unlockedDTCs.empty())
-			{
-				__FE_COUT_INFO__ << "All DTCs have CFO CDR lock." << __E__;
-			}
-			else if(!isRetry)
-			{
-				__FE_COUT_WARN__ << unlockedDTCs.size()
-				                 << " DTC(s) missing CFO CDR lock:";
-				for(const auto& uid : unlockedDTCs)
-					__FE_COUT__ << "  " << uid;
-				__FE_COUT__ << "Performing SERDES resets and retrying..." << __E__;
-
-				thisCFO_->CFOandDTC_Registers::ResetSERDES();
-				thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-				indicateSubIterationWork();
-			}
-			else
-			{
-				__FE_SS__ << "Phase 2 failed: " << unlockedDTCs.size()
-				          << " DTC(s) still missing CFO CDR lock after retry:";
-				for(const auto& uid : unlockedDTCs)
-					ss << " " << uid;
-				__FE_SS_THROW__;
-			}
+			__FE_COUT_INFO__ << "All DTCs passed Phase 3a RTF Interface Status checks."
+			                 << __E__;
 		}
-		indicateIterationWork();
-	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_SYNC)
-	{
-		// Phase 3: placeholder
-		__FE_COUT__ << "Phase 3 — Establish Timing Chain Sync (placeholder)." << __E__;
-		timing_chain_first_substep_ = -1;
+		else
+		{
+			__FE_COUT__ << "Sync phase — idle while DTCs work..." << __E__;
+		}
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
 	{
-		// Phase 4: CFO idles while DTCs configure ROCs
-		__FE_COUT__ << "Idle while DTCs configure ROC links..." << __E__;
+		__FE_COUT__ << "Idle while DTCs configure ROC links and DCS..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ROC_DATA_PATH)
+	{
+		__FE_COUT__ << "Idle while DTCs set up ROC data path..." << __E__;
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
 	{
-		__FE_COUT__ << "Final SoftReset to clear errors before enabling idle operation."
+		__FE_COUT__ << "Final SoftReset to clear errors before enabling CFO operation."
 		            << __E__;
 		thisCFO_->SoftReset();
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
 	{
-		// Phase 5: Enable CFO Idle Operation
-		__FE_COUT__ << "Enable communication over links" << __E__;
-		thisCFO_->EnableEmbeddedClockMarker();
+		// Phase 6: Enable CFO Operation
+		__FE_COUT__ << "Enable CFO operation (RF0, punch)." << __E__;
 		thisCFO_->EnableAcceleratorRF0();
 		thisCFO_->SetPunchEnable();
-		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -2853,7 +2978,8 @@ bool CFOFrontEndInterface::running(void)
 		}
 
 		if(next_starting_event_window_tag_ == 0 &&
-		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+		   (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		    operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC))
 		{
 			__FE_COUT_INFO__ << "Sleeping for the Super Orchestration..." << __E__;
 			sleep(5);
