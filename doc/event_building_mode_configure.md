@@ -36,7 +36,7 @@ Key design constraints:
 | 3 | **2b — Timing Chain: CDR Check** | Enumerate DTCs, call "Get Link Lock Status" FE Macro on each; if unlocked -> `ResetSERDES()` + retry; throw on 2nd failure | `ReadSERDESRXCDRLock(DTC_Link_CFO)` — throw if not locked | `ReadSERDESRXCDRLock(DTC_Link_CFO)` — throw if not locked |
 | 4 | **3a — Sync: CFO check + edge fix (no-ROC)** | Call "Get RTF Interface Status" FE Macro on all DTCs; validate CFO Emulation Mode OFF, JA Source RJ45, Saturated YES, CFO CDR Lock LOCKED | Edge fix sub-steps: wait markers > 1000, check errors, toggle edge + SoftReset if needed, retry once | idle |
 | 5 | **3b — Sync: edge fix (ROC DTCs)** | idle | idle | Same edge fix sub-steps as 3a |
-| 6 | **3c — Sync: RTF offset + verify (no-ROC)** | idle | `ReadRTFHistIdelay()`, compute offset, `SetCFOSamplePermanentOffset()`, `SoftReset()`, wait markers > 1000, verify all CFO interface errors = 0 | idle |
+| 6 | **3c — Sync: RTF offset + verify (no-ROC)** | idle | `ReadRTFHistIdelay()`, compute offset, `SetCFOSamplePermanentOffset()`, `SoftReset()`, wait markers > 1000, verify all CFO interface errors = 0; if RTFPhase is the only error flag and all counters are 0, toggle edge + `SoftReset()` and re-verify once | idle |
 | 7 | **3d — Sync: RTF offset + verify (ROC)** | idle | idle | Same offset + verify sub-steps as 3c |
 | 8 | **4 — ROC and DCS Setup** | idle | idle | `SetupROCs()` per link, `EnableDCSReception()`, CRV `SetPunchEnable()`, `SoftReset()`, ROC DCS-based configure |
 | 9 | **5 — ROC Data Path Setup** | idle | idle | `DisableLink(EVB)`, `SetEVBInfo()`, DRP mode, `EnableLink(EVB)`, `SetCFOEventModeRequiredMask()` |
@@ -149,13 +149,17 @@ Only active in **EventBuildingAndSyncMode**.
 
 0. Read `ReadRTFHistIdelay()`, verify saturated and bin != 7. Compute
    `impliedPos = 2 - satBin`, call `SetCFOSamplePermanentOffset(impliedPos)`, `SoftReset()`.
-1+. Wait for markers > 1000 (1s polls, up to 3s timeout).
-Final. Verify all CFO interface errors and counters are 0: RTF 40MHz Phase Shift, Illegal
-Marker Timing, Event Start Marker Tx, Clock Marker Tx, Rx-to-Tx Data Corruption, CDR Unlock
-Count, JA Unlock Count, JA Recovered Clock LOS Count, JA External Clock LOS Count, RX CFO
-Link Event Start Character Error Count, RX CFO Link 40MHz Character Error Count, CDC
-Diagnostic (parity + batch slip). Throws with `getCFORTFSettingsStatusAndErrors()` output if
-any non-zero.
+1+. Wait for markers > 1000 (1s polls, up to ~7s timeout).
+Verify. Read all CFO interface error flags (RTF 40MHz Phase Shift, Illegal Marker Timing,
+Event Start Marker Tx, Clock Marker Tx, Rx-to-Tx Data Corruption) and counters (CDR Unlock,
+JA Unlock, JA Recovered Clock LOS, JA External Clock LOS, RX CFO Link Event Start Character
+Error, RX CFO Link 40MHz Character Error, CDC Diagnostic parity + batch slip).
+  - If **RTFPhase is the only error** (all other flags clear, all counters zero): toggle
+    CFO clock edge via `ToggleExternalCFOSampleEdge()`, `SoftReset()`, then re-wait for
+    markers > 1000 and re-verify. This retry happens at most once.
+  - If any other error flag or counter is non-zero (or RTFPhase persists after retry):
+    throw with `getCFORTFSettingsStatusAndErrors()` output.
+  - Otherwise: pass.
 
 ### CFO, DTC w/ ROCs: idle
 

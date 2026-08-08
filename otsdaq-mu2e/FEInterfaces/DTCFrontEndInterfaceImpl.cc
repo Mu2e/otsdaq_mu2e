@@ -2236,6 +2236,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 				if(subStep == 0)
 				{
+					rtfPhaseEdgeRetried_ = false;
+
 					uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
 					bool     saturated = (rtfHist >> 10) & 1;
 					uint32_t satBin    = (rtfHist >> 7) & 0x7;
@@ -2266,11 +2268,11 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 					if(markers <= 1000)
 					{
-						if(subStep >= 4)
+						if(subStep >= 8)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID()
 							          << " CFO Rx Clock Markers <= 1000 (" << markers
-							          << ") after RTF offset apply + 3s wait.";
+							          << ") after RTF offset apply + wait.";
 							__FE_SS_THROW__;
 						}
 						sleep(1);
@@ -2279,8 +2281,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					else
 					{
 						uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
-						bool hasErrors =
-						    dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr) ||
+						bool rtfPhase   = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);
+						bool otherFlags =
 						    dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ||
 						    dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
 						    dtc->ReadCFOClockMarkerTxError(cfoErr) ||
@@ -2299,18 +2301,35 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						bool hasCounterErrors = cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS ||
 						                        evtStartErr || clk40Err || parity || batchSlip;
 
-						if(hasErrors || hasCounterErrors)
+						bool rtfPhaseOnly = rtfPhase && !otherFlags && !hasCounterErrors;
+
+						if(rtfPhaseOnly && !rtfPhaseEdgeRetried_)
+						{
+							int newEdge = dtc->ToggleExternalCFOSampleEdge();
+							dtc->SoftReset();
+							rtfPhaseEdgeRetried_ = true;
+							__FE_COUT_INFO__ << "RTFPhase error only — toggled CFO clock edge to "
+							                 << (newEdge ? "negedge" : "posedge")
+							                 << " and issued SoftReset; retrying verify." << __E__;
+							indicateSubIterationWork();
+						}
+						else if(rtfPhase || otherFlags || hasCounterErrors)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " RTF offset verify failed — CFO interface errors "
-							             "present after RTF offset apply:\n"
+							          << " RTF offset verify failed"
+							          << (rtfPhaseEdgeRetried_
+							                  ? " (after edge-flip retry)"
+							                  : "")
+							          << " — CFO interface errors present:\n"
 							          << getCFORTFSettingsStatusAndErrors();
 							__FE_SS_THROW__;
 						}
-
-						__FE_COUT_INFO__ << "RTF offset verify passed — all CFO interface "
-						                    "errors and counters are 0."
-						                 << __E__;
+						else
+						{
+							__FE_COUT_INFO__ << "RTF offset verify passed — all CFO interface "
+							                    "errors and counters are 0."
+							                 << __E__;
+						}
 					}
 				}
 			}

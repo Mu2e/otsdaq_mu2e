@@ -165,6 +165,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void registerFEMacros(void);
 
 	int                     timing_chain_first_substep_ = -1;
+	bool                    rtfPhaseEdgeRetried_       = false;
 	int                     dtc_location_in_chain_ = -1;
 	unsigned int            runningCallCount_      = 0;
 	unsigned int            roc_mask_              = 0;
