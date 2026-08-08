@@ -1257,7 +1257,8 @@ try
 		configureHardwareDevMode();
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
 	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
@@ -2046,10 +2047,10 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 	// A DTC with no real ROCs (all emulated or none) runs Phase 1a (iteration 0).
 	// A DTC with at least one real ROC runs Phase 1b (iteration 1).
-	const bool hasRealROCs  = (roc_mask_ & ~roc_emulated_mask_) != 0;
-	const int  myClockPhase = hasRealROCs
-	                              ? CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B
-	                              : CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A;
+	const bool hasRealROCs = (roc_mask_ & ~roc_emulated_mask_) != 0;
+	const int  myClockPhase =
+        hasRealROCs ? CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B
+	                 : CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A;
 
 	if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A ||
 	   step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B)
@@ -2065,7 +2066,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		else
 			__FE_COUT__ << "Idle — waiting for "
 			            << (hasRealROCs ? "Phase 1a (DTCs w/o real ROCs)"
-			                           : "Phase 1b (DTCs w/ real ROCs)")
+			                            : "Phase 1b (DTCs w/ real ROCs)")
 			            << " to complete." << __E__;
 
 		indicateIterationWork();
@@ -2073,7 +2074,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_ENABLE)
 	{
 		// Phase 2a: idle while CFO enables links + clock markers
-		__FE_COUT__ << "Phase 2a — idle while CFO enables links + clock markers." << __E__;
+		__FE_COUT__ << "Phase 2a — idle while CFO enables links + clock markers."
+		            << __E__;
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
@@ -2086,7 +2088,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		if(!cfoCDRLocked)
 		{
 			__FE_SS__ << "DTC " << getInterfaceUID()
-			          << " CFO CDR lock not achieved during Phase 2b — Timing Chain: CDR Check.";
+			          << " CFO CDR lock not achieved during Phase 2b — Timing Chain: CDR "
+			             "Check.";
 			__FE_SS_THROW__;
 		}
 		timing_chain_first_substep_ = -1;
@@ -2109,14 +2112,16 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		{
 			// Phase 3a/3b: Edge fix — split by DTC type
 			bool myEdgePhase =
-			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A && !hasRealROCs) ||
-			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B && hasRealROCs);
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A &&
+			     !hasRealROCs) ||
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B &&
+			     hasRealROCs);
 
 			if(!myEdgePhase)
 			{
 				__FE_COUT__ << "Idle — waiting for "
 				            << (hasRealROCs ? "Phase 3a (no-ROC DTCs)"
-				                           : "Phase 3b (ROC DTCs)")
+				                            : "Phase 3b (ROC DTCs)")
 				            << " to fix CFO clock edge." << __E__;
 			}
 			else
@@ -2174,9 +2179,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				{
 					bool isRetry = (subStep == 3);
 
-					uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
-					bool txMarkers  = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
-					                  dtc->ReadCFOClockMarkerTxError(cfoErr);
+					uint32_t cfoErr    = dtc->ReadCFOLinkErrorRegister();
+					bool     txMarkers = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+					                 dtc->ReadCFOClockMarkerTxError(cfoErr);
 					bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
 
 					uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
@@ -2205,8 +2210,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					}
 					else
 					{
-						__FE_COUT_INFO__ << "No CFO interface errors — clock edge is correct."
-						                 << __E__;
+						__FE_COUT_INFO__
+						    << "No CFO interface errors — clock edge is correct."
+						    << __E__;
 					}
 				}
 			}
@@ -2214,14 +2220,16 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		else  // SYNC_C or SYNC_D — RTF Marker Offset + verify, split by DTC type
 		{
 			bool myOffsetPhase =
-			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C && !hasRealROCs) ||
-			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D && hasRealROCs);
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C &&
+			     !hasRealROCs) ||
+			    (step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D &&
+			     hasRealROCs);
 
 			if(!myOffsetPhase)
 			{
 				__FE_COUT__ << "Idle — waiting for "
 				            << (hasRealROCs ? "Phase 3c (no-ROC DTCs)"
-				                           : "Phase 3d (ROC DTCs)")
+				                            : "Phase 3d (ROC DTCs)")
 				            << " to apply RTF marker offset." << __E__;
 			}
 			else
@@ -2230,7 +2238,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					timing_chain_first_substep_ = getSubIterationIndex();
 
 				int subStep = getSubIterationIndex() - timing_chain_first_substep_;
-				__FE_COUT_INFO__ << "Phase 3 RTF Marker Offset, sub-step=" << subStep << __E__;
+				__FE_COUT_INFO__ << "Phase 3 RTF Marker Offset, sub-step=" << subStep
+				                 << __E__;
 
 				auto dtc = getDTC();
 
@@ -2244,9 +2253,10 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 					if(!saturated || satBin == 7)
 					{
-						__FE_SS__ << "DTC " << getInterfaceUID()
-						          << " RTF histogram not saturated (saturated=" << saturated
-						          << ", bin=" << satBin << "); cannot apply offset.";
+						__FE_SS__
+						    << "DTC " << getInterfaceUID()
+						    << " RTF histogram not saturated (saturated=" << saturated
+						    << ", bin=" << satBin << "); cannot apply offset.";
 						__FE_SS_THROW__;
 					}
 
@@ -2280,26 +2290,30 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					}
 					else
 					{
-						uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
-						bool rtfPhase   = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);
-						bool otherFlags =
-						    dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ||
-						    dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
-						    dtc->ReadCFOClockMarkerTxError(cfoErr) ||
-						    dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
+						uint32_t cfoErr   = dtc->ReadCFOLinkErrorRegister();
+						bool     rtfPhase = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);
+						bool otherFlags = dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ||
+						                  dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+						                  dtc->ReadCFOClockMarkerTxError(cfoErr) ||
+						                  dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
 
-						uint32_t cdrUnlock = dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
-						uint32_t jaUnlock  = dtc->ReadJitterAttenuatorUnlockCount();
-						uint32_t jaRecLOS  = dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
-						uint32_t jaExtLOS  = dtc->ReadJitterAttenuatorExternalClockLOSCount();
-						uint32_t evtStartErr = dtc->ReadRXCFOLinkEventStartCharacterErrorCount();
-						uint32_t clk40Err    = dtc->ReadRXCFOLink40MHzCharacterErrorCount();
-						uint32_t cdcDiag     = dtc->ReadCFOCDCDiag();
-						uint32_t parity      = (cdcDiag >> 16) & 0xFFFF;
-						uint32_t batchSlip   = cdcDiag & 0xFFFF;
+						uint32_t cdrUnlock =
+						    dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+						uint32_t jaUnlock = dtc->ReadJitterAttenuatorUnlockCount();
+						uint32_t jaRecLOS =
+						    dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
+						uint32_t jaExtLOS =
+						    dtc->ReadJitterAttenuatorExternalClockLOSCount();
+						uint32_t evtStartErr =
+						    dtc->ReadRXCFOLinkEventStartCharacterErrorCount();
+						uint32_t clk40Err  = dtc->ReadRXCFOLink40MHzCharacterErrorCount();
+						uint32_t cdcDiag   = dtc->ReadCFOCDCDiag();
+						uint32_t parity    = (cdcDiag >> 16) & 0xFFFF;
+						uint32_t batchSlip = cdcDiag & 0xFFFF;
 
-						bool hasCounterErrors = cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS ||
-						                        evtStartErr || clk40Err || parity || batchSlip;
+						bool hasCounterErrors = cdrUnlock || jaUnlock || jaRecLOS ||
+						                        jaExtLOS || evtStartErr || clk40Err ||
+						                        parity || batchSlip;
 
 						bool rtfPhaseOnly = rtfPhase && !otherFlags && !hasCounterErrors;
 
@@ -2308,27 +2322,29 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							int newEdge = dtc->ToggleExternalCFOSampleEdge();
 							dtc->SoftReset();
 							rtfPhaseEdgeRetried_ = true;
-							__FE_COUT_INFO__ << "RTFPhase error only — toggled CFO clock edge to "
-							                 << (newEdge ? "negedge" : "posedge")
-							                 << " and issued SoftReset; retrying verify." << __E__;
+							__FE_COUT_INFO__
+							    << "RTFPhase error only — toggled CFO clock edge to "
+							    << (newEdge ? "negedge" : "posedge")
+							    << " and issued SoftReset; retrying verify." << __E__;
 							indicateSubIterationWork();
 						}
 						else if(rtfPhase || otherFlags || hasCounterErrors)
 						{
-							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " RTF offset verify failed"
-							          << (rtfPhaseEdgeRetried_
-							                  ? " (after edge-flip retry)"
-							                  : "")
-							          << " — CFO interface errors present:\n"
-							          << getCFORTFSettingsStatusAndErrors();
+							__FE_SS__
+							    << "DTC " << getInterfaceUID()
+							    << " RTF offset verify failed"
+							    << (rtfPhaseEdgeRetried_ ? " (after edge-flip retry)"
+							                             : "")
+							    << " — CFO interface errors present:\n"
+							    << getCFORTFSettingsStatusAndErrors();
 							__FE_SS_THROW__;
 						}
 						else
 						{
-							__FE_COUT_INFO__ << "RTF offset verify passed — all CFO interface "
-							                    "errors and counters are 0."
-							                 << __E__;
+							__FE_COUT_INFO__
+							    << "RTF offset verify passed — all CFO interface "
+							       "errors and counters are 0."
+							    << __E__;
 						}
 					}
 				}
@@ -2353,7 +2369,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				timing_chain_first_substep_ = getSubIterationIndex();
 
 			int subStep = getSubIterationIndex() - timing_chain_first_substep_;
-			__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep << __E__;
+			__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep
+			                 << __E__;
 
 			auto dtc = getDTC();
 
@@ -2370,19 +2387,31 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					bool emulated = ((roc_emulated_mask_ >> i) & 1);
 
 					if(!enabled)
-						SetupROCs(DTCLib::DTC_Link_ID(i), 0, 1, 0,
-						          DTCLib::DTC_ROC_Emulation_Type(0), 0);
+						SetupROCs(DTCLib::DTC_Link_ID(i),
+						          0,
+						          1,
+						          0,
+						          DTCLib::DTC_ROC_Emulation_Type(0),
+						          0);
 					else if(!emulated)
 					{
 						bool clockMakersEnabled = false;
 						if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
 							clockMakersEnabled = false;
-						SetupROCs(DTCLib::DTC_Link_ID(i), 1, clockMakersEnabled, 0,
-						          DTCLib::DTC_ROC_Emulation_Type(0), 0);
+						SetupROCs(DTCLib::DTC_Link_ID(i),
+						          1,
+						          clockMakersEnabled,
+						          0,
+						          DTCLib::DTC_ROC_Emulation_Type(0),
+						          0);
 					}
 					else
-						SetupROCs(DTCLib::DTC_Link_ID(i), 1, 1, 1,
-						          DTCLib::DTC_ROC_Emulation_Type(0), 16);
+						SetupROCs(DTCLib::DTC_Link_ID(i),
+						          1,
+						          1,
+						          1,
+						          DTCLib::DTC_ROC_Emulation_Type(0),
+						          16);
 				}
 
 				// Step 2: Enable DCS Reception
@@ -2428,8 +2457,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 					if(subStep == 1)
 					{
-						if(!dtc->WaitForLinkReady(
-						       roc.second->getLinkID(), 1000, 2.0))
+						if(!dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
 						{
 							__FE_SS__ << "ROC " << roc.first << " on link "
 							          << roc.second->getLinkID()
@@ -2472,8 +2500,10 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			dtc->DisableLink(DTCLib::DTC_Link_EVB);
 			try
 			{
-				uint32_t dtcID = getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
-				uint32_t mode  = getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
+				uint32_t dtcID =
+				    getSelfNode().getNode("EventBuilderDTCID").getValue<uint32_t>();
+				uint32_t mode =
+				    getSelfNode().getNode("EventBuilderMode").getValue<uint32_t>();
 				uint32_t partID =
 				    getSelfNode().getNode("EventBuilderPartitionID").getValue<uint32_t>();
 				uint32_t macIdx =
@@ -2486,16 +2516,17 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			}
 			catch(...)
 			{
-				__FE_COUT_INFO__ << "Ignoring missing event building configuration values."
-				                 << __E__;
+				__FE_COUT_INFO__
+				    << "Ignoring missing event building configuration values." << __E__;
 			}
 
 			// Step 2: Software DRP mode
 			bool enableSoftwareDRP = false;
 			try
 			{
-				enableSoftwareDRP =
-				    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+				enableSoftwareDRP = getSelfNode()
+				                        .getNode("EnableSoftwareDataRequestMode")
+				                        .getValue<bool>();
 			}
 			catch(...)
 			{
@@ -2523,8 +2554,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			}
 			catch(...)
 			{
-				__FE_COUT_INFO__ << "No 'EventModeRequiredMask' field found. Default to 0x"
-				                 << std::hex << eventModeRequiredMask << __E__;
+				__FE_COUT_INFO__
+				    << "No 'EventModeRequiredMask' field found. Default to 0x" << std::hex
+				    << eventModeRequiredMask << __E__;
 			}
 			dtc->SetCFOEventModeRequiredMask(eventModeRequiredMask);
 
@@ -2571,8 +2603,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 
 	switch(step)
 	{
-	case 0:
-	{
+	case 0: {
 		getDTC()->SoftReset();
 
 		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6);
@@ -2598,8 +2629,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		break;
 	}
 
-	case 1:
-	{
+	case 1: {
 		__FE_COUTV__(configure_clock_);
 		if(configure_clock_)
 		{
@@ -2627,8 +2657,8 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUT__ << "Setting JA select=" << select
 			            << " alsoResetJA=" << alsoResetJA << __E__;
 			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(select, alsoResetJA);
-			__FE_COUT__ << "JA CSR: " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR()
-			            << __E__;
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 
 			indicateSubIterationWork();
 		}
@@ -2637,8 +2667,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		break;
 	}
 
-	default:
-	{
+	default: {
 		if(!configure_clock_)
 		{
 			__FE_COUT__ << "Clock configuration not enabled, nothing to poll." << __E__;
@@ -2704,7 +2733,8 @@ void DTCFrontEndInterface::halt(void)
 		getDTC()->DisableCFOEmulation();  //stop Event Window Marker generation
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2758,7 +2788,8 @@ void DTCFrontEndInterface::pause(void)
 		getDTC()->DisableCFOEmulation();  //stop Event Window Marker generation
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2806,7 +2837,8 @@ void DTCFrontEndInterface::stop(void)
 		getDTC()->DisableCFOEmulation();  //stop Event Window Marker generation
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -2966,7 +2998,8 @@ void DTCFrontEndInterface::resume(void)
 		);
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 	}
@@ -3060,7 +3093,8 @@ void DTCFrontEndInterface::start(std::string runNumber)
 		getDTC()->SoftReset();  //reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 		getDTC()->SoftReset();  //reset counters
@@ -3304,7 +3338,8 @@ bool DTCFrontEndInterface::running(void)
 		__FE_COUT_INFO__ << "Running for hardware development mode!" << __E__;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << "Running for Event Building mode!" << __E__;
 	}

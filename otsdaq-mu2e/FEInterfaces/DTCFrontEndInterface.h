@@ -165,12 +165,12 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void registerFEMacros(void);
 
 	int                     timing_chain_first_substep_ = -1;
-	bool                    rtfPhaseEdgeRetried_       = false;
-	int                     dtc_location_in_chain_ = -1;
-	unsigned int            runningCallCount_      = 0;
-	unsigned int            roc_mask_              = 0;
-	unsigned int            roc_emulated_mask_     = 0;
-	bool                    emulate_cfo_           = true;
+	bool                    rtfPhaseEdgeRetried_        = false;
+	int                     dtc_location_in_chain_      = -1;
+	unsigned int            runningCallCount_           = 0;
+	unsigned int            roc_mask_                   = 0;
+	unsigned int            roc_emulated_mask_          = 0;
+	bool                    emulate_cfo_                = true;
 	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
 	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 

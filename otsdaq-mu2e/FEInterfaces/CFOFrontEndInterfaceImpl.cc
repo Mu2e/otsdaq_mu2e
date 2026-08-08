@@ -1269,8 +1269,7 @@ void CFOFrontEndInterface::LoopbackTopologyDiscovery(__ARGS__)
 		if(bestLink >= 0)
 		{
 			int pos = linkPositionCounter[bestLink]++;
-			ostr << "Link " << bestLink << ", Pos " << pos
-			     << ", avg delay "
+			ostr << "Link " << bestLink << ", Pos " << pos << ", avg delay "
 			     << std::format("{:.1f}", result.avgDelay) << " ns"
 			     << " (" << result.rocMeasurements.size() << " ROCs responded)\n";
 		}
@@ -1854,7 +1853,7 @@ void CFOFrontEndInterface::configure(void)
 
 	if(skipInit_)
 		return;
-	
+
 	testAndUpdateTimeAlive("Configure");
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
@@ -1863,7 +1862,8 @@ void CFOFrontEndInterface::configure(void)
 		return;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
 	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
@@ -2138,18 +2138,15 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 							continue;
 						try
 						{
-							auto supNode =
-							    app.second.getNode("LinkToSupervisorTable");
+							auto supNode = app.second.getNode("LinkToSupervisorTable");
 							auto feChildren =
-							    supNode.getNode("LinkToFEInterfaceTable")
-							        .getChildren();
+							    supNode.getNode("LinkToFEInterfaceTable").getChildren();
 							for(const auto& fe : feChildren)
 							{
 								if(!fe.second.isEnabled())
 									continue;
 								if(fe.second.getNode("FEInterfacePluginName")
-								       .getValue<std::string>() !=
-								   "DTCFrontEndInterface")
+								       .getValue<std::string>() != "DTCFrontEndInterface")
 									continue;
 								DTCLockInfo info;
 								info.uid = fe.first;
@@ -2167,8 +2164,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			}
 		}
 
-		__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces."
-		            << __E__;
+		__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces." << __E__;
 
 		std::vector<std::string> unlockedDTCs;
 		for(auto& dtcLock : dtcLockInfos)
@@ -2176,21 +2172,19 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
 			try
 			{
-				runFrontEndMacro(
-				    dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+				runFrontEndMacro(dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
 
 				__FE_COUT__ << "DTC " << dtcLock.uid
 				            << " argsOut.size()=" << argsOut.size() << __E__;
 				for(size_t ai = 0; ai < argsOut.size(); ++ai)
-					__FE_COUT__ << "  argsOut[" << ai
-					            << "] name='" << argsOut[ai].first
+					__FE_COUT__ << "  argsOut[" << ai << "] name='" << argsOut[ai].first
 					            << "' val='" << argsOut[ai].second << "'" << __E__;
 
 				std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
-				__FE_COUT__ << "DTC " << dtcLock.uid
-				            << " Lock Status: " << lockStatus << __E__;
+				__FE_COUT__ << "DTC " << dtcLock.uid << " Lock Status: " << lockStatus
+				            << __E__;
 
-				bool foundCFOLine = false;
+				bool               foundCFOLine = false;
 				std::istringstream iss(lockStatus);
 				std::string        line;
 				while(std::getline(iss, line))
@@ -2210,9 +2204,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			}
 			catch(const std::exception& e)
 			{
-				__FE_COUT_WARN__
-				    << "Failed to read lock status from DTC " << dtcLock.uid
-				    << ": " << e.what() << __E__;
+				__FE_COUT_WARN__ << "Failed to read lock status from DTC " << dtcLock.uid
+				                 << ": " << e.what() << __E__;
 				unlockedDTCs.push_back(dtcLock.uid + " (unreachable)");
 				continue;
 			}
@@ -2230,7 +2223,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 		if(!unreachableDTCs.empty())
 		{
-			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: " << unreachableDTCs.size()
+			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: "
+			          << unreachableDTCs.size()
 			          << " DTC(s) unreachable via FE Macro 'Get Link Lock Status':";
 			for(const auto& uid : unreachableDTCs)
 				ss << "\n  " << uid;
@@ -2257,8 +2251,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			catch(const std::exception& e)
 			{
 				__FE_SS__ << "Phase 2b SERDES reset failed for "
-				          << justUnlockedDTCs.size()
-				          << " DTC(s) missing CFO CDR lock:";
+				          << justUnlockedDTCs.size() << " DTC(s) missing CFO CDR lock:";
 				for(const auto& uid : justUnlockedDTCs)
 					ss << "\n  " << uid;
 				ss << "\n\nSERDES reset error: " << e.what();
@@ -2268,7 +2261,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		}
 		else
 		{
-			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: " << justUnlockedDTCs.size()
+			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: "
+			          << justUnlockedDTCs.size()
 			          << " DTC(s) still missing CFO CDR lock after retry:";
 			for(const auto& uid : justUnlockedDTCs)
 				ss << "\n  " << uid;
@@ -2292,8 +2286,9 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A)
 		{
 			// Phase 3a: Check all DTCs via "Get RTF Interface Status"
-			__FE_COUT_INFO__ << "Phase 3a — checking all DTCs via Get RTF Interface Status..."
-			                 << __E__;
+			__FE_COUT_INFO__
+			    << "Phase 3a — checking all DTCs via Get RTF Interface Status..."
+			    << __E__;
 			timing_chain_first_substep_ = -1;
 
 			std::vector<std::string> dtcUIDs;
@@ -2349,12 +2344,12 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
 				try
 				{
-					runFrontEndMacro(
-					    dtcUID, "Get RTF Interface Status", argsIn, argsOut);
+					runFrontEndMacro(dtcUID, "Get RTF Interface Status", argsIn, argsOut);
 				}
 				catch(const std::exception& e)
 				{
-					__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): Failed to read RTF Interface Status from DTC "
+					__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): Failed to read "
+					             "RTF Interface Status from DTC "
 					          << dtcUID << ": " << e.what();
 					__FE_SS_THROW__;
 				}
@@ -2389,8 +2384,9 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 							found = true;
 							if(line.find(chk.required) == std::string::npos)
 							{
-								__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC " << dtcUID << " failed check: "
-								          << chk.label << ". Line: " << line;
+								__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC "
+								          << dtcUID << " failed check: " << chk.label
+								          << ". Line: " << line;
 								__FE_SS_THROW__;
 							}
 							break;
@@ -2398,13 +2394,14 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 					}
 					if(!found)
 					{
-						__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC " << dtcUID
-						          << " — could not find '" << chk.keyword
+						__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC "
+						          << dtcUID << " — could not find '" << chk.keyword
 						          << "' in RTF Interface Status output.";
 						__FE_SS_THROW__;
 					}
 				}
-				__FE_COUT__ << "DTC " << dtcUID << " passed all Phase 3a checks." << __E__;
+				__FE_COUT__ << "DTC " << dtcUID << " passed all Phase 3a checks."
+				            << __E__;
 			}
 
 			__FE_COUT_INFO__ << "All DTCs passed Phase 3a RTF Interface Status checks."
@@ -2519,8 +2516,7 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 		indicateSubIterationWork();
 		break;
 
-	case 1:
-	{
+	case 1: {
 		__FE_COUTV__(configure_clock_);
 		if(configure_clock_)
 		{
@@ -2547,8 +2543,8 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUT__ << "Setting JA select=" << select
 			            << " alsoResetJA=" << alsoResetJA << __E__;
 			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(select, alsoResetJA);
-			__FE_COUT__ << "JA CSR: " << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR()
-			            << __E__;
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
 
 			indicateSubIterationWork();
 		}
@@ -2557,8 +2553,7 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 		break;
 	}
 
-	default:
-	{
+	default: {
 		if(!configure_clock_)
 		{
 			__FE_COUT__ << "Clock configuration not enabled, nothing to poll." << __E__;
@@ -2647,8 +2642,8 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		    << "Invalid iteration ordering: RUN_START_READY_FOR_TRIGGERS_ITERATION ("
 		    << CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION
 		    << ") must be larger than CONFIG_CFO_EVENT_SENDING_START_ITERATION ("
-		    << CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION
-		    << ")." << __E__;
+		    << CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION << ")."
+		    << __E__;
 		__FE_SS_THROW__;
 	}
 
@@ -3034,7 +3029,8 @@ bool CFOFrontEndInterface::running(void)
 
 		if(next_starting_event_window_tag_ == 0 &&
 		   (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-		    operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC))
+		    operatingMode_ ==
+		        CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC))
 		{
 			__FE_COUT_INFO__ << "Sleeping for the Super Orchestration..." << __E__;
 			sleep(5);
@@ -6721,8 +6717,8 @@ void CFOFrontEndInterface::TemporaryDiagnosticTest(__ARGS__)
 	ostr << "Called 'Get Link Lock Status' on " << targetDTC << "\n";
 	ostr << "macroArgsOut.size()=" << macroArgsOut.size() << "\n";
 	for(size_t i = 0; i < macroArgsOut.size(); ++i)
-		ostr << "  macroArgsOut[" << i << "] name='" << macroArgsOut[i].first
-		     << "' val='" << macroArgsOut[i].second << "'\n";
+		ostr << "  macroArgsOut[" << i << "] name='" << macroArgsOut[i].first << "' val='"
+		     << macroArgsOut[i].second << "'\n";
 
 	__SET_ARG_OUT__("Response", ostr.str());
 }  //end TemporaryDiagnosticTest()
