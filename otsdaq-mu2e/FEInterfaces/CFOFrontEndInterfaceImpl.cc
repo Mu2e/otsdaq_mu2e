@@ -582,6 +582,16 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Discovers timing chain topology by probing each DTC with CFO loopback markers. "
 		"Maps every DTC to a CFO link (chain index) and position in chain."
 	);
+	registerFEMacroFunction(
+		"Temporary Diagnostic Test",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::TemporaryDiagnosticTest),
+		std::vector<std::string>{},
+		std::vector<std::string>{"Response"},
+		1,
+		"*",
+		"Diagnostic: calls 'Get Link Lock Status' on Calo01_DTC1 via runFrontEndMacro."
+	);
 	// clang-format on
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
@@ -2163,6 +2173,35 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			{
 				runFrontEndMacro(
 				    dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+
+				__FE_COUT__ << "DTC " << dtcLock.uid
+				            << " argsOut.size()=" << argsOut.size() << __E__;
+				for(size_t ai = 0; ai < argsOut.size(); ++ai)
+					__FE_COUT__ << "  argsOut[" << ai
+					            << "] name='" << argsOut[ai].first
+					            << "' val='" << argsOut[ai].second << "'" << __E__;
+
+				std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
+				__FE_COUT__ << "DTC " << dtcLock.uid
+				            << " Lock Status: " << lockStatus << __E__;
+
+				bool foundCFOLine = false;
+				std::istringstream iss(lockStatus);
+				std::string        line;
+				while(std::getline(iss, line))
+				{
+					if(line.find("CFO") != std::string::npos &&
+					   line.find("CDR Lock") != std::string::npos)
+					{
+						foundCFOLine = true;
+						if(line.find("[x]") != std::string::npos)
+							dtcLock.cfoCDRLocked = true;
+						break;
+					}
+				}
+
+				if(!foundCFOLine || !dtcLock.cfoCDRLocked)
+					unlockedDTCs.push_back(dtcLock.uid);
 			}
 			catch(const std::exception& e)
 			{
@@ -2172,54 +2211,65 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				unlockedDTCs.push_back(dtcLock.uid + " (unreachable)");
 				continue;
 			}
-
-			std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
-			__FE_COUT__ << "DTC " << dtcLock.uid
-			            << " Lock Status: " << lockStatus << __E__;
-
-			bool foundCFOLine = false;
-			std::istringstream iss(lockStatus);
-			std::string        line;
-			while(std::getline(iss, line))
-			{
-				if(line.find("CFO") != std::string::npos &&
-				   line.find("CDR Lock") != std::string::npos)
-				{
-					foundCFOLine = true;
-					if(line.find("[x]") != std::string::npos)
-						dtcLock.cfoCDRLocked = true;
-					break;
-				}
-			}
-
-			if(!foundCFOLine || !dtcLock.cfoCDRLocked)
-				unlockedDTCs.push_back(dtcLock.uid);
 		}
 
-		if(unlockedDTCs.empty())
+		std::vector<std::string> unreachableDTCs;
+		std::vector<std::string> justUnlockedDTCs;
+		for(const auto& uid : unlockedDTCs)
+		{
+			if(uid.find("(unreachable)") != std::string::npos)
+				unreachableDTCs.push_back(uid);
+			else
+				justUnlockedDTCs.push_back(uid);
+		}
+
+		if(!unreachableDTCs.empty())
+		{
+			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: " << unreachableDTCs.size()
+			          << " DTC(s) unreachable via FE Macro 'Get Link Lock Status':";
+			for(const auto& uid : unreachableDTCs)
+				ss << "\n  " << uid;
+			__FE_SS_THROW__;
+		}
+
+		if(justUnlockedDTCs.empty())
 		{
 			__FE_COUT_INFO__ << "All DTCs have CFO CDR lock." << __E__;
 		}
 		else if(!isRetry)
 		{
-			__FE_COUT_WARN__ << unlockedDTCs.size()
+			__FE_COUT_WARN__ << justUnlockedDTCs.size()
 			                 << " DTC(s) missing CFO CDR lock:";
-			for(const auto& uid : unlockedDTCs)
+			for(const auto& uid : justUnlockedDTCs)
 				__FE_COUT__ << "  " << uid;
 			__FE_COUT__ << "Performing SERDES resets and retrying..." << __E__;
 
-			thisCFO_->CFOandDTC_Registers::ResetSERDES();
-			thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			try
+			{
+				thisCFO_->CFOandDTC_Registers::ResetSERDES();
+				thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			}
+			catch(const std::exception& e)
+			{
+				__FE_SS__ << "Phase 2b SERDES reset failed for "
+				          << justUnlockedDTCs.size()
+				          << " DTC(s) missing CFO CDR lock:";
+				for(const auto& uid : justUnlockedDTCs)
+					ss << "\n  " << uid;
+				ss << "\n\nSERDES reset error: " << e.what();
+				__FE_SS_THROW__;
+			}
 			indicateSubIterationWork();
 		}
 		else
 		{
-			__FE_SS__ << "Phase 2b failed: " << unlockedDTCs.size()
+			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: " << justUnlockedDTCs.size()
 			          << " DTC(s) still missing CFO CDR lock after retry:";
-			for(const auto& uid : unlockedDTCs)
-				ss << " " << uid;
+			for(const auto& uid : justUnlockedDTCs)
+				ss << "\n  " << uid;
 			__FE_SS_THROW__;
 		}
+		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
@@ -2299,7 +2349,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				}
 				catch(const std::exception& e)
 				{
-					__FE_SS__ << "Phase 3a: Failed to read RTF Interface Status from DTC "
+					__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): Failed to read RTF Interface Status from DTC "
 					          << dtcUID << ": " << e.what();
 					__FE_SS_THROW__;
 				}
@@ -2334,7 +2384,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 							found = true;
 							if(line.find(chk.required) == std::string::npos)
 							{
-								__FE_SS__ << "Phase 3a: DTC " << dtcUID << " failed check: "
+								__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC " << dtcUID << " failed check: "
 								          << chk.label << ". Line: " << line;
 								__FE_SS_THROW__;
 							}
@@ -2343,7 +2393,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 					}
 					if(!found)
 					{
-						__FE_SS__ << "Phase 3a: DTC " << dtcUID
+						__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC " << dtcUID
 						          << " — could not find '" << chk.keyword
 						          << "' in RTF Interface Status output.";
 						__FE_SS_THROW__;
@@ -6650,5 +6700,26 @@ void CFOFrontEndInterface::RunplanSubrunConfigRead(__ARGS__)
 	__SET_ARG_OUT__("Subrun Event Limit", subrunEvtLimit);
 	__SET_ARG_OUT__("Subrun Prediction Offset", subrunPredOffset);
 }  //end RunplanSubrunConfigRead()
+
+//==============================================================================
+void CFOFrontEndInterface::TemporaryDiagnosticTest(__ARGS__)
+{
+	std::string targetDTC = "Calo01_DTC1";
+	__FE_COUT_INFO__ << "TemporaryDiagnosticTest: calling 'Get Link Lock Status' on "
+	                 << targetDTC << __E__;
+
+	std::vector<FEVInterface::frontEndMacroArg_t> macroArgsIn, macroArgsOut;
+	runFrontEndMacro(targetDTC, "Get Link Lock Status", macroArgsIn, macroArgsOut);
+
+	__FE_COUT_INFO__ << "macroArgsOut.size()=" << macroArgsOut.size() << __E__;
+	std::ostringstream ostr;
+	ostr << "Called 'Get Link Lock Status' on " << targetDTC << "\n";
+	ostr << "macroArgsOut.size()=" << macroArgsOut.size() << "\n";
+	for(size_t i = 0; i < macroArgsOut.size(); ++i)
+		ostr << "  macroArgsOut[" << i << "] name='" << macroArgsOut[i].first
+		     << "' val='" << macroArgsOut[i].second << "'\n";
+
+	__SET_ARG_OUT__("Response", ostr.str());
+}  //end TemporaryDiagnosticTest()
 
 // DEFINE_OTS_INTERFACE(CFOFrontEndInterface)

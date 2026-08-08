@@ -2086,9 +2086,10 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		if(!cfoCDRLocked)
 		{
 			__FE_SS__ << "DTC " << getInterfaceUID()
-			          << " CFO CDR lock not achieved during Phase 2b.";
+			          << " CFO CDR lock not achieved during Phase 2b — Timing Chain: CDR Check.";
 			__FE_SS_THROW__;
 		}
+		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
@@ -2314,8 +2315,11 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				}
 			}
 		}
-		timing_chain_first_substep_ = -1;
-		indicateIterationWork();
+		if(!VStateMachine::getSubIterationWork())
+		{
+			timing_chain_first_substep_ = -1;
+			indicateIterationWork();
+		}
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
 	{
