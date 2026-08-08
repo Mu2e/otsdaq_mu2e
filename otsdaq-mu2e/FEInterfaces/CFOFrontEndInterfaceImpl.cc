@@ -1157,6 +1157,7 @@ void CFOFrontEndInterface::LoopbackTopologyDiscovery(__ARGS__)
 	};
 	std::vector<DTCProbeResult> probeResults;
 	probeResults.reserve(dtcInfos.size());
+	std::map<int, int> linkPositionCounter;
 
 	const double delay_unit = 5.0 / 8.0;
 
@@ -1266,9 +1267,13 @@ void CFOFrontEndInterface::LoopbackTopologyDiscovery(__ARGS__)
 		}
 
 		if(bestLink >= 0)
-			ostr << "Link " << bestLink << ", avg delay "
+		{
+			int pos = linkPositionCounter[bestLink]++;
+			ostr << "Link " << bestLink << ", Pos " << pos
+			     << ", avg delay "
 			     << std::format("{:.1f}", result.avgDelay) << " ns"
 			     << " (" << result.rocMeasurements.size() << " ROCs responded)\n";
+		}
 		else
 			ostr << "no response\n";
 
