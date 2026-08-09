@@ -824,6 +824,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "falling-edge, 2 for auto-find, Default := 0)",
 	        "Permanent Offset (-2 to 2, Default := 0)",
 	        "IDELAY Tap Value (0-31, Default := -1 do nothing)",
+	        "RTF 40MHz Sample Edge (0 for negedge, 1 for posedge, Default := 0)",
 	    },  // namesOfInputArgs
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
@@ -2134,20 +2135,20 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 				auto dtc = getDTC();
 
-				if(subStep <= 2 && (subStep % 2) == 0)
+				if(subStep == 0)
 				{
+					// clear JA counters that SoftReset does not reset
+					dtc->ClearRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+					dtc->ClearJitterAttenuatorUnlockCount();
+					dtc->ClearJitterAttenuatorRecoveredClockLOSCount();
+					dtc->ClearJitterAttenuatorExternalClockLOSCount();
+					dtc->SoftReset();
+
 					uint32_t markers = dtc->ReadCFOTXClockMarkerCountLink6();
 					__FE_COUT__ << "CFO Rx Clock Markers = " << markers << __E__;
 					if(markers > 1000)
 					{
 						indicateSubIterationWork();
-					}
-					else if(subStep >= 2)
-					{
-						__FE_SS__ << "DTC " << getInterfaceUID()
-						          << " CFO Rx Clock Markers still <= 1000 (" << markers
-						          << ") after edge toggle + 3s wait.";
-						__FE_SS_THROW__;
 					}
 					else
 					{
@@ -2168,6 +2169,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							else
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID()
+								          << " Phase " << (hasRealROCs ? "3b" : "3a")
+								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after 3s wait — CFO clock not arriving.";
 								__FE_SS_THROW__;
@@ -2188,20 +2191,25 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
 					uint32_t batchSlip      = cdcDiag & 0xFFFF;
 
-					if(txMarkers || rxToTx || parityMismatch || batchSlip)
+					bool needsFlip = txMarkers || rxToTx || parityMismatch || batchSlip;
+
+					if(needsFlip)
 					{
 						if(isRetry)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " CFO clock edge fix failed after 2 attempts."
-							          << " Errors: TxMarkers=" << txMarkers
+							          << " Phase " << (hasRealROCs ? "3b" : "3a")
+							          << " edge fix FAILED after 2 attempts."
+							          << " TxMarkers=" << txMarkers
 							          << " Rx-to-Tx=" << rxToTx
 							          << " Parity=" << parityMismatch
-							          << " BatchSlip=" << batchSlip;
+							          << " BatchSlip=" << batchSlip
+							          << "\n" << getCFORTFSettingsStatusAndErrors();
 							__FE_SS_THROW__;
 						}
 
 						int newEdge = dtc->ToggleExternalCFOSampleEdge();
+						usleep(100000);  // let the RTF clock histogram saturate
 						dtc->SoftReset();
 						__FE_COUT_INFO__ << "Toggled CFO clock edge to "
 						                 << (newEdge ? "negedge" : "posedge")
@@ -2210,9 +2218,69 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					}
 					else
 					{
+						uint32_t cdrUnlock =
+						    dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+						uint32_t jaUnlock =
+						    dtc->ReadJitterAttenuatorUnlockCount();
+						uint32_t jaRecLOS =
+						    dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
+						uint32_t jaExtLOS =
+						    dtc->ReadJitterAttenuatorExternalClockLOSCount();
+
+						if(cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS)
+						{
+							__FE_SS__ << "DTC " << getInterfaceUID()
+							          << " Phase " << (hasRealROCs ? "3b" : "3a")
+							          << " edge fix PASSED but JA input clock"
+							          << " instability detected."
+							          << " CDR=" << cdrUnlock
+							          << " JA=" << jaUnlock
+							          << " JA-Rec=" << jaRecLOS
+							          << " JA-Ext=" << jaExtLOS;
+							__FE_SS_THROW__;
+						}
+
 						__FE_COUT_INFO__
 						    << "No CFO interface errors — clock edge is correct."
 						    << __E__;
+					}
+				}
+				else if(subStep == 2)
+				{
+					dtc->SoftReset();  // clear transient counters from edge flip
+
+					uint32_t markers = dtc->ReadCFOTXClockMarkerCountLink6();
+					__FE_COUT__ << "CFO Rx Clock Markers = " << markers << __E__;
+					if(markers > 1000)
+					{
+						indicateSubIterationWork();
+					}
+					else
+					{
+						sleep(1);
+						markers = dtc->ReadCFOTXClockMarkerCountLink6();
+						if(markers > 1000)
+						{
+							indicateSubIterationWork();
+						}
+						else
+						{
+							sleep(1);
+							markers = dtc->ReadCFOTXClockMarkerCountLink6();
+							if(markers > 1000)
+							{
+								indicateSubIterationWork();
+							}
+							else
+							{
+								__FE_SS__ << "DTC " << getInterfaceUID()
+								          << " Phase " << (hasRealROCs ? "3b" : "3a")
+								          << " edge fix FAILED:"
+								          << " CFO Rx Clock Markers <= 1000 (" << markers
+								          << ") after edge toggle + 3s wait.";
+								__FE_SS_THROW__;
+							}
+						}
 					}
 				}
 			}
@@ -2247,6 +2315,12 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				{
 					rtfPhaseEdgeRetried_ = false;
 
+					// clear JA counters that SoftReset does not reset
+					dtc->ClearRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+					dtc->ClearJitterAttenuatorUnlockCount();
+					dtc->ClearJitterAttenuatorRecoveredClockLOSCount();
+					dtc->ClearJitterAttenuatorExternalClockLOSCount();
+
 					uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
 					bool     saturated = (rtfHist >> 10) & 1;
 					uint32_t satBin    = (rtfHist >> 7) & 0x7;
@@ -2255,8 +2329,12 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					{
 						__FE_SS__
 						    << "DTC " << getInterfaceUID()
-						    << " RTF histogram not saturated (saturated=" << saturated
-						    << ", bin=" << satBin << "); cannot apply offset.";
+						    << " Phase " << (hasRealROCs ? "3d" : "3c")
+						    << " RTF offset FAILED:"
+						    << " histogram not saturated (saturated=" << saturated
+						    << ", bin=" << satBin << "); cannot apply offset."
+						    << " (Phase " << (hasRealROCs ? "3b" : "3a")
+						    << " edge fix passed)";
 						__FE_SS_THROW__;
 					}
 
@@ -2267,6 +2345,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					                 << " => offset=" << impliedPos
 					                 << " (readback=" << readback << ")." << __E__;
 
+					usleep(100000);  // let the RTF clock histogram saturate
 					dtc->SoftReset();
 					__FE_COUT__ << "SoftReset issued after marker offset apply." << __E__;
 					indicateSubIterationWork();
@@ -2281,8 +2360,12 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						if(subStep >= 8)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID()
+							          << " Phase " << (hasRealROCs ? "3d" : "3c")
+							          << " RTF offset FAILED:"
 							          << " CFO Rx Clock Markers <= 1000 (" << markers
-							          << ") after RTF offset apply + wait.";
+							          << ") after RTF offset apply + wait."
+							          << " (Phase " << (hasRealROCs ? "3b" : "3a")
+							          << " edge fix passed)";
 							__FE_SS_THROW__;
 						}
 						sleep(1);
@@ -2297,13 +2380,6 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						                  dtc->ReadCFOClockMarkerTxError(cfoErr) ||
 						                  dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
 
-						uint32_t cdrUnlock =
-						    dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
-						uint32_t jaUnlock = dtc->ReadJitterAttenuatorUnlockCount();
-						uint32_t jaRecLOS =
-						    dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
-						uint32_t jaExtLOS =
-						    dtc->ReadJitterAttenuatorExternalClockLOSCount();
 						uint32_t evtStartErr =
 						    dtc->ReadRXCFOLinkEventStartCharacterErrorCount();
 						uint32_t clk40Err  = dtc->ReadRXCFOLink40MHzCharacterErrorCount();
@@ -2311,36 +2387,66 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						uint32_t parity    = (cdcDiag >> 16) & 0xFFFF;
 						uint32_t batchSlip = cdcDiag & 0xFFFF;
 
-						bool hasCounterErrors = cdrUnlock || jaUnlock || jaRecLOS ||
-						                        jaExtLOS || evtStartErr || clk40Err ||
-						                        parity || batchSlip;
+						bool hasRTFCounterErrors = evtStartErr || clk40Err ||
+						                           parity || batchSlip;
 
-						bool rtfPhaseOnly = rtfPhase && !otherFlags && !hasCounterErrors;
+						bool rtfPhaseOnly = rtfPhase && !otherFlags && !hasRTFCounterErrors;
 
 						if(rtfPhaseOnly && !rtfPhaseEdgeRetried_)
 						{
-							int newEdge = dtc->ToggleExternalCFOSampleEdge();
+							__FE_COUT_INFO__
+							    << "RTFPhase error only — pre-flip status:\n"
+							    << getCFORTFSettingsStatusAndErrors() << __E__;
+
+							int newEdge = dtc->ToggleRTFPunchedClockEdge();
+							usleep(100000);  // let the RTF clock histogram saturate
 							dtc->SoftReset();
 							rtfPhaseEdgeRetried_ = true;
 							__FE_COUT_INFO__
-							    << "RTFPhase error only — toggled CFO clock edge to "
-							    << (newEdge ? "negedge" : "posedge")
+							    << "Toggled RTF punched clock edge to "
+							    << (newEdge ? "posedge" : "negedge")
 							    << " and issued SoftReset; retrying verify." << __E__;
 							indicateSubIterationWork();
 						}
-						else if(rtfPhase || otherFlags || hasCounterErrors)
+						else if(rtfPhase || otherFlags || hasRTFCounterErrors)
 						{
 							__FE_SS__
 							    << "DTC " << getInterfaceUID()
-							    << " RTF offset verify failed"
+							    << " Phase " << (hasRealROCs ? "3d" : "3c")
+							    << " RTF offset verify FAILED"
 							    << (rtfPhaseEdgeRetried_ ? " (after edge-flip retry)"
 							                             : "")
-							    << " — CFO interface errors present:\n"
+							    << " (Phase " << (hasRealROCs ? "3b" : "3a")
+							    << " edge fix passed):\n"
 							    << getCFORTFSettingsStatusAndErrors();
 							__FE_SS_THROW__;
 						}
 						else
 						{
+							uint32_t cdrUnlock =
+							    dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+							uint32_t jaUnlock =
+							    dtc->ReadJitterAttenuatorUnlockCount();
+							uint32_t jaRecLOS =
+							    dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
+							uint32_t jaExtLOS =
+							    dtc->ReadJitterAttenuatorExternalClockLOSCount();
+
+							if(cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS)
+							{
+								__FE_SS__ << "DTC " << getInterfaceUID()
+								          << " Phase " << (hasRealROCs ? "3d" : "3c")
+								          << " RTF offset verify PASSED"
+								          << " but JA input clock instability detected."
+								          << " CDR=" << cdrUnlock
+								          << " JA=" << jaUnlock
+								          << " JA-Rec=" << jaRecLOS
+								          << " JA-Ext=" << jaExtLOS
+								          << " (Phase " << (hasRealROCs ? "3b" : "3a")
+								          << " edge fix passed)";
+								__FE_SS_THROW__;
+							}
+
 							__FE_COUT_INFO__
 							    << "RTF offset verify passed — all CFO interface "
 							       "errors and counters are 0."
@@ -5336,6 +5442,8 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << "        JA Source: " << jaSource << "\n";
 	o << "  CFO-RTF Edge Select:   " << edgeModeStr
 	  << "    CFO CDR Lock: " << (cfoCDRLock ? "LOCKED" : "Not Locked") << "\n";
+	o << "  RTF PunchedClk Edge:   "
+	  << (dtc->ReadRTFPunchedClockEdge() ? "posedge" : "negedge") << "\n";
 	o << "  CFO Marker Pos:        " << measuredPos << " ==> "
 	  << (measuredPos == 7 ? "invalid" : std::to_string(impliedPos))
 	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
@@ -5525,32 +5633,34 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 	auto     dtc    = getDTC();
 	uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
 
-	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge
-	// (RTFPhase is ignored — it can fire transiently and does not indicate a wrong edge):
 	bool txMarkers = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
 	                 dtc->ReadCFOClockMarkerTxError(cfoErr);
-	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);  // "Rx-to-Tx"
+	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
 
 	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
 	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
 	uint32_t batchSlip      = cdcDiag & 0xFFFF;
 
+	bool needsFlip = txMarkers || rxToTx || parityMismatch || batchSlip;
+
 	std::ostringstream outss;
-	if(txMarkers || rxToTx || parityMismatch || batchSlip)
+	if(needsFlip)
 	{
 		int newEdge = dtc->ToggleExternalCFOSampleEdge();
-		dtc->SoftReset();  // clear sticky errors/lock counters after changing the edge
+		usleep(100000);  // let the RTF clock histogram saturate
+		dtc->SoftReset();
 		outss << "CFO interface errors present ("
 		      << "TxMarkers=" << (txMarkers ? "x" : " ")
-		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ") << " Parity=" << parityMismatch
-		      << " BatchSlip=" << batchSlip << "); toggled CFO clock edge to "
+		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ")
+		      << " Parity=" << parityMismatch
+		      << " BatchSlip=" << batchSlip
+		      << "); toggled CFO clock edge to "
 		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
 		      << " and issued a DTC Soft Reset.";
 	}
 	else
 	{
-		outss << "No TxMarkers/Rx-to-Tx/Parity/BatchSlip errors present; CFO clock edge "
-		         "left unchanged.";
+		outss << "No edge-related errors present; CFO clock edge left unchanged.";
 	}
 
 	__FE_COUT_INFO__ << outss.str() << __E__;
@@ -5911,7 +6021,11 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 	            false),
 	        __GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0),
 	        __GET_ARG_IN__(
-	            "IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1)));
+	            "IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1),
+	        __GET_ARG_IN__(
+	            "RTF 40MHz Sample Edge (0 for negedge, 1 for posedge, Default := 0)",
+	            int,
+	            0)));
 }  //end SetupCFOInterface()
 
 //========================================================================
@@ -5921,7 +6035,8 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
                                                     bool cfoRxTxEnable,
                                                     bool enableAutogenDRP,
                                                     int  permanentOffset /* = 0 */,
-                                                    int  idelayTapValue /* = -1 */)
+                                                    int  idelayTapValue /* = -1 */,
+                                                    int  rtfPunchedClockEdge /* = 0 */)
 {
 	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
@@ -6003,6 +6118,9 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 
 	__FE_COUTV__(permanentOffset);
 	getDTC()->SetCFOSamplePermanentOffset(permanentOffset);
+
+	__FE_COUTV__(rtfPunchedClockEdge);
+	getDTC()->SetRTFPunchedClockEdge(rtfPunchedClockEdge);
 
 	__FE_COUTV__(idelayTapValue);
 	if(idelayTapValue >= 0)

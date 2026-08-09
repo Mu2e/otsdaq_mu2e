@@ -263,8 +263,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              bool alsoSetupJA,
 	                              bool cfoRxTxEnable,
 	                              bool enableAutogenDRP,
-	                              int  permanentOffset = 0,
-	                              int  idelayTapValue  = -1);
+	                              int  permanentOffset      = 0,
+	                              int  idelayTapValue       = -1,
+	                              int  rtfPunchedClockEdge  = 0);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
 	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
 	                                              bool               useDetachedBufferTest,
