@@ -2048,12 +2048,13 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 	const bool hasRealROCs = has_real_roc_flow_;
 	__FE_COUT__ << "DTC " << getInterfaceUID() << " classified as '"
-	            << (hasRealROCs ? "w/ real ROCs" : "w/o real ROCs")
-	            << "' (" << (has_real_roc_flow_ ? real_roc_flow_reason_ : "all ROCs emulated or none")
+	            << (hasRealROCs ? "w/ real ROCs" : "w/o real ROCs") << "' ("
+	            << (has_real_roc_flow_ ? real_roc_flow_reason_
+	                                   : "all ROCs emulated or none")
 	            << ")" << __E__;
-	const int  myClockPhase =
-        hasRealROCs ? CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B
-	                 : CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A;
+	const int myClockPhase =
+	    hasRealROCs ? CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B
+	                : CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A;
 
 	if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A ||
 	   step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B)
@@ -2171,8 +2172,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							else
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-								          << (hasRealROCs ? "3b" : "3a")
-								          << " [" << real_roc_flow_reason_ << "]"
+								          << (hasRealROCs ? "3b" : "3a") << " ["
+								          << real_roc_flow_reason_ << "]"
 								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after 3s wait — CFO clock not arriving.";
@@ -2201,8 +2202,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						if(isRetry)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-							          << (hasRealROCs ? "3b" : "3a")
-							          << " [" << real_roc_flow_reason_ << "]"
+							          << (hasRealROCs ? "3b" : "3a") << " ["
+							          << real_roc_flow_reason_ << "]"
 							          << " edge fix FAILED after 2 attempts."
 							          << " TxMarkers=" << txMarkers
 							          << " Rx-to-Tx=" << rxToTx
@@ -2233,8 +2234,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						if(cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-							          << (hasRealROCs ? "3b" : "3a")
-							          << " [" << real_roc_flow_reason_ << "]"
+							          << (hasRealROCs ? "3b" : "3a") << " ["
+							          << real_roc_flow_reason_ << "]"
 							          << " edge fix PASSED but JA input clock"
 							          << " instability detected."
 							          << " CDR=" << cdrUnlock << " JA=" << jaUnlock
@@ -2276,8 +2277,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							else
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-								          << (hasRealROCs ? "3b" : "3a")
-								          << " [" << real_roc_flow_reason_ << "]"
+								          << (hasRealROCs ? "3b" : "3a") << " ["
+								          << real_roc_flow_reason_ << "]"
 								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after edge toggle + 3s wait.";
@@ -2331,8 +2332,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					if(!saturated || satBin == 7)
 					{
 						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-						          << (hasRealROCs ? "3d" : "3c")
-						          << " [" << real_roc_flow_reason_ << "]"
+						          << (hasRealROCs ? "3d" : "3c") << " ["
+						          << real_roc_flow_reason_ << "]"
 						          << " RTF offset FAILED:"
 						          << " histogram not saturated (saturated=" << saturated
 						          << ", bin=" << satBin << "); cannot apply offset."
@@ -2363,8 +2364,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						if(subStep >= 8)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-							          << (hasRealROCs ? "3d" : "3c")
-							          << " [" << real_roc_flow_reason_ << "]"
+							          << (hasRealROCs ? "3d" : "3c") << " ["
+							          << real_roc_flow_reason_ << "]"
 							          << " RTF offset FAILED:"
 							          << " CFO Rx Clock Markers <= 1000 (" << markers
 							          << ") after RTF offset apply + wait."
@@ -2417,8 +2418,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						{
 							__FE_SS__
 							    << "DTC " << getInterfaceUID() << " Phase "
-							    << (hasRealROCs ? "3d" : "3c")
-							    << " [" << real_roc_flow_reason_ << "]"
+							    << (hasRealROCs ? "3d" : "3c") << " ["
+							    << real_roc_flow_reason_ << "]"
 							    << " RTF offset verify FAILED"
 							    << (rtfPhaseEdgeRetried_ ? " (after edge-flip retry)"
 							                             : "")
@@ -2440,8 +2441,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							if(cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS)
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-								          << (hasRealROCs ? "3d" : "3c")
-								          << " [" << real_roc_flow_reason_ << "]"
+								          << (hasRealROCs ? "3d" : "3c") << " ["
+								          << real_roc_flow_reason_ << "]"
 								          << " RTF offset verify PASSED"
 								          << " but JA input clock instability detected."
 								          << " CDR=" << cdrUnlock << " JA=" << jaUnlock
@@ -2568,12 +2569,13 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 					if(subStep == 1)
 					{
-						bool linkEmulated = ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
+						bool linkEmulated =
+						    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
 						if(!linkEmulated &&
 						   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
 						{
-							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " Phase 4 [" << real_roc_flow_reason_ << "]"
+							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
+							          << real_roc_flow_reason_ << "]"
 							          << " ROC " << roc.first << " on link "
 							          << roc.second->getLinkID()
 							          << " was not ready after 2s.";
@@ -5790,8 +5792,9 @@ void DTCFrontEndInterface::DTCInstantiate()
 				{
 					if(!roc.second.getNode("ROCTypeLinkTable").isDisconnected())
 					{
-						has_real_roc_flow_    = true;
-						real_roc_flow_reason_ = "ROC '" + roc.first + "' has ROCTypeLinkTable";
+						has_real_roc_flow_ = true;
+						real_roc_flow_reason_ =
+						    "ROC '" + roc.first + "' has ROCTypeLinkTable";
 						break;
 					}
 				}
@@ -5800,10 +5803,12 @@ void DTCFrontEndInterface::DTCInstantiate()
 				}
 				try
 				{
-					if(!roc.second.getNode("LinkToSlowControlsChannelTable").isDisconnected())
+					if(!roc.second.getNode("LinkToSlowControlsChannelTable")
+					        .isDisconnected())
 					{
-						has_real_roc_flow_    = true;
-						real_roc_flow_reason_ = "ROC '" + roc.first + "' has LinkToSlowControlsChannelTable";
+						has_real_roc_flow_ = true;
+						real_roc_flow_reason_ =
+						    "ROC '" + roc.first + "' has LinkToSlowControlsChannelTable";
 						break;
 					}
 				}
@@ -5819,7 +5824,9 @@ void DTCFrontEndInterface::DTCInstantiate()
 	{
 		try
 		{
-			if(Configurable::getSelfNode().getNode("EnableROCConfigureStep").getValue<bool>())
+			if(Configurable::getSelfNode()
+			       .getNode("EnableROCConfigureStep")
+			       .getValue<bool>())
 			{
 				has_real_roc_flow_    = true;
 				real_roc_flow_reason_ = "EnableROCConfigureStep is true";
@@ -5831,7 +5838,8 @@ void DTCFrontEndInterface::DTCInstantiate()
 	}
 
 	__FE_COUT__ << "Real ROC flow: " << (has_real_roc_flow_ ? "YES" : "NO")
-	            << (has_real_roc_flow_ ? " (" + real_roc_flow_reason_ + ")" : "") << __E__;
+	            << (has_real_roc_flow_ ? " (" + real_roc_flow_reason_ + ")" : "")
+	            << __E__;
 
 	// DTC firmware design version must match ReadDesignDate()_ReadVivadoVersion() [ ignoring ReadDesignVersionNumber() for now ]
 	// for example the string might be "Jun/13/2023 16:00	raw-data: 0x23061316" + "_22.1"
