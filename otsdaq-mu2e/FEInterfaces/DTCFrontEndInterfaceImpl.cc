@@ -2046,9 +2046,11 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		__SS_THROW__;
 	}
 
-	// A DTC with no real ROCs (all emulated or none) runs Phase 1a (iteration 0).
-	// A DTC with at least one real ROC runs Phase 1b (iteration 1).
-	const bool hasRealROCs = (roc_mask_ & ~roc_emulated_mask_) != 0;
+	const bool hasRealROCs = has_real_roc_flow_;
+	__FE_COUT__ << "DTC " << getInterfaceUID() << " classified as '"
+	            << (hasRealROCs ? "w/ real ROCs" : "w/o real ROCs")
+	            << "' (" << (has_real_roc_flow_ ? real_roc_flow_reason_ : "all ROCs emulated or none")
+	            << ")" << __E__;
 	const int  myClockPhase =
         hasRealROCs ? CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B
 	                 : CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A;
@@ -2170,6 +2172,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 								          << (hasRealROCs ? "3b" : "3a")
+								          << " [" << real_roc_flow_reason_ << "]"
 								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after 3s wait — CFO clock not arriving.";
@@ -2199,6 +2202,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 							          << (hasRealROCs ? "3b" : "3a")
+							          << " [" << real_roc_flow_reason_ << "]"
 							          << " edge fix FAILED after 2 attempts."
 							          << " TxMarkers=" << txMarkers
 							          << " Rx-to-Tx=" << rxToTx
@@ -2230,6 +2234,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 							          << (hasRealROCs ? "3b" : "3a")
+							          << " [" << real_roc_flow_reason_ << "]"
 							          << " edge fix PASSED but JA input clock"
 							          << " instability detected."
 							          << " CDR=" << cdrUnlock << " JA=" << jaUnlock
@@ -2272,6 +2277,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 								          << (hasRealROCs ? "3b" : "3a")
+								          << " [" << real_roc_flow_reason_ << "]"
 								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after edge toggle + 3s wait.";
@@ -2325,7 +2331,9 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					if(!saturated || satBin == 7)
 					{
 						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
-						          << (hasRealROCs ? "3d" : "3c") << " RTF offset FAILED:"
+						          << (hasRealROCs ? "3d" : "3c")
+						          << " [" << real_roc_flow_reason_ << "]"
+						          << " RTF offset FAILED:"
 						          << " histogram not saturated (saturated=" << saturated
 						          << ", bin=" << satBin << "); cannot apply offset."
 						          << " (Phase " << (hasRealROCs ? "3b" : "3a")
@@ -2356,6 +2364,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 							          << (hasRealROCs ? "3d" : "3c")
+							          << " [" << real_roc_flow_reason_ << "]"
 							          << " RTF offset FAILED:"
 							          << " CFO Rx Clock Markers <= 1000 (" << markers
 							          << ") after RTF offset apply + wait."
@@ -2409,6 +2418,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							__FE_SS__
 							    << "DTC " << getInterfaceUID() << " Phase "
 							    << (hasRealROCs ? "3d" : "3c")
+							    << " [" << real_roc_flow_reason_ << "]"
 							    << " RTF offset verify FAILED"
 							    << (rtfPhaseEdgeRetried_ ? " (after edge-flip retry)"
 							                             : "")
@@ -2431,6 +2441,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							{
 								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 								          << (hasRealROCs ? "3d" : "3c")
+								          << " [" << real_roc_flow_reason_ << "]"
 								          << " RTF offset verify PASSED"
 								          << " but JA input clock instability detected."
 								          << " CDR=" << cdrUnlock << " JA=" << jaUnlock
@@ -2557,9 +2568,13 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 					if(subStep == 1)
 					{
-						if(!dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
+						bool linkEmulated = ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
+						if(!linkEmulated &&
+						   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
 						{
-							__FE_SS__ << "ROC " << roc.first << " on link "
+							__FE_SS__ << "DTC " << getInterfaceUID()
+							          << " Phase 4 [" << real_roc_flow_reason_ << "]"
+							          << " ROC " << roc.first << " on link "
 							          << roc.second->getLinkID()
 							          << " was not ready after 2s.";
 							__FE_SS_THROW__;
@@ -2580,8 +2595,11 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					indicateSubIterationWork();
 			}
 		}
-		timing_chain_first_substep_ = -1;
-		indicateIterationWork();
+		if(!VStateMachine::getSubIterationWork())
+		{
+			timing_chain_first_substep_ = -1;
+			indicateIterationWork();
+		}
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ROC_DATA_PATH)
 	{
@@ -2709,7 +2727,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6);
 		getDTC()->ClearControlRegister(controlRegisterKeepMask);
 
-		if((roc_mask_ & ~roc_emulated_mask_) != 0)
+		if(has_real_roc_flow_)
 		{
 			getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
 
@@ -5753,7 +5771,67 @@ void DTCFrontEndInterface::DTCInstantiate()
 		__FE_COUT__ << "roc_mask to instantiate DTC class = 0x" << std::hex
 		            << dtc_class_roc_mask << std::dec << __E__;
 
+		has_real_roc_flow_    = false;
+		real_roc_flow_reason_ = "";
+
+		if((roc_mask_ & ~roc_emulated_mask_) != 0)
+		{
+			has_real_roc_flow_    = true;
+			real_roc_flow_reason_ = "non-emulated ROC present";
+		}
+
+		if(!has_real_roc_flow_)
+		{
+			for(auto& roc : rocChildren)
+			{
+				if(!roc.second.getNode("Status").getValue<bool>())
+					continue;
+				try
+				{
+					if(!roc.second.getNode("ROCTypeLinkTable").isDisconnected())
+					{
+						has_real_roc_flow_    = true;
+						real_roc_flow_reason_ = "ROC '" + roc.first + "' has ROCTypeLinkTable";
+						break;
+					}
+				}
+				catch(...)
+				{
+				}
+				try
+				{
+					if(!roc.second.getNode("LinkToSlowControlsChannelTable").isDisconnected())
+					{
+						has_real_roc_flow_    = true;
+						real_roc_flow_reason_ = "ROC '" + roc.first + "' has LinkToSlowControlsChannelTable";
+						break;
+					}
+				}
+				catch(...)
+				{
+				}
+			}
+		}
+
 	}  // end create roc mask
+
+	if(!has_real_roc_flow_)
+	{
+		try
+		{
+			if(Configurable::getSelfNode().getNode("EnableROCConfigureStep").getValue<bool>())
+			{
+				has_real_roc_flow_    = true;
+				real_roc_flow_reason_ = "EnableROCConfigureStep is true";
+			}
+		}
+		catch(...)
+		{
+		}
+	}
+
+	__FE_COUT__ << "Real ROC flow: " << (has_real_roc_flow_ ? "YES" : "NO")
+	            << (has_real_roc_flow_ ? " (" + real_roc_flow_reason_ + ")" : "") << __E__;
 
 	// DTC firmware design version must match ReadDesignDate()_ReadVivadoVersion() [ ignoring ReadDesignVersionNumber() for now ]
 	// for example the string might be "Jun/13/2023 16:00	raw-data: 0x23061316" + "_22.1"

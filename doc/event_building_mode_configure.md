@@ -70,8 +70,19 @@ Operating mode constants in `CFOandDTCCoreVInterface.h`:
 
 ## How a DTC knows its type
 
-A DTC with no real ROCs: `(roc_mask_ & ~roc_emulated_mask_) == 0`. A DTC with at least one real
-ROC: `(roc_mask_ & ~roc_emulated_mask_) != 0`.
+A DTC is classified as "with real ROCs" (`has_real_roc_flow_ = true`) if **any** of these
+conditions is met (checked in order during DTC instantiation):
+
+1. At least one enabled, non-emulated ROC: `(roc_mask_ & ~roc_emulated_mask_) != 0`
+2. Any enabled ROC has `ROCTypeLinkTable` connected (not `NO_LINK`)
+3. Any enabled ROC has `LinkToSlowControlsChannelTable` connected (not `NO_LINK`)
+4. The DTC's `EnableROCConfigureStep` configuration parameter is `true`
+
+Rules 2–4 allow exercising the "real ROC" configuration flow (Phases 1b, 3b, 3d, 4, 5) with
+emulated-only ROCs — useful for testing subsystem configure sequences without physical hardware.
+
+The classification reason is stored in `real_roc_flow_reason_` and included in error messages
+so operators can see why a DTC took a particular phase path.
 
 ## Phase 1a/1b — Establish Clocks
 
