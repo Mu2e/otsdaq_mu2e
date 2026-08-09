@@ -2168,8 +2168,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							}
 							else
 							{
-								__FE_SS__ << "DTC " << getInterfaceUID()
-								          << " Phase " << (hasRealROCs ? "3b" : "3a")
+								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+								          << (hasRealROCs ? "3b" : "3a")
 								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after 3s wait — CFO clock not arriving.";
@@ -2197,14 +2197,14 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					{
 						if(isRetry)
 						{
-							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " Phase " << (hasRealROCs ? "3b" : "3a")
+							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+							          << (hasRealROCs ? "3b" : "3a")
 							          << " edge fix FAILED after 2 attempts."
 							          << " TxMarkers=" << txMarkers
 							          << " Rx-to-Tx=" << rxToTx
 							          << " Parity=" << parityMismatch
-							          << " BatchSlip=" << batchSlip
-							          << "\n" << getCFORTFSettingsStatusAndErrors();
+							          << " BatchSlip=" << batchSlip << "\n"
+							          << getCFORTFSettingsStatusAndErrors();
 							__FE_SS_THROW__;
 						}
 
@@ -2220,8 +2220,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					{
 						uint32_t cdrUnlock =
 						    dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
-						uint32_t jaUnlock =
-						    dtc->ReadJitterAttenuatorUnlockCount();
+						uint32_t jaUnlock = dtc->ReadJitterAttenuatorUnlockCount();
 						uint32_t jaRecLOS =
 						    dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
 						uint32_t jaExtLOS =
@@ -2229,14 +2228,12 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 						if(cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS)
 						{
-							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " Phase " << (hasRealROCs ? "3b" : "3a")
+							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+							          << (hasRealROCs ? "3b" : "3a")
 							          << " edge fix PASSED but JA input clock"
 							          << " instability detected."
-							          << " CDR=" << cdrUnlock
-							          << " JA=" << jaUnlock
-							          << " JA-Rec=" << jaRecLOS
-							          << " JA-Ext=" << jaExtLOS;
+							          << " CDR=" << cdrUnlock << " JA=" << jaUnlock
+							          << " JA-Rec=" << jaRecLOS << " JA-Ext=" << jaExtLOS;
 							__FE_SS_THROW__;
 						}
 
@@ -2273,8 +2270,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 							}
 							else
 							{
-								__FE_SS__ << "DTC " << getInterfaceUID()
-								          << " Phase " << (hasRealROCs ? "3b" : "3a")
+								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+								          << (hasRealROCs ? "3b" : "3a")
 								          << " edge fix FAILED:"
 								          << " CFO Rx Clock Markers <= 1000 (" << markers
 								          << ") after edge toggle + 3s wait.";
@@ -2327,14 +2324,12 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 					if(!saturated || satBin == 7)
 					{
-						__FE_SS__
-						    << "DTC " << getInterfaceUID()
-						    << " Phase " << (hasRealROCs ? "3d" : "3c")
-						    << " RTF offset FAILED:"
-						    << " histogram not saturated (saturated=" << saturated
-						    << ", bin=" << satBin << "); cannot apply offset."
-						    << " (Phase " << (hasRealROCs ? "3b" : "3a")
-						    << " edge fix passed)";
+						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+						          << (hasRealROCs ? "3d" : "3c") << " RTF offset FAILED:"
+						          << " histogram not saturated (saturated=" << saturated
+						          << ", bin=" << satBin << "); cannot apply offset."
+						          << " (Phase " << (hasRealROCs ? "3b" : "3a")
+						          << " edge fix passed)";
 						__FE_SS_THROW__;
 					}
 
@@ -2359,8 +2354,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					{
 						if(subStep >= 8)
 						{
-							__FE_SS__ << "DTC " << getInterfaceUID()
-							          << " Phase " << (hasRealROCs ? "3d" : "3c")
+							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+							          << (hasRealROCs ? "3d" : "3c")
 							          << " RTF offset FAILED:"
 							          << " CFO Rx Clock Markers <= 1000 (" << markers
 							          << ") after RTF offset apply + wait."
@@ -2387,32 +2382,33 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						uint32_t parity    = (cdcDiag >> 16) & 0xFFFF;
 						uint32_t batchSlip = cdcDiag & 0xFFFF;
 
-						bool hasRTFCounterErrors = evtStartErr || clk40Err ||
-						                           parity || batchSlip;
+						bool hasRTFCounterErrors =
+						    evtStartErr || clk40Err || parity || batchSlip;
 
-						bool rtfPhaseOnly = rtfPhase && !otherFlags && !hasRTFCounterErrors;
+						bool rtfPhaseOnly =
+						    rtfPhase && !otherFlags && !hasRTFCounterErrors;
 
 						if(rtfPhaseOnly && !rtfPhaseEdgeRetried_)
 						{
-							__FE_COUT_INFO__
-							    << "RTFPhase error only — pre-flip status:\n"
-							    << getCFORTFSettingsStatusAndErrors() << __E__;
+							__FE_COUT_INFO__ << "RTFPhase error only — pre-flip status:\n"
+							                 << getCFORTFSettingsStatusAndErrors()
+							                 << __E__;
 
 							int newEdge = dtc->ToggleRTFPunchedClockEdge();
 							usleep(100000);  // let the RTF clock histogram saturate
 							dtc->SoftReset();
 							rtfPhaseEdgeRetried_ = true;
-							__FE_COUT_INFO__
-							    << "Toggled RTF punched clock edge to "
-							    << (newEdge ? "posedge" : "negedge")
-							    << " and issued SoftReset; retrying verify." << __E__;
+							__FE_COUT_INFO__ << "Toggled RTF punched clock edge to "
+							                 << (newEdge ? "posedge" : "negedge")
+							                 << " and issued SoftReset; retrying verify."
+							                 << __E__;
 							indicateSubIterationWork();
 						}
 						else if(rtfPhase || otherFlags || hasRTFCounterErrors)
 						{
 							__FE_SS__
-							    << "DTC " << getInterfaceUID()
-							    << " Phase " << (hasRealROCs ? "3d" : "3c")
+							    << "DTC " << getInterfaceUID() << " Phase "
+							    << (hasRealROCs ? "3d" : "3c")
 							    << " RTF offset verify FAILED"
 							    << (rtfPhaseEdgeRetried_ ? " (after edge-flip retry)"
 							                             : "")
@@ -2425,8 +2421,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						{
 							uint32_t cdrUnlock =
 							    dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
-							uint32_t jaUnlock =
-							    dtc->ReadJitterAttenuatorUnlockCount();
+							uint32_t jaUnlock = dtc->ReadJitterAttenuatorUnlockCount();
 							uint32_t jaRecLOS =
 							    dtc->ReadJitterAttenuatorRecoveredClockLOSCount();
 							uint32_t jaExtLOS =
@@ -2434,15 +2429,14 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 							if(cdrUnlock || jaUnlock || jaRecLOS || jaExtLOS)
 							{
-								__FE_SS__ << "DTC " << getInterfaceUID()
-								          << " Phase " << (hasRealROCs ? "3d" : "3c")
+								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+								          << (hasRealROCs ? "3d" : "3c")
 								          << " RTF offset verify PASSED"
 								          << " but JA input clock instability detected."
-								          << " CDR=" << cdrUnlock
-								          << " JA=" << jaUnlock
+								          << " CDR=" << cdrUnlock << " JA=" << jaUnlock
 								          << " JA-Rec=" << jaRecLOS
-								          << " JA-Ext=" << jaExtLOS
-								          << " (Phase " << (hasRealROCs ? "3b" : "3a")
+								          << " JA-Ext=" << jaExtLOS << " (Phase "
+								          << (hasRealROCs ? "3b" : "3a")
 								          << " edge fix passed)";
 								__FE_SS_THROW__;
 							}
@@ -5651,10 +5645,8 @@ void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 		dtc->SoftReset();
 		outss << "CFO interface errors present ("
 		      << "TxMarkers=" << (txMarkers ? "x" : " ")
-		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ")
-		      << " Parity=" << parityMismatch
-		      << " BatchSlip=" << batchSlip
-		      << "); toggled CFO clock edge to "
+		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ") << " Parity=" << parityMismatch
+		      << " BatchSlip=" << batchSlip << "); toggled CFO clock edge to "
 		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
 		      << " and issued a DTC Soft Reset.";
 	}
@@ -6020,8 +6012,7 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 	            bool,
 	            false),
 	        __GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0),
-	        __GET_ARG_IN__(
-	            "IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1),
+	        __GET_ARG_IN__("IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1),
 	        __GET_ARG_IN__(
 	            "RTF 40MHz Sample Edge (0 for negedge, 1 for posedge, Default := 0)",
 	            int,
