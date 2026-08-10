@@ -2471,8 +2471,8 @@ uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
 //========================================================================
 void CFOandDTCCoreVInterface::recordTimeAlive()
 {
-	time_t now = time(nullptr);
-	lastTimeAliveValue_ = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	time_t now             = time(nullptr);
+	lastTimeAliveValue_    = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
 	lastTimeAliveReadTime_ = now;
 	__FE_COUT__ << "Recorded Time Alive register value: " << lastTimeAliveValue_ << __E__;
 }  //end recordTimeAlive()
@@ -2488,8 +2488,8 @@ void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transiti
 	if((now - lastTimeAliveReadTime_) < 2)
 	{
 		__FE_COUT__ << "Time Alive check skipped during '" << transitionName
-		            << "' (cached within 2 seconds; last value: " << lastTimeAliveValue_ << ")"
-		            << __E__;
+		            << "' (cached within 2 seconds; last value: " << lastTimeAliveValue_
+		            << ")" << __E__;
 		return;
 	}
 
@@ -2497,8 +2497,7 @@ void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transiti
 	    getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
 	if(currentTimeAliveValue < lastTimeAliveValue_)
 	{
-		__FE_SS__ << "Time Alive register value DECREASED during '"
-		          << transitionName
+		__FE_SS__ << "Time Alive register value DECREASED during '" << transitionName
 		          << "' transition! Current value: " << currentTimeAliveValue
 		          << ", last recorded value: " << lastTimeAliveValue_
 		          << ". This indicates the board has rebooted." << __E__;
@@ -2508,13 +2507,12 @@ void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transiti
 	if(currentTimeAliveValue == lastTimeAliveValue_)
 	{
 		__FE_SS__ << "Time Alive register has not increased in 2+ seconds during '"
-		          << transitionName
-		          << "' (value: " << currentTimeAliveValue
+		          << transitionName << "' (value: " << currentTimeAliveValue
 		          << "). Board clock is hung or not running." << __E__;
 		__FE_SS_THROW__;
 	}
 
-	lastTimeAliveValue_ = currentTimeAliveValue;
+	lastTimeAliveValue_    = currentTimeAliveValue;
 	lastTimeAliveReadTime_ = now;
 	__FE_COUT__ << "Time Alive check passed during '" << transitionName
 	            << "', updated value: " << lastTimeAliveValue_ << __E__;
