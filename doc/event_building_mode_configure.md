@@ -40,7 +40,7 @@ Key design constraints:
 | 7 | **3d — Sync: RTF offset + verify (ROC)** | idle | idle | Same offset + verify sub-steps as 3c |
 | 8 | **4 — ROC and DCS Setup** | idle | idle | `SetupROCs()` per link, `EnableDCSReception()`, CRV `SetPunchEnable()`, `SoftReset()`, ROC DCS-based configure |
 | 9 | **5 — ROC Data Path Setup** | idle | idle | `DisableLink(EVB)`, `SetEVBInfo()`, DRP mode, `EnableLink(EVB)`, `SetCFOEventModeRequiredMask()` |
-| 10 | **Final SoftReset** | `SoftReset()` | `SoftReset()` | `SoftReset()` |
+| 10 | **Final SoftReset** | `SoftReset()` | `EnableLink(CFO)`, `SoftReset()` | `EnableLink(CFO)`, `SoftReset()` |
 | 11 | **6 — Enable CFO Operation** | `EnableAcceleratorRF0()`, `SetPunchEnable()` | idle | idle |
 
 In **EventBuildingMode** (no sync), iterations 4–7 are idle for all devices (CFO and all DTCs
@@ -219,8 +219,9 @@ Only DTCs with real ROCs act. CFO and no-ROC DTCs idle.
 
 ## Final SoftReset (iteration 10)
 
-Both CFO and all DTCs: `SoftReset()` to clear accumulated errors from ROC/DCS and data path
-setup.
+All DTCs: `EnableLink(CFO)` to ensure the CFO receive path is active before the CFO begins
+sending heartbeats and event window markers, then `SoftReset()` to clear accumulated errors
+from ROC/DCS and data path setup. CFO: `SoftReset()` only.
 
 ## Phase 6 — Enable CFO Operation (iteration 11)
 
