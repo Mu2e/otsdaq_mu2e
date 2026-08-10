@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cmath>
+#include <format>
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/ConfigurationInterface/ConfigurationManagerRW.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
