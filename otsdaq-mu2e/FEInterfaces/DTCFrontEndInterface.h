@@ -116,6 +116,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t>                      mismatchedEventTagsCount_;
 		std::vector<std::pair<uint64_t, uint64_t>> mismatchedEventTagJumps_;
 
+		std::atomic<uint64_t> subrunTransitionCount_;
+		bool                  lastSubrunBit_ = false;
+
 		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
 		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
 		    rocPayloadByteCount_;
@@ -220,16 +223,24 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void configureHardwareDevMode(__ARGS__);
 	void ConfigureForTimingChain(__ARGS__);
 
+	std::string getCFORTFSettingsStatusAndErrors();
+
 	void DTCCounters(__ARGS__);
 	void readRxDiagFIFO(__ARGS__);
 	void readTxDiagFIFO(__ARGS__);
 	void GetLinkErrors(__ARGS__);
+	void GetRTFInterfaceStatus(__ARGS__);
+	void RTFMarkerOffsetApply(__ARGS__);
+	void FixCFOClockEdge(__ARGS__);
+	void EVBHighLevelCounters(__ARGS__);
 	void ROCResetLink(__ARGS__);
 	void HeaderFormatTest(__ARGS__);
 
 	void DTCInstantiate(__ARGS__);
 	void ResetDTCLinks(__ARGS__);
 	void EnableDTCLink(__ARGS__);
+
+	void SoftReset(__ARGS__) override;
 
 	void ResetPCIe(__ARGS__);
 	void ResetCFOLinkRx(__ARGS__);
@@ -250,7 +261,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              bool alsoSetupJA,
 	                              bool cfoRxTxEnable,
 	                              bool enableAutogenDRP,
-	                              int  permanentOffset = 0);
+	                              int  permanentOffset = 0,
+	                              int  idelayTapValue  = -1);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
 	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
 	                                              bool               useDetachedBufferTest,

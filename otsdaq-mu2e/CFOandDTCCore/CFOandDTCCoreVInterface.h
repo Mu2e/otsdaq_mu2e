@@ -72,12 +72,13 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	void     testRTFClockInEventBuildingMode(const std::string& transitionName);
 
   protected:
-	int         deviceIndex_        = -1;  //PCIe index
-	bool        configure_clock_    = false;
-	bool        emulatorMode_       = false;
-	bool        skipInit_           = true;
-	std::string operatingMode_      = "";
-	uint32_t    lastTimeAliveValue_ = 0;
+	int         deviceIndex_           = -1;  //PCIe index
+	bool        configure_clock_       = false;
+	bool        emulatorMode_          = false;
+	bool        skipInit_              = true;
+	std::string operatingMode_         = "";
+	uint32_t    lastTimeAliveValue_    = 0;
+	time_t      lastTimeAliveReadTime_ = 0;  // only re-read if >= +2 seconds have elapsed
 
 	static const int CONFIG_DTC_TIMING_CHAIN_START_INDEX = 1;
 	static const int CONFIG_DTC_TIMING_CHAIN_STEPS       = 3;
@@ -88,8 +89,8 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	    FPGAClock_;  //period of FPGA clock in ns (as of Feb 2026, was 25ns)
 
   public:
-	void SoftReset(__ARGS__);
-	void HardReset(__ARGS__);
+	virtual void SoftReset(__ARGS__);
+	void         HardReset(__ARGS__);
 
 	void GetFirmwareVersion(__ARGS__);
 	void ResetPCIe(__ARGS__);

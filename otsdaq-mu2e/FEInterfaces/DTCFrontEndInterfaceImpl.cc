@@ -588,6 +588,54 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "Jitter Attenuator lost the RX Recovered clock and "
 	    "lost the RX External clock since last reset.");
 
+	registerFEMacroFunction(
+	    "Get RTF Interface Status",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::GetRTFInterfaceStatus),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"RTF Interface Status"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Displays CFO interface status/errors, RTF timing settings, "
+	    "and the RTF_HIST_IDELAY register (histogram bins, IDELAY tap "
+	    "readback, saturation info).");
+
+	registerFEMacroFunction(
+	    "RTF Marker Offset Apply",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::RTFMarkerOffsetApply),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"RTF Marker Offset Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Reads the CFO measured marker position (as shown by 'Get RTF Interface "
+	    "Status') and sets the CFO Sample Permanent Offset to the implied ( ==> ) "
+	    "value, centering the RTF marker.");
+
+	registerFEMacroFunction(
+	    "Fix CFO Clock Edge",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::FixCFOClockEdge),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"Fix CFO Clock Edge Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Checks the CFO interface sticky errors (as shown by 'Get RTF Interface "
+	    "Status'). If RTFPhase, TxMarkers, or Rx-to-Tx shows an error, toggles the "
+	    "current CFO clock edge (Control Register 0x9100 bit 5).");
+
+	registerFEMacroFunction(
+	    "EVB High Level Counters",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::EVBHighLevelCounters),
+	    std::vector<std::string>{},
+	    std::vector<std::string>{"EVB High Level Counters"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Reads and displays the six 16-bit EVB high-level word counters from "
+	    "registers 0x9200 (ROC input / Self-transfer), 0x9204 (DDR FIFO write / "
+	    "DDR->TX), and 0x9208 (Buffer manager output / DMA output).");
+
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS
 	               << " steps. So choose 1 step at a time, 0-"
@@ -776,6 +824,7 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "Force External CFO Sample Clock Edge (0 for rising-edge, 1 for "
 	        "falling-edge, 2 for auto-find, Default := 0)",
 	        "Permanent Offset (-2 to 2, Default := 0)",
+	        "IDELAY Tap Value (0-31, Default := -1 do nothing)",
 	    },  // namesOfInputArgs
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
@@ -2072,13 +2121,20 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	//Jun/18/2023 14:00 raw-data: 0x23061814
 	switch(step)
 	{
-	case 0:
+	case 0: {
 		//put DTC in known state with DTC reset and control clear
 		getDTC()->SoftReset();
-		getDTC()->ClearControlRegister();
+
+		// Preserve control-register bits that are managed by this front-end but are
+		// NOT reconstructed by the configuration steps below, so ClearControlRegister
+		// does not wipe them. Bits 5 & 6 are the External CFO Sample Edge Mode.
+		// Add any future FE-managed-but-unreconstructed control bits to this mask.
+		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6);
+		getDTC()->ClearControlRegister(controlRegisterKeepMask);
 
 		indicateIterationWork();
 		break;
+	}
 	case 1:
 		//During debug session on 14-Nov-2023, realized JA config breaks ROC link CDR lock
 		//	So solution:
@@ -4767,6 +4823,76 @@ void DTCFrontEndInterface::configureHardwareDevMode(__ARGS__)
 }  // end configureHardwareDevMode()
 
 //========================================================================
+std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
+{
+	auto               dtc = getDTC();
+	std::ostringstream o;
+
+	auto        jaSelect = dtc->ReadJitterAttenuatorSelect().to_ulong();
+	std::string jaSource =
+	    jaSelect == 0 ? "Internal CFO" : (jaSelect == 1 ? "RJ45" : "Timing Card");
+	int  edgeMode   = dtc->ReadExternalCFOSampleEdgeMode(std::nullopt);
+	bool cfoEmMode  = dtc->ReadCFOEmulationMode();
+	bool cfoCDRLock = dtc->ReadSERDESRXCDRLock(DTCLib::DTC_Link_CFO);
+
+	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
+	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
+	int      impliedPos  = dtc->ReadCFOImpliedMarkerOffset(cfoErr);
+
+	uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
+	bool     saturated = (rtfHist >> 10) & 1;
+	uint32_t satBin    = (rtfHist >> 7) & 0x7;
+
+	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
+	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
+	uint32_t batchSlip      = cdcDiag & 0xFFFF;
+
+	o << "=== CFO/RTF Settings & Status ==="
+	  << "\n";
+	std::string edgeModeStr =
+	    ((edgeMode & 1) == 0   ? "posedge"
+	     : (edgeMode & 1) == 1 ? "negedge"
+	     : edgeMode == 2
+	         ? "auto"  //as of July 2026, bit-1 is not used in the DTC firmware!
+	         : ("unknown(" + std::to_string(edgeMode) + ")"));
+	o << "  CFO Emulation Mode:    " << (cfoEmMode ? "ON" : "OFF")
+	  << "        JA Source: " << jaSource << "\n";
+	o << "  CFO-RTF Edge Select:   " << edgeModeStr
+	  << "    CFO CDR Lock: " << (cfoCDRLock ? "LOCKED" : "Not Locked") << "\n";
+	o << "  CFO Marker Pos:        " << measuredPos << " ==> "
+	  << (measuredPos == 7 ? "invalid" : std::to_string(impliedPos))
+	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
+	o << "  RTF Hist Sat Bin:      "
+	  << (saturated && satBin != 7 ? std::to_string(satBin) + " ==> " +
+	                                     std::to_string(2 - static_cast<int>(satBin))
+	                               : (satBin == 7 ? "invalid" : "N/A"))
+	  << "      Saturated: " << (saturated ? "YES" : "NO") << "\n";
+	o << "  CFO Rx Clock Markers:  " << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
+
+	o << "\n=== CFO Interface Errors ==="
+	  << "\n";
+	o << "  ErrFlag:  RTFPhase RTFMarker TxMarkers Rx-to-Tx |  CDR  JA    JA-Rec "
+	     "JA-Ext\n";
+	o << "  Sticky:     "
+	  << "[" << (dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr) ? "x" : " ") << "]      "
+	  << "[" << (dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ? "x" : " ") << "]       "
+	  << "[" << (dtc->ReadCFOEventStartMarkerTxError(cfoErr) ? "x" : " ") << ":"
+	  << (dtc->ReadCFOClockMarkerTxError(cfoErr) ? "x" : " ") << "]     "
+	  << "[" << (dtc->ReadCFORxToTxDataCorruptionError(cfoErr) ? "x" : " ") << "]    ";
+	o << "|  " << dtc->ReadRXCDRUnlockCount(DTCLib::DTC_Link_CFO) << "     "
+	  << dtc->ReadJitterAttenuatorUnlockCount() << "     "
+	  << dtc->ReadJitterAttenuatorRecoveredClockLOSCount() << "      "
+	  << dtc->ReadJitterAttenuatorExternalClockLOSCount() << "\n";
+
+	o << "            EvtStart  40MHz  Parity  BatchSlip\n";
+	o << "  Count:       " << dtc->ReadRXCFOLinkEventStartCharacterErrorCount()
+	  << "      " << dtc->ReadRXCFOLink40MHzCharacterErrorCount() << "       "
+	  << parityMismatch << "       " << batchSlip << "\n";
+
+	return o.str();
+}  //end getCFORTFSettingsStatusAndErrors()
+
+//========================================================================
 void DTCFrontEndInterface::DTCCounters(__ARGS__)
 {
 	auto dtc = getDTC();
@@ -4775,10 +4901,9 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 
 	protocol << getDTC()->FormattedRegDump(
 	    130,
-	    {[dtc] { return dtc->FormatCFOTXClockMarkerCountLink6(); },
-	     [dtc] { return dtc->FormatTXEventWindowMarkerCountLink(DTCLib::DTC_Link_CFO); },
-	     [dtc] { return dtc->FormatTXHeartbeatPacketCountLink(DTCLib::DTC_Link_CFO); },
-	     [dtc] { return dtc->FormatCFOLinkError(); }});
+	    {[dtc] { return dtc->FormatTXEventWindowMarkerCountLink(DTCLib::DTC_Link_CFO); },
+	     [dtc] { return dtc->FormatTXHeartbeatPacketCountLink(DTCLib::DTC_Link_CFO); }});
+	protocol << "\n" << getCFORTFSettingsStatusAndErrors();
 
 	auto csvLinkCounts = [dtc](const std::string&                           label,
 	                           std::function<uint32_t(DTCLib::DTC_Link_ID)> readFn) {
@@ -4853,6 +4978,135 @@ void DTCFrontEndInterface::GetLinkErrors(__ARGS__)
 	    "Link Errors",
 	    getDTC()->FormattedRegDump(0, getDTC()->formattedSERDESErrorFunctions_));
 }  //end GetLinkErrors()
+
+//========================================================================
+void DTCFrontEndInterface::GetRTFInterfaceStatus(__ARGS__)
+{
+	std::ostringstream outss;
+
+	outss << getCFORTFSettingsStatusAndErrors();
+
+	uint32_t rtfHist   = getDTC()->ReadRTFHistIdelay();
+	uint32_t idelayTap = (rtfHist >> 27) & 0x1F;
+	bool     idelayRdy = (rtfHist >> 26) & 1;
+	bool     saturated = (rtfHist >> 10) & 1;
+	uint32_t satBin    = (rtfHist >> 7) & 0x7;
+
+	outss << "\n=== RTF Histogram & IDELAY ==="
+	      << "\n";
+	outss << "  IDELAY Tap: " << idelayTap << "  Ready: " << (idelayRdy ? "YES" : "NO")
+	      << "  Saturated: "
+	      << (saturated ? "YES (bin " + std::to_string(satBin) + ")" : "NO") << "\n";
+	outss << "  Bins [0-4]: ";
+	for(int bin = 0; bin < 5; ++bin)
+	{
+		if(bin)
+			outss << ", ";
+		outss << ((rtfHist >> (11 + bin * 3)) & 0x7);
+	}
+	outss << "\n";
+
+	__SET_ARG_OUT__("RTF Interface Status", "\n" + outss.str());
+}  //end GetRTFInterfaceStatus()
+
+//========================================================================
+void DTCFrontEndInterface::RTFMarkerOffsetApply(__ARGS__)
+{
+	auto     dtc       = getDTC();
+	uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
+	bool     saturated = (rtfHist >> 10) & 1;
+	uint32_t satBin    = (rtfHist >> 7) & 0x7;
+
+	if(!saturated || satBin == 7)
+	{
+		__SS__ << "RTF histogram has not saturated (saturated=" << saturated
+		       << ", bin=" << satBin << "); cannot apply offset.";
+		__SS_THROW__;
+	}
+
+	int impliedPos = 2 - static_cast<int>(satBin);
+
+	uint32_t cfoErr      = dtc->ReadCFOLinkErrorRegister();
+	int      measuredPos = dtc->ReadCFOMeasuredMarkerPosition(cfoErr);
+
+	dtc->SetCFOSamplePermanentOffset(impliedPos);
+	int readback = dtc->ReadCFOSamplePermanentOffset();
+
+	std::ostringstream outss;
+	outss << "RTF Hist Sat Bin: " << satBin << " ==> " << impliedPos
+	      << "  (CFO Marker Pos: " << measuredPos << ")"
+	      << ";  Permanent Offset set to " << impliedPos << " (readback " << readback
+	      << ").";
+
+	__FE_COUT_INFO__ << outss.str() << __E__;
+	__SET_ARG_OUT__("RTF Marker Offset Result", outss.str());
+}  //end RTFMarkerOffsetApply()
+
+//========================================================================
+void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
+{
+	auto     dtc    = getDTC();
+	uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
+
+	// error checkmarks from "Get RTF Interface Status" that indicate a bad clock edge
+	// (RTFPhase is ignored — it can fire transiently and does not indicate a wrong edge):
+	bool txMarkers = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+	                 dtc->ReadCFOClockMarkerTxError(cfoErr);
+	bool rxToTx = dtc->ReadCFORxToTxDataCorruptionError(cfoErr);  // "Rx-to-Tx"
+
+	uint32_t cdcDiag        = dtc->ReadCFOCDCDiag();
+	uint32_t parityMismatch = (cdcDiag >> 16) & 0xFFFF;
+	uint32_t batchSlip      = cdcDiag & 0xFFFF;
+
+	std::ostringstream outss;
+	if(txMarkers || rxToTx || parityMismatch || batchSlip)
+	{
+		int newEdge = dtc->ToggleExternalCFOSampleEdge();
+		dtc->SoftReset();  // clear sticky errors/lock counters after changing the edge
+		outss << "CFO interface errors present ("
+		      << "TxMarkers=" << (txMarkers ? "x" : " ")
+		      << " Rx-to-Tx=" << (rxToTx ? "x" : " ") << " Parity=" << parityMismatch
+		      << " BatchSlip=" << batchSlip << "); toggled CFO clock edge to "
+		      << (newEdge ? "negedge (falling)" : "posedge (rising)")
+		      << " and issued a DTC Soft Reset.";
+	}
+	else
+	{
+		outss << "No TxMarkers/Rx-to-Tx/Parity/BatchSlip errors present; CFO clock edge "
+		         "left unchanged.";
+	}
+
+	__FE_COUT_INFO__ << outss.str() << __E__;
+	__SET_ARG_OUT__("Fix CFO Clock Edge Result", outss.str());
+}  //end FixCFOClockEdge()
+
+//========================================================================
+void DTCFrontEndInterface::EVBHighLevelCounters(__ARGS__)
+{
+	auto dtc = getDTC();
+
+	// read each register once and decode both 16-bit fields from that snapshot
+	uint32_t reg9200 = dtc->ReadEVBHighLevelCounters0();
+	uint32_t reg9204 = dtc->ReadEVBHighLevelCounters1();
+	uint32_t reg9208 = dtc->ReadEVBHighLevelCounters2();
+
+	std::ostringstream o;
+	o << "=== EVB High Level Counters ===\n";
+	o << "  0x9200:  ROC input words:              " << dtc->ReadEVBROCInputWords(reg9200)
+	  << "\n";
+	o << "           Self-transfer words:          "
+	  << dtc->ReadEVBSelfTransferWords(reg9200) << "\n";
+	o << "  0x9204:  DDR FIFO write words:         "
+	  << dtc->ReadEVBDDRFIFOWriteWords(reg9204) << "\n";
+	o << "           DDR->TX words:                " << dtc->ReadEVBDDRToTXWords(reg9204)
+	  << "\n";
+	o << "  0x9208:  Buffer manager output words:  "
+	  << dtc->ReadEVBBufferManagerOutputWords(reg9208) << "\n";
+	o << "           DMA output words:             "
+	  << dtc->ReadEVBDMAOutputWords(reg9208) << "\n";
+
+	__SET_ARG_OUT__("EVB High Level Counters", "\n" + o.str());
+}  //end EVBHighLevelCounters()
 
 // //========================================================================
 // void DTCFrontEndInterface::ROCDestroy(__ARGS__)
@@ -5067,6 +5321,17 @@ void DTCFrontEndInterface::ConfigureForTimingChain(__ARGS__)
 }  //end ConfigureForTimingChain()
 
 //========================================================================
+void DTCFrontEndInterface::SoftReset(__ARGS__)
+{
+	CFOandDTCCoreVInterface::SoftReset(feMacroStruct, argsIn, argsOut);
+
+	getDTC()->ClearRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
+	getDTC()->ClearJitterAttenuatorUnlockCount();
+	getDTC()->ClearJitterAttenuatorRecoveredClockLOSCount();
+	getDTC()->ClearJitterAttenuatorExternalClockLOSCount();
+}  //end SoftReset()
+
+//========================================================================
 void DTCFrontEndInterface::ResetCFOLinkRx(__ARGS__)
 {
 	getDTC()->ResetSERDESRX(DTCLib::DTC_Link_ID::DTC_Link_CFO);
@@ -5168,7 +5433,9 @@ void DTCFrontEndInterface::SetupCFOInterface(__ARGS__)
 	            "Enable Auto-generation of Data Request Packets (Default := false)",
 	            bool,
 	            false),
-	        __GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0)));
+	        __GET_ARG_IN__("Permanent Offset (-2 to 2, Default := 0)", int, 0),
+	        __GET_ARG_IN__(
+	            "IDELAY Tap Value (0-31, Default := -1 do nothing)", int, -1)));
 }  //end SetupCFOInterface()
 
 //========================================================================
@@ -5177,13 +5444,22 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
                                                     bool alsoSetupJA,
                                                     bool cfoRxTxEnable,
                                                     bool enableAutogenDRP,
-                                                    int  permanentOffset /* = 0 */)
+                                                    int  permanentOffset /* = 0 */,
+                                                    int  idelayTapValue /* = -1 */)
 {
 	std::stringstream outSs;
 	__FE_COUTV__(forceCFOedge);
 
 	getDTC()->DisableCFOEmulation();
 	getDTC()->SetExternalCFOSampleEdgeMode(forceCFOedge);  //forceCFOedge is a 2-bit value
+
+	// always enable CFO-RTF offset control (bit 6) so measured_RTF_position updates
+	{
+		uint32_t ctrl;
+		getDevice()->read_register(0x9100, 100, &ctrl);
+		ctrl |= (1 << 6);
+		getDevice()->write_register(0x9100, 100, ctrl);
+	}
 
 	__FE_COUTV__(useCFOemulator);
 
@@ -5251,6 +5527,26 @@ std::string DTCFrontEndInterface::SetupCFOInterface(int  forceCFOedge,
 
 	__FE_COUTV__(permanentOffset);
 	getDTC()->SetCFOSamplePermanentOffset(permanentOffset);
+
+	__FE_COUTV__(idelayTapValue);
+	if(idelayTapValue >= 0)
+	{
+		if(idelayTapValue > 31)
+		{
+			__SS__ << "IDELAY Tap Value must be 0-31, received " << idelayTapValue;
+			__SS_THROW__;
+		}
+		uint32_t cfoErrReg;
+		getDevice()->read_register(0x9398, 100, &cfoErrReg);
+		cfoErrReg = (cfoErrReg & ~(0x1FF << 3)) | ((idelayTapValue & 0x1F) << 3);
+		getDevice()->write_register(0x9398, 100, cfoErrReg);
+		cfoErrReg |= (1 << 8);
+		getDevice()->write_register(0x9398, 100, cfoErrReg);
+		usleep(1000);
+		cfoErrReg &= ~(1 << 8);
+		getDevice()->write_register(0x9398, 100, cfoErrReg);
+		outSs << "Set IDELAY Tap Value = " << idelayTapValue << " and loaded\n";
+	}
 
 	outSs << getDTC()->FormatDTCControl() << __E__ << getDTC()->FormatCFOLinkError()
 	      << __E__;
@@ -5802,6 +6098,8 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 
 		statusSs << "Events count:" << threadStruct->eventsCount_ << __E__;
 		statusSs << "Subevents count:" << threadStruct->subeventsCount_ << __E__;
+		statusSs << "Subrun Transition count:" << threadStruct->subrunTransitionCount_
+		         << __E__;
 
 		if(threadStruct->saveBinaryData_ && threadStruct->packetThresholdToSave_ > 0)
 			statusSs << "Saved " << (threadStruct->inSubeventMode_ ? "subevent" : "event")
@@ -5989,6 +6287,17 @@ void DTCFrontEndInterface::handleDetachedSubevent(
 
 	//start mutex scope to change non-atomic status counters
 	std::lock_guard<std::mutex> lock(threadStruct->lock_);
+
+	bool currentSubrunBit = (subevent->GetHeader()->event_mode >> 33) & 1;
+	__GEN_COUTT__ << "event_mode=0x" << std::hex << subevent->GetHeader()->event_mode
+	              << std::dec << " subrunBit=" << currentSubrunBit
+	              << " lastSubrunBit=" << threadStruct->lastSubrunBit_
+	              << " subrunTransitionCount=" << threadStruct->subrunTransitionCount_;
+	if(currentSubrunBit != threadStruct->lastSubrunBit_)
+	{
+		++(threadStruct->subrunTransitionCount_);
+		threadStruct->lastSubrunBit_ = currentSubrunBit;
+	}
 
 	if(threadStruct->transferStartTime_ ==
 	   std::chrono::steady_clock::time_point::min())  //init start time
@@ -6255,6 +6564,8 @@ try
 		threadStruct->subeventsCount_           = 0;
 		threadStruct->mismatchedEventTagsCount_ = 0;
 		threadStruct->mismatchedEventTagJumps_.clear();
+		threadStruct->subrunTransitionCount_         = 0;
+		threadStruct->lastSubrunBit_                 = false;
 		threadStruct->rocFragmentsCount_             = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocPayloadEmptyCount_          = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocFragmentTimeoutsCount_      = {0, 0, 0, 0, 0, 0};
@@ -6354,6 +6665,8 @@ try
 						threadStruct->subeventsCount_           = 0;
 						threadStruct->mismatchedEventTagsCount_ = 0;
 						threadStruct->mismatchedEventTagJumps_.clear();
+						threadStruct->subrunTransitionCount_         = 0;
+						threadStruct->lastSubrunBit_                 = false;
 						threadStruct->rocFragmentsCount_             = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocPayloadEmptyCount_          = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocFragmentTimeoutsCount_      = {0, 0, 0, 0, 0, 0};

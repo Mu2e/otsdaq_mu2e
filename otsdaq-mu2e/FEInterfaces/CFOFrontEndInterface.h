@@ -5,8 +5,10 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <vector>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/CoreSupervisors/FESupervisor.h"
+#include "otsdaq/TableCore/TableVersion.h"
 
 namespace ots
 {
@@ -225,6 +227,19 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void ConfigureForTimingChain(__ARGS__);
 	void LoopbackTest(__ARGS__);
+	void LoopbackTopologyDiscovery(__ARGS__);
+
+	struct ROCLoopbackResult
+	{
+		std::string rocUID;
+		double      avgDelay;
+		double      stddev;
+	};
+	TableVersion ModifyROCMarkerDelayOffsetConfiguration(
+	    std::ostream&                         os,
+	    const std::vector<ROCLoopbackResult>& rocResults,
+	    int                                   minROCdelayOffset = 0);
+
 	void TestMarker(__ARGS__);
 
 	void RunplanSubrunConfigSetup(__ARGS__);
