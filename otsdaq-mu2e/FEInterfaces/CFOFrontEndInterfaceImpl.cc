@@ -2438,24 +2438,6 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		thisCFO_->EnableAcceleratorRF0();
 		thisCFO_->SetPunchEnable();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		if(cfoEventSendingStartIteration >
-		   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-		       CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-		{
-			__FE_COUT__ << "CFO reset serdes TX " << __E__;
-			thisCFO_->ResetAllSERDESTx();
-		}
-		else
-		{
-			__FE_COUT__ << "Skipping CFO TX reset because event sending was configured "
-			               "to start at iteration "
-			            << cfoEventSendingStartIteration << __E__;
-		}
-		indicateIterationWork();
-	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 
