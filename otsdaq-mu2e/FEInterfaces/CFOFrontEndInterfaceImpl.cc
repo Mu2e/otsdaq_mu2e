@@ -2703,6 +2703,12 @@ void CFOFrontEndInterface::stop(void)
 }  //end stop()
 
 //==============================================================================
+unsigned int CFOFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
+{
+	return 12;
+}  // end getMinReadyForEventGenerationStartIteration()
+
+//==============================================================================
 bool CFOFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)

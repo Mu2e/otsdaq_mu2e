@@ -2841,6 +2841,19 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 //==============================================================================
 // return true to keep running
+unsigned int DTCFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
+{
+	unsigned int maxIteration = 0;
+	for(const auto& rocPair : rocs_)
+	{
+		unsigned int val = rocPair.second->getMinReadyForEventGenerationStartIteration();
+		if(val > maxIteration)
+			maxIteration = val;
+	}
+	return maxIteration;
+}  // end getMinReadyForEventGenerationStartIteration()
+
+//==============================================================================
 bool DTCFrontEndInterface::running(void)
 {
 	__FE_COUTV__(skipInit_);

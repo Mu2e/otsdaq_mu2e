@@ -31,6 +31,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	void start(std::string runNumber) override;
 	void stop(void) override;
 	bool running(void) override;
+	unsigned int getMinReadyForEventGenerationStartIteration(void) const override;
 
 	// CFO specific items
 	//----------------
