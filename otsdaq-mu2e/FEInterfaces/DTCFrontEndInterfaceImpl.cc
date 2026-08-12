@@ -632,9 +632,9 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    std::vector<std::string>{"EVB High Level Counters"},
 	    1,  // requiredUserPermissions
 	    "*",
-	    "Reads and displays the six 16-bit EVB high-level word counters from "
+	    "Reads and displays the seven 16-bit EVB high-level word counters from "
 	    "registers 0x9200 (ROC input / Self-transfer), 0x9204 (DDR FIFO write / "
-	    "DDR->TX), and 0x9208 (Buffer manager output / DMA output).");
+	    "DDR->TX), 0x9208 (Buffer manager output / DMA output), and 0x920C (GBE RX).");
 
 	std::stringstream feMacroTooltip;
 	feMacroTooltip << "There are " << CONFIG_DTC_TIMING_CHAIN_STEPS
@@ -5085,10 +5085,10 @@ void DTCFrontEndInterface::EVBHighLevelCounters(__ARGS__)
 {
 	auto dtc = getDTC();
 
-	// read each register once and decode both 16-bit fields from that snapshot
 	uint32_t reg9200 = dtc->ReadEVBHighLevelCounters0();
 	uint32_t reg9204 = dtc->ReadEVBHighLevelCounters1();
 	uint32_t reg9208 = dtc->ReadEVBHighLevelCounters2();
+	uint32_t reg920C = dtc->ReadEVBHighLevelCounters3();
 
 	std::ostringstream o;
 	o << "=== EVB High Level Counters ===\n";
@@ -5104,6 +5104,8 @@ void DTCFrontEndInterface::EVBHighLevelCounters(__ARGS__)
 	  << dtc->ReadEVBBufferManagerOutputWords(reg9208) << "\n";
 	o << "           DMA output words:             "
 	  << dtc->ReadEVBDMAOutputWords(reg9208) << "\n";
+	o << "  0x920C:  GBE RX words:                 " << dtc->ReadEVBGBERXWords(reg920C)
+	  << "\n";
 
 	__SET_ARG_OUT__("EVB High Level Counters", "\n" + o.str());
 }  //end EVBHighLevelCounters()
