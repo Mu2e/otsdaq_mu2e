@@ -13,7 +13,6 @@
 #include "mu2e_driver/mu2e_mmap_ioctl.h"  // m_ioc_cmd_t, m_ioc_reg_access_t, dtc_address_t, dtc_data_t
 
 #include "otsdaq/FECore/FEVInterface.h"
-#include "otsdaq/FiniteStateMachine/RunControlIterationConstants.h"
 
 namespace ots
 {
@@ -95,9 +94,6 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	static const int CONFIG_PHASE_ROC_DATA_PATH                 = 9;   // Phase 5: ROC Data Path Setup — DTCs w/ real ROCs only
 	static const int CONFIG_PHASE_FINAL_SOFT_RESET              = 10;  // Final SoftReset before enabling CFO operation
 	static const int CONFIG_CFO_EVENT_SENDING_START_ITERATION   = 11;  // Phase 6: Enable CFO Operation — last iteration
-
-	static const int RUN_START_READY_FOR_TRIGGERS_ITERATION =
-	    RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION;
 
 	bool artdaqMode_ = false;  // true to prevent run data file generation
 

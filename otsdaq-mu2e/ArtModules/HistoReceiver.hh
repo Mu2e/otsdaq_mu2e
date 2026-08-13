@@ -19,7 +19,7 @@ class HistoReceiver
 	};
 	void addHistogram(TH1* h, TDirectory* subdir, int mode);
 	void addGraph(TGraph* g, TDirectory* subdir, int mode);
-	void addObject(TObject* h, TDirectory* subdir, int mode);
+	void addObject(TObject* readObject, TDirectory* subdir, int mode);
 	void readPacket(TDirectory* dir, std::string* buf);
 	int  parseMode(std::string mode);
 };

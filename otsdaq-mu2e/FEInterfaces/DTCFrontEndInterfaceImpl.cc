@@ -2687,7 +2687,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
 	{
 		getDTC()->EnableLink(DTCLib::DTC_Link_CFO);
-		__FE_COUT__ << "CFO link enabled, Final SoftReset to clear errors before enabling CFO operation."
+		__FE_COUT__ << "CFO link enabled, Final SoftReset to clear errors before "
+		               "enabling CFO operation."
 		            << __E__;
 		getDTC()->SoftReset();
 		indicateIterationWork();

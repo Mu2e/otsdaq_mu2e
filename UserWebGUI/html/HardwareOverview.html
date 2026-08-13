@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Mu2e Hardware Overview</title>
+
+	<link href='/WebPath/css/fonts.css?family=Inconsolata:400' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/Mu2e.css">
+	<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/HardwareOverview.css">
+
+	<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+	<script type="text/JavaScript" src="/WebPath/UserWebPath/js/Mu2e.js"></script>
+	<script type="text/JavaScript" src="/WebPath/UserWebPath/js/Mu2eHardware.js"></script>
+
+	<script>
+
+		var _selectedUID = null;
+		var _structureReady = false;
+		var _macrosReady = false;
+
+		// =============================================================
+		// init — called by DesktopContent.js after page load
+		// =============================================================
+		function init() {
+			Debug.log("HardwareOverview init()");
+
+			DesktopContent.tooltip("Mu2e Hardware Overview",
+				"View configured FE interfaces, DTCs, and ROCs. " +
+				"Click a device to see settings and run macros.");
+			DesktopContent.setWindowTooltip(
+				"View configured FE interfaces, DTCs, and ROCs.");
+
+			_structureReady = false;
+			_macrosReady = false;
+
+			document.getElementById("gridContent").innerHTML =
+				"<div class='placeholder-text'>Loading...</div>";
+			document.getElementById("detailContent").innerHTML =
+				"<div class='placeholder-text'>Click a DTC or ROC to view details.</div>";
+			document.getElementById("activeConfigInfo").innerHTML = "";
+			updateSaveButton();
+
+			Mu2eHardware.fetchActiveConfig(function (cfg) {
+				var el = document.getElementById("activeConfigInfo");
+				if (!el || !cfg) return;
+				var html = "";
+				if (cfg.config && cfg.config.groupName) {
+					if (cfg.configAlias)
+						html += "<b>" + cfg.configAlias + "</b> &mdash; ";
+					html += cfg.config.groupName + " (" + cfg.config.groupKey + ")";
+				}
+				el.innerHTML = html;
+			});
+
+			Mu2eHardware.fetchStructure(function () {
+				_structureReady = true;
+				if (_macrosReady) renderGrid();
+			});
+
+			Mu2eHardware.fetchMacroList(function () {
+				_macrosReady = true;
+				if (_structureReady) renderGrid();
+			});
+		}
+
+		// =============================================================
+		// renderGrid
+		// =============================================================
+		function renderGrid() {
+			var html = Mu2eHardware.buildGridHTML(
+				"selectDevice(&#39;__UID__&#39;, event)",
+				"toggleStatus(&#39;__UID__&#39;)");
+			document.getElementById("gridContent").innerHTML = html;
+
+			if (_selectedUID)
+				Mu2eHardware.highlightTreeNode(_selectedUID);
+		}
+
+		// =============================================================
+		// toggleStatus — toggle a DTC/ROC on/off
+		// =============================================================
+		function toggleStatus(uid) {
+			var newStatus = Mu2eHardware.toggleDeviceStatus(uid);
+			if (newStatus === null) return;
+			var dot = document.getElementById("dot-" + uid);
+			if (dot) {
+				dot.classList.remove("status-on", "status-off");
+				dot.classList.add(newStatus === "1" ? "status-on" : "status-off");
+			}
+			updateSaveButton();
+		}
+
+		function updateSaveButton() {
+			var btn = document.getElementById("saveBtn");
+			var hasChanges = Mu2eHardware.hasUnsavedChanges();
+			if (btn) {
+				btn.style.display = hasChanges ? "" : "none";
+				btn.disabled = false;
+			}
+
+			var tbl = document.querySelector(".hw-grid");
+			if (tbl) tbl.classList.toggle("hw-grid-unsaved", hasChanges);
+		}
+
+		function saveChanges() {
+			var btn = document.getElementById("saveBtn");
+			if (btn) btn.disabled = true;
+
+			Mu2eHardware.saveChanges(function (success) {
+				if (success) {
+					init();
+				} else {
+					if (btn) btn.disabled = false;
+					Debug.log("Save failed.", Debug.HIGH_PRIORITY);
+				}
+			});
+		}
+
+		// =============================================================
+		// selectDevice — user clicked a device in the grid
+		// =============================================================
+		function selectDevice(uid, event) {
+			if (event) event.stopPropagation();
+
+			Mu2eHardware.highlightTreeNode(uid);
+			_selectedUID = uid;
+
+			var detailEl = document.getElementById("detailContent");
+			var devType = Mu2eHardware.getDeviceType(uid);
+
+			var html = "";
+
+			// Header — just UID and parent link
+			html += "<div class='detail-header'>";
+			html += "<span class='detail-uid'>" + uid + "</span>";
+			if (devType === "roc") {
+				var parentDTC = Mu2eHardware.getParentDTC(uid);
+				if (parentDTC)
+					html += "<span class='detail-parent'>" +
+						"on <a onclick=\"selectDevice('" + parentDTC + "')\">" +
+						parentDTC + "</a></span>";
+			}
+			html += "</div>";
+
+			// Settings accordion (loads async)
+			html += "<div id='settingsContent'>" +
+				"<span class='placeholder-text'>Loading settings...</span></div>";
+
+			// Channels section (ROCs only, loads async)
+			if (devType === "roc")
+				html += "<div id='channelsContent'></div>";
+
+			// Actions
+			html += "<div class='accordion-section'>";
+			html += "<div class='accordion-header' onclick='toggleAccordion(this)'>Actions</div>";
+			html += "<div class='accordion-body accordion-open'>";
+			html += "<div id='macroButtons'></div>";
+			html += "</div></div>";
+
+			// Output area
+			html += "<div id='macroOutput'></div>";
+
+			detailEl.innerHTML = html;
+
+			// Load settings
+			Mu2eHardware.fetchDeviceSettings(uid, function (fields) {
+				var el = document.getElementById("settingsContent");
+				if (el) el.innerHTML = Mu2eHardware.renderSettingsHTML(fields);
+			});
+
+			// Load channels for ROCs
+			if (devType === "roc") {
+				Mu2eHardware.fetchChannels(uid, function (result) {
+					var el = document.getElementById("channelsContent");
+					if (el) el.innerHTML = Mu2eHardware.renderChannelsHTML(result);
+				});
+			}
+
+			buildMacroButtons(uid);
+		}
+
+		// =============================================================
+		// toggleAccordion
+		// =============================================================
+		function toggleAccordion(headerEl) {
+			var body = headerEl.nextElementSibling;
+			if (body) body.classList.toggle("accordion-open");
+		}
+
+		// =============================================================
+		// buildMacroButtons — promoted macros as buttons, rest in accordion
+		// =============================================================
+
+		var _macroRunTarget = null;  // { uid, dtcUID, linkIndex } — what to run macros on
+		var _activeMacros = null;   // the macro map to use for the current selection
+
+		function buildMacroButtons(uid) {
+			var btnEl = document.getElementById("macroButtons");
+			var devType = Mu2eHardware.getDeviceType(uid);
+			var macros, feClass;
+
+			if (devType === "roc") {
+				// Get macros from parent DTC, filtered to ROC-relevant ones
+				var rocInfo = Mu2eHardware.getROCMacros(uid);
+				if (!rocInfo || !Object.keys(rocInfo.macros).length) {
+					btnEl.innerHTML =
+						"<span class='placeholder-text'>No macros available.</span>";
+					return;
+				}
+				macros = rocInfo.macros;
+				_macroRunTarget = {
+					uid: rocInfo.dtcUID,
+					dtcUID: rocInfo.dtcUID,
+					linkIndex: rocInfo.linkIndex,
+				};
+				// Use the DTC's feClass for promoted macro lookup
+				var dtcMacros = Mu2eHardware.getMacrosForDevice(rocInfo.dtcUID);
+				var dtcNames = dtcMacros ? Object.keys(dtcMacros) : [];
+				feClass = dtcNames.length ? dtcMacros[dtcNames[0]].feClass : "";
+			} else {
+				macros = Mu2eHardware.getMacrosForDevice(uid);
+				if (!macros || Object.keys(macros).length === 0) {
+					btnEl.innerHTML =
+						"<span class='placeholder-text'>No macros available.</span>";
+					return;
+				}
+				_macroRunTarget = { uid: uid, dtcUID: null, linkIndex: -1 };
+				var macroNames = Object.keys(macros);
+				feClass = macros[macroNames[0]].feClass;
+			}
+
+			_activeMacros = macros;
+			var macroNames = Object.keys(macros);
+
+			// Pick promoted list based on device type
+			var promoted = (devType === "roc") ?
+				Mu2eHardware.ROC_PROMOTED : (Mu2eHardware.PROMOTED_MACROS[feClass] || []);
+			var promotedSet = {};
+			for (var i = 0; i < promoted.length; ++i)
+				promotedSet[promoted[i]] = true;
+
+			var html = "";
+
+			// Promoted buttons (prominent)
+			for (var i = 0; i < promoted.length; ++i) {
+				var name = promoted[i];
+				if (!macros[name]) continue;
+				html += _macroButton(name, macros[name], "macro-btn-primary");
+			}
+
+			// Remaining macros in accordion
+			var otherHtml = "";
+			var otherCount = 0;
+			for (var i = 0; i < macroNames.length; ++i) {
+				var name = macroNames[i];
+				if (promotedSet[name]) continue;
+				otherHtml += _macroButton(name, macros[name], "macro-btn");
+				otherCount++;
+			}
+
+			if (otherCount > 0) {
+				html += "<div class='accordion-section' style='margin-top:6px;'>";
+				html += "<div class='accordion-header' onclick='toggleAccordion(this)'>" +
+					"All Macros <span class='accordion-count'>(" +
+					otherCount + ")</span></div>";
+				html += "<div class='accordion-body'>" +
+					"<div style='display:flex;flex-wrap:wrap;gap:3px;padding:4px 0;'>" +
+					otherHtml + "</div></div></div>";
+			}
+
+			btnEl.innerHTML = html;
+		}
+
+		function _macroButton(name, macro, cls) {
+			var safeName = name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+			var label = Mu2eHardware.macroDisplayName(name);
+			return "<button class='" + cls + "' " +
+				"title='" + (macro.tooltip || name).replace(/'/g, "&#39;") + "' " +
+				"onclick='onMacroClick(\"" + safeName + "\")'>" +
+				label + "</button>";
+		}
+
+		// =============================================================
+		// onMacroClick — handle macro button click
+		// =============================================================
+		function onMacroClick(macroName) {
+			if (!_activeMacros) return;
+			var macro = _activeMacros[macroName];
+			if (!macro) return;
+
+			var outputEl = document.getElementById("macroOutput");
+			var targetDTC = _macroRunTarget ? _macroRunTarget.dtcUID : null;
+			var targetLink = _macroRunTarget ? _macroRunTarget.linkIndex : -1;
+
+			if (macro.inputs.length > 0) {
+				var html = "<div class='macro-input-form'>";
+				html += "<b>" + macroName + "</b><br>";
+				for (var i = 0; i < macro.inputs.length; ++i) {
+					var argName = macro.inputs[i];
+					var isRocMask = argName.toLowerCase().indexOf("roc") >= 0 &&
+						argName.toLowerCase().indexOf("mask") >= 0;
+
+					html += "<div class='macro-input-row'>";
+					html += "<label>" + argName + ":</label>";
+
+					if (isRocMask) {
+						var dtcForMask = targetDTC || _selectedUID;
+						var rocs = Mu2eHardware.getROCsForDTC(dtcForMask);
+
+						// Pre-select only this ROC's link if we're on a ROC
+						var preselect = targetLink >= 0 ? targetLink : -1;
+
+						// Build the mask value
+						var maskVal;
+						if (preselect >= 0) {
+							var mask = "";
+							for (var r = 0; r < rocs.length; ++r)
+								mask += (r === preselect) ? "1" : "0";
+							while (mask.length < 6) mask += "0";
+							maskVal = "0x" + mask;
+						} else {
+							maskVal = "-1";
+						}
+
+						html += "<input type='hidden' class='macroInputField' " +
+							"id='rocMaskInput' " +
+							"data-arg='" + argName.replace(/'/g, "&#39;") +
+							"' value='" + maskVal + "'>";
+						html += "<div class='roc-mask-selector'>";
+						for (var r = 0; r < rocs.length; ++r) {
+							var isOn = (preselect < 0) || (r === preselect);
+							html += "<div class='roc-mask-box " +
+								(isOn ? "roc-mask-on" : "roc-mask-off") + "' " +
+								"data-link='" + r + "' " +
+								"title='" + rocs[r].name + " (link " + r + ")' " +
+								"onclick='toggleRocMask(this)'>" +
+								rocs[r].name + "</div>";
+						}
+						if (!rocs.length)
+							html += "<span class='placeholder-text'>No ROCs found</span>";
+						html += "</div>";
+					} else {
+						html += "<input type='text' class='macroInputField' " +
+							"data-arg='" + argName.replace(/'/g, "&#39;") +
+							"' value=''>";
+					}
+					html += "</div>";
+				}
+				html += "<button class='macro-run-btn' " +
+					"onclick='executeMacro(\"" + macroName.replace(/"/g, "&quot;") +
+					"\")'>Run " + macroName + "</button>";
+				html += "</div>";
+				outputEl.innerHTML = html;
+				return;
+			}
+
+			executeMacro(macroName);
+		}
+
+		// =============================================================
+		// toggleRocMask
+		// =============================================================
+		function toggleRocMask(el) {
+			el.classList.toggle("roc-mask-on");
+			el.classList.toggle("roc-mask-off");
+
+			var boxes = document.querySelectorAll(".roc-mask-box");
+			var allOn = true;
+			var mask = "";
+			for (var i = 0; i < boxes.length; ++i) {
+				var on = boxes[i].classList.contains("roc-mask-on");
+				mask += on ? "1" : "0";
+				if (!on) allOn = false;
+			}
+			while (mask.length < 6) mask += "0";
+
+			var input = document.getElementById("rocMaskInput");
+			if (input)
+				input.value = allOn ? "-1" : "0x" + mask;
+		}
+
+		// =============================================================
+		// executeMacro — gather inputs and run
+		// =============================================================
+		function executeMacro(macroName) {
+			var inputs = {};
+			var fields = document.getElementsByClassName("macroInputField");
+			for (var i = 0; i < fields.length; ++i)
+				inputs[fields[i].getAttribute("data-arg")] = fields[i].value;
+
+			// Run on the correct target (parent DTC for ROC macros)
+			var runUID = _macroRunTarget ? _macroRunTarget.uid : _selectedUID;
+
+			var outputEl = document.getElementById("macroOutput");
+			outputEl.innerHTML = "Running <b>" + macroName + "</b> on " + runUID + "...";
+
+			Mu2eHardware.runMacro(runUID, macroName, inputs,
+				function (result) {
+					outputEl.innerHTML = Mu2eHardware.formatMacroResult(
+						macroName, result, _selectedUID);
+				},
+				function (progressInfo) {
+					var str = "Still running...";
+					for (var p = 0; p < progressInfo.length; ++p)
+						str += "<br>Target: <b>" + progressInfo[p].uid +
+							"</b> — " + progressInfo[p].percent + "%";
+					outputEl.innerHTML = str;
+				}
+			);
+		}
+
+	// =============================================================
+	// Global actions — run macros across all active DTCs
+	// =============================================================
+	function runOnAllDTCs(macroName, inputs, label) {
+		var el = document.getElementById("globalOutput");
+		el.style.display = "";
+		el.innerHTML = "Running <b>" + (label || macroName) +
+			"</b> on all active DTCs...";
+
+		Mu2eHardware.runMacroOnAll(
+			"DTCFrontEndInterface", macroName, inputs,
+			function (results) {
+				var h = "<b>" + (label || macroName) +
+					"</b> — " + results.length + " DTC(s):<br>";
+				for (var i = 0; i < results.length; ++i) {
+					var r = results[i];
+					h += "<hr style='border:none;border-top:1px solid #ddd;margin:4px 0;'>";
+					h += "<b>" + r.uid + "</b>: ";
+					if (r.result.error) {
+						h += "<span class='badValue'>" + r.result.error + "</span>";
+					} else {
+						for (var t = 0; t < r.result.targets.length; ++t) {
+							var out = r.result.targets[t].outputs;
+							for (var k in out)
+								h += "<b>" + k + "</b> = " +
+									Mu2eHardware.colorizeValue(out[k]);
+						}
+					}
+					h += "<br>";
+				}
+				el.innerHTML = h;
+			},
+			function (uid, result) {
+				el.innerHTML += uid + " done. ";
+			}
+		);
+	}
+
+	</script>
+</head>
+
+<body onload='//init() called by DesktopContent.js'>
+	<div id="hardwareOverviewContainer">
+
+		<!-- Full-width header -->
+		<div id="pageHeader">
+			<h3>Mu2e Hardware Overview</h3>
+			<button id="saveBtn" class="save-btn" onclick="saveChanges()" style="display:none;">Save Changes</button>
+			<span id="activeConfigInfo" class="config-info"></span>
+		</div>
+
+		<!-- Two-panel area below header -->
+		<div id="panelsContainer">
+
+			<!-- Left: hardware grid -->
+			<div id="gridPanel">
+				<div id="gridContent"></div>
+			</div>
+
+			<!-- Right: detail panel -->
+			<div id="detailPanel">
+				<div class="accordion-section">
+					<div class="accordion-header" onclick="toggleAccordion(this)">All DTCs</div>
+					<div class="accordion-body">
+						<div class="global-actions-bar">
+							<button class="macro-btn-primary"
+								onclick="runOnAllDTCs('DTC Read', {address: '0x9668'}, 'Read 0x9668')"
+								title="Read register 0x9668 on all active DTCs">Read 0x9668</button>
+							<button class="macro-btn-primary"
+								onclick="runOnAllDTCs('Get DTC Counters', {}, 'Counters')"
+								title="Get counters from all active DTCs">Counters</button>
+							<button class="macro-btn-primary"
+								onclick="runOnAllDTCs('Get Link Lock Status', {}, 'Link Status')"
+								title="Get link lock status from all active DTCs">Link Status</button>
+						</div>
+						<div id="globalOutput" class="global-output" style="display:none;"></div>
+					</div>
+				</div>
+				<div id="detailContent">
+					<div class="placeholder-text">Click a DTC or ROC to view details.</div>
+				</div>
+			</div>
+
+		</div><!-- end panelsContainer -->
+
+	</div>
+</body>
+</html>
