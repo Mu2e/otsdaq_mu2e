@@ -1,6 +1,7 @@
+#include <algorithm>
 #include <cmath>
+#include <format>
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
-#include "otsdaq/FiniteStateMachine/RunControlIterationConstants.h"
 #include "otsdaq/ConfigurationInterface/ConfigurationManagerRW.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
@@ -126,7 +127,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Clock Marker Enable/Disable",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::EnableOrDisableClockMarkers),
-					std::vector<std::string>{"Enable Clock Markers (Default := false)"}, // namesOfInputArgs
+					std::vector<std::string>{"Enable Clock Markers (Default := true)"}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",  // allowedCallingFEs
@@ -243,7 +244,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
 											"Number of 1.4s super cycle repetitions (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-											"Enable Clock Markers (Default := false)",
+											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
@@ -264,7 +265,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"Number of Event Window Markers to generate (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Event Window Mode (Default := 1)",
-											"Enable Clock Markers (Default := false)",
+											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
@@ -2636,12 +2637,12 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	testAndUpdateTimeAlive("Start");
 	testRTFClockInEventBuildingMode("Start");
 
-	if(CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION <=
-	   CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
+	if(getMinReadyForEventGenerationStartIteration() <=
+	   static_cast<unsigned int>(CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION))
 	{
 		__FE_SS__
-		    << "Invalid iteration ordering: RUN_START_READY_FOR_TRIGGERS_ITERATION ("
-		    << CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION
+		    << "Invalid iteration ordering: getMinReadyForEventGenerationStartIteration ("
+		    << getMinReadyForEventGenerationStartIteration()
 		    << ") must be larger than CONFIG_CFO_EVENT_SENDING_START_ITERATION ("
 		    << CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION << ")."
 		    << __E__;
@@ -2671,20 +2672,20 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
 	{
-		const int startIteration = getIterationIndex();
+		const unsigned int startIteration = getIterationIndex();
 		if(startIteration <
-		   RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION)
+		   getMinReadyForEventGenerationStartIteration())
 		{
 			__FE_COUT_INFO__
 			    << "Delaying CFO run plan launch until start iteration >= "
-			    << RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION
+			    << getMinReadyForEventGenerationStartIteration()
 			    << __E__;
 			indicateIterationWork();
 			return;
 		}
 
 		if(startIteration ==
-		   RunControlIterationConstants::RUN_START_READY_FOR_TRIGGERS_ITERATION)
+		   getMinReadyForEventGenerationStartIteration())
 		{
 			bool autoFixedWidthRunPlanEnable = false;
 			try
@@ -3093,6 +3094,12 @@ void CFOFrontEndInterface::stop(void)
 }  //end stop()
 
 //==============================================================================
+unsigned int CFOFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
+{
+	return 12;
+}  // end getMinReadyForEventGenerationStartIteration()
+
+//==============================================================================
 bool CFOFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
@@ -3404,7 +3411,7 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 	    theSuperParameters_.numberOfEventWindows,  //numberOfEvents,
 	    next_starting_event_window_tag_,           //startTag,
 	    1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
-	    0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
+	    1,  //__GET_ARG_IN__("Enable Clock Markers (Default := true)",bool,true),
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
 	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
@@ -3528,7 +3535,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__
 	        __GET_ARG_IN__("Use Detached Buffer Test (Default := false)", uint32_t),
 	        numberOfCycles,
 	        startTag,
-	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
 	            bool),
@@ -3657,7 +3664,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 {
 	bool enableClockMarkers =
-	    __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false);
+	    __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true);
 	__FE_COUTV__(enableClockMarkers);
 	if(enableClockMarkers)
 		thisCFO_->EnableEmbeddedClockMarker();
@@ -3709,7 +3716,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	                  "Event Window Mode (Default := 1)",
 	                  uint64_t,
 	                  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
-	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
 	            bool),
