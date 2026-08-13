@@ -2687,7 +2687,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
 	{
 		getDTC()->EnableLink(DTCLib::DTC_Link_CFO);
-		__FE_COUT__ << "CFO link enabled, Final SoftReset to clear errors before enabling CFO operation."
+		__FE_COUT__ << "CFO link enabled, Final SoftReset to clear errors before "
+		               "enabling CFO operation."
 		            << __E__;
 		getDTC()->SoftReset();
 		indicateIterationWork();
@@ -3437,6 +3438,19 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 //==============================================================================
 // return true to keep running
+unsigned int DTCFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
+{
+	unsigned int maxIteration = 0;
+	for(const auto& rocPair : rocs_)
+	{
+		unsigned int val = rocPair.second->getMinReadyForEventGenerationStartIteration();
+		if(val > maxIteration)
+			maxIteration = val;
+	}
+	return maxIteration;
+}  // end getMinReadyForEventGenerationStartIteration()
+
+//==============================================================================
 bool DTCFrontEndInterface::running(void)
 {
 	__FE_COUTV__(skipInit_);

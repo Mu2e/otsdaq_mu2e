@@ -36,13 +36,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
   public:
 	// state machine
 	//----------------
-	void configure(void) override;
-	void halt(void) override;
-	void pause(void) override;
-	void resume(void) override;
-	void start(std::string runNumber) override;
-	void stop(void) override;
-	bool running(void) override;
+	void         configure(void) override;
+	void         halt(void) override;
+	void         pause(void) override;
+	void         resume(void) override;
+	void         start(std::string runNumber) override;
+	void         stop(void) override;
+	bool         running(void) override;
+	unsigned int getMinReadyForEventGenerationStartIteration(void) const override;
 
 	// emulator handlers
 	//----------------

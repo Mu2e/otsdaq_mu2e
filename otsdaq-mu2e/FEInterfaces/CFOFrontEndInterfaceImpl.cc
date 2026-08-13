@@ -2637,12 +2637,13 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	testAndUpdateTimeAlive("Start");
 	testRTFClockInEventBuildingMode("Start");
 
-	if(CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION <=
-	   CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
+	if(getMinReadyForEventGenerationStartIteration() <=
+	   static_cast<unsigned int>(
+	       CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION))
 	{
 		__FE_SS__
-		    << "Invalid iteration ordering: RUN_START_READY_FOR_TRIGGERS_ITERATION ("
-		    << CFOandDTCCoreVInterface::RUN_START_READY_FOR_TRIGGERS_ITERATION
+		    << "Invalid iteration ordering: getMinReadyForEventGenerationStartIteration ("
+		    << getMinReadyForEventGenerationStartIteration()
 		    << ") must be larger than CONFIG_CFO_EVENT_SENDING_START_ITERATION ("
 		    << CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION << ")."
 		    << __E__;
@@ -2669,6 +2670,80 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		__FE_COUT_INFO__ << "Start the loopback!" << __E__;
 		loopbackTest(runNumber);
 		__FE_COUT_INFO__ << "End the loopback!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	{
+		const unsigned int startIteration = getIterationIndex();
+		if(startIteration < getMinReadyForEventGenerationStartIteration())
+		{
+			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start iteration >= "
+			                 << getMinReadyForEventGenerationStartIteration() << __E__;
+			indicateIterationWork();
+			return;
+		}
+
+		if(startIteration == getMinReadyForEventGenerationStartIteration())
+		{
+			bool autoFixedWidthRunPlanEnable = false;
+			try
+			{
+				autoFixedWidthRunPlanEnable =
+				    getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>();
+			}
+			catch(...)
+			{
+				__FE_COUT_WARN__
+				    << "Missing CFOInterfaceTable AutoFixedWidthRunPlanEnable. "
+				       "Skipping startup run plan launch."
+				    << __E__;
+				return;
+			}
+
+			if(!autoFixedWidthRunPlanEnable)
+			{
+				__FE_COUT_INFO__
+				    << "AutoFixedWidthRunPlanEnable is disabled. Skipping startup run "
+				       "plan launch."
+				    << __E__;
+				return;
+			}
+
+			const uint32_t numberOfEventWindowMarkers = 0;  // 0 means infinite windows
+
+			std::string eventDuration = "100us";
+			try
+			{
+				eventDuration = getSelfNode()
+				                    .getNode("AutoFixedWidthRunPlanEventDuration")
+				                    .getValueWithDefault("100us");
+			}
+			catch(...)
+			{
+				__FE_COUT_WARN__
+				    << "Optional CFOInterfaceTable AutoFixedWidthRunPlanEventDuration "
+				       "was not found; defaulting to 100us."
+				    << __E__;
+			}
+
+			__FE_COUT_INFO__ << "Launching startup fixed-width CFO run plan in infinite "
+			                    "mode (count=0) "
+			                 << "at duration " << eventDuration << __E__;
+
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(true,
+			                                             false,
+			                                             eventDuration,
+			                                             numberOfEventWindowMarkers,
+			                                             next_starting_event_window_tag_,
+			                                             1,
+			                                             false,
+			                                             false,
+			                                             false,
+			                                             false);
+
+			next_starting_event_window_tag_ += numberOfEventWindowMarkers;
+		}
 	}
 
 	/* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
@@ -2840,7 +2915,24 @@ void CFOFrontEndInterface::stop(void)
 		return;
 	}
 
-	// TODO: add CFO Halt or Leave
+	// Stop the run plan if AutoFixedWidthRunPlan was enabled
+	try
+	{
+		if(getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>())
+		{
+			__FE_COUT_INFO__ << "Disabling CFO run plan." << __E__;
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			    false, false, "100us", 0, 0, 1, false, false, false, false);
+		}
+	}
+	catch(...)
+	{
+	}
+
+	// Apply explicit CFO halt behavior on stop transition.
+	halt();
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
@@ -3013,6 +3105,12 @@ void CFOFrontEndInterface::stop(void)
 	indicateIterationWork();
 	return;
 }  //end stop()
+
+//==============================================================================
+unsigned int CFOFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
+{
+	return 12;
+}  // end getMinReadyForEventGenerationStartIteration()
 
 //==============================================================================
 bool CFOFrontEndInterface::running(void)
