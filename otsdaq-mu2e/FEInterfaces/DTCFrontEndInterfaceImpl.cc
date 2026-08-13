@@ -2099,6 +2099,11 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_CFO_EDGE_FIX)
+	{
+		__FE_COUT__ << "Idle while CFO fixes edges..." << __E__;
+		indicateIterationWork();
+	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
@@ -5659,7 +5664,36 @@ void DTCFrontEndInterface::RTFMarkerOffsetApply(__ARGS__)
 //========================================================================
 void DTCFrontEndInterface::FixCFOClockEdge(__ARGS__)
 {
-	auto     dtc    = getDTC();
+	auto dtc = getDTC();
+
+	// wait for CFO TX Clock Markers > 1000 before checking errors
+	{
+		uint32_t markers     = dtc->ReadCFOTXClockMarkerCountLink6();
+		uint32_t prevMarkers = markers;
+		int      polls       = 0;
+		while(markers <= 1000)
+		{
+			usleep(100000);
+			markers = dtc->ReadCFOTXClockMarkerCountLink6();
+			++polls;
+			if(markers == prevMarkers && polls >= 5)
+			{
+				__FE_SS__ << "Fix CFO Clock Edge: no CFO clock markers arriving on DTC "
+				          << getInterfaceUID() << " (count stuck at " << markers
+				          << " after " << (polls * 100) << " ms).";
+				__FE_SS_THROW__;
+			}
+			if(polls >= 30)
+			{
+				__FE_SS__ << "Fix CFO Clock Edge: CFO clock markers too slow on DTC "
+				          << getInterfaceUID() << " (" << markers
+				          << " after 3 s, need > 1000).";
+				__FE_SS_THROW__;
+			}
+			prevMarkers = markers;
+		}
+	}
+
 	uint32_t cfoErr = dtc->ReadCFOLinkErrorRegister();
 
 	bool txMarkers = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
