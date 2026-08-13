@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cmath>
+#include <format>
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
 #include "otsdaq/ConfigurationInterface/ConfigurationManagerRW.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
@@ -125,7 +127,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Clock Marker Enable/Disable",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::EnableOrDisableClockMarkers),
-					std::vector<std::string>{"Enable Clock Markers (Default := false)"}, // namesOfInputArgs
+					std::vector<std::string>{"Enable Clock Markers (Default := true)"}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",  // allowedCallingFEs
@@ -242,7 +244,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
 											"Number of 1.4s super cycle repetitions (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-											"Enable Clock Markers (Default := false)",
+											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
@@ -263,7 +265,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"Number of Event Window Markers to generate (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Event Window Mode (Default := 1)",
-											"Enable Clock Markers (Default := false)",
+											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
@@ -3324,7 +3326,7 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 	    theSuperParameters_.numberOfEventWindows,  //numberOfEvents,
 	    next_starting_event_window_tag_,           //startTag,
 	    1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
-	    0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
+	    1,  //__GET_ARG_IN__("Enable Clock Markers (Default := true)",bool,true),
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
 	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
@@ -3448,7 +3450,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__
 	        __GET_ARG_IN__("Use Detached Buffer Test (Default := false)", uint32_t),
 	        numberOfCycles,
 	        startTag,
-	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
 	            bool),
@@ -3577,7 +3579,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 {
 	bool enableClockMarkers =
-	    __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false);
+	    __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true);
 	__FE_COUTV__(enableClockMarkers);
 	if(enableClockMarkers)
 		thisCFO_->EnableEmbeddedClockMarker();
@@ -3629,7 +3631,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	                  "Event Window Mode (Default := 1)",
 	                  uint64_t,
 	                  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
-	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
 	            bool),
