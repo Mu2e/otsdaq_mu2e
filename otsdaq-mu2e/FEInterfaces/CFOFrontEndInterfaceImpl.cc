@@ -2638,7 +2638,8 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	testRTFClockInEventBuildingMode("Start");
 
 	if(getMinReadyForEventGenerationStartIteration() <=
-	   static_cast<unsigned int>(CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION))
+	   static_cast<unsigned int>(
+	       CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION))
 	{
 		__FE_SS__
 		    << "Invalid iteration ordering: getMinReadyForEventGenerationStartIteration ("
@@ -2671,22 +2672,19 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		__FE_COUT_INFO__ << "End the loopback!" << __E__;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
-	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		const unsigned int startIteration = getIterationIndex();
-		if(startIteration <
-		   getMinReadyForEventGenerationStartIteration())
+		if(startIteration < getMinReadyForEventGenerationStartIteration())
 		{
-			__FE_COUT_INFO__
-			    << "Delaying CFO run plan launch until start iteration >= "
-			    << getMinReadyForEventGenerationStartIteration()
-			    << __E__;
+			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start iteration >= "
+			                 << getMinReadyForEventGenerationStartIteration() << __E__;
 			indicateIterationWork();
 			return;
 		}
 
-		if(startIteration ==
-		   getMinReadyForEventGenerationStartIteration())
+		if(startIteration == getMinReadyForEventGenerationStartIteration())
 		{
 			bool autoFixedWidthRunPlanEnable = false;
 			try
@@ -2923,10 +2921,13 @@ void CFOFrontEndInterface::stop(void)
 		if(getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>())
 		{
 			__FE_COUT_INFO__ << "Disabling CFO run plan." << __E__;
-			CompileSetAndLaunchTemplateFixedWidthRunPlan(false, false, "100us", 0, 0, 1, false, false, false, false);
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			    false, false, "100us", 0, 0, 1, false, false, false, false);
 		}
 	}
-	catch(...) {}
+	catch(...)
+	{
+	}
 
 	// Apply explicit CFO halt behavior on stop transition.
 	halt();
