@@ -36,13 +36,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
   public:
 	// state machine
 	//----------------
-	void configure(void) override;
-	void halt(void) override;
-	void pause(void) override;
-	void resume(void) override;
-	void start(std::string runNumber) override;
-	void stop(void) override;
-	bool running(void) override;
+	void         configure(void) override;
+	void         halt(void) override;
+	void         pause(void) override;
+	void         resume(void) override;
+	void         start(std::string runNumber) override;
+	void         stop(void) override;
+	bool         running(void) override;
+	unsigned int getMinReadyForEventGenerationStartIteration(void) const override;
 
 	// emulator handlers
 	//----------------
@@ -86,7 +87,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void configureHardwareDevMode(void);
 	void configureEventBuildingMode(int step = -1);
 	void configureLoopbackMode(int step = -1);
-	void configureForTimingChain(int step);
+	void configureForTimingChain(int step = -1);
 	void configureCommon(void);
 
 	void loopbackTest(int step = -1);
@@ -164,11 +165,15 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void createROCs(void);
 	void registerFEMacros(void);
 
-	int                     dtc_location_in_chain_ = -1;
-	unsigned int            runningCallCount_      = 0;
-	unsigned int            roc_mask_              = 0;
-	unsigned int            roc_emulated_mask_     = 0;
-	bool                    emulate_cfo_           = true;
+	int                     timing_chain_first_substep_ = -1;
+	bool                    rtfPhaseEdgeRetried_        = false;
+	int                     dtc_location_in_chain_      = -1;
+	unsigned int            runningCallCount_           = 0;
+	unsigned int            roc_mask_                   = 0;
+	unsigned int            roc_emulated_mask_          = 0;
+	bool                    has_real_roc_flow_          = false;
+	std::string             real_roc_flow_reason_;
+	bool                    emulate_cfo_ = true;
 	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
 	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 
@@ -261,8 +266,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              bool alsoSetupJA,
 	                              bool cfoRxTxEnable,
 	                              bool enableAutogenDRP,
-	                              int  permanentOffset = 0,
-	                              int  idelayTapValue  = -1);
+	                              int  permanentOffset     = 0,
+	                              int  idelayTapValue      = -1,
+	                              int  rtfPunchedClockEdge = 0);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
 	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
 	                                              bool               useDetachedBufferTest,
