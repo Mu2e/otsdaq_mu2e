@@ -8,11 +8,12 @@ corresponds to a phase; sub-iterations handle steps within a phase that must eac
 
 Two operating modes use this sequence:
 
-- **EventBuildingMode** — skips sync phases (iterations 4–7 are idle for all devices).
+- **EventBuildingMode** — skips sync phases (iterations 4–8 are idle for all devices).
 - **EventBuildingAndSyncMode** — assumes the RTF 40 MHz sync clock is present and runs the
-  full sync sequence (edge fix, RTF Marker Offset, error verification).
+  full sync sequence (CFO-coordinated edge fix, per-DTC edge fix, RTF Marker Offset, error
+  verification).
 
-Both modes use the same iteration count (12 iterations, 0–11).
+Both modes use the same iteration count (13 iterations, 0–12).
 
 Key design constraints:
 
@@ -23,7 +24,7 @@ Key design constraints:
 - **DCS ownership**: Only one DTC instance can control DCS (ROC communication via DMA). This is
   the instance with real ROCs. The CFO-subsystem DTC must never call `EnableDCSReception()`.
 - **No-ROC DTCs** skip ROC/EVB setup entirely — they only participate in clock/sync phases
-  (iterations 0–7) and Final SoftReset (iteration 10).
+  (iterations 0–8) and Final SoftReset (iteration 11).
 - **Sub-step budget**: Each sub-step must complete in <5s to avoid SOAP/xoap timeouts.
 
 ## Phase Map
@@ -34,16 +35,17 @@ Key design constraints:
 | 1 | **1b — Establish Clocks** | idle | idle | `SoftReset()`, `ClearControlRegister(keepMask)`, `DisableLink(EVB)`, disable ROC links, `DisableCFOLoopback()`, JA setup + lock poll |
 | 2 | **2a — Timing Chain: Enable** | `EnableLink(CFO_Link_ALL)`, `EnableEmbeddedClockMarker()` | idle | idle |
 | 3 | **2b — Timing Chain: CDR Check** | Enumerate DTCs, call "Get Link Lock Status" FE Macro on each; if unlocked -> `ResetSERDES()` + retry; throw on 2nd failure | `ReadSERDESRXCDRLock(DTC_Link_CFO)` — throw if not locked | `ReadSERDESRXCDRLock(DTC_Link_CFO)` — throw if not locked |
-| 4 | **3a — Sync: CFO check + edge fix (no-ROC)** | Call "Get RTF Interface Status" FE Macro on all DTCs; validate CFO Emulation Mode OFF, JA Source RJ45, Saturated YES, CFO CDR Lock LOCKED | Clear JA counters + SoftReset, wait markers > 1000, check edge errors (txMarkers/rxToTx/parity/batchSlip) — toggle edge + SoftReset if needed, retry once; then verify JA counters stayed 0 | idle |
-| 5 | **3b — Sync: edge fix (ROC DTCs)** | idle | idle | Same edge fix sub-steps as 3a |
-| 6 | **3c — Sync: RTF offset + verify (no-ROC)** | idle | Clear JA counters, apply RTF offset + `SoftReset()`, wait markers > 1000, verify error flags + RTF counters; if RTFPhase-only, toggle RTF punched clock edge (bit 7) + `SoftReset()` and re-verify once; then verify JA counters stayed 0 | idle |
-| 7 | **3d — Sync: RTF offset + verify (ROC)** | idle | idle | Same offset + verify sub-steps as 3c |
-| 8 | **4 — ROC and DCS Setup** | idle | idle | `SetupROCs()` per link, `EnableDCSReception()`, CRV `SetPunchEnable()`, `SoftReset()`, ROC DCS-based configure |
-| 9 | **5 — ROC Data Path Setup** | idle | idle | `DisableLink(EVB)`, `SetEVBInfo()`, DRP mode, `EnableLink(EVB)`, `SetCFOEventModeRequiredMask()` |
-| 10 | **Final SoftReset** | `SoftReset()` | `EnableLink(CFO)`, `SoftReset()` | `EnableLink(CFO)`, `SoftReset()` |
-| 11 | **6 — Enable CFO Operation** | `EnableAcceleratorRF0()`, `SetPunchEnable()` | idle | idle |
+| 4 | **2c — CFO Edge Fix** | RTF validation on all DTCs, then iterative edge fix loop (call "Fix CFO Clock Edge" FE Macro on each DTC per pass until 2 consecutive clean passes or max 10 passes; throw if not converged) | idle | idle |
+| 5 | **3a — Sync: edge fix (no-ROC)** | idle | Clear JA counters + SoftReset, wait markers > 1000, check edge errors (txMarkers/rxToTx/parity/batchSlip) — toggle edge + SoftReset if needed, retry once; then verify JA counters stayed 0 | idle |
+| 6 | **3b — Sync: edge fix (ROC DTCs)** | idle | idle | Same edge fix sub-steps as 3a |
+| 7 | **3c — Sync: RTF offset + verify (no-ROC)** | idle | Clear JA counters, apply RTF offset + `SoftReset()`, wait markers > 1000, verify error flags + RTF counters; if RTFPhase-only, toggle RTF punched clock edge (bit 7) + `SoftReset()` and re-verify once; then verify JA counters stayed 0 | idle |
+| 8 | **3d — Sync: RTF offset + verify (ROC)** | idle | idle | Same offset + verify sub-steps as 3c |
+| 9 | **4 — ROC and DCS Setup** | idle | idle | `SetupROCs()` per link, `EnableDCSReception()`, CRV `SetPunchEnable()`, `SoftReset()`, ROC DCS-based configure |
+| 10 | **5 — ROC Data Path Setup** | idle | idle | `DisableLink(EVB)`, `SetEVBInfo()`, DRP mode, `EnableLink(EVB)`, `SetCFOEventModeRequiredMask()` |
+| 11 | **Final SoftReset** | `SoftReset()` | `EnableLink(CFO)`, `SoftReset()` | `EnableLink(CFO)`, `SoftReset()` |
+| 12 | **6 — Enable CFO Operation** | `EnableAcceleratorRF0()`, `SetPunchEnable()` | idle | idle |
 
-In **EventBuildingMode** (no sync), iterations 4–7 are idle for all devices (CFO and all DTCs
+In **EventBuildingMode** (no sync), iterations 4–8 are idle for all devices (CFO and all DTCs
 log "Sync phase idle" and advance).
 
 Constants in `CFOandDTCCoreVInterface.h`:
@@ -52,16 +54,15 @@ Constants in `CFOandDTCCoreVInterface.h`:
 - `CONFIG_PHASE_ESTABLISH_CLOCKS_B` = 1
 - `CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_ENABLE` = 2
 - `CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK` = 3
-- `CONFIG_PHASE_ESTABLISH_SYNC_A` = 4
-- `CONFIG_PHASE_ESTABLISH_SYNC_B` = 5
-- `CONFIG_PHASE_ESTABLISH_SYNC_C` = 6
-- `CONFIG_PHASE_ESTABLISH_SYNC_D` = 7
-- `CONFIG_PHASE_ESTABLISH_ROC_CONFIG` = 8
-- `CONFIG_PHASE_ROC_DATA_PATH` = 9
-- `CONFIG_PHASE_FINAL_SOFT_RESET` = 10
-- `CONFIG_CFO_EVENT_SENDING_START_ITERATION` = 11
-
-`RUN_START_READY_FOR_TRIGGERS_ITERATION` = 12 (in `RunControlIterationConstants.h`).
+- `CONFIG_PHASE_CFO_EDGE_FIX` = 4
+- `CONFIG_PHASE_ESTABLISH_SYNC_A` = 5
+- `CONFIG_PHASE_ESTABLISH_SYNC_B` = 6
+- `CONFIG_PHASE_ESTABLISH_SYNC_C` = 7
+- `CONFIG_PHASE_ESTABLISH_SYNC_D` = 8
+- `CONFIG_PHASE_ESTABLISH_ROC_CONFIG` = 9
+- `CONFIG_PHASE_ROC_DATA_PATH` = 10
+- `CONFIG_PHASE_FINAL_SOFT_RESET` = 11
+- `CONFIG_CFO_EVENT_SENDING_START_ITERATION` = 12
 
 Operating mode constants in `CFOandDTCCoreVInterface.h`:
 
@@ -122,14 +123,40 @@ Idle.
 
 Self-check `ReadSERDESRXCDRLock(DTC_Link_CFO)`. If not locked, throws exception.
 
-## Phase 3a — Sync: CFO check + edge fix (no-ROC DTCs) (iteration 4)
+## Phase 2c — CFO Edge Fix (iteration 4)
 
 Only active in **EventBuildingAndSyncMode**. In **EventBuildingMode**, all devices idle.
 
-### CFO
+### CFO — sub-steps
 
-Enumerates all DTCs, calls "Get RTF Interface Status" FE Macro on each. Validates: CFO Emulation
-Mode OFF, JA Source RJ45, Saturated YES, CFO CDR Lock LOCKED. Throws if any check fails.
+0. Enumerate all DTCs, call "Get RTF Interface Status" FE Macro on each. Validates: CFO
+   Emulation Mode OFF, JA Source RJ45, Saturated YES, CFO CDR Lock LOCKED. Throws if any check
+   fails.
+
+1+. Iterative edge fix passes. On each pass, the CFO calls "Fix CFO Clock Edge" FE Macro on
+   every DTC. That macro waits for CFO TX Clock Markers > 1000 (100ms polling, throws if no
+   count increase or if count stays ≤ 1000 after ~3s), then checks edge errors (txMarkers,
+   rxToTx, parity, batchSlip). If errors are present, it toggles the CFO sample edge, settles
+   100ms, and issues a `SoftReset()`.
+
+   - If **no DTC toggled** on two consecutive passes → chain converged. Done.
+   - If **some toggled** and pass count < 10 → another pass.
+   - If pass count ≥ 10 → throw exception listing which DTCs still have errors.
+
+   Changing an upstream DTC's edge can affect downstream DTCs, so multiple passes may be needed
+   for convergence. Early DTCs in the chain do not lose their correct edge once found; the loop
+   is monotonically converging.
+
+### DTC (all types): idle
+
+## Phase 3a — Sync: edge fix (no-ROC DTCs) (iteration 5)
+
+Only active in **EventBuildingAndSyncMode**. In **EventBuildingMode**, all devices idle.
+
+Per-DTC fallback edge fix after the CFO-coordinated loop. Each no-ROC DTC independently checks
+and fixes its own edge.
+
+### CFO: idle
 
 ### DTC w/o ROCs — sub-steps
 
@@ -146,7 +173,7 @@ Mode OFF, JA Source RJ45, Saturated YES, CFO CDR Lock LOCKED. Throws if any chec
 
 ### DTC w/ ROCs: idle
 
-## Phase 3b — Sync: edge fix (ROC DTCs) (iteration 5)
+## Phase 3b — Sync: edge fix (ROC DTCs) (iteration 6)
 
 Only active in **EventBuildingAndSyncMode**.
 
@@ -156,7 +183,7 @@ Same sub-step sequence as Phase 3a for no-ROC DTCs.
 
 ### CFO, DTC w/o ROCs: idle
 
-## Phase 3c — Sync: RTF offset + verify (no-ROC DTCs) (iteration 6)
+## Phase 3c — Sync: RTF offset + verify (no-ROC DTCs) (iteration 7)
 
 Only active in **EventBuildingAndSyncMode**.
 
@@ -180,7 +207,7 @@ Tx, Clock Marker Tx, Rx-to-Tx Data Corruption) and RTF counters (Event Start Cha
 
 ### CFO, DTC w/ ROCs: idle
 
-## Phase 3d — Sync: RTF offset + verify (ROC DTCs) (iteration 7)
+## Phase 3d — Sync: RTF offset + verify (ROC DTCs) (iteration 8)
 
 Only active in **EventBuildingAndSyncMode**.
 
@@ -190,7 +217,7 @@ Same sub-step sequence as Phase 3c.
 
 ### CFO, DTC w/o ROCs: idle
 
-## Phase 4 — ROC and DCS Setup (iteration 8)
+## Phase 4 — ROC and DCS Setup (iteration 9)
 
 Only DTCs with real ROCs act. CFO and no-ROC DTCs idle.
 
@@ -207,7 +234,7 @@ Sub-steps 1+: ROC DCS-based configure. The DTC acts as FESupervisor for its ROCs
 ROC's sub-iteration index, calls `roc->configure()`, checks `getSubIterationWork()`. First
 sub-step also calls `WaitForLinkReady()` per ROC. Repeats until all ROCs are done.
 
-## Phase 5 — ROC Data Path Setup (iteration 9)
+## Phase 5 — ROC Data Path Setup (iteration 10)
 
 Only DTCs with real ROCs act. CFO and no-ROC DTCs idle.
 
@@ -217,13 +244,13 @@ Only DTCs with real ROCs act. CFO and no-ROC DTCs idle.
 3. `EnableLink(EVB)`
 4. Read `EventModeRequiredMask` from config (default 0), `SetCFOEventModeRequiredMask(mask)`
 
-## Final SoftReset (iteration 10)
+## Final SoftReset (iteration 11)
 
 All DTCs: `EnableLink(CFO)` to ensure the CFO receive path is active before the CFO begins
 sending heartbeats and event window markers, then `SoftReset()` to clear accumulated errors
 from ROC/DCS and data path setup. CFO: `SoftReset()` only.
 
-## Phase 6 — Enable CFO Operation (iteration 11)
+## Phase 6 — Enable CFO Operation (iteration 12)
 
 CFO only. All DTCs idle.
 
