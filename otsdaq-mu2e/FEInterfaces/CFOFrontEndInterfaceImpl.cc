@@ -2670,7 +2670,8 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		loopbackTest(runNumber);
 		__FE_COUT_INFO__ << "End the loopback!" << __E__;
 	}
-	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		const unsigned int startIteration = getIterationIndex();
 		if(startIteration <
@@ -2915,6 +2916,17 @@ void CFOFrontEndInterface::stop(void)
 		__FE_COUT_INFO__ << "CFO stop for HW Dev mode." << __E__;
 		return;
 	}
+
+	// Stop the run plan if AutoFixedWidthRunPlan was enabled
+	try
+	{
+		if(getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>())
+		{
+			__FE_COUT_INFO__ << "Disabling CFO run plan." << __E__;
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(false, false, "100us", 0, 0, 1, false, false, false, false);
+		}
+	}
+	catch(...) {}
 
 	// Apply explicit CFO halt behavior on stop transition.
 	halt();
