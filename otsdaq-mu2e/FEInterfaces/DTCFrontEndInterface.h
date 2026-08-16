@@ -255,6 +255,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void GetDTCIdAndEVBInfo(__ARGS__);
 	void SetDTCIdAndEVBInfo(__ARGS__);
+	void EVBInit(__ARGS__);
+	void EVBStatus(__ARGS__);
 
 	// void 								ResetEVBLinkRx						(__ARGS__);
 	// void 								ResetEVBLinkTx						(__ARGS__);

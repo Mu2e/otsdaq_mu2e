@@ -2102,6 +2102,23 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->EnableEmbeddedClockMarker();
 		__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
+
+		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		{
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+				true,    // enable
+				false,   // useDetachedBufferTest
+				"1.7us", // eventDuration
+				0,       // numberOfEventWindowMarkers (0 = infinite)
+				0,       // initialEventWindowTag
+				0,       // eventWindowMode (null heartbeat — marker traffic only)
+				true,    // enableClockMarkers
+				false,   // saveBinaryDataToFile
+				false,   // saveSubeventHeadersToDataFile
+				false);  // doNotResetCounters
+			__FE_COUT__ << "Started fixed-width event run plan for aggressive 8b10 traffic during sync phases." << __E__;
+		}
+
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
@@ -2505,6 +2522,22 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			}
 		}
 	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_E)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+		}
+		else
+		{
+			thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			__FE_COUT__ << "Stopped CFO event generation after sync phases." << __E__;
+		}
+		indicateIterationWork();
+	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
@@ -2603,7 +2636,7 @@ void CFOFrontEndInterface::configureLoopbackMode(int step)
 
 //==============================================================================
 // Phase 1 (Establish Clocks) for the CFO.
-//	Sub-step 0: halt, disable beam modes, SoftReset, ClearControlRegister, DisableAllOutputs
+//	Sub-step 0: halt, disable beam modes, ClearControlRegister, DisableAllOutputs
 //	Sub-step 1: JA setup — check lock, full reset if unlocked, mux-only if locked
 //	Sub-steps 2+: JA lock polling (up to ~10 polls, 1s each)
 void CFOFrontEndInterface::configureForTimingChain(int step)
@@ -2620,7 +2653,6 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 		halt();
 		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-		thisCFO_->SoftReset();
 		thisCFO_->ClearControlRegister();
 		thisCFO_->DisableAllOutputs();
 		indicateSubIterationWork();

@@ -809,6 +809,31 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "*",
 	    "Read the fields of the DTC ID and EVB Info register.");
 
+	registerFEMacroFunction(
+	    "EVB Init",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::EVBInit),  // feMacroFunction
+	    std::vector<std::string>{
+	        "EVB Number of DTCs in Cluster (Default := 1)",
+	        "EVB Cluster Base DTC Address as hostname (e.g. calo-01, trk-04) (Default := auto)"},  // namesOfInputArgs
+	    std::vector<std::string>{"Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Configure EVB registers from hostname-derived addresses (DTC ID, MAC, "
+	    "Partition ID=0x99, Mode=0), enable the EVB link, and issue a Soft Reset.");
+
+	registerFEMacroFunction(
+	    "EVB Status",
+	    static_cast<FEVInterface::frontEndMacroFunction_t>(
+	        &DTCFrontEndInterface::EVBStatus),  // feMacroFunction
+	    std::vector<std::string>{},             // namesOfInputArgs
+	    std::vector<std::string>{"Result"},
+	    1,  // requiredUserPermissions
+	    "*",
+	    "Display all EVB counters: config (0x9154/0x9158), pipeline word counters "
+	    "(0x9200-0x920C), per-DTC BRAM stats (types 0x0-0x8 via 0x9160), "
+	    "and 10GbE RX packet errors (0x9590).");
+
 	//------------------
 
 	registerFEMacroFunction(
@@ -2473,6 +2498,11 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			indicateIterationWork();
 		}
 	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_E)
+	{
+		__FE_COUT__ << "Idle while CFO stops events..." << __E__;
+		indicateIterationWork();
+	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
 	{
 		// Phase 4: ROC and DCS Setup — only DTCs with real ROCs act
@@ -2718,7 +2748,7 @@ void DTCFrontEndInterface::configureLoopbackMode(int step)
 
 //==============================================================================
 // Phase 1 (Establish Clocks) for DTC.
-//	Sub-step 0: SoftReset, ClearControlRegister, selective link disable, passthrough
+//	Sub-step 0: ClearControlRegister (preserve edge bits), selective link disable, passthrough
 //	Sub-step 1: JA setup — check lock, full reset if unlocked, mux-only if locked
 //	Sub-steps 2+: JA lock polling (up to ~10 polls, 1s each)
 void DTCFrontEndInterface::configureForTimingChain(int step)
@@ -2731,9 +2761,7 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 	case 0: {
-		getDTC()->SoftReset();
-
-		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6);
+		const uint32_t controlRegisterKeepMask = (1u << 5) | (1u << 6) | (1u << 7);
 		getDTC()->ClearControlRegister(controlRegisterKeepMask);
 
 		if(has_real_roc_flow_)
@@ -6112,6 +6140,149 @@ void DTCFrontEndInterface::SetDTCIdAndEVBInfo(__ARGS__)
 	                getDTC()->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
 	                    getDTC()->FormatEVBClusterInfo());
 }  //end SetDTCIdAndEVBInfo()
+
+//========================================================================
+static uint32_t hostnameToEVBAddress(const std::string& shortHostname)
+{
+	uint32_t subsystemOffset = 0;
+	if(shortHostname.find("calo") != std::string::npos)
+		subsystemOffset = 100;
+	else if(shortHostname.find("extmon") != std::string::npos)
+		subsystemOffset = 230;
+	else if(shortHostname.find("crv") != std::string::npos)
+		subsystemOffset = 200;
+	else if(shortHostname.find("stm") != std::string::npos)
+		subsystemOffset = 220;
+
+	std::vector<std::string> parts;
+	StringMacros::getVectorFromString(shortHostname, parts, {'-'});
+	return subsystemOffset + atoi(parts.back().c_str()) * 2;
+}  //end hostnameToEVBAddress()
+
+//========================================================================
+void DTCFrontEndInterface::EVBInit(__ARGS__)
+{
+	auto dtc = getDTC();
+
+	std::string hostname = __ENV__("HOSTNAME");
+	std::vector<std::string> hostSplit;
+	StringMacros::getVectorFromString(hostname, hostSplit, {'.'});
+	std::string shortHostname = hostSplit[0];
+
+	uint32_t macAddress = hostnameToEVBAddress(shortHostname) + deviceIndex_;
+
+	uint8_t  DTCid        = (1 << 7) | macAddress;
+	uint8_t  evbMode      = 0;
+	uint8_t  evbPartition = 0x99;
+	uint8_t  evbMAC       = macAddress;
+	uint16_t deadTime     = 0;
+
+	__FE_COUTV__(hostname);
+	__FE_COUTV__(macAddress);
+	__FE_COUTV__((int)DTCid);
+
+	uint8_t NumOfDTCs = __GET_ARG_IN__("EVB Number of DTCs in Cluster (Default := 1)", uint8_t, 1);
+
+	std::string baseDTCHostname = __GET_ARG_IN__(
+	    "EVB Cluster Base DTC Address as hostname (e.g. calo-01, trk-04) (Default := auto)",
+	    std::string, shortHostname);
+	uint8_t evbBaseAddr = hostnameToEVBAddress(baseDTCHostname);
+
+	__FE_COUTV__(baseDTCHostname);
+	__FE_COUTV__((int)evbBaseAddr);
+
+	if(NumOfDTCs == 0)
+	{
+		__FE_SS__ << "Invalid input for Number of DTCs in Cluster: " << (int)NumOfDTCs
+		          << ". This value must be at least 1." << __E__;
+		__FE_SS_THROW__;
+	}
+
+	dtc->DisableLink(DTCLib::DTC_Link_EVB);
+	dtc->SetEVBInfo(DTCid, evbMode, evbPartition, evbMAC);
+	dtc->SetEVBClusterInfo(deadTime, evbBaseAddr, NumOfDTCs);
+	dtc->EnableLink(DTCLib::DTC_Link_EVB);
+	dtc->SoftReset();
+
+	__SET_ARG_OUT__("Result",
+	                dtc->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
+	                    dtc->FormatEVBClusterInfo());
+}  //end EVBInit()
+
+//========================================================================
+void DTCFrontEndInterface::EVBStatus(__ARGS__)
+{
+	auto dtc = getDTC();
+	std::ostringstream o;
+
+	o << "=== EVB Configuration ===\n";
+	o << "  DTC ID:            " << (int)dtc->ReadDTCID()                       << "\n";
+	o << "  EVB Mode:          " << (int)dtc->ReadEVBMode()                     << "\n";
+	o << "  Partition ID:      " << (int)dtc->ReadEVBLocalParitionID()          << "\n";
+	o << "  Local MAC Address: " << (int)dtc->ReadEVBLocalMACAddress()          << "\n";
+	o << "  Start Node:        " << (int)dtc->ReadEVBStartNode()                << "\n";
+	o << "  Num Dest Nodes:    " << (int)dtc->ReadEVBNumberOfDestinationNodes() << "\n";
+	o << "  Dead Time:         " << dtc->ReadEVBDeadTime()                      << "\n";
+	o << "\n";
+
+	uint32_t reg9200 = dtc->ReadEVBHighLevelCounters0();
+	uint32_t reg9204 = dtc->ReadEVBHighLevelCounters1();
+	uint32_t reg9208 = dtc->ReadEVBHighLevelCounters2();
+	uint32_t reg920C = dtc->ReadEVBHighLevelCounters3();
+
+	o << "=== EVB Pipeline Word Counters ===\n";
+	o << "  ROC input words:              " << dtc->ReadEVBROCInputWords(reg9200)             << "\n";
+	o << "  Self-transfer words:          " << dtc->ReadEVBSelfTransferWords(reg9200)          << "\n";
+	o << "  DDR FIFO write words:         " << dtc->ReadEVBDDRFIFOWriteWords(reg9204)          << "\n";
+	o << "  DDR->TX words:                " << dtc->ReadEVBDDRToTXWords(reg9204)               << "\n";
+	o << "  Buffer manager output words:  " << dtc->ReadEVBBufferManagerOutputWords(reg9208)    << "\n";
+	o << "  DMA output words:             " << dtc->ReadEVBDMAOutputWords(reg9208)              << "\n";
+	o << "  GBE RX words:                 " << dtc->ReadEVBGBERXWords(reg920C)                  << "\n";
+	o << "\n";
+
+	uint8_t startNode = dtc->ReadEVBStartNode();
+	uint8_t numNodes  = dtc->ReadEVBNumberOfDestinationNodes();
+
+	static const char* bramTypeNames[] = {
+	    "RxCount",
+	    "RxLastSeqTag",
+	    "RxMissingPktCnt",
+	    "RxByteCount",
+	    "RxLastPktArrival",
+	    "TxLastSeqTag",
+	    "TravelTime",
+	    "TxIdleCount",
+	    "RxIdleCount",
+	};
+	static const uint8_t NUM_BRAM_TYPES = 9;
+
+	o << "=== EVB Per-DTC BRAM Stats ===\n";
+	o << "  (StartNode=" << (int)startNode
+	  << ", NumNodes=" << (int)numNodes << ")\n";
+
+	o << std::setw(20) << std::left << "  Type";
+	for(uint8_t d = 0; d < numNodes; ++d)
+		o << "  MAC#" << std::setw(4) << std::left << (int)(startNode + d);
+	o << "\n";
+
+	for(uint8_t t = 0; t < NUM_BRAM_TYPES; ++t)
+	{
+		o << "  " << std::setw(18) << std::left << bramTypeNames[t];
+
+		for(uint8_t d = 0; d < numNodes; ++d)
+		{
+			uint32_t val = dtc->ReadEVBStats(DTCLib::DTC_EVBStatsType(t), d);
+			o << "  " << std::setw(10) << std::right << val;
+		}
+		o << "\n";
+	}
+	o << "\n";
+
+	o << "=== EVB 10GbE SERDES ===\n";
+	o << "  RX Packet Error Count (0x9590): " << dtc->ReadEVBSERDESRXPacketErrorCounter() << "\n";
+
+	__SET_ARG_OUT__("Result", "\n" + o.str());
+}  //end EVBStatus()
 
 // //========================================================================
 // void DTCFrontEndInterface::ResetEVBLinkRx(__ARGS__)
