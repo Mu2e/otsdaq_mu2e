@@ -2287,8 +2287,12 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				ss << "\n  " << uid;
 			__FE_SS_THROW__;
 		}
-		timing_chain_first_substep_ = -1;
-		indicateIterationWork();
+
+		if(!VStateMachine::getSubIterationWork())
+		{
+			timing_chain_first_substep_ = -1;
+			indicateIterationWork();
+		}
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_CFO_EDGE_FIX)
 	{

@@ -167,6 +167,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	int                     timing_chain_first_substep_ = -1;
 	bool                    rtfPhaseEdgeRetried_        = false;
+	std::string             rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails
 	int                     dtc_location_in_chain_      = -1;
 	unsigned int            runningCallCount_           = 0;
 	unsigned int            roc_mask_                   = 0;

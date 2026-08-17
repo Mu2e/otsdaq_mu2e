@@ -34,7 +34,7 @@ Key design constraints:
 |---|---|---|---|---|
 | 0 | **1a — Establish Clocks** | `halt()`, `DisableBeamOnMode(ALL)`, `DisableBeamOffMode(ALL)`, `ClearControlRegister()`, `DisableAllOutputs()`, JA setup + lock poll | `ClearControlRegister(keepMask)`, `DisableCFOLoopback()`, JA setup + lock poll (keepMask preserves bits 5-7: edge settings) | idle |
 | 1 | **1b — Establish Clocks** | idle | idle | `ClearControlRegister(keepMask)`, `DisableLink(EVB)`, disable ROC links, `DisableCFOLoopback()`, JA setup + lock poll (keepMask preserves bits 5-7: edge settings) |
-| 2 | **2a — Timing Chain: Enable** | `EnableLink(CFO_Link_ALL)`, `EnableEmbeddedClockMarker()`; in Sync mode also starts fixed-width event run plan (1.7µs, mode 0, infinite markers) for aggressive 8b10 traffic | idle | idle |
+| 2 | **2a — Timing Chain: Enable** | `EnableLink(CFO_Link_ALL)`, `EnableEmbeddedClockMarker()`; in Sync mode also starts fixed-width event run plan (1.7µs, mode 0, infinite markers) for aggressive 8b10 traffic | `EnableLink(DTC_Link_CFO)`; in Sync mode also enables CFO-RTF Offset Control (bit 6) | `EnableLink(DTC_Link_CFO)`; in Sync mode also enables CFO-RTF Offset Control (bit 6) |
 | 3 | **2b — Timing Chain: CDR Check** | Enumerate DTCs, call "Get Link Lock Status" FE Macro on each; if unlocked -> `ResetSERDES()` + retry; throw on 2nd failure | `ReadSERDESRXCDRLock(DTC_Link_CFO)` — throw if not locked | `ReadSERDESRXCDRLock(DTC_Link_CFO)` — throw if not locked |
 | 4 | **2c — CFO Edge Fix** | RTF validation on all DTCs, then iterative edge fix loop (call "Fix CFO Clock Edge" FE Macro on each DTC per pass until 2 consecutive clean passes or max 10 passes; throw if not converged) | idle | idle |
 | 5 | **3a — Sync: edge fix (no-ROC)** | idle | Clear JA counters + SoftReset, wait markers > 1000, check edge errors (txMarkers/rxToTx/parity/batchSlip) — toggle edge + SoftReset if needed, retry once; then verify JA counters stayed 0 | idle |
@@ -74,16 +74,21 @@ Operating mode constants in `CFOandDTCCoreVInterface.h`:
 
 ## How a DTC knows its type
 
-A DTC is classified as "with real ROCs" (`has_real_roc_flow_ = true`) if **any** of these
-conditions is met (checked in order during DTC instantiation):
+A DTC is classified as "with real ROCs" (`has_real_roc_flow_ = true`) based on the
+`EnableROCConfigureStep` configuration parameter and ROC mask checks:
 
+0. **Override**: If `EnableROCConfigureStep` is explicitly `false`, the DTC is forced to the
+   no-ROC path regardless of ROC masks or link tables. No further rules are checked.
 1. At least one enabled, non-emulated ROC: `(roc_mask_ & ~roc_emulated_mask_) != 0`
 2. Any enabled ROC has `ROCTypeLinkTable` connected (not `NO_LINK`)
 3. Any enabled ROC has `LinkToSlowControlsChannelTable` connected (not `NO_LINK`)
-4. The DTC's `EnableROCConfigureStep` configuration parameter is `true`
+4. If none of rules 1–3 triggered but `EnableROCConfigureStep` is `true` (the default),
+   the DTC is classified as real-ROC to exercise the full configure flow.
 
-Rules 2–4 allow exercising the "real ROC" configuration flow (Phases 1b, 3b, 3d, 4, 5) with
+Rules 1–4 allow exercising the "real ROC" configuration flow (Phases 1b, 3b, 3d, 4, 5) with
 emulated-only ROCs — useful for testing subsystem configure sequences without physical hardware.
+Rule 0 allows forcing a DTC with physical ROCs to skip ROC-specific phases (e.g. during
+commissioning when the ROC side is not yet ready).
 
 The classification reason is stored in `real_roc_flow_reason_` and included in error messages
 so operators can see why a DTC took a particular phase path.
@@ -120,9 +125,14 @@ character mix on the CFO→DTC timing links — that is more likely to expose ed
 errors than clock markers alone. Events remain active through Phases 2c–3d and are stopped
 at Phase 3e.
 
-### DTC
+### DTC (all types)
 
-Idle.
+`EnableLink(DTC_Link_CFO)` — enables the CFO receive link on the DTC so that CDR lock can
+be established before Phase 2b checks it.
+
+In **EventBuildingAndSyncMode**, also sets control register bit 6 (Enable CFO-RTF Offset
+Control) so the measured RTF position updates and is available for edge fix decisions at
+Phase 2c and RTF offset calibration at Phases 3c/3d.
 
 ## Phase 2b — Timing Chain: CDR Check (iteration 3)
 
@@ -203,8 +213,9 @@ Only active in **EventBuildingAndSyncMode**.
 ### DTC w/o ROCs — sub-steps
 
 0. Clear JA counters (CDR Unlock, JA Unlock, JA Recovered Clock LOS, JA External Clock LOS).
-   Read `ReadRTFHistIdelay()`, verify saturated and bin != 7. Compute
-   `impliedPos = 2 - satBin`, call `SetCFOSamplePermanentOffset(impliedPos)`, `SoftReset()`.
+   Read CFO Marker Pos from `ReadCFOMeasuredMarkerPosition()` (register 0x9398 bits [18:16]),
+   verify saturated and markerPos <= 4. Compute Perm Offset via `ReadCFOImpliedMarkerOffset()`
+   (`2 - markerPos`), call `SetCFOSamplePermanentOffset()`, `SoftReset()`.
 1+. Wait for markers > 1000 (1s polls, up to ~7s timeout).
 Verify. Read error flags (RTF 40MHz Phase Shift, Illegal Marker Timing, Event Start Marker
 Tx, Clock Marker Tx, Rx-to-Tx Data Corruption) and RTF counters (Event Start Character Error,

@@ -845,8 +845,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "Also setup Jitter Attenuator (Default := false)",
 	        "Set Link RX/TX Enable (Default := false)",
 	        "Enable Auto-generation of Data Request Packets (Default := false)",
-	        "Force External CFO Sample Clock Edge (0 for rising-edge, 1 for "
-	        "falling-edge, 2 for auto-find, Default := 0)",
+	        "Force External CFO Sample Clock Edge (0 for posedge, 1 for "
+	        "negedge, 2 for auto-find, Default := 0)",
 	        "Permanent Offset (-2 to 2, Default := 0)",
 	        "IDELAY Tap Value (0-31, Default := -1 do nothing)",
 	        "RTF 40MHz Sample Edge (0 for negedge, 1 for posedge, Default := 0)",
@@ -2102,9 +2102,21 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_ENABLE)
 	{
-		// Phase 2a: idle while CFO enables links + clock markers
-		__FE_COUT__ << "Phase 2a — idle while CFO enables links + clock markers."
-		            << __E__;
+		// Phase 2a: enable DTC CFO link so CDR lock can be checked at Phase 2b
+		getDTC()->EnableLink(DTCLib::DTC_Link_CFO);
+
+		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		{
+			// enable CFO-RTF offset control (bit 6) so measured RTF position updates
+			uint32_t ctrl;
+			getDevice()->read_register(0x9100, 100, &ctrl);
+			ctrl |= (1 << 6);
+			getDevice()->write_register(0x9100, 100, ctrl);
+			__FE_COUT__ << "Phase 2a — enabled CFO link and CFO-RTF Offset Control on DTC." << __E__;
+		}
+		else
+			__FE_COUT__ << "Phase 2a — enabled CFO link on DTC." << __E__;
+
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
@@ -2348,6 +2360,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				if(subStep == 0)
 				{
 					rtfPhaseEdgeRetried_ = false;
+					rtfPhaseEdgeRetryDetail_.clear();
 
 					// clear JA counters that SoftReset does not reset
 					dtc->ClearRXCDRUnlockCount(DTCLib::DTC_Link_CFO);
@@ -2355,43 +2368,67 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					dtc->ClearJitterAttenuatorRecoveredClockLOSCount();
 					dtc->ClearJitterAttenuatorExternalClockLOSCount();
 
+					indicateSubIterationWork();
+				}
+				else if(subStep <= 4)
+				{
+					uint32_t cfoErrSub0   = dtc->ReadCFOLinkErrorRegister();
+					int      measuredPos  = dtc->ReadCFOMeasuredMarkerPosition(cfoErrSub0);
+					int      impliedPos   = dtc->ReadCFOImpliedMarkerOffset(cfoErrSub0);
+
 					uint32_t rtfHist   = dtc->ReadRTFHistIdelay();
 					bool     saturated = (rtfHist >> 10) & 1;
 					uint32_t satBin    = (rtfHist >> 7) & 0x7;
 
-					if(!saturated || satBin == 7)
+					if(!saturated && subStep < 4)
+					{
+						__FE_COUT__ << "RTF histogram not yet saturated (subStep=" << subStep
+						            << ", markerPos=" << measuredPos
+						            << ", satBin=" << satBin << "); waiting 100ms..." << __E__;
+						usleep(100000);
+						indicateSubIterationWork();
+					}
+					else if(!saturated || measuredPos > 4)
 					{
 						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 						          << (hasRealROCs ? "3d" : "3c") << " ["
 						          << real_roc_flow_reason_ << "]"
 						          << " RTF offset FAILED:"
-						          << " histogram not saturated (saturated=" << saturated
-						          << ", bin=" << satBin << "); cannot apply offset."
+						          << " CFO Marker Pos invalid (markerPos=" << measuredPos
+						          << ", saturated=" << saturated
+						          << ", satBin=" << satBin << "); cannot apply offset."
 						          << " (Phase " << (hasRealROCs ? "3b" : "3a")
 						          << " edge fix passed)";
 						__FE_SS_THROW__;
 					}
+					else
+					{
+						dtc->SetCFOSamplePermanentOffset(impliedPos);
+						int readback = dtc->ReadCFOSamplePermanentOffset();
+						__FE_COUT_INFO__ << "RTF Marker Offset: CFO Marker Pos=" << measuredPos
+						                 << " => Perm Offset=" << impliedPos
+						                 << " (readback=" << readback
+						                 << ", saturated=" << saturated
+						                 << ", satBin=" << satBin << ")." << __E__;
 
-					int impliedPos = 2 - static_cast<int>(satBin);
-					dtc->SetCFOSamplePermanentOffset(impliedPos);
-					int readback = dtc->ReadCFOSamplePermanentOffset();
-					__FE_COUT_INFO__ << "RTF Marker Offset: satBin=" << satBin
-					                 << " => offset=" << impliedPos
-					                 << " (readback=" << readback << ")." << __E__;
-
-					usleep(100000);  // let the RTF clock histogram saturate
-					dtc->SoftReset();
-					__FE_COUT__ << "SoftReset issued after marker offset apply." << __E__;
-					indicateSubIterationWork();
+						usleep(100000);
+						dtc->SoftReset();
+						__FE_COUT__ << "SoftReset issued after marker offset apply." << __E__;
+						indicateSubIterationWork();
+					}
 				}
 				else
 				{
-					uint32_t markers = dtc->ReadCFOTXClockMarkerCountLink6();
-					__FE_COUT__ << "CFO Rx Clock Markers = " << markers << __E__;
+					uint32_t markers  = dtc->ReadCFOTXClockMarkerCountLink6();
+					uint32_t ewmCount = dtc->ReadTXEventWindowMarkerCount(DTCLib::DTC_Link_CFO);
+					uint32_t hbCount  = dtc->ReadTXHeartbeatPacketCount(DTCLib::DTC_Link_CFO);
+					__FE_COUT__ << "CFO Rx Clock Markers = " << markers
+					            << ", Event Markers = " << ewmCount
+					            << ", Heartbeat Packets = " << hbCount << __E__;
 
 					if(markers <= 1000)
 					{
-						if(subStep >= 8)
+						if(subStep >= 12)
 						{
 							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
 							          << (hasRealROCs ? "3d" : "3c") << " ["
@@ -2408,10 +2445,10 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					}
 					else
 					{
-						uint32_t cfoErr   = dtc->ReadCFOLinkErrorRegister();
-						bool     rtfPhase = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);
-						bool otherFlags = dtc->ReadCFOIllegalMarkerTimingError(cfoErr) ||
-						                  dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
+						uint32_t cfoErr    = dtc->ReadCFOLinkErrorRegister();
+						bool     rtfPhase  = dtc->ReadCFORTF40MHzPhaseShiftError(cfoErr);
+						bool     rtfMarker = dtc->ReadCFOIllegalMarkerTimingError(cfoErr);
+						bool otherFlags = dtc->ReadCFOEventStartMarkerTxError(cfoErr) ||
 						                  dtc->ReadCFOClockMarkerTxError(cfoErr) ||
 						                  dtc->ReadCFORxToTxDataCorruptionError(cfoErr);
 
@@ -2425,34 +2462,74 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 						bool hasRTFCounterErrors =
 						    evtStartErr || clk40Err || parity || batchSlip;
 
-						bool rtfPhaseOnly =
-						    rtfPhase && !otherFlags && !hasRTFCounterErrors;
+						bool rtfEdgeRetryEligible =
+						    (rtfPhase || rtfMarker) && !otherFlags && !hasRTFCounterErrors;
 
-						if(rtfPhaseOnly && !rtfPhaseEdgeRetried_)
+						if(rtfEdgeRetryEligible && !rtfPhaseEdgeRetried_)
 						{
-							__FE_COUT_INFO__ << "RTFPhase error only — pre-flip status:\n"
+							__FE_COUT_INFO__ << "RTFPhase/RTFMarker error only — pre-flip status:\n"
 							                 << getCFORTFSettingsStatusAndErrors()
 							                 << __E__;
 
 							int newEdge = dtc->ToggleRTFPunchedClockEdge();
-							usleep(100000);  // let the RTF clock histogram saturate
 							dtc->SoftReset();
+							usleep(100000);
+
+							uint32_t cfoErr2      = dtc->ReadCFOLinkErrorRegister();
+							int      measuredPos2 = dtc->ReadCFOMeasuredMarkerPosition(cfoErr2);
+							int      newOffset    = dtc->ReadCFOImpliedMarkerOffset(cfoErr2);
+
+							uint32_t rtfHist2   = dtc->ReadRTFHistIdelay();
+							bool     saturated2 = (rtfHist2 >> 10) & 1;
+							uint32_t satBin2    = (rtfHist2 >> 7) & 0x7;
+							if(!saturated2 || measuredPos2 > 4)
+							{
+								__FE_SS__ << "DTC " << getInterfaceUID() << " Phase "
+								          << (hasRealROCs ? "3d" : "3c") << " ["
+								          << real_roc_flow_reason_ << "]"
+								          << " RTF offset recalc FAILED after edge-flip:"
+								          << " CFO Marker Pos invalid (markerPos=" << measuredPos2
+								          << ", saturated=" << saturated2
+								          << ", satBin=" << satBin2 << ").";
+								__FE_SS_THROW__;
+							}
+							dtc->SetCFOSamplePermanentOffset(newOffset);
+							int newReadback = dtc->ReadCFOSamplePermanentOffset();
+							__FE_COUT_INFO__ << "Post-edge-flip RTF Marker Offset: CFO Marker Pos=" << measuredPos2
+							                 << " => Perm Offset=" << newOffset
+							                 << " (readback=" << newReadback
+							                 << ", satBin=" << satBin2 << ")." << __E__;
+							dtc->SoftReset();
+							usleep(100000);
+
 							rtfPhaseEdgeRetried_ = true;
-							__FE_COUT_INFO__ << "Toggled RTF punched clock edge to "
-							                 << (newEdge ? "posedge" : "negedge")
-							                 << " and issued SoftReset; retrying verify."
+							{
+								std::ostringstream rd;
+								rd << "toggled RTF punched clock edge to "
+								   << (newEdge ? "posedge" : "negedge")
+								   << ", CFO Marker Pos=" << measuredPos2
+								   << ", new Perm Offset=" << newOffset
+								   << " (satBin=" << satBin2 << ")";
+								rtfPhaseEdgeRetryDetail_ = rd.str();
+							}
+							__FE_COUT_INFO__ << "Edge-flip retry: " << rtfPhaseEdgeRetryDetail_
+							                 << "; retrying verify."
 							                 << __E__;
 							indicateSubIterationWork();
 						}
-						else if(rtfPhase || otherFlags || hasRTFCounterErrors)
+						else if(rtfPhase || rtfMarker || otherFlags || hasRTFCounterErrors)
 						{
 							__FE_SS__
 							    << "DTC " << getInterfaceUID() << " Phase "
 							    << (hasRealROCs ? "3d" : "3c") << " ["
 							    << real_roc_flow_reason_ << "]"
 							    << " RTF offset verify FAILED"
-							    << (rtfPhaseEdgeRetried_ ? " (after edge-flip retry)"
-							                             : "")
+							    << " (verified with " << markers << " clock markers, "
+							    << ewmCount << " event markers, "
+							    << hbCount << " heartbeat packets)"
+							    << (rtfPhaseEdgeRetried_
+							            ? " (after edge-flip retry: " + rtfPhaseEdgeRetryDetail_ + ")"
+							            : "")
 							    << " (Phase " << (hasRealROCs ? "3b" : "3a")
 							    << " edge fix passed):\n"
 							    << getCFORTFSettingsStatusAndErrors();
@@ -5510,8 +5587,7 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << (measuredPos == 7 ? "invalid" : std::to_string(impliedPos))
 	  << "      Perm Offset: " << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
 	o << "  RTF Hist Sat Bin:      "
-	  << (saturated && satBin != 7 ? std::to_string(satBin) + " ==> " +
-	                                     std::to_string(2 - static_cast<int>(satBin))
+	  << (saturated && satBin != 7 ? std::to_string(satBin)
 	                               : (satBin == 7 ? "invalid" : "N/A"))
 	  << "      Saturated: " << (saturated ? "YES" : "NO") << "\n";
 	o << "  CFO Rx Clock Markers:  " << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
@@ -5855,66 +5931,78 @@ void DTCFrontEndInterface::DTCInstantiate()
 		has_real_roc_flow_    = false;
 		real_roc_flow_reason_ = "";
 
-		if((roc_mask_ & ~roc_emulated_mask_) != 0)
-		{
-			has_real_roc_flow_    = true;
-			real_roc_flow_reason_ = "non-emulated ROC present";
-		}
-
-		if(!has_real_roc_flow_)
-		{
-			for(auto& roc : rocChildren)
-			{
-				if(!roc.second.getNode("Status").getValue<bool>())
-					continue;
-				try
-				{
-					if(!roc.second.getNode("ROCTypeLinkTable").isDisconnected())
-					{
-						has_real_roc_flow_ = true;
-						real_roc_flow_reason_ =
-						    "ROC '" + roc.first + "' has ROCTypeLinkTable";
-						break;
-					}
-				}
-				catch(...)
-				{
-				}
-				try
-				{
-					if(!roc.second.getNode("LinkToSlowControlsChannelTable")
-					        .isDisconnected())
-					{
-						has_real_roc_flow_ = true;
-						real_roc_flow_reason_ =
-						    "ROC '" + roc.first + "' has LinkToSlowControlsChannelTable";
-						break;
-					}
-				}
-				catch(...)
-				{
-				}
-			}
-		}
-
-	}  // end create roc mask
-
-	if(!has_real_roc_flow_)
-	{
+		// Check EnableROCConfigureStep first — when explicitly false, it overrides
+		// all other classification rules and forces the no-ROC path.
+		bool enableROCConfigureStep = true;  // default: allow other rules to decide
 		try
 		{
-			if(Configurable::getSelfNode()
-			       .getNode("EnableROCConfigureStep")
-			       .getValue<bool>())
-			{
-				has_real_roc_flow_    = true;
-				real_roc_flow_reason_ = "EnableROCConfigureStep is true";
-			}
+			enableROCConfigureStep = Configurable::getSelfNode()
+			                             .getNode("EnableROCConfigureStep")
+			                             .getValue<bool>();
 		}
 		catch(...)
 		{
 		}
-	}
+
+		if(!enableROCConfigureStep)
+		{
+			// Explicit opt-out — skip real-ROC classification entirely
+			has_real_roc_flow_    = false;
+			real_roc_flow_reason_ = "EnableROCConfigureStep=false";
+		}
+		else
+		{
+			if((roc_mask_ & ~roc_emulated_mask_) != 0)
+			{
+				has_real_roc_flow_    = true;
+				real_roc_flow_reason_ = "non-emulated ROC present";
+			}
+
+			if(!has_real_roc_flow_)
+			{
+				for(auto& roc : rocChildren)
+				{
+					if(!roc.second.getNode("Status").getValue<bool>())
+						continue;
+					try
+					{
+						if(!roc.second.getNode("ROCTypeLinkTable").isDisconnected())
+						{
+							has_real_roc_flow_ = true;
+							real_roc_flow_reason_ =
+							    "ROC '" + roc.first + "' has ROCTypeLinkTable";
+							break;
+						}
+					}
+					catch(...)
+					{
+					}
+					try
+					{
+						if(!roc.second.getNode("LinkToSlowControlsChannelTable")
+						        .isDisconnected())
+						{
+							has_real_roc_flow_ = true;
+							real_roc_flow_reason_ =
+							    "ROC '" + roc.first + "' has LinkToSlowControlsChannelTable";
+							break;
+						}
+					}
+					catch(...)
+					{
+					}
+				}
+			}
+
+			if(!has_real_roc_flow_)
+			{
+				// EnableROCConfigureStep is true (checked above) — use it as final rule
+				has_real_roc_flow_    = true;
+				real_roc_flow_reason_ = "EnableROCConfigureStep is true";
+			}
+		}
+
+	}  // end create roc mask
 
 	__FE_COUT__ << "Real ROC flow: " << (has_real_roc_flow_ ? "YES" : "NO")
 	            << (has_real_roc_flow_ ? " (" + real_roc_flow_reason_ + ")" : "")
@@ -6171,7 +6259,7 @@ void DTCFrontEndInterface::EVBInit(__ARGS__)
 
 	uint32_t macAddress = hostnameToEVBAddress(shortHostname) + deviceIndex_;
 
-	uint8_t  DTCid        = (1 << 7) | macAddress;
+	uint8_t  DTCid        = macAddress;
 	uint8_t  evbMode      = 0;
 	uint8_t  evbPartition = 0x99;
 	uint8_t  evbMAC       = macAddress;
@@ -6215,12 +6303,25 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	auto dtc = getDTC();
 	std::ostringstream o;
 
+	auto evbLinkEnable = dtc->ReadLinkEnabled(DTCLib::DTC_Link_ID::DTC_Link_EVB);
+	bool evbCDRLock    = dtc->ReadSERDESRXCDRLock(DTCLib::DTC_Link_ID::DTC_Link_EVB);
+
+	o << "=== EVB Link Status ===\n";
+	o << "  Link TX Enable:  " << (evbLinkEnable.TransmitEnable ? "OK" : "Not Enabled") << "\n";
+	o << "  Link RX Enable:  " << (evbLinkEnable.ReceiveEnable  ? "OK" : "Not Enabled") << "\n";
+	o << "  RX CDR Lock:     " << (evbCDRLock ? "LOCKED" : "Not LOCKED") << "\n";
+	o << "\n";
+
 	o << "=== EVB Configuration ===\n";
-	o << "  DTC ID:            " << (int)dtc->ReadDTCID()                       << "\n";
+	int dtcId   = dtc->ReadDTCID();
+	int partId  = dtc->ReadEVBLocalParitionID();
+	int macAddr = dtc->ReadEVBLocalMACAddress();
+	int sNode   = dtc->ReadEVBStartNode();
+	o << "  DTC ID:            0x" << std::hex << dtcId  << " (" << std::dec << dtcId  << ")\n";
 	o << "  EVB Mode:          " << (int)dtc->ReadEVBMode()                     << "\n";
-	o << "  Partition ID:      " << (int)dtc->ReadEVBLocalParitionID()          << "\n";
-	o << "  Local MAC Address: " << (int)dtc->ReadEVBLocalMACAddress()          << "\n";
-	o << "  Start Node:        " << (int)dtc->ReadEVBStartNode()                << "\n";
+	o << "  Partition ID:      0x" << std::hex << partId << " (" << std::dec << partId << ")\n";
+	o << "  Local MAC Address: 0x" << std::hex << macAddr << " (" << std::dec << macAddr << ")\n";
+	o << "  Start Node:        0x" << std::hex << sNode  << " (" << std::dec << sNode  << ")\n";
 	o << "  Num Dest Nodes:    " << (int)dtc->ReadEVBNumberOfDestinationNodes() << "\n";
 	o << "  Dead Time:         " << dtc->ReadEVBDeadTime()                      << "\n";
 	o << "\n";
@@ -6260,14 +6361,14 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	o << "  (StartNode=" << (int)startNode
 	  << ", NumNodes=" << (int)numNodes << ")\n";
 
-	o << std::setw(20) << std::left << "  Type";
+	o << std::setw(24) << std::left << "  Type";
 	for(uint8_t d = 0; d < numNodes; ++d)
 		o << "  MAC#" << std::setw(4) << std::left << (int)(startNode + d);
 	o << "\n";
 
 	for(uint8_t t = 0; t < NUM_BRAM_TYPES; ++t)
 	{
-		o << "  " << std::setw(18) << std::left << bramTypeNames[t];
+		o << "  " << std::setw(22) << std::left << bramTypeNames[t];
 
 		for(uint8_t d = 0; d < numNodes; ++d)
 		{
