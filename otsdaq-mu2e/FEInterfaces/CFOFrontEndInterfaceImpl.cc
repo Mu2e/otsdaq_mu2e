@@ -2637,19 +2637,6 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	testAndUpdateTimeAlive("Start");
 	testRTFClockInEventBuildingMode("Start");
 
-	if(getMinReadyForEventGenerationStartIteration() <=
-	   static_cast<unsigned int>(
-	       CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION))
-	{
-		__FE_SS__
-		    << "Invalid iteration ordering: getMinReadyForEventGenerationStartIteration ("
-		    << getMinReadyForEventGenerationStartIteration()
-		    << ") must be larger than CONFIG_CFO_EVENT_SENDING_START_ITERATION ("
-		    << CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION << ")."
-		    << __E__;
-		__FE_SS_THROW__;
-	}
-
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO start for HW Dev mode." << __E__;
@@ -2675,16 +2662,24 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	        operatingMode_ ==
 	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
+		const unsigned int systemMinReady = getSystemMinReadyForEventGenerationStartIteration();
+		if(systemMinReady < 2)
+		{
+			__FE_SS__ << "SystemMinReadyForEventGenerationStartIteration must be >= 2 (got "
+			          << systemMinReady << ")." << __E__;
+			__FE_SS_THROW__;
+		}
+
 		const unsigned int startIteration = getIterationIndex();
-		if(startIteration < getMinReadyForEventGenerationStartIteration())
+		if(startIteration < systemMinReady)
 		{
 			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start iteration >= "
-			                 << getMinReadyForEventGenerationStartIteration() << __E__;
+			                 << systemMinReady << __E__;
 			indicateIterationWork();
 			return;
 		}
 
-		if(startIteration == getMinReadyForEventGenerationStartIteration())
+		if(startIteration == systemMinReady)
 		{
 			bool autoFixedWidthRunPlanEnable = false;
 			try
@@ -3109,7 +3104,7 @@ void CFOFrontEndInterface::stop(void)
 //==============================================================================
 unsigned int CFOFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
 {
-	return 12;
+	return 2;
 }  // end getMinReadyForEventGenerationStartIteration()
 
 //==============================================================================
