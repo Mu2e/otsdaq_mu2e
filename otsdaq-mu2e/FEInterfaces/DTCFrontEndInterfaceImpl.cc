@@ -6385,14 +6385,14 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	o << "=== EVB Per-DTC BRAM Stats ===\n";
 	o << "  (StartNode=" << (int)startNode << ", NumNodes=" << (int)numNodes << ")\n";
 
-	o << std::setw(24) << std::left << "  Type";
+	o << std::setw(27) << std::left << "  Type";
 	for(uint8_t d = 0; d < numNodes; ++d)
 		o << "  MAC#" << std::setw(4) << std::left << (int)(startNode + d);
 	o << "\n";
 
 	for(uint8_t t = 0; t < NUM_BRAM_TYPES; ++t)
 	{
-		o << "  " << std::setw(22) << std::left << bramTypeNames[t];
+		o << "  " << std::setw(18) << std::left << bramTypeNames[t];
 
 		for(uint8_t d = 0; d < numNodes; ++d)
 		{
