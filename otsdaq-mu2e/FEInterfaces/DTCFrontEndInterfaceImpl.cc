@@ -6307,6 +6307,24 @@ void DTCFrontEndInterface::EVBInit(__ARGS__)
 	dtc->EnableLink(DTCLib::DTC_Link_EVB);
 	dtc->SoftReset();
 
+	{
+		uint32_t val;
+		for(int i = 0; i < 1000; ++i)
+		{
+			usleep(1000);
+			val = dtc->ReadEVBStats(DTCLib::DTC_EVBStatsType_TxIdleCount, 0);
+			if(val == 0)
+				break;
+		}
+		if(val != 0)
+		{
+			__FE_SS__ << "EVB Stats BRAM did not clear after SoftReset. "
+			          << "TxIdleCount = 0x" << std::hex << val << ". Expected 0."
+			          << __E__;
+			__FE_SS_THROW__;
+		}
+	}
+
 	__SET_ARG_OUT__("Result",
 	                dtc->FormatEVBLocalParitionIDMACIndex() + std::string("\n") +
 	                    dtc->FormatEVBClusterInfo());
