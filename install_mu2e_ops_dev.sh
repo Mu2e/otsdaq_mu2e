@@ -7,9 +7,9 @@
 # change log:
 #   -- 26-Feb-2026: Initial version of the script. It is a wrapper to the mu2e-quick-spack-start.sh script, which is used to install the otsdaq
 #
-# In new terminal, should source this script on the NFS host (mu2e-mgr-01 in MC2, mu2edaq13 in HEERC) 
-#	to create a new development area for otsdaq-mu2e. 
-# 	It will copy the srcs/otsdaq* repos from an existing area (default: /home/mu2eshift/ots_ops_dev) 
+# In new terminal, should source this script on the NFS host (mu2e-mgr-01 in MC2, mu2edaq13 in HEERC)
+#	to create a new development area for otsdaq-mu2e.
+# 	It will copy the srcs/otsdaq* repos from an existing area (default: /home/mu2eshift/ots_ops_dev)
 #	to the new area.
 #
 # Example execution from new terminal at PWD = ~mu2etrk on mu2e-mgr-01 in MC2:
@@ -106,8 +106,8 @@ rm setup-env.sh
 rm setup_spack_build_system_v0.28.sh
 rm fonts.*
 rm mu2e-quick-spack-start.sh
-rm setup_ots_rte.sh 
-rm setup_ots.sh 
+rm setup_ots_rte.sh
+rm setup_ots.sh
 ll
 
 #get scripts and make links
