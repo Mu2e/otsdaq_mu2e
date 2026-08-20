@@ -58,6 +58,7 @@ for d in /sys/bus/usb/devices/*; do
     vendor=$(<"$d/idVendor")
     product=$(<"$d/idProduct")
     if [[ "$vendor" == "0403" && "$product" == "6014" ]] ||
+	   [[ "$vendor" == "03fd" && "$product" == "0013" ]] ||
 	   [[ "$vendor" == "03fd" && "$product" == "0008" ]]; then
 	   echo -e "$(date +%d%b%y.%T) boot_from_flash_all_DTCs_AL9.sh:${LINENO} |  \t Found JTAG with vendor ${vendor} and product ${product}"
      #try both flash types!

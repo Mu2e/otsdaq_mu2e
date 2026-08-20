@@ -1,3 +1,4 @@
+echo -e "$(date +%d%b%y.%T) program_both_DTCs.sh:${LINENO} |  \t Programming both bitfiles on ${HOSTNAME} - hit ENTER if it seems likes this script is hanging..."
 source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 
