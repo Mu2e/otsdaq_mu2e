@@ -600,10 +600,16 @@
 				0, 0, true, false, true);
 		}
 
+		var _pendingDiscardRun = false;
+
 		function stopRun() {
+			_pendingDiscardRun = false;
 			DesktopContent.popUpVerification(
-				"Please enter a logbook entry to end this run:",
+				"Please enter a logbook entry to end this run:" +
+				"<br><br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-discardRun' onchange='_pendingDiscardRun=this.checked;' /> Discard run for processing</label>",
 				function (entry) {
+					var discardRun = _pendingDiscardRun || false;
 					// First halt the iterator
 					DesktopContent.XMLHttpRequest(
 						"StateMachineXgiHandler?fsmName=" + _fsmName +
@@ -613,7 +619,8 @@
 							DesktopContent.XMLHttpRequest(
 								"StateMachineXgiHandler?fsmName=" + _fsmName +
 								"&StateMachine=Stop",
-								"logEntry=" + encodeURIComponent(entry || ""),
+								"logEntry=" + encodeURIComponent(entry || "") +
+								"&discardRun=" + (discardRun ? "1" : "0"),
 								function (req, reqParam, errStr) {
 									if (errStr) {
 										Debug.err("Stop failed: " + errStr);
