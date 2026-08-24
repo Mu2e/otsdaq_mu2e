@@ -5,6 +5,9 @@ for d in /sys/bus/usb/devices/*; do
     if [[ "$vendor" == "0403" && "$product" == "6014" ]]; then
       echo "Found Future Tech JTAG: $(basename "$d")"
     fi
+    if [[ "$vendor" == "03fd" && "$product" == "0013" ]]; then
+      echo "Found Xilinx III JTAG: $(basename "$d")"
+    fi
     if [[ "$vendor" == "03fd" && "$product" == "0008" ]]; then
       echo "Found Xilinx II JTAG: $(basename "$d")"
     fi

@@ -5,6 +5,7 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     return 1 2>/dev/null || exit 1
 fi
 
+echo -e "$(date +%d%b%y.%T) program_one_FPGA.sh:${LINENO} |  \t Programming one bitfile on ${HOSTNAME} - hit ENTER if it seems likes this script is hanging..."
 source /home/xilinx/Vivado_Lab/2021.2/settings64.sh
 
 SCRIPT_DIR="$(
