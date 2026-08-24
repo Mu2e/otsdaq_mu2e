@@ -1123,21 +1123,21 @@ void DBRunInfo::updateRunInfo(unsigned int       runConditionID,
 				}
 				catch(const nlohmann::json::exception& e)
 				{
-					__COUT_WARN__ << "Failed to parse metadata JSON: " << e.what() << __E__;
+					__COUT_WARN__ << "Failed to parse metadata JSON: " << e.what()
+					              << __E__;
 				}
 			}
 
 			std::ostringstream endCommentQueryStream;
-			endCommentQueryStream << "INSERT INTO " << dbSchema_ << ".run_end_info("
-			                      << "run_number, "
-			                      << "comment, "
-			                      << "discard_run, "
-			                      << "create_time) "
-			                      << "VALUES ("
-			                      << boost::numeric_cast<long int>(runNumber) << ","
-			                      << escapedComment << ","
-			                      << (discardRun ? "TRUE" : "NULL")
-			                      << ",CURRENT_TIMESTAMP);";
+			endCommentQueryStream
+			    << "INSERT INTO " << dbSchema_ << ".run_end_info("
+			    << "run_number, "
+			    << "comment, "
+			    << "discard_run, "
+			    << "create_time) "
+			    << "VALUES (" << boost::numeric_cast<long int>(runNumber) << ","
+			    << escapedComment << "," << (discardRun ? "TRUE" : "NULL")
+			    << ",CURRENT_TIMESTAMP);";
 
 			std::string endCommentQuery = endCommentQueryStream.str();
 			PGresult*   endCommentRes   = PQexec(runInfoDbConn_, endCommentQuery.c_str());
