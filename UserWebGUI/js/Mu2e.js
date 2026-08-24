@@ -41,11 +41,11 @@ var Mu2e = Mu2e || {};
 
 	Mu2e.stateColor = function (state) {
 		var colors = {
-			"Initial": "#4a76a8",
-			"Halted": "#e67e22",
-			"Configured": "#17a2b8",
-			"Running": "#28a745",
-			"Paused": "#17a2b8",
+			"Initial": "#0769bf",
+			"Halted": "#ea8303",
+			"Configured": "#05947a",
+			"Running": "#05942a",
+			"Paused": "#05947a",
 		};
 		return colors[state] || "#6c757d";
 	};

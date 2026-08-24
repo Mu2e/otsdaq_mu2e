@@ -79,10 +79,15 @@
 
 	var _knownHostnames  = {};
 	var _knownSources    = {};
+	var _knownApps       = {};
 	var _hostnameShortMap = {};
 	var _knownHostList   = [];
 
 	var _filterStyleEls  = {};
+
+	// URL-parameter preselections: applied once when the dropdown first
+	// sees a matching value, then cleared so the user can change freely.
+	var _preselect = { source: null, node: null, app: null };
 
 	var _monthArr = ["Jan","Feb","Mar","Apr","May","Jun",
 	                 "Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -133,28 +138,32 @@
 	}
 
 	function recomputeShortenedHostnames() {
-		if (_knownHostList.length <= 1) {
-			for (var i = 0; i < _knownHostList.length; ++i)
-				_hostnameShortMap[_knownHostList[i]] = _knownHostList[i];
-			return;
+		var shorts = [];
+		for (var i = 0; i < _knownHostList.length; ++i) {
+			var h = _knownHostList[i];
+			var dot = h.indexOf(".");
+			shorts.push(dot > 0 ? h.slice(0, dot) : h);
 		}
-		var hosts = _knownHostList.slice();
-		// strip common suffix (e.g. ".fnal.gov")
-		var minLen = hosts.reduce(function(m,h){ return Math.min(m,h.length); }, 9999);
-		var commonSuffix = 0;
-		for (var ci = 1; ci <= minLen; ++ci) {
-			var ch = hosts[0][hosts[0].length - ci];
-			var allMatch = true;
-			for (var hi = 1; hi < hosts.length; ++hi) {
-				if (hosts[hi][hosts[hi].length - ci] !== ch) { allMatch = false; break; }
+		// strip common prefix up to a "-" boundary (e.g. "mu2e-")
+		if (shorts.length > 1) {
+			var minLen = shorts.reduce(function(m,s){ return Math.min(m,s.length); }, 9999);
+			var commonPrefix = 0;
+			for (var ci = 0; ci < minLen; ++ci) {
+				var ch = shorts[0][ci];
+				var allMatch = true;
+				for (var hi = 1; hi < shorts.length; ++hi) {
+					if (shorts[hi][ci] !== ch) { allMatch = false; break; }
+				}
+				if (!allMatch) break;
+				if (ch === "-") commonPrefix = ci + 1;
 			}
-			if (allMatch) commonSuffix = ci; else break;
+			if (commonPrefix > 0) {
+				for (var i = 0; i < shorts.length; ++i)
+					shorts[i] = shorts[i].slice(commonPrefix) || shorts[i];
+			}
 		}
-		for (var i = 0; i < hosts.length; ++i) {
-			var short = commonSuffix > 0 ? hosts[i].slice(0, hosts[i].length - commonSuffix) : hosts[i];
-			if (short.endsWith(".") || short.endsWith("-")) short = short.slice(0, -1);
-			_hostnameShortMap[_knownHostList[i]] = short || _knownHostList[i];
-		}
+		for (var i = 0; i < _knownHostList.length; ++i)
+			_hostnameShortMap[_knownHostList[i]] = shorts[i];
 	}
 
 	// Make a CSS-safe class name from a string
@@ -192,17 +201,29 @@
 			opt.textContent = name;
 			sel.appendChild(opt);
 		}
-		sel.value = "Trigger"; // default
+		var urlParams = new URLSearchParams(window.location.search);
+		var startSystem = urlParams.get("system") || "Trigger";
+		if (!SYSTEMS[startSystem]) startSystem = "Trigger";
+		sel.value = startSystem;
 
 		// Attach event handlers
 		sel.onchange = function() { switchSystem(this.value); };
-		document.getElementById("sourceSelect").onchange = applyFilters;
-		document.getElementById("nodeSelect").onchange = applyFilters;
+		initCheckdrop("sourceSelect");
+		initCheckdrop("nodeSelect");
+		initCheckdrop("appSelect");
 		document.getElementById("levelSelect").onchange = applyFilters;
 		document.getElementById("searchInput").oninput = applySearchFilter;
 		document.getElementById("pauseBtn").onclick = togglePause;
 		document.getElementById("clearBtn").onclick = clearMessages;
 		document.getElementById("orderBtn").onclick = toggleOrder;
+
+		// Close checkdrops when clicking outside
+		document.addEventListener("click", function(e) {
+			var drops = document.querySelectorAll(".mu2e-checkdrop.open");
+			for (var i = 0; i < drops.length; ++i) {
+				if (!drops[i].contains(e.target)) drops[i].classList.remove("open");
+			}
+		});
 
 		// Track user scrolling
 		document.getElementById("messageArea").addEventListener("scroll", function() {
@@ -211,13 +232,21 @@
 			_scrollFollow = atBottom;
 		});
 
-		document.getElementById("levelSelect").value = "Warning";
+		var startLevel = urlParams.get("level") || "Warning";
+		document.getElementById("levelSelect").value = startLevel;
+
+		var startSearch = urlParams.get("search") || "";
+		if (startSearch) document.getElementById("searchInput").value = startSearch;
+
+		_preselect.source = urlParams.get("source") || null;
+		_preselect.node   = urlParams.get("node")   || null;
+		_preselect.app    = urlParams.get("app")     || null;
 
 		window.addEventListener("resize", layoutPage);
 		layoutPage();
 
-		// Start with default system (also applies filters)
-		switchSystem("Trigger");
+		// Start with URL-specified or default system (also applies filters)
+		switchSystem(startSystem);
 	}
 
 	// =========================================================================
@@ -233,12 +262,14 @@
 		_totalMessages = 0;
 		_knownHostnames = {};
 		_knownSources = {};
+		_knownApps = {};
 		_hostnameShortMap = {};
 		_knownHostList = [];
 
 		// Reset dropdowns
-		document.getElementById("sourceSelect").innerHTML = "";
-		document.getElementById("nodeSelect").innerHTML = "";
+		clearCheckdrop("sourceSelect");
+		clearCheckdrop("nodeSelect");
+		clearCheckdrop("appSelect");
 
 		// Clear display
 		document.getElementById("messageArea").innerHTML = "";
@@ -355,6 +386,7 @@
 
 			var hostCss = cssClass(hostname);
 			var srcCss = cssClass(source);
+			var appCss = cssClass(label);
 			var levelCss = cssClass(level);
 
 			// Track new values for dropdowns
@@ -366,6 +398,10 @@
 				_knownSources[source] = true;
 				dropdownsChanged = true;
 			}
+			if (label && !_knownApps[label]) {
+				_knownApps[label] = true;
+				dropdownsChanged = true;
+			}
 
 			var fileStr = convertForClient(file + ":" + line);
 			var msgStr = convertForClient(msg);
@@ -374,6 +410,7 @@
 			htmlParts.push("<div class='mu2e-log-entry lvl-" + levelCss +
 				" host-" + hostCss +
 				" src-" + srcCss +
+				" app-" + appCss +
 				"'>" +
 				"<span class='mu2e-log-host'>" + Mu2e.esc(shortHost) + " | </span>" +
 				"<span class='mu2e-log-level'>" + Mu2e.esc(level) + "</span>" +
@@ -401,7 +438,10 @@
 			}
 		}
 
-		if (dropdownsChanged) updateDropdowns();
+		if (dropdownsChanged) {
+			updateDropdowns();
+			applyFilters();
+		}
 		updateStatusCounts();
 		applySearchFilter();
 	}
@@ -417,41 +457,104 @@
 	}
 
 	// =========================================================================
-	// Dropdown management
+	// Checkbox dropdown management
 	// =========================================================================
-	function getSelectedValues(selectEl) {
+	function initCheckdrop(id) {
+		var el = document.getElementById(id);
+		var btn = el.querySelector(".mu2e-checkdrop-btn");
+		btn.onclick = function(e) {
+			e.stopPropagation();
+			// close others
+			var others = document.querySelectorAll(".mu2e-checkdrop.open");
+			for (var i = 0; i < others.length; ++i)
+				if (others[i] !== el) others[i].classList.remove("open");
+			el.classList.toggle("open");
+		};
+	}
+
+	function clearCheckdrop(id) {
+		var el = document.getElementById(id);
+		el.querySelector(".mu2e-checkdrop-list").innerHTML = "";
+		el.querySelector(".mu2e-checkdrop-btn").textContent = "All";
+		el.classList.remove("open");
+	}
+
+	function getCheckdropValues(id) {
+		var boxes = document.getElementById(id).querySelectorAll("input[type=checkbox]:checked");
 		var vals = [];
-		for (var i = 0; i < selectEl.options.length; ++i)
-			if (selectEl.options[i].selected) vals.push(selectEl.options[i].value);
+		for (var i = 0; i < boxes.length; ++i) vals.push(boxes[i].value);
 		return vals;
 	}
 
-	function updateDropdowns() {
-		// Source multi-select
-		var srcSel = document.getElementById("sourceSelect");
-		var prevSrc = getSelectedValues(srcSel);
-		var sortedSources = Object.keys(_knownSources).sort();
-		srcSel.innerHTML = "";
-		for (var i = 0; i < sortedSources.length; ++i) {
-			var opt = document.createElement("option");
-			opt.value = sortedSources[i];
-			opt.textContent = sortedSources[i];
-			if (prevSrc.indexOf(sortedSources[i]) !== -1) opt.selected = true;
-			srcSel.appendChild(opt);
+	function updateCheckdropLabel(id, labelFn) {
+		var el = document.getElementById(id);
+		var btn = el.querySelector(".mu2e-checkdrop-btn");
+		var vals = getCheckdropValues(id);
+		var total = el.querySelectorAll("input[type=checkbox]").length;
+		if (vals.length === 0 || vals.length === total) {
+			btn.textContent = "All";
+		} else {
+			var display = labelFn ? vals.map(labelFn) : vals;
+			if (display.length <= 2)
+				btn.textContent = display.join(", ");
+			else
+				btn.textContent = display.length + " selected";
 		}
+	}
 
-		// Node multi-select
-		var nodeSel = document.getElementById("nodeSelect");
-		var prevNode = getSelectedValues(nodeSel);
-		var sortedHosts = Object.keys(_knownHostnames).sort();
-		nodeSel.innerHTML = "";
-		for (var i = 0; i < sortedHosts.length; ++i) {
-			var opt = document.createElement("option");
-			opt.value = sortedHosts[i];
-			opt.textContent = getShortenedHostname(sortedHosts[i]);
-			if (prevNode.indexOf(sortedHosts[i]) !== -1) opt.selected = true;
-			nodeSel.appendChild(opt);
+	var _CHECKDROP_PRESELECT_KEY = {
+		sourceSelect: "source", nodeSelect: "node", appSelect: "app"
+	};
+
+	function rebuildCheckdrop(id, items, labelFn) {
+		var el = document.getElementById(id);
+		el._labelFn = labelFn || null;
+		var list = el.querySelector(".mu2e-checkdrop-list");
+		var prev = getCheckdropValues(id);
+
+		var psKey = _CHECKDROP_PRESELECT_KEY[id];
+		var psVal = psKey ? _preselect[psKey] : null;
+		var psMatches = {};
+		if (psVal) {
+			var psLower = psVal.toLowerCase();
+			for (var pi = 0; pi < items.length; ++pi) {
+				var il = items[pi].toLowerCase();
+				if (il === psLower || il.indexOf(psLower) === 0 || psLower.indexOf(il) === 0)
+					psMatches[items[pi]] = true;
+			}
 		}
+		var hasPsMatch = Object.keys(psMatches).length > 0;
+
+		list.innerHTML = "";
+		for (var i = 0; i < items.length; ++i) {
+			var lbl = document.createElement("label");
+			var cb = document.createElement("input");
+			cb.type = "checkbox";
+			cb.value = items[i];
+			if (hasPsMatch)
+				cb.checked = !!psMatches[items[i]];
+			else if (prev.indexOf(items[i]) !== -1)
+				cb.checked = true;
+			cb.onchange = function() {
+				updateCheckdropLabel(id, el._labelFn);
+				applyFilters();
+			};
+			lbl.appendChild(cb);
+			lbl.appendChild(document.createTextNode(
+				labelFn ? labelFn(items[i]) : items[i]));
+			list.appendChild(lbl);
+		}
+		if (hasPsMatch) _preselect[psKey] = null;
+		updateCheckdropLabel(id, labelFn);
+	}
+
+	function updateDropdowns() {
+		rebuildCheckdrop("sourceSelect",
+			Object.keys(_knownSources).sort());
+		rebuildCheckdrop("nodeSelect",
+			Object.keys(_knownHostnames).sort(), getShortenedHostname);
+		rebuildCheckdrop("appSelect",
+			Object.keys(_knownApps).sort());
 	}
 
 	// =========================================================================
@@ -478,45 +581,55 @@
 	}
 
 	function applyFilters() {
-		var srcSel  = document.getElementById("sourceSelect");
-		var nodeSel = document.getElementById("nodeSelect");
-		var level   = document.getElementById("levelSelect").value;
+		var srcVals  = getCheckdropValues("sourceSelect");
+		var nodeVals = getCheckdropValues("nodeSelect");
+		var appVals  = getCheckdropValues("appSelect");
+		var level    = document.getElementById("levelSelect").value;
 
-		// Source filter — multi-select: show only selected, or all if none selected
-		var selSrc = getSelectedValues(srcSel);
-		if (selSrc.length === 0 || selSrc.length === srcSel.options.length) {
-			setFilterStyle("source", null);
-		} else {
-			var css = ".mu2e-log-entry { display: none; }\n";
-			for (var i = 0; i < selSrc.length; ++i)
-				css += ".mu2e-log-entry.src-" + cssClass(selSrc[i]) + " { display: block; }\n";
-			setFilterStyle("source", css);
-		}
+		var srcTotal  = document.getElementById("sourceSelect").querySelectorAll("input[type=checkbox]").length;
+		var nodeTotal = document.getElementById("nodeSelect").querySelectorAll("input[type=checkbox]").length;
+		var appTotal  = document.getElementById("appSelect").querySelectorAll("input[type=checkbox]").length;
 
-		// Node filter — multi-select: show only selected, or all if none selected
-		var selNode = getSelectedValues(nodeSel);
-		if (selNode.length === 0 || selNode.length === nodeSel.options.length) {
-			setFilterStyle("node", null);
-		} else {
-			var css = ".mu2e-log-entry { display: none; }\n";
-			for (var i = 0; i < selNode.length; ++i)
-				css += ".mu2e-log-entry.host-" + cssClass(selNode[i]) + " { display: block; }\n";
-			setFilterStyle("node", css);
-		}
+		var srcAll  = (srcVals.length === 0  || srcVals.length === srcTotal);
+		var nodeAll = (nodeVals.length === 0 || nodeVals.length === nodeTotal);
+		var appAll  = (appVals.length === 0  || appVals.length === appTotal);
 
-		// Level filter — show selected level and above
-		if (level === "All") {
-			setFilterStyle("level", null);
-		} else {
+		// Levels to hide
+		var hiddenLevels = [];
+		if (level !== "All") {
 			var levelOrder = ["TRACE+","TRACE","Debug","Info","Warning","Error"];
 			var idx = levelOrder.indexOf(level);
-			var css = "";
-			for (var i = 0; i < idx; ++i) {
-				css += ".mu2e-log-entry.lvl-" + cssClass(levelOrder[i]) +
-				       " { display: none; }\n";
-			}
-			setFilterStyle("level", css || null);
+			for (var i = 0; i < idx; ++i)
+				hiddenLevels.push(levelOrder[i]);
 		}
+
+		// Build single combined CSS
+		var css = "";
+
+		// Hide levels below threshold (always works, independent)
+		for (var i = 0; i < hiddenLevels.length; ++i)
+			css += ".mu2e-log-entry.lvl-" + cssClass(hiddenLevels[i]) +
+			       " { display: none !important; }\n";
+
+		// Combined source/node/app filter
+		if (!(srcAll && nodeAll && appAll)) {
+			css += ".mu2e-log-entry { display: none; }\n";
+
+			var srcClasses  = srcAll  ? [""] : srcVals.map(function(v)  { return ".src-"  + cssClass(v); });
+			var nodeClasses = nodeAll ? [""] : nodeVals.map(function(v) { return ".host-" + cssClass(v); });
+			var appClasses  = appAll  ? [""] : appVals.map(function(v)  { return ".app-"  + cssClass(v); });
+
+			var selectors = [];
+			for (var si = 0; si < srcClasses.length; ++si)
+				for (var ni = 0; ni < nodeClasses.length; ++ni)
+					for (var ai = 0; ai < appClasses.length; ++ai)
+						selectors.push(".mu2e-log-entry" +
+							srcClasses[si] + nodeClasses[ni] + appClasses[ai]);
+
+			css += selectors.join(",\n") + " { display: block; }\n";
+		}
+
+		setFilterStyle("combo", css || null);
 
 		applySearchFilter();
 	}
@@ -545,6 +658,18 @@
 		}
 
 		document.getElementById("shownCount").textContent = visCount;
+		restripeRows();
+	}
+
+	function restripeRows() {
+		var entries = document.getElementById("messageArea").getElementsByClassName("mu2e-log-entry");
+		var odd = true;
+		for (var i = 0; i < entries.length; ++i) {
+			if (entries[i].offsetParent === null) continue;
+			entries[i].classList.toggle("row-odd", odd);
+			entries[i].classList.toggle("row-even", !odd);
+			odd = !odd;
+		}
 	}
 
 	// =========================================================================
@@ -612,10 +737,22 @@
 		<div class="mu2e-toolbar-sep"></div>
 
 		<label>Source:</label>
-		<select id="sourceSelect" multiple title="Ctrl+click to multi-select"></select>
+		<div id="sourceSelect" class="mu2e-checkdrop">
+			<button type="button" class="mu2e-checkdrop-btn">All</button>
+			<div class="mu2e-checkdrop-list"></div>
+		</div>
 
 		<label>Node:</label>
-		<select id="nodeSelect" multiple title="Ctrl+click to multi-select"></select>
+		<div id="nodeSelect" class="mu2e-checkdrop">
+			<button type="button" class="mu2e-checkdrop-btn">All</button>
+			<div class="mu2e-checkdrop-list"></div>
+		</div>
+
+		<label>App:</label>
+		<div id="appSelect" class="mu2e-checkdrop">
+			<button type="button" class="mu2e-checkdrop-btn">All</button>
+			<div class="mu2e-checkdrop-list"></div>
+		</div>
 
 		<div class="mu2e-toolbar-sep"></div>
 

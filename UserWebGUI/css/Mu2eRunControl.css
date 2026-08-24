@@ -243,13 +243,14 @@ body {
 }
 
 /* Semantic progress bar colors */
-.ss-bg-Initial    { background: #5a6a7a; }
-.ss-bg-Halted     { background: #b35600; }
-.ss-bg-Configured { background: #4a6280; }
-.ss-bg-Running    { background: #1b8a2e; }
-.ss-bg-Paused     { background: #4a6280; }
-.ss-bg-Error      { background: #c0392b; }
-.ss-bg-unknown    { background: #999; }
+.ss-bg-Initial    { background: #4a9ad4; }
+.ss-bg-Halted     { background: #d4a04a; }
+.ss-bg-Configured { background: #4aaa96; }
+.ss-bg-Running    { background: #4aaa5e; }
+.ss-bg-Paused     { background: #4aaa96; }
+.ss-bg-Error      { background: #d45050; }
+.ss-bg-unknown    { background: #aaa; }
+.ss-bg-disabled   { background: #ccc; color: #888; }
 
 /* ---- Progress percentage ---- */
 .ss-progress-pct {
@@ -532,8 +533,18 @@ body {
 }
 
 .sysoverview-item-clickable:hover {
-	outline: 1px solid rgba(255, 255, 255, 0.8);
-	filter: brightness(1.12);
+	filter: brightness(1.15);
+}
+
+.sysoverview-log-link {
+	cursor: pointer;
+	margin-left: 3px;
+	font-size: 9px;
+	opacity: 0.6;
+}
+
+.sysoverview-log-link:hover {
+	opacity: 1;
 }
 
 .sysoverview-empty {
