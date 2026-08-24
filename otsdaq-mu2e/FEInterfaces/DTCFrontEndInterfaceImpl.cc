@@ -6843,7 +6843,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
 	}
 	//else enabling, so apply parameters, then enable
 
-	getDTC()->SoftReset();  //to reset event window tag starting point handling
+	// 20-Aug-2026: rrivera removing Soft Reset so interaction with CFO Emulator better matches interaction with external CFO
+	// getDTC()->SoftReset();  //to reset event window tag starting point handling
 
 	//ASSUME release buffers is handled by the reading code
 	// // release of all the buffers
