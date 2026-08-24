@@ -123,7 +123,7 @@ rm -rf srcs/otsdaq*
 cp -r "$OTS_OPS_DEV_PATH/srcs/otsdaq"* srcs/.
 
 #cleanup vestiges of the install
-rm setup-env.sh
+mv setup-env.sh init-setup-env.sh #save file for Eric/Spack-expert debuggin
 rm setup_spack_build_system_v0.28.sh
 rm fonts.*
 rm mu2e-quick-spack-start.sh
