@@ -21,139 +21,8 @@
 			overflow: hidden;
 		}
 
-		/* ---- Filter bar ---- */
-		#filterBar {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 8px;
-			padding: 6px 10px;
-			background: #e8ecf1;
-			border-bottom: 1px solid #ccd0d8;
-			font-size: 11px;
-		}
-
-		#filterBar label {
-			font-weight: bold;
-			color: #333;
-			margin-left: 4px;
-		}
-
-		#filterBar select, #filterBar input[type="text"] {
-			font-family: 'Inconsolata', monospace;
-			font-size: 11px;
-			padding: 2px 4px;
-			border: 1px solid #aab;
-			border-radius: 3px;
-			background: #fff;
-		}
-
-		#filterBar select { min-width: 90px; }
 		#searchInput { min-width: 150px; flex-grow: 1; max-width: 300px; }
-
-		.filter-sep {
-			width: 1px;
-			height: 18px;
-			background: #bbb;
-			margin: 0 2px;
-		}
-
-		#pauseBtn {
-			font-family: 'Comfortaa', sans-serif;
-			font-size: 10px;
-			padding: 2px 10px;
-			cursor: pointer;
-			border: 1px solid #888;
-			border-radius: 3px;
-			background: #fff;
-		}
-		#pauseBtn:hover { background: #ddd; }
 		#pauseBtn.paused { background: #f8d7da; border-color: #c00; color: #c00; }
-
-		#orderBtn {
-			font-family: 'Comfortaa', sans-serif;
-			font-size: 10px;
-			padding: 2px 10px;
-			cursor: pointer;
-			border: 1px solid #888;
-			border-radius: 3px;
-			background: #fff;
-		}
-		#orderBtn:hover { background: #ddd; }
-
-		#clearBtn {
-			font-family: 'Comfortaa', sans-serif;
-			font-size: 10px;
-			padding: 2px 10px;
-			cursor: pointer;
-			border: 1px solid #888;
-			border-radius: 3px;
-			background: #fff;
-		}
-		#clearBtn:hover { background: #ddd; }
-
-		/* ---- Message display ---- */
-		#messageArea {
-			overflow-y: auto;
-			overflow-x: hidden;
-			font-family: 'Inconsolata', monospace;
-			font-size: 11px;
-			line-height: 1.4;
-			padding: 4px 6px;
-			background: #1a1a2e;
-			color: #66ff33;
-		}
-
-		.msg-entry {
-			padding: 1px 0;
-			white-space: pre-wrap;
-			word-break: break-all;
-			border-bottom: 1px solid rgba(255,255,255,0.03);
-		}
-
-		/* Level coloring */
-		.msg-entry.lvl-Error    { color: #f94141; }
-		.msg-entry.lvl-Warning  { color: #ffbc7b; }
-		.msg-entry.lvl-Info     { color: #32baff; }
-		.msg-entry.lvl-TRACE    { color: #5a8a5a; }
-		.msg-entry.lvl-TRACE_   { color: #4a7a4a; } /* TRACE+ becomes TRACE_ via cssClass */
-
-		.msg-host  { color: #888; }
-		.msg-level { font-weight: bold; }
-		.msg-time  { color: #999; }
-		.msg-label { color: #ccc; font-weight: bold; }
-		.msg-file  { color: #777; }
-		.msg-text  { }
-
-		.msg-entry.lvl-Error .msg-text   { color: #f94141; }
-		.msg-entry.lvl-Warning .msg-text { color: #ffbc7b; }
-		.msg-entry.lvl-Info .msg-text    { color: #32baff; }
-
-		/* Hidden by filter */
-		.search-hidden { display: none !important; }
-
-		/* ---- Status bar ---- */
-		#statusBar {
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			padding: 3px 10px;
-			background: #e8ecf1;
-			border-top: 1px solid #ccd0d8;
-			font-size: 10px;
-			color: #555;
-		}
-
-		#connectionDot {
-			display: inline-block;
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: #999;
-		}
-		#connectionDot.connected    { background: #28a745; }
-		#connectionDot.disconnected { background: #dc3545; }
-
 	</style>
 
 	<script>
@@ -209,8 +78,7 @@
 	var _REFRESH_ACTIVE  = 200;
 
 	var _knownHostnames  = {};
-	var _knownLabels     = {};
-	var _knownApps       = {};
+	var _knownSources    = {};
 	var _hostnameShortMap = {};
 	var _knownHostList   = [];
 
@@ -289,23 +157,6 @@
 		}
 	}
 
-	// =========================================================================
-	// App extraction and classification from Label
-	// artdaq labels follow "processName_Component": "br01_BoardReaderApp" → app="br01"
-	// OTS labels are plain names: "GatewaySupervisor" → app="GatewaySupervisor"
-	// =========================================================================
-	function extractApp(label) {
-		if (!label) return "Unknown";
-		var idx = label.indexOf("_");
-		if (idx > 0) return label.substring(0, idx);
-		return label;
-	}
-
-	function classifyLabel(label) {
-		if (!label) return "unknown";
-		return (label.indexOf("_") > 0) ? "artdaq" : "ots";
-	}
-
 	// Make a CSS-safe class name from a string
 	function cssClass(str) {
 		if (!str) return "";
@@ -345,8 +196,8 @@
 
 		// Attach event handlers
 		sel.onchange = function() { switchSystem(this.value); };
-		document.getElementById("componentSelect").onchange = applyFilters;
-		document.getElementById("appSelect").onchange = applyFilters;
+		document.getElementById("sourceSelect").onchange = applyFilters;
+		document.getElementById("nodeSelect").onchange = applyFilters;
 		document.getElementById("levelSelect").onchange = applyFilters;
 		document.getElementById("searchInput").oninput = applySearchFilter;
 		document.getElementById("pauseBtn").onclick = togglePause;
@@ -381,19 +232,13 @@
 		_lastUpdateIndex = -1;
 		_totalMessages = 0;
 		_knownHostnames = {};
-		_knownLabels = {};
-		_knownApps = {};
+		_knownSources = {};
 		_hostnameShortMap = {};
 		_knownHostList = [];
 
 		// Reset dropdowns
-		var compSel = document.getElementById("componentSelect");
-		compSel.innerHTML = '<option value="All">All</option>';
-		compSel.value = "All";
-
-		var appSel = document.getElementById("appSelect");
-		appSel.innerHTML = '<option value="All">All</option>';
-		appSel.value = "All";
+		document.getElementById("sourceSelect").innerHTML = "";
+		document.getElementById("nodeSelect").innerHTML = "";
 
 		// Clear display
 		document.getElementById("messageArea").innerHTML = "";
@@ -498,6 +343,7 @@
 			var m = msgArr[i];
 			var level    = m[MSG_FIELDS[F_LEVEL]]    || "";
 			var label    = m[MSG_FIELDS[F_LABEL]]    || "";
+			var source   = m[MSG_FIELDS[F_SOURCE]]   || "";
 			var msg      = m[MSG_FIELDS[F_MSG]]      || "";
 			var time     = m[MSG_FIELDS[F_TIME]]      || "";
 			var file     = m[MSG_FIELDS[F_FILE]]      || "";
@@ -505,23 +351,19 @@
 			var hostname = m[MSG_FIELDS[F_HOSTNAME]] || "";
 			var count    = m[MSG_FIELDS[F_COUNT]]     || "";
 
-			var app = extractApp(label);
-			var component = classifyLabel(label);
+			if (source == "xdaq.exe") source = "OTSDAQ";
+
 			var hostCss = cssClass(hostname);
-			var appCss = cssClass(app);
+			var srcCss = cssClass(source);
 			var levelCss = cssClass(level);
-			var componentCss = cssClass(component);
 
 			// Track new values for dropdowns
 			if (!_knownHostnames[hostname]) {
 				_knownHostnames[hostname] = true;
 				dropdownsChanged = true;
 			}
-			if (!_knownLabels[label]) {
-				_knownLabels[label] = true;
-			}
-			if (!_knownApps[app]) {
-				_knownApps[app] = component;
+			if (!_knownSources[source]) {
+				_knownSources[source] = true;
 				dropdownsChanged = true;
 			}
 
@@ -529,17 +371,16 @@
 			var msgStr = convertForClient(msg);
 			var shortHost = getShortenedHostname(hostname);
 
-			htmlParts.push("<div class='msg-entry lvl-" + levelCss +
+			htmlParts.push("<div class='mu2e-log-entry lvl-" + levelCss +
 				" host-" + hostCss +
-				" comp-" + componentCss +
-				" app-" + appCss +
+				" src-" + srcCss +
 				"'>" +
-				"<span class='msg-host'>" + Mu2e.esc(shortHost) + " | </span>" +
-				"<span class='msg-level'>" + Mu2e.esc(level) + "</span>" +
-				"<span class='msg-time'> (" + formatTime(time) + ") </span>" +
-				"<span class='msg-label'>" + Mu2e.esc(label) + ":</span> " +
-				"<span class='msg-file'>" + fileStr + "</span> " +
-				"<span class='msg-text'>" + msgStr + "</span>" +
+				"<span class='mu2e-log-host'>" + Mu2e.esc(shortHost) + " | </span>" +
+				"<span class='mu2e-log-level'>" + Mu2e.esc(level) + "</span>" +
+				"<span class='mu2e-log-time'> (" + formatTime(time) + ") </span>" +
+				"<span class='mu2e-log-label'>" + Mu2e.esc(label) + ":</span> " +
+				"<span class='mu2e-log-file'>" + fileStr + "</span> " +
+				"<span class='mu2e-log-text'>" + msgStr + "</span>" +
 				"</div>");
 
 			_totalMessages++;
@@ -578,67 +419,39 @@
 	// =========================================================================
 	// Dropdown management
 	// =========================================================================
+	function getSelectedValues(selectEl) {
+		var vals = [];
+		for (var i = 0; i < selectEl.options.length; ++i)
+			if (selectEl.options[i].selected) vals.push(selectEl.options[i].value);
+		return vals;
+	}
+
 	function updateDropdowns() {
-		// Component dropdown — auto-detect OTS vs artdaq from labels
-		var compSel = document.getElementById("componentSelect");
-		var currentComp = compSel.value;
-		var hasOts = false, hasArtdaq = false;
-		for (var lbl in _knownLabels) {
-			var c = classifyLabel(lbl);
-			if (c === "ots") hasOts = true;
-			else hasArtdaq = true;
-		}
-		compSel.innerHTML = '<option value="All">All</option>';
-		if (hasOts) compSel.innerHTML += '<option value="ots">OTS</option>';
-		if (hasArtdaq) compSel.innerHTML += '<option value="artdaq">artdaq</option>';
-		// Restore selection if still valid
-		if (compSel.querySelector('option[value="' + currentComp + '"]'))
-			compSel.value = currentComp;
-		else
-			compSel.value = "All";
-
-		// App dropdown
-		var appSel = document.getElementById("appSelect");
-		var currentApp = appSel.value;
-		var sortedApps = Object.keys(_knownApps).sort();
-		appSel.innerHTML = '<option value="All">All</option>';
-
-		// Group: OTS apps first, then artdaq apps
-		var otsApps = [], artdaqApps = [];
-		for (var i = 0; i < sortedApps.length; ++i) {
-			if (_knownApps[sortedApps[i]] === "ots")
-				otsApps.push(sortedApps[i]);
-			else
-				artdaqApps.push(sortedApps[i]);
+		// Source multi-select
+		var srcSel = document.getElementById("sourceSelect");
+		var prevSrc = getSelectedValues(srcSel);
+		var sortedSources = Object.keys(_knownSources).sort();
+		srcSel.innerHTML = "";
+		for (var i = 0; i < sortedSources.length; ++i) {
+			var opt = document.createElement("option");
+			opt.value = sortedSources[i];
+			opt.textContent = sortedSources[i];
+			if (prevSrc.indexOf(sortedSources[i]) !== -1) opt.selected = true;
+			srcSel.appendChild(opt);
 		}
 
-		if (otsApps.length > 0) {
-			var grp = document.createElement("optgroup");
-			grp.label = "OTS";
-			for (var i = 0; i < otsApps.length; ++i) {
-				var opt = document.createElement("option");
-				opt.value = otsApps[i];
-				opt.textContent = otsApps[i];
-				grp.appendChild(opt);
-			}
-			appSel.appendChild(grp);
+		// Node multi-select
+		var nodeSel = document.getElementById("nodeSelect");
+		var prevNode = getSelectedValues(nodeSel);
+		var sortedHosts = Object.keys(_knownHostnames).sort();
+		nodeSel.innerHTML = "";
+		for (var i = 0; i < sortedHosts.length; ++i) {
+			var opt = document.createElement("option");
+			opt.value = sortedHosts[i];
+			opt.textContent = getShortenedHostname(sortedHosts[i]);
+			if (prevNode.indexOf(sortedHosts[i]) !== -1) opt.selected = true;
+			nodeSel.appendChild(opt);
 		}
-		if (artdaqApps.length > 0) {
-			var grp = document.createElement("optgroup");
-			grp.label = "artdaq";
-			for (var i = 0; i < artdaqApps.length; ++i) {
-				var opt = document.createElement("option");
-				opt.value = artdaqApps[i];
-				opt.textContent = artdaqApps[i];
-				grp.appendChild(opt);
-			}
-			appSel.appendChild(grp);
-		}
-
-		if (appSel.querySelector('option[value="' + currentApp + '"]'))
-			appSel.value = currentApp;
-		else
-			appSel.value = "All";
 	}
 
 	// =========================================================================
@@ -665,29 +478,30 @@
 	}
 
 	function applyFilters() {
-		var comp  = document.getElementById("componentSelect").value;
-		var app   = document.getElementById("appSelect").value;
-		var level = document.getElementById("levelSelect").value;
+		var srcSel  = document.getElementById("sourceSelect");
+		var nodeSel = document.getElementById("nodeSelect");
+		var level   = document.getElementById("levelSelect").value;
 
-		// Component filter — hide by component class
-		if (comp === "All") {
-			setFilterStyle("component", null);
+		// Source filter — multi-select: show only selected, or all if none selected
+		var selSrc = getSelectedValues(srcSel);
+		if (selSrc.length === 0 || selSrc.length === srcSel.options.length) {
+			setFilterStyle("source", null);
 		} else {
-			var css = "";
-			if (comp === "ots")
-				css = ".msg-entry:not(.comp-ots) { display: none; }\n";
-			else if (comp === "artdaq")
-				css = ".msg-entry:not(.comp-artdaq) { display: none; }\n";
-			setFilterStyle("component", css);
+			var css = ".mu2e-log-entry { display: none; }\n";
+			for (var i = 0; i < selSrc.length; ++i)
+				css += ".mu2e-log-entry.src-" + cssClass(selSrc[i]) + " { display: block; }\n";
+			setFilterStyle("source", css);
 		}
 
-		// App filter — hide entries that don't match
-		if (app === "All") {
-			setFilterStyle("app", null);
+		// Node filter — multi-select: show only selected, or all if none selected
+		var selNode = getSelectedValues(nodeSel);
+		if (selNode.length === 0 || selNode.length === nodeSel.options.length) {
+			setFilterStyle("node", null);
 		} else {
-			var appClass = cssClass(app);
-			setFilterStyle("app",
-				".msg-entry:not(.app-" + appClass + ") { display: none; }\n");
+			var css = ".mu2e-log-entry { display: none; }\n";
+			for (var i = 0; i < selNode.length; ++i)
+				css += ".mu2e-log-entry.host-" + cssClass(selNode[i]) + " { display: block; }\n";
+			setFilterStyle("node", css);
 		}
 
 		// Level filter — show selected level and above
@@ -698,7 +512,7 @@
 			var idx = levelOrder.indexOf(level);
 			var css = "";
 			for (var i = 0; i < idx; ++i) {
-				css += ".msg-entry.lvl-" + cssClass(levelOrder[i]) +
+				css += ".mu2e-log-entry.lvl-" + cssClass(levelOrder[i]) +
 				       " { display: none; }\n";
 			}
 			setFilterStyle("level", css || null);
@@ -710,7 +524,7 @@
 	function applySearchFilter() {
 		var query = document.getElementById("searchInput").value.toLowerCase();
 		var area = document.getElementById("messageArea");
-		var entries = area.getElementsByClassName("msg-entry");
+		var entries = area.getElementsByClassName("mu2e-log-entry");
 		var visCount = 0;
 
 		if (!query) {
@@ -772,7 +586,7 @@
 	// =========================================================================
 	function updateStatus(text, connected) {
 		var dot = document.getElementById("connectionDot");
-		dot.className = connected ? "connected" : "disconnected";
+		dot.className = "status-dot " + (connected ? "status-on" : "status-off");
 		document.getElementById("connectionText").textContent = text;
 	}
 
@@ -791,23 +605,19 @@
 <body onload='//init() called by DesktopContent.js' onresize="layoutPage();">
 
 	<!-- Filter bar -->
-	<div id="filterBar">
+	<div id="filterBar" class="mu2e-toolbar">
 		<label>System:</label>
 		<select id="systemSelect"></select>
 
-		<div class="filter-sep"></div>
+		<div class="mu2e-toolbar-sep"></div>
 
-		<label>Component:</label>
-		<select id="componentSelect">
-			<option value="All">All</option>
-		</select>
+		<label>Source:</label>
+		<select id="sourceSelect" multiple title="Ctrl+click to multi-select"></select>
 
-		<label>App:</label>
-		<select id="appSelect">
-			<option value="All">All</option>
-		</select>
+		<label>Node:</label>
+		<select id="nodeSelect" multiple title="Ctrl+click to multi-select"></select>
 
-		<div class="filter-sep"></div>
+		<div class="mu2e-toolbar-sep"></div>
 
 		<label>Level:</label>
 		<select id="levelSelect">
@@ -823,19 +633,19 @@
 		<label>Search:</label>
 		<input type="text" id="searchInput" placeholder="filter text...">
 
-		<div class="filter-sep"></div>
+		<div class="mu2e-toolbar-sep"></div>
 
-		<button id="orderBtn">Newest first</button>
-		<button id="pauseBtn">Pause</button>
-		<button id="clearBtn">Clear</button>
+		<button id="orderBtn" class="mu2e-toolbar-btn">Newest first</button>
+		<button id="pauseBtn" class="mu2e-toolbar-btn">Pause</button>
+		<button id="clearBtn" class="mu2e-toolbar-btn">Clear</button>
 	</div>
 
 	<!-- Message display -->
-	<div id="messageArea"></div>
+	<div id="messageArea" class="mu2e-log"></div>
 
 	<!-- Status bar -->
-	<div id="statusBar">
-		<span id="connectionDot"></span>
+	<div id="statusBar" class="mu2e-statusbar">
+		<span id="connectionDot" class="status-dot status-unknown"></span>
 		<span id="connectionText">Initializing...</span>
 		<span>|</span>
 		<span>System: <b id="systemName">---</b></span>
