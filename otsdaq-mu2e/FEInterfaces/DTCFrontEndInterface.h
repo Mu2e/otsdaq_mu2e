@@ -105,6 +105,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		DTCLib::DTC* thisDTC_;
 
 		bool                  inSubeventMode_   = false;
+		bool                  inEVBMode_        = false;
 		bool                  activeMatch_      = false;
 		std::atomic<uint64_t> expectedEventTag_ = -1, nextEventWindowTag_ = -1;
 		bool                  saveBinaryData_                  = false;
@@ -123,6 +124,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
 		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
 		    rocPayloadByteCount_;
+		std::atomic<uint64_t> evbDmaBuffersRead_{0};
+		std::atomic<uint64_t> evbChunksCount_{0};
+		std::atomic<uint64_t> evbTotalDataWordsRead_{0};
+		std::atomic<uint64_t> evbCloseFillersCount_{0};
+		std::atomic<uint64_t> evbFramingErrors_{0};
+		std::map<uint8_t, uint64_t> evbSourceChunkCounts_;
+		std::map<uint8_t, uint64_t> evbSourceWordCounts_;
+
 		uint64_t                                           totalSubeventBytesTransferred_;
 		std::chrono::time_point<std::chrono::steady_clock> transferStartTime_,
 		    transferEndTime_;
@@ -142,6 +151,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	static std::string getDetachedBufferTestStatus(
 	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	        threadStruct);
+	static std::string getDetachedBufferTestEVBStatus(
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
 	static uint64_t getDetachedBufferTestReceivedCount(
 	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	        threadStruct);
@@ -156,7 +168,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                            bool               saveSubeventHeadersToDataFile,
 	                            bool               doNotResetCounters,
 	                            bool               skipBy32,
-	                            uint32_t           packetThresholdToSave);
+	                            uint32_t           packetThresholdToSave,
+	                            bool               inEVBMode = false);
 
 	std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	    bufferTestThreadStruct_;
@@ -284,7 +297,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                                              bool               saveSubeventHeadersToDataFile,
 	                                              bool               doNotResetCounters,
 	                                              bool               skipBy32,
-	                                              uint32_t           packetThresholdToSave);
+	                                              uint32_t           packetThresholdToSave,
+	                                              bool               inEVBMode = false);
 	void        SetCFOEmulatorFixedWidthEmulation(__ARGS__);
 	std::string SetCFOEmulatorFixedWidthEmulation(bool               enable,
 	                                              bool               useDetachedBufferTest,
@@ -299,7 +313,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                                              bool               saveSubeventHeadersToDataFile,
 	                                              bool               doNotResetCounters,
 	                                              bool               skipBy32,
-	                                              uint32_t           packetThresholdToSave);
+	                                              uint32_t           packetThresholdToSave,
+	                                              bool               inEVBMode = false);
 
 	void BufferTest(__ARGS__);
 	void PatternTest(__ARGS__);

@@ -412,7 +412,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "Save Binary Data to File (Default: false)",
 	        "Save Binary Data Filename",
 	        "Save Subevent Header to Binary File (Default: false)",
-	        "Payload Packet Threshold for Saving Event (Default: 0)"
+	        "Payload Packet Threshold for Saving Event (Default: 0)",
+	        "EVB Mode (Default: false)"
 	        // "Software Generated Data Requests (bool)",
 	        // "Do Not Send Heartbeats (bool)"
 	    },
@@ -877,7 +878,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: "
 	        "false)",
 	        "For Detached Buffer Test, Payload Packet Threshold for Saving Event "
-	        "(Default: 0)"},  // namesOfInputArgs
+	        "(Default: 0)",
+	        "For Detached Buffer Test, EVB Mode (Default: false)"},  // namesOfInputArgs
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
@@ -907,7 +909,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	        "For Detached Buffer Test, Skip-by-32 to Emulate Event Building (Default: "
 	        "false)",
 	        "For Detached Buffer Test, Payload Packet Threshold for Saving Event "
-	        "(Default: 0)"},  // namesOfInputArgs
+	        "(Default: 0)",
+	        "For Detached Buffer Test, EVB Mode (Default: false)"},  // namesOfInputArgs
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
@@ -6649,7 +6652,8 @@ void DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(__ARGS__)
 	                       bool),
 	        __GET_ARG_IN__("For Detached Buffer Test, Payload Packet Threshold for "
 	                       "Saving Event (Default: 0)",
-	                       uint32_t)));
+	                       uint32_t),
+	        __GET_ARG_IN__("For Detached Buffer Test, EVB Mode (Default: false)", bool)));
 }  //end SetCFOEmulatorOnOffSpillEmulation()
 
 //========================================================================
@@ -6666,7 +6670,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(
     bool               saveSubeventHeadersToDataFile,
     bool               doNotResetCounters,
     bool               skipBy32,
-    uint32_t           packetThresholdToSave)
+    uint32_t           packetThresholdToSave,
+    bool               inEVBMode)
 {
 	__FE_COUTV__(enable);
 
@@ -6695,7 +6700,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorOnOffSpillEmulation(
 		                       saveSubeventHeadersToDataFile,
 		                       doNotResetCounters,
 		                       skipBy32,
-		                       packetThresholdToSave);
+		                       packetThresholdToSave,
+		                       inEVBMode);
 
 	//If Event Window duration = 0, this specifies to execute the On/Off Spill emulation of Event Window intervals.
 	getDTC()->SetCFOEmulationEventWindowInterval(0);
@@ -6817,7 +6823,8 @@ void DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(__ARGS__)
 	                       bool),
 	        __GET_ARG_IN__("For Detached Buffer Test, Payload Packet Threshold for "
 	                       "Saving Event (Default: 0)",
-	                       uint32_t)));
+	                       uint32_t),
+	        __GET_ARG_IN__("For Detached Buffer Test, EVB Mode (Default: false)", bool)));
 }  //end SetCFOEmulatorFixedWidthEmulation()
 
 //========================================================================
@@ -6835,7 +6842,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
     bool               saveSubeventHeadersToDataFile,
     bool               doNotResetCounters,
     bool               skipBy32,
-    uint32_t           packetThresholdToSave)
+    uint32_t           packetThresholdToSave,
+    bool               inEVBMode)
 {
 	__FE_COUTV__(enable);
 
@@ -6865,7 +6873,8 @@ std::string DTCFrontEndInterface::SetCFOEmulatorFixedWidthEmulation(
 		                       saveSubeventHeadersToDataFile,
 		                       doNotResetCounters,
 		                       skipBy32,
-		                       packetThresholdToSave);
+		                       packetThresholdToSave,
+		                       inEVBMode);
 
 	__FE_COUTV__(eventDuration);
 	bool   foundUnits = false;
@@ -7025,7 +7034,8 @@ void DTCFrontEndInterface::initDetachedBufferTest(
     bool               saveSubeventHeadersToDataFile,
     bool               doNotResetCounters,
     bool               skipBy32,
-    uint32_t           packetThresholdToSave)
+    uint32_t           packetThresholdToSave,
+    bool               inEVBMode)
 {
 	__FE_COUTV__(saveBinaryDataToFile);
 	__FE_COUTV__(doNotResetCounters);
@@ -7046,6 +7056,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 		{
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
 			bufferTestThreadStruct_->inSubeventMode_         = true;
+			bufferTestThreadStruct_->inEVBMode_              = inEVBMode;
 			bufferTestThreadStruct_->activeMatch_            = false;
 			bufferTestThreadStruct_->expectedEventTag_       = initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_         = saveBinaryDataToFile;
@@ -7072,6 +7083,7 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 		{
 			std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
 			bufferTestThreadStruct_->inSubeventMode_         = true;
+			bufferTestThreadStruct_->inEVBMode_              = inEVBMode;
 			bufferTestThreadStruct_->activeMatch_            = false;
 			bufferTestThreadStruct_->expectedEventTag_       = initialEventWindowTag;
 			bufferTestThreadStruct_->saveBinaryData_         = saveBinaryDataToFile;
@@ -7109,7 +7121,9 @@ void DTCFrontEndInterface::initDetachedBufferTest(
 uint64_t DTCFrontEndInterface::getDetachedBufferTestReceivedCount(
     std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
 {
-	if(!threadStruct->inSubeventMode_)
+	if(threadStruct->inEVBMode_)
+		return threadStruct->subeventsCount_;
+	else if(!threadStruct->inSubeventMode_)
 		return threadStruct->eventsCount_;
 	else
 		return threadStruct->subeventsCount_;
@@ -7265,6 +7279,124 @@ std::string DTCFrontEndInterface::getDetachedBufferTestStatus(
 
 	return statusSs.str();
 }  //end getDetachedBufferTestStatus()
+
+//==============================================================================
+std::string DTCFrontEndInterface::getDetachedBufferTestEVBStatus(
+    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct)
+{
+	std::string mfSubject_ = LOCAL_COUT_HDR;
+	__GEN_COUT__ << "Get detached buffer test EVB status..." << __E__;
+
+	std::stringstream statusSs;
+
+	{
+		std::lock_guard<std::mutex> lock(threadStruct->lock_);
+
+		if(threadStruct->error_ != "")
+			statusSs << "Detached thread caught error:" << threadStruct->error_ << __E__;
+		statusSs << "Detached thread running:"
+		         << (threadStruct->running_ ? "true" : "false") << __E__;
+		statusSs << "Mode: EVB" << __E__;
+
+		if(threadStruct->saveBinaryData_)
+			statusSs << "Output file:"
+			         << (std::string(__ENV__("OTSDAQ_DATA")) + "/" +
+			             threadStruct->saveBinaryDataFilename_)
+			         << __E__;
+
+		statusSs << "SubEvents count:" << threadStruct->subeventsCount_ << __E__;
+		statusSs << "Subrun Transition count:" << threadStruct->subrunTransitionCount_
+		         << __E__;
+		statusSs << "Total Subevent Bytes Transferred (including Headers): "
+		         << threadStruct->totalSubeventBytesTransferred_ << __E__;
+
+		long long ns =
+		    std::chrono::duration_cast<std::chrono::nanoseconds>(
+		        threadStruct->transferEndTime_ - threadStruct->transferStartTime_)
+		        .count();
+		if(ns > 1000)
+		{
+			statusSs << "Data Transfer Duration: " << ns / 1000.0 / 1000.0 << " ms"
+			         << __E__;
+			statusSs << "Average Data Rate: "
+			         << ((double)threadStruct->totalSubeventBytesTransferred_) /
+			                (ns / 1000.0)
+			         << " MB/s" << __E__;
+		}
+		else
+			statusSs << "Data Transfer Duration too short to establish data rate."
+			         << __E__;
+
+		statusSs << "Starting Event Window Tag:" << threadStruct->expectedEventTag_
+		         << __E__;
+		statusSs << "Next Expected Event Window Tag:" << threadStruct->nextEventWindowTag_
+		         << __E__;
+		statusSs << "Mismatched Event Tags count:"
+		         << threadStruct->mismatchedEventTagsCount_ << __E__;
+
+		statusSs << "EVB DMA Buffers Read:" << threadStruct->evbDmaBuffersRead_ << __E__;
+		statusSs << "EVB FAFA Chunks Parsed:" << threadStruct->evbChunksCount_ << __E__;
+		statusSs << "EVB Framing Errors:" << threadStruct->evbFramingErrors_ << __E__;
+
+		statusSs << "EVB Per-Source Chunk Counts..." << __E__;
+		for(auto& [src, count] : threadStruct->evbSourceChunkCounts_)
+			statusSs << "\t Source 0x" << std::hex << static_cast<int>(src) << std::dec
+			         << " chunks:" << count << __E__;
+
+		statusSs << "EVB Per-Source Word Counts..." << __E__;
+		for(auto& [src, count] : threadStruct->evbSourceWordCounts_)
+			statusSs << "\t Source 0x" << std::hex << static_cast<int>(src) << std::dec
+			         << " words:" << count << __E__;
+
+		statusSs << "ROC Fragments..." << __E__;
+		for(size_t i = 0; i < threadStruct->rocFragmentsCount_.size(); ++i)
+			statusSs << "\t Roc-" << i
+			         << " Fragments count:" << threadStruct->rocFragmentsCount_[i]
+			         << __E__;
+
+		statusSs << "ROC Payload Byte count..." << __E__;
+		for(size_t i = 0; i < threadStruct->rocPayloadByteCount_.size(); ++i)
+			statusSs << "\t Roc-" << i
+			         << " Payload bytes:" << threadStruct->rocPayloadByteCount_[i]
+			         << __E__;
+
+		try
+		{
+			statusSs << "HW EVB Counters..." << __E__;
+			statusSs << "\t wc_roc_input:" << threadStruct->thisDTC_->ReadEVBROCInputWords() << __E__;
+			statusSs << "\t wc_self_transfer:" << threadStruct->thisDTC_->ReadEVBSelfTransferWords() << __E__;
+			statusSs << "\t wc_gbe_ddr_fifo:" << threadStruct->thisDTC_->ReadEVBDDRFIFOWriteWords() << __E__;
+			statusSs << "\t wc_ddr_to_tx:" << threadStruct->thisDTC_->ReadEVBDDRToTXWords() << __E__;
+			statusSs << "\t wc_bufmgr_output:" << threadStruct->thisDTC_->ReadEVBBufferManagerOutputWords() << __E__;
+			statusSs << "\t wc_output_stream:" << threadStruct->thisDTC_->ReadEVBDMAOutputWords() << __E__;
+			statusSs << "\t wc_gbe_rx:" << threadStruct->thisDTC_->ReadEVBGBERXWords() << __E__;
+			uint16_t selfXfer = threadStruct->thisDTC_->ReadEVBSelfTransferWords();
+			uint16_t bufmgr   = threadStruct->thisDTC_->ReadEVBBufferManagerOutputWords();
+			uint16_t output   = threadStruct->thisDTC_->ReadEVBDMAOutputWords();
+			statusSs << "\t Zero-sum check (output == self + bufmgr): " << output << " == "
+			         << selfXfer << " + " << bufmgr << " = " << (selfXfer + bufmgr)
+			         << " => " << (output == (selfXfer + bufmgr) ? "PASS" : "MISMATCH") << __E__;
+		}
+		catch(const std::exception& e)
+		{
+			statusSs << "HW EVB Counters: read error: " << e.what() << __E__;
+		}
+
+		if(threadStruct->error_ != "" || threadStruct->evbFramingErrors_ > 0)
+		{
+			__SS__ << "Error identified in the detached buffer EVB status";
+			if(threadStruct->evbFramingErrors_ > 0)
+				ss << ". Framing errors: " << threadStruct->evbFramingErrors_;
+			ss << ": ";
+			__COUT_ERR__ << ss.str();
+			ss << "\n" << statusSs.str();
+			return ss.str();
+		}
+	}
+	__GEN_COUT__ << "Done getting detached buffer test EVB status..." << __E__;
+
+	return statusSs.str();
+}  //end getDetachedBufferTestEVBStatus()
 
 //==============================================================================
 void DTCFrontEndInterface::handleDetachedSubevent(
@@ -7617,6 +7749,13 @@ try
 		threadStruct->rocFragmentErrorsCount_        = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocHeaderTimeoutsCount_        = {0, 0, 0, 0, 0, 0};
 		threadStruct->rocPayloadByteCount_           = {0, 0, 0, 0, 0, 0};
+		threadStruct->evbDmaBuffersRead_             = 0;
+		threadStruct->evbChunksCount_                = 0;
+		threadStruct->evbTotalDataWordsRead_         = 0;
+		threadStruct->evbCloseFillersCount_          = 0;
+		threadStruct->evbFramingErrors_              = 0;
+		threadStruct->evbSourceChunkCounts_.clear();
+		threadStruct->evbSourceWordCounts_.clear();
 		threadStruct->totalSubeventBytesTransferred_ = 0;
 		threadStruct->transferStartTime_ = std::chrono::steady_clock::time_point::min();
 		threadStruct->transferEndTime_   = std::chrono::steady_clock::time_point::min();
@@ -7634,11 +7773,17 @@ try
 				if(threadStruct->doNotResetCounters_)
 					__GEN_COUT_INFO__
 					    << "NOT Resetting counters; previous status was as follows: \n"
-					    << getDetachedBufferTestStatus(threadStruct) << __E__;
+					    << (threadStruct->inEVBMode_
+					            ? getDetachedBufferTestEVBStatus(threadStruct)
+					            : getDetachedBufferTestStatus(threadStruct))
+					    << __E__;
 				else
 					__GEN_COUT_INFO__
 					    << "Resetting counters; previous status was as follows: \n"
-					    << getDetachedBufferTestStatus(threadStruct) << __E__;
+					    << (threadStruct->inEVBMode_
+					            ? getDetachedBufferTestEVBStatus(threadStruct)
+					            : getDetachedBufferTestStatus(threadStruct))
+					    << __E__;
 
 				// start mutex scope
 				{
@@ -7718,6 +7863,13 @@ try
 						threadStruct->rocFragmentErrorsCount_        = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocHeaderTimeoutsCount_        = {0, 0, 0, 0, 0, 0};
 						threadStruct->rocPayloadByteCount_           = {0, 0, 0, 0, 0, 0};
+						threadStruct->evbDmaBuffersRead_             = 0;
+						threadStruct->evbChunksCount_                = 0;
+						threadStruct->evbTotalDataWordsRead_         = 0;
+						threadStruct->evbCloseFillersCount_          = 0;
+						threadStruct->evbFramingErrors_              = 0;
+						threadStruct->evbSourceChunkCounts_.clear();
+						threadStruct->evbSourceWordCounts_.clear();
 						threadStruct->totalSubeventBytesTransferred_ = 0;
 						threadStruct->transferStartTime_ =
 						    std::chrono::steady_clock::time_point::min();
@@ -7765,7 +7917,49 @@ try
 
 		}  //done with check for starting event window tag
 
-		if(!threadStruct->inSubeventMode_)  //treat as an Event
+		if(threadStruct->inEVBMode_)
+		{
+			__GEN_COUTT__ << "get the data requested via ->GetEVBDataAsEvents(...)"
+			              << " nextEventWindowTag=" << threadStruct->nextEventWindowTag_
+			              << " iteration=" << ii
+			              << " subeventsCount=" << threadStruct->subeventsCount_;
+
+			if(threadStruct->exitThread_)
+			{
+				__GEN_COUT_INFO__ << "exitThread received in Buffer Test" << __E__;
+				break;
+			}
+			auto events = threadStruct->thisDTC_->GetEVBDataAsEvents(
+			    DTCLib::DTC_EventWindowTag(threadStruct->nextEventWindowTag_),
+			    false /* EWT match */);
+
+			++ii;
+
+			if(events.empty())
+				continue;
+
+			for(auto& eventPtr : events)
+			{
+				if(threadStruct->exitThread_)
+				{
+					__GEN_COUT__ << "exitThread received in Buffer Test" << __E__;
+					break;
+				}
+
+				handleDetachedSubevent(eventPtr->GetSubEvents().at(0), threadStruct);
+			}
+
+			if(lastCount != threadStruct->subeventsCount_ || ii % 2000 == 0)
+			{
+				__GEN_COUT__
+				    << "EVB mode... iteration #"
+				    << ii
+				    << ", SubEvents received so far = " << threadStruct->subeventsCount_
+				    << __E__;
+				lastCount = threadStruct->subeventsCount_;
+			}
+		}  // end EVB mode handling
+		else if(!threadStruct->inSubeventMode_)  //treat as an Event
 		{
 			__GEN_COUTT__ << "get the data requested as events via ->GetData(...)"
 			              << __E__;
@@ -8082,6 +8276,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	// bool displayPayloadAtGUI = __GET_ARG_IN__("Display Payload at GUI (Default: true)", bool, true);
 	unsigned int packetThresholdToSave = __GET_ARG_IN__(
 	    "Payload Packet Threshold for Saving Event (Default: 0)", unsigned int);
+	bool inEVBMode = __GET_ARG_IN__("EVB Mode (Default: false)", bool);
 
 	__FE_COUTV__(command);
 	__FE_COUTV__(dataAreSubEvents);
@@ -8091,6 +8286,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 	__FE_COUTV__(saveBinaryDataFilename);
 	__FE_COUTV__(saveSubeventHeadersToDataFile);
 	__FE_COUTV__(packetThresholdToSave);
+	__FE_COUTV__(inEVBMode);
 
 	// print the result
 	std::stringstream outSs;
@@ -8118,6 +8314,7 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			{
 				std::lock_guard<std::mutex> lock(bufferTestThreadStruct_->lock_);
 				bufferTestThreadStruct_->inSubeventMode_         = dataAreSubEvents;
+				bufferTestThreadStruct_->inEVBMode_              = inEVBMode;
 				bufferTestThreadStruct_->activeMatch_            = activeMatch;
 				bufferTestThreadStruct_->expectedEventTag_       = timestampStart;
 				bufferTestThreadStruct_->saveBinaryData_         = saveBinaryDataToFile;
@@ -8144,8 +8341,11 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 		}
 		sleep(1);
 		outSs << "Reading status..." << __E__;
-		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(
-		    bufferTestThreadStruct_);
+		outSs << (bufferTestThreadStruct_->inEVBMode_
+		              ? DTCFrontEndInterface::getDetachedBufferTestEVBStatus(
+		                    bufferTestThreadStruct_)
+		              : DTCFrontEndInterface::getDetachedBufferTestStatus(
+		                    bufferTestThreadStruct_));
 	}
 	else if(command == "0" || command == "Status")
 	{
@@ -8156,8 +8356,11 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 			bufferTestThreadStruct_ =
 			    std::make_shared<DTCFrontEndInterface::DetachedBufferTestThreadStruct>();
 
-		outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(
-		    bufferTestThreadStruct_);
+		outSs << (bufferTestThreadStruct_->inEVBMode_
+		              ? DTCFrontEndInterface::getDetachedBufferTestEVBStatus(
+		                    bufferTestThreadStruct_)
+		              : DTCFrontEndInterface::getDetachedBufferTestStatus(
+		                    bufferTestThreadStruct_));
 	}
 	else if(command == "2" || command == "Halt")
 	{
@@ -8198,8 +8401,11 @@ void DTCFrontEndInterface::BufferTest_detached(__ARGS__)
 		outSs << "Reading final status..." << __E__;
 		try
 		{
-			outSs << DTCFrontEndInterface::getDetachedBufferTestStatus(
-			    bufferTestThreadStruct_);
+			outSs << (bufferTestThreadStruct_->inEVBMode_
+			              ? DTCFrontEndInterface::getDetachedBufferTestEVBStatus(
+			                    bufferTestThreadStruct_)
+			              : DTCFrontEndInterface::getDetachedBufferTestStatus(
+			                    bufferTestThreadStruct_));
 		}
 		catch(const std::runtime_error& e)
 		{
