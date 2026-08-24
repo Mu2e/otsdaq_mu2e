@@ -7,9 +7,29 @@
 # change log:
 #   -- 26-Feb-2026: Initial version of the script. It is a wrapper to the mu2e-quick-spack-start.sh script, which is used to install the otsdaq
 #
-# This install worked on 25-Feb-2026 in MC2 on dl-01
-#   - it took ~30 minutes for quick spack start
-#   - plus it took ~30 minutes for the mz_uc clean build
+# In new terminal, should source this script on the NFS host (mu2e-mgr-01 in MC2, mu2edaq13 in HEERC)
+#	to create a new development area for otsdaq-mu2e.
+# 	It will copy the srcs/otsdaq* repos from an existing area (default: /home/mu2eshift/ots_ops_dev)
+#	to the new area.
+#
+# Example execution from new terminal at PWD = ~mu2etrk on mu2e-mgr-01 in MC2:
+# 		baseurl="https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e/refs/heads/develop"
+# 		curl "$baseurl/install_mu2e_ops_dev.sh" -o install_mu2e_ops_dev.sh
+# 		source install_mu2e_ops_dev.sh <dev area folder name> [optional area to copy from] [--no-dev-only]
+#
+#   Options:
+#       --no-dev-only   Remove the --dev-only flag from the spack install (by default --dev-only is included).
+#                       Use this option if the install location does not already have the correct dependencies
+#                       installed (e.g. a fresh machine or new spack area). Without --dev-only, spack will do
+#                       a full dependency install which takes ~3 hours instead of ~6 minutes.
+#
+# This install worked on 21-Aug-2026, started 11:45. 11:51 mz_uc asked Y/N and number of cores,.. 13:23 pressed Y and 24. 13:29 done with compile.
+# This install worked on 20-Aug-2026 in MC2 on mgr-01 from /home/mu2etrk/ots_tmp
+#		> source install_mu2e_ops_dev.sh myots
+#   - Started at 14:02
+#	- 15:52: done with install, copy, spack setup.. now concretizing...
+#   - 15:55: starting mz_uc for a clean build, have to click Y and enter cores
+#	- 16:06: done with mz_uc.
 #   - resulting srcs directory (all on develop branch, not fetched nor pulled from remote):
 #       artdaq-core-mu2e
 #       artdaq-mu2e
@@ -37,13 +57,27 @@
 #       UpdateOTS.sh --pullall
 #
 
+DEV_ONLY_FLAG="--dev-only"
+POSITIONAL_ARGS=()
+for arg in "$@"; do
+	case "$arg" in
+		--no-dev-only)
+			DEV_ONLY_FLAG=""
+			;;
+		*)
+			POSITIONAL_ARGS+=("$arg")
+			;;
+	esac
+done
+set -- "${POSITIONAL_ARGS[@]}"
+
 OTS_OPS_DEV_PATH="/home/mu2eshift/ots_ops_dev"
 # $2 (optional): override OTS_OPS_DEV_PATH with an existing directory to build from another area's work
 if [[ -n "$2" && -d "$2" ]]; then
 	OTS_OPS_DEV_PATH="$2"
 fi
 
-echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t This script should be sourced on mu2e-dl-01 in MC2. Will copy srcs/otsdaq* from ${OTS_OPS_DEV_PATH}"
+echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t This script should be sourced on mu2e-mgr-01 in MC2. Will copy srcs/otsdaq* from ${OTS_OPS_DEV_PATH}"
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Error: This script must be sourced, not executed"
@@ -76,7 +110,7 @@ curl "$baseurl/$latestscript" -o mu2e-quick-spack-start.sh
 chmod +x mu2e-quick-spack-start.sh
 unset SPACK_ROOT # just in case there is another installation hanging around in your bash environment
 # Specify --tag (e.g. --tag v3_04_00) to build your area against a fixed tag of the software. (Defaults to the latest tag in otsdaq-mu2e)
-./mu2e-quick-spack-start.sh --trigger --develop --dev-only # Omit --trigger if you are not developing any code that depends on data overlays or Offline code
+./mu2e-quick-spack-start.sh --trigger --develop $DEV_ONLY_FLAG # Omit --trigger if you are not developing any code that depends on data overlays or Offline code. Pass --no-dev-only to this script to omit --dev-only.
 
 ll srcs/
 if [ ! -d "srcs" ]; then
@@ -89,10 +123,12 @@ rm -rf srcs/otsdaq*
 cp -r "$OTS_OPS_DEV_PATH/srcs/otsdaq"* srcs/.
 
 #cleanup vestiges of the install
-rm setup-env.sh
+mv setup-env.sh init-setup-env.sh #save file for Eric/Spack-expert debuggin
 rm setup_spack_build_system_v0.28.sh
 rm fonts.*
 rm mu2e-quick-spack-start.sh
+rm setup_ots_rte.sh
+rm setup_ots.sh
 ll
 
 #get scripts and make links
@@ -113,3 +149,9 @@ ll
 . setup_ots.sh cfo
 UpdateOTS.sh --develop #move all srcs repos to develop branch
 mz_uc
+
+echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t Install complete!"
+echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t    Note: the otsdaq* repos are all on the develop branch, but not fetched nor pulled."
+echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t    They will be at whatever hash has been fetched in ${OTS_OPS_DEV_PATH} (which should be known to be compilable as a set)."
+echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t    If you want to pull the latest of all repos in srcs/, do the following:"
+echo -e "$(date +%d%b%y.%T) install_mu2e_ops_dev.sh:${LINENO} \t        UpdateOTS.sh --pullall"
