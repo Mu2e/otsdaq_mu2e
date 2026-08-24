@@ -2662,11 +2662,13 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 	        operatingMode_ ==
 	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
-		const unsigned int systemMinReady = getSystemMinReadyForEventGenerationStartIteration();
+		const unsigned int systemMinReady =
+		    getSystemMinReadyForEventGenerationStartIteration();
 		if(systemMinReady < 2)
 		{
-			__FE_SS__ << "SystemMinReadyForEventGenerationStartIteration must be >= 2 (got "
-			          << systemMinReady << ")." << __E__;
+			__FE_SS__
+			    << "SystemMinReadyForEventGenerationStartIteration must be >= 2 (got "
+			    << systemMinReady << ")." << __E__;
 			__FE_SS_THROW__;
 		}
 

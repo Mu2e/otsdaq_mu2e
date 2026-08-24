@@ -3220,7 +3220,8 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
 
-		const unsigned int systemMinReady = getSystemMinReadyForEventGenerationStartIteration();
+		const unsigned int systemMinReady =
+		    getSystemMinReadyForEventGenerationStartIteration();
 		const unsigned int startIteration = getIterationIndex();
 
 		if(startIteration == 0)
@@ -3243,7 +3244,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 
 		if(startIteration == systemMinReady - 1 && getSubIterationIndex() == 0)
 			getDTC()->SoftReset();
-            usleep(500000);  // wait 100 ms for DTC to reset counters
+		usleep(500000);  // wait 100 ms for DTC to reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
