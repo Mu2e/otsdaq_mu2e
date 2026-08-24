@@ -1,0 +1,849 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Mu2e Log Viewer</title>
+
+	<link href='/WebPath/css/fonts.css?family=Inconsolata:400' rel='stylesheet' type='text/css'>
+	<link href='/WebPath/css/fonts.css?family=Comfortaa:700,400' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/Mu2e.css">
+
+	<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+	<script type="text/JavaScript" src="/WebPath/UserWebPath/js/Mu2e.js"></script>
+
+	<style>
+		body {
+			background-color: transparent;
+			font-family: 'Comfortaa', sans-serif;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		/* ---- Filter bar ---- */
+		#filterBar {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 8px;
+			padding: 6px 10px;
+			background: #e8ecf1;
+			border-bottom: 1px solid #ccd0d8;
+			font-size: 11px;
+		}
+
+		#filterBar label {
+			font-weight: bold;
+			color: #333;
+			margin-left: 4px;
+		}
+
+		#filterBar select, #filterBar input[type="text"] {
+			font-family: 'Inconsolata', monospace;
+			font-size: 11px;
+			padding: 2px 4px;
+			border: 1px solid #aab;
+			border-radius: 3px;
+			background: #fff;
+		}
+
+		#filterBar select { min-width: 90px; }
+		#searchInput { min-width: 150px; flex-grow: 1; max-width: 300px; }
+
+		.filter-sep {
+			width: 1px;
+			height: 18px;
+			background: #bbb;
+			margin: 0 2px;
+		}
+
+		#pauseBtn {
+			font-family: 'Comfortaa', sans-serif;
+			font-size: 10px;
+			padding: 2px 10px;
+			cursor: pointer;
+			border: 1px solid #888;
+			border-radius: 3px;
+			background: #fff;
+		}
+		#pauseBtn:hover { background: #ddd; }
+		#pauseBtn.paused { background: #f8d7da; border-color: #c00; color: #c00; }
+
+		#orderBtn {
+			font-family: 'Comfortaa', sans-serif;
+			font-size: 10px;
+			padding: 2px 10px;
+			cursor: pointer;
+			border: 1px solid #888;
+			border-radius: 3px;
+			background: #fff;
+		}
+		#orderBtn:hover { background: #ddd; }
+
+		#clearBtn {
+			font-family: 'Comfortaa', sans-serif;
+			font-size: 10px;
+			padding: 2px 10px;
+			cursor: pointer;
+			border: 1px solid #888;
+			border-radius: 3px;
+			background: #fff;
+		}
+		#clearBtn:hover { background: #ddd; }
+
+		/* ---- Message display ---- */
+		#messageArea {
+			overflow-y: auto;
+			overflow-x: hidden;
+			font-family: 'Inconsolata', monospace;
+			font-size: 11px;
+			line-height: 1.4;
+			padding: 4px 6px;
+			background: #1a1a2e;
+			color: #66ff33;
+		}
+
+		.msg-entry {
+			padding: 1px 0;
+			white-space: pre-wrap;
+			word-break: break-all;
+			border-bottom: 1px solid rgba(255,255,255,0.03);
+		}
+
+		/* Level coloring */
+		.msg-entry.lvl-Error    { color: #f94141; }
+		.msg-entry.lvl-Warning  { color: #ffbc7b; }
+		.msg-entry.lvl-Info     { color: #32baff; }
+		.msg-entry.lvl-TRACE    { color: #5a8a5a; }
+		.msg-entry.lvl-TRACE_   { color: #4a7a4a; } /* TRACE+ becomes TRACE_ via cssClass */
+
+		.msg-host  { color: #888; }
+		.msg-level { font-weight: bold; }
+		.msg-time  { color: #999; }
+		.msg-label { color: #ccc; font-weight: bold; }
+		.msg-file  { color: #777; }
+		.msg-text  { }
+
+		.msg-entry.lvl-Error .msg-text   { color: #f94141; }
+		.msg-entry.lvl-Warning .msg-text { color: #ffbc7b; }
+		.msg-entry.lvl-Info .msg-text    { color: #32baff; }
+
+		/* Hidden by filter */
+		.search-hidden { display: none !important; }
+
+		/* ---- Status bar ---- */
+		#statusBar {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 3px 10px;
+			background: #e8ecf1;
+			border-top: 1px solid #ccd0d8;
+			font-size: 10px;
+			color: #555;
+		}
+
+		#connectionDot {
+			display: inline-block;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: #999;
+		}
+		#connectionDot.connected    { background: #28a745; }
+		#connectionDot.disconnected { background: #dc3545; }
+
+	</style>
+
+	<script>
+	"use strict";
+
+	// =========================================================================
+	// Mu2e system configuration
+	// Each system maps to one ConsoleSupervisor on a known port.
+	// =========================================================================
+	var SYSTEMS = {
+		"Trigger":  {port: 3045},
+		"Calo":     {port: 3025},
+		"CFO":      {port: 3095},
+		"Tracker":  {port: 3065},
+		"CRV":      {port: 3085},
+		"DQM":      {port: 5029},
+		"STM":      {port: 30351},
+		"DCS":      {port: 5019},
+	};
+
+	var CONSOLE_LID = 260;
+
+	// =========================================================================
+	// Message field indices — must match ConsoleSupervisor JSON output order
+	// (same as Console.html)
+	// =========================================================================
+	var MSG_FIELDS = ["Level","Label","Source","Msg","Time","File","Line","Custom","Hostname","Count"];
+	var F_LEVEL    = 0,
+	    F_LABEL    = 1,
+	    F_SOURCE   = 2,
+	    F_MSG      = 3,
+	    F_TIME     = 4,
+	    F_FILE     = 5,
+	    F_LINE     = 6,
+	    F_CUSTOM   = 7,
+	    F_HOSTNAME = 8,
+	    F_COUNT    = 9;
+
+	// =========================================================================
+	// State
+	// =========================================================================
+	var _initDone        = false;
+	var _currentSystem   = "";
+	var _pollTimer       = 0;
+	var _lastUpdateCount = 0;
+	var _lastUpdateIndex = -1;
+	var _paused          = false;
+	var _scrollFollow    = true;
+	var _newestOnTop     = true;
+	var _totalMessages   = 0;
+	var _maxClientMessages = 5000;
+	var _REFRESH_IDLE    = 2000;
+	var _REFRESH_ACTIVE  = 200;
+
+	var _knownHostnames  = {};
+	var _knownLabels     = {};
+	var _knownApps       = {};
+	var _hostnameShortMap = {};
+	var _knownHostList   = [];
+
+	var _filterStyleEls  = {};
+
+	var _monthArr = ["Jan","Feb","Mar","Apr","May","Jun",
+	                 "Jul","Aug","Sep","Oct","Nov","Dec"];
+
+	// =========================================================================
+	// Utility functions (from Console.html)
+	// =========================================================================
+	function convertForClient(str) {
+		var t, s, i, c;
+		var tabSz = 8;
+		while ((t = str.indexOf("\t")) != -1) {
+			s = "";
+			c = (tabSz - (t % tabSz));
+			if (c <= 1) c += tabSz;
+			for (i = 0; i < c; ++i) s += "&nbsp;";
+			str = [str.slice(0, t), s, str.slice(t + 1)].join('');
+		}
+		return str
+			.replace(/%26/g, "&amp;")
+			.replace(/%3C/g, "&lt;")
+			.replace(/%3E/g, "&gt;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/%22/g, "&quot;")
+			.replace(/%27/g, "&#039;")
+			.replace(/%0A%0D/g, "<br>")
+			.replace(/%20%20/g, "&nbsp;&nbsp;");
+	}
+
+	function formatTime(t) {
+		var date = new Date(t * 1000);
+		var mm = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+		var ss = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+		var m = _monthArr[date.getMonth()];
+		var d = ('0' + date.getDate()).slice(-2);
+		var y = date.getFullYear() - 2000;
+		return d + m + y + "." + date.getHours() + ":" + mm + ":" + ss;
+	}
+
+	// =========================================================================
+	// Hostname shortening (from Console.html pattern)
+	// =========================================================================
+	function getShortenedHostname(hostname) {
+		if (_hostnameShortMap[hostname]) return _hostnameShortMap[hostname];
+		_knownHostList.push(hostname);
+		recomputeShortenedHostnames();
+		return _hostnameShortMap[hostname] || hostname;
+	}
+
+	function recomputeShortenedHostnames() {
+		if (_knownHostList.length <= 1) {
+			for (var i = 0; i < _knownHostList.length; ++i)
+				_hostnameShortMap[_knownHostList[i]] = _knownHostList[i];
+			return;
+		}
+		var hosts = _knownHostList.slice();
+		// strip common suffix (e.g. ".fnal.gov")
+		var minLen = hosts.reduce(function(m,h){ return Math.min(m,h.length); }, 9999);
+		var commonSuffix = 0;
+		for (var ci = 1; ci <= minLen; ++ci) {
+			var ch = hosts[0][hosts[0].length - ci];
+			var allMatch = true;
+			for (var hi = 1; hi < hosts.length; ++hi) {
+				if (hosts[hi][hosts[hi].length - ci] !== ch) { allMatch = false; break; }
+			}
+			if (allMatch) commonSuffix = ci; else break;
+		}
+		for (var i = 0; i < hosts.length; ++i) {
+			var short = commonSuffix > 0 ? hosts[i].slice(0, hosts[i].length - commonSuffix) : hosts[i];
+			if (short.endsWith(".") || short.endsWith("-")) short = short.slice(0, -1);
+			_hostnameShortMap[_knownHostList[i]] = short || _knownHostList[i];
+		}
+	}
+
+	// =========================================================================
+	// App extraction and classification from Label
+	// artdaq labels follow "processName_Component": "br01_BoardReaderApp" → app="br01"
+	// OTS labels are plain names: "GatewaySupervisor" → app="GatewaySupervisor"
+	// =========================================================================
+	function extractApp(label) {
+		if (!label) return "Unknown";
+		var idx = label.indexOf("_");
+		if (idx > 0) return label.substring(0, idx);
+		return label;
+	}
+
+	function classifyLabel(label) {
+		if (!label) return "unknown";
+		return (label.indexOf("_") > 0) ? "artdaq" : "ots";
+	}
+
+	// Make a CSS-safe class name from a string
+	function cssClass(str) {
+		if (!str) return "";
+		return str.replace(/[^a-zA-Z0-9_-]/g, "_");
+	}
+
+	// =========================================================================
+	// Layout
+	// =========================================================================
+	function layoutPage() {
+		var bar = document.getElementById("filterBar");
+		var status = document.getElementById("statusBar");
+		var area = document.getElementById("messageArea");
+		var wh = window.innerHeight;
+		var barH = bar.offsetHeight;
+		var statusH = status.offsetHeight;
+		area.style.height = (wh - barH - statusH) + "px";
+	}
+
+	// =========================================================================
+	// Initialization
+	// =========================================================================
+	function init() {
+		if (_initDone) return;
+		_initDone = true;
+		Debug.log("Mu2eLogViewer init()");
+
+		// Populate System dropdown
+		var sel = document.getElementById("systemSelect");
+		for (var name in SYSTEMS) {
+			var opt = document.createElement("option");
+			opt.value = name;
+			opt.textContent = name;
+			sel.appendChild(opt);
+		}
+		sel.value = "Trigger"; // default
+
+		// Attach event handlers
+		sel.onchange = function() { switchSystem(this.value); };
+		document.getElementById("componentSelect").onchange = applyFilters;
+		document.getElementById("appSelect").onchange = applyFilters;
+		document.getElementById("levelSelect").onchange = applyFilters;
+		document.getElementById("searchInput").oninput = applySearchFilter;
+		document.getElementById("pauseBtn").onclick = togglePause;
+		document.getElementById("clearBtn").onclick = clearMessages;
+		document.getElementById("orderBtn").onclick = toggleOrder;
+
+		// Track user scrolling
+		document.getElementById("messageArea").addEventListener("scroll", function() {
+			var el = this;
+			var atBottom = (el.scrollHeight - el.scrollTop - el.clientHeight) < 30;
+			_scrollFollow = atBottom;
+		});
+
+		document.getElementById("levelSelect").value = "Warning";
+
+		window.addEventListener("resize", layoutPage);
+		layoutPage();
+
+		// Start with default system (also applies filters)
+		switchSystem("Trigger");
+	}
+
+	// =========================================================================
+	// System switching
+	// =========================================================================
+	function switchSystem(name) {
+		if (_pollTimer) clearTimeout(_pollTimer);
+		_pollTimer = 0;
+
+		_currentSystem = name;
+		_lastUpdateCount = 0;
+		_lastUpdateIndex = -1;
+		_totalMessages = 0;
+		_knownHostnames = {};
+		_knownLabels = {};
+		_knownApps = {};
+		_hostnameShortMap = {};
+		_knownHostList = [];
+
+		// Reset dropdowns
+		var compSel = document.getElementById("componentSelect");
+		compSel.innerHTML = '<option value="All">All</option>';
+		compSel.value = "All";
+
+		var appSel = document.getElementById("appSelect");
+		appSel.innerHTML = '<option value="All">All</option>';
+		appSel.value = "All";
+
+		// Clear display
+		document.getElementById("messageArea").innerHTML = "";
+		clearFilterStyles();
+		applyFilters();
+
+		updateStatus("Connecting...", false);
+		getConsoleUpdates();
+	}
+
+	// =========================================================================
+	// Polling — modeled on Console.html getConsoleUpdates/handleRefreshConsole
+	// =========================================================================
+	function getConsoleUpdates() {
+		if (_pollTimer) clearTimeout(_pollTimer);
+		_pollTimer = 0;
+
+		var sys = SYSTEMS[_currentSystem];
+		if (!sys) return;
+
+		// Build URL and POST data to match DesktopContent.XMLHttpRequest format
+		var origin = window.location.protocol + "//" +
+		             window.location.hostname + ":" + sys.port;
+		var url = origin +
+		          "/urn:xdaq-application:lid=" + CONSOLE_LID +
+		          "/Request?RequestType=GetConsoleMsgs";
+
+		// POST body: cookie + request params (same format as DesktopContent)
+		var cc = DesktopContent._cookieCodeMailbox || "0";
+		var postData = "CookieCode=" + cc +
+		               "&RequestOrigin=" + origin +
+		               "&lcount=" + _lastUpdateCount +
+		               "&lindex=" + _lastUpdateIndex;
+
+		var req = new XMLHttpRequest();
+		req.onreadystatechange = function() {
+			if (req.readyState !== 4) return;
+			handleConsoleResponse(req);
+		};
+		req.onerror = function() {
+			updateStatus("Connection error", false);
+			_pollTimer = setTimeout(getConsoleUpdates, _REFRESH_IDLE);
+		};
+		req.open("POST", url, true);
+		req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+		req.send(postData);
+	}
+
+	function handleConsoleResponse(req) {
+		if (!req || req.status !== 200 || !req.responseXML) {
+			updateStatus("Disconnected", false);
+			_pollTimer = setTimeout(getConsoleUpdates, _REFRESH_IDLE);
+			return;
+		}
+
+		// Update counters (same as Console.html)
+		var tmp;
+		tmp = getXMLVal(req, "last_update_index");
+		if (tmp) _lastUpdateIndex = tmp;
+		tmp = getXMLVal(req, "last_update_count");
+		if (tmp) _lastUpdateCount = tmp;
+
+		var nextInterval = _REFRESH_IDLE;
+
+		// Parse messages JSON
+		var msgsEl = req.responseXML.getElementsByTagName("messages")[0];
+		var msgStr;
+		if (msgsEl && msgsEl.children.length &&
+		    (msgStr = msgsEl.children[0].getAttribute("value")) &&
+		    msgStr.length > 5) {
+
+			var msgArr;
+			try { msgArr = JSON.parse(msgStr); }
+			catch(e) { msgArr = []; }
+
+			if (msgArr.length > 0) {
+				nextInterval = _REFRESH_ACTIVE;
+				renderMessages(msgArr);
+			}
+		}
+
+		updateStatus("Connected", true);
+		_pollTimer = setTimeout(getConsoleUpdates, nextInterval);
+	}
+
+	function getXMLVal(req, tagName) {
+		if (!req.responseXML) return null;
+		var els = req.responseXML.getElementsByTagName(tagName);
+		if (els.length === 0) return null;
+		return els[0].getAttribute("value");
+	}
+
+	// =========================================================================
+	// Rendering
+	// =========================================================================
+	function renderMessages(msgArr) {
+		var area = document.getElementById("messageArea");
+		var htmlParts = [];
+		var dropdownsChanged = false;
+
+		for (var i = 0; i < msgArr.length; ++i) {
+			var m = msgArr[i];
+			var level    = m[MSG_FIELDS[F_LEVEL]]    || "";
+			var label    = m[MSG_FIELDS[F_LABEL]]    || "";
+			var msg      = m[MSG_FIELDS[F_MSG]]      || "";
+			var time     = m[MSG_FIELDS[F_TIME]]      || "";
+			var file     = m[MSG_FIELDS[F_FILE]]      || "";
+			var line     = m[MSG_FIELDS[F_LINE]]      || "";
+			var hostname = m[MSG_FIELDS[F_HOSTNAME]] || "";
+			var count    = m[MSG_FIELDS[F_COUNT]]     || "";
+
+			var app = extractApp(label);
+			var component = classifyLabel(label);
+			var hostCss = cssClass(hostname);
+			var appCss = cssClass(app);
+			var levelCss = cssClass(level);
+			var componentCss = cssClass(component);
+
+			// Track new values for dropdowns
+			if (!_knownHostnames[hostname]) {
+				_knownHostnames[hostname] = true;
+				dropdownsChanged = true;
+			}
+			if (!_knownLabels[label]) {
+				_knownLabels[label] = true;
+			}
+			if (!_knownApps[app]) {
+				_knownApps[app] = component;
+				dropdownsChanged = true;
+			}
+
+			var fileStr = convertForClient(file + ":" + line);
+			var msgStr = convertForClient(msg);
+			var shortHost = getShortenedHostname(hostname);
+
+			htmlParts.push("<div class='msg-entry lvl-" + levelCss +
+				" host-" + hostCss +
+				" comp-" + componentCss +
+				" app-" + appCss +
+				"'>" +
+				"<span class='msg-host'>" + Mu2e.esc(shortHost) + " | </span>" +
+				"<span class='msg-level'>" + Mu2e.esc(level) + "</span>" +
+				"<span class='msg-time'> (" + formatTime(time) + ") </span>" +
+				"<span class='msg-label'>" + Mu2e.esc(label) + ":</span> " +
+				"<span class='msg-file'>" + fileStr + "</span> " +
+				"<span class='msg-text'>" + msgStr + "</span>" +
+				"</div>");
+
+			_totalMessages++;
+		}
+
+		if (!_paused) {
+			var html;
+			if (_newestOnTop) {
+				html = htmlParts.reverse().join("");
+				area.insertAdjacentHTML("afterbegin", html);
+			} else {
+				html = htmlParts.join("");
+				area.insertAdjacentHTML("beforeend", html);
+			}
+			trimMessages(area);
+			if (!_newestOnTop && _scrollFollow) {
+				area.scrollTop = area.scrollHeight;
+			}
+		}
+
+		if (dropdownsChanged) updateDropdowns();
+		updateStatusCounts();
+		applySearchFilter();
+	}
+
+	function trimMessages(area) {
+		if (_newestOnTop) {
+			while (area.children.length > _maxClientMessages)
+				area.removeChild(area.lastChild);
+		} else {
+			while (area.children.length > _maxClientMessages)
+				area.removeChild(area.firstChild);
+		}
+	}
+
+	// =========================================================================
+	// Dropdown management
+	// =========================================================================
+	function updateDropdowns() {
+		// Component dropdown — auto-detect OTS vs artdaq from labels
+		var compSel = document.getElementById("componentSelect");
+		var currentComp = compSel.value;
+		var hasOts = false, hasArtdaq = false;
+		for (var lbl in _knownLabels) {
+			var c = classifyLabel(lbl);
+			if (c === "ots") hasOts = true;
+			else hasArtdaq = true;
+		}
+		compSel.innerHTML = '<option value="All">All</option>';
+		if (hasOts) compSel.innerHTML += '<option value="ots">OTS</option>';
+		if (hasArtdaq) compSel.innerHTML += '<option value="artdaq">artdaq</option>';
+		// Restore selection if still valid
+		if (compSel.querySelector('option[value="' + currentComp + '"]'))
+			compSel.value = currentComp;
+		else
+			compSel.value = "All";
+
+		// App dropdown
+		var appSel = document.getElementById("appSelect");
+		var currentApp = appSel.value;
+		var sortedApps = Object.keys(_knownApps).sort();
+		appSel.innerHTML = '<option value="All">All</option>';
+
+		// Group: OTS apps first, then artdaq apps
+		var otsApps = [], artdaqApps = [];
+		for (var i = 0; i < sortedApps.length; ++i) {
+			if (_knownApps[sortedApps[i]] === "ots")
+				otsApps.push(sortedApps[i]);
+			else
+				artdaqApps.push(sortedApps[i]);
+		}
+
+		if (otsApps.length > 0) {
+			var grp = document.createElement("optgroup");
+			grp.label = "OTS";
+			for (var i = 0; i < otsApps.length; ++i) {
+				var opt = document.createElement("option");
+				opt.value = otsApps[i];
+				opt.textContent = otsApps[i];
+				grp.appendChild(opt);
+			}
+			appSel.appendChild(grp);
+		}
+		if (artdaqApps.length > 0) {
+			var grp = document.createElement("optgroup");
+			grp.label = "artdaq";
+			for (var i = 0; i < artdaqApps.length; ++i) {
+				var opt = document.createElement("option");
+				opt.value = artdaqApps[i];
+				opt.textContent = artdaqApps[i];
+				grp.appendChild(opt);
+			}
+			appSel.appendChild(grp);
+		}
+
+		if (appSel.querySelector('option[value="' + currentApp + '"]'))
+			appSel.value = currentApp;
+		else
+			appSel.value = "All";
+	}
+
+	// =========================================================================
+	// CSS-based filtering (technique from Console.html)
+	// =========================================================================
+	function clearFilterStyles() {
+		for (var key in _filterStyleEls) {
+			if (_filterStyleEls[key] && _filterStyleEls[key].parentNode)
+				_filterStyleEls[key].parentNode.removeChild(_filterStyleEls[key]);
+		}
+		_filterStyleEls = {};
+	}
+
+	function setFilterStyle(key, css) {
+		if (_filterStyleEls[key] && _filterStyleEls[key].parentNode)
+			_filterStyleEls[key].parentNode.removeChild(_filterStyleEls[key]);
+
+		if (!css) { delete _filterStyleEls[key]; return; }
+
+		var el = document.createElement("style");
+		el.appendChild(document.createTextNode(css));
+		document.head.appendChild(el);
+		_filterStyleEls[key] = el;
+	}
+
+	function applyFilters() {
+		var comp  = document.getElementById("componentSelect").value;
+		var app   = document.getElementById("appSelect").value;
+		var level = document.getElementById("levelSelect").value;
+
+		// Component filter — hide by component class
+		if (comp === "All") {
+			setFilterStyle("component", null);
+		} else {
+			var css = "";
+			if (comp === "ots")
+				css = ".msg-entry:not(.comp-ots) { display: none; }\n";
+			else if (comp === "artdaq")
+				css = ".msg-entry:not(.comp-artdaq) { display: none; }\n";
+			setFilterStyle("component", css);
+		}
+
+		// App filter — hide entries that don't match
+		if (app === "All") {
+			setFilterStyle("app", null);
+		} else {
+			var appClass = cssClass(app);
+			setFilterStyle("app",
+				".msg-entry:not(.app-" + appClass + ") { display: none; }\n");
+		}
+
+		// Level filter — show selected level and above
+		if (level === "All") {
+			setFilterStyle("level", null);
+		} else {
+			var levelOrder = ["TRACE+","TRACE","Debug","Info","Warning","Error"];
+			var idx = levelOrder.indexOf(level);
+			var css = "";
+			for (var i = 0; i < idx; ++i) {
+				css += ".msg-entry.lvl-" + cssClass(levelOrder[i]) +
+				       " { display: none; }\n";
+			}
+			setFilterStyle("level", css || null);
+		}
+
+		applySearchFilter();
+	}
+
+	function applySearchFilter() {
+		var query = document.getElementById("searchInput").value.toLowerCase();
+		var area = document.getElementById("messageArea");
+		var entries = area.getElementsByClassName("msg-entry");
+		var visCount = 0;
+
+		if (!query) {
+			for (var i = 0; i < entries.length; ++i) {
+				entries[i].classList.remove("search-hidden");
+				if (entries[i].offsetParent !== null) visCount++;
+			}
+		} else {
+			for (var i = 0; i < entries.length; ++i) {
+				var text = entries[i].textContent.toLowerCase();
+				if (text.indexOf(query) !== -1) {
+					entries[i].classList.remove("search-hidden");
+					if (entries[i].offsetParent !== null) visCount++;
+				} else {
+					entries[i].classList.add("search-hidden");
+				}
+			}
+		}
+
+		document.getElementById("shownCount").textContent = visCount;
+	}
+
+	// =========================================================================
+	// Pause / Clear
+	// =========================================================================
+	function togglePause() {
+		_paused = !_paused;
+		var btn = document.getElementById("pauseBtn");
+		if (_paused) {
+			btn.textContent = "Resume";
+			btn.classList.add("paused");
+		} else {
+			btn.textContent = "Pause";
+			btn.classList.remove("paused");
+		}
+	}
+
+	function toggleOrder() {
+		_newestOnTop = !_newestOnTop;
+		var btn = document.getElementById("orderBtn");
+		btn.textContent = _newestOnTop ? "Newest first" : "Oldest first";
+
+		// Reverse existing messages in the display
+		var area = document.getElementById("messageArea");
+		var children = Array.prototype.slice.call(area.children);
+		area.innerHTML = "";
+		for (var i = children.length - 1; i >= 0; --i)
+			area.appendChild(children[i]);
+	}
+
+	function clearMessages() {
+		document.getElementById("messageArea").innerHTML = "";
+		_totalMessages = 0;
+		updateStatusCounts();
+	}
+
+	// =========================================================================
+	// Status bar
+	// =========================================================================
+	function updateStatus(text, connected) {
+		var dot = document.getElementById("connectionDot");
+		dot.className = connected ? "connected" : "disconnected";
+		document.getElementById("connectionText").textContent = text;
+	}
+
+	function updateStatusCounts() {
+		var area = document.getElementById("messageArea");
+		document.getElementById("totalCount").textContent = area.children.length;
+		document.getElementById("systemName").textContent = _currentSystem;
+	}
+
+	// =========================================================================
+	// init — called automatically by DesktopContent.js
+	// =========================================================================
+
+	</script>
+</head>
+<body onload='//init() called by DesktopContent.js' onresize="layoutPage();">
+
+	<!-- Filter bar -->
+	<div id="filterBar">
+		<label>System:</label>
+		<select id="systemSelect"></select>
+
+		<div class="filter-sep"></div>
+
+		<label>Component:</label>
+		<select id="componentSelect">
+			<option value="All">All</option>
+		</select>
+
+		<label>App:</label>
+		<select id="appSelect">
+			<option value="All">All</option>
+		</select>
+
+		<div class="filter-sep"></div>
+
+		<label>Level:</label>
+		<select id="levelSelect">
+			<option value="All">All</option>
+			<option value="Error">Error</option>
+			<option value="Warning">Warning</option>
+			<option value="Info">Info</option>
+			<option value="Debug">Debug</option>
+			<option value="TRACE">TRACE</option>
+			<option value="TRACE+">TRACE+</option>
+		</select>
+
+		<label>Search:</label>
+		<input type="text" id="searchInput" placeholder="filter text...">
+
+		<div class="filter-sep"></div>
+
+		<button id="orderBtn">Newest first</button>
+		<button id="pauseBtn">Pause</button>
+		<button id="clearBtn">Clear</button>
+	</div>
+
+	<!-- Message display -->
+	<div id="messageArea"></div>
+
+	<!-- Status bar -->
+	<div id="statusBar">
+		<span id="connectionDot"></span>
+		<span id="connectionText">Initializing...</span>
+		<span>|</span>
+		<span>System: <b id="systemName">---</b></span>
+		<span>|</span>
+		<span>Messages: <b id="totalCount">0</b></span>
+		<span>|</span>
+		<span>Showing: <b id="shownCount">0</b></span>
+	</div>
+
+</body>
+</html>
