@@ -15,8 +15,15 @@
 # Example execution from new terminal at PWD = ~mu2etrk on mu2e-mgr-01 in MC2:
 # 		baseurl="https://raw.githubusercontent.com/Mu2e/otsdaq_mu2e/refs/heads/develop"
 # 		curl "$baseurl/install_mu2e_ops_dev.sh" -o install_mu2e_ops_dev.sh
-# 		source install_mu2e_ops_dev.sh <dev area folder name> [optional area to copy from]
+# 		source install_mu2e_ops_dev.sh <dev area folder name> [optional area to copy from] [--no-dev-only]
 #
+#   Options:
+#       --no-dev-only   Remove the --dev-only flag from the spack install (by default --dev-only is included).
+#                       Use this option if the install location does not already have the correct dependencies
+#                       installed (e.g. a fresh machine or new spack area). Without --dev-only, spack will do
+#                       a full dependency install which takes ~3 hours instead of ~6 minutes.
+#
+# This install worked on 21-Aug-2026, started 11:45. 11:51 mz_uc asked Y/N and number of cores,.. 13:23 pressed Y and 24. 13:29 done with compile.
 # This install worked on 20-Aug-2026 in MC2 on mgr-01 from /home/mu2etrk/ots_tmp
 #		> source install_mu2e_ops_dev.sh myots
 #   - Started at 14:02
@@ -49,6 +56,20 @@
 #   - If you want to pull the latest of all repos in srcs/, do the following:
 #       UpdateOTS.sh --pullall
 #
+
+DEV_ONLY_FLAG="--dev-only"
+POSITIONAL_ARGS=()
+for arg in "$@"; do
+	case "$arg" in
+		--no-dev-only)
+			DEV_ONLY_FLAG=""
+			;;
+		*)
+			POSITIONAL_ARGS+=("$arg")
+			;;
+	esac
+done
+set -- "${POSITIONAL_ARGS[@]}"
 
 OTS_OPS_DEV_PATH="/home/mu2eshift/ots_ops_dev"
 # $2 (optional): override OTS_OPS_DEV_PATH with an existing directory to build from another area's work
@@ -89,7 +110,7 @@ curl "$baseurl/$latestscript" -o mu2e-quick-spack-start.sh
 chmod +x mu2e-quick-spack-start.sh
 unset SPACK_ROOT # just in case there is another installation hanging around in your bash environment
 # Specify --tag (e.g. --tag v3_04_00) to build your area against a fixed tag of the software. (Defaults to the latest tag in otsdaq-mu2e)
-./mu2e-quick-spack-start.sh --trigger --develop #--dev-only # Omit --trigger if you are not developing any code that depends on data overlays or Offline code
+./mu2e-quick-spack-start.sh --trigger --develop $DEV_ONLY_FLAG # Omit --trigger if you are not developing any code that depends on data overlays or Offline code. Pass --no-dev-only to this script to omit --dev-only.
 
 ll srcs/
 if [ ! -d "srcs" ]; then
@@ -102,7 +123,7 @@ rm -rf srcs/otsdaq*
 cp -r "$OTS_OPS_DEV_PATH/srcs/otsdaq"* srcs/.
 
 #cleanup vestiges of the install
-rm setup-env.sh
+mv setup-env.sh init-setup-env.sh #save file for Eric/Spack-expert debuggin
 rm setup_spack_build_system_v0.28.sh
 rm fonts.*
 rm mu2e-quick-spack-start.sh
