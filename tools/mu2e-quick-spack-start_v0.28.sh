@@ -187,13 +187,13 @@ fi
 os=$(echo ${os_long//./_}|sed 's/almalinux/al/;s/ubuntu/u/')
 # Auto-add upstreams from /mu2e
 if [ $opt_use_mu2e -eq 1 ] && [ -d /mu2e/spack_v0.28 ];then
-  art=`ls -d /mu2e/spack_v0.28/art-suite-*-${os}|tail -1`
-  artdaq=`ls -d /mu2e/spack_v0.28/artdaq-*-${os}|tail -1`
-  ots=`ls -d /mu2e/spack_v0.28/ots-*-${os}|tail -1`
-  mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
-
-  upstreams+=($mu2e $ots $artdaq $art)
-
+  if [ $opt_dev_only -eq 1 ]; then
+    mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
+    upstreams+=($mu2e)
+  else
+    ots=`ls -d /mu2e/spack_v0.28/ots-*-${os}|tail -1`
+    upstreams+=($ots)
+  fi
 elif [ $opt_use_cvmfs -eq 1 ] && [ -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28 ]; then
   if [ $opt_dev_only -eq 1 ]; then
     mu2e=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
