@@ -3340,13 +3340,32 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for Event Building mode!" << __E__;
-		getDTC()->SoftReset();  //reset counters
-		for(auto& roc : rocs_)
+
+		const unsigned int systemMinReady =
+		    getSystemMinReadyForEventGenerationStartIteration();
+		const unsigned int startIteration = getIterationIndex();
+
+		if(startIteration == 0)
 		{
-			__FE_COUT__ << "Starting ROC " << __E__;
-			roc.second->start(runNumber);
-			__FE_COUT__ << "Done starting ROC" << __E__;
+			__FE_COUT__ << "Issuing DTC SoftReset before starting ROCs..." << __E__;
+			getDTC()->SoftReset();
+			for(auto& roc : rocs_)
+			{
+				__FE_COUT__ << "Starting ROC " << __E__;
+				roc.second->start(runNumber);
+				__FE_COUT__ << "Done starting ROC" << __E__;
+			}
 		}
+
+		if(startIteration < systemMinReady - 1)
+		{
+			indicateIterationWork();
+			return;
+		}
+
+		if(startIteration == systemMinReady - 1 && getSubIterationIndex() == 0)
+			getDTC()->SoftReset();
+		usleep(500000);  // wait 100 ms for DTC to reset counters
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
