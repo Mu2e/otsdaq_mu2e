@@ -6348,10 +6348,9 @@ void DTCFrontEndInterface::EVBInit(__ARGS__)
 	}
 
 	std::ostringstream macSs;
-	macSs << "Expected DTC MAC Address: "
-	      << std::hex << std::setfill('0')
-	      << "00:00:" << std::setw(2) << (int)evbPartition
-	      << ":00:00:" << std::setw(2) << (int)evbMAC;
+	macSs << "Expected DTC MAC Address: " << std::hex << std::setfill('0')
+	      << "00:00:" << std::setw(2) << (int)evbPartition << ":00:00:" << std::setw(2)
+	      << (int)evbMAC;
 
 	__SET_ARG_OUT__("Result",
 	                macSs.str() + std::string("\n") +
