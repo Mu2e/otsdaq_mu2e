@@ -2102,6 +2102,25 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->EnableEmbeddedClockMarker();
 		__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
+
+		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		{
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			    true,     // enable
+			    false,    // useDetachedBufferTest
+			    "1.7us",  // eventDuration
+			    0,        // numberOfEventWindowMarkers (0 = infinite)
+			    0,        // initialEventWindowTag
+			    0,        // eventWindowMode (null heartbeat — marker traffic only)
+			    true,     // enableClockMarkers
+			    false,    // saveBinaryDataToFile
+			    false,    // saveSubeventHeadersToDataFile
+			    false);   // doNotResetCounters
+			__FE_COUT__ << "Started fixed-width event run plan for aggressive 8b10 "
+			               "traffic during sync phases."
+			            << __E__;
+		}
+
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
@@ -2270,29 +2289,32 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				ss << "\n  " << uid;
 			__FE_SS_THROW__;
 		}
-		timing_chain_first_substep_ = -1;
-		indicateIterationWork();
+
+		if(!VStateMachine::getSubIterationWork())
+		{
+			timing_chain_first_substep_ = -1;
+			indicateIterationWork();
+		}
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_CFO_EDGE_FIX)
 	{
 		bool doSync = (operatingMode_ ==
 		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
 
 		if(!doSync)
 		{
-			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+			__FE_COUT__ << "CFO edge fix phase idle (no sync in EventBuildingMode)."
+			            << __E__;
+			indicateIterationWork();
 		}
-		else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A)
+		else
 		{
-			// Phase 3a: Check all DTCs via "Get RTF Interface Status"
-			__FE_COUT_INFO__
-			    << "Phase 3a — checking all DTCs via Get RTF Interface Status..."
-			    << __E__;
-			timing_chain_first_substep_ = -1;
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
 
+			int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+
+			// enumerate all DTCs from config tree
 			std::vector<std::string> dtcUIDs;
 			{
 				auto cfgMgr   = Configurable::getConfigurationManager();
@@ -2338,76 +2360,191 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 				}
 			}
 
-			__FE_COUT__ << "Checking " << dtcUIDs.size()
-			            << " DTC(s) for RTF Interface Status..." << __E__;
-
-			for(const auto& dtcUID : dtcUIDs)
+			if(subStep == 0)
 			{
-				std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
-				try
-				{
-					runFrontEndMacro(dtcUID, "Get RTF Interface Status", argsIn, argsOut);
-				}
-				catch(const std::exception& e)
-				{
-					__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): Failed to read "
-					             "RTF Interface Status from DTC "
-					          << dtcUID << ": " << e.what();
-					__FE_SS_THROW__;
-				}
+				// Sub-step 0: RTF validation on all DTCs
+				__FE_COUT_INFO__
+				    << "Phase 2c — checking all DTCs via Get RTF Interface Status..."
+				    << __E__;
+				cfo_edge_fix_consecutive_clean_ = 0;
 
-				std::string status = __GET_ARG_OUT__("RTF Interface Status", std::string);
-				__FE_COUT__ << "DTC " << dtcUID << " RTF status: " << status << __E__;
+				__FE_COUT__ << "Checking " << dtcUIDs.size()
+				            << " DTC(s) for RTF Interface Status..." << __E__;
 
-				struct Check
+				for(const auto& dtcUID : dtcUIDs)
 				{
-					std::string keyword;
-					std::string required;
-					std::string label;
-				};
-				std::vector<Check> checks = {
-				    {"CFO Emulation Mode", "OFF", "CFO Emulation Mode must be OFF"},
-				    {"JA Source", "RJ45", "JA Source must be RJ45"},
-				    {"Saturated", "YES", "RTF histogram must be Saturated"},
-				    {"CFO CDR Lock", "LOCKED", "CFO CDR Lock must be LOCKED"},
-				};
-
-				std::istringstream iss(status);
-				std::string        line;
-				for(auto& chk : checks)
-				{
-					bool found = false;
-					iss.clear();
-					iss.str(status);
-					while(std::getline(iss, line))
+					std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+					try
 					{
-						if(line.find(chk.keyword) != std::string::npos)
-						{
-							found = true;
-							if(line.find(chk.required) == std::string::npos)
-							{
-								__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC "
-								          << dtcUID << " failed check: " << chk.label
-								          << ". Line: " << line;
-								__FE_SS_THROW__;
-							}
-							break;
-						}
+						runFrontEndMacro(
+						    dtcUID, "Get RTF Interface Status", argsIn, argsOut);
 					}
-					if(!found)
+					catch(const std::exception& e)
 					{
-						__FE_SS__ << "Phase 3a (Sync: CFO check + edge fix): DTC "
-						          << dtcUID << " — could not find '" << chk.keyword
-						          << "' in RTF Interface Status output.";
+						__FE_SS__ << "Phase 2c (CFO Edge Fix): Failed to read "
+						             "RTF Interface Status from DTC "
+						          << dtcUID << ": " << e.what();
 						__FE_SS_THROW__;
 					}
-				}
-				__FE_COUT__ << "DTC " << dtcUID << " passed all Phase 3a checks."
-				            << __E__;
-			}
 
-			__FE_COUT_INFO__ << "All DTCs passed Phase 3a RTF Interface Status checks."
-			                 << __E__;
+					std::string status =
+					    __GET_ARG_OUT__("RTF Interface Status", std::string);
+					__FE_COUT__ << "DTC " << dtcUID << " RTF status: " << status << __E__;
+
+					struct Check
+					{
+						std::string keyword;
+						std::string required;
+						std::string label;
+					};
+					std::vector<Check> checks = {
+					    {"CFO Emulation Mode", "OFF", "CFO Emulation Mode must be OFF"},
+					    {"JA Source", "RJ45", "JA Source must be RJ45"},
+					    {"Saturated", "YES", "RTF histogram must be Saturated"},
+					    {"CFO CDR Lock", "LOCKED", "CFO CDR Lock must be LOCKED"},
+					};
+
+					std::istringstream iss(status);
+					std::string        line;
+					for(auto& chk : checks)
+					{
+						bool found = false;
+						iss.clear();
+						iss.str(status);
+						while(std::getline(iss, line))
+						{
+							if(line.find(chk.keyword) != std::string::npos)
+							{
+								found = true;
+								if(line.find(chk.required) == std::string::npos)
+								{
+									__FE_SS__ << "Phase 2c (CFO Edge Fix): DTC " << dtcUID
+									          << " failed check: " << chk.label
+									          << ". Line: " << line;
+									__FE_SS_THROW__;
+								}
+								break;
+							}
+						}
+						if(!found)
+						{
+							__FE_SS__ << "Phase 2c (CFO Edge Fix): DTC " << dtcUID
+							          << " — could not find '" << chk.keyword
+							          << "' in RTF Interface Status output.";
+							__FE_SS_THROW__;
+						}
+					}
+					__FE_COUT__ << "DTC " << dtcUID << " passed all RTF checks." << __E__;
+				}
+
+				__FE_COUT_INFO__
+				    << "All DTCs passed Phase 2c RTF Interface Status checks." << __E__;
+				indicateSubIterationWork();
+			}
+			else
+			{
+				// Sub-steps 1+: iterative edge fix passes
+				const int MAX_CFO_EDGE_FIX_PASSES = 10;
+				int       pass                    = subStep;
+
+				__FE_COUT_INFO__ << "Phase 2c — CFO edge fix pass " << pass << " of "
+				                 << MAX_CFO_EDGE_FIX_PASSES << "..." << __E__;
+
+				std::vector<std::string> toggledDTCs;
+
+				for(const auto& dtcUID : dtcUIDs)
+				{
+					std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+					try
+					{
+						runFrontEndMacro(dtcUID, "Fix CFO Clock Edge", argsIn, argsOut);
+					}
+					catch(const std::exception& e)
+					{
+						__FE_SS__ << "Phase 2c (CFO Edge Fix): Fix CFO Clock Edge "
+						             "failed on DTC "
+						          << dtcUID << ": " << e.what();
+						__FE_SS_THROW__;
+					}
+
+					std::string result =
+					    __GET_ARG_OUT__("Fix CFO Clock Edge Result", std::string);
+					__FE_COUT__ << "DTC " << dtcUID << ": " << result << __E__;
+
+					if(result.find("toggled") != std::string::npos)
+						toggledDTCs.push_back(dtcUID);
+				}
+
+				if(toggledDTCs.empty())
+				{
+					++cfo_edge_fix_consecutive_clean_;
+					if(cfo_edge_fix_consecutive_clean_ >= 2)
+					{
+						__FE_COUT_INFO__
+						    << "Phase 2c — CFO edge fix converged after " << pass
+						    << " pass(es) (2 consecutive clean passes)." << __E__;
+						timing_chain_first_substep_ = -1;
+						indicateIterationWork();
+					}
+					else
+					{
+						__FE_COUT__ << "Phase 2c — pass " << pass
+						            << " clean, running confirmation pass..." << __E__;
+						indicateSubIterationWork();
+					}
+				}
+				else
+				{
+					cfo_edge_fix_consecutive_clean_ = 0;
+
+					__FE_COUT__ << "Phase 2c — pass " << pass << " toggled "
+					            << toggledDTCs.size() << " DTC(s):";
+					for(const auto& uid : toggledDTCs)
+						__FE_COUT__ << "  " << uid;
+					__FE_COUT__ << __E__;
+
+					if(pass >= MAX_CFO_EDGE_FIX_PASSES)
+					{
+						__FE_SS__ << "Phase 2c (CFO Edge Fix): edge fix did not converge "
+						             "after "
+						          << MAX_CFO_EDGE_FIX_PASSES
+						          << " passes. DTCs still toggling:";
+						for(const auto& uid : toggledDTCs)
+							ss << "\n  " << uid;
+						__FE_SS_THROW__;
+					}
+					indicateSubIterationWork();
+				}
+			}
+		}
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_E)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+		}
+		else
+		{
+			thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			__FE_COUT__ << "Stopped CFO event generation after sync phases." << __E__;
+		}
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
 		}
 		else
 		{
@@ -2495,7 +2632,7 @@ void CFOFrontEndInterface::configureLoopbackMode(int step)
 
 //==============================================================================
 // Phase 1 (Establish Clocks) for the CFO.
-//	Sub-step 0: halt, disable beam modes, SoftReset, ClearControlRegister, DisableAllOutputs
+//	Sub-step 0: halt, disable beam modes, ClearControlRegister, DisableAllOutputs
 //	Sub-step 1: JA setup — check lock, full reset if unlocked, mux-only if locked
 //	Sub-steps 2+: JA lock polling (up to ~10 polls, 1s each)
 void CFOFrontEndInterface::configureForTimingChain(int step)
@@ -2512,7 +2649,6 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 		halt();
 		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-		thisCFO_->SoftReset();
 		thisCFO_->ClearControlRegister();
 		thisCFO_->DisableAllOutputs();
 		indicateSubIterationWork();
