@@ -23,6 +23,8 @@
 
 		#searchInput { min-width: 150px; flex-grow: 1; max-width: 300px; }
 		#pauseBtn.paused { background: #f8d7da; border-color: #c00; color: #c00; }
+		.mu2e-log-entry:nth-child(odd) { background: rgba(0,0,0,0.03); }
+		.mu2e-log-entry:nth-child(even) { background: transparent; }
 	</style>
 
 	<script>
@@ -30,7 +32,8 @@
 
 	// =========================================================================
 	// Mu2e system configuration
-	// Each system maps to one ConsoleSupervisor on a known port.
+	// Each system maps to one ConsoleSupervisor on a known base port
+	// (ots_ops values). The offset is auto-detected from the serving port.
 	// =========================================================================
 	var SYSTEMS = {
 		"Trigger":  {port: 3045},
@@ -38,10 +41,46 @@
 		"CFO":      {port: 3095},
 		"Tracker":  {port: 3065},
 		"CRV":      {port: 3085},
+		"Shift":    {port: 3075},
 		"DQM":      {port: 5029},
 		"STM":      {port: 30351},
 		"DCS":      {port: 5019},
 	};
+
+	var SHIFT_BASE_PORT = 3075;
+
+	// Auto-detect port offset by comparing the serving gateway port
+	// against the known base ports (e.g. ots_trk uses offset 900).
+	var _portOffset = 0;
+	var _offsetApplied = false;
+
+	function applyPortOffset() {
+		if (_offsetApplied) return;
+
+		// Prefer the real server port from DesktopContent (works through tunnels)
+		var myPort = 0;
+		var source = "";
+		if (typeof DesktopContent !== "undefined" && DesktopContent._serverOrigin) {
+			var m = DesktopContent._serverOrigin.match(/:(\d+)/);
+			if (m) { myPort = parseInt(m[1]); source = "DesktopContent._serverOrigin"; }
+		}
+		// Fallback to window.location.port
+		if (!myPort) {
+			myPort = parseInt(window.location.port) || 0;
+			source = "window.location.port";
+		}
+		// Page is served from the Shift gateway; offset = serving port - Shift base port
+		_portOffset = myPort - SHIFT_BASE_PORT;
+		if (_portOffset < 0) _portOffset = 0;
+		console.log("[Mu2eLogViewer] Port offset: " + _portOffset + " (from " + source + "=" + myPort + ")");
+		if (_portOffset) {
+			for (var name in SYSTEMS)
+				SYSTEMS[name].port += _portOffset;
+		}
+		_offsetApplied = true;
+		if (_portOffset)
+			console.log("[Mu2eLogViewer] Applied offset " + _portOffset + " to all SYSTEMS ports");
+	}
 
 	var CONSOLE_LID = 260;
 
@@ -73,9 +112,10 @@
 	var _scrollFollow    = true;
 	var _newestOnTop     = true;
 	var _totalMessages   = 0;
-	var _maxClientMessages = 5000;
+	var _maxClientMessages = 2000;
 	var _REFRESH_IDLE    = 2000;
-	var _REFRESH_ACTIVE  = 200;
+	var _REFRESH_ACTIVE  = 500;
+	var _lastSearchQuery = "";
 
 	var _knownHostnames  = {};
 	var _knownSources    = {};
@@ -192,6 +232,7 @@
 		if (_initDone) return;
 		_initDone = true;
 		Debug.log("Mu2eLogViewer init()");
+		applyPortOffset();
 
 		// Populate System dropdown
 		var sel = document.getElementById("systemSelect");
@@ -289,10 +330,16 @@
 
 		var sys = SYSTEMS[_currentSystem];
 		if (!sys) return;
+		applyPortOffset();
 
-		// Build URL and POST data to match DesktopContent.XMLHttpRequest format
+		// Build URL — use the real server hostname (not tunnel localhost)
+		var hostname = window.location.hostname;
+		if (typeof DesktopContent !== "undefined" && DesktopContent._serverOrigin) {
+			var m = DesktopContent._serverOrigin.match(/:\/\/([^:\/]+)/);
+			if (m) hostname = m[1];
+		}
 		var origin = window.location.protocol + "//" +
-		             window.location.hostname + ":" + sys.port;
+		             hostname + ":" + sys.port;
 		var url = origin +
 		          "/urn:xdaq-application:lid=" + CONSOLE_LID +
 		          "/Request?RequestType=GetConsoleMsgs";
@@ -321,6 +368,17 @@
 	function handleConsoleResponse(req) {
 		if (!req || req.status !== 200 || !req.responseXML) {
 			updateStatus("Disconnected", false);
+			_pollTimer = setTimeout(getConsoleUpdates, _REFRESH_IDLE);
+			return;
+		}
+
+		// Check for server-side error (e.g. stale lastUpdateCount)
+		var errEl = getXMLVal(req, "Error");
+		if (errEl) {
+			console.log("[Mu2eLogViewer] Server error, resetting counters: " +
+				errEl.substring(0, 120));
+			_lastUpdateCount = 0;
+			_lastUpdateIndex = -1;
 			_pollTimer = setTimeout(getConsoleUpdates, _REFRESH_IDLE);
 			return;
 		}
@@ -443,17 +501,21 @@
 			applyFilters();
 		}
 		updateStatusCounts();
-		applySearchFilter();
 	}
 
 	function trimMessages(area) {
+		var excess = area.children.length - _maxClientMessages;
+		if (excess <= 0) return;
+		// Build a range to remove in one operation
+		var range = document.createRange();
 		if (_newestOnTop) {
-			while (area.children.length > _maxClientMessages)
-				area.removeChild(area.lastChild);
+			range.setStartBefore(area.children[_maxClientMessages]);
+			range.setEndAfter(area.lastElementChild);
 		} else {
-			while (area.children.length > _maxClientMessages)
-				area.removeChild(area.firstChild);
+			range.setStartBefore(area.firstElementChild);
+			range.setEndAfter(area.children[excess - 1]);
 		}
+		range.deleteContents();
 	}
 
 	// =========================================================================
@@ -636,40 +698,32 @@
 
 	function applySearchFilter() {
 		var query = document.getElementById("searchInput").value.toLowerCase();
+		if (query === _lastSearchQuery) return;
+		_lastSearchQuery = query;
+
 		var area = document.getElementById("messageArea");
 		var entries = area.getElementsByClassName("mu2e-log-entry");
-		var visCount = 0;
 
-		if (!query) {
-			for (var i = 0; i < entries.length; ++i) {
-				entries[i].classList.remove("search-hidden");
-				if (entries[i].offsetParent !== null) visCount++;
-			}
-		} else {
-			for (var i = 0; i < entries.length; ++i) {
-				var text = entries[i].textContent.toLowerCase();
-				if (text.indexOf(query) !== -1) {
-					entries[i].classList.remove("search-hidden");
-					if (entries[i].offsetParent !== null) visCount++;
-				} else {
-					entries[i].classList.add("search-hidden");
-				}
-			}
-		}
-
-		document.getElementById("shownCount").textContent = visCount;
-		restripeRows();
-	}
-
-	function restripeRows() {
-		var entries = document.getElementById("messageArea").getElementsByClassName("mu2e-log-entry");
-		var odd = true;
+		// Batch all reads first, then all writes (avoid layout thrashing)
+		var hideList = [];
+		var showList = [];
 		for (var i = 0; i < entries.length; ++i) {
-			if (entries[i].offsetParent === null) continue;
-			entries[i].classList.toggle("row-odd", odd);
-			entries[i].classList.toggle("row-even", !odd);
-			odd = !odd;
+			if (!query) {
+				showList.push(entries[i]);
+			} else {
+				var text = entries[i].textContent.toLowerCase();
+				if (text.indexOf(query) !== -1)
+					showList.push(entries[i]);
+				else
+					hideList.push(entries[i]);
+			}
 		}
+		for (var i = 0; i < showList.length; ++i)
+			showList[i].classList.remove("search-hidden");
+		for (var i = 0; i < hideList.length; ++i)
+			hideList[i].classList.add("search-hidden");
+
+		document.getElementById("shownCount").textContent = showList.length;
 	}
 
 	// =========================================================================
