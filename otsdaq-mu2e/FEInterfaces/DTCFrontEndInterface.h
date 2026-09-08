@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include "dtcInterfaceLib/DTC.h"
 #include "dtcInterfaceLib/DTCSoftwareCFO.h"
@@ -106,6 +107,11 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 		bool                  inSubeventMode_   = false;
 		bool                  inEVBMode_        = false;
+		uint8_t               evbNumDestNodes_  = 1;
+		std::set<uint8_t>     evbSourcesSeenForTag_;  // EVB mode: source DTC IDs that have delivered the current expected tag
+		bool                  evbTagSynced_     = false;  // EVB mode: expected tag has been synced to the first subevent seen after (re)start
+		std::map<uint8_t /*source_dtc_id*/, std::vector<uint64_t>> evbRocFragmentsBySource_;    // EVB mode: ROC fragment counts per source DTC, per link
+		std::map<uint8_t /*source_dtc_id*/, std::vector<uint64_t>> evbRocPayloadBytesBySource_;  // EVB mode: ROC payload bytes per source DTC, per link
 		bool                  activeMatch_      = false;
 		std::atomic<uint64_t> expectedEventTag_ = -1, nextEventWindowTag_ = -1;
 		bool                  saveBinaryData_                  = false;
@@ -124,13 +130,11 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
 		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
 		    rocPayloadByteCount_;
-		std::atomic<uint64_t> evbDmaBuffersRead_{0};
 		std::atomic<uint64_t> evbChunksCount_{0};
 		std::atomic<uint64_t> evbTotalDataWordsRead_{0};
 		std::atomic<uint64_t> evbCloseFillersCount_{0};
 		std::atomic<uint64_t> evbFramingErrors_{0};
-		std::map<uint8_t, uint64_t> evbSourceChunkCounts_;
-		std::map<uint8_t, uint64_t> evbSourceWordCounts_;
+
 
 		uint64_t                                           totalSubeventBytesTransferred_;
 		std::chrono::time_point<std::chrono::steady_clock> transferStartTime_,
@@ -192,6 +196,13 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 
 	std::ofstream datafile_[8];
+
+	struct EVBBRAMSnapshot
+	{
+		std::chrono::steady_clock::time_point timestamp;
+		std::map<uint16_t /*type<<8|slot*/, uint32_t> values;
+	};
+	EVBBRAMSnapshot evbBRAMSnapshot_;
 
 	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
 	std::map<DTCLib::DTC_Link_ID, bool>                                   rocRunningStatus_;
