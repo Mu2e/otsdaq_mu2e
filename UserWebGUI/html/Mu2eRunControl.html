@@ -1,0 +1,1246 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Mu2e Run Control</title>
+
+	<link href='/WebPath/css/fonts.css?family=Inconsolata:400' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/Mu2e.css">
+	<link rel="stylesheet" type="text/css" href="/WebPath/UserWebPath/css/Mu2eRunControl.css">
+
+	<script type="text/JavaScript" src="/WebPath/js/Globals.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/Debug.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/DesktopContent.js"></script>
+	<script type="text/JavaScript" src="/WebPath/js/js_lib/ConfigurationAPI.js"></script>
+	<script type="text/JavaScript" src="/WebPath/UserWebPath/js/Mu2e.js"></script>
+	<script type="text/JavaScript" src="/WebPath/UserWebPath/js/Mu2eHardware.js"></script>
+
+	<script>
+
+		var _fsmName = "";
+		var _fsmNames = [];
+		var _subsystems = [];
+		var _system = {};
+		var _systemAliases = [];
+		var _pollTimer = 0;
+		var _pollNonce = 0;
+
+		// Valid transitions per state
+		var _TRANSITIONS = {
+			"Initial":    ["Configure"],
+			"Halted":     ["Configure", "Start"],
+			"Configured": ["Start", "Halt"],
+			"Running":    ["Stop", "Halt"],
+			"Paused":     ["Stop", "Halt"],
+			"Failed":     ["Halt"],
+			"Error":      ["Halt"],
+		};
+
+		// =============================================================
+		// init
+		// =============================================================
+		function init() {
+			Debug.log("Mu2eRunControl init()");
+			DesktopContent.tooltip("Mu2e Run Control",
+				"Mu2e subsystem dashboard — status, transitions, and run control.");
+			DesktopContent.setWindowTooltip("Mu2e subsystem dashboard.");
+
+			// First get the active FSM name, then get all FSM names
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=getCurrentState", "",
+				function (reqState) {
+					var activeFsm = DesktopContent.getXMLValue(reqState, "active_fsmName");
+
+					DesktopContent.XMLHttpRequest(
+						"Request?RequestType=getStateMachineNames", "",
+						function (req) {
+							var names = req.responseXML.getElementsByTagName("stateMachineName");
+							_fsmNames = [];
+							for (var i = 0; i < names.length; ++i)
+								_fsmNames.push(names[i].getAttribute("value"));
+
+							// Default to the active FSM, or first available
+							if (activeFsm && _fsmNames.indexOf(activeFsm) >= 0)
+								_fsmName = activeFsm;
+							else if (_fsmNames.length)
+								_fsmName = _fsmNames[0];
+							loadSubsystems();
+						},
+						0, 0, true, false, true);
+				},
+				0, 0, true, false, true);
+		}
+
+		// =============================================================
+		// loadSubsystems
+		// =============================================================
+		function loadSubsystems() {
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=getRemoteSubsystems&fsmName=" + _fsmName, "",
+				function (req) {
+					parseSubsystems(req);
+					parseSystemStatus(req);
+					parseAliases(req);
+					renderAll();
+					startPolling();
+				},
+				0, 0, true, false, true);
+		}
+
+		// =============================================================
+		// Parsing
+		// =============================================================
+		var _SS_FIELDS = ["name","url","id","status","progress","detail",
+			"lastStatusTime","configAlias","configAliasChoices",
+			"fsmMode","fsmIncluded","fsmName","landingPage",
+			"consoleErrCount","consoleWarnCount",
+			"activeContextGroupName","activeContextGroupKey",
+			"activeConfigGroupName","activeConfigGroupKey",
+			"selectedConfigGroupName","selectedConfigGroupKey"];
+
+		function parseSubsystems(req) {
+			_subsystems = [];
+			var arrs = {};
+			for (var i = 0; i < _SS_FIELDS.length; ++i)
+				arrs[_SS_FIELDS[i]] = req.responseXML.getElementsByTagName(
+					"subsystem_" + _SS_FIELDS[i]);
+			var count = arrs[_SS_FIELDS[0]].length;
+			for (var j = 0; j < count; ++j) {
+				var ss = {};
+				for (var i = 0; i < _SS_FIELDS.length; ++i)
+					ss[_SS_FIELDS[i]] = arrs[_SS_FIELDS[i]][j] ?
+						arrs[_SS_FIELDS[i]][j].getAttribute("value") : "";
+				ss.fsmIncluded = ss.fsmIncluded | 0;
+				ss.progress = ss.progress | 0;
+				var parsed = Mu2e.stripStatusError(ss.status);
+				ss.status = parsed.status;
+				ss.error = parsed.error;
+				// Default FSM mode to "Do Not Halt"
+				if (ss.fsmMode !== "Do Not Halt") {
+					ss.fsmMode = "Do Not Halt";
+					DesktopContent.XMLHttpRequest(
+						"Request?RequestType=setRemoteSubsystemFsmControl" +
+						"&targetSubsystem=" + encodeURIComponent(ss.name) +
+						"&controlType=mode&setValue=" +
+						encodeURIComponent("Do Not Halt"), "",
+						null, 0, 0, true, true, true);
+				}
+
+				_subsystems.push(ss);
+			}
+		}
+
+		var _lastError = "";
+
+		function parseSystemStatus(req) {
+			var rawState = DesktopContent.getXMLValue(req, "current_state") || "unknown";
+			var parsedState = Mu2e.stripStatusError(rawState);
+			_system.state = parsedState.status;
+
+			_system.inTransition = DesktopContent.getXMLValue(req, "in_transition") === "1";
+			_system.transition = DesktopContent.getXMLValue(req, "current_transition") || "";
+			_system.progress = DesktopContent.getXMLValue(req, "transition_progress") | 0;
+			_system.timeInState = DesktopContent.getXMLValue(req, "time_in_state") | 0;
+			var rn = DesktopContent.getXMLValue(req, "run_number");
+			if (rn) _system.runNumber = rn;
+			_system.selectedAlias = DesktopContent.getXMLValue(req, "UserLastConfigAlias") || "";
+			var activeFsm = DesktopContent.getXMLValue(req, "active_fsmName");
+			if (activeFsm) _system.activeFsm = activeFsm;
+			var activeFsmWindow = DesktopContent.getXMLValue(req, "active_fsmWindowName");
+			if (activeFsmWindow !== undefined) _system.activeFsmWindow = activeFsmWindow;
+			var logEntry = DesktopContent.getXMLValue(req, "last_run_log_entry");
+			if (logEntry) _system.lastRunLogEntry = Mu2e.decodeDetail(logEntry);
+
+			// Handle errors — show as red pop-up via Debug.err()
+			var err = DesktopContent.getXMLValue(req, "current_error") || "";
+			if (err && err !== "" && err !== _lastError) {
+				_lastError = err;
+				Debug.err(err);
+			}
+			_system.error = err;
+		}
+
+		function parseAliases(req) {
+			_systemAliases = [];
+			var names = req.responseXML.getElementsByTagName("config_alias");
+			var keys = req.responseXML.getElementsByTagName("config_key");
+			var comments = req.responseXML.getElementsByTagName("config_comment");
+			for (var i = 0; i < names.length; ++i)
+				_systemAliases.push({
+					name: names[i].getAttribute("value"),
+					key: keys[i] ? keys[i].getAttribute("value") : "",
+					comment: comments[i] ? comments[i].getAttribute("value") : "",
+				});
+		}
+
+		function parseSubsystemStatus(req) {
+			var fields = ["name","url","id","status","progress","detail",
+				"lastStatusTime","configAlias","configAliasChoices",
+				"fsmMode","fsmIncluded","fsmName","consoleErrCount","consoleWarnCount",
+				"activeContextGroupName","activeContextGroupKey",
+				"activeConfigGroupName","activeConfigGroupKey",
+				"selectedConfigGroupName","selectedConfigGroupKey"];
+			var arrs = {};
+			for (var i = 0; i < fields.length; ++i)
+				arrs[fields[i]] = req.responseXML.getElementsByTagName("subsystem_" + fields[i]);
+			var count = arrs[fields[0]].length;
+			for (var j = 0; j < count && j < _subsystems.length; ++j) {
+				for (var i = 0; i < fields.length; ++i)
+					if (arrs[fields[i]][j])
+						_subsystems[j][fields[i]] = arrs[fields[i]][j].getAttribute("value");
+				_subsystems[j].fsmIncluded = _subsystems[j].fsmIncluded | 0;
+				_subsystems[j].progress = _subsystems[j].progress | 0;
+				var p = Mu2e.stripStatusError(_subsystems[j].status);
+				_subsystems[j].status = p.status;
+				_subsystems[j].error = p.error;
+			}
+		}
+
+		// Detail parsing, stateCell, formatTimeCell — now in Mu2e.js
+
+		// =============================================================
+		// Polling
+		// =============================================================
+		function startPolling() {
+			if (_pollTimer) clearTimeout(_pollTimer);
+			_pollTimer = setTimeout(pollStatus, 1000);
+		}
+
+		function pollStatus() {
+			var nonce = ++_pollNonce;
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=getRemoteSubsystemStatus" +
+				"&fsmName=" + _fsmName +
+				"&getRunNumber=" + (nonce % 5 === 0 ? "1" : "0"), "",
+				function (req) {
+					if (nonce !== _pollNonce) return;
+					parseSubsystemStatus(req);
+					parseSystemStatus(req);
+					updateStatusBar();
+					updateSubsystemRows();
+					renderSystemOverview();
+					refreshArtdaqGridIfChanged();
+					_pollTimer = setTimeout(pollStatus, 1000);
+				},
+				0, 0, true, true, true);
+		}
+
+		// =============================================================
+		// Rendering
+		// =============================================================
+		function renderAll() {
+			updateStatusBar();
+			renderConfigSection();
+			renderSubsystemTable();
+			loadSystemOverview();
+			loadArtdaqGrid();
+			updateClock();
+			setInterval(updateClock, 1000);
+		}
+
+		function updateClock() {
+			var el = document.getElementById("systemClock");
+			if (el) el.textContent = new Date().toLocaleTimeString();
+		}
+
+		// =============================================================
+		// Status bar
+		// =============================================================
+		function updateStatusBar() {
+			var isRunning = _system.state === "Running" || _system.state === "Paused";
+
+			var stateEl = document.getElementById("systemState");
+			if (stateEl) {
+				var stateText = _system.inTransition ?
+					_system.transition + "..." : (_system.state || "---");
+				var hasError = _system.error && _system.error !== "";
+
+				// Merge run number into badge when running
+				var runNum = "";
+				if (isRunning) {
+					var num = Mu2e.parseRunNumber(_system.runNumber);
+					if (num !== "---") runNum = " #" + num;
+				}
+
+				if (hasError && !_system.inTransition) {
+					stateEl.innerHTML = Mu2e.esc(stateText) +
+						" <span class='error-icon' " +
+						"title='" + Mu2e.escAttr(Mu2e.decodeDetail(_system.error).substring(0, 1000)) +
+						"'>&#9888;</span>";
+				} else {
+					stateEl.textContent = stateText + runNum;
+				}
+				stateEl.className = "status-state " +
+					(_system.inTransition ? "state-unknown" : Mu2e.stateClass(_system.state));
+			}
+
+
+			var cmtEl = document.getElementById("runComment");
+			if (cmtEl) {
+				if (isRunning && _system.lastRunLogEntry) {
+					var comment = _system.lastRunLogEntry
+						.replace(/^Run\s*#?\d+\s*:\s*/i, "");
+					cmtEl.textContent = comment;
+					cmtEl.style.display = "";
+				} else {
+					cmtEl.textContent = "";
+					cmtEl.style.display = "none";
+				}
+			}
+
+			var timeEl = document.getElementById("timeInState");
+			if (timeEl) timeEl.textContent = Mu2e.formatTime(_system.timeInState);
+
+			// Iterator Start/Stop button
+			var mcRunBtn = document.getElementById("mc-run-btn");
+			if (mcRunBtn) {
+				var isRunning = _system.state === "Running" || _system.state === "Paused";
+				var canStart = _system.state === "Halted" || _system.state === "Configured";
+				var h = "";
+				if (isRunning) {
+					h = "<button class='mc-btn-stop' " +
+						"onclick='stopRun()'" +
+						(_system.inTransition ? " disabled" : "") +
+						">Stop Run</button>";
+				} else if (canStart) {
+					var onclick = (_system.state === "Halted") ?
+						"startFromHalted()" : "promptLogAndStart(false)";
+					h = "<button class='mc-btn-start' " +
+						"onclick='" + onclick + "'" +
+						(_system.inTransition ? " disabled" : "") +
+						">Start Run</button>";
+				}
+				mcRunBtn.innerHTML = h;
+			}
+
+			// FSM transition buttons (Configure, Halt — no Start/Stop)
+			var mcActions = document.getElementById("mc-actions");
+			if (mcActions) {
+				var valid = _TRANSITIONS[_system.state] || [];
+				var h = "";
+				var isRunning = _system.state === "Running" || _system.state === "Paused";
+				for (var i = 0; i < valid.length; ++i) {
+					var action = valid[i];
+					if (action === "Start" || action === "Stop") continue;
+					if (action === "Halt" && isRunning) continue;
+					h += "<button class='mc-btn' " +
+						"onclick=\"systemTransition('" + action + "')\"" +
+						(_system.inTransition ? " disabled" : "") +
+						">" + action + "</button>";
+				}
+				mcActions.innerHTML = h;
+			}
+
+			// Freeze Run Type when not in Halted/Initial
+			var fsmSelect = document.getElementById("fsmSelect");
+			if (fsmSelect) {
+				var canChange = (_system.state === "Halted" || _system.state === "Initial");
+				fsmSelect.disabled = !canChange;
+			}
+
+		}
+
+		// =============================================================
+		// Config section — Run Type selector
+		// =============================================================
+		function renderConfigSection() {
+			// Set default alias if none selected
+			if (!_system.selectedAlias && _systemAliases.length)
+				_system.selectedAlias = _systemAliases[0].name;
+
+			var el = document.getElementById("configContent");
+			var html = "";
+			html += "<label>Run Type:</label>";
+			html += "<select id='fsmSelect' onchange='onFsmChange(this.value)'>";
+			for (var i = 0; i < _fsmNames.length; ++i) {
+				var sel = _fsmNames[i] === _fsmName ? " selected" : "";
+				html += "<option value='" + Mu2e.escAttr(_fsmNames[i]) + "'" + sel + ">" +
+					Mu2e.esc(_fsmNames[i]) + "</option>";
+			}
+			html += "</select>";
+			el.innerHTML = html;
+		}
+
+		function onFsmChange(value) {
+			_fsmName = value;
+			loadSubsystems();
+		}
+
+		function onSystemAliasChange(value) {
+			_system.selectedAlias = value;
+		}
+
+		// =============================================================
+		// Subsystem table
+		// =============================================================
+		function renderSubsystemTable() {
+			var el = document.getElementById("subsystemContent");
+			if (!_subsystems.length) {
+				el.innerHTML = "<div class='placeholder-text'>No subsystems found.</div>";
+				return;
+			}
+
+			// Subsystem table
+			var html = "<table class='subsystem-grid'>";
+			html += "<colgroup>";
+			html += "<col style='width:38px;'>";
+			html += "<col style='width:160px;'>";
+			html += "<col style='width:100px;'>";
+			html += "<col style='width:80px;'>";
+			html += "<col style='width:250px;'>";
+			html += "<col>";
+			html += "</colgroup>";
+			html += "<thead><tr>";
+			html += "<th></th>";
+			html += "<th>Subsystem</th>";
+			html += "<th>State</th>";
+			html += "<th>Time</th>";
+			html += "<th>Transitions</th>";
+			html += "<th>Comment</th>";
+			html += "</tr></thead><tbody>";
+
+			for (var i = 0; i < _subsystems.length; ++i)
+				html += renderSubsystemRow(i);
+
+			html += "</tbody></table>";
+			el.innerHTML = html;
+		}
+
+		function renderSubsystemRow(idx) {
+			var ss = _subsystems[idx];
+			var included = ss.fsmIncluded;
+			var isUnknown = (ss.status === "UNKNOWN" || !ss.status);
+			var h = "<tr id='ss-row-" + idx + "' class='" +
+				(included ? "ss-row-included" : "ss-row-excluded") + "'>";
+
+			// Include toggle switch
+			h += "<td><button class='ss-include-toggle " +
+				(included ? "ss-include-on" : "ss-include-off") +
+				"' id='ss-incl-" + idx + "' " +
+				"onclick='toggleInclude(" + idx + ")'></button></td>";
+
+			// Name — dim if UNKNOWN
+			h += "<td><span class='" +
+				(isUnknown ? "ss-name-unknown" : "ss-name") + "'>" +
+				Mu2e.esc(ss.name) + "</span></td>";
+
+			// State
+			h += "<td class='ss-state-cell' id='ss-state-" + idx + "'>";
+			h += Mu2e.stateCell(ss.status, ss.progress, ss.error);
+			h += "</td>";
+
+			// Time in state + uptime combined
+			h += "<td class='ss-time-cell' id='ss-time-" + idx + "'>" +
+				Mu2e.formatTimeCell(ss.detail, ss.progress) + "</td>";
+
+			// Transition buttons
+			h += "<td>";
+			h += "<div id='ss-actions-" + idx + "'>" +
+				transitionButtons(idx, ss.status) + "</div>";
+			// Config alias dropdown — frozen when configured/running
+			var choices = ss.configAliasChoices ? ss.configAliasChoices.split(",") : [];
+			var frozen = (ss.status === "Configured" || ss.status === "Running" || ss.status === "Paused");
+			if (choices.length > 1) {
+				h += "<select class='ss-alias-select' id='ss-alias-" + idx + "' " +
+					(frozen ? "disabled " : "") +
+					"onchange='onSubsystemAliasChange(" + idx + ", this.value)'>";
+				for (var c = 0; c < choices.length; ++c) {
+					var sel = choices[c] === ss.configAlias ? " selected" : "";
+					h += "<option" + sel + ">" + Mu2e.esc(choices[c]) + "</option>";
+				}
+				h += "</select>";
+			} else if (ss.configAlias) {
+				h += "<span class='ss-alias-label'>" +
+					Mu2e.esc(ss.configAlias) + "</span>";
+			}
+			h += "</td>";
+
+			// Comment
+			var comment = Mu2e.parseComment(ss.detail);
+			h += "<td class='ss-comment' id='ss-comment-" + idx + "' " +
+				"title='" + Mu2e.escAttr(comment) + "'>" +
+				Mu2e.esc(comment) + "</td>";
+
+			h += "</tr>";
+			return h;
+		}
+
+		function transitionButtons(idx, status) {
+			var valid = _TRANSITIONS[status] || [];
+			var h = "";
+			for (var i = 0; i < valid.length; ++i) {
+				var action = valid[i];
+				// Start only at top level
+				if (action === "Start" && idx >= 0) continue;
+				var onclick = idx === -1 ?
+					"systemTransition('" + action + "')" :
+					"subsystemAction(" + idx + ", '" + action + "')";
+				h += "<button class='ss-transition-btn' " +
+					"onclick=\"" + onclick + "\">" + action + "</button>";
+			}
+			if (idx >= 0)
+				h += "<button class='ss-power-btn' title='Power cycle' " +
+					"onclick='bootSubsystem(" + idx + ")'>&#9211;</button>";
+			return h;
+		}
+
+
+		function updateSubsystemRows() {
+			// Master Control banner — no separate actions, just state badge
+
+			for (var i = 0; i < _subsystems.length; ++i) {
+				var cell = document.getElementById("ss-state-" + i);
+				if (cell) cell.innerHTML = Mu2e.stateCell(
+					_subsystems[i].status, _subsystems[i].progress, _subsystems[i].error);
+
+				var timeEl = document.getElementById("ss-time-" + i);
+				if (timeEl) timeEl.innerHTML = Mu2e.formatTimeCell(_subsystems[i].detail, _subsystems[i].progress);
+
+				var actEl = document.getElementById("ss-actions-" + i);
+				if (actEl) actEl.innerHTML = transitionButtons(i, _subsystems[i].status);
+
+				var aliasEl = document.getElementById("ss-alias-" + i);
+				if (aliasEl) {
+					var frozen = (_subsystems[i].status === "Configured" ||
+						_subsystems[i].status === "Running" ||
+						_subsystems[i].status === "Paused");
+					aliasEl.disabled = frozen;
+				}
+
+				var cmtEl = document.getElementById("ss-comment-" + i);
+				if (cmtEl) {
+					var cmt = Mu2e.parseComment(_subsystems[i].detail);
+					cmtEl.textContent = cmt;
+					cmtEl.title = cmt;
+				}
+			}
+		}
+
+		function showError(errText) {
+			Debug.err(errText);
+		}
+
+		// =============================================================
+		// Actions
+		// =============================================================
+		function startStop() {
+			var isRunning = _system.state === "Running" || _system.state === "Paused";
+			if (isRunning) {
+				systemTransition("Stop");
+			} else {
+				systemTransition("Configure", function () {
+					setTimeout(function () { systemTransition("Start"); }, 500);
+				});
+			}
+		}
+
+		function startFromHalted() {
+			promptLogAndStart(true);
+		}
+
+		// Prompt for log entry then start a run via iteratePlayGenerated
+		function promptLogAndStart(needsConfigure) {
+			DesktopContent.popUpVerification(
+				"Please enter a logbook entry for the next run:",
+				function (entry) {
+					var doStart = function () {
+						startRun(entry || "");
+					};
+					if (needsConfigure) {
+						systemTransition("Configure", function () {
+							// Wait for Configured state
+							var wait = function () {
+								if (_system.state === "Configured")
+									doStart();
+								else if (_system.state === "Failed" || _system.state === "Error")
+									Debug.err("Configure failed — cannot Start.");
+								else
+									setTimeout(wait, 1000);
+							};
+							setTimeout(wait, 2000);
+						});
+					} else {
+						doStart();
+					}
+				},
+				undefined, "#efeaea", undefined, "#770000",
+				true /*getUserInput*/, 500 /*dialogWidth*/,
+				function () { Debug.log("Start cancelled."); },
+				"Start" /*yesButtonText*/,
+				true /*noAutoComplete*/,
+				"" /*defaultUserInputValue*/,
+				undefined, true /*wantMultilineInput*/
+			);
+		}
+
+		function startRun(logEntry) {
+			var alias = _system.selectedAlias;
+			if (!alias && _systemAliases.length)
+				alias = _systemAliases[0].name;
+
+			var parameters = "";
+			parameters += _fsmName;
+			parameters += "," + (alias || "");
+			parameters += ",0";   // durationSeconds (0 = open-ended)
+			parameters += ",1";   // numberOfRuns
+			parameters += ",0";   // keepConfiguration
+			parameters += "," + encodeURIComponent(logEntry);
+
+			DesktopContent.XMLHttpRequest(
+				"StateMachineXgiHandler?" +
+				"&StateMachine=iteratePlayGenerated" +
+				"&fsmName=" + _fsmName,
+				"&fsmWindowName=" + encodeURIComponent(parameters),
+				function (req, reqParam, errStr) {
+					if (errStr) {
+						Debug.err("Start failed: " + errStr);
+						return;
+					}
+					console.log("Run started.");
+				},
+				0, 0, true, false, true);
+		}
+
+		function stopRun() {
+			DesktopContent.popUpVerification(
+				"Please enter a logbook entry to end this run:",
+				function (entry) {
+					// First halt the iterator
+					DesktopContent.XMLHttpRequest(
+						"StateMachineXgiHandler?fsmName=" + _fsmName +
+						"&StateMachine=iterateHalt", "",
+						function () {
+							// Then send Stop with log entry
+							DesktopContent.XMLHttpRequest(
+								"StateMachineXgiHandler?fsmName=" + _fsmName +
+								"&StateMachine=Stop",
+								"logEntry=" + encodeURIComponent(entry || ""),
+								function (req, reqParam, errStr) {
+									if (errStr) {
+										Debug.err("Stop failed: " + errStr);
+										return;
+									}
+									console.log("Run stopped.");
+								},
+								0, 0, true, false, true);
+						},
+						0, 0, true, false, true);
+				},
+				undefined, "#efeaea", undefined, "#770000",
+				true /*getUserInput*/, 500 /*dialogWidth*/,
+				function () { Debug.log("Stop cancelled."); },
+				"Stop Run" /*yesButtonText*/,
+				true /*noAutoComplete*/,
+				"" /*defaultUserInputValue*/,
+				undefined, true /*wantMultilineInput*/
+			);
+		}
+
+		function systemTransition(command, onDone) {
+			console.log("systemTransition:", command, "fsmName:", _fsmName,
+				"state:", _system.state, "fsmWindow:", _system.activeFsmWindow);
+
+			// Halt: send iterateHalt first, wait for system to leave Running, then Halt
+			if (command === "Halt") {
+				DesktopContent.XMLHttpRequest(
+					"StateMachineXgiHandler?fsmName=" + _fsmName +
+					"&StateMachine=iterateHalt", "",
+					function () { console.log("iterateHalt sent"); },
+					0, 0, true, false, true);
+
+				var waitAndHalt = function (retries) {
+					if (retries <= 0) {
+						Debug.err("Timed out waiting for iterator to release. Try Halt again.");
+						if (onDone) onDone();
+						return;
+					}
+					if (_system.state === "Running" || _system.state === "Paused" ||
+						_system.inTransition) {
+						console.log("Waiting for iterator to release... retries:", retries);
+						setTimeout(function () { waitAndHalt(retries - 1); }, 2000);
+						return;
+					}
+					// Iterator released — now send Halt
+					console.log("Iterator released, sending Halt. State:", _system.state);
+					DesktopContent.XMLHttpRequest(
+						"StateMachineXgiHandler?fsmName=" + _fsmName +
+						"&StateMachine=Halt", "",
+						function (req, reqParam, errStr) {
+							if (errStr) console.log("Halt result:", errStr);
+							else console.log("Halt OK");
+							if (onDone) onDone();
+						},
+						0, 0, true, false, true);
+				};
+				setTimeout(function () { waitAndHalt(30); }, 3000);
+				return;
+			}
+
+			var postData = "";
+			if (command === "Configure") {
+				var alias = _system.selectedAlias;
+				if (!alias && _systemAliases.length)
+					alias = _systemAliases[0].name;
+				if (alias)
+					postData = "ConfigurationAlias=" + encodeURIComponent(alias);
+			}
+
+			DesktopContent.XMLHttpRequest(
+				"StateMachineXgiHandler?fsmName=" + _fsmName +
+				"&StateMachine=" + command,
+				postData,
+				function (req, reqParam, errStr) {
+					if (errStr) {
+						console.log("systemTransition ERROR:", errStr);
+						Debug.err("Transition " + command + " failed: " + errStr);
+						return;
+					}
+					var success = DesktopContent.getXMLValue(req, "state_transition_attempted") == "1";
+					if (!success) {
+						var err = DesktopContent.getXMLValue(req, "state_transition_attempted_err");
+						console.log("systemTransition REJECTED:", err);
+						Debug.err("Transition " + command + " rejected: " + (err || "unknown"));
+						return;
+					}
+					console.log("systemTransition OK:", command);
+					if (onDone) onDone();
+				},
+				0, 0, true, false, true);
+		}
+
+		function subsystemAction(idx, command) {
+			var ss = _subsystems[idx];
+			var param = "";
+			if (command === "Configure" && ss.configAlias)
+				param = "&parameter=" + encodeURIComponent(ss.configAlias);
+
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=commandRemoteSubsystem" +
+				"&fsmName=" + _fsmName +
+				"&command=" + command +
+				"&targetSubsystem=" + encodeURIComponent(ss.name) + param, "",
+				function () {
+					ss.status = "Launching " + command;
+					ss.progress = 0;
+					updateSubsystemRows();
+				},
+				0, 0, true, true, true);
+		}
+
+		function onSubsystemAliasChange(idx, value) {
+			_subsystems[idx].configAlias = value;
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=setRemoteSubsystemFsmControl" +
+				"&targetSubsystem=" + encodeURIComponent(_subsystems[idx].name) +
+				"&controlType=configAlias" +
+				"&setValue=" + encodeURIComponent(value), "",
+				null, 0, 0, true, true, true);
+		}
+
+		function toggleInclude(idx) {
+			var newVal = _subsystems[idx].fsmIncluded ? 0 : 1;
+			_subsystems[idx].fsmIncluded = newVal;
+
+			var btn = document.getElementById("ss-incl-" + idx);
+			if (btn)
+				btn.className = "ss-include-toggle " + (newVal ? "ss-include-on" : "ss-include-off");
+			var row = document.getElementById("ss-row-" + idx);
+			if (row) row.className = newVal ? "ss-row-included" : "ss-row-excluded";
+
+			// Update system overview dimming
+			renderSystemOverview();
+
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=setRemoteSubsystemFsmControl" +
+				"&targetSubsystem=" + encodeURIComponent(_subsystems[idx].name) +
+				"&controlType=include&setValue=" + newVal, "",
+				null, 0, 0, true, true, true);
+		}
+
+		function bootSubsystem(idx) {
+			var name = _subsystems[idx].name;
+			if (!confirm("Power cycle " + name + "?\n\nThis will reboot the subsystem."))
+				return;
+			DesktopContent.XMLHttpRequest(
+				"Request?RequestType=gatewayLaunchOTSInstance" +
+				"&targetSubsystem=" + encodeURIComponent(name), "",
+				function () {
+					Debug.log("Reboot sent to " + name);
+					_subsystems[idx].status = "Rebooting";
+					_subsystems[idx].progress = 0;
+					updateSubsystemRows();
+				},
+				0, 0, true, true, true);
+		}
+
+		// =============================================================
+		// System Overview — per-subsystem active context/config group summary
+		// =============================================================
+		function loadSystemOverview() {
+			renderSystemOverview();
+		}
+
+		function renderSystemOverview() {
+			var el = document.getElementById("systemOverviewContent");
+			if (!_subsystems.length) {
+				el.innerHTML = "<div class='placeholder-text'>No subsystems found.</div>";
+				return;
+			}
+
+			var html = "<table class='sysoverview-grid'>";
+			html += "<thead><tr>";
+			html += "<th>Subsystem</th>";
+			html += "<th>Status</th>";
+			html += "<th>Context Group</th>";
+			html += "<th>Config Group</th>";
+			html += "</tr></thead><tbody>";
+
+			for (var i = 0; i < _subsystems.length; ++i)
+				html += renderSystemOverviewRow(_subsystems[i]);
+
+			html += "</tbody></table>";
+			el.innerHTML = html;
+		}
+
+		function renderSystemOverviewRow(ss) {
+			var isUnknown = (ss.status === "UNKNOWN" || !ss.status);
+			var h = "<tr class='" + (isUnknown ? "sysoverview-dimmed" : "") + "'>";
+
+			// Config group: prefer the live active group; if none yet (not configured),
+			// fall back to the selected alias's resolved group, shown as "pending".
+			var configCell;
+			if (ss.activeConfigGroupName)
+				configCell = formatGroupCell(ss.activeConfigGroupName, ss.activeConfigGroupKey);
+			else if (ss.selectedConfigGroupName)
+				configCell = formatGroupCell(ss.selectedConfigGroupName, ss.selectedConfigGroupKey, true);
+			else
+				configCell = formatGroupCell();
+
+			h += "<td class='sysoverview-host'>" + Mu2e.esc(ss.name) + "</td>";
+			h += "<td>" + Mu2e.esc(ss.status || "UNKNOWN") + "</td>";
+			h += "<td class='sysoverview-cell'>" + formatGroupCell(ss.activeContextGroupName, ss.activeContextGroupKey) + "</td>";
+			h += "<td class='sysoverview-cell'>" + configCell + "</td>";
+
+			h += "</tr>";
+			return h;
+		}
+
+		function formatGroupCell(groupName, groupKey, pending) {
+			if (!groupName) return "<span class='sysoverview-empty'>&mdash;</span>";
+			var h = Mu2e.esc(groupName) + " <span class='sysoverview-roc-count'>(" + Mu2e.esc(groupKey) + ")</span>";
+			if (pending) h += " <span class='sysoverview-subsystem'>pending</span>";
+			return h;
+		}
+
+		// =============================================================
+		// ARTDAQ Node Grid — hosts × process types, merged across subsystems
+		// =============================================================
+		var _ARTDAQ_TYPES = ["reader", "builder", "logger", "dispatcher", "monitor", "router"];
+		var _ARTDAQ_TYPE_LABELS = {
+			reader: "Reader", builder: "Builder", logger: "Logger",
+			dispatcher: "Dispatcher", monitor: "Monitor", router: "Router"
+		};
+
+		// Resolved groups (active or pending-selected) arrive over the 1s status
+		// poll, a request/response cycle or two after a Configure/dropdown change --
+		// getArtdaqNodes itself is a real table-group load server-side, so we only
+		// want to re-fetch when the resolved signature actually changes, not on
+		// every poll tick.
+		var _artdaqGridSignature = "";
+
+		function subsystemArtdaqSignature(ss) {
+			var cfgName = ss.activeConfigGroupName || ss.selectedConfigGroupName;
+			var cfgKey  = ss.activeConfigGroupName ? ss.activeConfigGroupKey : ss.selectedConfigGroupKey;
+			return ss.name + "|" + cfgName + "(" + cfgKey + ")|" +
+				ss.activeContextGroupName + "(" + ss.activeContextGroupKey + ")";
+		}
+
+		function computeArtdaqGridSignature() {
+			var sig = "";
+			for (var i = 0; i < _subsystems.length; ++i)
+				sig += subsystemArtdaqSignature(_subsystems[i]) + ";";
+			return sig;
+		}
+
+		// Called after every poll: cheap signature check, only re-fetches the
+		// (expensive) artdaq node grid when a subsystem's resolved group changed.
+		function refreshArtdaqGridIfChanged() {
+			var sig = computeArtdaqGridSignature();
+			if (sig === _artdaqGridSignature) return;
+			_artdaqGridSignature = sig;
+			loadArtdaqGrid();
+		}
+
+		function loadArtdaqGrid() {
+			_artdaqGridSignature = computeArtdaqGridSignature();
+			// ConfigGuiLid must be discovered (async) before setConfigGuiLid() has
+			// anything to apply; do this every call rather than assuming some other
+			// caller already triggered discovery first.
+			Mu2eHardware.discoverConfigGuiLid(function () {
+				doLoadArtdaqGrid();
+			});
+		}
+
+		var _artdaqGridNonce = 0;
+
+		function doLoadArtdaqGrid() {
+			var nonce = ++_artdaqGridNonce;
+			var targets = [];
+			for (var i = 0; i < _subsystems.length; ++i) {
+				var ss = _subsystems[i];
+				var cfgName = ss.activeConfigGroupName || ss.selectedConfigGroupName;
+				var cfgKey  = ss.activeConfigGroupName ? ss.activeConfigGroupKey : ss.selectedConfigGroupKey;
+				var ctxName = ss.activeContextGroupName;
+				var ctxKey  = ss.activeContextGroupKey;
+				if (cfgName && ctxName)
+					targets.push({ ss: ss, cfgName: cfgName, cfgKey: cfgKey, ctxName: ctxName, ctxKey: ctxKey });
+			}
+
+			if (!targets.length) {
+				var el = document.getElementById("artdaqGridContent");
+				if (el) el.innerHTML = "<div class='placeholder-text'>No subsystems with a resolved context+config group yet.</div>";
+				return;
+			}
+
+			// hostname -> { type -> [ {status, subsystemName, artdaqSubsystem} ] }
+			var hosts = {};
+			var remaining = targets.length;
+
+			targets.forEach(function (t) {
+				Mu2eHardware.setConfigGuiLid();
+				DesktopContent.XMLHttpRequest(
+					"Request?RequestType=getArtdaqNodes" +
+					"&tableGroup=" + encodeURIComponent(t.cfgName) +
+					"&tableGroupKey=" + encodeURIComponent(t.cfgKey) +
+					"&contextGroup=" + encodeURIComponent(t.ctxName) +
+					"&contextGroupKey=" + encodeURIComponent(t.ctxKey) +
+					"&suppressMultiNode=1",
+					"modifiedTables=",
+					function (req, reqParam, errStr) {
+						if (nonce !== _artdaqGridNonce) return;  // superseded by a newer load
+						var xml = req && req.responseXML;
+						if (errStr)
+							console.log("ArtdaqGrid: error fetching nodes for", t.ss.name, errStr);
+						if (!errStr && xml)
+							mergeArtdaqNodesXML(xml, t, hosts);
+						if (--remaining === 0) {
+							renderArtdaqGrid(hosts);
+						}
+					},
+					0, 0, true, true);
+			});
+		}
+
+		function mergeArtdaqNodesXML(xml, target, hosts) {
+			var subsystemName = target.ss.name;
+			for (var ti = 0; ti < _ARTDAQ_TYPES.length; ++ti) {
+				var type = _ARTDAQ_TYPES[ti];
+				var labelNodes      = xml.getElementsByTagName(type);
+				var statusNodes     = xml.getElementsByTagName(type + "-status");
+				var hostnameNodes   = xml.getElementsByTagName(type + "-hostname");
+				var artSubNodes     = xml.getElementsByTagName(type + "-subsystem");
+
+				for (var i = 0; i < hostnameNodes.length; ++i) {
+					// hostnames are stored URI-encoded internally (dashes/dots would
+					// otherwise confuse artdaq's multi-node "printer syntax" compression
+					// elsewhere) -- decode for display/grouping here.
+					var hostname = hostnameNodes[i].getAttribute("value");
+					if (!hostname) continue;
+					try { hostname = decodeURIComponent(hostname); } catch (e) { }
+					hostname = hostname.replace(/(-data)?\.fnal\.gov$/i, "");
+
+					if (!hosts[hostname]) hosts[hostname] = {};
+					if (!hosts[hostname][type]) hosts[hostname][type] = [];
+
+					// label carries a ";status=0/1" suffix baked in server-side to keep
+					// map keys unique -- strip it for display, we already have status
+					// from the separate -status field.
+					var label = labelNodes[i] ? labelNodes[i].getAttribute("value") : "";
+					var statusSuffixIdx = label.lastIndexOf(";status=");
+					if (statusSuffixIdx >= 0) label = label.substring(0, statusSuffixIdx);
+
+					hosts[hostname][type].push({
+						label: label,
+						type: type,
+						status: statusNodes[i] ? statusNodes[i].getAttribute("value") : "",
+						subsystemName: subsystemName,
+						subsystemLandingPage: target.ss.landingPage,
+						artdaqSubsystem: artSubNodes[i] ? artSubNodes[i].getAttribute("value") : "",
+						cfgName: target.cfgName,
+						cfgKey: target.cfgKey
+					});
+				}
+			}
+		}
+
+		// Group hosts by naming pattern (mu2e-<group>-NN) for display ordering.
+		var _HOST_GROUP_ORDER = ["cfo", "calo", "trk", "crv", "dl", "dcs"];
+		function hostGroupRank(hostname) {
+			var m = hostname.match(/^mu2e-?([a-z]+)/i);
+			var group = m ? m[1].toLowerCase() : "";
+			var idx = _HOST_GROUP_ORDER.indexOf(group);
+			return idx >= 0 ? idx : _HOST_GROUP_ORDER.length;
+		}
+
+		function renderArtdaqGrid(hosts) {
+			var el = document.getElementById("artdaqGridContent");
+			if (!el) return;
+
+			_artdaqNodeRegistry = []; // reset click registry for this render
+
+			var hostnames = Object.keys(hosts).sort(function (a, b) {
+				var ra = hostGroupRank(a), rb = hostGroupRank(b);
+				if (ra !== rb) return ra - rb;
+				return a < b ? -1 : (a > b ? 1 : 0);
+			});
+			if (!hostnames.length) {
+				el.innerHTML = "<div class='placeholder-text'>No artdaq nodes found for any subsystem's active groups.</div>";
+				return;
+			}
+
+			var html = "<table class='sysoverview-grid'>";
+			html += "<thead><tr><th>Host</th>";
+			for (var ti = 0; ti < _ARTDAQ_TYPES.length; ++ti)
+				html += "<th>" + _ARTDAQ_TYPE_LABELS[_ARTDAQ_TYPES[ti]] + "</th>";
+			html += "</tr></thead><tbody>";
+
+			for (var hi = 0; hi < hostnames.length; ++hi) {
+				var hostname = hostnames[hi];
+				html += "<tr><td class='sysoverview-host'>" + Mu2e.esc(hostname) + "</td>";
+				for (ti = 0; ti < _ARTDAQ_TYPES.length; ++ti) {
+					var entries = hosts[hostname][_ARTDAQ_TYPES[ti]];
+					html += "<td class='sysoverview-cell'>" + renderArtdaqCell(entries) + "</td>";
+				}
+				html += "</tr>";
+			}
+
+			html += "</tbody></table>";
+			el.innerHTML = html;
+		}
+
+		var _SS_BG_STATES = ["Initial", "Halted", "Configured", "Running", "Paused", "Error"];
+		function getSubsystemStatus(subsystemName) {
+			var status = "unknown";
+			for (var i = 0; i < _subsystems.length; ++i)
+				if (_subsystems[i].name === subsystemName) {
+					status = _subsystems[i].status || "unknown";
+					break;
+				}
+			return _SS_BG_STATES.indexOf(status) >= 0 ? status : "unknown";
+		}
+
+		// Flat registry of rendered node entries so onclick can reference an entry
+		// by index (avoids escaping group/label strings into inline handlers).
+		var _artdaqNodeRegistry = [];
+
+		function renderArtdaqCell(entries) {
+			if (!entries || !entries.length)
+				return "<span class='sysoverview-empty'>&mdash;</span>";
+
+			var h = "";
+			for (var i = 0; i < entries.length; ++i) {
+				var e = entries[i];
+				var isOn = e.status === "1" || e.status === "true";
+				var ssStatus = getSubsystemStatus(e.subsystemName);
+				var regIdx = _artdaqNodeRegistry.push(e) - 1;
+				h += "<div class='sysoverview-item sysoverview-item-clickable ss-bg-" + Mu2e.esc(ssStatus) +
+					"' title='" + Mu2e.escAttr(e.subsystemName + " — click to open FHiCL") + "'" +
+					" onclick='openArtdaqNodeFcl(" + regIdx + ")'>";
+				h += "<span class='status-dot " + (isOn ? "status-on" : "status-off") + "'></span>";
+				h += Mu2e.esc(e.label || "?");
+				h += "</div>";
+			}
+			return h;
+		}
+
+		// =============================================================
+		// Opening a subsystem app for an artdaq node (config / FHiCL)
+		// -------------------------------------------------------------
+		// Clicking a node badge opens one of that node's subsystem apps
+		// (ConfigurationGUI or Code Editor). The hard part is that each subsystem
+		// is a separate (often remote) gateway reachable only via a port-forwarded
+		// localhost URL that the top-level Gateway resolves server-side via its
+		// admin port-translation map -- we cannot reconstruct that URL client-side.
+		//
+		// The trick: the parent OTS desktop already holds those exact, reachable,
+		// port-translated URLs in its icon map (built when it rendered the remote
+		// subsystem folders). So we:
+		//   1. find the subsystem's icon folder from its landingPage
+		//      (the landingPage is itself one of that folder's icons),
+		//   2. look up the reachable URL for the wanted icon ("Configure" /
+		//      "Code Editor") within that folder,
+		//   3. append app-specific params and open it as an OTS desktop window.
+		//
+		// Note: node identity. e.label is the concrete node UID (we request
+		// getArtdaqNodes with suppressMultiNode=1, so labels are not wildcards).
+		// This is what makes the FHiCL filename (<type>-<uid>.fcl) valid.
+		// =============================================================
+
+		// Open a URL as an OTS desktop window via the parent desktop's
+		// addWindow(name, subname, url, unique); fall back to a browser tab if the
+		// parent desktop object isn't reachable (e.g. page loaded stand-alone).
+		function openOtsDesktopWindow(winName, url) {
+			try {
+				DesktopContent._theDesktopWindow.Desktop.desktop.addWindow(
+					winName, "", url, false);
+			} catch (err) {
+				Debug.log("ArtdaqGrid: desktop addWindow unavailable (" + err +
+					"), falling back to new tab.");
+				window.open(url, "_blank");
+			}
+		}
+
+		// Read the parent OTS desktop's icon map, which already holds the exact
+		// browser-reachable, port-translated remote URLs (e.g.
+		// "Trigger/Configure" -> "http://localhost:3945/...ConfigurationGUI.html
+		//  ?urn=281&remoteServerOrigin=...&remoteServerUrnLid=200").
+		function getDesktopIconMap() {
+			try {
+				return DesktopContent._theDesktopWindow.Desktop.desktop.icons.iconNameToPathMap;
+			} catch (err) {
+				Debug.log("ArtdaqGrid: cannot access desktop icon map: " + err);
+				return null;
+			}
+		}
+
+		// Derive a subsystem's icon folder by locating the icon-map key that matches
+		// its landingPage (the landingPage is itself one of that folder's icons).
+		function findSubsystemIconFolder(landingPage) {
+			var map = getDesktopIconMap();
+			if (!map || !landingPage) return null;
+			for (var key in map) {
+				if (!map.hasOwnProperty(key)) continue;
+				if (key === landingPage) {
+					var si = key.lastIndexOf("/");
+					return si >= 0 ? key.substring(0, si) : "";
+				}
+				var suffix = "/" + landingPage;
+				if (key.length > suffix.length &&
+					key.substring(key.length - suffix.length) === suffix)
+					return key.substring(0, key.length - suffix.length);
+			}
+			return null;
+		}
+
+		// Return the reachable URL for a named icon within the subsystem's folder
+		// (e.g. iconName "Configure" or "Code Editor"). These URLs are already
+		// port-translated to browser-reachable form by the desktop icon map.
+		function findSubsystemIconUrl(landingPage, iconName) {
+			var map = getDesktopIconMap();
+			var folder = findSubsystemIconFolder(landingPage);
+			if (!map || folder === null) return null;
+			var mapKey = folder ? (folder + "/" + iconName) : iconName;
+			var entry = map[mapKey];
+			return entry ? entry[0] : null;
+		}
+
+		// Open the node's subsystem ConfigurationGUI, activating the node's resolved
+		// config group and opening its tree view at root (via the autoTreeGroup/
+		// autoTreeKey deep-link handled in ConfigurationGUI.html init).
+		//
+		// NOTE: intentionally parked. Not currently wired to the badge click (the
+		// click opens FHiCL, see openArtdaqNodeFcl). Kept for a future config-open
+		// affordance (e.g. a second control on the badge or a context menu).
+		function openArtdaqNodeConfig(regIdx) {
+			var e = _artdaqNodeRegistry[regIdx];
+			if (!e) return;
+
+			var url = findSubsystemIconUrl(e.subsystemLandingPage, "Configure");
+			if (!url) {
+				Debug.err("Cannot open config for '" + e.subsystemName +
+					"': no Configure desktop icon found for landing page '" +
+					e.subsystemLandingPage + "'. (Is the subsystem's desktop folder loaded?)");
+				return;
+			}
+
+			// e.cfgName/e.cfgKey is the resolved config group (active, else selected).
+			if (e.cfgName && e.cfgKey && e.cfgKey !== "-1") {
+				url += (url.indexOf("?") >= 0 ? "&" : "?") +
+					"autoTreeGroup=" + encodeURIComponent(e.cfgName) +
+					"&autoTreeKey=" + encodeURIComponent(e.cfgKey);
+			}
+
+			Debug.log("Opening Configure for " + e.subsystemName + ": " + url);
+			openOtsDesktopWindow(e.subsystemName + " Configure", url);
+		}
+
+		// Open the node's generated FHiCL file in the subsystem's Code Editor, the
+		// same way ConfigurationGUI_artdaq does: CodeEditor with readOnlyMode +
+		// startFilePrimary=/$USER_DATA/ARTDAQConfigurations/<type>-<uid>.fcl.
+		function openArtdaqNodeFcl(regIdx) {
+			var e = _artdaqNodeRegistry[regIdx];
+			if (!e) return;
+
+			var baseUrl = findSubsystemIconUrl(e.subsystemLandingPage, "Code Editor");
+			if (!baseUrl) {
+				Debug.err("Cannot open FHiCL for '" + e.subsystemName +
+					"': no Code Editor desktop icon found for landing page '" +
+					e.subsystemLandingPage + "'. (Is the subsystem's desktop folder loaded, " +
+					"and does its Context include a Code Editor Supervisor?)");
+				return;
+			}
+
+			// FHiCL filename: /$USER_DATA/ARTDAQConfigurations/<type>-<uid>.fcl
+			// (e.label is the concrete node UID -- see suppressMultiNode note above).
+			var filename = "/$USER_DATA/ARTDAQConfigurations/" +
+				e.type + "-" + e.label + ".fcl";
+
+			var url = baseUrl + (baseUrl.indexOf("?") >= 0 ? "&" : "?") +
+				"readOnlyMode=1&startFilePrimary=" + encodeURIComponent(filename);
+
+			Debug.log("Opening FHiCL for " + e.label + " on " + e.subsystemName + ": " + url);
+			openOtsDesktopWindow(e.subsystemName + " FHiCL: " + e.label, url);
+		}
+
+
+	</script>
+</head>
+
+<body onload='//init() called by DesktopContent.js'>
+
+	<!-- Master Control banner -->
+	<div id="masterControl">
+		<table class="mc-table"><tbody>
+			<tr>
+				<td class="mc-td-left">
+					<div id="systemState" class="status-state state-unknown">---</div>
+					<span class="mc-time" id="timeInState">00:00:00</span>
+				</td>
+				<td class="mc-td-right">
+					<span id="mc-actions"></span>
+					<span id="mc-run-btn"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="mc-td-left">
+					<span class="mc-run-comment" id="runComment"></span>
+				</td>
+				<td class="mc-td-right">
+					<div id="configContent" class="config-row"></div>
+				</td>
+			</tr>
+		</tbody></table>
+	</div>
+
+	<!-- Subsystem grid -->
+	<div id="subsystemSection">
+		<div id="subsystemContent">
+			<span class="placeholder-text">Loading subsystems...</span>
+		</div>
+	</div>
+
+	<!-- System Overview — debug: per-subsystem active context/config group summary -->
+	<div id="systemOverviewSection">
+		<div id="systemOverviewContent">
+			<span class="placeholder-text">Loading system overview...</span>
+		</div>
+	</div>
+
+	<!-- ARTDAQ Node Grid — hosts × process types -->
+	<div id="artdaqGridSection">
+		<div id="artdaqGridContent">
+			<span class="placeholder-text">Loading artdaq node grid...</span>
+		</div>
+	</div>
+
+</body>
+</html>

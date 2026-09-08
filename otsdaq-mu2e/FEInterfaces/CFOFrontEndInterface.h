@@ -5,8 +5,10 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <vector>
 #include "otsdaq-mu2e/CFOandDTCCore/CFOandDTCCoreVInterface.h"
 #include "otsdaq/CoreSupervisors/FESupervisor.h"
+#include "otsdaq/TableCore/TableVersion.h"
 
 namespace ots
 {
@@ -21,14 +23,15 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	// state machine
 	//----------------
-	void configure(void) override;
-	void configureSlowControls(void) override;
-	void halt(void) override;
-	void pause(void) override;
-	void resume(void) override;
-	void start(std::string runNumber) override;
-	void stop(void) override;
-	bool running(void) override;
+	void         configure(void) override;
+	void         configureSlowControls(void) override;
+	void         halt(void) override;
+	void         pause(void) override;
+	void         resume(void) override;
+	void         start(std::string runNumber) override;
+	void         stop(void) override;
+	bool         running(void) override;
+	unsigned int getMinReadyForEventGenerationStartIteration(void) const override;
 
 	// CFO specific items
 	//----------------
@@ -144,6 +147,7 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 	/// -- end helper functions for Shared Run Plan ---------
 
 	int                         timing_chain_first_substep_     = -1;
+	int                         cfo_edge_fix_consecutive_clean_ = 0;
 	uint64_t                    next_starting_event_window_tag_ = 0;
 	const std::vector<uint32_t> standardNValues_                = {100, 200, uint32_t(1e3), 2 * uint32_t(1e3)};  //, uint32_t(1e4), uint32_t(1e5), uint32_t(1e6), uint32_t(1e7), uint32_t(1e8), uint32_t(1e9)};
 	const std::map<std::string,
@@ -225,6 +229,20 @@ class CFOFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void ConfigureForTimingChain(__ARGS__);
 	void LoopbackTest(__ARGS__);
+	void LoopbackTopologyDiscovery(__ARGS__);
+	void TemporaryDiagnosticTest(__ARGS__);
+
+	struct ROCLoopbackResult
+	{
+		std::string rocUID;
+		double      avgDelay;
+		double      stddev;
+	};
+	TableVersion ModifyROCMarkerDelayOffsetConfiguration(
+	    std::ostream&                         os,
+	    const std::vector<ROCLoopbackResult>& rocResults,
+	    int                                   minROCdelayOffset = 0);
+
 	void TestMarker(__ARGS__);
 
 	void RunplanSubrunConfigSetup(__ARGS__);

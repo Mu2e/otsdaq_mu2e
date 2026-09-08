@@ -11,7 +11,9 @@ using namespace ots;
 
 std::string CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV   = "HardwareDevMode";
 std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING = "EventBuildingMode";
-std::string CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK       = "LoopbackMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC =
+    "EventBuildingAndSyncMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK = "LoopbackMode";
 
 //=========================================================================================
 CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
@@ -2471,25 +2473,46 @@ uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
 //========================================================================
 void CFOandDTCCoreVInterface::recordTimeAlive()
 {
-	lastTimeAliveValue_ = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	lastTimeAliveValue_    = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	lastTimeAliveReadTime_ = time(0);
 	__FE_COUT__ << "Recorded Time Alive register value: " << lastTimeAliveValue_ << __E__;
 }  //end recordTimeAlive()
 
 //========================================================================
 void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transitionName)
 {
+	// only re-read the Time Alive register if at least 2 seconds have elapsed since the last read.
+	// this avoids false "board rebooted" alarms when macros or rapid transitions read the register
+	// within the same wall-clock second (the 40 MHz counter may not advance enough to be visible).
+	if((time(0) - lastTimeAliveReadTime_) < 2)
+	{
+		__FE_COUT__ << "Time Alive check skipped during '" << transitionName
+		            << "' (cached within 2 seconds; last value: " << lastTimeAliveValue_
+		            << ")" << __E__;
+		return;
+	}
+
 	uint32_t currentTimeAliveValue =
 	    getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
-	if(currentTimeAliveValue <= lastTimeAliveValue_)
+	if(currentTimeAliveValue < lastTimeAliveValue_)
 	{
-		__FE_SS__ << "Time Alive register value has not increased during '"
-		          << transitionName
+		__FE_SS__ << "Time Alive register value DECREASED during '" << transitionName
 		          << "' transition! Current value: " << currentTimeAliveValue
 		          << ", last recorded value: " << lastTimeAliveValue_
-		          << ". This likely indicates the board has rebooted." << __E__;
+		          << ". This indicates the board has rebooted." << __E__;
 		__FE_SS_THROW__;
 	}
-	lastTimeAliveValue_ = currentTimeAliveValue;
+
+	if(currentTimeAliveValue == lastTimeAliveValue_)
+	{
+		__FE_SS__ << "Time Alive register has not increased in 2+ seconds during '"
+		          << transitionName << "' (value: " << currentTimeAliveValue
+		          << "). Board clock is hung or not running." << __E__;
+		__FE_SS_THROW__;
+	}
+
+	lastTimeAliveValue_    = currentTimeAliveValue;
+	lastTimeAliveReadTime_ = time(0);
 	__FE_COUT__ << "Time Alive check passed during '" << transitionName
 	            << "', updated value: " << lastTimeAliveValue_ << __E__;
 }  //end testAndUpdateTimeAlive()
@@ -2498,7 +2521,7 @@ void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transiti
 void CFOandDTCCoreVInterface::testRTFClockInEventBuildingMode(
     const std::string& transitionName)
 {
-	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING)
+	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 		return;
 
 	uint32_t jaCSRValue      = getCFOandDTCRegisters()->FormatJitterAttenuatorCSR().value;

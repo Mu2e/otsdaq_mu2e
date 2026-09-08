@@ -9,6 +9,11 @@ echo "#   cd ${XILINX_INSTALL_PATH}/data/xicom/cable_drivers/lin64/install_scrip
 echo "#   ./install_drivers"
 echo "#   reboot #might be needed"
 
+echo "--------------------------"
+echo "To export from an ILA in vivado_lab tcl:"
+echo "#   source /home/mu2ehwdev/.Xilinx/vivado_lab/2021.2/Vivado_lab_init.tcl"
+echo "#   write_ila_csv 8    ;# to export ILA_8"
+
 SCRIPT_DIR="$(
   cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd -P
 )"

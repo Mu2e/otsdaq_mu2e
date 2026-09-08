@@ -5,6 +5,11 @@
 
 namespace ots
 {
+namespace
+{
+constexpr UInt_t kHistoPacketMagic = 0x4f545331;  // 'OTS1'
+}
+
 HistoSender::HistoSender(std::string serverHost, int serverPort)
     : sender_(serverHost, serverPort)
 {
@@ -22,6 +27,8 @@ void HistoSender::sendHistogram(std::string directoryName, TH1* hist)
 	TBufferFile buffer_(TBufferFile::kWrite);
 	buffer_.SetWriteMode();
 	buffer_.WriteStdString(directoryName);
+	buffer_ << kHistoPacketMagic;
+	buffer_ << static_cast<UInt_t>(1);
 	buffer_.WriteObject(hist);
 	sender_.sendPacket(buffer_.Buffer(), buffer_.Length());
 	buffer_.Reset();
@@ -34,6 +41,8 @@ void HistoSender::sendHistograms(std::string directoryName, std::vector<TH1*>& h
 	TBufferFile buffer_(TBufferFile::kWrite);
 	buffer_.SetWriteMode();
 	buffer_.WriteStdString(directoryName);
+	buffer_ << kHistoPacketMagic;
+	buffer_ << static_cast<UInt_t>(hists.size());
 	for(size_t i = 0; i < hists.size(); ++i)
 	{
 		buffer_.WriteObject(hists[i]);
@@ -50,6 +59,8 @@ void HistoSender::sendHistograms(std::map<std::string, std::vector<TH1*>>& hists
 	{
 		std::string dirName = hist_iter.first;
 		buffer_.WriteStdString(dirName);
+		buffer_ << kHistoPacketMagic;
+		buffer_ << static_cast<UInt_t>(hist_iter.second.size());
 		for(size_t i = 0; i < hist_iter.second.size(); ++i)
 		{
 			buffer_.WriteObject(hist_iter.second[i]);
@@ -67,6 +78,8 @@ void HistoSender::sendGraphs(std::map<std::string, std::vector<TGraph*>>& graphs
 	{
 		std::string dirName = iter.first;
 		buffer_.WriteStdString(dirName);
+		buffer_ << kHistoPacketMagic;
+		buffer_ << static_cast<UInt_t>(iter.second.size());
 		for(size_t i = 0; i < iter.second.size(); ++i)
 		{
 			buffer_.WriteObject(iter.second[i]);

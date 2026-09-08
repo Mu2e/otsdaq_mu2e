@@ -346,13 +346,14 @@ unsigned int DBRunInfo::insertRunCondition(
 
 			std::string sql = std::string("INSERT INTO ") + dbSchema_ +
 			                  ".config "
-			                  "(run_number, subsystem, config, create_time) "
-			                  "VALUES ($1, $2, $3::jsonb, CURRENT_TIMESTAMP);";
+			                  "(run_number, subsystem, settings, version, create_time) "
+			                  "VALUES ($1, $2, $3::jsonb, $4, CURRENT_TIMESTAMP);";
 
-			const char* paramValues[3];
+			const char* paramValues[4];
 			paramValues[0] = runNumberStr.c_str();
 			paramValues[1] = subsystem.c_str();
 			paramValues[2] = jsonString.c_str();
+			paramValues[3] = "1";
 
 			__COUT__ << "DEBUG INSERTING RUN CONDITION:" << __E__;
 			__COUT__ << "paramValues[0]: " << paramValues[0] << __E__;
@@ -361,7 +362,7 @@ unsigned int DBRunInfo::insertRunCondition(
 
 			res = PQexecParams(runInfoDbConn_,
 			                   sql.c_str(),
-			                   3,     // number of parameters
+			                   4,     // number of parameters
 			                   NULL,  // param types (let Postgres infer)
 			                   paramValues,
 			                   NULL,  // param lengths
@@ -1018,6 +1019,10 @@ TransitionTypeInfo DBRunInfo::getTransitionTypeInfo(
 		return {4, "Pause to Running - Resume"};
 	case RunInfoVInterface::RunTransitionType::START:
 		return {5, "Configure to Running - Start"};
+	case RunInfoVInterface::RunTransitionType::STOP_COMPLETE:
+		return {6, "Stop transition completed successfully"};
+	case RunInfoVInterface::RunTransitionType::HALT_COMPLETE:
+		return {7, "Halt transition completed successfully"};
 	default:
 		__SS__ << "Unknown RunTransitionType: " << static_cast<int>(runStopType) << __E__;
 		__SS_THROW__;

@@ -187,21 +187,21 @@ fi
 os=$(echo ${os_long//./_}|sed 's/almalinux/al/;s/ubuntu/u/')
 # Auto-add upstreams from /mu2e
 if [ $opt_use_mu2e -eq 1 ] && [ -d /mu2e/spack_v0.28 ];then
-  art=`ls -d /mu2e/spack_v0.28/art-suite-*-${os}|tail -1`
-  artdaq=`ls -d /mu2e/spack_v0.28/artdaq-*-${os}|tail -1`
-  ots=`ls -d /mu2e/spack_v0.28/ots-*-${os}|tail -1`
-  mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
-
-  upstreams+=($mu2e $ots $artdaq $art)
-
+  if [ $opt_dev_only -eq 1 ]; then
+    mu2e=`ls -d /mu2e/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
+    upstreams+=($mu2e)
+  else
+    ots=`ls -d /mu2e/spack_v0.28/ots-*-${os}|tail -1`
+    upstreams+=($ots)
+  fi
 elif [ $opt_use_cvmfs -eq 1 ] && [ -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28 ]; then
-  art=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/art-suite-*-${os}|tail -1`
-  artdaq=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/artdaq-*-${os}|tail -1`
-  ots=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/ots-*-${os}|tail -1`
-  mu2e=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
-
-  upstreams+=($artdaq $art)
-
+  if [ $opt_dev_only -eq 1 ]; then
+    mu2e=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/mu2e-tdaq-*-${os}|tail -1`
+    upstreams+=($mu2e)
+  else
+    ots=`ls -d /cvmfs/fermilab.opensciencegrid.org/products/artdaq/spack_v0.28/ots-*-${os}|tail -1`
+    upstreams+=($ots)
+  fi
 fi
 
 # If updating upstreams, clear existing file first
@@ -209,7 +209,7 @@ if [ ${#upstreams[@]} -gt 0 ]; then
   rm $spackdir/etc/spack/upstreams.yaml
 fi
 for upstream in ${upstreams[@]}; do
-    for upstreamdir in `find $upstream -type f -wholename '*/.spack-db/index.json' 2>/dev/null`; do
+    for upstreamdir in `find $upstream -type f -wholename '*/.spack-db/index.json'|grep -v bootstrap 2>/dev/null`; do
         echo "Getting real directory for upstream database $upstreamdir"
         upstreamdir=`dirname $upstreamdir`
         upstreamdir=`dirname $upstreamdir`
@@ -231,6 +231,11 @@ for upstream in ${upstreams[@]}; do
             echo "    install_tree: $upstreamdir" >>$spackdir/etc/spack/upstreams.yaml
         fi
     done
+
+    # Get this upstream's upstreams
+    if [ -f $upstream/spack/etc/spack/upstreams.yaml ]; then
+        tail -n +2 $upstream/spack/etc/spack/upstreams.yaml >>$spackdir/etc/spack/upstreams.yaml
+    fi
 
     for envdir in `find $upstream -type d -wholename '*/var/spack/environments' 2>/dev/null`; do
         echo "Looking for mu2e environments in $envdir"
