@@ -32,6 +32,7 @@ packages_with_ci=(
 packages_without_ci=(
   ".github"
   "daq-operations"
+  "daq-docker"
   "otsdaq-mu2e-config"
   "TDAQFirmware"
   "mu2e-spack"
@@ -42,5 +43,4 @@ packages_without_ci=(
 packages=(
   "${packages_with_ci[@]}"
   "${packages_without_ci[@]}"
-  "daq-docker"
 )

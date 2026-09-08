@@ -36,13 +36,14 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
   public:
 	// state machine
 	//----------------
-	void configure(void) override;
-	void halt(void) override;
-	void pause(void) override;
-	void resume(void) override;
-	void start(std::string runNumber) override;
-	void stop(void) override;
-	bool running(void) override;
+	void         configure(void) override;
+	void         halt(void) override;
+	void         pause(void) override;
+	void         resume(void) override;
+	void         start(std::string runNumber) override;
+	void         stop(void) override;
+	bool         running(void) override;
+	unsigned int getMinReadyForEventGenerationStartIteration(void) const override;
 
 	// emulator handlers
 	//----------------
@@ -86,7 +87,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void configureHardwareDevMode(void);
 	void configureEventBuildingMode(int step = -1);
 	void configureLoopbackMode(int step = -1);
-	void configureForTimingChain(int step);
+	void configureForTimingChain(int step = -1);
 	void configureCommon(void);
 
 	void loopbackTest(int step = -1);
@@ -99,6 +100,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<bool> running_            = false;
 		std::atomic<bool> exitThread_         = false;
 		std::atomic<bool> resetStartEventTag_ = false;
+		std::atomic<bool> releaseAllComplete_ = false;  ///< Set true by the detached buffer-test thread immediately after its ReleaseAllBuffers() returns; consumers (e.g. SetCFOEmulatorFixedWidthEmulation) wait on this before enabling CFO emulation so emulation does not start while the driver is still draining DMA buffers.
 
 		DTCLib::DTC* thisDTC_;
 
@@ -114,6 +116,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t>                      subeventsCount_;
 		std::atomic<uint64_t>                      mismatchedEventTagsCount_;
 		std::vector<std::pair<uint64_t, uint64_t>> mismatchedEventTagJumps_;
+
+		std::atomic<uint64_t> subrunTransitionCount_;
+		bool                  lastSubrunBit_ = false;
 
 		std::vector<uint64_t> rocFragmentsCount_, rocFragmentTimeoutsCount_,
 		    rocFragmentErrorsCount_, rocPayloadEmptyCount_, rocHeaderTimeoutsCount_,
@@ -160,22 +165,29 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void createROCs(void);
 	void registerFEMacros(void);
 
+	int                     timing_chain_first_substep_ = -1;
+	bool                    rtfPhaseEdgeRetried_        = false;
+	std::string             rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails
 	int                     dtc_location_in_chain_ = -1;
+	unsigned int            runningCallCount_      = 0;
 	unsigned int            roc_mask_              = 0;
 	unsigned int            roc_emulated_mask_     = 0;
-	bool                    emulate_cfo_           = true;
+	bool                    has_real_roc_flow_     = false;
+	std::string             real_roc_flow_reason_;
+	bool                    emulate_cfo_ = true;
 	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
 	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 
 	std::ofstream datafile_[8];
 
 	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
+	std::map<DTCLib::DTC_Link_ID, bool>                                   rocRunningStatus_;
 
 	std::map<std::string /*DTC's FEMacro name*/,
 	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>
 	    rocFEMacroMap_;
 
-	static void detechedBufferTestThread(
+	static void detachedBufferTestThread(
 	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	        threadStruct);
 
@@ -188,8 +200,11 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                      DTCLib::DTC_ROC_Emulation_Type rocEmulationType,
 	                      uint32_t                       size,
 	                      bool                           blockNullHeartbeats     = false,
-	                      bool                           resequenceNonNullEvents = false);
+	                      bool                           resequenceNonNullEvents = false,
+	                      bool                           autoGenDRPPerROC        = false);
 	void        ReadROC(__ARGS__);
+	void        ROCFirmwareInventory(__ARGS__);
+	void        ListFirmwareDirectory(__ARGS__);
 	void        WriteROC(__ARGS__);
 	void        BlockReadROC(__ARGS__);
 	void        BlockWriteROC(__ARGS__);
@@ -202,6 +217,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void DTCSendHeartbeatAndDataRequest(__ARGS__);
 	void ResetLossOfLockCounter(__ARGS__);
 	void ReadLossOfLockCounter(__ARGS__);
+	void SpyBuffer(__ARGS__);
+	void ReleaseAllDAQBuffers(__ARGS__);
 	void GetLinkLockStatus(__ARGS__);
 	void SelectJitterAttenuatorSource(__ARGS__);
 	void WriteDTC(__ARGS__);
@@ -212,16 +229,24 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void configureHardwareDevMode(__ARGS__);
 	void ConfigureForTimingChain(__ARGS__);
 
+	std::string getCFORTFSettingsStatusAndErrors();
+
 	void DTCCounters(__ARGS__);
 	void readRxDiagFIFO(__ARGS__);
 	void readTxDiagFIFO(__ARGS__);
 	void GetLinkErrors(__ARGS__);
+	void GetRTFInterfaceStatus(__ARGS__);
+	void RTFMarkerOffsetApply(__ARGS__);
+	void FixCFOClockEdge(__ARGS__);
+	void EVBHighLevelCounters(__ARGS__);
 	void ROCResetLink(__ARGS__);
 	void HeaderFormatTest(__ARGS__);
 
 	void DTCInstantiate(__ARGS__);
 	void ResetDTCLinks(__ARGS__);
 	void EnableDTCLink(__ARGS__);
+
+	void SoftReset(__ARGS__) override;
 
 	void ResetPCIe(__ARGS__);
 	void ResetCFOLinkRx(__ARGS__);
@@ -231,6 +256,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	void GetDTCIdAndEVBInfo(__ARGS__);
 	void SetDTCIdAndEVBInfo(__ARGS__);
+	void EVBInit(__ARGS__);
+	void EVBStatus(__ARGS__);
 
 	// void 								ResetEVBLinkRx						(__ARGS__);
 	// void 								ResetEVBLinkTx						(__ARGS__);
@@ -242,7 +269,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              bool alsoSetupJA,
 	                              bool cfoRxTxEnable,
 	                              bool enableAutogenDRP,
-	                              int  permanentOffset = 0);
+	                              int  permanentOffset     = 0,
+	                              int  idelayTapValue      = -1,
+	                              int  rtfPunchedClockEdge = 0);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
 	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
 	                                              bool               useDetachedBufferTest,

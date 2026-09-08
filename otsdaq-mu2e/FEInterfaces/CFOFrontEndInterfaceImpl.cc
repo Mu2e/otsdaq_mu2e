@@ -1,4 +1,8 @@
+#include <algorithm>
+#include <cmath>
+#include <format>
 #include "otsdaq-mu2e/FEInterfaces/CFOFrontEndInterface.h"
+#include "otsdaq/ConfigurationInterface/ConfigurationManagerRW.h"
 #include "otsdaq/Macros/InterfacePluginMacros.h"
 //#include "otsdaq/DAQHardware/FrontEndHardwareTemplate.h"
 //#include "otsdaq/DAQHardware/FrontEndFirmwareTemplate.h"
@@ -103,9 +107,8 @@ CFOFrontEndInterface::~CFOFrontEndInterface(void)
 //==============================================================================
 void CFOFrontEndInterface::registerFEMacros(void)
 {
-	__FE_COUT__ << "Registering CFO FE Macros..." << __E__;
-
-	mapOfFEMacroFunctions_.clear();
+	__FE_COUT__ << "Registering CFO FE Macros... (inherited macro count = "
+	            << mapOfFEMacroFunctions_.size() << ")" << __E__;
 
 	// clang-format off
 
@@ -124,7 +127,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Clock Marker Enable/Disable",
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::EnableOrDisableClockMarkers),
-					std::vector<std::string>{"Enable Clock Markers (Default := false)"}, // namesOfInputArgs
+					std::vector<std::string>{"Enable Clock Markers (Default := true)"}, // namesOfInputArgs
 					std::vector<std::string>{}, // namesOfOutput
 					1,  // requiredUserPermissions
 					"*",  // allowedCallingFEs
@@ -158,7 +161,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 			static_cast<FEVInterface::frontEndMacroFunction_t>(
 					&CFOFrontEndInterface::LoopbackTest),  // feMacroFunction
 					std::vector<std::string>{ // namesOfInputArgs
-						"Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+						// "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)", // as of June 2026 -- defaulting to 0 exponent always (first loopback is somehow different than 2+ loopbacks)
 						"Number of Loopback tests (Default := 1)",
 						"Target Link (-1 for all, Default := -1)",
 						"Target ROC (-1 for all, Default := -1)",
@@ -241,7 +244,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 					std::vector<std::string>{"Enable CFO Run Plan Execution (Default := false)",
 											"Number of 1.4s super cycle repetitions (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
-											"Enable Clock Markers (Default := false)",
+											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
@@ -262,7 +265,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"Number of Event Window Markers to generate (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Event Window Mode (Default := 1)",
-											"Enable Clock Markers (Default := false)",
+											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
 											"For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)",
@@ -355,7 +358,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&CFOFrontEndInterface::SharedRunPlanSubsystemJoin),              	// feMacroFunction
 						std::vector<std::string>{
-							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Default = Custom)",
 							"Custom Mode Bit Position (0-47, Default = 0)",
 							"Custom Mode Bit Count (1-48, Default = 48)",
 							"Custom Mode Bit Value (Default = 0)",
@@ -402,7 +405,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 				static_cast<FEVInterface::frontEndMacroFunction_t>(
 						&CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin),  // feMacroFunction
 						std::vector<std::string>{
-							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Custom)",
+							"Subsystem Name (CRV, Calo, Tracker, STM, ExtMon, Default = Custom)",
 							"Duty Cycle (% or M:N on:event ratio, Default = 100%)",
 							"Custom Mode Bit Position (0-47, Default = 0)",
 							"Custom Mode Bit Count (1-48, Default = 48)",
@@ -566,10 +569,37 @@ void CFOFrontEndInterface::registerFEMacros(void)
 		"Read the Run Plan Subrun configuration registers. "
 		"Returns the Subrun Event Limit and Subrun Prediction Offset values."
 	);
+
+	registerFEMacroFunction(
+		"Loopback Topology Discovery",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::LoopbackTopologyDiscovery),
+		std::vector<std::string>{
+			"Number of Loopback tests per DTC (Default := 100)",
+			"Save ROC Delay Offsets to Table (Default := false)"
+		},
+		std::vector<std::string>{"Response"},
+		1,
+		"*",
+		"Discovers timing chain topology by probing each DTC with CFO loopback markers. "
+		"Maps every DTC to a CFO link (chain index) and position in chain."
+	);
+	registerFEMacroFunction(
+		"Temporary Diagnostic Test",
+		static_cast<FEVInterface::frontEndMacroFunction_t>(
+			&CFOFrontEndInterface::TemporaryDiagnosticTest),
+		std::vector<std::string>{},
+		std::vector<std::string>{"Response"},
+		1,
+		"*",
+		"Diagnostic: calls 'Get Link Lock Status' on Calo01_DTC1 via runFrontEndMacro."
+	);
 	// clang-format on
 
 	CFOandDTCCoreVInterface::registerCFOandDTCFEMacros();
 
+	__FE_COUT__ << "Done registering CFO FE Macros. Total macro count = "
+	            << mapOfFEMacroFunctions_.size() << __E__;
 }  //end registerFEMacros()
 
 // //=====================================================================================
@@ -616,10 +646,11 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 	ostr << std::endl;
 
 	// parameters
-	const int numberOfLoopbacksExp = __GET_ARG_IN__(
-	    "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
-	    uint32_t,
-	    3);
+	const int numberOfLoopbacksExp = 0;
+	//  __GET_ARG_IN__(
+	//     "Number of Loopback Exponent (Default := 3, which is 8 Loopback Markers sent)",
+	//     uint32_t,
+	//     3);
 	const int numberOfLoopbackTests =
 	    __GET_ARG_IN__("Number of Loopback tests (Default := 1)", uint32_t, 1);
 	const int targetLink =
@@ -864,6 +895,43 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 			}
 		}
 	}
+
+	// build Plotly histogram of delay measurements
+	{
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[)";
+
+		bool firstTrace = true;
+		for(const auto& [map_index, results] : roc_results)
+		{
+			const int counts = results.counts;
+			if(counts <= 0)
+				continue;
+
+			if(!firstTrace)
+				plotlySs << ",";
+			firstTrace = false;
+
+			plotlySs << R"({"x":[)";
+			for(int i = 0; i < counts; ++i)
+			{
+				if(i > 0)
+					plotlySs << ",";
+				plotlySs << results.graph->GetY()[i];
+			}
+			plotlySs << R"(],"type":"histogram","name":"Link )" << (map_index / 100)
+			         << " ROC " << (map_index % 100) << R"(","opacity":0.75})";
+		}
+
+		plotlySs << R"(],"layout":{)"
+		         << R"("title":{"text":"CFO Loopback Delay"},)"
+		         << R"("xaxis":{"title":{"text":"Delay [ns]"}},)"
+		         << R"("yaxis":{"title":{"text":"Count"}},)"
+		         << R"("barmode":"overlay"}})";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
+
 	if(writeFile)
 	{
 		tree->Write();
@@ -932,9 +1000,608 @@ void CFOFrontEndInterface::LoopbackTest(__ARGS__)
 
 	// ostr << std::endl << std::endl;
 
+	bool anySuccessful = false;
+	for(const auto& [map_index, results] : roc_results)
+		if(results.counts > 0)
+		{
+			anySuccessful = true;
+			break;
+		}
+	if(!anySuccessful)
+		ostr << "No loopback measurements were successful. Check the link status of "
+		        "targeted links."
+		     << std::endl;
+
 	__SET_ARG_OUT__("Response", ostr.str());
 
 }  // end LoopbackTest()
+
+//=====================================================================================
+void CFOFrontEndInterface::LoopbackTopologyDiscovery(__ARGS__)
+{
+	__FE_COUT__ << "Operation \"Loopback Topology Discovery\"" << __E__;
+
+	const int numberOfTests = __GET_ARG_IN__(
+	    "Number of Loopback tests per DTC (Default := 100)", uint32_t, 100);
+	const bool saveROCDelayOffsets =
+	    __GET_ARG_IN__("Save ROC Delay Offsets to Table (Default := false)", bool, false);
+
+	__FE_COUTV__(numberOfTests);
+	__FE_COUTV__(saveROCDelayOffsets);
+
+	std::stringstream ostr;
+	ostr << "\n";
+	ostr << "=== Loopback Topology Discovery ==="
+	     << "\n";
+	ostr << "Tests per DTC: " << numberOfTests << "\n\n";
+
+	// enumerate enabled DTC FE interfaces by traversing
+	// XDAQContextTable → enabled contexts → enabled apps → FESupervisorTable → FE interfaces
+	struct DTCInfo
+	{
+		std::string                         uid;
+		std::map<unsigned int, std::string> rocByLink;  // linkID (0-5) → rocUID
+	};
+	std::vector<DTCInfo> dtcInfos;
+	{
+		auto cfgMgr   = Configurable::getConfigurationManager();
+		auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
+		for(const auto& ctx : contexts)
+		{
+			if(!ctx.second.isEnabled())
+				continue;
+
+			try
+			{
+				auto apps = ctx.second.getNode("LinkToApplicationTable").getChildren();
+				for(const auto& app : apps)
+				{
+					if(!app.second.isEnabled())
+						continue;
+
+					try
+					{
+						auto supNode = app.second.getNode("LinkToSupervisorTable");
+						auto feChildren =
+						    supNode.getNode("LinkToFEInterfaceTable").getChildren();
+						for(const auto& fe : feChildren)
+						{
+							if(!fe.second.isEnabled())
+								continue;
+							if(fe.second.getNode("FEInterfacePluginName")
+							       .getValue<std::string>() != "DTCFrontEndInterface")
+								continue;
+
+							DTCInfo info;
+							info.uid = fe.first;
+
+							try
+							{
+								auto rocChildren = fe.second.getNode("LinkToFETypeTable")
+								                       .getNode("LinkToROCGroupTable")
+								                       .getChildren();
+								for(const auto& roc : rocChildren)
+								{
+									if(!roc.second.isEnabled())
+										continue;
+									unsigned int linkID = roc.second.getNode("linkID")
+									                          .getValue<unsigned int>();
+									info.rocByLink[linkID] = roc.first;
+								}
+							}
+							catch(...)
+							{
+							}
+
+							dtcInfos.push_back(std::move(info));
+						}
+					}
+					catch(...)
+					{
+					}
+				}
+			}
+			catch(...)
+			{
+			}
+		}
+	}
+
+	__FE_COUT__ << "Found " << dtcInfos.size() << " DTC FE interfaces." << __E__;
+	ostr << "Found " << dtcInfos.size() << " DTC FE interfaces:";
+	for(const auto& info : dtcInfos)
+		ostr << " " << info.uid;
+	ostr << "\n\n";
+
+	if(dtcInfos.empty())
+	{
+		ostr << "No DTC FE interfaces found. Nothing to map.\n";
+		__SET_ARG_OUT__("Response", ostr.str());
+		return;
+	}
+
+	// save and disable clock markers
+	const bool clockMarkerWasOn = thisCFO_->ReadEmbeddedClockMarkerEnable();
+	__FE_COUTV__(clockMarkerWasOn);
+	if(clockMarkerWasOn)
+		thisCFO_->DisableEmbeddedClockMarker();
+
+	// per-ROC measurement result
+	struct ROCMeasurement
+	{
+		std::string rocUID;
+		std::string dtcUID;
+		int         cfoLink    = -1;
+		int         rocIndex   = -1;
+		double      delaySum   = 0.0;
+		double      delaySumSq = 0.0;
+		int         hitCount   = 0;
+
+		double avg() const { return hitCount > 0 ? delaySum / hitCount : 0.0; }
+		double stddev() const
+		{
+			if(hitCount < 2)
+				return 0.0;
+			double mean = avg();
+			return std::sqrt(delaySumSq / hitCount - mean * mean);
+		}
+	};
+
+	// per-DTC probe result
+	struct DTCProbeResult
+	{
+		std::string                 uid;
+		int                         cfoLink  = -1;
+		double                      avgDelay = 0.0;
+		bool                        error    = false;
+		std::string                 errorMsg;
+		std::vector<ROCMeasurement> rocMeasurements;
+	};
+	std::vector<DTCProbeResult> probeResults;
+	probeResults.reserve(dtcInfos.size());
+	std::map<int, int> linkPositionCounter;
+
+	const double delay_unit = 5.0 / 8.0;
+
+	// set ALL DTCs to passthrough
+	ostr << "Setting all DTCs to passthrough...\n";
+	for(const auto& dtcInfo : dtcInfos)
+	{
+		std::vector<frontEndMacroArg_t> argsIn, argsOut;
+		__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+		runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		__FE_COUT__ << "  " << dtcInfo.uid << " set to passthrough." << __E__;
+	}
+	ostr << "\n";
+
+	// probe each DTC
+	for(const auto& dtcInfo : dtcInfos)
+	{
+		DTCProbeResult result;
+		result.uid = dtcInfo.uid;
+
+		__FE_COUT__ << "Probing DTC: " << dtcInfo.uid << __E__;
+		ostr << "Probing " << dtcInfo.uid << "... ";
+
+		// enable loopback on this DTC
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", false);
+			runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		}
+		catch(const std::exception& e)
+		{
+			result.error    = true;
+			result.errorMsg = e.what();
+			ostr << "FAILED (loopback enable): " << e.what() << "\n";
+			probeResults.push_back(result);
+			continue;
+		}
+
+		// per-(cfoLink, rocIndex) accumulators
+		std::map<int, std::map<int, ROCMeasurement>> linkRocMeas;
+
+		for(int itest = 0; itest < numberOfTests; ++itest)
+		{
+			thisCFO_->SetCableDelayMeasureExponentialCount(0);
+			thisCFO_->RunCableDelayLoopbackTest();
+			usleep(10000);
+
+			for(int link = 0; link < 8; ++link)
+			{
+				for(uint16_t roc = 0; roc < 6; ++roc)
+				{
+					bool     done;
+					uint32_t rawDelay = thisCFO_->ReadCableDelayMeasurement(
+					    CFOLib::CFO_Link_ID(link), roc, done);
+					if(done)
+					{
+						double delayNs = rawDelay * delay_unit;
+						auto&  m       = linkRocMeas[link][roc];
+						if(m.hitCount == 0)
+						{
+							m.cfoLink  = link;
+							m.rocIndex = roc;
+							m.dtcUID   = dtcInfo.uid;
+							auto it    = dtcInfo.rocByLink.find(roc);
+							m.rocUID   = (it != dtcInfo.rocByLink.end())
+							                 ? it->second
+							                 : "ROC_" + std::to_string(roc);
+						}
+						m.delaySum += delayNs;
+						m.delaySumSq += delayNs * delayNs;
+						m.hitCount++;
+					}
+				}
+			}
+		}
+
+		// determine which CFO link responded (pick the one with most total hits)
+		int    bestLink      = -1;
+		int    bestTotalHits = 0;
+		double bestTotalSum  = 0.0;
+		for(const auto& [link, rocMap] : linkRocMeas)
+		{
+			int    totalHits = 0;
+			double totalSum  = 0.0;
+			for(const auto& [roc, m] : rocMap)
+			{
+				totalHits += m.hitCount;
+				totalSum += m.delaySum;
+			}
+			if(totalHits > bestTotalHits)
+			{
+				bestLink      = link;
+				bestTotalHits = totalHits;
+				bestTotalSum  = totalSum;
+			}
+		}
+
+		result.cfoLink  = bestLink;
+		result.avgDelay = bestTotalHits > 0 ? bestTotalSum / bestTotalHits : 0.0;
+
+		// collect ROC measurements for the responding link
+		if(bestLink >= 0)
+		{
+			for(auto& [roc, m] : linkRocMeas[bestLink])
+				result.rocMeasurements.push_back(std::move(m));
+		}
+
+		if(bestLink >= 0)
+		{
+			int pos = linkPositionCounter[bestLink]++;
+			ostr << "Link " << bestLink << ", Pos " << pos << ", avg delay "
+			     << std::format("{:.1f}", result.avgDelay) << " ns"
+			     << " (" << result.rocMeasurements.size() << " ROCs responded)\n";
+		}
+		else
+			ostr << "no response\n";
+
+		probeResults.push_back(std::move(result));
+
+		// restore passthrough on this DTC
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+			runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		}
+		catch(const std::exception& e)
+		{
+			__FE_COUT_WARN__ << "Failed to restore passthrough on " << dtcInfo.uid << ": "
+			                 << e.what() << __E__;
+		}
+	}
+
+	// build topology: group by CFO link, sort by delay ascending
+	struct ChainEntry
+	{
+		std::string                 dtcUID;
+		double                      avgDelay;
+		std::vector<ROCMeasurement> rocMeas;
+	};
+	std::map<int, std::vector<ChainEntry>> chainMap;
+	for(auto& r : probeResults)
+	{
+		if(r.cfoLink >= 0 && !r.error)
+			chainMap[r.cfoLink].push_back(
+			    {r.uid, r.avgDelay, std::move(r.rocMeasurements)});
+	}
+
+	for(auto& [link, entries] : chainMap)
+		std::sort(entries.begin(), entries.end(), [](const auto& a, const auto& b) {
+			return a.avgDelay < b.avgDelay;
+		});
+
+	// count discovered vs not discovered
+	size_t discoveredCount = 0;
+	for(const auto& r : probeResults)
+		if(r.cfoLink >= 0 && !r.error)
+			++discoveredCount;
+	size_t notDiscoveredCount = probeResults.size() - discoveredCount;
+
+	// format topology output (DTC-level)
+	ostr << "\n=== Timing Chain Topology ===\n";
+	ostr << "Discovered: " << discoveredCount << " of " << probeResults.size()
+	     << " DTCs\n";
+
+	if(chainMap.empty())
+	{
+		ostr << "\nNo DTCs responded to loopback. Check fiber connections.\n";
+	}
+	else
+	{
+		ostr << "\n";
+		for(const auto& [link, entries] : chainMap)
+		{
+			ostr << "Chain " << link << " --> ";
+			for(size_t i = 0; i < entries.size(); ++i)
+			{
+				if(i > 0)
+					ostr << ", ";
+				ostr << entries[i].dtcUID << " ("
+				     << std::format("{:.1f}", entries[i].avgDelay) << " ns)";
+			}
+			ostr << "\n";
+		}
+	}
+
+	// list any DTCs that were not discovered
+	if(notDiscoveredCount > 0)
+	{
+		ostr << "\nNot Discovered (" << notDiscoveredCount << "):";
+		for(const auto& r : probeResults)
+		{
+			if(r.cfoLink < 0 || r.error)
+			{
+				ostr << " " << r.uid;
+				if(r.error)
+					ostr << " (error)";
+				else
+					ostr << " (no loopback response)";
+			}
+		}
+		ostr << "\n";
+	}
+
+	// optionally save ROC delay offsets to ROCInterfaceTable
+	{
+		std::vector<ROCLoopbackResult> allROCResults;
+		for(const auto& [link, entries] : chainMap)
+			for(const auto& entry : entries)
+				for(const auto& rm : entry.rocMeas)
+					if(rm.hitCount > 0)
+						allROCResults.push_back({rm.rocUID, rm.avg(), rm.stddev()});
+
+		if(saveROCDelayOffsets && !allROCResults.empty())
+		{
+			ostr << "\n--- Modifying ROCInterfaceTable EventWindowDelayOffset ---\n";
+			TableVersion newVer =
+			    ModifyROCMarkerDelayOffsetConfiguration(ostr, allROCResults);
+			ostr << "New table version: " << newVer << "\n";
+		}
+		else
+		{
+			TableVersion activeVer = getConfigurationManager()
+			                             ->getTableByName("ROCInterfaceTable")
+			                             ->getView()
+			                             .getVersion();
+			ostr << "\nDid not save ROC delay offsets to table (active version: "
+			     << activeVer << ")\n";
+		}
+	}
+
+	// build Plotly subplots: one histogram per chain position (hop)
+	{
+		// find max chain depth
+		size_t maxDepth = 0;
+		for(const auto& [link, entries] : chainMap)
+			maxDepth = std::max(maxDepth, entries.size());
+
+		std::stringstream plotlySs;
+		plotlySs << R"({"data":[)";
+
+		bool firstTrace = true;
+		for(size_t pos = 0; pos < maxDepth; ++pos)
+		{
+			int         subplotIdx = static_cast<int>(pos) + 1;
+			std::string xaxis =
+			    (subplotIdx == 1) ? "x" : "x" + std::to_string(subplotIdx);
+			std::string yaxis =
+			    (subplotIdx == 1) ? "y" : "y" + std::to_string(subplotIdx);
+
+			for(const auto& [link, entries] : chainMap)
+			{
+				if(pos >= entries.size())
+					continue;
+				for(const auto& rm : entries[pos].rocMeas)
+				{
+					if(rm.hitCount == 0)
+						continue;
+					if(!firstTrace)
+						plotlySs << ",";
+					firstTrace = false;
+
+					plotlySs << R"({"x":[)" << std::format("{:.1f}", rm.avg())
+					         << R"(],"type":"histogram","name":")" << rm.rocUID
+					         << R"(","xaxis":")" << xaxis << R"(","yaxis":")" << yaxis
+					         << R"(","opacity":0.75})";
+				}
+			}
+		}
+
+		plotlySs << R"(],"layout":{)"
+		         << R"("title":{"text":"Loopback Delay by Chain Position"},)";
+
+		plotlySs << R"("grid":{"rows":)" << maxDepth
+		         << R"(,"columns":1,"pattern":"independent"},)";
+
+		for(size_t pos = 0; pos < maxDepth; ++pos)
+		{
+			int         idx    = static_cast<int>(pos) + 1;
+			std::string suffix = (idx == 1) ? "" : std::to_string(idx);
+			plotlySs << R"("xaxis)" << suffix << R"(":{"title":{"text":"Delay [ns]"}},)";
+			plotlySs << R"("yaxis)" << suffix << R"(":{"title":{"text":"Position )" << pos
+			         << R"( Count"}},)";
+		}
+
+		plotlySs << R"("barmode":"overlay"})";
+		plotlySs << "}";
+
+		__SET_ARG_OUT__(PLOTLY_PLOT, plotlySs.str());
+	}
+
+	// leave all DTCs in passthrough
+	for(const auto& dtcInfo : dtcInfos)
+	{
+		try
+		{
+			std::vector<frontEndMacroArg_t> argsIn, argsOut;
+			__SET_ARG_IN__("setAsPassthrough (Default := false)", true);
+			runFrontEndMacro(dtcInfo.uid, "Loopback Manual Setup", argsIn, argsOut);
+		}
+		catch(...)
+		{
+		}
+	}
+
+	// restore clock markers
+	if(clockMarkerWasOn)
+		thisCFO_->EnableEmbeddedClockMarker();
+
+	__SET_ARG_OUT__("Response", ostr.str());
+
+}  // end LoopbackTopologyDiscovery()
+
+//=====================================================================================
+TableVersion CFOFrontEndInterface::ModifyROCMarkerDelayOffsetConfiguration(
+    std::ostream&                         os,
+    const std::vector<ROCLoopbackResult>& rocResults,
+    int                                   minROCdelayOffset /* = 0 */)
+{
+	__FE_COUT__ << "ModifyROCMarkerDelayOffsetConfiguration()" << __E__;
+
+	if(rocResults.empty())
+	{
+		__FE_COUT_WARN__ << "No ROC results to process." << __E__;
+		os << "No ROC results to process.\n";
+		return TableVersion();
+	}
+
+	// find max delay across all ROCs
+	double maxDelay = 0.0;
+	for(const auto& roc : rocResults)
+		if(roc.avgDelay > maxDelay)
+			maxDelay = roc.avgDelay;
+
+	// compute offsets: max delay ROC gets minROCdelayOffset,
+	// all others get (maxDelay - theirDelay) + minROCdelayOffset
+	struct ROCOffset
+	{
+		std::string rocUID;
+		int         offset;
+	};
+	std::vector<ROCOffset> rocOffsets;
+	rocOffsets.reserve(rocResults.size());
+
+	os << "Max loopback delay: " << std::format("{:.1f}", maxDelay)
+	   << " ns, minROCdelayOffset: " << minROCdelayOffset << "\n";
+
+	for(const auto& roc : rocResults)
+	{
+		int offset =
+		    static_cast<int>(std::round(maxDelay - roc.avgDelay)) + minROCdelayOffset;
+		rocOffsets.push_back({roc.rocUID, offset});
+		os << "  " << roc.rocUID << "  avg=" << std::format("{:.1f}", roc.avgDelay)
+		   << " ns  stddev=" << std::format("{:.1f}", roc.stddev)
+		   << " ns  offset=" << offset << "\n";
+	}
+
+	// get active version from the state machine's config manager
+	const std::string tableName = "ROCInterfaceTable";
+	TableVersion      activeVersion =
+	    getConfigurationManager()->getTableByName(tableName)->getView().getVersion();
+	__FE_COUTV__(activeVersion);
+	os << "Active " << tableName << " version: " << activeVersion << "\n";
+
+	// create ConfigurationManagerRW (do NOT initializeActiveGroups)
+	std::string            author = "CFOTopologyDiscovery";
+	ConfigurationManagerRW cfgMgrInst(author);
+	cfgMgrInst.getAllTableInfo(true /* refresh */,
+	                           0 /* accumulatedWarnings */,
+	                           "" /* errorFilterName */,
+	                           false /* getGroupKeys */,
+	                           false /* getGroupInfo */,
+	                           false /* initializeActiveGroups */);
+
+	// create temporary view from the active version
+	TableBase*   table            = cfgMgrInst.getTableByName(tableName);
+	TableVersion temporaryVersion = table->createTemporaryView(activeVersion);
+	TableView*   cfgView          = table->getTemporaryView(temporaryVersion);
+
+	// modify EventWindowDelayOffset for each ROC
+	const unsigned int colOffset = cfgView->findCol("EventWindowDelayOffset");
+	for(const auto& ro : rocOffsets)
+	{
+		try
+		{
+			unsigned int row = cfgView->findRow(cfgView->getColUID(), ro.rocUID);
+			cfgView->setValueAsString(std::to_string(ro.offset), row, colOffset);
+			__FE_COUT__ << "Set " << ro.rocUID
+			            << " EventWindowDelayOffset = " << ro.offset << __E__;
+		}
+		catch(const std::exception& e)
+		{
+			__FE_COUT_WARN__ << "ROC UID '" << ro.rocUID << "' not found in " << tableName
+			                 << ": " << e.what() << __E__;
+			os << "  WARNING: ROC '" << ro.rocUID << "' not found in table.\n";
+		}
+	}
+
+	// validate
+	try
+	{
+		cfgView->init();
+	}
+	catch(const std::runtime_error& e)
+	{
+		__FE_SS__ << "Error validating table: " << e.what() << __E__;
+		__FE_SS_THROW__;
+	}
+
+	// print for debugging
+	{
+		std::stringstream tableSs;
+		cfgView->print(tableSs);
+		__FE_COUTV__(tableSs.str());
+		os << "\n" << tableSs.str() << "\n";
+	}
+
+	// save as temporary version
+	bool         foundEquivalent;
+	TableVersion newVersion = cfgMgrInst.saveModifiedVersion(tableName,
+	                                                         activeVersion,
+	                                                         true /* makeTemporary */,
+	                                                         table,
+	                                                         cfgView->getVersion(),
+	                                                         false /* ignoreDuplicates */,
+	                                                         true /* lookForEquivalent */,
+	                                                         &foundEquivalent);
+
+	// TODO: uncomment for permanent save once verified:
+	// TableVersion permVersion = cfgMgrInst.saveModifiedVersion(
+	//     tableName, activeVersion, false /* makeTemporary */,
+	//     table, cfgView->getVersion(),
+	//     false /* ignoreDuplicates */, true /* lookForEquivalent */, &foundEquivalent);
+
+	__FE_COUTV__(newVersion);
+	__FE_COUTV__(foundEquivalent);
+
+	os << "Saved temporary " << tableName << " version: " << newVersion << "\n";
+
+	return newVersion;
+}  // end ModifyROCMarkerDelayOffsetConfiguration()
 
 //=====================================================================================
 // TODO: function to do a loopback test on the specified link
@@ -1134,6 +1801,41 @@ float CFOFrontEndInterface::MeasureLoopback(int linkToLoopback)
 
 }  // end MeasureLoopback()
 
+//==============================================================================
+void CFOFrontEndInterface::configureSlowControls(void)
+{
+	__FE_COUTV__(skipInit_);
+	if(skipInit_)
+		return;
+
+	bool slowControlsEnable = true;
+	try
+	{
+		slowControlsEnable = getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+	}
+	catch(...)
+	{
+		__FE_COUT__ << "Missing `SlowControlsEnable` in configuration, "
+		               "SlowControlsEnable defaults to "
+		            << slowControlsEnable << __E__;
+	}
+
+	if(!slowControlsEnable)
+	{
+		__FE_COUT__ << "Slow controls are disabled..." << __E__;
+		return;
+	}
+	__FE_COUT__ << "Configuring slow controls..." << __E__;
+
+	FEVInterface::configureSlowControls();
+
+	__FE_COUT__ << "CFO '" << getInterfaceUID()
+	            << "' slow controls channel count: " << getSlowControlsChannelCount()
+	            << __E__;
+
+	__FE_COUT__ << "Done configuring CFO slow controls." << __E__;
+}  // end configureSlowControls()
+
 //===============================================================================================
 void CFOFrontEndInterface::configure(void)
 {
@@ -1148,8 +1850,13 @@ void CFOFrontEndInterface::configure(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
+	if(getIterationIndex() == 0 && getSubIterationIndex() == 0)
+		recordTimeAlive();
+
 	if(skipInit_)
 		return;
+
+	testAndUpdateTimeAlive("Configure");
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
@@ -1157,6 +1864,8 @@ void CFOFrontEndInterface::configure(void)
 		return;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC ||
 	        operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		__FE_COUT_INFO__ << "Configuring for Event Building mode!" << __E__;
@@ -1370,47 +2079,502 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	if(step == -1)
 		step = getIterationIndex();
 
-	__FE_COUT_INFO__ << "configureEventBuildingMode() " << step << __E__;
+	__FE_COUT_INFO__ << "configureEventBuildingMode() iteration=" << step << __E__;
 
-	if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX)
+	if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A)
 	{
-		// in order to start from zero
+		// Phase 1a: CFO establishes clocks (DTCs w/o real ROCs also run at this iteration)
 		if(timing_chain_first_substep_ == -1)
 			timing_chain_first_substep_ = getSubIterationIndex();
 
 		configureForTimingChain();
 		indicateIterationWork();
 	}
-	else if(step < CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                   CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_B)
 	{
-		__FE_COUT__ << "Do nothing while DTCs finish configureForTimingChain..." << __E__;
+		__FE_COUT__ << "Idle while DTCs with real ROCs establish clocks..." << __E__;
+		timing_chain_first_substep_ = -1;
 		indicateIterationWork();
 	}
-	else if(step == CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_ENABLE)
 	{
-		__FE_COUT__ << "CFO reset serdes TX " << __E__;
-		thisCFO_->ResetAllSERDESTx();
-		indicateIterationWork();
-	}
-	else if(step == 1 + CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_START_INDEX +
-	                    CFOandDTCCoreVInterface::CONFIG_DTC_TIMING_CHAIN_STEPS)
-	{
-		__FE_COUT__ << "Enable communication over links" << __E__;
+		// Phase 2a: Enable all CFO link outputs + clock markers
+		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->EnableEmbeddedClockMarker();
+		__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
+
+		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		{
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			    true,     // enable
+			    false,    // useDetachedBufferTest
+			    "1.7us",  // eventDuration
+			    0,        // numberOfEventWindowMarkers (0 = infinite)
+			    0,        // initialEventWindowTag
+			    0,        // eventWindowMode (null heartbeat — marker traffic only)
+			    true,     // enableClockMarkers
+			    false,    // saveBinaryDataToFile
+			    false,    // saveSubeventHeadersToDataFile
+			    false);   // doNotResetCounters
+			__FE_COUT__ << "Started fixed-width event run plan for aggressive 8b10 "
+			               "traffic during sync phases."
+			            << __E__;
+		}
+
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_TIMING_CHAIN_CHECK)
+	{
+		// Phase 2b: CDR lock check
+		if(timing_chain_first_substep_ == -1)
+			timing_chain_first_substep_ = getSubIterationIndex();
+
+		int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+		__FE_COUT_INFO__ << "Phase 2b — CDR lock check, sub-step=" << subStep << __E__;
+
+		bool isRetry = (subStep == 1);
+		__FE_COUT__ << "Checking DTC CFO CDR lock ("
+		            << (isRetry ? "retry" : "1st attempt") << ")..." << __E__;
+
+		struct DTCLockInfo
+		{
+			std::string uid;
+			bool        cfoCDRLocked = false;
+		};
+		std::vector<DTCLockInfo> dtcLockInfos;
+		{
+			auto cfgMgr   = Configurable::getConfigurationManager();
+			auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
+			for(const auto& ctx : contexts)
+			{
+				if(!ctx.second.isEnabled())
+					continue;
+				try
+				{
+					auto apps =
+					    ctx.second.getNode("LinkToApplicationTable").getChildren();
+					for(const auto& app : apps)
+					{
+						if(!app.second.isEnabled())
+							continue;
+						try
+						{
+							auto supNode = app.second.getNode("LinkToSupervisorTable");
+							auto feChildren =
+							    supNode.getNode("LinkToFEInterfaceTable").getChildren();
+							for(const auto& fe : feChildren)
+							{
+								if(!fe.second.isEnabled())
+									continue;
+								if(fe.second.getNode("FEInterfacePluginName")
+								       .getValue<std::string>() != "DTCFrontEndInterface")
+									continue;
+								DTCLockInfo info;
+								info.uid = fe.first;
+								dtcLockInfos.push_back(std::move(info));
+							}
+						}
+						catch(...)
+						{
+						}
+					}
+				}
+				catch(...)
+				{
+				}
+			}
+		}
+
+		__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces." << __E__;
+
+		std::vector<std::string> unlockedDTCs;
+		for(auto& dtcLock : dtcLockInfos)
+		{
+			std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+			try
+			{
+				runFrontEndMacro(dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+
+				__FE_COUT__ << "DTC " << dtcLock.uid
+				            << " argsOut.size()=" << argsOut.size() << __E__;
+				for(size_t ai = 0; ai < argsOut.size(); ++ai)
+					__FE_COUT__ << "  argsOut[" << ai << "] name='" << argsOut[ai].first
+					            << "' val='" << argsOut[ai].second << "'" << __E__;
+
+				std::string lockStatus = __GET_ARG_OUT__("Lock Status", std::string);
+				__FE_COUT__ << "DTC " << dtcLock.uid << " Lock Status: " << lockStatus
+				            << __E__;
+
+				bool               foundCFOLine = false;
+				std::istringstream iss(lockStatus);
+				std::string        line;
+				while(std::getline(iss, line))
+				{
+					if(line.find("CFO") != std::string::npos &&
+					   line.find("CDR Lock") != std::string::npos)
+					{
+						foundCFOLine = true;
+						if(line.find("[x]") != std::string::npos)
+							dtcLock.cfoCDRLocked = true;
+						break;
+					}
+				}
+
+				if(!foundCFOLine || !dtcLock.cfoCDRLocked)
+					unlockedDTCs.push_back(dtcLock.uid);
+			}
+			catch(const std::exception& e)
+			{
+				__FE_COUT_WARN__ << "Failed to read lock status from DTC " << dtcLock.uid
+				                 << ": " << e.what() << __E__;
+				unlockedDTCs.push_back(dtcLock.uid + " (unreachable)");
+				continue;
+			}
+		}
+
+		std::vector<std::string> unreachableDTCs;
+		std::vector<std::string> justUnlockedDTCs;
+		for(const auto& uid : unlockedDTCs)
+		{
+			if(uid.find("(unreachable)") != std::string::npos)
+				unreachableDTCs.push_back(uid);
+			else
+				justUnlockedDTCs.push_back(uid);
+		}
+
+		if(!unreachableDTCs.empty())
+		{
+			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: "
+			          << unreachableDTCs.size()
+			          << " DTC(s) unreachable via FE Macro 'Get Link Lock Status':";
+			for(const auto& uid : unreachableDTCs)
+				ss << "\n  " << uid;
+			__FE_SS_THROW__;
+		}
+
+		if(justUnlockedDTCs.empty())
+		{
+			__FE_COUT_INFO__ << "All DTCs have CFO CDR lock." << __E__;
+		}
+		else if(!isRetry)
+		{
+			__FE_COUT_WARN__ << justUnlockedDTCs.size()
+			                 << " DTC(s) missing CFO CDR lock:";
+			for(const auto& uid : justUnlockedDTCs)
+				__FE_COUT__ << "  " << uid;
+			__FE_COUT__ << "Performing SERDES resets and retrying..." << __E__;
+
+			try
+			{
+				thisCFO_->CFOandDTC_Registers::ResetSERDES();
+				thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			}
+			catch(const std::exception& e)
+			{
+				__FE_SS__ << "Phase 2b SERDES reset failed for "
+				          << justUnlockedDTCs.size() << " DTC(s) missing CFO CDR lock:";
+				for(const auto& uid : justUnlockedDTCs)
+					ss << "\n  " << uid;
+				ss << "\n\nSERDES reset error: " << e.what();
+				__FE_SS_THROW__;
+			}
+			indicateSubIterationWork();
+		}
+		else
+		{
+			__FE_SS__ << "Phase 2b (Timing Chain: CDR Check) failed: "
+			          << justUnlockedDTCs.size()
+			          << " DTC(s) still missing CFO CDR lock after retry:";
+			for(const auto& uid : justUnlockedDTCs)
+				ss << "\n  " << uid;
+			__FE_SS_THROW__;
+		}
+
+		if(!VStateMachine::getSubIterationWork())
+		{
+			timing_chain_first_substep_ = -1;
+			indicateIterationWork();
+		}
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_CFO_EDGE_FIX)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+
+		if(!doSync)
+		{
+			__FE_COUT__ << "CFO edge fix phase idle (no sync in EventBuildingMode)."
+			            << __E__;
+			indicateIterationWork();
+		}
+		else
+		{
+			if(timing_chain_first_substep_ == -1)
+				timing_chain_first_substep_ = getSubIterationIndex();
+
+			int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+
+			// enumerate all DTCs from config tree
+			std::vector<std::string> dtcUIDs;
+			{
+				auto cfgMgr   = Configurable::getConfigurationManager();
+				auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
+				for(const auto& ctx : contexts)
+				{
+					if(!ctx.second.isEnabled())
+						continue;
+					try
+					{
+						auto apps =
+						    ctx.second.getNode("LinkToApplicationTable").getChildren();
+						for(const auto& app : apps)
+						{
+							if(!app.second.isEnabled())
+								continue;
+							try
+							{
+								auto supNode =
+								    app.second.getNode("LinkToSupervisorTable");
+								auto feChildren =
+								    supNode.getNode("LinkToFEInterfaceTable")
+								        .getChildren();
+								for(const auto& fe : feChildren)
+								{
+									if(!fe.second.isEnabled())
+										continue;
+									if(fe.second.getNode("FEInterfacePluginName")
+									       .getValue<std::string>() !=
+									   "DTCFrontEndInterface")
+										continue;
+									dtcUIDs.push_back(fe.first);
+								}
+							}
+							catch(...)
+							{
+							}
+						}
+					}
+					catch(...)
+					{
+					}
+				}
+			}
+
+			if(subStep == 0)
+			{
+				// Sub-step 0: RTF validation on all DTCs
+				__FE_COUT_INFO__
+				    << "Phase 2c — checking all DTCs via Get RTF Interface Status..."
+				    << __E__;
+				cfo_edge_fix_consecutive_clean_ = 0;
+
+				__FE_COUT__ << "Checking " << dtcUIDs.size()
+				            << " DTC(s) for RTF Interface Status..." << __E__;
+
+				for(const auto& dtcUID : dtcUIDs)
+				{
+					std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+					try
+					{
+						runFrontEndMacro(
+						    dtcUID, "Get RTF Interface Status", argsIn, argsOut);
+					}
+					catch(const std::exception& e)
+					{
+						__FE_SS__ << "Phase 2c (CFO Edge Fix): Failed to read "
+						             "RTF Interface Status from DTC "
+						          << dtcUID << ": " << e.what();
+						__FE_SS_THROW__;
+					}
+
+					std::string status =
+					    __GET_ARG_OUT__("RTF Interface Status", std::string);
+					__FE_COUT__ << "DTC " << dtcUID << " RTF status: " << status << __E__;
+
+					struct Check
+					{
+						std::string keyword;
+						std::string required;
+						std::string label;
+					};
+					std::vector<Check> checks = {
+					    {"CFO Emulation Mode", "OFF", "CFO Emulation Mode must be OFF"},
+					    {"JA Source", "RJ45", "JA Source must be RJ45"},
+					    {"Saturated", "YES", "RTF histogram must be Saturated"},
+					    {"CFO CDR Lock", "LOCKED", "CFO CDR Lock must be LOCKED"},
+					};
+
+					std::istringstream iss(status);
+					std::string        line;
+					for(auto& chk : checks)
+					{
+						bool found = false;
+						iss.clear();
+						iss.str(status);
+						while(std::getline(iss, line))
+						{
+							if(line.find(chk.keyword) != std::string::npos)
+							{
+								found = true;
+								if(line.find(chk.required) == std::string::npos)
+								{
+									__FE_SS__ << "Phase 2c (CFO Edge Fix): DTC " << dtcUID
+									          << " failed check: " << chk.label
+									          << ". Line: " << line;
+									__FE_SS_THROW__;
+								}
+								break;
+							}
+						}
+						if(!found)
+						{
+							__FE_SS__ << "Phase 2c (CFO Edge Fix): DTC " << dtcUID
+							          << " — could not find '" << chk.keyword
+							          << "' in RTF Interface Status output.";
+							__FE_SS_THROW__;
+						}
+					}
+					__FE_COUT__ << "DTC " << dtcUID << " passed all RTF checks." << __E__;
+				}
+
+				__FE_COUT_INFO__
+				    << "All DTCs passed Phase 2c RTF Interface Status checks." << __E__;
+				indicateSubIterationWork();
+			}
+			else
+			{
+				// Sub-steps 1+: iterative edge fix passes
+				const int MAX_CFO_EDGE_FIX_PASSES = 10;
+				int       pass                    = subStep;
+
+				__FE_COUT_INFO__ << "Phase 2c — CFO edge fix pass " << pass << " of "
+				                 << MAX_CFO_EDGE_FIX_PASSES << "..." << __E__;
+
+				std::vector<std::string> toggledDTCs;
+
+				for(const auto& dtcUID : dtcUIDs)
+				{
+					std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+					try
+					{
+						runFrontEndMacro(dtcUID, "Fix CFO Clock Edge", argsIn, argsOut);
+					}
+					catch(const std::exception& e)
+					{
+						__FE_SS__ << "Phase 2c (CFO Edge Fix): Fix CFO Clock Edge "
+						             "failed on DTC "
+						          << dtcUID << ": " << e.what();
+						__FE_SS_THROW__;
+					}
+
+					std::string result =
+					    __GET_ARG_OUT__("Fix CFO Clock Edge Result", std::string);
+					__FE_COUT__ << "DTC " << dtcUID << ": " << result << __E__;
+
+					if(result.find("toggled") != std::string::npos)
+						toggledDTCs.push_back(dtcUID);
+				}
+
+				if(toggledDTCs.empty())
+				{
+					++cfo_edge_fix_consecutive_clean_;
+					if(cfo_edge_fix_consecutive_clean_ >= 2)
+					{
+						__FE_COUT_INFO__
+						    << "Phase 2c — CFO edge fix converged after " << pass
+						    << " pass(es) (2 consecutive clean passes)." << __E__;
+						timing_chain_first_substep_ = -1;
+						indicateIterationWork();
+					}
+					else
+					{
+						__FE_COUT__ << "Phase 2c — pass " << pass
+						            << " clean, running confirmation pass..." << __E__;
+						indicateSubIterationWork();
+					}
+				}
+				else
+				{
+					cfo_edge_fix_consecutive_clean_ = 0;
+
+					__FE_COUT__ << "Phase 2c — pass " << pass << " toggled "
+					            << toggledDTCs.size() << " DTC(s):";
+					for(const auto& uid : toggledDTCs)
+						__FE_COUT__ << "  " << uid;
+					__FE_COUT__ << __E__;
+
+					if(pass >= MAX_CFO_EDGE_FIX_PASSES)
+					{
+						__FE_SS__ << "Phase 2c (CFO Edge Fix): edge fix did not converge "
+						             "after "
+						          << MAX_CFO_EDGE_FIX_PASSES
+						          << " passes. DTCs still toggling:";
+						for(const auto& uid : toggledDTCs)
+							ss << "\n  " << uid;
+						__FE_SS_THROW__;
+					}
+					indicateSubIterationWork();
+				}
+			}
+		}
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_E)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+		}
+		else
+		{
+			thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+			__FE_COUT__ << "Stopped CFO event generation after sync phases." << __E__;
+		}
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
+	{
+		bool doSync = (operatingMode_ ==
+		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+
+		if(!doSync)
+		{
+			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+		}
+		else
+		{
+			__FE_COUT__ << "Sync phase — idle while DTCs work..." << __E__;
+		}
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
+	{
+		__FE_COUT__ << "Idle while DTCs configure ROC links and DCS..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ROC_DATA_PATH)
+	{
+		__FE_COUT__ << "Idle while DTCs set up ROC data path..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
+	{
+		__FE_COUT__ << "Final SoftReset to clear errors before enabling CFO operation."
+		            << __E__;
+		thisCFO_->SoftReset();
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
+	{
+		// Phase 6: Enable CFO Operation
+		__FE_COUT__ << "Enable CFO operation (RF0, punch)." << __E__;
 		thisCFO_->EnableAcceleratorRF0();
 		thisCFO_->SetPunchEnable();
-
-		thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-
-		__FE_COUT__ << "CFO Event Window interval time now controlled by CFO Run Plan, "
-		               "as of Firmware version: Nov/09/2023 11:00"
-		            << __E__;
-		//thisCFO_->SetEventWindowEmulatorInterval(0x1f40 /* 40us */);
-
-		__FE_COUT__ << "CFO set 40MHz marker interval" << __E__;
-		//thisCFO_->SetClockMarkerIntervalCount(0x0800);  // 0 = NO markers
 	}
 	else
 		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
@@ -1467,94 +2631,31 @@ void CFOFrontEndInterface::configureLoopbackMode(int step)
 }  // end configureLoopbackMode()
 
 //==============================================================================
+// Phase 1 (Establish Clocks) for the CFO.
+//	Sub-step 0: halt, disable beam modes, ClearControlRegister, DisableAllOutputs
+//	Sub-step 1: JA setup — check lock, full reset if unlocked, mux-only if locked
+//	Sub-steps 2+: JA lock polling (up to ~10 polls, 1s each)
 void CFOFrontEndInterface::configureForTimingChain(int step)
 {
-	//use sub-iteration index (but not the value of the index)
-	//	sub-iterations focus allow one entity to finish an iteration index, while others wait,
-	//	but can not be sure of starting sub-iteration index from entity to entity.
 	if(step == -1)
 		step = getSubIterationIndex() - timing_chain_first_substep_;
 
-	__FE_COUT_INFO__ << "configureForTimingChain() " << step << __E__;
+	__FE_COUT_INFO__ << "configureForTimingChain() sub-step=" << step << __E__;
 
-	std::string designVersion = thisCFO_->ReadDesignDate();
-	__FE_COUTV__(designVersion);
-	//Jun/13/2023 16:00 raw-data: 0x23061316
-	//DTC-style: Jun/13/2023 17:00 raw-data: 0x23061317
-
-	std::string matchDesignVersion = "Jun/13/2023 16:00   raw-data: 0x23061316";
 	switch(step)
 	{
 	case 0:
-		//put CFO in known state with DTC reset and control clear
-		thisCFO_->SoftReset();
+		next_starting_event_window_tag_ = 0;
+		halt();
+		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+		thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->ClearControlRegister();
-
 		thisCFO_->DisableAllOutputs();
-
-		__FE_COUTV__(configure_clock_);  //1
-
-		//NOTE on Jun/13/2023 16:00 raw-data: 0x23061316
-		//	need to configure crystal!
-
-		__FE_COUT__ << "CFO Design Version:\t" << designVersion << __E__
-		            << "Expected version:\t" << matchDesignVersion << __E__ << "Match:\t"
-		            << (designVersion.compare(matchDesignVersion) == 0) << __E__;
-
-		if(configure_clock_ &&
-		   thisCFO_->ReadDesignDate() == "Jun/13/2023 16:00   raw-data: 0x23061316")
-		{
-			// only configure the clock/crystal the first loop through...
-
-			__FE_COUT_INFO__ << "CFO reset clock..." << __E__;
-
-			if(1)
-			{
-				__FE_COUT__ << "CFO set crystal frequency to 156.25 MHz" << __E__;
-				thisCFO_->SetSERDESOscillatorFrequency(0x09502F90);
-				// registerWrite(0x9160, 0x09502F90);
-
-				// set RST_REG bit
-				thisCFO_->WriteSERDESIICInterface(
-				    DTC_IICSERDESBusAddress::DTC_IICSERDESBusAddress_EVB /* device */,
-				    0x87 /* address */,
-				    0x01 /* data */);
-			}
-
-			// registerWrite(0x9168, 0x55870100);
-			// registerWrite(0x916c, 0x00000001);
-
-			// sleep(5);
-
-			//-----begin code snippet pulled from: mu2eUtil program_clock -C 0 -F
-			// 200000000 ---
-			// C=0 = main board SERDES clock
-			// C=1 = DDR clock
-			// C=2 = Timing board SERDES clock
-
-			int targetFrequency = 200000000;
-
-			//auto oscillator = DTCLib::DTC_OscillatorType_SERDES;  //-C 0 = CFO (main
-			// board SERDES clock)
-			// auto oscillator = DTCLib::DTC_OscillatorType_DDR; //-C 1 (DDR clock)
-			// auto oscillator = DTCLib::DTC_OscillatorType_Timing; //-C 2 = DTC (with
-			// timing card)
-
-			__FE_COUT__ << "CFO set oscillator frequency to " << std::dec
-			            << targetFrequency << " MHz" << __E__;
-
-			thisCFO_->SetNewOscillatorFrequency(targetFrequency);
-
-			//-----end code snippet pulled from: mu2eUtil program_clock -C 0 -F
-			// 200000000
-
-			sleep(5);
-		}  //end special behavior for "original" CFO version 0x23061316
-
 		indicateSubIterationWork();
 		break;
+
 	case 1: {
-		__FE_COUT__ << "CFO go to next sub-iteration! step: " << step << __E__;
+		__FE_COUTV__(configure_clock_);
 		if(configure_clock_)
 		{
 			uint32_t select = 0;
@@ -1572,34 +2673,59 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 			__FE_COUTV__(select);
 			//For CFO - 0 ==> Local oscillator
 			//For CFO - 1 ==> RTF copper clock
-			thisCFO_->SetJitterAttenuatorSelect(select, true /* alsoResetJA */);
+
+			bool jaLocked = getCFOandDTCRegisters()->ReadJitterAttenuatorLocked();
+			__FE_COUT__ << "JA locked before setup: " << jaLocked << __E__;
+
+			bool alsoResetJA = !jaLocked;
+			__FE_COUT__ << "Setting JA select=" << select
+			            << " alsoResetJA=" << alsoResetJA << __E__;
+			getCFOandDTCRegisters()->SetJitterAttenuatorSelect(select, alsoResetJA);
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+
+			indicateSubIterationWork();
 		}
 		else
 			__FE_COUT_INFO__ << "Skipping configure clock." << __E__;
-	}
-	// indicateSubIterationWork(); //for now, not running case 2, saving ResetAllSERDESTx for after DTCs are configured
-	break;
-	case 2:  //for now, not running case 2
-
-		// __FE_COUT__ << "CFO reset serdes PLLs " << __E__;
-		// thisCFO_->ResetAllSERDESPlls();
-
-		__FE_COUT__ << "CFO reset serdes TX " << __E__;
-		thisCFO_->ResetAllSERDESTx();
-
-		// __FE_COUT__ << "CFO reset serdes RX " << __E__;
-		// thisCFO_->ResetSERDES(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-
-		// __FE_COUT__ << "CFO enable markers on link " << __E__;
-		// thisCFO_->EnableTiming();
-
-		// __FE_COUT__ << "CFO enable serdes transmit and receive " << __E__;
-		// thisCFO_->EnableLink(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-
 		break;
-	default:
-		__FE_COUT__ << "Do nothing while other configurable entities finish..." << __E__;
 	}
+
+	default: {
+		if(!configure_clock_)
+		{
+			__FE_COUT__ << "Clock configuration not enabled, nothing to poll." << __E__;
+			break;
+		}
+
+		const int pollIndex = step - 2;
+		const int maxPolls  = 10;
+
+		if(getCFOandDTCRegisters()->ReadJitterAttenuatorLocked())
+		{
+			__FE_COUT_INFO__ << "JA locked after " << pollIndex << " poll(s)." << __E__;
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+			break;
+		}
+
+		if(pollIndex < maxPolls)
+		{
+			sleep(1);
+			__FE_COUT__ << "JA not locked, poll " << (pollIndex + 1) << "/" << maxPolls
+			            << __E__;
+			indicateSubIterationWork();
+		}
+		else
+		{
+			__FE_COUT_WARN__ << "JA failed to lock after " << maxPolls
+			                 << " polls! Continuing anyway." << __E__;
+			__FE_COUT__ << "JA CSR: "
+			            << getCFOandDTCRegisters()->FormatJitterAttenuatorCSR() << __E__;
+		}
+		break;
+	}
+	}  // end switch
 
 }  // end configureForTimingChain()
 
@@ -1644,6 +2770,9 @@ void CFOFrontEndInterface::resume(void)
 //==============================================================================
 void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 {
+	testAndUpdateTimeAlive("Start");
+	testRTFClockInEventBuildingMode("Start");
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO start for HW Dev mode." << __E__;
@@ -1664,6 +2793,90 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		__FE_COUT_INFO__ << "Start the loopback!" << __E__;
 		loopbackTest(runNumber);
 		__FE_COUT_INFO__ << "End the loopback!" << __E__;
+	}
+	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+	        operatingMode_ ==
+	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+	{
+		const unsigned int systemMinReady =
+		    getSystemMinReadyForEventGenerationStartIteration();
+		if(systemMinReady < 2)
+		{
+			__FE_SS__
+			    << "SystemMinReadyForEventGenerationStartIteration must be >= 2 (got "
+			    << systemMinReady << ")." << __E__;
+			__FE_SS_THROW__;
+		}
+
+		const unsigned int startIteration = getIterationIndex();
+		if(startIteration < systemMinReady)
+		{
+			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start iteration >= "
+			                 << systemMinReady << __E__;
+			indicateIterationWork();
+			return;
+		}
+
+		if(startIteration == systemMinReady)
+		{
+			bool autoFixedWidthRunPlanEnable = false;
+			try
+			{
+				autoFixedWidthRunPlanEnable =
+				    getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>();
+			}
+			catch(...)
+			{
+				__FE_COUT_WARN__
+				    << "Missing CFOInterfaceTable AutoFixedWidthRunPlanEnable. "
+				       "Skipping startup run plan launch."
+				    << __E__;
+				return;
+			}
+
+			if(!autoFixedWidthRunPlanEnable)
+			{
+				__FE_COUT_INFO__
+				    << "AutoFixedWidthRunPlanEnable is disabled. Skipping startup run "
+				       "plan launch."
+				    << __E__;
+				return;
+			}
+
+			const uint32_t numberOfEventWindowMarkers = 0;  // 0 means infinite windows
+
+			std::string eventDuration = "100us";
+			try
+			{
+				eventDuration = getSelfNode()
+				                    .getNode("AutoFixedWidthRunPlanEventDuration")
+				                    .getValueWithDefault("100us");
+			}
+			catch(...)
+			{
+				__FE_COUT_WARN__
+				    << "Optional CFOInterfaceTable AutoFixedWidthRunPlanEventDuration "
+				       "was not found; defaulting to 100us."
+				    << __E__;
+			}
+
+			__FE_COUT_INFO__ << "Launching startup fixed-width CFO run plan in infinite "
+			                    "mode (count=0) "
+			                 << "at duration " << eventDuration << __E__;
+
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(true,
+			                                             false,
+			                                             eventDuration,
+			                                             numberOfEventWindowMarkers,
+			                                             next_starting_event_window_tag_,
+			                                             1,
+			                                             false,
+			                                             false,
+			                                             false,
+			                                             false);
+
+			next_starting_event_window_tag_ += numberOfEventWindowMarkers;
+		}
 	}
 
 	/* COMMENTED 20-Jun-2023 by rrivera to start using CFO_Register directly.. will need to add features to support loopback revival
@@ -1826,13 +3039,33 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 //==============================================================================
 void CFOFrontEndInterface::stop(void)
 {
+	testAndUpdateTimeAlive("Stop");
+	testRTFClockInEventBuildingMode("Stop");
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << "CFO stop for HW Dev mode." << __E__;
 		return;
 	}
 
-	// TODO: add CFO Halt or Leave
+	// Stop the run plan if AutoFixedWidthRunPlan was enabled
+	try
+	{
+		if(getSelfNode().getNode("AutoFixedWidthRunPlanEnable").getValue<bool>())
+		{
+			__FE_COUT_INFO__ << "Disabling CFO run plan." << __E__;
+			CompileSetAndLaunchTemplateFixedWidthRunPlan(
+			    false, false, "100us", 0, 0, 1, false, false, false, false);
+		}
+	}
+	catch(...)
+	{
+	}
+
+	// Apply explicit CFO halt behavior on stop transition.
+	halt();
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 
 	int numberOfCAPTANPulses =
 	    getConfigurationManager()
@@ -2007,10 +3240,19 @@ void CFOFrontEndInterface::stop(void)
 }  //end stop()
 
 //==============================================================================
+unsigned int CFOFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
+{
+	return 2;
+}  // end getMinReadyForEventGenerationStartIteration()
+
+//==============================================================================
 bool CFOFrontEndInterface::running(void)
 {
 	while(WorkLoop::continueWorkLoop_)
 	{
+		testAndUpdateTimeAlive("Running");
+		testRTFClockInEventBuildingMode("Running");
+
 		if(!theSuperParameters_.go)
 		{
 			__FE_COUT__ << "Not running the Super Orchestration loop!" << __E__;
@@ -2019,7 +3261,9 @@ bool CFOFrontEndInterface::running(void)
 		}
 
 		if(next_starting_event_window_tag_ == 0 &&
-		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING)
+		   (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		    operatingMode_ ==
+		        CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC))
 		{
 			__FE_COUT_INFO__ << "Sleeping for the Super Orchestration..." << __E__;
 			sleep(5);
@@ -2313,7 +3557,7 @@ void CFOFrontEndInterface::SuperOrchestration(bool doCRVReset,
 	    theSuperParameters_.numberOfEventWindows,  //numberOfEvents,
 	    next_starting_event_window_tag_,           //startTag,
 	    1,  //__GET_ARG_IN__("Event Window Mode (Default := 1)", uint64_t, 1),
-	    0,  //__GET_ARG_IN__("Enable Clock Markers (Default := false)",bool,false),
+	    1,  //__GET_ARG_IN__("Enable Clock Markers (Default := true)",bool,true),
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Binary Data to File (Default: false)", bool),
 	    0,  //__GET_ARG_IN__("For Detached Buffer Test, Save Subevent Header to Binary File (Default: false)", bool),
 	    0  //__GET_ARG_IN__("For Detached Buffer Test, Do NOT Reset Counters (Default: false)", bool)
@@ -2437,7 +3681,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(__ARGS__
 	        __GET_ARG_IN__("Use Detached Buffer Test (Default := false)", uint32_t),
 	        numberOfCycles,
 	        startTag,
-	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
 	            bool),
@@ -2566,7 +3810,7 @@ std::string CFOFrontEndInterface::CompileSetAndLaunchTemplateSuperCycleRunPlan(
 void CFOFrontEndInterface::EnableOrDisableClockMarkers(__ARGS__)
 {
 	bool enableClockMarkers =
-	    __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false);
+	    __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true);
 	__FE_COUTV__(enableClockMarkers);
 	if(enableClockMarkers)
 		thisCFO_->EnableEmbeddedClockMarker();
@@ -2618,7 +3862,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	                  "Event Window Mode (Default := 1)",
 	                  uint64_t,
 	                  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
-	        __GET_ARG_IN__("Enable Clock Markers (Default := false)", bool, false),
+	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
 	            bool),
@@ -5690,5 +6934,26 @@ void CFOFrontEndInterface::RunplanSubrunConfigRead(__ARGS__)
 	__SET_ARG_OUT__("Subrun Event Limit", subrunEvtLimit);
 	__SET_ARG_OUT__("Subrun Prediction Offset", subrunPredOffset);
 }  //end RunplanSubrunConfigRead()
+
+//==============================================================================
+void CFOFrontEndInterface::TemporaryDiagnosticTest(__ARGS__)
+{
+	std::string targetDTC = "Calo01_DTC1";
+	__FE_COUT_INFO__ << "TemporaryDiagnosticTest: calling 'Get Link Lock Status' on "
+	                 << targetDTC << __E__;
+
+	std::vector<FEVInterface::frontEndMacroArg_t> macroArgsIn, macroArgsOut;
+	runFrontEndMacro(targetDTC, "Get Link Lock Status", macroArgsIn, macroArgsOut);
+
+	__FE_COUT_INFO__ << "macroArgsOut.size()=" << macroArgsOut.size() << __E__;
+	std::ostringstream ostr;
+	ostr << "Called 'Get Link Lock Status' on " << targetDTC << "\n";
+	ostr << "macroArgsOut.size()=" << macroArgsOut.size() << "\n";
+	for(size_t i = 0; i < macroArgsOut.size(); ++i)
+		ostr << "  macroArgsOut[" << i << "] name='" << macroArgsOut[i].first << "' val='"
+		     << macroArgsOut[i].second << "'\n";
+
+	__SET_ARG_OUT__("Response", ostr.str());
+}  //end TemporaryDiagnosticTest()
 
 // DEFINE_OTS_INTERFACE(CFOFrontEndInterface)

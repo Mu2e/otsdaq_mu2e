@@ -11,7 +11,9 @@ using namespace ots;
 
 std::string CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV   = "HardwareDevMode";
 std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING = "EventBuildingMode";
-std::string CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK       = "LoopbackMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC =
+    "EventBuildingAndSyncMode";
+std::string CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK = "LoopbackMode";
 
 //=========================================================================================
 CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
@@ -57,9 +59,23 @@ CFOandDTCCoreVInterface::CFOandDTCCoreVInterface(
 		auto mu2eGlobalRecords =
 		    getConfigurationManager()->getNode("/Mu2eGlobalsTable").getChildren();
 		if(mu2eGlobalRecords.size())  // take first record
-			skipInit_ = mu2eGlobalRecords[0]
-			                .second.getNode("SkipCFOandDTCConfigureSteps")
-			                .getValue<bool>();
+		{
+			// Try new column name first, fall back to old name for backwards compatibility
+			try
+			{
+				skipInit_ = mu2eGlobalRecords[0]
+				                .second.getNode("GlobalSkipCFOandDTCConfigureSteps")
+				                .getValue<bool>();
+			}
+			catch(...)
+			{
+				skipInit_ = mu2eGlobalRecords[0]
+				                .second.getNode("SkipCFOandDTCConfigureSteps")
+				                .getValue<bool>();
+			}
+			__FE_COUTV__(skipInit_);
+		}
+		__FE_COUTV__(mu2eGlobalRecords.size());
 	}
 	catch(const std::runtime_error& e)
 	{
@@ -366,7 +382,10 @@ void CFOandDTCCoreVInterface::universalWrite(char* address, char* writeValue)
 // GetFirmwareVersion
 void CFOandDTCCoreVInterface::GetFirmwareVersion(__ARGS__)
 {
-	__SET_ARG_OUT__("Firmware Version Date", getCFOandDTCRegisters()->ReadDesignDate());
+	__SET_ARG_OUT__(
+	    "Firmware Version Date",
+	    getCFOandDTCRegisters()->FormattedRegDump(
+	        130, {[this] { return getCFOandDTCRegisters()->FormatDeviceTimeAlive(); }}));
 }  // end GetFirmwareVersion()
 
 //========================================================================
@@ -2450,3 +2469,69 @@ uint64_t CFOandDTCCoreVInterface::convertEventDurationToClocks(
 // 	__SET_ARG_OUT__("Startup Status",rd.str());
 
 // } //end StartupFireflyTx()
+
+//========================================================================
+void CFOandDTCCoreVInterface::recordTimeAlive()
+{
+	lastTimeAliveValue_    = getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	lastTimeAliveReadTime_ = time(0);
+	__FE_COUT__ << "Recorded Time Alive register value: " << lastTimeAliveValue_ << __E__;
+}  //end recordTimeAlive()
+
+//========================================================================
+void CFOandDTCCoreVInterface::testAndUpdateTimeAlive(const std::string& transitionName)
+{
+	// only re-read the Time Alive register if at least 2 seconds have elapsed since the last read.
+	// this avoids false "board rebooted" alarms when macros or rapid transitions read the register
+	// within the same wall-clock second (the 40 MHz counter may not advance enough to be visible).
+	if((time(0) - lastTimeAliveReadTime_) < 2)
+	{
+		__FE_COUT__ << "Time Alive check skipped during '" << transitionName
+		            << "' (cached within 2 seconds; last value: " << lastTimeAliveValue_
+		            << ")" << __E__;
+		return;
+	}
+
+	uint32_t currentTimeAliveValue =
+	    getCFOandDTCRegisters()->FormatDeviceTimeAlive().value;
+	if(currentTimeAliveValue < lastTimeAliveValue_)
+	{
+		__FE_SS__ << "Time Alive register value DECREASED during '" << transitionName
+		          << "' transition! Current value: " << currentTimeAliveValue
+		          << ", last recorded value: " << lastTimeAliveValue_
+		          << ". This indicates the board has rebooted." << __E__;
+		__FE_SS_THROW__;
+	}
+
+	if(currentTimeAliveValue == lastTimeAliveValue_)
+	{
+		__FE_SS__ << "Time Alive register has not increased in 2+ seconds during '"
+		          << transitionName << "' (value: " << currentTimeAliveValue
+		          << "). Board clock is hung or not running." << __E__;
+		__FE_SS_THROW__;
+	}
+
+	lastTimeAliveValue_    = currentTimeAliveValue;
+	lastTimeAliveReadTime_ = time(0);
+	__FE_COUT__ << "Time Alive check passed during '" << transitionName
+	            << "', updated value: " << lastTimeAliveValue_ << __E__;
+}  //end testAndUpdateTimeAlive()
+
+//========================================================================
+void CFOandDTCCoreVInterface::testRTFClockInEventBuildingMode(
+    const std::string& transitionName)
+{
+	if(operatingMode_ != CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		return;
+
+	uint32_t jaCSRValue      = getCFOandDTCRegisters()->FormatJitterAttenuatorCSR().value;
+	bool     rtfClockMissing = (jaCSRValue >> 10) & 1;
+	if(rtfClockMissing)
+	{
+		__FE_SS__ << "RTF (RJ45) clock is missing during '" << transitionName
+		          << "' transition! JA CSR register value: 0x" << std::hex << jaCSRValue
+		          << std::dec << __E__;
+		__FE_SS_THROW__;
+	}
+	__FE_COUT__ << "RTF clock check passed during '" << transitionName << "'" << __E__;
+}  //end testRTFClockInEventBuildingMode()

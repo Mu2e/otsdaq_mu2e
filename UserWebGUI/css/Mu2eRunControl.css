@@ -1,0 +1,557 @@
+/* Mu2eRunControl.css — Clean operator dashboard */
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Comfortaa', sans-serif;
+	font-size: 12px;
+	color: #2c3e50;
+	background: #f0f2f5;
+}
+
+/* ================================================================
+   MASTER CONTROL — unified banner with state, run info, controls
+   ================================================================ */
+
+/* ---- Master Control banner ---- */
+
+#masterControl {
+	background: #e6e9ef;
+	border-bottom: 2px solid #c8ced8;
+	padding: 6px 18px 8px;
+}
+
+.mc-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.mc-table td {
+	padding: 3px 0;
+	vertical-align: middle;
+}
+
+.mc-td-left {
+	white-space: nowrap;
+	width: 300px;
+}
+
+.mc-td-left > * {
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.mc-td-center {
+	text-align: center;
+	white-space: nowrap;
+}
+
+.mc-td-right {
+	text-align: right;
+	white-space: nowrap;
+	width: 100px;
+}
+
+.mc-run-label {
+	font-size: 9px;
+	color: #777;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+}
+
+.mc-run-number {
+	font-size: 18px;
+	font-weight: bold;
+	font-family: 'Inconsolata', monospace;
+	color: #2c3e50;
+}
+
+.mc-run-comment {
+	font-size: 11px;
+	color: #666;
+	font-style: italic;
+	display: inline-block;
+	max-width: 500px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+.mc-time {
+	font-size: 14px;
+	font-family: 'Inconsolata', monospace;
+	color: #4a5568;
+}
+
+.status-state {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 16px;
+	border-radius: 5px;
+	color: #fff;
+	text-align: center;
+	letter-spacing: 0.5px;
+	display: inline-block;
+}
+
+.status-clock {
+	font-size: 12px;
+	color: #777;
+	font-family: 'Inconsolata', monospace;
+}
+
+/* FSM transition buttons */
+#mc-actions {
+	display: inline-flex;
+	gap: 5px;
+	vertical-align: middle;
+}
+
+/* Iterator Start/Stop Run button */
+#mc-run-btn {
+	display: inline;
+	margin-left: 12px;
+	padding-left: 12px;
+	border-left: 1px solid #c0c6d0;
+}
+
+.mc-btn, .mc-btn-start, .mc-btn-stop {
+	font-size: 13px;
+	font-weight: bold;
+	padding: 7px 24px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	color: #fff;
+	letter-spacing: 0.5px;
+	transition: background 0.15s;
+}
+
+.mc-btn       { background: #4a5568; }
+.mc-btn:hover { background: #2d3748; }
+
+.mc-btn-start       { background: #1b8a2e; }
+.mc-btn-start:hover { background: #157623; }
+
+.mc-btn-stop       { background: #c0392b; }
+.mc-btn-stop:hover { background: #a5311f; }
+
+.mc-btn:disabled, .mc-btn-start:disabled, .mc-btn-stop:disabled {
+	background: #bbb;
+	cursor: default;
+}
+
+/* Error icon (⚠) */
+.error-icon {
+	cursor: pointer;
+	font-size: 15px;
+	vertical-align: middle;
+	margin-left: 2px;
+}
+
+/* Config row (inline in master control) */
+.config-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.config-row label {
+	font-weight: bold;
+	font-size: 10px;
+	color: #555;
+}
+
+.config-row select {
+	font-size: 11px;
+	padding: 3px 6px;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	min-width: 150px;
+}
+
+/* ================================================================
+   SUBSYSTEM TABLE — clean, borderless rows
+   ================================================================ */
+
+#subsystemSection {
+	padding: 4px 18px;
+}
+
+.subsystem-grid {
+	width: 100%;
+	font-size: 11px;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+.subsystem-grid th {
+	font-weight: 600;
+	font-size: 9px;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	color: #8898a8;
+	padding: 6px 10px;
+	text-align: left;
+	border-bottom: 2px solid #dde2e8;
+}
+
+.subsystem-grid td {
+	padding: 6px 10px;
+	vertical-align: middle;
+	border: 1px solid #eef0f3;
+}
+
+.subsystem-grid tbody tr:nth-child(odd) td {
+	background: #fff;
+}
+
+.subsystem-grid tbody tr:nth-child(even) td {
+	background: #e8ecf2;
+}
+
+.subsystem-grid tbody tr:hover td {
+	background: #dce3ed;
+}
+
+/* ---- State cell with progress bar ---- */
+.ss-state-cell {
+	position: relative;
+	width: 100px;
+	min-width: 100px;
+	max-width: 100px;
+	overflow: visible;
+	border-radius: 3px;
+}
+
+.ss-progress-bar {
+	position: absolute;
+	top: 0; left: 0;
+	height: 100%;
+	opacity: 0.3;
+	transition: width 0.3s;
+	border-radius: 3px;
+}
+
+.ss-state-text {
+	position: relative;
+	z-index: 1;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+/* Semantic progress bar colors */
+.ss-bg-Initial    { background: #5a6a7a; }
+.ss-bg-Halted     { background: #b35600; }
+.ss-bg-Configured { background: #4a6280; }
+.ss-bg-Running    { background: #1b8a2e; }
+.ss-bg-Paused     { background: #4a6280; }
+.ss-bg-Error      { background: #c0392b; }
+.ss-bg-unknown    { background: #999; }
+
+/* ---- Progress percentage ---- */
+.ss-progress-pct {
+	font-size: 9px;
+	color: #4a6280;
+	font-weight: bold;
+}
+
+/* ---- Combined time cell ---- */
+.ss-time-cell {
+	font-family: 'Inconsolata', monospace;
+	font-size: 11px;
+	color: #2c3e50;
+	white-space: nowrap;
+}
+
+.ss-uptime-sub {
+	font-size: 9px;
+	color: #999;
+	margin-top: 1px;
+}
+
+/* ---- Transition buttons ---- */
+.subsystem-grid td:has(.ss-transition-btn) {
+	white-space: nowrap;
+}
+
+.ss-transition-btn {
+	font-size: 9px;
+	padding: 3px 8px;
+	cursor: pointer;
+	background: #4a5568;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+	margin: 0 1px;
+	min-width: 52px;
+	transition: background 0.1s;
+}
+
+.ss-transition-btn:hover {
+	background: #2d3748;
+}
+
+.ss-transition-disabled {
+	background: transparent;
+	color: #ccc;
+	border: 1px solid #e0e0e0;
+	cursor: default;
+}
+
+.ss-transition-disabled:hover {
+	background: transparent;
+}
+
+/* Power cycle — very subtle */
+.ss-power-btn {
+	font-size: 11px;
+	padding: 2px 4px;
+	cursor: pointer;
+	background: none;
+	border: none;
+	color: #ccc;
+	line-height: 1;
+	transition: color 0.15s;
+}
+
+.ss-power-btn:hover {
+	color: #c0392b;
+}
+
+/* ---- Config alias dropdown in transitions cell ---- */
+.ss-alias-select {
+	font-size: 9px;
+	padding: 2px 4px;
+	width: 100%;
+	color: #555;
+	margin-top: 3px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	background: #fff;
+}
+
+.ss-alias-select:disabled {
+	background: #f5f5f5;
+	color: #999;
+}
+
+.ss-alias-label {
+	font-size: 9px;
+	color: #999;
+	margin-top: 3px;
+	display: block;
+}
+
+/* ---- Comment column ---- */
+.ss-comment {
+	font-size: 10px;
+	color: #777;
+	max-width: 300px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+}
+
+/* ---- Include toggle switch ---- */
+.ss-include-toggle {
+	position: relative;
+	width: 34px;
+	height: 18px;
+	border-radius: 9px;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	transition: background 0.2s;
+	display: block;
+}
+
+.ss-include-toggle::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: #fff;
+	transition: left 0.2s;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.ss-include-on {
+	background: #4a5568;
+}
+
+.ss-include-on::after {
+	left: 17px;
+}
+
+.ss-include-off {
+	background: #d0d5dc;
+}
+
+.ss-include-off::after {
+	left: 3px;
+}
+
+.ss-include-on:hover { background: #2d3748; }
+.ss-include-off:hover { background: #b8bfc8; }
+
+/* ---- Row states ---- */
+.ss-row-included {}
+
+.ss-row-excluded td {
+	opacity: 0.45;
+}
+
+.ss-row-excluded:hover td {
+	opacity: 0.7;
+}
+
+/* ---- Subsystem name ---- */
+.ss-name {
+	font-weight: 600;
+	color: #2c3e50;
+}
+
+.ss-name-unknown {
+	font-weight: 600;
+	color: #aaa;
+}
+
+/* ================================================================
+   SYSTEM OVERVIEW — hosts × process types grid
+   ================================================================ */
+
+#systemOverviewSection {
+	padding: 4px 18px;
+	margin-top: 4px;
+	border-top: 2px solid #dde2e8;
+}
+
+.sysoverview-header {
+	font-weight: 600;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	color: #6a7a8a;
+	margin-bottom: 4px;
+}
+
+.sysoverview-grid {
+	width: 100%;
+	font-size: 11px;
+	table-layout: auto;
+	border-collapse: collapse;
+}
+
+.sysoverview-grid th {
+	font-weight: 600;
+	font-size: 9px;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	color: #8898a8;
+	padding: 5px 10px;
+	text-align: left;
+	border-bottom: 2px solid #dde2e8;
+}
+
+.sysoverview-grid td {
+	padding: 5px 10px;
+	vertical-align: top;
+	border: 1px solid #eef0f3;
+}
+
+.sysoverview-grid tbody tr:nth-child(odd) td {
+	background: #fff;
+}
+
+.sysoverview-grid tbody tr:nth-child(even) td {
+	background: #e8ecf2;
+}
+
+.sysoverview-grid tbody tr:hover td {
+	background: #dce3ed;
+}
+
+.sysoverview-host {
+	font-weight: 600;
+	font-family: 'Inconsolata', monospace;
+	font-size: 11px;
+	color: #2c3e50;
+	white-space: nowrap;
+}
+
+.sysoverview-cell {
+	line-height: 1.6;
+}
+
+.sysoverview-item {
+	display: inline-block;
+	white-space: nowrap;
+	margin-right: 10px;
+	font-size: 10px;
+}
+
+.sysoverview-item .status-dot {
+	vertical-align: middle;
+	margin-right: 2px;
+}
+
+.sysoverview-roc-count {
+	font-size: 9px;
+	color: #999;
+}
+
+.sysoverview-subsystem {
+	font-size: 8px;
+	color: #8898a8;
+	background: #e8ecf1;
+	padding: 1px 4px;
+	border-radius: 2px;
+	vertical-align: middle;
+	margin-left: 2px;
+}
+
+.sysoverview-dimmed {
+	opacity: 0.35;
+}
+
+/* Reuse the shared .ss-bg-* state colors as a small inline badge background */
+.sysoverview-item[class*="ss-bg-"] {
+	padding: 1px 4px;
+	border-radius: 3px;
+	color: #fff;
+}
+
+/* Clickable node badge -> jumps to config */
+.sysoverview-item-clickable {
+	cursor: pointer;
+}
+
+.sysoverview-item-clickable:hover {
+	outline: 1px solid rgba(255, 255, 255, 0.8);
+	filter: brightness(1.12);
+}
+
+.sysoverview-empty {
+	color: #ccc;
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+@keyframes blink {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.4; }
+}
+
+.transition-indicator {
+	font-size: 11px;
+	color: #b35600;
+	font-weight: bold;
+	animation: blink 1s ease-in-out infinite;
+}

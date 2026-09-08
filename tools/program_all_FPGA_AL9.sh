@@ -36,11 +36,16 @@ if [ ! -f $BITFILE ]; then
 fi
 echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Checking ${HOSTNAME} JTAGs to program bitfile ${BITFILE} for each JTAG"
 
-# For dry run, only print the JTAGs found
-COMMANDHEAD=""
+# For dry run, only print the commands that would be executed
 if [[ "${DRYRUN}" != "" ]]; then
     echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t DRYRUN $DRYRUN"
-    COMMANDHEAD="echo -e program_all_FPGA_AL9.sh | \t "
+    run_cmd() {
+        echo -e "program_all_FPGA_AL9.sh | \t $*"
+    }
+else
+    run_cmd() {
+        "$@"
+    }
 fi
 
 # Look for potential JTAGs to program, then program them (unless dryrun requested)
@@ -50,13 +55,18 @@ for d in /sys/bus/usb/devices/*; do
     vendor=$(<"$d/idVendor")
     product=$(<"$d/idProduct")
     if [[ "$vendor" == "0403" && "$product" == "6014" ]] ||
+	   [[ "$vendor" == "03fd" && "$product" == "0013" ]] ||
 	   [[ "$vendor" == "03fd" && "$product" == "0008" ]]; then
 	   echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Found JTAG with vendor ${vendor} and product ${product}"
-	   ${COMMANDHEAD} /home/mu2ehwdev/program_one_FPGA_AL9.sh NORESET ${INDEX} ${BITFILE}
+	   run_cmd /home/mu2ehwdev/program_one_FPGA_AL9.sh NORESET ${INDEX} ${BITFILE}
 	   ((INDEX++))
     fi
   fi
 done
+
+if [[ "${INDEX}" -eq 0 ]]; then
+  echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t WARNING: No JTAG cables matched the filter (vendor/product 0403:6014 or 03fd:0013 or 03fd:0008)."
+fi
 
 
 if [[ "$DORESET" -eq 0 ]]; then
@@ -70,10 +80,10 @@ echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Handling res
 
 if [[ "$NO_OTS_KILL" -eq 1 ]]; then
   echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe without xdaq kill: sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh NOKILL"
-  ${COMMANDHEAD} sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh NOKILL
+  run_cmd sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh NOKILL
 else
   echo -e "$(date +%d%b%y.%T) program_all_FPGA_AL9.sh:${LINENO} |  \t Handling reset of PCIe: sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh"
-  ${COMMANDHEAD} sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
+  run_cmd sudo ${SCRIPT_DIR}/reset_PCIe_AL9.sh
 fi
 
 # Print a summary result
