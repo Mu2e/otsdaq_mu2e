@@ -91,10 +91,11 @@ class CFOandDTCCoreVInterface : public FEVInterface
 	static const int CONFIG_PHASE_ESTABLISH_SYNC_B              = 6;   // Phase 3b: Sync — edge fix (ROC DTCs)
 	static const int CONFIG_PHASE_ESTABLISH_SYNC_C              = 7;   // Phase 3c: Sync — RTF offset + verify (no-ROC DTCs)
 	static const int CONFIG_PHASE_ESTABLISH_SYNC_D              = 8;   // Phase 3d: Sync — RTF offset + verify (ROC DTCs)
-	static const int CONFIG_PHASE_ESTABLISH_ROC_CONFIG          = 9;   // Phase 4: ROC and DCS Setup — DTCs w/ real ROCs only
-	static const int CONFIG_PHASE_ROC_DATA_PATH                 = 10;  // Phase 5: ROC Data Path Setup — DTCs w/ real ROCs only
-	static const int CONFIG_PHASE_FINAL_SOFT_RESET              = 11;  // Final SoftReset before enabling CFO operation
-	static const int CONFIG_CFO_EVENT_SENDING_START_ITERATION   = 12;  // Phase 6: Enable CFO Operation — last iteration
+	static const int CONFIG_PHASE_ESTABLISH_SYNC_E              = 9;   // Phase 3e: Stop CFO events after sync phases
+	static const int CONFIG_PHASE_ESTABLISH_ROC_CONFIG          = 10;  // Phase 4: ROC and DCS Setup — DTCs w/ real ROCs only
+	static const int CONFIG_PHASE_ROC_DATA_PATH                 = 11;  // Phase 5: ROC Data Path Setup — DTCs w/ real ROCs only
+	static const int CONFIG_PHASE_FINAL_SOFT_RESET              = 12;  // Final SoftReset before enabling CFO operation
+	static const int CONFIG_CFO_EVENT_SENDING_START_ITERATION   = 13;  // Phase 6: Enable CFO Operation — last iteration
 
 	bool artdaqMode_ = false;  // true to prevent run data file generation
 
