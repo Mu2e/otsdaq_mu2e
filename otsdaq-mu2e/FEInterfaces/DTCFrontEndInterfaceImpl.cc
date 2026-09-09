@@ -2605,62 +2605,62 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_ROC_CONFIG)
 	{
-		// Phase 4: ROC and DCS Setup — only DTCs with real ROCs act
-		if(!hasRealROCs)
+		// Phase 4: every DTC sets up its ROC links (ROC links follow roc_mask_ only);
+		//	the DCS setup and ROC configure steps that follow are for DTCs w/ real ROCs
+		if(timing_chain_first_substep_ == -1)
+			timing_chain_first_substep_ = getSubIterationIndex();
+
+		int subStep = getSubIterationIndex() - timing_chain_first_substep_;
+		__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep << __E__;
+
+		auto dtc = getDTC();
+
+		if(subStep == 0)
 		{
-			__FE_COUT__ << "Idle — no real ROCs to configure." << __E__;
-		}
-		else
-		{
-			if(timing_chain_first_substep_ == -1)
-				timing_chain_first_substep_ = getSubIterationIndex();
+			// Step 1: SetupROCs per link
+			__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
+			            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
+			            << std::dec << __E__;
 
-			int subStep = getSubIterationIndex() - timing_chain_first_substep_;
-			__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep
-			                 << __E__;
-
-			auto dtc = getDTC();
-
-			if(subStep == 0)
+			for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
 			{
-				// Step 1: SetupROCs per link
-				__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
-				            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
-				            << std::dec << __E__;
+				bool enabled  = ((roc_mask_ >> i) & 1);
+				bool emulated = ((roc_emulated_mask_ >> i) & 1);
 
-				for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
+				if(!enabled)
+					SetupROCs(DTCLib::DTC_Link_ID(i),
+					          0,
+					          1,
+					          0,
+					          DTCLib::DTC_ROC_Emulation_Type(0),
+					          0);
+				else if(!emulated)
 				{
-					bool enabled  = ((roc_mask_ >> i) & 1);
-					bool emulated = ((roc_emulated_mask_ >> i) & 1);
-
-					if(!enabled)
-						SetupROCs(DTCLib::DTC_Link_ID(i),
-						          0,
-						          1,
-						          0,
-						          DTCLib::DTC_ROC_Emulation_Type(0),
-						          0);
-					else if(!emulated)
-					{
-						bool clockMakersEnabled = false;
-						if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
-							clockMakersEnabled = false;
-						SetupROCs(DTCLib::DTC_Link_ID(i),
-						          1,
-						          clockMakersEnabled,
-						          0,
-						          DTCLib::DTC_ROC_Emulation_Type(0),
-						          0);
-					}
-					else
-						SetupROCs(DTCLib::DTC_Link_ID(i),
-						          1,
-						          1,
-						          1,
-						          DTCLib::DTC_ROC_Emulation_Type(0),
-						          16);
+					bool clockMakersEnabled = false;
+					if(getCFOandDTCRegisters()->isCRVDTCDesignFlavour())
+						clockMakersEnabled = false;
+					SetupROCs(DTCLib::DTC_Link_ID(i),
+					          1,
+					          clockMakersEnabled,
+					          0,
+					          DTCLib::DTC_ROC_Emulation_Type(0),
+					          0);
 				}
+				else
+					SetupROCs(DTCLib::DTC_Link_ID(i),
+					          1,
+					          1,
+					          1,
+					          DTCLib::DTC_ROC_Emulation_Type(0),
+					          16);
+			}
 
+			if(!hasRealROCs)
+				__FE_COUT__ << "ROC links are setup; no real ROCs, so skipping DCS "
+				               "setup and ROC configure."
+				            << __E__;
+			else
+			{
 				// Step 2: Enable DCS Reception
 				dtc->EnableDCSReception();
 
@@ -2689,48 +2689,48 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				if(doConfigureROCs)
 					indicateSubIterationWork();
 			}
-			else
+		}
+		else
+		{
+			// Step 5: ROC DCS-based configure (sub-iterations)
+			// DTC acts as FESupervisor for its ROCs
+			bool anyROCNeedsWork = false;
+
+			for(auto& roc : rocs_)
 			{
-				// Step 5: ROC DCS-based configure (sub-iterations)
-				// DTC acts as FESupervisor for its ROCs
-				bool anyROCNeedsWork = false;
+				roc.second->VStateMachine::setIterationIndex(0);
+				roc.second->VStateMachine::setSubIterationIndex(subStep - 1);
+				roc.second->VStateMachine::clearIterationWork();
+				roc.second->VStateMachine::clearSubIterationWork();
 
-				for(auto& roc : rocs_)
+				if(subStep == 1)
 				{
-					roc.second->VStateMachine::setIterationIndex(0);
-					roc.second->VStateMachine::setSubIterationIndex(subStep - 1);
-					roc.second->VStateMachine::clearIterationWork();
-					roc.second->VStateMachine::clearSubIterationWork();
-
-					if(subStep == 1)
+					bool linkEmulated =
+					    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
+					if(!linkEmulated &&
+					   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
 					{
-						bool linkEmulated =
-						    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
-						if(!linkEmulated &&
-						   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
-						{
-							__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
-							          << real_roc_flow_reason_ << "]"
-							          << " ROC " << roc.first << " on link "
-							          << roc.second->getLinkID()
-							          << " was not ready after 2s.";
-							__FE_SS_THROW__;
-						}
-					}
-
-					roc.second->configure();
-
-					if(roc.second->VStateMachine::getSubIterationWork())
-					{
-						anyROCNeedsWork = true;
-						__FE_COUT__ << "ROC " << roc.first
-						            << " needs another sub-iteration." << __E__;
+						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
+						          << real_roc_flow_reason_ << "]"
+						          << " ROC " << roc.first << " on link "
+						          << roc.second->getLinkID()
+						          << " was not ready after 2s.";
+						__FE_SS_THROW__;
 					}
 				}
 
-				if(anyROCNeedsWork)
-					indicateSubIterationWork();
+				roc.second->configure();
+
+				if(roc.second->VStateMachine::getSubIterationWork())
+				{
+					anyROCNeedsWork = true;
+					__FE_COUT__ << "ROC " << roc.first << " needs another sub-iteration."
+					            << __E__;
+				}
 			}
+
+			if(anyROCNeedsWork)
+				indicateSubIterationWork();
 		}
 		if(!VStateMachine::getSubIterationWork())
 		{
@@ -2892,9 +2892,13 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		getDTC()->ClearControlRegister(controlRegisterKeepMask);
 
 		if(has_real_roc_flow_)
-		{
 			getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
 
+		// ROC link enable/disable follows roc_mask_ only, independent of
+		// has_real_roc_flow_ (i.e. of EnableROCConfigureStep), so the ROC links are
+		// always down while the control register and jitter attenuator are reworked.
+		if(roc_mask_)
+		{
 			__FE_COUT__ << "Disabling configured ROC links (roc_mask_=0x" << std::hex
 			            << roc_mask_ << std::dec << "), leaving CFO link untouched."
 			            << __E__;
