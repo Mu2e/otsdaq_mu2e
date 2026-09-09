@@ -3619,7 +3619,10 @@ void DTCFrontEndInterface::start(std::string runNumber)
 // return true to keep running
 unsigned int DTCFrontEndInterface::getMinReadyForEventGenerationStartIteration(void) const
 {
-	unsigned int maxIteration = 0;
+	// DTC needs iteration 0 (SoftReset + start ROCs), iteration 1 (wait for
+	// artdaq to finish starting), and iteration 2 (post-artdaq SoftReset).
+	// So the system is not ready for event generation until iteration 3.
+	unsigned int maxIteration = 3;
 	for(const auto& rocPair : rocs_)
 	{
 		unsigned int val = rocPair.second->getMinReadyForEventGenerationStartIteration();
