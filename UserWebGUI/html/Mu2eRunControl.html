@@ -184,6 +184,8 @@
 				arrs[fields[i]] = req.responseXML.getElementsByTagName("subsystem_" + fields[i]);
 			var count = arrs[fields[0]].length;
 			for (var j = 0; j < count && j < _subsystems.length; ++j) {
+				var oldStatus = _subsystems[j].status;
+
 				for (var i = 0; i < fields.length; ++i)
 					if (arrs[fields[i]][j])
 						_subsystems[j][fields[i]] = arrs[fields[i]][j].getAttribute("value");
@@ -192,6 +194,29 @@
 				var p = Mu2e.stripStatusError(_subsystems[j].status);
 				_subsystems[j].status = p.status;
 				_subsystems[j].error = p.error;
+
+				var newStatus = _subsystems[j].status;
+
+				if (_subsystems[j].fsmIncluded &&
+						newStatus === "UNKNOWN" && newStatus !== oldStatus) {
+					Debug.warn("From Subsystem '" +
+						_subsystems[j].name + " (" + _subsystems[j].url + ")... " +
+						"Status is UNKNOWN. This may indicate that the Subsystem " +
+						"is offline or unreachable.");
+				}
+
+				if (newStatus !== oldStatus &&
+						(newStatus.indexOf("Fail") === 0 ||
+						 newStatus.indexOf("Error") === 0 ||
+						 newStatus.indexOf("Soft") === 0)) {
+					var isOldError = oldStatus &&
+						(oldStatus.indexOf("Fail") === 0 ||
+						 oldStatus.indexOf("Error") === 0 ||
+						 oldStatus.indexOf("Soft") === 0);
+					if (!isOldError)
+						Debug.err("From Subsystem '" +
+							_subsystems[j].name + "'... " + newStatus);
+				}
 			}
 		}
 
@@ -600,10 +625,21 @@
 				0, 0, true, false, true);
 		}
 
+		var _pendingDiscardRun = false;
+		var _pendingWriteToEcl = false;
+
 		function stopRun() {
+			_pendingDiscardRun = false;
+			_pendingWriteToEcl = false;
 			DesktopContent.popUpVerification(
-				"Please enter a logbook entry to end this run:",
+				"Please enter a logbook entry to end this run:" +
+				"<br><br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-writeToEcl' onchange='_pendingWriteToEcl=this.checked;' /> Write end-of-run summary to ECL</label>" +
+				"<br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-discardRun' onchange='_pendingDiscardRun=this.checked;' /> Discard run for processing</label>",
 				function (entry) {
+					var discardRun = _pendingDiscardRun || false;
+					var writeToEcl = _pendingWriteToEcl || false;
 					// First halt the iterator
 					DesktopContent.XMLHttpRequest(
 						"StateMachineXgiHandler?fsmName=" + _fsmName +
@@ -613,7 +649,9 @@
 							DesktopContent.XMLHttpRequest(
 								"StateMachineXgiHandler?fsmName=" + _fsmName +
 								"&StateMachine=Stop",
-								"logEntry=" + encodeURIComponent(entry || ""),
+								"logEntry=" + encodeURIComponent(entry || "") +
+								"&writeToEcl=" + (writeToEcl ? "1" : "0") +
+								"&discardRun=" + (discardRun ? "1" : "0"),
 								function (req, reqParam, errStr) {
 									if (errStr) {
 										Debug.err("Stop failed: " + errStr);
