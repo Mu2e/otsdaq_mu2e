@@ -2611,8 +2611,7 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 			timing_chain_first_substep_ = getSubIterationIndex();
 
 		int subStep = getSubIterationIndex() - timing_chain_first_substep_;
-		__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep
-		                 << __E__;
+		__FE_COUT_INFO__ << "Phase 4 ROC and DCS Setup, sub-step=" << subStep << __E__;
 
 		auto dtc = getDTC();
 
@@ -2725,8 +2724,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				if(roc.second->VStateMachine::getSubIterationWork())
 				{
 					anyROCNeedsWork = true;
-					__FE_COUT__ << "ROC " << roc.first
-					            << " needs another sub-iteration." << __E__;
+					__FE_COUT__ << "ROC " << roc.first << " needs another sub-iteration."
+					            << __E__;
 				}
 			}
 
