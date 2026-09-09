@@ -2149,12 +2149,24 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
 	{
+		bool doEdgeFix =
+		    (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		     operatingMode_ ==
+		         CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
 		bool doSync = (operatingMode_ ==
 		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
 
-		if(!doSync)
+		if((step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
+		    step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B) &&
+		   !doEdgeFix)
 		{
-			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+			__FE_COUT__ << "Edge fix phase idle." << __E__;
+		}
+		else if((step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+		         step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D) &&
+		        !doSync)
+		{
+			__FE_COUT__ << "RTF offset phase idle (no 40 MHz sync)." << __E__;
 		}
 		else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
 		        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B)
@@ -2731,7 +2743,34 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		// Phase 5: ROC Data Path Setup — only DTCs with real ROCs act
 		if(!hasRealROCs)
 		{
-			__FE_COUT__ << "Idle — no ROC data path to set up." << __E__;
+			if(roc_mask_)
+			{
+				bool enableSoftwareDRP = false;
+				try
+				{
+					enableSoftwareDRP = getSelfNode()
+					                        .getNode("EnableSoftwareDataRequestMode")
+					                        .getValue<bool>();
+				}
+				catch(...)
+				{
+				}
+				if(enableSoftwareDRP)
+				{
+					__FE_COUT__ << "Enabling Software Data Request Mode (no-ROC path)."
+					            << __E__;
+					getDTC()->EnableSoftwareDRP();
+				}
+				else
+				{
+					__FE_COUT__
+					    << "Enabling Auto-generation of Data Requests (no-ROC path)."
+					    << __E__;
+					getDTC()->DisableSoftwareDRP();
+				}
+			}
+			else
+				__FE_COUT__ << "Idle — no ROC data path to set up." << __E__;
 		}
 		else
 		{

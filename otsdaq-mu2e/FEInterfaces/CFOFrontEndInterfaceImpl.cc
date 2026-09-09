@@ -2104,7 +2104,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		thisCFO_->EnableEmbeddedClockMarker();
 		__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
 
-		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 		{
 			CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			    true,     // enable
@@ -2118,7 +2119,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			    false,    // saveSubeventHeadersToDataFile
 			    false);   // doNotResetCounters
 			__FE_COUT__ << "Started fixed-width event run plan for aggressive 8b10 "
-			               "traffic during sync phases."
+			               "traffic during edge fix phases."
 			            << __E__;
 		}
 
@@ -2299,13 +2300,14 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_CFO_EDGE_FIX)
 	{
-		bool doSync = (operatingMode_ ==
-		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		bool doEdgeFix =
+		    (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		     operatingMode_ ==
+		         CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
 
-		if(!doSync)
+		if(!doEdgeFix)
 		{
-			__FE_COUT__ << "CFO edge fix phase idle (no sync in EventBuildingMode)."
-			            << __E__;
+			__FE_COUT__ << "CFO edge fix phase idle." << __E__;
 			indicateIterationWork();
 		}
 		else
@@ -2521,23 +2523,29 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_E)
 	{
-		bool doSync = (operatingMode_ ==
-		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
-		if(!doSync)
+		bool doEdgeFix =
+		    (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		     operatingMode_ ==
+		         CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		if(!doEdgeFix)
 		{
-			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+			__FE_COUT__ << "Stop-events phase idle." << __E__;
 		}
 		else
 		{
 			thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 			thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-			__FE_COUT__ << "Stopped CFO event generation after sync phases." << __E__;
+			__FE_COUT__ << "Stopped CFO event generation after edge fix phases." << __E__;
 		}
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B)
+	{
+		__FE_COUT__ << "Idle while DTCs perform edge fix..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
 	{
 		bool doSync = (operatingMode_ ==
@@ -2545,11 +2553,11 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 		if(!doSync)
 		{
-			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+			__FE_COUT__ << "RTF offset phase idle (no 40 MHz sync)." << __E__;
 		}
 		else
 		{
-			__FE_COUT__ << "Sync phase — idle while DTCs work..." << __E__;
+			__FE_COUT__ << "Idle while DTCs apply RTF marker offset..." << __E__;
 		}
 		indicateIterationWork();
 	}
