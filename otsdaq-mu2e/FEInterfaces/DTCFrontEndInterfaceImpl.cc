@@ -1,4 +1,5 @@
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
+#include "dtcInterfaceLib/EVBErrorStatus.h"
 #include "otsdaq/FECore/MakeInterface.h"
 #include "otsdaq/Macros/BinaryStringMacros.h"
 // #include "otsdaq/Macros/InterfacePluginMacros.h"
@@ -6528,49 +6529,11 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 		__SS_THROW__;
 	}
 
-	o << "=== EVB Errors / Live Status (0x9370) ===\n";
+	o << "=== EVB Errors / Status (0x9370) ===\n";
 	o << "  Raw register: 0x" << std::hex << std::right << std::setfill('0')
 	  << std::setw(8) << evbErrorStatus << std::dec << std::setfill(' ') << "\n";
-	o << "  Sticky errors [15:0] (since SoftReset; 1 = data lost/corrupted): 0x"
-	  << std::hex << std::setfill('0') << std::setw(4) << (evbErrorStatus & 0xFFFFu)
-	  << std::dec << std::setfill(' ') << "\n";
-	static const char* const evbErrorNames[] = {
-	    "RX source buffer write-while-full (words lost)",
-	    "RX sequence gap (packet lost on wire)",
-	    "RX packet rejected (bad frame type, source > 31, illegal dest MAC)",
-	    "DDR write CDC underflow (corrupt burst)",
-	    "TX FSM fault (undefined state / dest > 31)",
-	    "Credit violation (outstanding > CREDIT at 0x17; counters desynced)",
-	    "Buffer-manager chunk > DMA_max_size (sent anyway; software may not parse)",
-	};
-	for(size_t bit = 0; bit < sizeof(evbErrorNames) / sizeof(evbErrorNames[0]); ++bit)
-	{
-		if((evbErrorStatus >> bit) & 1u)
-			o << "    Bit " << bit << ": " << evbErrorNames[bit] << "\n";
-	}
-
-	o << "  Live status [31:16] (user_clk-synced; 1 = asserted, not sticky): 0x"
-	  << std::hex << std::setfill('0') << std::setw(4) << (evbErrorStatus >> 16)
-	  << std::dec << std::setfill(' ') << "\n";
-	static const char* const evbStatusNames[] = {
-	    "ROC input held (tvalid && !tready)",
-	    "Self-subevent throttle holding",
-	    "Credit throttle (window has data, destination has no credit)",
-	    "DDR channel almost-full back-pressure",
-	    "DDR write CDC FIFO full",
-	    "Both staging FIFOs owned elsewhere while a window has data",
-	    "Any RX source buffer >= 3/4 full",
-	    "DMA back-pressure (m_axis_tvalid && !tready)",
-	    "Peer frontier valid (throttle armed)",
-	    "DDR calib_done",
-	};
-	for(size_t index = 0; index < sizeof(evbStatusNames) / sizeof(evbStatusNames[0]);
-	    ++index)
-	{
-		const size_t bit = 16 + index;
-		if((evbErrorStatus >> bit) & 1u)
-			o << "    Bit " << bit << ": " << evbStatusNames[index] << "\n";
-	}
+	for(const auto& line : DTCLib::DecodeEVBErrorStatus(evbErrorStatus))
+		o << "  " << line << "\n";
 	o << "\n";
 
 	o << "=== EVB Pipeline Counters ===\n";
@@ -6639,7 +6602,7 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 
 	o << "=== EVB Per-DTC BRAM Stats ===\n";
 	o << "  (StartNode=" << (int)startNode << ", NumNodes=" << (int)numNodes << ")\n";
-	o << "  Note: TxIdleCount - RxCount = RxMissingPktCnt (may differ by race condition)\n";
+	o << "  Note: RxCount/RxByteCount include idle packets; packed timestamp rows are hex.\n";
 	if(bramOverflow)
 		o << "  *** WARNING: NumNodes=" << (int)numNodes
 		  << " exceeds BRAM address limit of " << (int)MAX_BRAM_SLOTS
@@ -6658,21 +6621,23 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	for(uint8_t t = 0; t < NUM_BRAM_TYPES; ++t)
 	{
 		bool rawCount = (t == DTCLib::DTC_EVBStatsType_RxMissingPacketCount);
-		o << "  " << std::setw(18) << std::left
-		  << (std::string(bramTypeNames[t]) + (rawCount ? "*" : ""));
-
 		bool isCounter = (t == DTCLib::DTC_EVBStatsType_RxCount ||
 		                  t == DTCLib::DTC_EVBStatsType_RxMissingPacketCount ||
 		                  t == DTCLib::DTC_EVBStatsType_RxByteCount ||
 		                  t == DTCLib::DTC_EVBStatsType_TxIdleCount ||
 		                  t == DTCLib::DTC_EVBStatsType_RxIdleCount);
+		o << "  " << std::setw(18) << std::left
+		  << (std::string(bramTypeNames[t]) + ((rawCount || !isCounter) ? "*" : ""));
 
 		for(uint8_t d = 0; d < bramNodes; ++d)
 		{
 			uint32_t val = dtc->ReadEVBStats(DTCLib::DTC_EVBStatsType(t), d);
 			currentSnapshot.values[(uint16_t(t) << 8) | d] = val;
-			if(isCounter && (val & 0x80000000u))
+			if(isCounter && val == 0xFFFFFFFFu)
 				o << "  " << std::setw(10) << std::right << "SATURATED";
+			else if(!isCounter)
+				o << "  0x" << std::hex << std::setw(8) << std::right << std::setfill('0')
+				  << val << std::dec << std::setfill(' ');
 			else if(rawCount)
 				o << "  " << std::setw(10) << std::right << val;
 			else
@@ -6681,7 +6646,7 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 		}
 		o << "\n";
 	}
-	o << "  * = raw count (not K)\n";
+	o << "  * = raw count or packed hex value (not K)\n";
 	{
 		// A DTC never receives from itself: RxCount[self] must be 0.  Report raw if not.
 		int selfSlot = macAddr - (int)startNode;
@@ -6749,6 +6714,11 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 				if(prevIt != evbBRAMSnapshot_.values.end() &&
 				   currIt != currentSnapshot.values.end())
 				{
+					if(currIt->second == 0xFFFFFFFFu)
+					{
+						o << "  " << std::setw(10) << std::right << "SATURATED";
+						continue;
+					}
 					// signed delta: uint32 subtraction would wrap to ~2^32 when prev > curr
 					int64_t delta = (int64_t)currIt->second - (int64_t)prevIt->second;
 					if(currIt->second == 0)
