@@ -3632,7 +3632,6 @@ unsigned int DTCFrontEndInterface::getMinReadyForEventGenerationStartIteration(v
 //==============================================================================
 bool DTCFrontEndInterface::running(void)
 {
-	__FE_COUTV__(skipInit_);
 	if(skipInit_)
 		return false;
 
@@ -3644,22 +3643,28 @@ bool DTCFrontEndInterface::running(void)
 		testRTFClockInEventBuildingMode("Running");
 	}
 
-	__FE_COUTV__(operatingMode_);
-	__FE_COUTV__(emulatorMode_);
+	if(runningCallCount_ == 1)
+	{
+		__FE_COUTV__(operatingMode_);
+		__FE_COUTV__(emulatorMode_);
+	}
 
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
-		__FE_COUT_INFO__ << "Running for hardware development mode!" << __E__;
+		if(runningCallCount_ == 1)
+			__FE_COUT_INFO__ << "Running for hardware development mode!" << __E__;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
 	        operatingMode_ ==
 	            CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 	{
-		__FE_COUT_INFO__ << "Running for Event Building mode!" << __E__;
+		if(runningCallCount_ == 1)
+			__FE_COUT_INFO__ << "Running for Event Building mode!" << __E__;
 	}
 	else if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
-		__FE_COUT_INFO__ << "Running for Loopback mode!" << __E__;
+		if(runningCallCount_ == 1)
+			__FE_COUT_INFO__ << "Running for Loopback mode!" << __E__;
 	}
 	else
 	{

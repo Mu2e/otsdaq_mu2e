@@ -265,6 +265,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"Number of Event Window Markers to generate (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Event Window Mode (Default := 1)",
+											"On-spill Flag (Default := false)",
 											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
@@ -3853,6 +3854,18 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	std::string modeStr =
 	    __GET_ARG_IN__("Event Window Mode (Default := 1)", std::string, "1");
 
+	uint64_t eventWindowMode =
+	    modeStr == "0"
+	        ? 0
+	        : __GET_ARG_IN__(
+	              "Event Window Mode (Default := 1)",
+	              uint64_t,
+	              1);  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
+
+	bool onSpill = __GET_ARG_IN__("On-spill Flag (Default := false)", bool, false);
+	if(onSpill)
+		eventWindowMode |= 0x100000000;
+
 	__SET_ARG_OUT__(
 	    "response",
 	    CompileSetAndLaunchTemplateFixedWidthRunPlan(
@@ -3864,12 +3877,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	                       std::string),
 	        numberOfEvents,
 	        startTag,
-	        modeStr == "0"
-	            ? 0
-	            : __GET_ARG_IN__(
-	                  "Event Window Mode (Default := 1)",
-	                  uint64_t,
-	                  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
+	        eventWindowMode,
 	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
