@@ -184,6 +184,8 @@
 				arrs[fields[i]] = req.responseXML.getElementsByTagName("subsystem_" + fields[i]);
 			var count = arrs[fields[0]].length;
 			for (var j = 0; j < count && j < _subsystems.length; ++j) {
+				var oldStatus = _subsystems[j].status;
+
 				for (var i = 0; i < fields.length; ++i)
 					if (arrs[fields[i]][j])
 						_subsystems[j][fields[i]] = arrs[fields[i]][j].getAttribute("value");
@@ -192,6 +194,29 @@
 				var p = Mu2e.stripStatusError(_subsystems[j].status);
 				_subsystems[j].status = p.status;
 				_subsystems[j].error = p.error;
+
+				var newStatus = _subsystems[j].status;
+
+				if (_subsystems[j].fsmIncluded &&
+						newStatus === "UNKNOWN" && newStatus !== oldStatus) {
+					Debug.warn("From Subsystem '" +
+						_subsystems[j].name + " (" + _subsystems[j].url + ")... " +
+						"Status is UNKNOWN. This may indicate that the Subsystem " +
+						"is offline or unreachable.");
+				}
+
+				if (newStatus !== oldStatus &&
+						(newStatus.indexOf("Fail") === 0 ||
+						 newStatus.indexOf("Error") === 0 ||
+						 newStatus.indexOf("Soft") === 0)) {
+					var isOldError = oldStatus &&
+						(oldStatus.indexOf("Fail") === 0 ||
+						 oldStatus.indexOf("Error") === 0 ||
+						 oldStatus.indexOf("Soft") === 0);
+					if (!isOldError)
+						Debug.err("From Subsystem '" +
+							_subsystems[j].name + "'... " + newStatus);
+				}
 			}
 		}
 
@@ -421,7 +446,9 @@
 			// Name — dim if UNKNOWN
 			h += "<td><span class='" +
 				(isUnknown ? "ss-name-unknown" : "ss-name") + "'>" +
-				Mu2e.esc(ss.name) + "</span></td>";
+				Mu2e.esc(ss.name) + "</span>" +
+				"<span class='sysoverview-log-link' title='Open log viewer'" +
+				" onclick='openSubsystemLog(" + idx + ")'>&#x1f4cb;</span></td>";
 
 			// State
 			h += "<td class='ss-state-cell' id='ss-state-" + idx + "'>";
@@ -600,10 +627,21 @@
 				0, 0, true, false, true);
 		}
 
+		var _pendingDiscardRun = false;
+		var _pendingWriteToEcl = false;
+
 		function stopRun() {
+			_pendingDiscardRun = false;
+			_pendingWriteToEcl = false;
 			DesktopContent.popUpVerification(
-				"Please enter a logbook entry to end this run:",
+				"Please enter a logbook entry to end this run:" +
+				"<br><br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-writeToEcl' onchange='_pendingWriteToEcl=this.checked;' /> Write end-of-run summary to ECL</label>" +
+				"<br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-discardRun' onchange='_pendingDiscardRun=this.checked;' /> Discard run for processing</label>",
 				function (entry) {
+					var discardRun = _pendingDiscardRun || false;
+					var writeToEcl = _pendingWriteToEcl || false;
 					// First halt the iterator
 					DesktopContent.XMLHttpRequest(
 						"StateMachineXgiHandler?fsmName=" + _fsmName +
@@ -613,7 +651,9 @@
 							DesktopContent.XMLHttpRequest(
 								"StateMachineXgiHandler?fsmName=" + _fsmName +
 								"&StateMachine=Stop",
-								"logEntry=" + encodeURIComponent(entry || ""),
+								"logEntry=" + encodeURIComponent(entry || "") +
+								"&writeToEcl=" + (writeToEcl ? "1" : "0") +
+								"&discardRun=" + (discardRun ? "1" : "0"),
 								function (req, reqParam, errStr) {
 									if (errStr) {
 										Debug.err("Stop failed: " + errStr);
@@ -834,10 +874,17 @@
 		// =============================================================
 		// ARTDAQ Node Grid — hosts × process types, merged across subsystems
 		// =============================================================
-		var _ARTDAQ_TYPES = ["reader", "builder", "logger", "dispatcher", "monitor", "router"];
-		var _ARTDAQ_TYPE_LABELS = {
-			reader: "Reader", builder: "Builder", logger: "Logger",
-			dispatcher: "Dispatcher", monitor: "Monitor", router: "Router"
+		var _ARTDAQ_TYPES = ["reader", "builder", "supervisor", "logger", "dispatcher", "router", "monitor"];
+		var _ARTDAQ_GRID_COLUMNS = ["reader", "builder", "infrastructure", "dqm"];
+		var _ARTDAQ_GRID_COLUMN_LABELS = {
+			reader: "Reader", builder: "Builder",
+			infrastructure: "Infrastructure", dqm: "DQM"
+		};
+		var _ARTDAQ_TYPE_TO_COLUMN = {
+			reader: "reader", builder: "builder",
+			supervisor: "infrastructure", logger: "infrastructure",
+			dispatcher: "infrastructure", router: "infrastructure",
+			monitor: "dqm"
 		};
 
 		// Resolved groups (active or pending-selected) arrive over the 1s status
@@ -916,15 +963,12 @@
 					"&suppressMultiNode=1",
 					"modifiedTables=",
 					function (req, reqParam, errStr) {
-						if (nonce !== _artdaqGridNonce) return;  // superseded by a newer load
+						if (nonce !== _artdaqGridNonce) return;
 						var xml = req && req.responseXML;
-						if (errStr)
-							console.log("ArtdaqGrid: error fetching nodes for", t.ss.name, errStr);
 						if (!errStr && xml)
 							mergeArtdaqNodesXML(xml, t, hosts);
-						if (--remaining === 0) {
+						if (--remaining === 0)
 							renderArtdaqGrid(hosts);
-						}
 					},
 					0, 0, true, true);
 			});
@@ -932,6 +976,35 @@
 
 		function mergeArtdaqNodesXML(xml, target, hosts) {
 			var subsystemName = target.ss.name;
+
+			// Extract artdaqSupervisor (DAQInterface) entry
+			var supEls = xml.getElementsByTagName("artdaqSupervisor");
+			if (supEls.length > 0) {
+				var supStatus = xml.getElementsByTagName("artdaqSupervisor-status");
+				var supAddr   = xml.getElementsByTagName("artdaqSupervisor-contextAddress");
+				var supName   = supEls[0].getAttribute("value") || "ARTDAQSupervisor";
+				var status    = supStatus.length ? supStatus[0].getAttribute("value") : "0";
+				var addr      = supAddr.length ? supAddr[0].getAttribute("value") : "";
+				var hostname  = addr.replace(/^https?:\/\//, "").replace(/(-data)?\.fnal\.gov$/i, "");
+
+				if (hostname) {
+					var col = _ARTDAQ_TYPE_TO_COLUMN["supervisor"];
+					if (!hosts[hostname]) hosts[hostname] = {};
+					if (!hosts[hostname][col]) hosts[hostname][col] = [];
+					hosts[hostname][col].push({
+						label: supName,
+						type: "supervisor",
+						hostname: hostname,
+						status: status,
+						subsystemName: subsystemName,
+						subsystemLandingPage: target.ss.landingPage,
+						artdaqSubsystem: "",
+						cfgName: target.cfgName,
+						cfgKey: target.cfgKey
+					});
+				}
+			}
+
 			for (var ti = 0; ti < _ARTDAQ_TYPES.length; ++ti) {
 				var type = _ARTDAQ_TYPES[ti];
 				var labelNodes      = xml.getElementsByTagName(type);
@@ -948,8 +1021,9 @@
 					try { hostname = decodeURIComponent(hostname); } catch (e) { }
 					hostname = hostname.replace(/(-data)?\.fnal\.gov$/i, "");
 
+					var col = _ARTDAQ_TYPE_TO_COLUMN[type] || type;
 					if (!hosts[hostname]) hosts[hostname] = {};
-					if (!hosts[hostname][type]) hosts[hostname][type] = [];
+					if (!hosts[hostname][col]) hosts[hostname][col] = [];
 
 					// label carries a ";status=0/1" suffix baked in server-side to keep
 					// map keys unique -- strip it for display, we already have status
@@ -958,9 +1032,10 @@
 					var statusSuffixIdx = label.lastIndexOf(";status=");
 					if (statusSuffixIdx >= 0) label = label.substring(0, statusSuffixIdx);
 
-					hosts[hostname][type].push({
+					hosts[hostname][col].push({
 						label: label,
 						type: type,
+						hostname: hostname,
 						status: statusNodes[i] ? statusNodes[i].getAttribute("value") : "",
 						subsystemName: subsystemName,
 						subsystemLandingPage: target.ss.landingPage,
@@ -999,15 +1074,15 @@
 
 			var html = "<table class='sysoverview-grid'>";
 			html += "<thead><tr><th>Host</th>";
-			for (var ti = 0; ti < _ARTDAQ_TYPES.length; ++ti)
-				html += "<th>" + _ARTDAQ_TYPE_LABELS[_ARTDAQ_TYPES[ti]] + "</th>";
+			for (var ci = 0; ci < _ARTDAQ_GRID_COLUMNS.length; ++ci)
+				html += "<th>" + _ARTDAQ_GRID_COLUMN_LABELS[_ARTDAQ_GRID_COLUMNS[ci]] + "</th>";
 			html += "</tr></thead><tbody>";
 
 			for (var hi = 0; hi < hostnames.length; ++hi) {
 				var hostname = hostnames[hi];
 				html += "<tr><td class='sysoverview-host'>" + Mu2e.esc(hostname) + "</td>";
-				for (ti = 0; ti < _ARTDAQ_TYPES.length; ++ti) {
-					var entries = hosts[hostname][_ARTDAQ_TYPES[ti]];
+				for (ci = 0; ci < _ARTDAQ_GRID_COLUMNS.length; ++ci) {
+					var entries = hosts[hostname][_ARTDAQ_GRID_COLUMNS[ci]];
 					html += "<td class='sysoverview-cell'>" + renderArtdaqCell(entries) + "</td>";
 				}
 				html += "</tr>";
@@ -1015,6 +1090,48 @@
 
 			html += "</tbody></table>";
 			el.innerHTML = html;
+		}
+
+		var _ARTDAQ_TYPE_TO_SOURCE = {
+			supervisor: "DAQInterface", reader: "BoardReader", builder: "EventBuilder",
+			logger: "DataLogger", dispatcher: "Dispatcher",
+			monitor: "Monitor", router: "Router"
+		};
+
+		var _SS_NAME_TO_LOG_SYSTEM = {
+			Trigger_Gateway: "Trigger", Calo_HardwareGateway: "Calo",
+			CFO_HardwareGateway: "CFO", CRV_HardwareGateway: "CRV",
+			DQM_Gateway: "DQM", STM_Gateway: "STM",
+			Tracker_Gateway: "Tracker", DCS_Gateway: "DCS"
+		};
+
+		function openSubsystemLog(idx) {
+			var ss = _subsystems[idx];
+			if (!ss) return;
+			var sys = _SS_NAME_TO_LOG_SYSTEM[ss.name] || ss.name.replace(/_.*/, "");
+			var url = "/WebPath/UserWebPath/html/Mu2eLogViewer.html" +
+				"?system=" + encodeURIComponent(sys) +
+				"&source=OTSDAQ" +
+				"&level=Info";
+			openOtsDesktopWindow(sys + " Log", url);
+		}
+
+		function openArtdaqNodeLog(regIdx) {
+			var e = _artdaqNodeRegistry[regIdx];
+			if (!e) return;
+			var sys = _SS_NAME_TO_LOG_SYSTEM[e.subsystemName] || e.subsystemName.replace(/_.*/, "");
+			var src = _ARTDAQ_TYPE_TO_SOURCE[e.type] || e.type;
+			var url = "/WebPath/UserWebPath/html/Mu2eLogViewer.html" +
+				"?system=" + encodeURIComponent(sys) +
+				"&source=" + encodeURIComponent(src) +
+				"&node=" + encodeURIComponent(e.hostname) +
+				"&level=Info";
+			if (e.type === "supervisor")
+				url = "/WebPath/UserWebPath/html/Mu2eLogViewer.html" +
+					"?system=" + encodeURIComponent(sys) +
+					"&app=DAQInterface_partition_6" +
+					"&level=Info";
+			openOtsDesktopWindow(sys + " Log: " + e.label, url);
 		}
 
 		var _SS_BG_STATES = ["Initial", "Halted", "Configured", "Running", "Paused", "Error"];
@@ -1042,11 +1159,17 @@
 				var isOn = e.status === "1" || e.status === "true";
 				var ssStatus = getSubsystemStatus(e.subsystemName);
 				var regIdx = _artdaqNodeRegistry.push(e) - 1;
-				h += "<div class='sysoverview-item sysoverview-item-clickable ss-bg-" + Mu2e.esc(ssStatus) +
-					"' title='" + Mu2e.escAttr(e.subsystemName + " — click to open FHiCL") + "'" +
+				h += "<div class='sysoverview-item " +
+					(isOn ? "ss-bg-" + Mu2e.esc(ssStatus) : "ss-bg-disabled") + "'>";
+				h += "<span class='sysoverview-item-clickable'" +
+					" title='" + Mu2e.escAttr(e.subsystemName + " — click to open FHiCL") + "'" +
 					" onclick='openArtdaqNodeFcl(" + regIdx + ")'>";
 				h += "<span class='status-dot " + (isOn ? "status-on" : "status-off") + "'></span>";
 				h += Mu2e.esc(e.label || "?");
+				h += "</span>";
+				if (isOn)
+					h += "<span class='sysoverview-log-link' title='Open log viewer'" +
+						" onclick='openArtdaqNodeLog(" + regIdx + ")'>&#x1f4cb;</span>";
 				h += "</div>";
 			}
 			return h;
