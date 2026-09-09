@@ -602,10 +602,21 @@
 				0, 0, true, false, true);
 		}
 
+		var _pendingDiscardRun = false;
+		var _pendingWriteToEcl = false;
+
 		function stopRun() {
+			_pendingDiscardRun = false;
+			_pendingWriteToEcl = false;
 			DesktopContent.popUpVerification(
-				"Please enter a logbook entry to end this run:",
+				"Please enter a logbook entry to end this run:" +
+				"<br><br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-writeToEcl' onchange='_pendingWriteToEcl=this.checked;' /> Write end-of-run summary to ECL</label>" +
+				"<br><label style='cursor:pointer;'><input type='checkbox' " +
+				"id='Mu2eRunControl-discardRun' onchange='_pendingDiscardRun=this.checked;' /> Discard run for processing</label>",
 				function (entry) {
+					var discardRun = _pendingDiscardRun || false;
+					var writeToEcl = _pendingWriteToEcl || false;
 					// First halt the iterator
 					DesktopContent.XMLHttpRequest(
 						"StateMachineXgiHandler?fsmName=" + _fsmName +
@@ -615,7 +626,9 @@
 							DesktopContent.XMLHttpRequest(
 								"StateMachineXgiHandler?fsmName=" + _fsmName +
 								"&StateMachine=Stop",
-								"logEntry=" + encodeURIComponent(entry || ""),
+								"logEntry=" + encodeURIComponent(entry || "") +
+								"&writeToEcl=" + (writeToEcl ? "1" : "0") +
+								"&discardRun=" + (discardRun ? "1" : "0"),
 								function (req, reqParam, errStr) {
 									if (errStr) {
 										Debug.err("Stop failed: " + errStr);
