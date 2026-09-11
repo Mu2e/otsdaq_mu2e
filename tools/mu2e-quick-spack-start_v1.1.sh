@@ -327,6 +327,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
             fi
         else
             cd offline
+            git remote set-url origin https://github.com/Mu2e/tdaq-offline.git
             git pull
             cd ..
         fi
