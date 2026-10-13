@@ -2806,15 +2806,24 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 			__FE_SS_THROW__;
 		}
 
-		// Start steps are ordered across subsystems (DTC SoftReset -> artdaq -> DTC final
+		// Start steps are ordered across subsystems (DTC SoftReset -> artdaq -> DTC/CFO final
 		// SoftReset -> CFO run plan): subsystem-iterations under a top-level, plain
 		// iterations when standalone.
 		const unsigned int startIteration = getSubsystemSyncStepIndex();
-		if(startIteration < systemMinReady)
+		if(startIteration < systemMinReady - 1)
 		{
 			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start step >= "
 			                 << systemMinReady << " (now " << startIteration << ")"
 			                 << __E__;
+			indicateSubsystemSyncStepWork();
+			return;
+		}
+
+		if(startIteration == systemMinReady - 1)
+		{
+			__FE_COUT_INFO__ << "CFO SoftReset (aligned with DTC final SoftReset)."
+			                 << __E__;
+			thisCFO_->SoftReset();
 			indicateSubsystemSyncStepWork();
 			return;
 		}
@@ -2872,7 +2881,7 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 			                                             numberOfEventWindowMarkers,
 			                                             next_starting_event_window_tag_,
 			                                             1,
-			                                             false,
+			                                             true,
 			                                             false,
 			                                             false,
 			                                             false);
