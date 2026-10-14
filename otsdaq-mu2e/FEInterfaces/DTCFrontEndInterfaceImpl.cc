@@ -1311,13 +1311,15 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "EVB Status",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::EVBStatus),  // feMacroFunction
-	    std::vector<std::string>{},             // namesOfInputArgs
+	    std::vector<std::string>{
+	        "Read TX History Entries (0x91F0; advances the hardware pointer, Default := only when frozen)"},
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
 	    "Display all EVB counters: config (0x9154/0x9158), error/status flags (0x9370), "
-	    "pipeline word counters (0x9200-0x920C), and per-DTC BRAM stats "
-	    "(types 0x0-0x8 via 0x9160).");
+	    "retransmission (0x9174), TX packet history (0x925C/0x91F0: frozen state and the packets "
+	    "around the first drop), pipeline word counters (0x9200-0x920C), and per-DTC BRAM stats "
+	    "(types 0x0-0xA via 0x9160).");
 
 	registerFEMacroFunction(
 	    "Exercise Link 7 Reset",
@@ -6283,8 +6285,18 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << "Perm Offset:" << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
 	o << "  RTF Hist Sat Bin:       " << std::left << std::setw(col1w)
 	  << (satBinStr + " Saturated: " + (saturated ? "YES" : "NO")) << std::setw(col2w)
-	  << "Rx Clock Markers:" << dtc->ReadCFOTXClockMarkerCountLink6() << "\n"
-	  << std::right;
+	  << "Rx Clock Markers:" << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
+	{
+		uint32_t eventModeRequiredMask = dtc->ReadCFOEventModeRequiredMask();
+		o << "  Event Mode Req Mask:    ";
+		if(eventModeRequiredMask)
+			o << "0x" << std::right << std::hex << std::setfill('0') << std::setw(8)
+			  << eventModeRequiredMask << std::dec << std::setfill(' ') << std::left;
+		else
+			o << "NOT set";
+		o << "\n";
+	}
+	o << std::right;
 
 	o << "\n=== CFO Interface Errors ==="
 	  << "\n";
@@ -6351,10 +6363,11 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 	    "    TX Null HBP Count    ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXNullHeartbeatCount(l); });
 	performance << csvLinkCounts(
-	    "    TX non-Null HBP Diff ", [dtc](DTCLib::DTC_Link_ID l) {
-		    return static_cast<uint32_t>(static_cast<uint16_t>(
-		        dtc->ReadTXHeartbeatPacketCount(l) - dtc->ReadTXNullHeartbeatCount(l)));
-	    });
+	    "    TX Non-null HBP Count",
+	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXNonnullHeartbeatCount(l); });
+	performance << csvLinkCounts(
+	    "    TX Blocked HBP Count ",
+	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXBlockedHeartbeatCount(l); });
 	performance << csvLinkCounts(
 	    "    Rx Data Header Count ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadRXDataHeaderPacketCount(l); });
@@ -7607,6 +7620,47 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	}
 	else
 		o << "  Not in this bitfile (retransmission starts with 0xd6100291).\n";
+	o << "\n";
+
+	// TX packet history (hw agent 2026-10-13/14): the log freezes on the first retransmission
+	// request, so a frozen status after a run points at the packets on the wire at the drop.
+	// It is a 1024-entry ring; once full the count stays at 1023 and the entries start at the
+	// oldest survivor, so the LAST entry read is the packet just before the freeze.  The read
+	// pointer only rewinds on SoftReset: the log can be walked once per run.  By default the
+	// entries are read only when the log is frozen; the input forces a read either way.
+	o << "=== EVB TX Packet History (0x925C status, 0x91F0 entries) ===\n";
+	if(evbHasRetransmission(dtc))
+	{
+		const std::string readEntriesInput = __GET_ARG_IN__(
+		    "Read TX History Entries (0x91F0; advances the hardware pointer, Default := only "
+		    "when frozen)",
+		    std::string,
+		    "");
+		const bool forceReadEntries =
+		    !readEntriesInput.empty() && readEntriesInput != "Default" &&
+		    readEntriesInput != "0" && readEntriesInput != "false";
+		try
+		{
+			const uint32_t statusRaw = dtc->ReadEVBTxHistoryStatus();
+			const bool     frozen    = (statusRaw >> 31) & 1u;
+			if(statusRaw == 0xFFFFFFFFu)
+				o << "  0x925C reads 0xFFFFFFFF: not in this bitfile.\n";
+			else
+			{
+				const auto history = dtc->ReadEVBTxHistory(frozen || forceReadEntries);
+				o << dtc->FormatEVBTxHistoryText(history, "  ");
+				if(!frozen && !forceReadEntries)
+					o << "  (entries left unread so the one walk per run is saved for a frozen "
+					     "log; set the input to read them anyway)\n";
+			}
+		}
+		catch(const std::exception& e)
+		{
+			o << "  read failed: " << e.what() << "\n";
+		}
+	}
+	else
+		o << "  Not in this bitfile.\n";
 	o << "\n";
 
 	o << "=== EVB Pipeline Counters ===\n";
