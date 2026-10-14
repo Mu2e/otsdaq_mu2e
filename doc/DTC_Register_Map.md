@@ -87,7 +87,7 @@ Source: `register_map.v`
 | 0x91E4 | DETECTOR_EMULATION_END | Detector emulation end address |
 | 0x91E8 | CFOEMDRPDELAYTIME | CFO emulator DRP delay time |
 | 0x91EC | MAXENETPAYLOADSIZE | Max Ethernet payload size [13:0] |
-| 0x91F0 | EVB_TX_HIST_READ | (2026-10-13, read-only) TX packet history BRAM readback. Each read returns one entry and advances the pointer. Returns 0xFFFFFFFF when all entries have been read. Bit layout: [28] first packet of subevent, [27] last packet, [26] has data (vs null), [25:21] destination (5-bit), [20:13] sequence number, [12:0] packet size in 64-bit words. Read 0x925C first to check frozen + count, then read this register count+1 times (first read loads the output, subsequent reads return entries 0..count-1). |
+| 0x91F0 | EVB_TX_HIST_READ | (2026-10-13, read-only) TX packet history BRAM readback. Each read returns one entry and advances the pointer. Returns 0xFFFFFFFF when all entries have been read. Bit layout: [28] first packet of subevent, [27] last packet, [26] has data (vs null), [25:21] destination (5-bit), [20:13] sequence number, [12:0] packet size in 64-bit words. Read 0x925C first to check frozen + count, then read this register count+1 times (first read loads the output, subsequent reads return entries 0..count-1). **Walk once per run:** the read pointer resets only on SoftReset, so a second walk returns 0xFFFFFFFF until the next SoftReset. **Ring:** after 1024 packets the count holds at 1023 and entry 0 is the oldest surviving packet, not the first packet of the run; the entry just before the freeze is the LAST one read, so walk to the end and look backwards from there. If frozen = 0 at the end of a run, no retransmission was requested and the log holds the most recent packets. |
 | 0x91F4 | CFOEMCLOCK40MHZINTERVAL | CFO emulator 40 MHz clock marker interval |
 | 0x91F8 | CFOMarkerEnables | CFO 40 MHz clock marker enables [5:0] |
 | 0x91FC | ROCFINISHTHRESHOLD | ROC finish threshold [7:0] |
@@ -261,6 +261,9 @@ Layout: `[31:16] = status` (bit 20 = external ROC emulator error since 2026-10-0
 | [31:21] | — | Reserved (zero) |
 
 Bits [13:0] are latched `_ever` flags, cleared by link reset.
+
+| Address | Register Name | Purpose |
+|---------|---------------|---------|
 | 0x93A0 | FFCSR | Firefly CSR: read {5'b0, present[2:0], 5'b0, interrupt[2:0], 5'b0, select[2:0], 5'b0, reset[2:0]} = present at [26:24] (bit 25 = Firefly 1 = EVB link RX), interrupt [18:16], select [10:8], reset [2:0]; write [10:8] select, [2:0] reset (read layout corrected 2026-09-24 from register_map.v, HW read 0x03030000) |
 | 0x93A4 | SFPCSR | SFP CSR: read [31] present, [30:16] status, write [15:0] control |
 | 0x93B0 | RXCDRUNLOCKCOUNT0 | RX CDR unlock counter, link 0; write to clear |
@@ -315,7 +318,7 @@ RTF punched clock histogram bins and IDELAY tap readback.
 | 0x942C | SEQUENCEERRORINDUCEPACKET5 | Sequence error induce packet, ROC 5 |
 | 0x9490 | DATAPENDINGDIAGNOSTICTIMER0 | Data pending diagnostic timer FIFO, ROC 0; read pops FIFO, write resets |
 | 0x9494 | DATAPENDINGDIAGNOSTICTIMER1 | Data pending diagnostic timer FIFO, ROC 1; read pops FIFO, write resets |
-| 0x9495 | DATAPENDINGDIAGNOSTICTIMER2 | Data pending diagnostic timer FIFO, ROC 2; read pops FIFO, write resets |
+| 0x9498 | DATAPENDINGDIAGNOSTICTIMER2 | Data pending diagnostic timer FIFO, ROC 2; read pops FIFO, write resets (2026-10-14: the RTL had 0x9495, unaligned and never decoded, so ROC 2's timer was unreadable on every bitfile before this fix) |
 | 0x949C | DATAPENDINGDIAGNOSTICTIMER3 | Data pending diagnostic timer FIFO, ROC 3; read pops FIFO, write resets |
 | 0x94A0 | DATAPENDINGDIAGNOSTICTIMER4 | Data pending diagnostic timer FIFO, ROC 4; read pops FIFO, write resets |
 | 0x94A4 | DATAPENDINGDIAGNOSTICTIMER5 | Data pending diagnostic timer FIFO, ROC 5; read pops FIFO, write resets |

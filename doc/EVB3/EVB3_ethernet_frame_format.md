@@ -309,11 +309,12 @@ per pair; the reverse pair is a separate conversation.
 - The link uses two 64b/66b start-block alignments (0x78 and 0x33) that shift the frame by
   4 bytes inside the 66-bit blocks. This is below the PHY; a NIC capture shows ordinary
   frames either way.
-- Header word 3 exists only on the retransmission development branch (2026-09-30; sim PASS
-  2026-10-01, run 30) and has not been on hardware yet. Every bitfile on the bench so far has no word 3: payload at
-  offset 16, byte count `8N + 2`. Both layouts put `010` in the field's low bits, so tell them
-  apart by a dissector preference or by the frame length: `16 + 8N` old, `24 + 8N` new, with
-  N from the byte-count field.
+- Header word 3 has been on hardware since bitfile 0xd6100291 (2026-10-03). Bitfiles before
+  that have no word 3: payload at offset 16, byte count `8N + 2`. Both layouts put `010` in the
+  field's low bits, so tell them apart by a dissector preference or by the frame length:
+  `16 + 8N` old, `24 + 8W` new, with W from the byte-count field. The 2026-10-14 pad change
+  (Section 3.2) is not on hardware yet: on bitfiles between 0xd6100291 and that build, word 3
+  bits [11:0] read 0 and the real count is `(byte_count >> 3) - 1` with the pad past the end.
 - The receiving firmware's `txTime` read (Section 4) does not match the sender's field
   placement; the "TravelTime" statistic it feeds is informational and this is being
   reported to the firmware team separately.
