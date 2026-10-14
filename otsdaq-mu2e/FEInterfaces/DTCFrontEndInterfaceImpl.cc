@@ -257,15 +257,24 @@ void checkROCEmulatorBlock(
 	    static_cast<uint16_t>(words[wordCount - 1] + 2);
 }
 
-// Sum (now - last snapshot) into the run totals, wrap-safe in 32 bits, then advance the snapshot
+// Sum (now - last snapshot) into the run totals, wrap-safe in 32 bits, then advance the snapshot.
+// Element 13 (EVBOutputLongestHold) is a since-reset maximum, not a counter: track the highest
+// value seen across snapshots rather than accumulating meaningless deltas.
 void accumulateEVBStallCounters(DTCLib::DTC*                           dtc,
                                 std::array<std::atomic<uint32_t>, 15>& lastSnapshot,
                                 std::array<std::atomic<uint64_t>, 15>& accumulated)
 {
+	static const size_t longestHoldIndex = 13;
 	const auto values = dtc->ReadEVBStallCounters();
 	for(size_t index = 0; index < lastSnapshot.size() && index < values.size(); ++index)
 	{
-		accumulated[index] += static_cast<uint32_t>(values[index] - lastSnapshot[index]);
+		if(index == longestHoldIndex)
+		{
+			if(values[index] > accumulated[index])
+				accumulated[index] = values[index];
+		}
+		else
+			accumulated[index] += static_cast<uint32_t>(values[index] - lastSnapshot[index]);
 		lastSnapshot[index] = values[index];
 	}
 }
