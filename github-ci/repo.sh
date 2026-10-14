@@ -27,6 +27,7 @@ packages_with_ci=(
     "otsdaq-mu2e-sync"
     "otsdaq-mu2e-tracker"
     "otsdaq-mu2e-trigger"
+    "tdaq-offline"
 )
 
 packages_without_ci=(
