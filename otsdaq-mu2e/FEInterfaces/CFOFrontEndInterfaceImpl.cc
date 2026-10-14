@@ -5756,20 +5756,19 @@ void CFOFrontEndInterface::SharedRunPlanSubsystemSingleShotJoin(__ARGS__)
 			// Check condition 2: current run-plan tag has advanced by the expected number of events.
 			uint64_t currentRunPlanTag = thisCFO_->ReadRunPlanCurrentTag();
 			eventCountDelta            = currentRunPlanTag - initialRunPlanTag;
-			bool eventCountValid = (eventCountDelta >= expectedEventCountDelta);
+			bool eventCountValid       = (eventCountDelta >= expectedEventCountDelta);
 
 			// Report progress to the GUI based on tag advancement within this chunk
 			{
 				unsigned int chunkProgressPercent =
 				    expectedEventCountDelta > 0
-				        ? static_cast<unsigned int>(
-				              100 * eventCountDelta / expectedEventCountDelta)
+				        ? static_cast<unsigned int>(100 * eventCountDelta /
+				                                    expectedEventCountDelta)
 				        : 0;
 				if(chunkProgressPercent > 100)
 					chunkProgressPercent = 100;
-				unsigned int overallPercent =
-				    static_cast<unsigned int>(
-				        (chunkIndex * 100 + chunkProgressPercent) / chunkCounts.size());
+				unsigned int overallPercent = static_cast<unsigned int>(
+				    (chunkIndex * 100 + chunkProgressPercent) / chunkCounts.size());
 				setFEMacroPercentDone(overallPercent);
 			}
 

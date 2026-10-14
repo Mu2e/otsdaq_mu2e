@@ -265,7 +265,7 @@ void accumulateEVBStallCounters(DTCLib::DTC*                           dtc,
                                 std::array<std::atomic<uint64_t>, 15>& accumulated)
 {
 	static const size_t longestHoldIndex = 13;
-	const auto values = dtc->ReadEVBStallCounters();
+	const auto          values           = dtc->ReadEVBStallCounters();
 	for(size_t index = 0; index < lastSnapshot.size() && index < values.size(); ++index)
 	{
 		if(index == longestHoldIndex)
@@ -274,7 +274,8 @@ void accumulateEVBStallCounters(DTCLib::DTC*                           dtc,
 				accumulated[index] = values[index];
 		}
 		else
-			accumulated[index] += static_cast<uint32_t>(values[index] - lastSnapshot[index]);
+			accumulated[index] +=
+			    static_cast<uint32_t>(values[index] - lastSnapshot[index]);
 		lastSnapshot[index] = values[index];
 	}
 }
@@ -1311,14 +1312,16 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "EVB Status",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::EVBStatus),  // feMacroFunction
-	    std::vector<std::string>{
-	        "Read TX History Entries (0x91F0; advances the hardware pointer, Default := only when frozen)"},
+	    std::vector<std::string>{"Read TX History Entries (0x91F0; advances the hardware "
+	                             "pointer, Default := only when frozen)"},
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
 	    "Display all EVB counters: config (0x9154/0x9158), error/status flags (0x9370), "
-	    "retransmission (0x9174), TX packet history (0x925C/0x91F0: frozen state and the packets "
-	    "around the first drop), pipeline word counters (0x9200-0x920C), and per-DTC BRAM stats "
+	    "retransmission (0x9174), TX packet history (0x925C/0x91F0: frozen state and the "
+	    "packets "
+	    "around the first drop), pipeline word counters (0x9200-0x920C), and per-DTC "
+	    "BRAM stats "
 	    "(types 0x0-0xA via 0x9160).");
 
 	registerFEMacroFunction(
@@ -7647,7 +7650,8 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	if(evbHasRetransmission(dtc))
 	{
 		const std::string readEntriesInput = __GET_ARG_IN__(
-		    "Read TX History Entries (0x91F0; advances the hardware pointer, Default := only "
+		    "Read TX History Entries (0x91F0; advances the hardware pointer, Default := "
+		    "only "
 		    "when frozen)",
 		    std::string,
 		    "");
@@ -7665,7 +7669,8 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 				const auto history = dtc->ReadEVBTxHistory(frozen || forceReadEntries);
 				o << dtc->FormatEVBTxHistoryText(history, "  ");
 				if(!frozen && !forceReadEntries)
-					o << "  (entries left unread so the one walk per run is saved for a frozen "
+					o << "  (entries left unread so the one walk per run is saved for a "
+					     "frozen "
 					     "log; set the input to read them anyway)\n";
 			}
 		}
