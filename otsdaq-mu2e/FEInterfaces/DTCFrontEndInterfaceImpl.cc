@@ -35,6 +35,10 @@ using namespace ots;
 
 namespace
 {
+/// Name of the extra output argument appended to every "ROC FEMacro - X" wrapper,
+/// reporting which ROC links succeeded/failed when the macro runs on many ROCs.
+const char* const ROC_LINK_SUMMARY_ARG = "Link Summary";
+
 uint32_t readEVBBufferTestStatus(DTCLib::DTC* dtc)
 {
 	if(!dtc)
@@ -1147,6 +1151,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					    "Target ROC");  //for display (especially to see which ROCs were targeted with -1)
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
+					outputArgs.push_back(
+					    ROC_LINK_SUMMARY_ARG);  //per-link OK/FAILED summary when running many ROCs
 
 					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
 					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
@@ -4036,6 +4042,21 @@ bool DTCFrontEndInterface::running(void)
 }  // end running()
 
 //==============================================================================
+namespace
+{
+/// First line of an exception message, for compact per-link summaries (the full
+/// message is still written to the log).
+std::string firstLineOf(const std::string& msg)
+{
+	std::string line = msg.substr(0, msg.find('\n'));
+	while(line.size() &&
+	      (line.back() == ' ' || line.back() == '\t' || line.back() == '\r'))
+		line.pop_back();
+	return line;
+}
+}  // namespace
+
+//==============================================================================
 // rocRead
 void DTCFrontEndInterface::ReadROC(__ARGS__)
 {
@@ -4067,8 +4088,14 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 
 	DTCLib::roc_data_t readData = -999;
 
-	bool        found = false;
-	std::string result;
+	// Read every targeted link, even if some fail; report a per-link summary at the
+	// end. Only throw when no targeted link could be read (so a single-link read
+	// still produces an error as before).
+	bool              found = false;
+	std::string       result;
+	std::string       okLinks, failedLinks;
+	size_t            okCount = 0, failCount = 0;
+	std::stringstream errorDetails;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -4087,6 +4114,10 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 		{
 			found = true;
 			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
+			const std::string linkStr =
+			    std::to_string(static_cast<uint8_t>(roc.second->getLinkID()));
+
+			std::string entry;
 			try  //give user feedback on ROC status if exception caught
 			{
 				if(emulatorMode_)
@@ -4098,32 +4129,38 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 					readData =
 					    getDTC()->ReadROCRegister(roc.second->getLinkID(), address, 300);
 				}
+
+				char readDataStr[100];
+				sprintf(readDataStr, "0x%x", readData);
+				entry = readDataStr;
+				++okCount;
+				okLinks += (okLinks.size() ? ", " : "") + linkStr;
+
+				__FE_COUT__ << "readData"
+				            << ": 0x" << std::hex << readData << std::dec << __E__;
+			}
+			catch(const std::exception& e)
+			{
+				++failCount;
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				entry = "ERROR: " + firstLineOf(e.what());
+				errorDetails << "\n\nLink " << linkStr << ": " << e.what();
+				__FE_COUT_WARN__ << "Error during ROC read of link " << linkStr
+				                 << " - continuing with remaining links. Here was the "
+				                    "error: "
+				                 << e.what() << __E__;
 			}
 			catch(...)
 			{
-				__SS__ << "Error during ROC read of link " << roc.second->getLinkID()
-				       << " - check that the ROC is enabled and ready; here is the DTC "
-				          "ROC setup: "
-				       << getDTC()->FormattedRegDump(
-				              0, getDTC()->formattedROCEmulationFunctions_)
-				       << __E__;
-				try
-				{
-					throw;
-				}
-				catch(const std::runtime_error& e)
-				{
-					ss << "\nHere was the error: " << e.what() << __E__;
-				}
-				catch(const std::exception& e)
-				{
-					ss << "\nHere was the error: " << e.what() << __E__;
-				}
-				__SS_THROW__;
+				++failCount;
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				entry = "ERROR: unknown exception";
+				errorDetails << "\n\nLink " << linkStr << ": unknown exception";
+				__FE_COUT_WARN__ << "Unknown exception during ROC read of link "
+				                 << linkStr << " - continuing with remaining links."
+				                 << __E__;
 			}
 
-			char readDataStr[100];
-			sprintf(readDataStr, "0x%x", readData);
 			if(result.size())
 				result += ", ";
 			else  //init
@@ -4134,25 +4171,40 @@ void DTCFrontEndInterface::ReadROC(__ARGS__)
 				result = ss.str();
 			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
-				result += "(" +
-				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
-				          ") ";
-			result += readDataStr;
-
-			__FE_COUT__ << "readData"
-			            << ": 0x" << std::hex << readData << std::dec << __E__;
+				result += "(" + linkStr + ") ";
+			result += entry;
 		}
 	}  //end roc exec loop
 
-	if(found)
+	if(!found)
 	{
-		__SET_ARG_OUT__("readData", result);
-		return;
+		__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal
+		          << " not found!" << __E__;
+		__FE_SS_THROW__;
 	}
 
-	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
-	          << __E__;
-	__FE_SS_THROW__;
+	if(okCount == 0)  // every targeted link failed
+	{
+		__FE_SS__ << "Error during ROC read of link(s) " << failedLinks
+		          << " - check that the ROC is enabled and ready; here is the DTC "
+		             "ROC setup: "
+		          << getDTC()->FormattedRegDump(0,
+		                                        getDTC()->formattedROCEmulationFunctions_)
+		          << errorDetails.str() << __E__;
+		__FE_SS_THROW__;
+	}
+
+	if(failCount)
+	{
+		result += "\n\nSummary: " + std::to_string(okCount) + " of " +
+		          std::to_string(okCount + failCount) +
+		          " link(s) read OK. OK link(s): " + okLinks +
+		          ". FAILED link(s): " + failedLinks + ".";
+		__FE_COUT_WARN__ << "ROC read of address " << address << " failed for link(s) "
+		                 << failedLinks << "; OK for link(s) " << okLinks << __E__;
+	}
+
+	__SET_ARG_OUT__("readData", result);
 }  // end ReadROC()
 
 //==============================================================================
@@ -4784,8 +4836,14 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 	__FE_COUT__ << "numberOfWords = " << std::dec << (unsigned int)wordCount << __E__;
 	__FE_COUTV__(incrementAddress);
 
-	bool        found  = false;
-	std::string result = "";
+	// Read every targeted link, even if some fail; report a per-link summary at the
+	// end. Only throw when no targeted link could be read (so a single-link read
+	// still produces an error as before).
+	bool              found  = false;
+	std::string       result = "";
+	std::string       okLinks, failedLinks;
+	size_t            okCount = 0, failCount = 0;
+	std::stringstream errorDetails;
 	for(auto& roc : rocs_)
 	{
 		if(usingRocMask)
@@ -4804,12 +4862,15 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 		{
 			found = true;
 			__FE_COUTT__ << "Doing " << roc.second->getLinkID() << __E__;
-			std::vector<DTCLib::roc_data_t> readData;
-
-			roc.second->readBlock(readData, address, wordCount, incrementAddress);
+			const std::string linkStr =
+			    std::to_string(static_cast<uint8_t>(roc.second->getLinkID()));
 
 			std::string readDataString = "";
+			try
 			{
+				std::vector<DTCLib::roc_data_t> readData;
+				roc.second->readBlock(readData, address, wordCount, incrementAddress);
+
 				for(size_t i = 0; i < readData.size(); ++i)
 				{
 					if(i)
@@ -4819,11 +4880,35 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 					readDataString +=
 					    BinaryStringMacros::binaryNumberToHexString(readData[i]);
 				}
+				++okCount;
+				okLinks += (okLinks.size() ? ", " : "") + linkStr;
+
+				__FE_COUT__ << "readData"
+				            << ": " << readDataString << __E__;
+			}
+			catch(const std::exception& e)
+			{
+				++failCount;
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				readDataString = "ERROR: " + firstLineOf(e.what());
+				errorDetails << "\n\nLink " << linkStr << ": " << e.what();
+				__FE_COUT_WARN__ << "Error during ROC block read of link " << linkStr
+				                 << " - continuing with remaining links. Here was the "
+				                    "error: "
+				                 << e.what() << __E__;
+			}
+			catch(...)
+			{
+				++failCount;
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				readDataString = "ERROR: unknown exception";
+				errorDetails << "\n\nLink " << linkStr << ": unknown exception";
+				__FE_COUT_WARN__ << "Unknown exception during ROC block read of link "
+				                 << linkStr << " - continuing with remaining links."
+				                 << __E__;
 			}
 
-			if(result.size())
-				result += "";
-			else  //init
+			if(!result.size())  //init
 			{
 				std::stringstream ss;
 				ss << "Block Read from ROC Address " << address << "(0x" << std::hex
@@ -4831,26 +4916,38 @@ void DTCFrontEndInterface::BlockReadROC(__ARGS__)
 				result = ss.str();
 			}
 			if(rocLinkIndex == DTC_Link_ALL || usingRocMask)
-				result += "(" +
-				          std::to_string(static_cast<uint8_t>(roc.second->getLinkID())) +
-				          ") ";
+				result += "(" + linkStr + ") ";
 			result += readDataString + "\n";
-
-			__FE_COUT__ << "readData"
-			            << ": " << readDataString << __E__;
 		}
 	}  //end roc exec loop
 
-	if(found)
+	if(!found)
 	{
-		__SET_ARG_OUT__("readData", result);
-		return;
+		__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal
+		          << " not found!" << __E__;
+		__FE_SS_THROW__;
 	}
 
-	__FE_SS__ << "Target ROC or Mask 0x" << std::hex << rocLinkIndexVal << " not found!"
-	          << __E__;
-	__FE_SS_THROW__;
+	if(okCount == 0)  // every targeted link failed
+	{
+		__FE_SS__ << "Error during ROC block read of link(s) " << failedLinks
+		          << " - check that the ROC is enabled and ready." << errorDetails.str()
+		          << __E__;
+		__FE_SS_THROW__;
+	}
 
+	if(failCount)
+	{
+		result += "\nSummary: " + std::to_string(okCount) + " of " +
+		          std::to_string(okCount + failCount) +
+		          " link(s) read OK. OK link(s): " + okLinks +
+		          ". FAILED link(s): " + failedLinks + ".";
+		__FE_COUT_WARN__ << "ROC block read of address " << address
+		                 << " failed for link(s) " << failedLinks << "; OK for link(s) "
+		                 << okLinks << __E__;
+	}
+
+	__SET_ARG_OUT__("readData", result);
 }  // end BlockReadROC()
 
 //========================================================================
@@ -5446,8 +5543,9 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			auto& selectedRoc = selectedRocs[rocIndex];
 			__COUT__ << "ROC FE Macro start. rocLink=" << selectedRoc.linkID
 			         << " macro=" << rocFEMacroName << __E__;
-			// Fail immediately on an exception. Do not start another ROC after
-			// an uncompleted hardware transaction on this DTC.
+			// On an exception, record the error for this ROC and continue with the
+			// remaining ROCs; the per-link outcome is reported in the Link Summary
+			// output, and an exception is thrown only if every targeted ROC failed.
 			try
 			{
 				selectedRoc.roc->runSelfFrontEndMacro(
@@ -5462,36 +5560,74 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			catch(const std::exception& e)
 			{
 				selectedRoc.error = e.what();
-				break;
 			}
 			catch(...)
 			{
 				selectedRoc.error = "Unknown exception while running ROC FE Macro.";
-				break;
 			}
-			__COUT__ << "ROC FE Macro done. rocLink=" << selectedRoc.linkID
-			         << " macro=" << rocFEMacroName << __E__;
+
+			if(selectedRoc.error.empty())
+				__COUT__ << "ROC FE Macro done. rocLink=" << selectedRoc.linkID
+				         << " macro=" << rocFEMacroName << __E__;
+			else
+				__FE_COUT_WARN__
+				    << "ROC FE Macro '" << rocFEMacroName << "' failed for ROC link "
+				    << selectedRoc.linkID
+				    << " - continuing with remaining ROCs. Here was the error: "
+				    << selectedRoc.error << __E__;
 		}
 
+		// Build per-link summary
+		size_t            okCount = 0;
+		std::string       okLinks, failedLinks;
+		std::stringstream linkSummary;
 		for(const auto& selectedRoc : selectedRocs)
-			if(!selectedRoc.error.empty())
+		{
+			std::string linkStr = std::to_string(selectedRoc.linkID);
+			if(selectedRoc.error.empty())
 			{
-				__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
-				          << "' failed for ROC link " << selectedRoc.linkID << ": "
-				          << selectedRoc.error << __E__;
-				__FE_SS_THROW__;
+				++okCount;
+				okLinks += (okLinks.size() ? ", " : "") + linkStr;
+				linkSummary << "\nLink " << linkStr << ": OK";
 			}
+			else
+			{
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				linkSummary << "\nLink " << linkStr << ": FAILED - "
+				            << firstLineOf(selectedRoc.error);
+			}
+		}
 
-		// Merge per-ROC outputs after sequential execution, keeping the original
-		// CSV/array formatting expected by the FE Macro response.
-		bool arrayNotation = selectedRocs.size() > 1;
-		bool openedArray   = false;
+		if(okCount == 0)  // every targeted ROC failed
+		{
+			__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
+			          << "' failed for all targeted ROC link(s) " << failedLinks << ":"
+			          << __E__;
+			for(const auto& selectedRoc : selectedRocs)
+				ss << "\n\nLink " << selectedRoc.linkID << ": " << selectedRoc.error;
+			__FE_SS_THROW__;
+		}
+
+		if(okCount != selectedRocs.size())
+			__FE_COUT_WARN__ << "ROC FE Macro '" << rocFEMacroName
+			                 << "' failed for ROC link(s) " << failedLinks
+			                 << "; OK for ROC link(s) " << okLinks << __E__;
+
+		// Merge per-ROC outputs (of the ROCs that succeeded) after sequential
+		// execution, keeping the original CSV/array formatting expected by the FE
+		// Macro response. Array notation depends on the number of targeted ROCs, so
+		// the format does not change based on which ROCs failed.
+		bool   arrayNotation = selectedRocs.size() > 1;
+		size_t mergedCount   = 0;
 		for(size_t rocIndex = 0; rocIndex < selectedRocs.size(); ++rocIndex)
 		{
 			const auto& selectedRoc = selectedRocs[rocIndex];
-			bool        found       = rocIndex != 0;
+			if(!selectedRoc.error.empty())
+				continue;  // failed ROC has no outputs to merge
 
-			if(found && arrayNotation && !openedArray)
+			bool found = mergedCount != 0;
+
+			if(!found && arrayNotation)
 				argsOut[0].second =
 				    "[" + argsOut[0].second;  //add leading bracket for array notation
 			argsOut[0].second +=              //add new value
@@ -5501,7 +5637,10 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size();
 			    ++i)
 			{
-				if(found && arrayNotation && !openedArray)
+				if(argsOut[i].first == ROC_LINK_SUMMARY_ARG)
+					continue;  // filled below
+
+				if(!found && arrayNotation)
 					argsOut[i].second =
 					    "[" + argsOut[i].second;  //add leading bracket for array notation
 				argsOut[i].second +=              //add new value
@@ -5509,18 +5648,23 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 				__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second << __E__;
 			}
 
-			if(found && arrayNotation)
-				openedArray = true;
+			++mergedCount;
 		}
 
 		//finalize array notation for output args
 		if(arrayNotation)
 		{
 			for(auto& argOut : argsOut)
-				if(argOut.first !=
-				   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
+				if(argOut.first != PLOTLY_PLOT /* defined at FEVinterface.h */
+				   &&                          //leave built-in arg as DEFAULT
+				   argOut.first != ROC_LINK_SUMMARY_ARG)
 					argOut.second += "]";  //add trailing bracket for array notation
 		}
+
+		__SET_ARG_OUT__(ROC_LINK_SUMMARY_ARG,
+		                std::to_string(okCount) + " of " +
+		                    std::to_string(selectedRocs.size()) + " ROC(s) OK." +
+		                    linkSummary.str());
 	}
 	else  //individual target defined by feMacroIt pair
 	{
