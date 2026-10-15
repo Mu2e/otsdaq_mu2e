@@ -3747,6 +3747,26 @@ void DTCFrontEndInterface::stop(void)
 		return;
 	__FE_COUTV__(transitionStr);
 
+	// Resume Slow Controls polling now that the run has ended (see matching pause
+	// in start(), which stops Slow Controls for the duration of the run so its
+	// DCS traffic cannot contend with the DAQ while running).
+	{
+		bool slowControlsEnable = true;
+		try
+		{
+			slowControlsEnable =
+			    getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+		}
+		catch(...)
+		{
+		}
+		if(slowControlsEnable)
+		{
+			slowControlsWorkLoopShouldRun_ = true;
+			__FE_COUT__ << "Resuming Slow Controls workloop at Stop." << __E__;
+		}
+	}
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
@@ -3956,6 +3976,27 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	if(skipInit_)
 		return;
 	__FE_COUTV__(transitionStr);
+
+	// Pause Slow Controls polling for the duration of the run, so its DCS
+	// traffic on the DTC cannot contend with the DAQ while running. Resumed
+	// in stop(). Idempotent: start() may be called more than once per run
+	// across subsystem-iteration steps.
+	{
+		bool slowControlsEnable = true;
+		try
+		{
+			slowControlsEnable =
+			    getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+		}
+		catch(...)
+		{
+		}
+		if(slowControlsEnable)
+		{
+			slowControlsWorkLoopShouldRun_ = false;
+			__FE_COUT__ << "Pausing Slow Controls workloop for Start." << __E__;
+		}
+	}
 
 	runningCallCount_ = 0;
 	rocRunningStatus_.clear();
