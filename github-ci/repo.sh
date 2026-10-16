@@ -27,6 +27,7 @@ packages_with_ci=(
     "otsdaq-mu2e-sync"
     "otsdaq-mu2e-tracker"
     "otsdaq-mu2e-trigger"
+    "tdaq-offline"
 )
 
 packages_without_ci=(
@@ -37,7 +38,8 @@ packages_without_ci=(
   "TDAQFirmware"
   "mu2e-spack"
   "mu2e-tdaq-suite"
-  "daq-shifter-tools"
+  "mu2edaq-shifter-tools"
+  "mu2edaq-documentation"
 )
 
 packages=(

@@ -265,6 +265,7 @@ void CFOFrontEndInterface::registerFEMacros(void)
 											"Number of Event Window Markers to generate (0 := infinite)",
 											"Starting Event Window Tag (Default or -1 := start from 0 and continue)",
 											"Event Window Mode (Default := 1)",
+											"On-spill Flag (Default := false)",
 											"Enable Clock Markers (Default := true)",
 											"Use Detached Buffer Test (Default := false)",
 											"For Detached Buffer Test, Save Binary Data to File (Default: false)",
@@ -1850,8 +1851,12 @@ void CFOFrontEndInterface::configure(void)
 	// 	regWriteMonitorStream_.flush();
 	// }
 
-	if(getIterationIndex() == 0 && getSubIterationIndex() == 0)
+	if(isFirstIteration())
+	{
 		recordTimeAlive();
+		resetConfigPhase();
+		timing_chain_first_substep_ = -1;
+	}
 
 	if(skipInit_)
 		return;
@@ -2077,9 +2082,23 @@ void CFOFrontEndInterface::configure(void)
 void CFOFrontEndInterface::configureEventBuildingMode(int step)
 {
 	if(step == -1)
-		step = getIterationIndex();
+	{
+		// The CFO subsystem always runs its pass first (subsystem-iteration 0, or
+		// STANDALONE). Kept as a guard for symmetry with the DTC turn rule.
+		if(!isMyConfigureSubsystemIteration(
+		       CFOandDTCCoreVInterface::CONFIG_SUBSYSTEM_ITERATION_CFO_SUBSYSTEM))
+		{
+			__FE_COUT__ << "Not the CFO subsystem's turn (subsystem-iteration "
+			            << getSubsystemIterationIndexString() << "); waiting." << __E__;
+			indicateSubsystemIterationWork();
+			return;
+		}
+		step = configPhase();
+	}
 
-	__FE_COUT_INFO__ << "configureEventBuildingMode() iteration=" << step << __E__;
+	__FE_COUT_INFO__ << "configureEventBuildingMode() phase=" << step
+	                 << " (subsystem-iteration " << getSubsystemIterationIndexString()
+	                 << ", iteration " << getIterationIndex() << ")" << __E__;
 
 	if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_CLOCKS_A)
 	{
@@ -2103,7 +2122,39 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 		thisCFO_->EnableEmbeddedClockMarker();
 		__FE_COUT__ << "Enabled all CFO links and embedded clock markers." << __E__;
 
-		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
+		// Also enable the CFO link on every DTC in this subsystem, so the chain bring-up
+		// (CDR check, edge fix) does not depend on the DTC front end having acted yet.
+		{
+			std::vector<std::string> dtcUIDs =
+			    getSubsystemFEUIDsOfPlugin("DTCFrontEndInterface");
+			__FE_COUT__ << "Enabling CFO link (link 6, Tx+Rx) on " << dtcUIDs.size()
+			            << " DTC(s) in this subsystem via FE macro..." << __E__;
+			for(const auto& dtcUID : dtcUIDs)
+			{
+				std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
+				argsIn.emplace_back("Target Link (Default = -1 := all links)", "6");
+				argsIn.emplace_back("Set Link Tx Enable (Default := false)", "1");
+				argsIn.emplace_back("Set Link Rx Enable (Default := false)", "1");
+				try
+				{
+					runSubsystemFrontEndMacro(
+					    dtcUID, "Enable/Disable DTC Link", argsIn, argsOut);
+				}
+				catch(const std::exception& e)
+				{
+					__FE_SS__
+					    << "Phase 2a (Timing Chain: Enable): failed to enable the CFO "
+					       "link on DTC "
+					    << dtcUID
+					    << " via FE Macro 'Enable/Disable DTC Link': " << e.what();
+					__FE_SS_THROW__;
+				}
+				__FE_COUT__ << "DTC " << dtcUID << " CFO link enabled." << __E__;
+			}
+		}
+
+		if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		   operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC)
 		{
 			CompileSetAndLaunchTemplateFixedWidthRunPlan(
 			    true,     // enable
@@ -2117,7 +2168,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			    false,    // saveSubeventHeadersToDataFile
 			    false);   // doNotResetCounters
 			__FE_COUT__ << "Started fixed-width event run plan for aggressive 8b10 "
-			               "traffic during sync phases."
+			               "traffic during edge fix phases."
 			            << __E__;
 		}
 
@@ -2142,47 +2193,11 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			bool        cfoCDRLocked = false;
 		};
 		std::vector<DTCLockInfo> dtcLockInfos;
+		for(const auto& uid : getSubsystemFEUIDsOfPlugin("DTCFrontEndInterface"))
 		{
-			auto cfgMgr   = Configurable::getConfigurationManager();
-			auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
-			for(const auto& ctx : contexts)
-			{
-				if(!ctx.second.isEnabled())
-					continue;
-				try
-				{
-					auto apps =
-					    ctx.second.getNode("LinkToApplicationTable").getChildren();
-					for(const auto& app : apps)
-					{
-						if(!app.second.isEnabled())
-							continue;
-						try
-						{
-							auto supNode = app.second.getNode("LinkToSupervisorTable");
-							auto feChildren =
-							    supNode.getNode("LinkToFEInterfaceTable").getChildren();
-							for(const auto& fe : feChildren)
-							{
-								if(!fe.second.isEnabled())
-									continue;
-								if(fe.second.getNode("FEInterfacePluginName")
-								       .getValue<std::string>() != "DTCFrontEndInterface")
-									continue;
-								DTCLockInfo info;
-								info.uid = fe.first;
-								dtcLockInfos.push_back(std::move(info));
-							}
-						}
-						catch(...)
-						{
-						}
-					}
-				}
-				catch(...)
-				{
-				}
-			}
+			DTCLockInfo info;
+			info.uid = uid;
+			dtcLockInfos.push_back(std::move(info));
 		}
 
 		__FE_COUT__ << "Found " << dtcLockInfos.size() << " DTC FE interfaces." << __E__;
@@ -2193,7 +2208,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 			std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
 			try
 			{
-				runFrontEndMacro(dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
+				runSubsystemFrontEndMacro(
+				    dtcLock.uid, "Get Link Lock Status", argsIn, argsOut);
 
 				__FE_COUT__ << "DTC " << dtcLock.uid
 				            << " argsOut.size()=" << argsOut.size() << __E__;
@@ -2298,13 +2314,14 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_CFO_EDGE_FIX)
 	{
-		bool doSync = (operatingMode_ ==
-		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		bool doEdgeFix =
+		    (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		     operatingMode_ ==
+		         CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
 
-		if(!doSync)
+		if(!doEdgeFix)
 		{
-			__FE_COUT__ << "CFO edge fix phase idle (no sync in EventBuildingMode)."
-			            << __E__;
+			__FE_COUT__ << "CFO edge fix phase idle." << __E__;
 			indicateIterationWork();
 		}
 		else
@@ -2314,51 +2331,9 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 			int subStep = getSubIterationIndex() - timing_chain_first_substep_;
 
-			// enumerate all DTCs from config tree
-			std::vector<std::string> dtcUIDs;
-			{
-				auto cfgMgr   = Configurable::getConfigurationManager();
-				auto contexts = cfgMgr->getNode("XDAQContextTable").getChildren();
-				for(const auto& ctx : contexts)
-				{
-					if(!ctx.second.isEnabled())
-						continue;
-					try
-					{
-						auto apps =
-						    ctx.second.getNode("LinkToApplicationTable").getChildren();
-						for(const auto& app : apps)
-						{
-							if(!app.second.isEnabled())
-								continue;
-							try
-							{
-								auto supNode =
-								    app.second.getNode("LinkToSupervisorTable");
-								auto feChildren =
-								    supNode.getNode("LinkToFEInterfaceTable")
-								        .getChildren();
-								for(const auto& fe : feChildren)
-								{
-									if(!fe.second.isEnabled())
-										continue;
-									if(fe.second.getNode("FEInterfacePluginName")
-									       .getValue<std::string>() !=
-									   "DTCFrontEndInterface")
-										continue;
-									dtcUIDs.push_back(fe.first);
-								}
-							}
-							catch(...)
-							{
-							}
-						}
-					}
-					catch(...)
-					{
-					}
-				}
-			}
+			// enumerate all DTCs in this subsystem from the config tree
+			std::vector<std::string> dtcUIDs =
+			    getSubsystemFEUIDsOfPlugin("DTCFrontEndInterface");
 
 			if(subStep == 0)
 			{
@@ -2376,7 +2351,7 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 					std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
 					try
 					{
-						runFrontEndMacro(
+						runSubsystemFrontEndMacro(
 						    dtcUID, "Get RTF Interface Status", argsIn, argsOut);
 					}
 					catch(const std::exception& e)
@@ -2457,7 +2432,8 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 					std::vector<FEVInterface::frontEndMacroArg_t> argsIn, argsOut;
 					try
 					{
-						runFrontEndMacro(dtcUID, "Fix CFO Clock Edge", argsIn, argsOut);
+						runSubsystemFrontEndMacro(
+						    dtcUID, "Fix CFO Clock Edge", argsIn, argsOut);
 					}
 					catch(const std::exception& e)
 					{
@@ -2520,23 +2496,29 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_E)
 	{
-		bool doSync = (operatingMode_ ==
-		               CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
-		if(!doSync)
+		bool doEdgeFix =
+		    (operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING ||
+		     operatingMode_ ==
+		         CFOandDTCCoreVInterface::CONFIG_MODE_EVENT_BUILDING_AND_SYNC);
+		if(!doEdgeFix)
 		{
-			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+			__FE_COUT__ << "Stop-events phase idle." << __E__;
 		}
 		else
 		{
 			thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 			thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
-			__FE_COUT__ << "Stopped CFO event generation after sync phases." << __E__;
+			__FE_COUT__ << "Stopped CFO event generation after edge fix phases." << __E__;
 		}
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_A ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B ||
-	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
+	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_B)
+	{
+		__FE_COUT__ << "Idle while DTCs perform edge fix..." << __E__;
+		indicateIterationWork();
+	}
+	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_C ||
 	        step == CFOandDTCCoreVInterface::CONFIG_PHASE_ESTABLISH_SYNC_D)
 	{
 		bool doSync = (operatingMode_ ==
@@ -2544,11 +2526,11 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 
 		if(!doSync)
 		{
-			__FE_COUT__ << "Sync phase idle (no sync in EventBuildingMode)." << __E__;
+			__FE_COUT__ << "RTF offset phase idle (no 40 MHz sync)." << __E__;
 		}
 		else
 		{
-			__FE_COUT__ << "Sync phase — idle while DTCs work..." << __E__;
+			__FE_COUT__ << "Idle while DTCs apply RTF marker offset..." << __E__;
 		}
 		indicateIterationWork();
 	}
@@ -2564,14 +2546,19 @@ void CFOFrontEndInterface::configureEventBuildingMode(int step)
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_PHASE_FINAL_SOFT_RESET)
 	{
-		__FE_COUT__ << "Final SoftReset to clear errors before enabling CFO operation."
+		__FE_COUT__ << "Releasing DAQ DMA buffers, then Final SoftReset to clear errors "
+		               "before enabling CFO operation."
 		            << __E__;
+		thisCFO_->ReleaseAllBuffers(DTC_DMA_Engine_DAQ);
 		thisCFO_->SoftReset();
 		indicateIterationWork();
 	}
 	else if(step == CFOandDTCCoreVInterface::CONFIG_CFO_EVENT_SENDING_START_ITERATION)
 	{
-		// Phase 6: Enable CFO Operation
+		// Phase 6: Enable CFO Operation — last phase of the CFO pass.
+		// Do not reset the phase base here: other FEs in this subsystem may still be
+		// iterating, so configure() will be called again and must keep returning a
+		// phase past the last one. The base is reset only on first-iteration configure() entry.
 		__FE_COUT__ << "Enable CFO operation (RF0, punch)." << __E__;
 		thisCFO_->EnableAcceleratorRF0();
 		thisCFO_->SetPunchEnable();
@@ -2645,8 +2632,9 @@ void CFOFrontEndInterface::configureForTimingChain(int step)
 	switch(step)
 	{
 	case 0:
+		// Do not call halt() here; its register writes (disable beam on/off modes) are
+		// done directly below, so the configure phase bookkeeping stays untouched.
 		next_starting_event_window_tag_ = 0;
-		halt();
 		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
 		thisCFO_->ClearControlRegister();
@@ -2742,6 +2730,11 @@ void CFOFrontEndInterface::halt(void)
 
 	__FE_COUT__ << "HALT: CFO status" << __E__;
 
+	// Do not reset the configure phase base here: halt() is also used as a plain
+	// hardware helper from inside configure() (run-plan compile, resets), where a
+	// reset would restart the phase sequence. The base is reset only at the start
+	// of a new configure() (isFirstIteration).
+
 	if(operatingMode_ != CFOandDTCCoreVInterface::CONFIG_MODE_LOOPBACK)
 	{
 		thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
@@ -2779,10 +2772,11 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 		return;
 	}
 
+	__FE_COUTV__(getSubsystemIterationIndexString());
 	__FE_COUTV__(getIterationIndex());
 	__FE_COUTV__(getSubIterationIndex());
 
-	if(getIterationIndex() == 0 && getSubIterationIndex() == 0)
+	if(isFirstIteration())
 	{
 		next_starting_event_window_tag_ = 0;  //reset next event window tag
 		__FE_COUTV__(next_starting_event_window_tag_);
@@ -2808,12 +2802,16 @@ void CFOFrontEndInterface::start(std::string runNumber)  // runNumber)
 			__FE_SS_THROW__;
 		}
 
-		const unsigned int startIteration = getIterationIndex();
+		// Start steps are ordered across subsystems (DTC SoftReset -> artdaq -> DTC final
+		// SoftReset -> CFO run plan): subsystem-iterations under a top-level, plain
+		// iterations when standalone.
+		const unsigned int startIteration = getSubsystemSyncStepIndex();
 		if(startIteration < systemMinReady)
 		{
-			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start iteration >= "
-			                 << systemMinReady << __E__;
-			indicateIterationWork();
+			__FE_COUT_INFO__ << "Delaying CFO run plan launch until start step >= "
+			                 << systemMinReady << " (now " << startIteration << ")"
+			                 << __E__;
+			indicateSubsystemSyncStepWork();
 			return;
 		}
 
@@ -3845,6 +3843,18 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	std::string modeStr =
 	    __GET_ARG_IN__("Event Window Mode (Default := 1)", std::string, "1");
 
+	uint64_t eventWindowMode =
+	    modeStr == "0"
+	        ? 0
+	        : __GET_ARG_IN__(
+	              "Event Window Mode (Default := 1)",
+	              uint64_t,
+	              1);  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
+
+	bool onSpill = __GET_ARG_IN__("On-spill Flag (Default := false)", bool, false);
+	if(onSpill)
+		eventWindowMode |= 0x100000000;
+
 	__SET_ARG_OUT__(
 	    "response",
 	    CompileSetAndLaunchTemplateFixedWidthRunPlan(
@@ -3856,12 +3866,7 @@ void CFOFrontEndInterface::CompileSetAndLaunchTemplateFixedWidthRunPlan(__ARGS__
 	                       std::string),
 	        numberOfEvents,
 	        startTag,
-	        modeStr == "0"
-	            ? 0
-	            : __GET_ARG_IN__(
-	                  "Event Window Mode (Default := 1)",
-	                  uint64_t,
-	                  1),  //allow mode 0 if user inputs it, but default to 1 since mode 0 is a null heartbeat and not a very useful default for a fixed width run plan
+	        eventWindowMode,
 	        __GET_ARG_IN__("Enable Clock Markers (Default := true)", bool, true),
 	        __GET_ARG_IN__(
 	            "For Detached Buffer Test, Save Binary Data to File (Default: false)",
@@ -4577,6 +4582,28 @@ void CFOFrontEndInterface::CFOHalt(__ARGS__)
 }  //end CFOHalt()
 
 //========================================================================
+// "CFO Soft Reset" FE Macro (registered in CFOandDTCCoreVInterface).
+//	Disable on-spill (0x9148) and off-spill (0x914C) Run Plan list processing
+//	before the Soft Reset, so the reset does not restart the Run Plan from
+//	its base address unexpectedly. Re-enable with a Run Plan launch macro.
+void CFOFrontEndInterface::SoftReset(__ARGS__)
+{
+	const bool onSpillWasEnabled  = thisCFO_->ReadBeamOnMode();
+	const bool offSpillWasEnabled = thisCFO_->ReadBeamOffMode();
+
+	thisCFO_->DisableBeamOnMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+	thisCFO_->DisableBeamOffMode(CFOLib::CFO_Link_ID::CFO_Link_ALL);
+
+	CFOandDTCCoreVInterface::SoftReset(feMacroStruct, argsIn, argsOut);
+
+	__FE_COUT_INFO__ << "CFO Soft Reset done. Run Plan list processing disabled first: "
+	                 << "on-spill was " << (onSpillWasEnabled ? "enabled" : "disabled")
+	                 << ", off-spill was "
+	                 << (offSpillWasEnabled ? "enabled" : "disabled")
+	                 << "; both are now disabled." << __E__;
+}  //end SoftReset()
+
+//========================================================================
 void CFOFrontEndInterface::GetCounters(__ARGS__)
 {
 	__SET_ARG_OUT__(
@@ -4725,7 +4752,19 @@ void CFOFrontEndInterface::SharedRunPlanStatus(__ARGS__)
 	std::string       divider(55, '=');
 	divider += "\n";
 
-	result << "CFO Run Plan Status: " << __E__;
+	bool beamOnEnabled  = thisCFO_->ReadBeamOnMode();
+	bool beamOffEnabled = thisCFO_->ReadBeamOffMode();
+	bool isRunning      = beamOnEnabled || beamOffEnabled;
+
+	result << "CFO Shared Run Plan: " << (isRunning ? "RUNNING" : "OFF")
+	       << (beamOnEnabled ? " (Beam-On)" : "") << (beamOffEnabled ? " (Beam-Off)" : "")
+	       << __E__;
+
+	result << "Available chunk loop counts: {";
+	for(size_t i = 0; i < standardNValues_.size(); ++i)
+		result << (i ? ", " : "") << standardNValues_[i];
+	result << "}" << __E__;
+
 	result << "\n" << divider << thisCFO_->FormatRunPlanCurrentTag() << __E__;
 
 	uint64_t eventDurationInClocks = extractSharedRunPlanEventDuration();

@@ -154,7 +154,7 @@ if [[ "x$build_system_script" == "x" ]];then
   build_system_script=$Base/setup_spack_build_system_v1.1.sh
 fi
 
-echo "ce1d0c139329e507b81af324aff6682880c184d5 *$build_system_script" | sha1sum -c -
+echo "63f733cce08e454534e24a9cfd95a64bd6e88ae9 *$build_system_script" | sha1sum -c -
 if [ $? -ne 0 ]; then
   echo "ERROR: setup_spack_build_system_v1.1.sh does not have the expected checksum! Please check Github for updates to this script!"
   exit 1
@@ -316,17 +316,18 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         checkout_package $pkg
     done
     if [[ ${opt_all_packages:-0} -eq 1 ]]; then
-        for pkg in mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-tracker otsdaq-mu2e-trigger mu2e-tdaq-suite;do
+        for pkg in mu2e-trig-config otsdaq-mu2e-calorimeter otsdaq-mu2e-crv otsdaq-mu2e-dqm otsdaq-mu2e-extmon otsdaq-mu2e-stm otsdaq-mu2e-sync otsdaq-mu2e-tracker otsdaq-mu2e-trigger mu2e-tdaq-suite;do
             checkout_package $pkg
         done
         if ! [ -d offline ];then
             if [ $opt_w -eq 0 ];then
-                git clone https://github.com/Mu2e/Offline.git offline
+                git clone https://github.com/Mu2e/tdaq-offline.git offline
             else
-                git clone git@github.com:Mu2e/Offline.git offline
+                git clone git@github.com:Mu2e/tdaq-offline.git offline
             fi
         else
             cd offline
+            git remote set-url origin https://github.com/Mu2e/tdaq-offline.git
             git pull
             cd ..
         fi
@@ -337,7 +338,7 @@ if [[ ${opt_develop:-0} -eq 1 ]];then
         done
     fi
     if [[ ${opt_artdaq:-0} -eq 1 ]] ; then
-        for pkg in artdaq artdaq-core artdaq-database artdaq-epics-plugin artdaq-mfextensions artdaq-utilities artdaq-daqinterface trace artdaq-suite;do
+        for pkg in artdaq artdaq-core artdaq-core-demo artdaq-database artdaq-epics-plugin artdaq-mfextensions artdaq-utilities artdaq-daqinterface trace artdaq-suite;do
             checkout_package $pkg art-daq
         done
     fi
