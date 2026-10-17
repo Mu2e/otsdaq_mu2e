@@ -35,6 +35,10 @@ using namespace ots;
 
 namespace
 {
+/// Name of the extra output argument appended to every "ROC FEMacro - X" wrapper,
+/// reporting which ROC links succeeded/failed when the macro runs on many ROCs.
+const char* const ROC_LINK_SUMMARY_ARG = "Link Summary";
+
 uint32_t readEVBBufferTestStatus(DTCLib::DTC* dtc)
 {
 	if(!dtc)
@@ -1617,6 +1621,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					    "Target ROC");  //for display (especially to see which ROCs were targeted with -1)
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
+					outputArgs.push_back(
+					    ROC_LINK_SUMMARY_ARG);  //per-link OK/FAILED summary when running many ROCs
 
 					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
 					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
@@ -3761,6 +3767,26 @@ void DTCFrontEndInterface::stop(void)
 		return;
 	__FE_COUTV__(transitionStr);
 
+	// Resume Slow Controls polling now that the run has ended (see matching pause
+	// in start(), which stops Slow Controls for the duration of the run so its
+	// DCS traffic cannot contend with the DAQ while running).
+	{
+		bool slowControlsEnable = true;
+		try
+		{
+			slowControlsEnable =
+			    getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+		}
+		catch(...)
+		{
+		}
+		if(slowControlsEnable)
+		{
+			slowControlsWorkLoopShouldRun_ = true;
+			__FE_COUT__ << "Resuming Slow Controls workloop at Stop." << __E__;
+		}
+	}
+
 	if(operatingMode_ == CFOandDTCCoreVInterface::CONFIG_MODE_HARDWARE_DEV)
 	{
 		__FE_COUT_INFO__ << transitionStr << " for hardware development mode!" << __E__;
@@ -3970,6 +3996,27 @@ void DTCFrontEndInterface::start(std::string runNumber)
 	if(skipInit_)
 		return;
 	__FE_COUTV__(transitionStr);
+
+	// Pause Slow Controls polling for the duration of the run, so its DCS
+	// traffic on the DTC cannot contend with the DAQ while running. Resumed
+	// in stop(). Idempotent: start() may be called more than once per run
+	// across subsystem-iteration steps.
+	{
+		bool slowControlsEnable = true;
+		try
+		{
+			slowControlsEnable =
+			    getSelfNode().getNode("SlowControlsEnable").getValue<bool>();
+		}
+		catch(...)
+		{
+		}
+		if(slowControlsEnable)
+		{
+			slowControlsWorkLoopShouldRun_ = false;
+			__FE_COUT__ << "Pausing Slow Controls workloop for Start." << __E__;
+		}
+	}
 
 	runningCallCount_ = 0;
 	rocRunningStatus_.clear();
@@ -4576,6 +4623,21 @@ bool DTCFrontEndInterface::running(void)
 	// }
 	// return true;
 }  // end running()
+
+//==============================================================================
+namespace
+{
+/// First line of an exception message, for compact per-link summaries (the full
+/// message is still written to the log).
+std::string firstLineOf(const std::string& msg)
+{
+	std::string line = msg.substr(0, msg.find('\n'));
+	while(line.size() &&
+	      (line.back() == ' ' || line.back() == '\t' || line.back() == '\r'))
+		line.pop_back();
+	return line;
+}
+}  // namespace
 
 //==============================================================================
 // rocRead
@@ -5966,8 +6028,9 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			auto& selectedRoc = selectedRocs[rocIndex];
 			__COUT__ << "ROC FE Macro start. rocLink=" << selectedRoc.linkID
 			         << " macro=" << rocFEMacroName << __E__;
-			// Fail immediately on an exception. Do not start another ROC after
-			// an uncompleted hardware transaction on this DTC.
+			// On an exception, record the error for this ROC and continue with the
+			// remaining ROCs; the per-link outcome is reported in the Link Summary
+			// output, and an exception is thrown only if every targeted ROC failed.
 			try
 			{
 				selectedRoc.roc->runSelfFrontEndMacro(
@@ -5982,36 +6045,74 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			catch(const std::exception& e)
 			{
 				selectedRoc.error = e.what();
-				break;
 			}
 			catch(...)
 			{
 				selectedRoc.error = "Unknown exception while running ROC FE Macro.";
-				break;
 			}
-			__COUT__ << "ROC FE Macro done. rocLink=" << selectedRoc.linkID
-			         << " macro=" << rocFEMacroName << __E__;
+
+			if(selectedRoc.error.empty())
+				__COUT__ << "ROC FE Macro done. rocLink=" << selectedRoc.linkID
+				         << " macro=" << rocFEMacroName << __E__;
+			else
+				__FE_COUT_WARN__
+				    << "ROC FE Macro '" << rocFEMacroName << "' failed for ROC link "
+				    << selectedRoc.linkID
+				    << " - continuing with remaining ROCs. Here was the error: "
+				    << selectedRoc.error << __E__;
 		}
 
+		// Build per-link summary
+		size_t            okCount = 0;
+		std::string       okLinks, failedLinks;
+		std::stringstream linkSummary;
 		for(const auto& selectedRoc : selectedRocs)
-			if(!selectedRoc.error.empty())
+		{
+			std::string linkStr = std::to_string(selectedRoc.linkID);
+			if(selectedRoc.error.empty())
 			{
-				__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
-				          << "' failed for ROC link " << selectedRoc.linkID << ": "
-				          << selectedRoc.error << __E__;
-				__FE_SS_THROW__;
+				++okCount;
+				okLinks += (okLinks.size() ? ", " : "") + linkStr;
+				linkSummary << "\nLink " << linkStr << ": OK";
 			}
+			else
+			{
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				linkSummary << "\nLink " << linkStr << ": FAILED - "
+				            << firstLineOf(selectedRoc.error);
+			}
+		}
 
-		// Merge per-ROC outputs after sequential execution, keeping the original
-		// CSV/array formatting expected by the FE Macro response.
-		bool arrayNotation = selectedRocs.size() > 1;
-		bool openedArray   = false;
+		if(okCount == 0)  // every targeted ROC failed
+		{
+			__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
+			          << "' failed for all targeted ROC link(s) " << failedLinks << ":"
+			          << __E__;
+			for(const auto& selectedRoc : selectedRocs)
+				ss << "\n\nLink " << selectedRoc.linkID << ": " << selectedRoc.error;
+			__FE_SS_THROW__;
+		}
+
+		if(okCount != selectedRocs.size())
+			__FE_COUT_WARN__ << "ROC FE Macro '" << rocFEMacroName
+			                 << "' failed for ROC link(s) " << failedLinks
+			                 << "; OK for ROC link(s) " << okLinks << __E__;
+
+		// Merge per-ROC outputs (of the ROCs that succeeded) after sequential
+		// execution, keeping the original CSV/array formatting expected by the FE
+		// Macro response. Array notation depends on the number of targeted ROCs, so
+		// the format does not change based on which ROCs failed.
+		bool   arrayNotation = selectedRocs.size() > 1;
+		size_t mergedCount   = 0;
 		for(size_t rocIndex = 0; rocIndex < selectedRocs.size(); ++rocIndex)
 		{
 			const auto& selectedRoc = selectedRocs[rocIndex];
-			bool        found       = rocIndex != 0;
+			if(!selectedRoc.error.empty())
+				continue;  // failed ROC has no outputs to merge
 
-			if(found && arrayNotation && !openedArray)
+			bool found = mergedCount != 0;
+
+			if(!found && arrayNotation)
 				argsOut[0].second =
 				    "[" + argsOut[0].second;  //add leading bracket for array notation
 			argsOut[0].second +=              //add new value
@@ -6021,7 +6122,10 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size();
 			    ++i)
 			{
-				if(found && arrayNotation && !openedArray)
+				if(argsOut[i].first == ROC_LINK_SUMMARY_ARG)
+					continue;  // filled below
+
+				if(!found && arrayNotation)
 					argsOut[i].second =
 					    "[" + argsOut[i].second;  //add leading bracket for array notation
 				argsOut[i].second +=              //add new value
@@ -6029,18 +6133,23 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 				__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second << __E__;
 			}
 
-			if(found && arrayNotation)
-				openedArray = true;
+			++mergedCount;
 		}
 
 		//finalize array notation for output args
 		if(arrayNotation)
 		{
 			for(auto& argOut : argsOut)
-				if(argOut.first !=
-				   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
+				if(argOut.first != PLOTLY_PLOT /* defined at FEVinterface.h */
+				   &&                          //leave built-in arg as DEFAULT
+				   argOut.first != ROC_LINK_SUMMARY_ARG)
 					argOut.second += "]";  //add trailing bracket for array notation
 		}
+
+		__SET_ARG_OUT__(ROC_LINK_SUMMARY_ARG,
+		                std::to_string(okCount) + " of " +
+		                    std::to_string(selectedRocs.size()) + " ROC(s) OK." +
+		                    linkSummary.str());
 	}
 	else  //individual target defined by feMacroIt pair
 	{
