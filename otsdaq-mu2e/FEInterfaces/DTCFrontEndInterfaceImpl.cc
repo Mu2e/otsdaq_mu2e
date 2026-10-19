@@ -3069,14 +3069,16 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				               "and clearing ROC emulation on all links (roc_mask_=0x"
 				            << std::hex << roc_mask_ << " emulated_mask_=0x"
 				            << roc_emulated_mask_ << std::dec << ")." << __E__;
-				dtc->SetROCEmulatorMask(0);  // 0x9110: internal/fiber-loopback/external bits only
+				dtc->SetROCEmulatorMask(
+				    0);  // 0x9110: internal/fiber-loopback/external bits only
 			}
 			else
 				__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
 				            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
 				            << std::dec << __E__;
 
-			for(size_t i = 0; !leaveROCLinksUntouched() && i < DTCLib::DTC_ROC_Links.size();
+			for(size_t i = 0;
+			    !leaveROCLinksUntouched() && i < DTCLib::DTC_ROC_Links.size();
 			    ++i)
 			{
 				bool enabled  = ((roc_mask_ >> i) & 1);

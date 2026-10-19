@@ -108,9 +108,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	struct MergedDetachedEvent
 	{
-		std::shared_ptr<DTCLib::DTC_Event> event;                 // self-contained copy
-		size_t                             numSubeventsFromDTC0;  // subevents [0,n0) came from DTC_0
-		uint64_t                           baseTag;               // == DTC_0 tag
+		std::shared_ptr<DTCLib::DTC_Event> event;  // self-contained copy
+		size_t   numSubeventsFromDTC0;             // subevents [0,n0) came from DTC_0
+		uint64_t baseTag;                          // == DTC_0 tag
 	};
 
 	struct DetachedBufferTestThreadStruct
@@ -119,7 +119,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<bool> running_            = false;
 		std::atomic<bool> exitThread_         = false;
 		std::atomic<bool> resetStartEventTag_ = false;
-		std::atomic<bool> releaseAllComplete_ = false;  ///< Set true by the detached buffer-test thread immediately after its ReleaseAllBuffers() returns; consumers (e.g. SetCFOEmulatorFixedWidthEmulation) wait on this before enabling CFO emulation so emulation does not start while the driver is still draining DMA buffers.
+		std::atomic<bool> releaseAllComplete_ =
+		    false;  ///< Set true by the detached buffer-test thread immediately after its ReleaseAllBuffers() returns; consumers (e.g. SetCFOEmulatorFixedWidthEmulation) wait on this before enabling CFO emulation so emulation does not start while the driver is still draining DMA buffers.
 
 		DTCLib::DTC* thisDTC_;
 
@@ -128,32 +129,40 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		uint8_t evbNumDestNodes_ = 1;
 		// source key = (sourceGroup << 8) | source_dtc_id; group 1 = subevent arrived via the
 		// DTC_1 half of a merged event.  Non-merge runs use group 0 only (key == source_dtc_id).
-		std::set<uint16_t>                                       evbSourcesSeenForTag_;        // source keys that have delivered the current expected tag
-		bool                                                     evbTagSynced_ = false;        // EVB mode: expected tag has been synced to the first subevent seen after (re)start
-		std::map<uint16_t /*source key*/, std::vector<uint64_t>> evbRocFragmentsBySource_;     // ROC fragment counts per source, per link
-		std::map<uint16_t /*source key*/, std::vector<uint64_t>> evbRocPayloadBytesBySource_;  // ROC payload bytes per source, per link
+		std::set<uint16_t>
+		    evbSourcesSeenForTag_;  // source keys that have delivered the current expected tag
+		bool evbTagSynced_ =
+		    false;  // EVB mode: expected tag has been synced to the first subevent seen after (re)start
+		std::map<uint16_t /*source key*/, std::vector<uint64_t>>
+		    evbRocFragmentsBySource_;  // ROC fragment counts per source, per link
+		std::map<uint16_t /*source key*/, std::vector<uint64_t>>
+		    evbRocPayloadBytesBySource_;  // ROC payload bytes per source, per link
 
 		// ---- merge modes ----
 		DetachedMergeMode mergeMode_ = DetachedMergeMode::Off;
-		DTCLib::DTC*      otherDTC_  = nullptr;  // DTC_1 FE's thisDTC_, borrowed; never deleted here
-		std::string       otherDTCUID_;
-		uint8_t           evbNumDestNodesOther_ = 1;
-		uint32_t          pairTimeoutMs_        = 2000;  // from thisDTC_->GetEVBEventTimeout() at Start
-		size_t            pairMaxPending_       = 1024;
+		DTCLib::DTC*      otherDTC_ =
+		    nullptr;  // DTC_1 FE's thisDTC_, borrowed; never deleted here
+		std::string otherDTCUID_;
+		uint8_t     evbNumDestNodesOther_ = 1;
+		uint32_t pairTimeoutMs_  = 2000;  // from thisDTC_->GetEVBEventTimeout() at Start
+		size_t   pairMaxPending_ = 1024;
 		struct PendingHalf
 		{
 			std::shared_ptr<DTCLib::DTC_Event>                 event;
 			std::chrono::time_point<std::chrono::steady_clock> arrival;
 		};
-		std::map<uint64_t /*baseTag*/, PendingHalf> pendingDTC0_, pendingDTC1_;  // thread-private
-		bool                                        haveMergedTag_     = false;
-		uint64_t                                    lastMergedBaseTag_ = 0;
+		std::map<uint64_t /*baseTag*/, PendingHalf> pendingDTC0_,
+		    pendingDTC1_;  // thread-private
+		bool     haveMergedTag_     = false;
+		uint64_t lastMergedBaseTag_ = 0;
 		// read lock-free by the status functions
 		std::atomic<uint64_t> mergedEventsCount_{0};
 		std::atomic<uint64_t> unmatchedDTC0Count_{0}, unmatchedDTC1Count_{0};
-		std::atomic<uint64_t> mergeTimeTotalNs_{0}, mergeTimeMaxNs_{0}, mergedBytesTotal_{0};
+		std::atomic<uint64_t> mergeTimeTotalNs_{0}, mergeTimeMaxNs_{0},
+		    mergedBytesTotal_{0};
 		std::atomic<size_t>   pendingDTC0Count_{0}, pendingDTC1Count_{0};
-		std::atomic<uint64_t> oldestPendingDTC0Tag_{UINT64_MAX}, oldestPendingDTC1Tag_{UINT64_MAX};
+		std::atomic<uint64_t> oldestPendingDTC0Tag_{UINT64_MAX},
+		    oldestPendingDTC1Tag_{UINT64_MAX};
 		bool                  activeMatch_      = false;
 		std::atomic<uint64_t> expectedEventTag_ = -1, nextEventWindowTag_ = -1;
 		bool                  saveBinaryData_                  = false;
@@ -177,10 +186,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t> evbCloseFillersCount_{0};
 		std::atomic<uint64_t> evbFramingErrors_{0};
 		std::atomic<uint32_t> evbStickyErrorsSeen_{0};
-		uint32_t              evbStickyIgnoreMask_{0};    // per-build known defects (set by thread)
-		uint32_t              evbOperatorIgnoreMask_{0};  // copied from the FE at Start; session-only
-		std::atomic<bool>     evbTrafficStarted_{false};
-		std::atomic<bool>     evbStatusReadFailed_{false};
+		uint32_t evbStickyIgnoreMask_{0};    // per-build known defects (set by thread)
+		uint32_t evbOperatorIgnoreMask_{0};  // copied from the FE at Start; session-only
+		std::atomic<bool> evbTrafficStarted_{false};
+		std::atomic<bool> evbStatusReadFailed_{false};
 		// Per-run count of 0x9370 polls with bit 17 (self-throttle: this DTC is >1024 tags
 		// ahead of its slowest peer) set.  hw agent 2026-09-24: this is the register that
 		// tells a run that stalled on the throttle from one that completed.
@@ -188,9 +197,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t> evbStatusPolls_{0};
 		// 0x9370 sampled on the first idle iteration after the last subevent arrived (~1 loop
 		// iteration late, vs ~2 s late for the timeout snapshot); re-armed whenever data resumes
-		std::atomic<bool>                                  evbErrAtStallOnsetValid_{false};
-		std::atomic<uint32_t>                              evbErrAtStallOnset_{0};
-		std::atomic<uint64_t>                              evbErrAtStallOnsetIter_{0};
+		std::atomic<bool>     evbErrAtStallOnsetValid_{false};
+		std::atomic<uint32_t> evbErrAtStallOnset_{0};
+		std::atomic<uint64_t> evbErrAtStallOnsetIter_{0};
 		std::chrono::time_point<std::chrono::steady_clock> evbErrAtStallOnsetTime_;
 		// EVB3 stall-time counters (0x9210-0x9228) sampled when traffic starts and on the first
 		// idle iteration after the last subevent (re-armed when data resumes); the difference
@@ -229,29 +238,35 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	    const DTCLib::DTC_SubEvent& subevent,
 	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	             threadStruct,
-	    uint64_t tagOffset   = 0,  // subtracted from the subevent tag before the expected-tag check
-	    uint8_t  sourceGroup = 0);  // 0 = DTC_0 half / non-merge, 1 = DTC_1 half
+	    uint64_t tagOffset =
+	        0,  // subtracted from the subevent tag before the expected-tag check
+	    uint8_t sourceGroup = 0);  // 0 = DTC_0 half / non-merge, 1 = DTC_1 half
 
 	static std::shared_ptr<DTCLib::DTC_Event> buildMergedDetachedEvent(
 	    const DTCLib::DTC_Event& half0, const DTCLib::DTC_Event& half1, uint64_t baseTag);
 	static void stageDetachedHalf(
-	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct,
-	    std::shared_ptr<DTCLib::DTC_Event>                                    half,
-	    bool                                                                  fromDTC1,
-	    std::vector<MergedDetachedEvent>&                                     mergedOut);
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	                                       threadStruct,
+	    std::shared_ptr<DTCLib::DTC_Event> half,
+	    bool                               fromDTC1,
+	    std::vector<MergedDetachedEvent>&  mergedOut);
 	static void mergeDetachedEvents(
-	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct,
-	    std::vector<std::shared_ptr<DTCLib::DTC_Event>>&                      eventsFromDTC0,
-	    std::vector<std::shared_ptr<DTCLib::DTC_Event>>&                      eventsFromDTC1,
-	    std::vector<MergedDetachedEvent>&                                     mergedOut);
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	                                                     threadStruct,
+	    std::vector<std::shared_ptr<DTCLib::DTC_Event>>& eventsFromDTC0,
+	    std::vector<std::shared_ptr<DTCLib::DTC_Event>>& eventsFromDTC1,
+	    std::vector<MergedDetachedEvent>&                mergedOut);
 	static std::string getDetachedMergeStatus(
-	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct,
-	    int                                                                   labelWidth);
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct,
+	    int labelWidth);
 	static void resetDetachedMergeState(
-	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
 	static void handleMergedDetachedEvents(
-	    std::vector<MergedDetachedEvent>&                                     merged,
-	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct> threadStruct);
+	    std::vector<MergedDetachedEvent>& merged,
+	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
+	        threadStruct);
 
 	void initDetachedBufferTest(uint64_t           initialEventWindowTag,
 	                            bool               saveBinaryDataToFile,
@@ -277,8 +292,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	DTCFrontEndInterface* findPeerDTCFrontEnd(int deviceIndex, std::string& visibleList);
 	void                  requireNoMergeReaderOnThisDTC(void);
 
-	int                     timing_chain_first_substep_   = -1;
-	unsigned int            configSubsystemIterationTurn_ = (unsigned int)-1;  // which subsystem-iteration this DTC configures in; -1 = not yet decided
+	int          timing_chain_first_substep_ = -1;
+	unsigned int configSubsystemIterationTurn_ =
+	    (unsigned int)-1;  // which subsystem-iteration this DTC configures in; -1 = not yet decided
 	/// DTCs in the CFO's subsystem (multi-subsystem configure only) do not enable/disable
 	/// their ROC links during configure and never switch to emulated ROCs (ROC emulation is
 	/// cleared instead); the detector subsystems own their ROC links.
@@ -288,8 +304,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		       configSubsystemIterationTurn_ ==
 		           CFOandDTCCoreVInterface::CONFIG_SUBSYSTEM_ITERATION_CFO_SUBSYSTEM;
 	}
-	bool                    rtfPhaseEdgeRetried_          = false;
-	std::string             rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails
+	bool rtfPhaseEdgeRetried_ = false;
+	std::string
+	    rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails
 	int                     dtc_location_in_chain_ = -1;
 	unsigned int            runningCallCount_      = 0;
 	unsigned int            roc_mask_              = 0;
@@ -310,7 +327,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	EVBBRAMSnapshot evbBRAMSnapshot_;
 
 	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
-	std::map<DTCLib::DTC_Link_ID, bool>                                   rocRunningStatus_;
+	std::map<DTCLib::DTC_Link_ID, bool> rocRunningStatus_;
 
 	std::map<std::string /*DTC's FEMacro name*/,
 	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>
@@ -403,35 +420,35 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              int  idelayTapValue      = -1,
 	                              int  rtfPunchedClockEdge = 0);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
-	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
-	                                              bool               useDetachedBufferTest,
-	                                              uint32_t           numberOfSuperCycles,
-	                                              uint64_t           initialEventWindowTag,
-	                                              bool               enableClockMarkers,
-	                                              bool               enableAutogenDRP,
-	                                              bool               saveBinaryDataToFile,
+	std::string SetCFOEmulatorOnOffSpillEmulation(bool     enable,
+	                                              bool     useDetachedBufferTest,
+	                                              uint32_t numberOfSuperCycles,
+	                                              uint64_t initialEventWindowTag,
+	                                              bool     enableClockMarkers,
+	                                              bool     enableAutogenDRP,
+	                                              bool     saveBinaryDataToFile,
 	                                              const std::string& filename,
-	                                              bool               saveSubeventHeadersToDataFile,
-	                                              bool               doNotResetCounters,
-	                                              bool               skipBy32,
-	                                              uint32_t           packetThresholdToSave,
-	                                              bool               inEVBMode = false);
+	                                              bool     saveSubeventHeadersToDataFile,
+	                                              bool     doNotResetCounters,
+	                                              bool     skipBy32,
+	                                              uint32_t packetThresholdToSave,
+	                                              bool     inEVBMode = false);
 	void        SetCFOEmulatorFixedWidthEmulation(__ARGS__);
-	std::string SetCFOEmulatorFixedWidthEmulation(bool               enable,
-	                                              bool               useDetachedBufferTest,
+	std::string SetCFOEmulatorFixedWidthEmulation(bool enable,
+	                                              bool useDetachedBufferTest,
 	                                              const std::string& eventDuration,
-	                                              uint32_t           numberOfEventWindowMarkers,
-	                                              uint64_t           initialEventWindowTag,
-	                                              uint64_t           eventWindowMode,
-	                                              bool               enableClockMarkers,
-	                                              bool               enableAutogenDRP,
-	                                              bool               saveBinaryDataToFile,
+	                                              uint32_t numberOfEventWindowMarkers,
+	                                              uint64_t initialEventWindowTag,
+	                                              uint64_t eventWindowMode,
+	                                              bool     enableClockMarkers,
+	                                              bool     enableAutogenDRP,
+	                                              bool     saveBinaryDataToFile,
 	                                              const std::string& filename,
-	                                              bool               saveSubeventHeadersToDataFile,
-	                                              bool               doNotResetCounters,
-	                                              bool               skipBy32,
-	                                              uint32_t           packetThresholdToSave,
-	                                              bool               inEVBMode = false);
+	                                              bool     saveSubeventHeadersToDataFile,
+	                                              bool     doNotResetCounters,
+	                                              bool     skipBy32,
+	                                              uint32_t packetThresholdToSave,
+	                                              bool     inEVBMode = false);
 
 	void BufferTest(__ARGS__);
 	void PatternTest(__ARGS__);
