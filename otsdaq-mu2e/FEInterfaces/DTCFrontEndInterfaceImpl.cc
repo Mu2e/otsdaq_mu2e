@@ -3059,12 +3059,25 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 		if(subStep == 0)
 		{
-			// Step 1: SetupROCs per link
-			__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
-			            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
-			            << std::dec << __E__;
+			// Step 1: SetupROCs per link. DTCs in the CFO's subsystem only carry the
+			// timing chain: their ROC link enables are left as is (the links are not
+			// disturbed) and ROC emulation is switched off on every link, so a DTC that
+			// was left emulating by an earlier configure does not stay in emulated mode.
+			if(leaveROCLinksUntouched())
+			{
+				__FE_COUT__ << "DTC in the CFO subsystem: leaving ROC links untouched "
+				               "and clearing ROC emulation on all links (roc_mask_=0x"
+				            << std::hex << roc_mask_ << " emulated_mask_=0x"
+				            << roc_emulated_mask_ << std::dec << ")." << __E__;
+				dtc->SetROCEmulatorMask(0);  // 0x9110: internal/fiber-loopback/external bits only
+			}
+			else
+				__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
+				            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
+				            << std::dec << __E__;
 
-			for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
+			for(size_t i = 0; !leaveROCLinksUntouched() && i < DTCLib::DTC_ROC_Links.size();
+			    ++i)
 			{
 				bool enabled  = ((roc_mask_ >> i) & 1);
 				bool emulated = ((roc_emulated_mask_ >> i) & 1);
@@ -3366,7 +3379,12 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		// ROC link enable/disable follows roc_mask_ only, independent of
 		// has_real_roc_flow_ (i.e. of EnableROCConfigureStep), so the ROC links are
 		// always down while the control register and jitter attenuator are reworked.
-		if(roc_mask_)
+		// DTCs in the CFO's subsystem leave their ROC links alone (see Phase 4).
+		if(leaveROCLinksUntouched())
+			__FE_COUT__ << "DTC in the CFO subsystem: leaving ROC links untouched "
+			               "(roc_mask_=0x"
+			            << std::hex << roc_mask_ << std::dec << ")." << __E__;
+		else if(roc_mask_)
 		{
 			__FE_COUT__ << "Disabling configured ROC links (roc_mask_=0x" << std::hex
 			            << roc_mask_ << std::dec << "), leaving CFO link untouched."
