@@ -35,6 +35,10 @@ using namespace ots;
 
 namespace
 {
+/// Name of the extra output argument appended to every "ROC FEMacro - X" wrapper,
+/// reporting which ROC links succeeded/failed when the macro runs on many ROCs.
+const char* const ROC_LINK_SUMMARY_ARG = "Link Summary";
+
 uint32_t readEVBBufferTestStatus(DTCLib::DTC* dtc)
 {
 	if(!dtc)
@@ -257,15 +261,25 @@ void checkROCEmulatorBlock(
 	    static_cast<uint16_t>(words[wordCount - 1] + 2);
 }
 
-// Sum (now - last snapshot) into the run totals, wrap-safe in 32 bits, then advance the snapshot
+// Sum (now - last snapshot) into the run totals, wrap-safe in 32 bits, then advance the snapshot.
+// Element 13 (EVBOutputLongestHold) is a since-reset maximum, not a counter: track the highest
+// value seen across snapshots rather than accumulating meaningless deltas.
 void accumulateEVBStallCounters(DTCLib::DTC*                           dtc,
                                 std::array<std::atomic<uint32_t>, 15>& lastSnapshot,
                                 std::array<std::atomic<uint64_t>, 15>& accumulated)
 {
-	const auto values = dtc->ReadEVBStallCounters();
+	static const size_t longestHoldIndex = 13;
+	const auto          values           = dtc->ReadEVBStallCounters();
 	for(size_t index = 0; index < lastSnapshot.size() && index < values.size(); ++index)
 	{
-		accumulated[index] += static_cast<uint32_t>(values[index] - lastSnapshot[index]);
+		if(index == longestHoldIndex)
+		{
+			if(values[index] > accumulated[index])
+				accumulated[index] = values[index];
+		}
+		else
+			accumulated[index] +=
+			    static_cast<uint32_t>(values[index] - lastSnapshot[index]);
 		lastSnapshot[index] = values[index];
 	}
 }
@@ -1302,13 +1316,17 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    "EVB Status",
 	    static_cast<FEVInterface::frontEndMacroFunction_t>(
 	        &DTCFrontEndInterface::EVBStatus),  // feMacroFunction
-	    std::vector<std::string>{},             // namesOfInputArgs
+	    std::vector<std::string>{"Read TX History Entries (0x91F0; advances the hardware "
+	                             "pointer, Default := only when frozen)"},
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
 	    "Display all EVB counters: config (0x9154/0x9158), error/status flags (0x9370), "
-	    "pipeline word counters (0x9200-0x920C), and per-DTC BRAM stats "
-	    "(types 0x0-0x8 via 0x9160).");
+	    "retransmission (0x9174), TX packet history (0x925C/0x91F0: frozen state and the "
+	    "packets "
+	    "around the first drop), pipeline word counters (0x9200-0x920C), and per-DTC "
+	    "BRAM stats "
+	    "(types 0x0-0xA via 0x9160).");
 
 	registerFEMacroFunction(
 	    "Exercise Link 7 Reset",
@@ -1603,6 +1621,8 @@ void DTCFrontEndInterface::registerFEMacros(void)
 					    "Target ROC");  //for display (especially to see which ROCs were targeted with -1)
 					for(auto& outArg : feMacro.second.namesOfOutputArguments_)
 						outputArgs.push_back(outArg);
+					outputArgs.push_back(
+					    ROC_LINK_SUMMARY_ARG);  //per-link OK/FAILED summary when running many ROCs
 
 					__FE_COUTTV__(StringMacros::vectorToString(inputArgs));
 					__FE_COUTTV__(StringMacros::vectorToString(outputArgs));
@@ -4625,6 +4645,21 @@ bool DTCFrontEndInterface::running(void)
 }  // end running()
 
 //==============================================================================
+namespace
+{
+/// First line of an exception message, for compact per-link summaries (the full
+/// message is still written to the log).
+std::string firstLineOf(const std::string& msg)
+{
+	std::string line = msg.substr(0, msg.find('\n'));
+	while(line.size() &&
+	      (line.back() == ' ' || line.back() == '\t' || line.back() == '\r'))
+		line.pop_back();
+	return line;
+}
+}  // namespace
+
+//==============================================================================
 // rocRead
 //========================================================================
 void DTCFrontEndInterface::ReadROC(__ARGS__)
@@ -6013,8 +6048,9 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			auto& selectedRoc = selectedRocs[rocIndex];
 			__COUT__ << "ROC FE Macro start. rocLink=" << selectedRoc.linkID
 			         << " macro=" << rocFEMacroName << __E__;
-			// Fail immediately on an exception. Do not start another ROC after
-			// an uncompleted hardware transaction on this DTC.
+			// On an exception, record the error for this ROC and continue with the
+			// remaining ROCs; the per-link outcome is reported in the Link Summary
+			// output, and an exception is thrown only if every targeted ROC failed.
 			try
 			{
 				selectedRoc.roc->runSelfFrontEndMacro(
@@ -6029,36 +6065,74 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			catch(const std::exception& e)
 			{
 				selectedRoc.error = e.what();
-				break;
 			}
 			catch(...)
 			{
 				selectedRoc.error = "Unknown exception while running ROC FE Macro.";
-				break;
 			}
-			__COUT__ << "ROC FE Macro done. rocLink=" << selectedRoc.linkID
-			         << " macro=" << rocFEMacroName << __E__;
+
+			if(selectedRoc.error.empty())
+				__COUT__ << "ROC FE Macro done. rocLink=" << selectedRoc.linkID
+				         << " macro=" << rocFEMacroName << __E__;
+			else
+				__FE_COUT_WARN__
+				    << "ROC FE Macro '" << rocFEMacroName << "' failed for ROC link "
+				    << selectedRoc.linkID
+				    << " - continuing with remaining ROCs. Here was the error: "
+				    << selectedRoc.error << __E__;
 		}
 
+		// Build per-link summary
+		size_t            okCount = 0;
+		std::string       okLinks, failedLinks;
+		std::stringstream linkSummary;
 		for(const auto& selectedRoc : selectedRocs)
-			if(!selectedRoc.error.empty())
+		{
+			std::string linkStr = std::to_string(selectedRoc.linkID);
+			if(selectedRoc.error.empty())
 			{
-				__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
-				          << "' failed for ROC link " << selectedRoc.linkID << ": "
-				          << selectedRoc.error << __E__;
-				__FE_SS_THROW__;
+				++okCount;
+				okLinks += (okLinks.size() ? ", " : "") + linkStr;
+				linkSummary << "\nLink " << linkStr << ": OK";
 			}
+			else
+			{
+				failedLinks += (failedLinks.size() ? ", " : "") + linkStr;
+				linkSummary << "\nLink " << linkStr << ": FAILED - "
+				            << firstLineOf(selectedRoc.error);
+			}
+		}
 
-		// Merge per-ROC outputs after sequential execution, keeping the original
-		// CSV/array formatting expected by the FE Macro response.
-		bool arrayNotation = selectedRocs.size() > 1;
-		bool openedArray   = false;
+		if(okCount == 0)  // every targeted ROC failed
+		{
+			__FE_SS__ << "ROC FE Macro '" << rocFEMacroName
+			          << "' failed for all targeted ROC link(s) " << failedLinks << ":"
+			          << __E__;
+			for(const auto& selectedRoc : selectedRocs)
+				ss << "\n\nLink " << selectedRoc.linkID << ": " << selectedRoc.error;
+			__FE_SS_THROW__;
+		}
+
+		if(okCount != selectedRocs.size())
+			__FE_COUT_WARN__ << "ROC FE Macro '" << rocFEMacroName
+			                 << "' failed for ROC link(s) " << failedLinks
+			                 << "; OK for ROC link(s) " << okLinks << __E__;
+
+		// Merge per-ROC outputs (of the ROCs that succeeded) after sequential
+		// execution, keeping the original CSV/array formatting expected by the FE
+		// Macro response. Array notation depends on the number of targeted ROCs, so
+		// the format does not change based on which ROCs failed.
+		bool   arrayNotation = selectedRocs.size() > 1;
+		size_t mergedCount   = 0;
 		for(size_t rocIndex = 0; rocIndex < selectedRocs.size(); ++rocIndex)
 		{
 			const auto& selectedRoc = selectedRocs[rocIndex];
-			bool        found       = rocIndex != 0;
+			if(!selectedRoc.error.empty())
+				continue;  // failed ROC has no outputs to merge
 
-			if(found && arrayNotation && !openedArray)
+			bool found = mergedCount != 0;
+
+			if(!found && arrayNotation)
 				argsOut[0].second =
 				    "[" + argsOut[0].second;  //add leading bracket for array notation
 			argsOut[0].second +=              //add new value
@@ -6068,7 +6142,10 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 			for(size_t i = 1; i < argsOut.size() && i - 1 < selectedRoc.outputArgs.size();
 			    ++i)
 			{
-				if(found && arrayNotation && !openedArray)
+				if(argsOut[i].first == ROC_LINK_SUMMARY_ARG)
+					continue;  // filled below
+
+				if(!found && arrayNotation)
 					argsOut[i].second =
 					    "[" + argsOut[i].second;  //add leading bracket for array notation
 				argsOut[i].second +=              //add new value
@@ -6076,18 +6153,23 @@ void DTCFrontEndInterface::RunROCFEMacro(__ARGS__)
 				__FE_COUTT__ << argsOut[i].first << ": " << argsOut[i].second << __E__;
 			}
 
-			if(found && arrayNotation)
-				openedArray = true;
+			++mergedCount;
 		}
 
 		//finalize array notation for output args
 		if(arrayNotation)
 		{
 			for(auto& argOut : argsOut)
-				if(argOut.first !=
-				   PLOTLY_PLOT /* defined at FEVinterface.h */)  //leave built-in arg as DEFAULT
+				if(argOut.first != PLOTLY_PLOT /* defined at FEVinterface.h */
+				   &&                          //leave built-in arg as DEFAULT
+				   argOut.first != ROC_LINK_SUMMARY_ARG)
 					argOut.second += "]";  //add trailing bracket for array notation
 		}
+
+		__SET_ARG_OUT__(ROC_LINK_SUMMARY_ARG,
+		                std::to_string(okCount) + " of " +
+		                    std::to_string(selectedRocs.size()) + " ROC(s) OK." +
+		                    linkSummary.str());
 	}
 	else  //individual target defined by feMacroIt pair
 	{
@@ -6350,8 +6432,18 @@ std::string DTCFrontEndInterface::getCFORTFSettingsStatusAndErrors()
 	  << "Perm Offset:" << dtc->ReadCFOSamplePermanentOffset(cfoErr) << "\n";
 	o << "  RTF Hist Sat Bin:       " << std::left << std::setw(col1w)
 	  << (satBinStr + " Saturated: " + (saturated ? "YES" : "NO")) << std::setw(col2w)
-	  << "Rx Clock Markers:" << dtc->ReadCFOTXClockMarkerCountLink6() << "\n"
-	  << std::right;
+	  << "Rx Clock Markers:" << dtc->ReadCFOTXClockMarkerCountLink6() << "\n";
+	{
+		uint32_t eventModeRequiredMask = dtc->ReadCFOEventModeRequiredMask();
+		o << "  Event Mode Req Mask:    ";
+		if(eventModeRequiredMask)
+			o << "0x" << std::right << std::hex << std::setfill('0') << std::setw(8)
+			  << eventModeRequiredMask << std::dec << std::setfill(' ') << std::left;
+		else
+			o << "NOT set";
+		o << "\n";
+	}
+	o << std::right;
 
 	o << "\n=== CFO Interface Errors ==="
 	  << "\n";
@@ -6418,10 +6510,11 @@ void DTCFrontEndInterface::DTCCounters(__ARGS__)
 	    "    TX Null HBP Count    ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXNullHeartbeatCount(l); });
 	performance << csvLinkCounts(
-	    "    TX non-Null HBP Diff ", [dtc](DTCLib::DTC_Link_ID l) {
-		    return static_cast<uint32_t>(static_cast<uint16_t>(
-		        dtc->ReadTXHeartbeatPacketCount(l) - dtc->ReadTXNullHeartbeatCount(l)));
-	    });
+	    "    TX Non-null HBP Count",
+	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXNonnullHeartbeatCount(l); });
+	performance << csvLinkCounts(
+	    "    TX Blocked HBP Count ",
+	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadTXBlockedHeartbeatCount(l); });
 	performance << csvLinkCounts(
 	    "    Rx Data Header Count ",
 	    [dtc](DTCLib::DTC_Link_ID l) { return dtc->ReadRXDataHeaderPacketCount(l); });
@@ -7674,6 +7767,49 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 	}
 	else
 		o << "  Not in this bitfile (retransmission starts with 0xd6100291).\n";
+	o << "\n";
+
+	// TX packet history (hw agent 2026-10-13/14): the log freezes on the first retransmission
+	// request, so a frozen status after a run points at the packets on the wire at the drop.
+	// It is a 1024-entry ring; once full the count stays at 1023 and the entries start at the
+	// oldest survivor, so the LAST entry read is the packet just before the freeze.  The read
+	// pointer only rewinds on SoftReset: the log can be walked once per run.  By default the
+	// entries are read only when the log is frozen; the input forces a read either way.
+	o << "=== EVB TX Packet History (0x925C status, 0x91F0 entries) ===\n";
+	if(evbHasRetransmission(dtc))
+	{
+		const std::string readEntriesInput = __GET_ARG_IN__(
+		    "Read TX History Entries (0x91F0; advances the hardware pointer, Default := "
+		    "only "
+		    "when frozen)",
+		    std::string,
+		    "");
+		const bool forceReadEntries =
+		    !readEntriesInput.empty() && readEntriesInput != "Default" &&
+		    readEntriesInput != "0" && readEntriesInput != "false";
+		try
+		{
+			const uint32_t statusRaw = dtc->ReadEVBTxHistoryStatus();
+			const bool     frozen    = (statusRaw >> 31) & 1u;
+			if(statusRaw == 0xFFFFFFFFu)
+				o << "  0x925C reads 0xFFFFFFFF: not in this bitfile.\n";
+			else
+			{
+				const auto history = dtc->ReadEVBTxHistory(frozen || forceReadEntries);
+				o << dtc->FormatEVBTxHistoryText(history, "  ");
+				if(!frozen && !forceReadEntries)
+					o << "  (entries left unread so the one walk per run is saved for a "
+					     "frozen "
+					     "log; set the input to read them anyway)\n";
+			}
+		}
+		catch(const std::exception& e)
+		{
+			o << "  read failed: " << e.what() << "\n";
+		}
+	}
+	else
+		o << "  Not in this bitfile.\n";
 	o << "\n";
 
 	o << "=== EVB Pipeline Counters ===\n";
@@ -10236,7 +10372,37 @@ std::string DTCFrontEndInterface::getDetachedBufferTestEVBStatus(
 				statusSs << " (" << std::fixed << std::setprecision(1)
 				         << (100.0 * rxBufferHigh / polls) << "%)";
 			statusSs << __E__;
+			// all live bits in one row, so bits 19/20/21 are visible without a code change each time
+			kv("HW EVB live bits 16..23 poll shares");
+			for(unsigned int liveBit = 16; liveBit < 24; ++liveBit)
+			{
+				const uint64_t bitPolls =
+				    threadStruct->evbLiveBitPolls_[liveBit - 16].load();
+				statusSs << (liveBit == 16 ? "" : "  ") << "b" << liveBit << "="
+				         << std::fixed << std::setprecision(1)
+				         << (polls ? 100.0 * bitPolls / polls : 0.0) << "%";
+			}
+			statusSs << "  (16 ROC held, 17 self-throttle, 18 credit, 19 DDR almost "
+			            "full, 20, 21, "
+			            "22 RX buffer high, 23 DMA back-pressure)"
+			         << __E__;
 		}
+		if(threadStruct->evbFirstStickyValid_)
+		{
+			const int64_t afterUs = threadStruct->evbFirstStickyAfterTrafficUs_.load();
+			kv("HW EVB first sticky latch")
+			    << "0x" << std::hex << std::setw(4) << std::setfill('0')
+			    << threadStruct->evbFirstStickyMask_.load() << std::dec
+			    << std::setfill(' ')
+			    << (afterUs >= 0 ? " at " + std::to_string(afterUs / 1000.0) +
+			                           " ms after traffic start"
+			                     : std::string(" before traffic was seen"))
+			    << ", iteration #" << threadStruct->evbFirstStickyIteration_.load()
+			    << ", SubEvents so far " << threadStruct->evbFirstStickySubevents_.load()
+			    << __E__;
+		}
+		else
+			kv("HW EVB first sticky latch") << "none during this run" << __E__;
 		if(threadStruct->evbStickyErrorsSeen_)
 			kv("HW EVB run validity")
 			    << "INVALID: sticky errors observed during this test: 0x" << std::hex
@@ -10719,10 +10885,14 @@ try
 		threadStruct->evbCreditThrottlePolls_  = 0;
 		threadStruct->evbRxBufferHighPolls_    = 0;
 		threadStruct->evbStatusPolls_          = 0;
-		threadStruct->evbLoopReaderNs_         = 0;
-		threadStruct->evbLoopStatusPollNs_     = 0;
-		threadStruct->evbLoopHandlingNs_       = 0;
-		threadStruct->evbLoopIterations_       = 0;
+		for(auto& liveBitPolls : threadStruct->evbLiveBitPolls_)
+			liveBitPolls = 0;
+		threadStruct->evbFirstStickyValid_ = false;
+		threadStruct->evbFirstStickyMask_  = 0;
+		threadStruct->evbLoopReaderNs_     = 0;
+		threadStruct->evbLoopStatusPollNs_ = 0;
+		threadStruct->evbLoopHandlingNs_   = 0;
+		threadStruct->evbLoopIterations_   = 0;
 		threadStruct->evbRocFragmentsBySource_.clear();
 		threadStruct->evbRocPayloadBytesBySource_.clear();
 		if(threadStruct->inEVBMode_ && threadStruct->thisDTC_)
@@ -10892,10 +11062,14 @@ try
 						threadStruct->evbCreditThrottlePolls_  = 0;
 						threadStruct->evbRxBufferHighPolls_    = 0;
 						threadStruct->evbStatusPolls_          = 0;
-						threadStruct->evbLoopReaderNs_         = 0;
-						threadStruct->evbLoopStatusPollNs_     = 0;
-						threadStruct->evbLoopHandlingNs_       = 0;
-						threadStruct->evbLoopIterations_       = 0;
+						for(auto& liveBitPolls : threadStruct->evbLiveBitPolls_)
+							liveBitPolls = 0;
+						threadStruct->evbFirstStickyValid_ = false;
+						threadStruct->evbFirstStickyMask_  = 0;
+						threadStruct->evbLoopReaderNs_     = 0;
+						threadStruct->evbLoopStatusPollNs_ = 0;
+						threadStruct->evbLoopHandlingNs_   = 0;
+						threadStruct->evbLoopIterations_   = 0;
 						threadStruct->evbRocFragmentsBySource_.clear();
 						threadStruct->evbRocPayloadBytesBySource_.clear();
 						if(threadStruct->inEVBMode_ && threadStruct->thisDTC_)
@@ -11079,6 +11253,9 @@ try
 					++threadStruct->evbCreditThrottlePolls_;
 				if(evbErr & (1u << 22))
 					++threadStruct->evbRxBufferHighPolls_;
+				for(unsigned int liveBit = 16; liveBit < 24; ++liveBit)
+					if(evbErr & (1u << liveBit))
+						++threadStruct->evbLiveBitPolls_[liveBit - 16];
 				if(!threadStruct->evbTrafficStarted_)
 				{
 					// Do not wait for a complete event: a missing peer may prevent any
@@ -11086,7 +11263,43 @@ try
 					if(dataThisIteration ||
 					   threadStruct->thisDTC_->ReadEVBROCInputWords() != 0 ||
 					   threadStruct->thisDTC_->ReadEVBGBERXWords() != 0)
+					{
 						threadStruct->evbTrafficStarted_ = true;
+						threadStruct->evbTrafficStartTime_ =
+						    std::chrono::steady_clock::now();
+					}
+				}
+				{
+					const uint32_t stickyNow = evbErr & DTCLib::EVBDefinedErrorMask &
+					                           ~threadStruct->evbStickyIgnoreMask_;
+					if(stickyNow && !threadStruct->evbFirstStickyValid_)
+					{
+						threadStruct->evbFirstStickyMask_ = stickyNow;
+						threadStruct->evbFirstStickyAfterTrafficUs_ =
+						    threadStruct->evbTrafficStarted_
+						        ? std::chrono::duration_cast<std::chrono::microseconds>(
+						              std::chrono::steady_clock::now() -
+						              threadStruct->evbTrafficStartTime_)
+						              .count()
+						        : -1;
+						threadStruct->evbFirstStickyIteration_ = ii;
+						threadStruct->evbFirstStickySubevents_ =
+						    threadStruct->subeventsCount_.load();
+						threadStruct->evbFirstStickyValid_ = true;
+						__GEN_COUT_WARN__
+						    << "EVB first sticky error latch: 0x" << std::hex
+						    << std::setw(4) << std::setfill('0') << stickyNow << std::dec
+						    << std::setfill(' ') << " at iteration #" << ii
+						    << ", SubEvents received so far = "
+						    << threadStruct->subeventsCount_ << ", "
+						    << (threadStruct->evbTrafficStarted_
+						            ? std::to_string(
+						                  threadStruct->evbFirstStickyAfterTrafficUs_ /
+						                  1000.0) +
+						                  " ms after traffic start"
+						            : std::string("before traffic was seen"))
+						    << __E__;
+					}
 				}
 				if(threadStruct->evbTrafficStarted_ &&
 				   !threadStruct->evbStallAtStartValid_)

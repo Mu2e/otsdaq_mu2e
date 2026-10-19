@@ -209,6 +209,18 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t> evbCreditThrottlePolls_{0};   // bit 18: window has data, destination has no credit
 		std::atomic<uint64_t> evbRxBufferHighPolls_{0};     // bit 22: an RX source buffer >= 3/4 full (peer data piling up)
 		std::atomic<uint64_t> evbStatusPolls_{0};
+		// Per-poll share of every live back-pressure bit 16..23 (index = bit - 16); the four
+		// named counters above stay for the existing report rows.  hw agent 2026-10-09 asked
+		// for bits 19 (DDR almost full), 20 and 21 as well.
+		std::array<std::atomic<uint64_t>, 8> evbLiveBitPolls_{};
+		// First time a sticky error bit [15:0] latched during this run: the mask seen on that
+		// poll and the delay from traffic start (the "time to first latch" the hw agent asked for).
+		std::atomic<bool>                     evbFirstStickyValid_{false};
+		std::atomic<uint32_t>                 evbFirstStickyMask_{0};
+		std::atomic<int64_t>                  evbFirstStickyAfterTrafficUs_{0};
+		std::atomic<uint64_t>                 evbFirstStickyIteration_{0};
+		std::atomic<uint64_t>                 evbFirstStickySubevents_{0};
+		std::chrono::steady_clock::time_point evbTrafficStartTime_;
 		// Software time profile of the EVB loop (steady_clock ns, accumulated per iteration):
 		// where the host spends its time between DMA buffers.  DTCLib keeps the per-step split
 		// inside GetEVBDataAsEvents (DTC::GetEVBReadProfile).
@@ -222,7 +234,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint32_t> evbErrAtStallOnset_{0};
 		std::atomic<uint64_t> evbErrAtStallOnsetIter_{0};
 		std::chrono::time_point<std::chrono::steady_clock> evbErrAtStallOnsetTime_;
-		// EVB3 stall-time counters (0x9210-0x9228) sampled when traffic starts and on the first
+		// EVB3 stall/output counters (0x9210-0x9248) sampled when traffic starts and on the first
 		// idle iteration after the last subevent (re-armed when data resumes); the difference
 		// gives the run's own stall shares, free of the pre-start idle time and the ~17 s wrap
 		std::atomic<bool>                     evbStallAtStartValid_{false};
