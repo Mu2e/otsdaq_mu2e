@@ -7753,6 +7753,18 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 		o << "  *** Bit 7 set: bit 1 and the Rx-type BRAM rows/rates on this DTC are "
 		     "unreliable "
 		     "(RX bookkeeping collision). Use word-count parity for loss. ***\n";
+	// Frames the switch delivered here although addressed to another DTC (hw agent 2026-10-13).
+	// Non-zero means the switch is flooding unicast: its MAC table does not hold the DTC
+	// addresses (the DTCs never send frames the switch would learn from, or the entries aged
+	// out).  Flooded frames compete for the same egress port as real traffic.
+	if(evbHasRetransmission(dtc))
+	{
+		const uint16_t illegalDestCount = dtc->ReadEVBRxIllegalDestCount();
+		o << "  Foreign frames received (0x9180, dest MAC not ours): " << illegalDestCount
+		  << (illegalDestCount == 0xFFFF ? " (saturated)" : "")
+		  << (illegalDestCount ? "  <- switch is flooding unicast to this port" : "")
+		  << "\n";
+	}
 	o << "\n";
 
 	o << "=== EVB Retransmission (0x9174 SoftReset clear, 16-bit wrap) ===\n";
