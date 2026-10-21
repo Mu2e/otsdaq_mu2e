@@ -3308,7 +3308,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		{
 			// Step 5: ROC DCS-based configure (sub-iterations)
 			// DTC acts as FESupervisor for its ROCs
-			bool anyROCNeedsWork = false;
+			bool                     anyROCNeedsWork = false;
+			std::vector<std::string> rocConfigureFailures;
 
 			for(auto& roc : rocs_)
 			{
@@ -3317,23 +3318,40 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				roc.second->VStateMachine::clearIterationWork();
 				roc.second->VStateMachine::clearSubIterationWork();
 
-				if(subStep == 1)
+				const std::string rocLabel = "ROC " + roc.first + " on link " +
+				                             std::to_string(roc.second->getLinkID());
+				try
 				{
-					bool linkEmulated =
-					    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
-					if(!linkEmulated &&
-					   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
+					if(subStep == 1)
 					{
-						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
-						          << real_roc_flow_reason_ << "]"
-						          << " ROC " << roc.first << " on link "
-						          << roc.second->getLinkID()
-						          << " was not ready after 2s.";
-						__FE_SS_THROW__;
+						bool linkEmulated =
+						    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
+						if(!linkEmulated &&
+						   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
+						{
+							__FE_SS__ << rocLabel << " was not ready after 2s.";
+							__FE_SS_THROW__;
+						}
 					}
-				}
 
-				roc.second->configure();
+					roc.second->configure();
+				}
+				catch(const std::runtime_error& rocConfigureError)
+				{
+					__FE_COUT_ERR__ << rocLabel << " failed to configure at sub-step "
+					                << subStep << ": " << rocConfigureError.what()
+					                << __E__;
+					rocConfigureFailures.push_back(rocLabel + ": " +
+					                               rocConfigureError.what());
+					continue;
+				}
+				catch(...)
+				{
+					__FE_COUT_ERR__ << rocLabel << " failed to configure at sub-step "
+					                << subStep << " with unknown exception." << __E__;
+					rocConfigureFailures.push_back(rocLabel + ": unknown exception");
+					continue;
+				}
 
 				if(roc.second->VStateMachine::getSubIterationWork())
 				{
@@ -3341,6 +3359,17 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					__FE_COUT__ << "ROC " << roc.first << " needs another sub-iteration."
 					            << __E__;
 				}
+			}
+
+			if(!rocConfigureFailures.empty())
+			{
+				__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
+				          << real_roc_flow_reason_ << "] sub-step " << subStep << ": "
+				          << rocConfigureFailures.size() << " of " << rocs_.size()
+				          << " ROCs failed to configure:";
+				for(const auto& rocConfigureFailure : rocConfigureFailures)
+					ss << "\n  - " << rocConfigureFailure;
+				__FE_SS_THROW__;
 			}
 
 			if(anyROCNeedsWork)
