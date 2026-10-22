@@ -1551,20 +1551,27 @@ void DTCFrontEndInterface::registerFEMacros(void)
 	    std::vector<std::string>{
 	        "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
 	        "Path to SPI image file (.spi)",
-	        "Expected SHA-256 of the SPI image (Default := read the .sha256 file next to the image)",
+	        "Expected SHA-256 of the SPI image (Default := read the .sha256 file next to "
+	        "the image)",
 	        "SPI flash start address (Default := 0x1010000)",
-	        "Write the image to the SPI flash (Default := true; false = only verify the flash against the file)",
+	        "Write the image to the SPI flash (Default := true; false = only verify the "
+	        "flash against the file)",
 	        "Program the FPGA after a verified upload (Default := false)",
-	        "Expected firmware version after programming, e.g. 0x0108 (Default := 0, do not check)",
+	        "Expected firmware version after programming, e.g. 0x0108 (Default := 0, do "
+	        "not check)",
 	        "Seconds to wait after pausing slow controls (Default := 5)",
 	    },  // namesOfInputArgs
 	    std::vector<std::string>{"Result"},
 	    1,  // requiredUserPermissions
 	    "*",
-	    "Upload an SPI image to the selected ROCs in 64 kB segments, each erased, written, verified against the "
-	    "file (CRC by the MiV, or read-back with an older MiV) and retried; never below 0x1010000 (directory, "
-	    "golden). Optionally program (IAP) only the ROCs whose whole image verified; the MiV authenticates it "
-	    "first. The slow controls of this DTC are paused for the whole macro and restored at the end; commands "
+	    "Upload an SPI image to the selected ROCs in 64 kB segments, each erased, "
+	    "written, verified against the "
+	    "file (CRC by the MiV, or read-back with an older MiV) and retried; never below "
+	    "0x1010000 (directory, "
+	    "golden). Optionally program (IAP) only the ROCs whose whole image verified; the "
+	    "MiV authenticates it "
+	    "first. The slow controls of this DTC are paused for the whole macro and "
+	    "restored at the end; commands "
 	    "and replies are exchanged under the DTC DCS lock.");
 
 	registerFEMacroFunction("Validate DTC Control Registers",
@@ -14296,15 +14303,19 @@ class OtsDcsLock : public rocflash::DcsLock
 class OtsRocPort : public rocflash::RocPort
 {
   public:
-	OtsRocPort(const std::string& uid, ROCCoreVInterface* roc, DTCLib::DTC* dtc) : roc_(roc), dtc_(dtc)
+	OtsRocPort(const std::string& uid, ROCCoreVInterface* roc, DTCLib::DTC* dtc)
+	    : roc_(roc), dtc_(dtc)
 	{
 		std::stringstream ss;
 		ss << "ROC '" << uid << "' link " << roc->getLinkID();
 		name_ = ss.str();
 	}
 	std::string name() const override { return name_; }
-	uint16_t    readRegister(uint16_t address) override { return roc_->readRegister(address); }
-	void        writeBlock(const std::vector<uint16_t>& words, uint16_t address) override
+	uint16_t    readRegister(uint16_t address) override
+	{
+		return roc_->readRegister(address);
+	}
+	void writeBlock(const std::vector<uint16_t>& words, uint16_t address) override
 	{
 		std::vector<DTCLib::roc_data_t> w(words.begin(), words.end());
 		roc_->writeBlock(w, address, false /* incrementAddress */);
@@ -14312,10 +14323,17 @@ class OtsRocPort : public rocflash::RocPort
 	// Block read through the DTC library directly, with a reply timeout: ROCCoreVInterface::readROCBlock
 	// passes 0 ms, and a reply later than the library's fixed 2.5 ms wait is lost ("read 0 words" with two
 	// DTCs busy on the same node, 2026-10-12) although the ROC has already sent it.
-	void readBlock(std::vector<uint16_t>& words, uint16_t address, uint16_t count) override
+	void readBlock(std::vector<uint16_t>& words,
+	               uint16_t               address,
+	               uint16_t               count) override
 	{
 		std::vector<DTCLib::roc_data_t> r;
-		dtc_->ReadROCBlock(r, roc_->getLinkID(), address, count, false /* incrementAddress */, 200 /* ms */);
+		dtc_->ReadROCBlock(r,
+		                   roc_->getLinkID(),
+		                   address,
+		                   count,
+		                   false /* incrementAddress */,
+		                   200 /* ms */);
 		words.assign(r.begin(), r.end());
 	}
 
@@ -14325,7 +14343,8 @@ class OtsRocPort : public rocflash::RocPort
 	{
 		dtc_->ResetSERDESTX(roc_->getLinkID());
 		dtc_->ResetSERDESRX(roc_->getLinkID());
-		info = std::string("RX CDR ") + (dtc_->ReadSERDESRXCDRLock(roc_->getLinkID()) ? "locked" : "NOT locked");
+		info = std::string("RX CDR ") +
+		       (dtc_->ReadSERDESRXCDRLock(roc_->getLinkID()) ? "locked" : "NOT locked");
 		return true;
 	}
 
@@ -14342,29 +14361,41 @@ class OtsRocPort : public rocflash::RocPort
 void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 {
 	uint32_t rocLinkIndexVal = __GET_ARG_IN__(
-	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)", uint32_t, -1 /* ALL */);
+	    "Target ROC or Mask (Default = -1 := all ROCs, or 0x111111 := all)",
+	    uint32_t,
+	    -1 /* ALL */);
 	std::string imagePath = __GET_ARG_IN__("Path to SPI image file (.spi)", std::string);
-	std::string sha256 =
-	    __GET_ARG_IN__("Expected SHA-256 of the SPI image (Default := read the .sha256 file next to the image)", std::string);
-	uint32_t    startAddress =
-	    __GET_ARG_IN__("SPI flash start address (Default := 0x1010000)", uint32_t, 0x1010000);
+	std::string sha256    = __GET_ARG_IN__(
+        "Expected SHA-256 of the SPI image (Default := read the .sha256 file next to the "
+	       "image)",
+        std::string);
+	uint32_t startAddress = __GET_ARG_IN__(
+	    "SPI flash start address (Default := 0x1010000)", uint32_t, 0x1010000);
 	bool writeImage = __GET_ARG_IN__(
-	    "Write the image to the SPI flash (Default := true; false = only verify the flash against the file)", bool, true);
-	bool program = __GET_ARG_IN__("Program the FPGA after a verified upload (Default := false)", bool);
+	    "Write the image to the SPI flash (Default := true; false = only verify the "
+	    "flash against the file)",
+	    bool,
+	    true);
+	bool program = __GET_ARG_IN__(
+	    "Program the FPGA after a verified upload (Default := false)", bool);
 	uint16_t expectedVersion = __GET_ARG_IN__(
-	    "Expected firmware version after programming, e.g. 0x0108 (Default := 0, do not check)", uint16_t, 0);
+	    "Expected firmware version after programming, e.g. 0x0108 (Default := 0, do not "
+	    "check)",
+	    uint16_t,
+	    0);
 	unsigned int slowControlsQuietSeconds = __GET_ARG_IN__(
 	    "Seconds to wait after pausing slow controls (Default := 5)", unsigned int, 5);
 
 	// target ROCs: same selection as Program ROCs (link index 0-5, -1 all, or mask with 4 bits per link)
 	const bool usingRocMask = rocLinkIndexVal != uint32_t(-1) && rocLinkIndexVal > 5;
-	std::vector<std::string>        targetUIDs;
+	std::vector<std::string>                 targetUIDs;
 	std::vector<std::unique_ptr<OtsRocPort>> ports;
-	std::vector<rocflash::RocPort*> portPtrs;
+	std::vector<rocflash::RocPort*>          portPtrs;
 	for(auto& roc : rocs_)
 	{
 		int link = int(roc.second->getLinkID());
-		if((!usingRocMask && (rocLinkIndexVal == uint32_t(-1) || uint32_t(link) == rocLinkIndexVal)) ||
+		if((!usingRocMask &&
+		    (rocLinkIndexVal == uint32_t(-1) || uint32_t(link) == rocLinkIndexVal)) ||
 		   (usingRocMask && ((1u << (link * 4)) & rocLinkIndexVal)))
 		{
 			targetUIDs.push_back(roc.first);
@@ -14384,7 +14415,8 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 		std::FILE* fp = std::fopen(imagePath.c_str(), "rb");
 		if(!fp)
 		{
-			__FE_SS__ << "Could not open the SPI image '" << imagePath << "': " << strerror(errno) << __E__;
+			__FE_SS__ << "Could not open the SPI image '" << imagePath
+			          << "': " << strerror(errno) << __E__;
 			__FE_SS_THROW__;
 		}
 		uint8_t buf[65536];
@@ -14400,8 +14432,10 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 		std::ifstream f(imagePath + ".sha256");
 		if(!(f >> sha256))
 		{
-			__FE_SS__ << "No SHA-256 given and no '" << imagePath
-			          << ".sha256' next to the image: refusing to flash an unchecked file." << __E__;
+			__FE_SS__
+			    << "No SHA-256 given and no '" << imagePath
+			    << ".sha256' next to the image: refusing to flash an unchecked file."
+			    << __E__;
 			__FE_SS_THROW__;
 		}
 	}
@@ -14421,13 +14455,17 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 	{
 		std::atomic<bool>& run;
 		const bool         wasRunning;
-		explicit SlowControlsPause(std::atomic<bool>& r) : run(r), wasRunning(r.load()) { run = false; }
+		explicit SlowControlsPause(std::atomic<bool>& r) : run(r), wasRunning(r.load())
+		{
+			run = false;
+		}
 		~SlowControlsPause() { run = wasRunning; }
 	} slowControlsPause(slowControlsWorkLoopShouldRun_);
 	if(slowControlsPause.wasRunning)
 	{
 		__FE_COUT_INFO__ << "Program ROCs Safe: slow controls paused, waiting "
-		                 << slowControlsQuietSeconds << " s for the running cycle to end" << __E__;
+		                 << slowControlsQuietSeconds << " s for the running cycle to end"
+		                 << __E__;
 		sleep(slowControlsQuietSeconds);
 	}
 
@@ -14436,7 +14474,9 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 	    portPtrs,
 	    image,
 	    opt,
-	    [this](const std::string& s) { __FE_COUT_INFO__ << "Program ROCs Safe: " << s << __E__; },
+	    [this](const std::string& s) {
+		    __FE_COUT_INFO__ << "Program ROCs Safe: " << s << __E__;
+	    },
 	    [this](int percent) { setFEMacroPercentDone(percent); },
 	    &dcsLock);
 
@@ -14448,10 +14488,12 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 	}
 	catch(const std::exception& e)
 	{
-		__FE_SS__ << "Program ROCs Safe stopped before sending anything: " << e.what() << __E__;
+		__FE_SS__ << "Program ROCs Safe stopped before sending anything: " << e.what()
+		          << __E__;
 		__FE_SS_THROW__;
 	}
-	resultsSs << (allOk ? "ALL OK" : "SOME ROCs FAILED (not programmed unless stated)") << "\n"
+	resultsSs << (allOk ? "ALL OK" : "SOME ROCs FAILED (not programmed unless stated)")
+	          << "\n"
 	          << session.summary();
 	__FE_COUT_INFO__ << resultsSs.str() << __E__;
 	if(!allOk)
