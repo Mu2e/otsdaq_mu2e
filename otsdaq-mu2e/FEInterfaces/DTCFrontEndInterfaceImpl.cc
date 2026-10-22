@@ -539,6 +539,17 @@ DTCFrontEndInterface::DTCFrontEndInterface(
 		emulate_cfo_ = getSelfNode().getNode("EmulateCFO").getValue<bool>();
 	__FE_COUTV__(emulate_cfo_);
 
+	try
+	{
+		enable_software_drp_ =
+		    getSelfNode().getNode("EnableSoftwareDataRequestMode").getValue<bool>();
+	}
+	catch(...)
+	{
+		enable_software_drp_ = false;
+	}  //ignore missing column, default to auto-gen DRP
+	__FE_COUTV__(enable_software_drp_);
+
 	DTCInstantiate();
 
 }  // end constructor()
@@ -3314,7 +3325,8 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 		{
 			// Step 5: ROC DCS-based configure (sub-iterations)
 			// DTC acts as FESupervisor for its ROCs
-			bool anyROCNeedsWork = false;
+			bool                     anyROCNeedsWork = false;
+			std::vector<std::string> rocConfigureFailures;
 
 			for(auto& roc : rocs_)
 			{
@@ -3323,23 +3335,40 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 				roc.second->VStateMachine::clearIterationWork();
 				roc.second->VStateMachine::clearSubIterationWork();
 
-				if(subStep == 1)
+				const std::string rocLabel = "ROC " + roc.first + " on link " +
+				                             std::to_string(roc.second->getLinkID());
+				try
 				{
-					bool linkEmulated =
-					    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
-					if(!linkEmulated &&
-					   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
+					if(subStep == 1)
 					{
-						__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
-						          << real_roc_flow_reason_ << "]"
-						          << " ROC " << roc.first << " on link "
-						          << roc.second->getLinkID()
-						          << " was not ready after 2s.";
-						__FE_SS_THROW__;
+						bool linkEmulated =
+						    ((roc_emulated_mask_ >> roc.second->getLinkID()) & 1);
+						if(!linkEmulated &&
+						   !dtc->WaitForLinkReady(roc.second->getLinkID(), 1000, 2.0))
+						{
+							__FE_SS__ << rocLabel << " was not ready after 2s.";
+							__FE_SS_THROW__;
+						}
 					}
-				}
 
-				roc.second->configure();
+					roc.second->configure();
+				}
+				catch(const std::runtime_error& rocConfigureError)
+				{
+					__FE_COUT_ERR__ << rocLabel << " failed to configure at sub-step "
+					                << subStep << ": " << rocConfigureError.what()
+					                << __E__;
+					rocConfigureFailures.push_back(rocLabel + ": " +
+					                               rocConfigureError.what());
+					continue;
+				}
+				catch(...)
+				{
+					__FE_COUT_ERR__ << rocLabel << " failed to configure at sub-step "
+					                << subStep << " with unknown exception." << __E__;
+					rocConfigureFailures.push_back(rocLabel + ": unknown exception");
+					continue;
+				}
 
 				if(roc.second->VStateMachine::getSubIterationWork())
 				{
@@ -3347,6 +3376,17 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 					__FE_COUT__ << "ROC " << roc.first << " needs another sub-iteration."
 					            << __E__;
 				}
+			}
+
+			if(!rocConfigureFailures.empty())
+			{
+				__FE_SS__ << "DTC " << getInterfaceUID() << " Phase 4 ["
+				          << real_roc_flow_reason_ << "] sub-step " << subStep << ": "
+				          << rocConfigureFailures.size() << " of " << rocs_.size()
+				          << " ROCs failed to configure:";
+				for(const auto& rocConfigureFailure : rocConfigureFailures)
+					ss << "\n  - " << rocConfigureFailure;
+				__FE_SS_THROW__;
 			}
 
 			if(anyROCNeedsWork)
@@ -3945,7 +3985,7 @@ void DTCFrontEndInterface::resume(void)
 		    0,                           //uint64_t initialEventWindowTag,
 		    1,                           //uint64_t eventWindowMode,
 		    0,                           //bool enableClockMarkers,
-		    1,                           //bool enableAutogenDRP,
+		    !enable_software_drp_,       //bool enableAutogenDRP,
 		    0,                           //bool saveBinaryDataToFile,
 		    "Default",                   //filename
 		    0,                           //bool saveSubeventHeadersToDataFile,
@@ -4052,7 +4092,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			    0,                           //uint64_t initialEventWindowTag,
 			    1,                           //uint64_t eventWindowMode,
 			    0,                           //bool enableClockMarkers,
-			    1,                           //bool enableAutogenDRP,
+			    !enable_software_drp_,       //bool enableAutogenDRP,
 			    0,                           //bool saveBinaryDataToFile,
 			    "Default",                   //filename
 			    0,                           //bool saveSubeventHeadersToDataFile,
@@ -7733,6 +7773,18 @@ void DTCFrontEndInterface::EVBStatus(__ARGS__)
 		o << "  *** Bit 7 set: bit 1 and the Rx-type BRAM rows/rates on this DTC are "
 		     "unreliable "
 		     "(RX bookkeeping collision). Use word-count parity for loss. ***\n";
+	// Frames the switch delivered here although addressed to another DTC (hw agent 2026-10-13).
+	// Non-zero means the switch is flooding unicast: its MAC table does not hold the DTC
+	// addresses (the DTCs never send frames the switch would learn from, or the entries aged
+	// out).  Flooded frames compete for the same egress port as real traffic.
+	if(evbHasRetransmission(dtc))
+	{
+		const uint16_t illegalDestCount = dtc->ReadEVBRxIllegalDestCount();
+		o << "  Foreign frames received (0x9180, dest MAC not ours): " << illegalDestCount
+		  << (illegalDestCount == 0xFFFF ? " (saturated)" : "")
+		  << (illegalDestCount ? "  <- switch is flooding unicast to this port" : "")
+		  << "\n";
+	}
 	o << "\n";
 
 	o << "=== EVB Retransmission (0x9174 SoftReset clear, 16-bit wrap) ===\n";
