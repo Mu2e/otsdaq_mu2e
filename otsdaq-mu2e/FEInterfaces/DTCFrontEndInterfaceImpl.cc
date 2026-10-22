@@ -3959,7 +3959,7 @@ void DTCFrontEndInterface::resume(void)
 		    0,                           //uint64_t initialEventWindowTag,
 		    1,                           //uint64_t eventWindowMode,
 		    0,                           //bool enableClockMarkers,
-		    !enable_software_drp_,      //bool enableAutogenDRP,
+		    !enable_software_drp_,       //bool enableAutogenDRP,
 		    0,                           //bool saveBinaryDataToFile,
 		    "Default",                   //filename
 		    0,                           //bool saveSubeventHeadersToDataFile,
@@ -4045,7 +4045,7 @@ void DTCFrontEndInterface::start(std::string runNumber)
 			    0,                           //uint64_t initialEventWindowTag,
 			    1,                           //uint64_t eventWindowMode,
 			    0,                           //bool enableClockMarkers,
-			    !enable_software_drp_,      //bool enableAutogenDRP,
+			    !enable_software_drp_,       //bool enableAutogenDRP,
 			    0,                           //bool saveBinaryDataToFile,
 			    "Default",                   //filename
 			    0,                           //bool saveSubeventHeadersToDataFile,
