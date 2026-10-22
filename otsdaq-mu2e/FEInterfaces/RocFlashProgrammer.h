@@ -31,10 +31,7 @@
 #pragma once
 
 #include <algorithm>
-<<<<<<< Updated upstream
 #include <array>
-=======
->>>>>>> Stashed changes
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -55,30 +52,19 @@ namespace rocflash
 class RocPort
 {
   public:
-<<<<<<< Updated upstream
 	virtual ~RocPort()                                                                            = default;
 	virtual std::string name() const                                                              = 0;
 	virtual uint16_t    readRegister(uint16_t address)                                            = 0;
 	virtual void        writeBlock(const std::vector<uint16_t>& words, uint16_t address)          = 0;
-=======
-	virtual ~RocPort() = default;
-	virtual std::string name() const                                       = 0;
-	virtual uint16_t    readRegister(uint16_t address)                     = 0;
-	virtual void        writeBlock(const std::vector<uint16_t>& words, uint16_t address) = 0;
->>>>>>> Stashed changes
 	virtual void        readBlock(std::vector<uint16_t>& words, uint16_t address, uint16_t count) = 0;
 	// Re-initialise the DTC side of this ROC's link (SERDES TX/RX reset of that link only). Returns false if
 	// not available. Needed after an IAP: the ROC restarts, and its link does not always come back by itself
 	// (2 of 6 ROCs on 2026-10-16; a manual link reset brought them back).
-<<<<<<< Updated upstream
 	virtual bool resyncLink(std::string& info)
 	{
 		(void)info;
 		return false;
 	}
-=======
-	virtual bool resyncLink(std::string& info) { (void)info; return false; }
->>>>>>> Stashed changes
 };
 
 // DCS lock of the DTC: the DTC library's own transaction lock (mu2edev::begin_dcs_transaction /
@@ -90,11 +76,7 @@ class RocPort
 class DcsLock
 {
   public:
-<<<<<<< Updated upstream
 	virtual ~DcsLock()    = default;
-=======
-	virtual ~DcsLock() = default;
->>>>>>> Stashed changes
 	virtual void lock()   = 0;
 	virtual void unlock() = 0;
 };
@@ -107,56 +89,33 @@ class NoDcsLock : public DcsLock
 
 enum : uint16_t
 {
-<<<<<<< Updated upstream
 	REG_DONE       = 128,
 	REG_COUNT      = 129,
 	REG_RETURN     = 132,
 	REG_COMMAND    = 384,
-=======
-	REG_DONE    = 128,
-	REG_COUNT   = 129,
-	REG_RETURN  = 132,
-	REG_COMMAND = 384,
->>>>>>> Stashed changes
 	REG_FW_VERSION = 246  // DRACRegisters 0xF6: [15:8] major, [7:0] minor
 };
 enum : uint16_t
 {
-<<<<<<< Updated upstream
 	ACT_ERASE     = 3,
 	ACT_PROG_ADDR = 5,
 	ACT_READ      = 7,
 	ACT_WRITE     = 8,
 	ACT_CRC       = 10
-=======
-	ACT_ERASE = 3,
-	ACT_PROG_ADDR = 5,
-	ACT_READ = 7,
-	ACT_WRITE = 8,
-	ACT_CRC = 10
->>>>>>> Stashed changes
 };
 
 //==================================================================================================
 // CRC-32 as zlib crc32() and as the MiV action 10
 inline uint32_t crc32(const uint8_t* p, size_t n, uint32_t crc = 0)
 {
-<<<<<<< Updated upstream
 	// built once, under the C++ guarantee for the initialisation of a function-local static (thread safe)
 	static const std::array<uint32_t, 256> crcTable = [] {
 		std::array<uint32_t, 256> table{};
-=======
-	static uint32_t tbl[256];
-	static bool     init = false;
-	if(!init)
-	{
->>>>>>> Stashed changes
 		for(uint32_t i = 0; i < 256; ++i)
 		{
 			uint32_t c = i;
 			for(int k = 0; k < 8; ++k)
 				c = (c & 1) ? (0xEDB88320u ^ (c >> 1)) : (c >> 1);
-<<<<<<< Updated upstream
 			table[i] = c;
 		}
 		return table;
@@ -164,15 +123,6 @@ inline uint32_t crc32(const uint8_t* p, size_t n, uint32_t crc = 0)
 	crc = ~crc;
 	for(size_t i = 0; i < n; ++i)
 		crc = crcTable[(crc ^ p[i]) & 0xFF] ^ (crc >> 8);
-=======
-			tbl[i] = c;
-		}
-		init = true;
-	}
-	crc = ~crc;
-	for(size_t i = 0; i < n; ++i)
-		crc = tbl[(crc ^ p[i]) & 0xFF] ^ (crc >> 8);
->>>>>>> Stashed changes
 	return ~crc;
 }
 
@@ -180,20 +130,8 @@ inline uint32_t crc32(const uint8_t* p, size_t n, uint32_t crc = 0)
 inline std::string sha256hex(const std::vector<uint8_t>& data)
 {
 	static const uint32_t K[64] = {
-<<<<<<< Updated upstream
 	    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
 	uint32_t             h[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
-=======
-	    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-	    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-	    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-	    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-	    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-	    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-	    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-	    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
-	uint32_t h[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
->>>>>>> Stashed changes
 	std::vector<uint8_t> m(data);
 	uint64_t             bits = uint64_t(data.size()) * 8;
 	m.push_back(0x80);
@@ -223,7 +161,6 @@ inline std::string sha256hex(const std::vector<uint8_t>& data)
 			uint32_t S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
 			uint32_t mj = (a & b) ^ (a & c) ^ (b & c);
 			uint32_t t2 = S0 + mj;
-<<<<<<< Updated upstream
 			hh          = g;
 			g           = f;
 			f           = e;
@@ -241,11 +178,6 @@ inline std::string sha256hex(const std::vector<uint8_t>& data)
 		h[5] += f;
 		h[6] += g;
 		h[7] += hh;
-=======
-			hh = g; g = f; f = e; e = d + t1; d = c; c = b; b = a; a = t1 + t2;
-		}
-		h[0] += a; h[1] += b; h[2] += c; h[3] += d; h[4] += e; h[5] += f; h[6] += g; h[7] += hh;
->>>>>>> Stashed changes
 	}
 	char out[65];
 	for(int i = 0; i < 8; ++i)
@@ -256,7 +188,6 @@ inline std::string sha256hex(const std::vector<uint8_t>& data)
 //==================================================================================================
 struct Options
 {
-<<<<<<< Updated upstream
 	uint32_t    startAddress   = 0x01010000;  // where the image goes in the SPI flash (64 kB aligned)
 	uint32_t    protectedBelow = 0x01010000;  // never erase/write below (directory, golden image)
 	std::string expectedSha256;               // mandatory: SHA-256 of the image file
@@ -270,20 +201,6 @@ struct Options
 	int pollMs              = 1;
 	int writeTimeoutMs      = 3000;
 	int eraseTimeoutMs      = 15000;  // one 64 kB block
-=======
-	uint32_t    startAddress       = 0x01010000;  // where the image goes in the SPI flash (64 kB aligned)
-	uint32_t    protectedBelow     = 0x01010000;  // never erase/write below (directory, golden image)
-	std::string expectedSha256;                   // mandatory: SHA-256 of the image file
-	bool        writeImage         = true;        // false: do not erase/write, only verify the flash against the file
-	bool        program            = false;       // IAP after a fully verified upload
-	bool        finalImageCrc      = true;        // new MiV: CRC of the whole image before the IAP
-	int         maxSegmentAttempts = 5;
-	uint16_t    expectedFwVersion  = 0;           // register REG_FW_VERSION after the IAP; 0 = do not check
-	// timing (ms)
-	int pollMs              = 1;
-	int writeTimeoutMs      = 3000;
-	int eraseTimeoutMs      = 15000;   // one 64 kB block
->>>>>>> Stashed changes
 	int readTimeoutMs       = 3000;
 	int crcSegmentTimeoutMs = 10000;
 	int crcImageTimeoutMs   = 600000;
@@ -306,19 +223,11 @@ enum class RocState
 
 struct RocResult
 {
-<<<<<<< Updated upstream
 	RocState                 state          = RocState::Selected;
 	bool                     newMiv         = false;  // supports tags and CRC (solid-programming MiV)
 	uint32_t                 readBytes      = 1016;   // older MiV: read-back piece (1016 bytes since 30bc2f4, 508 before)
 	int                      segmentRetries = 0;
 	std::string              error;
-=======
-	RocState    state          = RocState::Selected;
-	bool        newMiv         = false;  // supports tags and CRC (solid-programming MiV)
-	uint32_t    readBytes      = 1016;   // older MiV: read-back piece (1016 bytes since 30bc2f4, 508 before)
-	int         segmentRetries = 0;
-	std::string error;
->>>>>>> Stashed changes
 	std::vector<std::string> log;
 };
 
@@ -326,7 +235,6 @@ inline const char* stateName(RocState s)
 {
 	switch(s)
 	{
-<<<<<<< Updated upstream
 	case RocState::Selected:
 		return "selected";
 	case RocState::Uploading:
@@ -337,13 +245,6 @@ inline const char* stateName(RocState s)
 		return "programmed";
 	case RocState::Failed:
 		return "FAILED";
-=======
-	case RocState::Selected: return "selected";
-	case RocState::Uploading: return "uploading";
-	case RocState::Verified: return "verified, not programmed";
-	case RocState::Programmed: return "programmed";
-	case RocState::Failed: return "FAILED";
->>>>>>> Stashed changes
 	}
 	return "?";
 }
@@ -356,7 +257,6 @@ class FlashSession
 	using Logger   = std::function<void(const std::string&)>;
 	using Progress = std::function<void(int percent)>;
 
-<<<<<<< Updated upstream
 	FlashSession(std::vector<RocPort*> rocs, std::vector<uint8_t> image, Options opt, Logger log = nullptr, Progress progress = nullptr, DcsLock* dcsLock = nullptr)
 	    : rocs_(std::move(rocs))
 	    , image_(std::move(image))
@@ -364,12 +264,6 @@ class FlashSession
 	    , log_(log)
 	    , progress_(progress)
 	    , dcs_(dcsLock ? dcsLock : &noLock_)
-=======
-	FlashSession(std::vector<RocPort*> rocs, std::vector<uint8_t> image, Options opt, Logger log = nullptr,
-	             Progress progress = nullptr, DcsLock* dcsLock = nullptr)
-	    : rocs_(std::move(rocs)), image_(std::move(image)), opt_(opt), log_(log), progress_(progress),
-	      dcs_(dcsLock ? dcsLock : &noLock_)
->>>>>>> Stashed changes
 	{
 	}
 
@@ -425,12 +319,8 @@ class FlashSession
 	struct Held  // scoped DCS lock
 	{
 		DcsLock* l;
-<<<<<<< Updated upstream
 		explicit Held(DcsLock* x)
 		    : l(x) { l->lock(); }
-=======
-		explicit Held(DcsLock* x) : l(x) { l->lock(); }
->>>>>>> Stashed changes
 		~Held() { l->unlock(); }
 	};
 
@@ -444,11 +334,7 @@ class FlashSession
 			int left = timeoutMs - msSince(t0);
 			if(left <= 0 || !waitIdle(r, left))
 				return false;
-<<<<<<< Updated upstream
 			Held     h(dcs_);
-=======
-			Held h(dcs_);
->>>>>>> Stashed changes
 			uint16_t done  = r->readRegister(REG_DONE);
 			uint16_t count = r->readRegister(REG_COUNT) & 0x7ff;
 			if(count == 0 && (done == 0 || (done & 0x8000)))
@@ -494,11 +380,7 @@ class FlashSession
 		res_[r].error = why;
 		note(r, "FAILED: " + why);
 	}
-<<<<<<< Updated upstream
 	bool               alive(RocPort* r) const { return res_.at(r).state != RocState::Failed; }
-=======
-	bool alive(RocPort* r) const { return res_.at(r).state != RocState::Failed; }
->>>>>>> Stashed changes
 	static std::string hex(uint32_t v)
 	{
 		char b[16];
@@ -511,11 +393,7 @@ class FlashSession
 			tag_ = 1;
 		return tag_;
 	}
-<<<<<<< Updated upstream
 	void       sleepMs(int ms) { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
-=======
-	void sleepMs(int ms) { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
->>>>>>> Stashed changes
 	static int msSince(clock::time_point t0)
 	{
 		return int(std::chrono::duration_cast<std::chrono::milliseconds>(clock::now() - t0).count());
@@ -532,11 +410,7 @@ class FlashSession
 			throw std::runtime_error("expected SHA-256 of the image is mandatory (64 hex digits)");
 		if(image_.empty())
 			throw std::runtime_error("image is empty");
-<<<<<<< Updated upstream
 		std::string sha  = sha256hex(image_);
-=======
-		std::string sha = sha256hex(image_);
->>>>>>> Stashed changes
 		std::string want = opt_.expectedSha256;
 		std::transform(want.begin(), want.end(), want.begin(), ::tolower);
 		if(sha != want)
@@ -548,7 +422,6 @@ class FlashSession
 			throw std::runtime_error("start address " + hex(opt_.startAddress) +
 			                         " inside the protected area (directory/golden) below " +
 			                         hex(opt_.protectedBelow));
-<<<<<<< Updated upstream
 		if(opt_.writeImage && opt_.maxSegmentAttempts <= 0)
 			throw std::runtime_error("maxSegmentAttempts must be positive (is " +
 			                         std::to_string(opt_.maxSegmentAttempts) + "): no segment would be written");
@@ -567,10 +440,6 @@ class FlashSession
 			throw std::runtime_error("image of " + std::to_string(image_.size()) + " bytes at " + hex(opt_.startAddress) +
 			                         " (with the erase of the following block) reaches past the flash capacity of " +
 			                         std::to_string(opt_.flashBytes) + " bytes");
-=======
-		if(image_.size() % 2)
-			image_.push_back(0xFF);  // words of two bytes; 0xFF = erased flash
->>>>>>> Stashed changes
 		note("image " + std::to_string(image_.size()) + " bytes, SHA-256 OK, to " + hex(opt_.startAddress) +
 		     ", " + std::to_string(rocs_.size()) + " ROCs");
 	}
@@ -593,12 +462,9 @@ class FlashSession
 						r->readBlock(junk, REG_COMMAND, uint16_t(count - 4));
 				}
 				note(r, "drained " + std::to_string(count - 4) + " stale reply words");
-<<<<<<< Updated upstream
 				if(msSince(t0) > timeoutMs)
 					return false;  // a FIFO that never empties must not hold the session forever
 				sleepMs(opt_.pollMs);
-=======
->>>>>>> Stashed changes
 				continue;
 			}
 			if(count == 0 && (done == 0 || (done & 0x8000)))
@@ -653,12 +519,7 @@ class FlashSession
 	}
 
 	// New MiV: send a tagged command, wait for its reply of nPayload words, check the tag.
-<<<<<<< Updated upstream
 	std::vector<uint16_t> tagged(RocPort* r, std::vector<uint16_t> c, uint16_t nPayload, int timeoutMs, std::string& why)
-=======
-	std::vector<uint16_t> tagged(RocPort* r, std::vector<uint16_t> c, uint16_t nPayload, int timeoutMs,
-	                             std::string& why)
->>>>>>> Stashed changes
 	{
 		uint16_t tag = nextTag();
 		if(!sendTagged(r, c, tag))
@@ -672,12 +533,7 @@ class FlashSession
 	// New MiV: CRC of [addr, addr+len) on several ROCs at once: the command goes to every ROC, then the
 	// replies are collected, so the time does not grow with the number of ROCs. A lost or damaged reply is
 	// asked again (tries). Returns "" per ROC when the CRC equals want, else the reason.
-<<<<<<< Updated upstream
 	std::map<RocPort*, std::string> parallelCrc(const std::vector<RocPort*>& rs, uint32_t addr, uint32_t len, uint32_t want, int timeoutMs, int tries)
-=======
-	std::map<RocPort*, std::string> parallelCrc(const std::vector<RocPort*>& rs, uint32_t addr, uint32_t len,
-	                                            uint32_t want, int timeoutMs, int tries)
->>>>>>> Stashed changes
 	{
 		std::map<RocPort*, std::string> res;
 		std::vector<RocPort*>           todo = rs;
@@ -758,11 +614,7 @@ class FlashSession
 				fail(r, std::string("probe: ") + e.what());
 			}
 		}
-<<<<<<< Updated upstream
 		auto                     t0 = clock::now();
-=======
-		auto t0 = clock::now();
->>>>>>> Stashed changes
 		std::map<RocPort*, bool> answered;
 		while(msSince(t0) < 1000 && answered.size() < tags.size())
 		{
@@ -794,12 +646,7 @@ class FlashSession
 				if(!res_[r].newMiv)
 					probeLegacyReadSize(r);
 				if(alive(r))
-<<<<<<< Updated upstream
 					note(r, std::string("MiV ") + (res_[r].newMiv ? "with tags/CRC" : "without CRC (older): read-back verify"));
-=======
-					note(r, std::string("MiV ") + (res_[r].newMiv ? "with tags/CRC"
-					                                               : "without CRC (older): read-back verify"));
->>>>>>> Stashed changes
 			}
 			catch(const std::exception& e)
 			{
@@ -839,28 +686,17 @@ class FlashSession
 	//----------------------------------------------------------------------------------------------
 	void upload()
 	{
-<<<<<<< Updated upstream
 		const uint32_t seg  = 0x10000;
 		const size_t   nSeg = (image_.size() + seg - 1) / seg;
 		auto           t0   = clock::now();
-=======
-		const uint32_t seg   = 0x10000;
-		const size_t   nSeg  = (image_.size() + seg - 1) / seg;
-		auto           t0    = clock::now();
->>>>>>> Stashed changes
 		for(auto r : rocs_)
 			if(alive(r))
 				res_[r].state = RocState::Uploading;
 
 		for(size_t s = 0; s < nSeg; ++s)
 		{
-<<<<<<< Updated upstream
 			const uint32_t        off = uint32_t(s * seg);
 			const uint32_t        len = uint32_t(std::min<size_t>(seg, image_.size() - off));
-=======
-			const uint32_t off  = uint32_t(s * seg);
-			const uint32_t len  = uint32_t(std::min<size_t>(seg, image_.size() - off));
->>>>>>> Stashed changes
 			std::vector<RocPort*> todo;
 			for(auto r : rocs_)
 				if(alive(r))
@@ -874,12 +710,7 @@ class FlashSession
 				verifySegment(todo, off, len, err);
 				for(auto r : todo)
 					if(alive(r) && err.count(r))
-<<<<<<< Updated upstream
 						fail(r, "flash content differs from the file at segment " + hex(opt_.startAddress + off) + ": " + err[r] + " (nothing written; use write + program)");
-=======
-						fail(r, "flash content differs from the file at segment " + hex(opt_.startAddress + off) + ": " +
-						            err[r] + " (nothing written; use write + program)");
->>>>>>> Stashed changes
 				todo.clear();
 			}
 			for(int attempt = 1; attempt <= opt_.maxSegmentAttempts && !todo.empty(); ++attempt)
@@ -896,17 +727,9 @@ class FlashSession
 					if(err.count(r))
 					{
 						++res_[r].segmentRetries;
-<<<<<<< Updated upstream
 						note(r, "segment " + hex(opt_.startAddress + off) + " attempt " + std::to_string(attempt) + ": " + err[r]);
 						if(attempt == opt_.maxSegmentAttempts)
 							fail(r, "segment " + hex(opt_.startAddress + off) + " not verified after " + std::to_string(attempt) + " attempts: " + err[r]);
-=======
-						note(r, "segment " + hex(opt_.startAddress + off) + " attempt " + std::to_string(attempt) +
-						            ": " + err[r]);
-						if(attempt == opt_.maxSegmentAttempts)
-							fail(r, "segment " + hex(opt_.startAddress + off) + " not verified after " +
-							            std::to_string(attempt) + " attempts: " + err[r]);
->>>>>>> Stashed changes
 						else
 							again.push_back(r);
 					}
@@ -930,12 +753,7 @@ class FlashSession
 			if(!crcRocs.empty())
 			{
 				auto t0  = clock::now();
-<<<<<<< Updated upstream
 				auto chk = parallelCrc(crcRocs, opt_.startAddress, uint32_t(image_.size()), crc32(image_.data(), image_.size()), opt_.crcImageTimeoutMs, 2);
-=======
-				auto chk = parallelCrc(crcRocs, opt_.startAddress, uint32_t(image_.size()),
-				                       crc32(image_.data(), image_.size()), opt_.crcImageTimeoutMs, 2);
->>>>>>> Stashed changes
 				for(auto r : crcRocs)
 					if(!chk[r].empty())
 						fail(r, "whole-image " + chk[r]);
@@ -1060,12 +878,7 @@ class FlashSession
 	// older MiV, several ROCs at once: all are polled in turn from the moment the commands were sent, so the
 	// DONE drop of each one is seen even when they finish together (waiting for one ROC at a time misses the
 	// others' drop). A ROC whose drop was missed is accepted after minMs; the read-back decides anyway.
-<<<<<<< Updated upstream
 	void waitLegacyAll(const std::map<RocPort*, clock::time_point>& sent, int timeoutMs, int minMs, const std::string& what, std::map<RocPort*, std::string>& err)
-=======
-	void waitLegacyAll(const std::map<RocPort*, clock::time_point>& sent, int timeoutMs, int minMs,
-	                   const std::string& what, std::map<RocPort*, std::string>& err)
->>>>>>> Stashed changes
 	{
 		std::map<RocPort*, bool> sawBusy, done;
 		size_t                   left = sent.size();
@@ -1112,15 +925,9 @@ class FlashSession
 	{
 		for(uint32_t rec = 0; rec < len; rec += 1024)
 		{
-<<<<<<< Updated upstream
 			const uint32_t n    = std::min<uint32_t>(1024, len - rec);
 			const uint32_t addr = opt_.startAddress + off + rec;
 			auto           c    = cmd(ACT_WRITE, addr, n / 2);
-=======
-			const uint32_t n     = std::min<uint32_t>(1024, len - rec);
-			const uint32_t addr  = opt_.startAddress + off + rec;
-			auto           c     = cmd(ACT_WRITE, addr, n / 2);
->>>>>>> Stashed changes
 			for(uint32_t i = 0; i < n; i += 2)
 				c.push_back(uint16_t(image_[off + rec + i] | (image_[off + rec + i + 1] << 8)));
 			std::map<RocPort*, uint16_t>          tags;
@@ -1196,15 +1003,9 @@ class FlashSession
 			piece = std::min(piece, res_[r].readBytes);
 		for(uint32_t p = 0; p < len && !rbRocs.empty(); p += piece)
 		{
-<<<<<<< Updated upstream
 			const uint32_t                  n       = std::min<uint32_t>(piece, len - p) + (std::min<uint32_t>(piece, len - p) % 2);
 			std::vector<RocPort*>           pending = rbRocs;
 			std::map<RocPort*, std::string> last;
-=======
-			const uint32_t n = std::min<uint32_t>(piece, len - p) + (std::min<uint32_t>(piece, len - p) % 2);
-			std::vector<RocPort*>              pending = rbRocs;
-			std::map<RocPort*, std::string>    last;
->>>>>>> Stashed changes
 			for(int k = 0; k < 4 && !pending.empty(); ++k)
 			{
 				std::vector<RocPort*> sent, again;
@@ -1307,11 +1108,7 @@ class FlashSession
 		// each ROC: link down (programming) -> link back with the new firmware;
 		// or DONE with an error from the IAP service (not programmed, old firmware keeps running).
 		// All requested ROCs are polled in turn, so none can go down and come back unobserved.
-<<<<<<< Updated upstream
 		std::map<RocPort*, bool> wentDown, finished, answering;
-=======
-		std::map<RocPort*, bool> wentDown, finished;
->>>>>>> Stashed changes
 		std::map<RocPort*, int>  resyncs;
 		while(true)
 		{
@@ -1321,13 +1118,8 @@ class FlashSession
 				RocPort* r = kv.first;
 				if(finished[r])
 					continue;
-<<<<<<< Updated upstream
 				pending       = true;
 				int      t    = msSince(kv.second);
-=======
-				pending = true;
-				int      t = msSince(kv.second);
->>>>>>> Stashed changes
 				uint16_t done = 0, ret = 0, ver = 0;
 				bool     ok = true;
 				try
@@ -1340,7 +1132,6 @@ class FlashSession
 				{
 					ok = false;
 				}
-<<<<<<< Updated upstream
 				// not answering: a read exception or the all-ones register value of a dead link, same treatment
 				const bool disconnected = !ok || done == 0xffff;
 				answering[r]            = !disconnected;
@@ -1362,10 +1153,6 @@ class FlashSession
 				// idle (DONE, or 0 = nothing run since the restart, as waitIdle accepts) with PROG_RETURN clear:
 				// success needs evidence of a restart, the link having gone down, or the firmware version
 				// having changed to the expected one
-=======
-				if(!ok || done == 0xffff)
-					wentDown[r] = true;
->>>>>>> Stashed changes
 				else if(wentDown[r] || (opt_.expectedFwVersion && ver == opt_.expectedFwVersion &&
 				                        ver != verBefore_[r]))
 				{
@@ -1373,19 +1160,13 @@ class FlashSession
 					{
 						if(t > opt_.linkBackTimeoutMs)
 						{
-<<<<<<< Updated upstream
 							fail(r, "back after IAP with firmware version " + hex(ver) + ", expected " + hex(opt_.expectedFwVersion));
-=======
-							fail(r, "back after IAP with firmware version " + hex(ver) + ", expected " +
-							            hex(opt_.expectedFwVersion));
->>>>>>> Stashed changes
 							finished[r] = true;
 						}
 					}
 					else
 					{
 						res_[r].state = RocState::Programmed;
-<<<<<<< Updated upstream
 						note(r, "back after IAP in " + std::to_string(t / 1000) + " s" + (resyncs[r] ? " (after " + std::to_string(resyncs[r]) + " link reset)" : "") + ", firmware version " + hex(ver));
 						finished[r] = true;
 					}
@@ -1399,34 +1180,6 @@ class FlashSession
 				}
 				// no answer for a while after the IAP: re-initialise this ROC's link on the DTC and keep polling
 				if(!finished[r] && wentDown[r] && !answering[r] && resyncs[r] < opt_.linkResyncTries &&
-=======
-						note(r, "back after IAP in " + std::to_string(t / 1000) + " s" +
-						            (resyncs[r] ? " (after " + std::to_string(resyncs[r]) + " link reset)" : "") +
-						            ", firmware version " + hex(ver));
-						finished[r] = true;
-					}
-				}
-				// the MiV clears PROG_RETURN when it takes the command: a non-zero value with DONE after
-				// 200 ms is the result of this IAP request (authentication refused, or IAP service error)
-				else if((done & 0x8000) && ret != 0 && t > 200)
-				{
-					fail(r, "IAP refused, PROG_RETURN " + hex(ret) +
-					            ((ret & 0xFF00) == 0xA000
-					                 ? " (image authentication failed: NOT programmed, old firmware running)"
-					                 : ""));
-					finished[r] = true;
-				}
-				if(!finished[r] && !wentDown[r] && t > opt_.authTimeoutMs)
-				{
-					fail(r, "IAP: link never dropped and no result after " + std::to_string(t / 1000) + " s" +
-					            (ok && done == 0x4000 ? " (register 128 = 0x4000: the MiV is stuck in a system service, "
-					                                    "power-cycle the ROC; the verified image stays in the flash)"
-					                                  : ""));
-					finished[r] = true;
-				}
-				// no answer for a while after the IAP: re-initialise this ROC's link on the DTC and keep polling
-				if(!finished[r] && wentDown[r] && !ok && resyncs[r] < opt_.linkResyncTries &&
->>>>>>> Stashed changes
 				   t > opt_.linkResyncAfterMs * (resyncs[r] + 1))
 				{
 					std::string info;
@@ -1440,7 +1193,6 @@ class FlashSession
 					{
 						info = e.what();
 					}
-<<<<<<< Updated upstream
 					note(r, "not answering " + std::to_string(t / 1000) + " s after the IAP: link reset " + std::to_string(resyncs[r]) + (done_ ? " done" : " not available") + (info.empty() ? "" : " (" + info + ")"));
 				}
 				if(!finished[r] && wentDown[r] && t > opt_.linkBackTimeoutMs)
@@ -1451,17 +1203,6 @@ class FlashSession
 						fail(r, "IAP: ROC not answering " + std::to_string(t / 1000) + " s after the request, also after " + std::to_string(resyncs[r]) +
 						            " link reset(s): power-cycle the ROC (the verified image is "
 						            "in its flash; on 2026-10-16 such a ROC came back after a power cycle)");
-=======
-					note(r, "not answering " + std::to_string(t / 1000) + " s after the IAP: link reset " +
-					            std::to_string(resyncs[r]) + (done_ ? " done" : " not available") +
-					            (info.empty() ? "" : " (" + info + ")"));
-				}
-				if(!finished[r] && wentDown[r] && t > opt_.linkBackTimeoutMs)
-				{
-					fail(r, "IAP: ROC not answering " + std::to_string(t / 1000) + " s after the request, also after " +
-					            std::to_string(resyncs[r]) + " link reset(s): power-cycle the ROC (the verified image is "
-					            "in its flash; on 2026-10-16 such a ROC came back after a power cycle)");
->>>>>>> Stashed changes
 					finished[r] = true;
 				}
 			}

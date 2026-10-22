@@ -1,9 +1,6 @@
 #include "dtcInterfaceLib/EVBErrorStatus.h"
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
-<<<<<<< Updated upstream
 #include "otsdaq-mu2e/FEInterfaces/ROCPolarFireCoreInterface.h"  // actionLock_ for ProgramROCsSafe
-=======
->>>>>>> Stashed changes
 #include "otsdaq-mu2e/FEInterfaces/RocFlashProgrammer.h"
 #include "otsdaq/FECore/FEVInterfacesManager.h"
 #include "otsdaq/FECore/MakeInterface.h"
