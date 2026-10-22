@@ -14359,12 +14359,19 @@ class OtsRocPort : public rocflash::RocPort
 	}
 
 	// DTC side of this ROC's link: SERDES TX and RX reset of that link only (what "Reset ALL DTC Links" does
-	// for every link), then the CDR lock state for the log
+	// for every link), then a DTC SoftReset, then the CDR lock state for the log.
+	// The SoftReset is needed (2026-10-22, caloDTC13, ROC firmware 1.10): the IAP drops the link,
+	// the DTC latches "SERDES CDR lost lock" for that ROC and then rejects every DCS request to
+	// it at once. Only a SoftReset clears the latch; the SERDES reset alone did not. ROC81/82
+	// stayed "not answering" through 3 link resets and answered after the SoftReset of the next
+	// Configure. The SoftReset acts on the whole DTC: here it runs only while the session waits
+	// for ROCs after the IAP (no image transfer in flight, slow controls paused).
 	bool resyncLink(std::string& info) override
 	{
 		dtc_->ResetSERDESTX(roc_->getLinkID());
 		dtc_->ResetSERDESRX(roc_->getLinkID());
-		info = std::string("RX CDR ") +
+		dtc_->SoftReset();
+		info = std::string("SERDES reset + DTC SoftReset, RX CDR ") +
 		       (dtc_->ReadSERDESRXCDRLock(roc_->getLinkID()) ? "locked" : "NOT locked");
 		return true;
 	}
@@ -14523,6 +14530,16 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 		__FE_SS__ << "Program ROCs Safe stopped before sending anything: " << e.what()
 		          << __E__;
 		__FE_SS_THROW__;
+	}
+	// After an IAP: clear the DCS errors the DTC latched while the links were down, before slow
+	// controls resume (2026-10-22: without it every slow-controls read of ROCs already back with
+	// the new firmware failed with "SERDES CDR lost lock" until the next Configure).
+	if(program)
+	{
+		getDTC()->SoftReset();
+		__FE_COUT_INFO__ << "Program ROCs Safe: DTC SoftReset after the IAP "
+		                    "(clears latched DCS link errors)"
+		                 << __E__;
 	}
 	resultsSs << (allOk ? "ALL OK" : "SOME ROCs FAILED (not programmed unless stated)")
 	          << "\n"
