@@ -31,6 +31,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -107,22 +108,21 @@ enum : uint16_t
 // CRC-32 as zlib crc32() and as the MiV action 10
 inline uint32_t crc32(const uint8_t* p, size_t n, uint32_t crc = 0)
 {
-	static uint32_t tbl[256];
-	static bool     init = false;
-	if(!init)
-	{
+	// built once, under the C++ guarantee for the initialisation of a function-local static (thread safe)
+	static const std::array<uint32_t, 256> crcTable = [] {
+		std::array<uint32_t, 256> table{};
 		for(uint32_t i = 0; i < 256; ++i)
 		{
 			uint32_t c = i;
 			for(int k = 0; k < 8; ++k)
 				c = (c & 1) ? (0xEDB88320u ^ (c >> 1)) : (c >> 1);
-			tbl[i] = c;
+			table[i] = c;
 		}
-		init = true;
-	}
+		return table;
+	}();
 	crc = ~crc;
 	for(size_t i = 0; i < n; ++i)
-		crc = tbl[(crc ^ p[i]) & 0xFF] ^ (crc >> 8);
+		crc = crcTable[(crc ^ p[i]) & 0xFF] ^ (crc >> 8);
 	return ~crc;
 }
 
@@ -194,8 +194,9 @@ struct Options
 	bool        writeImage         = true;    // false: do not erase/write, only verify the flash against the file
 	bool        program            = false;   // IAP after a fully verified upload
 	bool        finalImageCrc      = true;    // new MiV: CRC of the whole image before the IAP
-	int         maxSegmentAttempts = 5;
-	uint16_t    expectedFwVersion  = 0;  // register REG_FW_VERSION after the IAP; 0 = do not check
+	int         maxSegmentAttempts = 5;       // must be positive (preflight)
+	uint64_t    flashBytes         = 0;       // flash capacity for the footprint check; 0 = only the 32-bit address space
+	uint16_t    expectedFwVersion  = 0;       // register REG_FW_VERSION after the IAP; 0 = do not check
 	// timing (ms)
 	int pollMs              = 1;
 	int writeTimeoutMs      = 3000;
@@ -421,8 +422,24 @@ class FlashSession
 			throw std::runtime_error("start address " + hex(opt_.startAddress) +
 			                         " inside the protected area (directory/golden) below " +
 			                         hex(opt_.protectedBelow));
+		if(opt_.writeImage && opt_.maxSegmentAttempts <= 0)
+			throw std::runtime_error("maxSegmentAttempts must be positive (is " +
+			                         std::to_string(opt_.maxSegmentAttempts) + "): no segment would be written");
 		if(image_.size() % 2)
 			image_.push_back(0xFF);  // words of two bytes; 0xFF = erased flash
+		// the whole footprint, in 64 bits so that nothing wraps: the padded image, rounded up to whole 64 kB
+		// segments, plus the one extra block an older MiV erases after the last segment (eraseSegment)
+		const uint64_t segmentBytes    = 0x10000;
+		const uint64_t paddedBytes     = ((uint64_t(image_.size()) + segmentBytes - 1) / segmentBytes) * segmentBytes;
+		const uint64_t footprintEnd    = uint64_t(opt_.startAddress) + paddedBytes + segmentBytes;
+		const uint64_t addressSpaceEnd = uint64_t(1) << 32;
+		if(footprintEnd > addressSpaceEnd)
+			throw std::runtime_error("image of " + std::to_string(image_.size()) + " bytes at " + hex(opt_.startAddress) +
+			                         " (with the erase of the following block) reaches past the 32-bit flash address space");
+		if(opt_.flashBytes && footprintEnd > opt_.flashBytes)
+			throw std::runtime_error("image of " + std::to_string(image_.size()) + " bytes at " + hex(opt_.startAddress) +
+			                         " (with the erase of the following block) reaches past the flash capacity of " +
+			                         std::to_string(opt_.flashBytes) + " bytes");
 		note("image " + std::to_string(image_.size()) + " bytes, SHA-256 OK, to " + hex(opt_.startAddress) +
 		     ", " + std::to_string(rocs_.size()) + " ROCs");
 	}
@@ -445,6 +462,9 @@ class FlashSession
 						r->readBlock(junk, REG_COMMAND, uint16_t(count - 4));
 				}
 				note(r, "drained " + std::to_string(count - 4) + " stale reply words");
+				if(msSince(t0) > timeoutMs)
+					return false;  // a FIFO that never empties must not hold the session forever
+				sleepMs(opt_.pollMs);
 				continue;
 			}
 			if(count == 0 && (done == 0 || (done & 0x8000)))
@@ -1088,7 +1108,7 @@ class FlashSession
 		// each ROC: link down (programming) -> link back with the new firmware;
 		// or DONE with an error from the IAP service (not programmed, old firmware keeps running).
 		// All requested ROCs are polled in turn, so none can go down and come back unobserved.
-		std::map<RocPort*, bool> wentDown, finished;
+		std::map<RocPort*, bool> wentDown, finished, answering;
 		std::map<RocPort*, int>  resyncs;
 		while(true)
 		{
@@ -1112,8 +1132,27 @@ class FlashSession
 				{
 					ok = false;
 				}
-				if(!ok || done == 0xffff)
+				// not answering: a read exception or the all-ones register value of a dead link, same treatment
+				const bool disconnected = !ok || done == 0xffff;
+				answering[r]            = !disconnected;
+				if(disconnected)
 					wentDown[r] = true;
+				// the MiV clears PROG_RETURN when it takes the command: a non-zero value with DONE after
+				// 200 ms is the result of this IAP request (authentication refused, or IAP service error).
+				// Checked before any success: a ROC that never restarted must not pass as programmed.
+				else if(!wentDown[r] && (done & 0x8000) && ret != 0 && t > 200)
+				{
+					fail(r, "IAP refused, PROG_RETURN " + hex(ret) + ((ret & 0xFF00) == 0xA000 ? " (image authentication failed: NOT programmed, old firmware running)" : ""));
+					finished[r] = true;
+				}
+				// MiV busy (DONE clear and not the fresh-restart value 0, e.g. 0x4000 executing) or DONE with an
+				// error: not back yet, keep polling
+				else if((done != 0 && !(done & 0x8000)) || ret != 0)
+				{
+				}
+				// idle (DONE, or 0 = nothing run since the restart, as waitIdle accepts) with PROG_RETURN clear:
+				// success needs evidence of a restart, the link having gone down, or the firmware version
+				// having changed to the expected one
 				else if(wentDown[r] || (opt_.expectedFwVersion && ver == opt_.expectedFwVersion &&
 				                        ver != verBefore_[r]))
 				{
@@ -1132,13 +1171,6 @@ class FlashSession
 						finished[r] = true;
 					}
 				}
-				// the MiV clears PROG_RETURN when it takes the command: a non-zero value with DONE after
-				// 200 ms is the result of this IAP request (authentication refused, or IAP service error)
-				else if((done & 0x8000) && ret != 0 && t > 200)
-				{
-					fail(r, "IAP refused, PROG_RETURN " + hex(ret) + ((ret & 0xFF00) == 0xA000 ? " (image authentication failed: NOT programmed, old firmware running)" : ""));
-					finished[r] = true;
-				}
 				if(!finished[r] && !wentDown[r] && t > opt_.authTimeoutMs)
 				{
 					fail(r, "IAP: link never dropped and no result after " + std::to_string(t / 1000) + " s" + (ok && done == 0x4000 ? " (register 128 = 0x4000: the MiV is stuck in a system service, "
@@ -1147,7 +1179,7 @@ class FlashSession
 					finished[r] = true;
 				}
 				// no answer for a while after the IAP: re-initialise this ROC's link on the DTC and keep polling
-				if(!finished[r] && wentDown[r] && !ok && resyncs[r] < opt_.linkResyncTries &&
+				if(!finished[r] && wentDown[r] && !answering[r] && resyncs[r] < opt_.linkResyncTries &&
 				   t > opt_.linkResyncAfterMs * (resyncs[r] + 1))
 				{
 					std::string info;
@@ -1165,9 +1197,12 @@ class FlashSession
 				}
 				if(!finished[r] && wentDown[r] && t > opt_.linkBackTimeoutMs)
 				{
-					fail(r, "IAP: ROC not answering " + std::to_string(t / 1000) + " s after the request, also after " + std::to_string(resyncs[r]) +
-					            " link reset(s): power-cycle the ROC (the verified image is "
-					            "in its flash; on 2026-10-16 such a ROC came back after a power cycle)");
+					if(answering[r])
+						fail(r, "IAP: ROC back after " + std::to_string(t / 1000) + " s but the MiV never reported idle without error (reg128=" + hex(done) + " reg132=" + hex(ret) + ", firmware version " + hex(ver) + "): not accepted as programmed");
+					else
+						fail(r, "IAP: ROC not answering " + std::to_string(t / 1000) + " s after the request, also after " + std::to_string(resyncs[r]) +
+						            " link reset(s): power-cycle the ROC (the verified image is "
+						            "in its flash; on 2026-10-16 such a ROC came back after a power cycle)");
 					finished[r] = true;
 				}
 			}

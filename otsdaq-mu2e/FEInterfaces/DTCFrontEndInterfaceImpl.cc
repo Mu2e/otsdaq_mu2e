@@ -1,5 +1,6 @@
 #include "dtcInterfaceLib/EVBErrorStatus.h"
 #include "otsdaq-mu2e/FEInterfaces/DTCFrontEndInterface.h"
+#include "otsdaq-mu2e/FEInterfaces/ROCPolarFireCoreInterface.h"  // actionLock_ for ProgramROCsSafe
 #include "otsdaq-mu2e/FEInterfaces/RocFlashProgrammer.h"
 #include "otsdaq/FECore/FEVInterfacesManager.h"
 #include "otsdaq/FECore/MakeInterface.h"
@@ -14303,13 +14304,33 @@ class OtsDcsLock : public rocflash::DcsLock
 class OtsRocPort : public rocflash::RocPort
 {
   public:
+	// The ROC's action lock (ROCPolarFireCoreInterface::actionLock_, the one every ROC flash action takes
+	// from command to reply) is held for the whole session, so no other action can send a command to this
+	// ROC, or have its reply drained, while the session's DTC transaction lock is released between steps.
+	// Throws if the ROC is busy with another action. Released in the destructor.
 	OtsRocPort(const std::string& uid, ROCCoreVInterface* roc, DTCLib::DTC* dtc)
 	    : roc_(roc), dtc_(dtc)
 	{
 		std::stringstream ss;
 		ss << "ROC '" << uid << "' link " << roc->getLinkID();
-		name_ = ss.str();
+		name_         = ss.str();
+		polarFireRoc_ = dynamic_cast<ROCPolarFireCoreInterface*>(roc);
+		if(polarFireRoc_)
+		{
+			if(!polarFireRoc_->actionLock_.try_lock())
+				throw std::runtime_error(name_ +
+				                         ": could not get the ROC action lock (is there "
+				                         "an incomplete action?)");
+			holdsActionLock_ = true;
+		}
 	}
+	~OtsRocPort() override
+	{
+		if(holdsActionLock_)
+			polarFireRoc_->actionLock_.unlock();
+	}
+	OtsRocPort(const OtsRocPort&)            = delete;
+	OtsRocPort& operator=(const OtsRocPort&) = delete;
 	std::string name() const override { return name_; }
 	uint16_t    readRegister(uint16_t address) override
 	{
@@ -14349,9 +14370,11 @@ class OtsRocPort : public rocflash::RocPort
 	}
 
   private:
-	ROCCoreVInterface* roc_;
-	DTCLib::DTC*       dtc_;
-	std::string        name_;
+	ROCCoreVInterface*         roc_;
+	DTCLib::DTC*               dtc_;
+	std::string                name_;
+	ROCPolarFireCoreInterface* polarFireRoc_    = nullptr;
+	bool                       holdsActionLock_ = false;
 };
 }  // namespace
 
@@ -14399,7 +14422,16 @@ void DTCFrontEndInterface::ProgramROCsSafe(__ARGS__)
 		   (usingRocMask && ((1u << (link * 4)) & rocLinkIndexVal)))
 		{
 			targetUIDs.push_back(roc.first);
-			ports.emplace_back(new OtsRocPort(roc.first, roc.second.get(), getDTC()));
+			try
+			{
+				ports.emplace_back(new OtsRocPort(roc.first, roc.second.get(), getDTC()));
+			}
+			catch(const std::exception& e)
+			{
+				__FE_SS__ << "Program ROCs Safe stopped before sending anything: "
+				          << e.what() << __E__;
+				__FE_SS_THROW__;
+			}
 			portPtrs.push_back(ports.back().get());
 		}
 	}
