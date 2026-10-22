@@ -352,7 +352,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	unsigned int            roc_emulated_mask_     = 0;
 	bool                    has_real_roc_flow_     = false;
 	std::string             real_roc_flow_reason_;
-	bool                    emulate_cfo_ = true;
+	bool                    emulate_cfo_         = true;
+	bool                    enable_software_drp_ = false;  ///< from DTCInterfaceTable EnableSoftwareDataRequestMode; when true, Autogenerate DRP is never enabled
 	DTCLib::DTCSoftwareCFO* EmulatedCFO_;
 	uint64_t                next_starting_cfoem_event_window_tag_ = 0;
 
@@ -502,6 +503,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	void ManualLoopbackSetup(__ARGS__);
 
 	void ProgramROCs(__ARGS__);
+	void ProgramROCsSafe(__ARGS__);  // segmented, verified, retried upload; IAP only of a verified image
 
 	void ValidateDTCControlRegisters(__ARGS__);
 };

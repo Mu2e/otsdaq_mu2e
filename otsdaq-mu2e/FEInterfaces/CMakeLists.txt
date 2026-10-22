@@ -7,6 +7,7 @@ cet_build_plugin(ROCDTCHardwareEmulated otsdaq::FEInterface LIBRARIES REG otsdaq
 cet_make_library(LIBRARY_NAME DTCFrontEndInterface SOURCE DTCFrontEndInterfaceImpl.cc
   LIBRARIES PUBLIC
   otsdaq-mu2e::CFOandDTCCore
+  otsdaq-mu2e::ROCPolarFireCoreInterface  # ProgramROCsSafe takes the ROC action lock (dynamic_cast needs its RTTI)
   ROOT::Hist
   ROOT::Core
   ROOT::RIO
