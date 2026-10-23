@@ -108,9 +108,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 
 	struct MergedDetachedEvent
 	{
-		std::shared_ptr<DTCLib::DTC_Event> event;  // self-contained copy
-		size_t   numSubeventsFromDTC0;             // subevents [0,n0) came from DTC_0
-		uint64_t baseTag;                          // == DTC_0 tag
+		std::shared_ptr<DTCLib::DTC_Event> event;                 // self-contained copy
+		size_t                             numSubeventsFromDTC0;  // subevents [0,n0) came from DTC_0
+		uint64_t                           baseTag;               // == DTC_0 tag
 	};
 
 	struct DetachedBufferTestThreadStruct
@@ -130,7 +130,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		// source key = (sourceGroup << 8) | source_dtc_id; group 1 = subevent arrived via the
 		// DTC_1 half of a merged event.  Non-merge runs use group 0 only (key == source_dtc_id).
 		std::set<uint16_t>
-		    evbSourcesSeenForTag_;  // source keys that have delivered the current expected tag
+		     evbSourcesSeenForTag_;  // source keys that have delivered the current expected tag
 		bool evbTagSynced_ =
 		    false;  // EVB mode: expected tag has been synced to the first subevent seen after (re)start
 		std::map<uint16_t /*source key*/, std::vector<uint64_t>>
@@ -144,8 +144,8 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		    nullptr;  // DTC_1 FE's thisDTC_, borrowed; never deleted here
 		std::string otherDTCUID_;
 		uint8_t     evbNumDestNodesOther_ = 1;
-		uint32_t pairTimeoutMs_  = 2000;  // from thisDTC_->GetEVBEventTimeout() at Start
-		size_t   pairMaxPending_ = 1024;
+		uint32_t    pairTimeoutMs_        = 2000;  // from thisDTC_->GetEVBEventTimeout() at Start
+		size_t      pairMaxPending_       = 1024;
 		struct PendingHalf
 		{
 			std::shared_ptr<DTCLib::DTC_Event>                 event;
@@ -197,10 +197,10 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t> evbCloseFillersCount_{0};
 		std::atomic<uint64_t> evbFramingErrors_{0};
 		std::atomic<uint32_t> evbStickyErrorsSeen_{0};
-		uint32_t evbStickyIgnoreMask_{0};    // per-build known defects (set by thread)
-		uint32_t evbOperatorIgnoreMask_{0};  // copied from the FE at Start; session-only
-		std::atomic<bool> evbTrafficStarted_{false};
-		std::atomic<bool> evbStatusReadFailed_{false};
+		uint32_t              evbStickyIgnoreMask_{0};    // per-build known defects (set by thread)
+		uint32_t              evbOperatorIgnoreMask_{0};  // copied from the FE at Start; session-only
+		std::atomic<bool>     evbTrafficStarted_{false};
+		std::atomic<bool>     evbStatusReadFailed_{false};
 		// Per-run count of 0x9370 polls with bit 17 (self-throttle: this DTC is >1024 tags
 		// ahead of its slowest peer) set.  hw agent 2026-09-24: this is the register that
 		// tells a run that stalled on the throttle from one that completed.
@@ -230,9 +230,9 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 		std::atomic<uint64_t> evbLoopIterations_{0};
 		// 0x9370 sampled on the first idle iteration after the last subevent arrived (~1 loop
 		// iteration late, vs ~2 s late for the timeout snapshot); re-armed whenever data resumes
-		std::atomic<bool>     evbErrAtStallOnsetValid_{false};
-		std::atomic<uint32_t> evbErrAtStallOnset_{0};
-		std::atomic<uint64_t> evbErrAtStallOnsetIter_{0};
+		std::atomic<bool>                                  evbErrAtStallOnsetValid_{false};
+		std::atomic<uint32_t>                              evbErrAtStallOnset_{0};
+		std::atomic<uint64_t>                              evbErrAtStallOnsetIter_{0};
 		std::chrono::time_point<std::chrono::steady_clock> evbErrAtStallOnsetTime_;
 		// EVB3 stall/output counters (0x9210-0x9248) sampled when traffic starts and on the first
 		// idle iteration after the last subevent (re-armed when data resumes); the difference
@@ -276,7 +276,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	    std::shared_ptr<DTCFrontEndInterface::DetachedBufferTestThreadStruct>
 	             threadStruct,
 	    uint64_t tagOffset =
-	        0,  // subtracted from the subevent tag before the expected-tag check
+	        0,                     // subtracted from the subevent tag before the expected-tag check
 	    uint8_t sourceGroup = 0);  // 0 = DTC_0 half / non-merge, 1 = DTC_1 half
 
 	static std::shared_ptr<DTCLib::DTC_Event> buildMergedDetachedEvent(
@@ -336,7 +336,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	    (unsigned int)-1;  // which subsystem-iteration this DTC configures in; -1 = not yet decided
 	bool rtfPhaseEdgeRetried_ = false;
 	std::string
-	    rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails
+	                        rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails
 	int                     dtc_location_in_chain_ = -1;
 	unsigned int            runningCallCount_      = 0;
 	unsigned int            roc_mask_              = 0;
@@ -358,7 +358,7 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	EVBBRAMSnapshot evbBRAMSnapshot_;
 
 	std::map<std::string /*ROC UID*/, std::unique_ptr<ROCCoreVInterface>> rocs_;
-	std::map<DTCLib::DTC_Link_ID, bool> rocRunningStatus_;
+	std::map<DTCLib::DTC_Link_ID, bool>                                   rocRunningStatus_;
 
 	std::map<std::string /*DTC's FEMacro name*/,
 	         std::pair<std::string /*ROC UID*/, std::string /*ROC's FEMacro name*/>>
@@ -452,35 +452,35 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	                              int  idelayTapValue      = -1,
 	                              int  rtfPunchedClockEdge = 0);
 	void        SetCFOEmulatorOnOffSpillEmulation(__ARGS__);
-	std::string SetCFOEmulatorOnOffSpillEmulation(bool     enable,
-	                                              bool     useDetachedBufferTest,
-	                                              uint32_t numberOfSuperCycles,
-	                                              uint64_t initialEventWindowTag,
-	                                              bool     enableClockMarkers,
-	                                              bool     enableAutogenDRP,
-	                                              bool     saveBinaryDataToFile,
+	std::string SetCFOEmulatorOnOffSpillEmulation(bool               enable,
+	                                              bool               useDetachedBufferTest,
+	                                              uint32_t           numberOfSuperCycles,
+	                                              uint64_t           initialEventWindowTag,
+	                                              bool               enableClockMarkers,
+	                                              bool               enableAutogenDRP,
+	                                              bool               saveBinaryDataToFile,
 	                                              const std::string& filename,
-	                                              bool     saveSubeventHeadersToDataFile,
-	                                              bool     doNotResetCounters,
-	                                              bool     skipBy32,
-	                                              uint32_t packetThresholdToSave,
-	                                              bool     inEVBMode = false);
+	                                              bool               saveSubeventHeadersToDataFile,
+	                                              bool               doNotResetCounters,
+	                                              bool               skipBy32,
+	                                              uint32_t           packetThresholdToSave,
+	                                              bool               inEVBMode = false);
 	void        SetCFOEmulatorFixedWidthEmulation(__ARGS__);
-	std::string SetCFOEmulatorFixedWidthEmulation(bool enable,
-	                                              bool useDetachedBufferTest,
+	std::string SetCFOEmulatorFixedWidthEmulation(bool               enable,
+	                                              bool               useDetachedBufferTest,
 	                                              const std::string& eventDuration,
-	                                              uint32_t numberOfEventWindowMarkers,
-	                                              uint64_t initialEventWindowTag,
-	                                              uint64_t eventWindowMode,
-	                                              bool     enableClockMarkers,
-	                                              bool     enableAutogenDRP,
-	                                              bool     saveBinaryDataToFile,
+	                                              uint32_t           numberOfEventWindowMarkers,
+	                                              uint64_t           initialEventWindowTag,
+	                                              uint64_t           eventWindowMode,
+	                                              bool               enableClockMarkers,
+	                                              bool               enableAutogenDRP,
+	                                              bool               saveBinaryDataToFile,
 	                                              const std::string& filename,
-	                                              bool     saveSubeventHeadersToDataFile,
-	                                              bool     doNotResetCounters,
-	                                              bool     skipBy32,
-	                                              uint32_t packetThresholdToSave,
-	                                              bool     inEVBMode = false);
+	                                              bool               saveSubeventHeadersToDataFile,
+	                                              bool               doNotResetCounters,
+	                                              bool               skipBy32,
+	                                              uint32_t           packetThresholdToSave,
+	                                              bool               inEVBMode = false);
 
 	void BufferTest(__ARGS__);
 	void PatternTest(__ARGS__);
