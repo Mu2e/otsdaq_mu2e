@@ -334,15 +334,6 @@ class DTCFrontEndInterface : public CFOandDTCCoreVInterface
 	int          timing_chain_first_substep_ = -1;
 	unsigned int configSubsystemIterationTurn_ =
 	    (unsigned int)-1;  // which subsystem-iteration this DTC configures in; -1 = not yet decided
-	/// DTCs in the CFO's subsystem (multi-subsystem configure only) do not enable/disable
-	/// their ROC links during configure and never switch to emulated ROCs (ROC emulation is
-	/// cleared instead); the detector subsystems own their ROC links.
-	bool leaveROCLinksUntouched(void) const
-	{
-		return !isStandaloneSubsystem() &&
-		       configSubsystemIterationTurn_ ==
-		           CFOandDTCCoreVInterface::CONFIG_SUBSYSTEM_ITERATION_CFO_SUBSYSTEM;
-	}
 	bool rtfPhaseEdgeRetried_ = false;
 	std::string
 	    rtfPhaseEdgeRetryDetail_;  // populated when edge-flip retry runs, included in error if verify still fails

@@ -3280,27 +3280,41 @@ void DTCFrontEndInterface::configureEventBuildingMode(int step)
 
 		if(subStep == 0)
 		{
-			// Step 1: SetupROCs per link. DTCs in the CFO's subsystem only carry the
-			// timing chain: their ROC link enables are left as is (the links are not
-			// disturbed) and ROC emulation is switched off on every link, so a DTC that
-			// was left emulating by an earlier configure does not stay in emulated mode.
-			if(leaveROCLinksUntouched())
+			// Step 1: SetupROCs per link. A DTC without real ROCs does not own its ROC
+			// links (another FE instance with the real ROCs may). If any ROC link is
+			// already on, that instance has set them up and nothing is touched. Only if
+			// every ROC link is off does this DTC set them up from its own ROC config
+			// (emulated or not, per EmulateInDTCHardware), so the timing chain reaches
+			// the ROCs.
+			bool setupLinks = hasRealROCs;
+			if(!hasRealROCs)
 			{
-				__FE_COUT__ << "DTC in the CFO subsystem: leaving ROC links untouched "
-				               "and clearing ROC emulation on all links (roc_mask_=0x"
-				            << std::hex << roc_mask_ << " emulated_mask_=0x"
-				            << roc_emulated_mask_ << std::dec << ")." << __E__;
-				dtc->SetROCEmulatorMask(
-				    0);  // 0x9110: internal/fiber-loopback/external bits only
+				bool anyLinkOn = false;
+				for(size_t i = 0; i < DTCLib::DTC_ROC_Links.size(); ++i)
+				{
+					auto linkEnable = dtc->ReadLinkEnabled(DTCLib::DTC_ROC_Links[i]);
+					if(linkEnable.TransmitEnable || linkEnable.ReceiveEnable)
+					{
+						anyLinkOn = true;
+						break;
+					}
+				}
+				setupLinks = !anyLinkOn;
+				__FE_COUT__ << "No real ROCs: "
+				            << (anyLinkOn ? "some ROC links are on, leaving all ROC "
+				                            "links as they are"
+				                          : "all ROC links are off, setting them up "
+				                            "per config")
+				            << " (roc_mask_=0x" << std::hex << roc_mask_
+				            << " emulated_mask_=0x" << roc_emulated_mask_ << std::dec
+				            << ")." << __E__;
 			}
 			else
 				__FE_COUT__ << "Setting up ROC links with roc_mask_=0x" << std::hex
 				            << roc_mask_ << " emulated_mask_=0x" << roc_emulated_mask_
 				            << std::dec << __E__;
 
-			for(size_t i = 0;
-			    !leaveROCLinksUntouched() && i < DTCLib::DTC_ROC_Links.size();
-			    ++i)
+			for(size_t i = 0; setupLinks && i < DTCLib::DTC_ROC_Links.size(); ++i)
 			{
 				bool enabled  = ((roc_mask_ >> i) & 1);
 				bool emulated = ((roc_emulated_mask_ >> i) & 1);
@@ -3628,13 +3642,11 @@ void DTCFrontEndInterface::configureForTimingChain(int step)
 		// when EventBuilderMode != 0 on the real-ROC path.
 		getDTC()->DisableLink(DTCLib::DTC_Link_EVB);
 
-		// ROC link enable/disable follows roc_mask_ only, independent of
-		// has_real_roc_flow_ (i.e. of EnableROCConfigureStep), so the ROC links are
-		// always down while the control register and jitter attenuator are reworked.
-		// DTCs in the CFO's subsystem leave their ROC links alone (see Phase 4).
-		if(leaveROCLinksUntouched())
-			__FE_COUT__ << "DTC in the CFO subsystem: leaving ROC links untouched "
-			               "(roc_mask_=0x"
+		// A DTC without real ROCs does not own its ROC links and leaves them alone;
+		// a DTC with real ROCs takes them down while the control register and
+		// jitter attenuator are reworked (see Phase 4).
+		if(!has_real_roc_flow_)
+			__FE_COUT__ << "No real ROCs: leaving ROC links untouched (roc_mask_=0x"
 			            << std::hex << roc_mask_ << std::dec << ")." << __E__;
 		else if(roc_mask_)
 		{
